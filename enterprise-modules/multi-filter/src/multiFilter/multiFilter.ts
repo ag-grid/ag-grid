@@ -18,11 +18,12 @@ import {
     AgGroupComponent,
     ContainerType,
     TabGuardComp,
-    _,
+    AgMenuItemComponent,
+    MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
+    _
 } from '@ag-grid-community/core';
-import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -36,7 +37,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
-    private lastActivatedMenuItem: MenuItemComponent | null = null;
+    private lastActivatedMenuItem: AgMenuItemComponent | null = null;
 
     private afterFiltersReadyFuncs: (() => void)[] = [];
 
@@ -142,8 +143,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.guiDestroyFuncs.length = 0;
     }
 
-    private insertFilterMenu(filter: IFilterComp, name: string): MenuItemComponent {
-        const menuItem = this.createBean(new MenuItemComponent({
+    private insertFilterMenu(filter: IFilterComp, name: string): AgMenuItemComponent {
+        const menuItem = this.createBean(new AgMenuItemComponent({
             name,
             subMenu: filter,
             cssClasses: ['ag-multi-filter-menu-item'],
@@ -155,7 +156,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
-        this.addManagedListener(menuItem, MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
+        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
             if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
                 this.lastActivatedMenuItem.deactivate();
             }

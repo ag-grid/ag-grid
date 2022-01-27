@@ -1,6 +1,8 @@
 import {
     _,
     AgEvent,
+    AgMenuItemComponent,
+    AgMenuList,
     Autowired,
     Bean,
     BeanStub,
@@ -12,7 +14,6 @@ import {
     FocusService,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridBodyComp,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeService,
@@ -25,8 +26,6 @@ import {
     RowNode,
     CtrlsService
 } from "@ag-grid-community/core";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 
 const CSS_MENU = 'ag-menu';
@@ -202,7 +201,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+            menu.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
         }
 
         return true;
@@ -216,7 +215,7 @@ class ContextMenu extends Component {
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
 
     private menuItems: (MenuItemDef | string)[];
-    private menuList: MenuList | null = null;
+    private menuList: AgMenuList | null = null;
     private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
@@ -226,7 +225,7 @@ class ContextMenu extends Component {
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = this.createBean(new MenuList());
+        const menuList = this.createBean(new AgMenuList());
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
         menuList.addMenuItems(menuItemsMapped);
@@ -234,7 +233,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e:AgEvent) => this.dispatchEvent(e));
+        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e:AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

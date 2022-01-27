@@ -15,7 +15,12 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgMenuList,
+    MenuItemDef,
+    PopupService,
+    FocusService,
+    AgMenuItemComponent
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 
@@ -27,9 +32,11 @@ export class ToolPanelColumnComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
+    @Autowired('modelItemUtils') private readonly modelItemUtils: ModelItemUtils;
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('popupService') private readonly popupService: PopupService;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
@@ -80,6 +87,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
@@ -115,6 +123,93 @@ export class ToolPanelColumnComp extends Component {
         res.location = 'columnToolPanelColumn';
         res.colDef = this.column.getColDef();
         return res;
+    }
+
+    private onContextMenu(e: MouseEvent): void {
+        const { column, gridOptionsWrapper, columnModel } = this;
+
+        const isFunctionsReadOnly = gridOptionsWrapper.isFunctionsReadOnly();
+        if (isFunctionsReadOnly || !column.isPrimary) { return; }
+
+        const allowRowGroup = column.isAllowRowGroup();
+        const allowValue = column.isAllowValue();
+        const allowPivot = columnModel.isPivotMode() && column.isAllowPivot();
+
+        if (!allowRowGroup && !allowValue && !allowPivot) { return; }
+        e.preventDefault();
+
+        this.createContextMenu(e, allowRowGroup, allowValue, allowPivot)
+    }
+
+    private createContextMenu(e: MouseEvent, rowGroup: boolean, value: boolean, pivot: boolean): void {
+        const wrapperEl = this.gridOptionsWrapper.getDocument().createElement('div');
+        wrapperEl.classList.add('ag-menu');
+        const menuList = this.createBean(new AgMenuList());
+        const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems(rowGroup, value, pivot);
+        let hideFunc = () => {};
+
+        wrapperEl.appendChild(menuList.getGui());
+        menuList.addMenuItems(menuItemsMapped);
+        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, () => {
+            this.focusWrapper.focus();
+            hideFunc();
+        });
+
+        const addPopupRes = this.popupService.addPopup({
+            modal: true,
+            eChild: wrapperEl,
+            closeOnEsc: true,
+            afterGuiAttached: () => this.focusService.focusInto(menuList.getGui()),
+            ariaLabel: 'Foo',
+            closedCallback: (e: KeyboardEvent) => {
+                if (e instanceof KeyboardEvent) {
+                    this.focusWrapper.focus();
+                }
+                this.destroyBean(menuList);
+            }
+        });
+
+        if (addPopupRes) {
+            hideFunc = addPopupRes.hideFunc;
+        }
+
+        this.popupService.positionPopupUnderMouseEvent({
+            type: 'columnContextMenu',
+            mouseEvent: e,
+            ePopup: wrapperEl
+        });
+    }
+
+    private getMappedMenuItems(rowGroup: boolean, value: boolean, pivot: boolean): MenuItemDef[] {
+        const ret: MenuItemDef[] = [];
+
+        if (rowGroup) {
+            const isRowGroupActive = this.column.isRowGroupActive();
+            const iconName = isRowGroupActive ? 'menuRemoveRowGroup' : 'menuAddRowGroup';
+            ret.push({
+                name: `${isRowGroupActive ? 'Un-Group by' : 'Group by'} ${this.displayName}`,
+                icon: _.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
+                action: () => {}
+            });
+        }
+
+        if (value) {
+            ret.push({
+                name: this.column.isValueActive() ? `Remove ${this.displayName} from values` : `Add ${this.displayName} to values`,
+                icon: _.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
+                action: () => {}
+            });
+        }
+
+        if (pivot) {
+            ret.push({
+                name: this.column.isPivotActive() ? `Remove ${this.displayName} from labels` : `Add ${this.displayName} to labels`,
+                icon: _.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
+                action: () => {}
+            });
+        }
+
+        return ret;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

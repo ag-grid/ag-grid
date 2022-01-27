@@ -1,20 +1,20 @@
-import {
-    TabGuardComp,
-    MenuItemDef,
-    KeyCode,
-    Autowired,
-    FocusService,
-    _,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
 
-export class MenuList extends TabGuardComp {
+import { FocusService } from "../focusService";
+import { Autowired, PostConstruct } from "../context/context";
+import { AgMenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./agMenuItemComponent";
+import { TabGuardComp } from "./tabGuardComp";
+import { KeyCode } from "../constants/keyCode";
+import { MenuItemDef } from "../entities/gridOptions";
+import { loadTemplate } from "../utils/dom";
+import { last } from "../utils/array";
+import { setAriaLevel } from "../utils/aria";
+
+export class AgMenuList extends TabGuardComp {
 
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    private menuItems: MenuItemComponent[] = [];
-    private activeMenuItem: MenuItemComponent | null;
+    private menuItems: AgMenuItemComponent[] = [];
+    private activeMenuItem: AgMenuItemComponent | null;
 
     constructor(private readonly level = 1) {
         super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
@@ -84,23 +84,23 @@ export class MenuList extends TabGuardComp {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const menuItem = this.createManagedBean(new MenuItemComponent({
+        const menuItem = this.createManagedBean(new AgMenuItemComponent({
             ...menuItemDef,
             isAnotherSubMenuOpen: () => this.menuItems.some(m => m.isSubMenuOpen())
         }));
 
         menuItem.setParentComponent(this);
 
-        _.setAriaLevel(menuItem.getGui(), this.level);
+        setAriaLevel(menuItem.getGui(), this.level);
 
         this.menuItems.push(menuItem);
         this.appendChild(menuItem.getGui());
 
-        this.addManagedListener(menuItem, MenuItemComponent.EVENT_MENU_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
+        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             this.dispatchEvent(event);
         });
 
-        this.addManagedListener(menuItem, MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
+        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
             if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
                 this.activeMenuItem.deactivate();
             }
@@ -126,25 +126,25 @@ export class MenuList extends TabGuardComp {
                 <div class="ag-menu-separator-part"></div>
             </div>`;
 
-        this.appendChild(_.loadTemplate(separatorHtml));
+        this.appendChild(loadTemplate(separatorHtml));
     }
 
-    private findTopMenu(): MenuList | undefined {
+    private findTopMenu(): AgMenuList | undefined {
         let parent = this.getParentComponent();
 
-        if (!parent && this instanceof MenuList) { return this; }
+        if (!parent && this instanceof AgMenuList) { return this; }
 
         while (true) {
             const nextParent = parent && parent.getParentComponent && parent.getParentComponent();
 
-            if (!nextParent || (!(nextParent instanceof MenuList || nextParent instanceof MenuItemComponent))) {
+            if (!nextParent || (!(nextParent instanceof AgMenuList || nextParent instanceof AgMenuItemComponent))) {
                 break;
             }
 
             parent = nextParent;
         }
 
-        return parent instanceof MenuList ? parent : undefined;
+        return parent instanceof AgMenuList ? parent : undefined;
     }
 
     private handleNavKey(key: string): void {
@@ -172,7 +172,7 @@ export class MenuList extends TabGuardComp {
     private closeIfIsChild(e?: KeyboardEvent): void {
         const parentItem = this.getParentComponent();
 
-        if (parentItem && parentItem instanceof MenuItemComponent) {
+        if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) { e.preventDefault(); }
 
             parentItem.closeSubMenu();
@@ -186,20 +186,20 @@ export class MenuList extends TabGuardComp {
         }
     }
 
-    private findNextItem(up?: boolean): MenuItemComponent | undefined {
+    private findNextItem(up?: boolean): AgMenuItemComponent | undefined {
         const items = this.menuItems.filter(item => !item.isDisabled());
 
         if (!items.length) { return; }
 
         if (!this.activeMenuItem) {
-            return up ? _.last(items) : items[0];
+            return up ? last(items) : items[0];
         }
 
         if (up) {
             items.reverse();
         }
 
-        let nextItem: MenuItemComponent;
+        let nextItem: AgMenuItemComponent;
         let foundCurrent = false;
 
         for (let i = 0; i < items.length; i++) {

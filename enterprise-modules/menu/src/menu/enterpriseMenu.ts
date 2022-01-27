@@ -25,10 +25,13 @@ import {
     FocusService,
     IAfterGuiAttachedParams,
     ContainerType,
-    CtrlsService
+    CtrlsService,
+    AgMenuList,
+    AgMenuItemComponent,
+    MenuItemSelectedEvent
+
 } from '@ag-grid-community/core';
-import { MenuList } from './menuList';
-import { MenuItemComponent, MenuItemSelectedEvent } from './menuItemComponent';
+
 import { MenuItemMapper } from './menuItemMapper';
 import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
 
@@ -207,7 +210,7 @@ export class EnterpriseMenu extends BeanStub {
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
     private column: Column;
-    private mainMenuList: MenuList;
+    private mainMenuList: AgMenuList;
 
     private columnSelectPanel: IPrimaryColsPanel;
 
@@ -420,13 +423,13 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createMainPanel(): TabbedItem {
-        this.mainMenuList = this.createManagedBean(new MenuList());
+        this.mainMenuList = this.createManagedBean(new AgMenuList());
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column)!,

@@ -1,7 +1,10 @@
-import { TabGuardComp, IComponent, KeyCode, PostConstruct } from '@ag-grid-community/core';
-import { MenuItemComponent } from './menuItemComponent';
+import { PostConstruct } from '../context/context';
+import { KeyCode } from '../constants/keyCode';
+import { AgMenuItemComponent } from './agMenuItemComponent';
+import { TabGuardComp } from './tabGuardComp';
+import { IComponent } from '../interfaces/iComponent';
 
-export class MenuPanel extends TabGuardComp {
+export class AgMenuPanel extends TabGuardComp {
     constructor(private readonly wrappedComponent: IComponent<any>) {
         super();
 
@@ -30,7 +33,7 @@ export class MenuPanel extends TabGuardComp {
     }
 
     private closePanel(): void {
-        const menuItem = (this.parentComponent as MenuItemComponent);
+        const menuItem = (this.parentComponent as AgMenuItemComponent);
         menuItem.closeSubMenu();
         setTimeout(() => menuItem.getGui().focus(), 0);
     }

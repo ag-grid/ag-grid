@@ -100,7 +100,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CompSelectorResult } from "../main";
+import { CompSelectorResult } from "../entities/colDef";
 
 export interface GridOptions {
 

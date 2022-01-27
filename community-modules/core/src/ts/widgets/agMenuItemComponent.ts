@@ -1,18 +1,24 @@
-import {
-    AgEvent,
-    Autowired,
-    Component,
-    MenuItemDef,
-    PostConstruct,
-    CustomTooltipFeature,
-    PopupService,
-    IComponent,
-    KeyCode,
-    ITooltipParams,
-    _
-} from "@ag-grid-community/core";
-import { MenuList } from './menuList';
-import { MenuPanel } from './menuPanel';
+
+import { AgEvent } from '../events';
+import { IPopupComponent } from '../interfaces/iPopupComponent';
+import { Autowired } from '../context/context';
+import { AgMenuList } from './agMenuList';
+import { AgMenuPanel } from './agMenuPanel';
+import { Component } from './component';
+import { PopupService } from './popupService';
+import { KeyCode } from '../constants/keyCode';
+import { PostConstruct } from '../context/context';
+import { MenuItemDef } from '../entities/gridOptions';
+import { ITooltipParams } from '../rendering/tooltipComponent';
+import { createIconNoSpan } from '../utils/icon';
+import { isNodeOrElement, loadTemplate } from '../utils/dom';
+import { CustomTooltipFeature } from './customTooltipFeature';
+import { getAriaLevel, setAriaDisabled, setAriaExpanded } from '../utils/aria';
+
+interface MenuItemComponentParams extends MenuItemDef {
+    isCompact?: boolean;
+    isAnotherSubMenuOpen: () => boolean;
+}
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -21,22 +27,17 @@ export interface MenuItemSelectedEvent extends AgEvent {
     action?: () => void;
     checked?: boolean;
     icon?: HTMLElement | string;
-    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
+    subMenu?: (MenuItemDef | string)[] | IPopupComponent<any>;
     cssClasses?: string[];
     tooltip?: string;
     event: MouseEvent | KeyboardEvent;
 }
 
 export interface MenuItemActivatedEvent extends AgEvent {
-    menuItem: MenuItemComponent;
+    menuItem: AgMenuItemComponent;
 }
 
-export interface MenuItemComponentParams extends MenuItemDef {
-    isCompact?: boolean;
-    isAnotherSubMenuOpen: () => boolean;
-}
-
-export class MenuItemComponent extends Component {
+export class AgMenuItemComponent extends Component {
     @Autowired('popupService') private readonly popupService: PopupService;
 
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
@@ -68,7 +69,7 @@ export class MenuItemComponent extends Component {
 
         if (this.params.disabled) {
             this.addCssClass(this.getClassName('disabled'));
-            _.setAriaDisabled(eGui, true);
+            setAriaDisabled(eGui, true);
         } else {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
@@ -102,20 +103,20 @@ export class MenuItemComponent extends Component {
 
         if (!this.params.subMenu) { return; }
 
-        const ePopup = _.loadTemplate(/* html */`<div class="ag-menu" role="presentation"></div>`);
+        const ePopup = loadTemplate(/* html */`<div class="ag-menu" role="presentation"></div>`);
         let destroySubMenu: () => void;
 
         if (this.params.subMenu instanceof Array) {
-            const currentLevel = _.getAriaLevel(this.getGui());
+            const currentLevel = getAriaLevel(this.getGui());
             const nextLevel = isNaN(currentLevel) ? 1 : (currentLevel + 1);
-            const childMenu = this.createBean(new MenuList(nextLevel));
+            const childMenu = this.createBean(new AgMenuList(nextLevel));
 
             childMenu.setParentComponent(this);
             childMenu.addMenuItems(this.params.subMenu);
             ePopup.appendChild(childMenu.getGui());
 
             // bubble menu item selected events
-            this.addManagedListener(childMenu, MenuItemComponent.EVENT_MENU_ITEM_SELECTED, e => this.dispatchEvent(e));
+            this.addManagedListener(childMenu, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, e => this.dispatchEvent(e));
             childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
 
             destroySubMenu = () => this.destroyBean(childMenu);
@@ -126,7 +127,7 @@ export class MenuItemComponent extends Component {
         } else {
             const { subMenu } = this.params;
 
-            const menuPanel = this.createBean(new MenuPanel(subMenu));
+            const menuPanel = this.createBean(new AgMenuPanel(subMenu));
             menuPanel.setParentComponent(this);
 
             const subMenuGui = menuPanel.getGui();
@@ -160,14 +161,14 @@ export class MenuItemComponent extends Component {
         });
 
         this.subMenuIsOpen = true;
-        _.setAriaExpanded(eGui, true);
+        setAriaExpanded(eGui, true);
 
         this.hideSubMenu = () => {
             if (addPopupRes) {
                 addPopupRes.hideFunc();
             }
             this.subMenuIsOpen = false;
-            _.setAriaExpanded(eGui, false);
+            setAriaExpanded(eGui, false);
             destroySubMenu();
         };
     }
@@ -176,7 +177,7 @@ export class MenuItemComponent extends Component {
         if (!this.hideSubMenu) { return; }
         this.hideSubMenu();
         this.hideSubMenu = null;
-        _.setAriaExpanded(this.getGui(), false);
+        setAriaExpanded(this.getGui(), false);
     }
 
     public isSubMenuOpen(): boolean {
@@ -216,14 +217,14 @@ export class MenuItemComponent extends Component {
     private addIcon(): void {
         if (!this.params.checked && !this.params.icon && this.params.isCompact) { return; }
 
-        const icon = _.loadTemplate(/* html */
+        const icon = loadTemplate(/* html */
             `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
         );
 
         if (this.params.checked) {
-            icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper)!);
+            icon.appendChild(createIconNoSpan('check', this.gridOptionsWrapper)!);
         } else if (this.params.icon) {
-            if (_.isNodeOrElement(this.params.icon)) {
+            if (isNodeOrElement(this.params.icon)) {
                 icon.appendChild(this.params.icon as HTMLElement);
             } else if (typeof this.params.icon === 'string') {
                 icon.innerHTML = this.params.icon;
@@ -238,7 +239,7 @@ export class MenuItemComponent extends Component {
     private addName(): void {
         if (!this.params.name && this.params.isCompact) { return; }
 
-        const name = _.loadTemplate(/* html */
+        const name = loadTemplate(/* html */
             `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
         );
 
@@ -266,7 +267,7 @@ export class MenuItemComponent extends Component {
 
     private addShortcut(): void {
         if (!this.params.shortcut && this.params.isCompact) { return; }
-        const shortcut = _.loadTemplate(/* html */
+        const shortcut = loadTemplate(/* html */
             `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
         );
 
@@ -276,7 +277,7 @@ export class MenuItemComponent extends Component {
     private addSubMenu(): void {
         if (!this.params.subMenu && this.params.isCompact) { return; }
 
-        const pointer = _.loadTemplate(/* html */
+        const pointer = loadTemplate(/* html */
             `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
         );
 
@@ -284,9 +285,9 @@ export class MenuItemComponent extends Component {
 
         if (this.params.subMenu) {
             const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
-            _.setAriaExpanded(eGui, false);
+            setAriaExpanded(eGui, false);
 
-            pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper)!);
+            pointer.appendChild(createIconNoSpan(iconName, this.gridOptionsWrapper)!);
         }
 
         eGui.appendChild(pointer);
@@ -302,7 +303,7 @@ export class MenuItemComponent extends Component {
         if (this.params.subMenu && !this.params.action) { return; }
 
         const e: MenuItemSelectedEvent = {
-            type: MenuItemComponent.EVENT_MENU_ITEM_SELECTED,
+            type: AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,
             cssClasses: this.params.cssClasses,
@@ -320,7 +321,7 @@ export class MenuItemComponent extends Component {
 
     private onItemActivated(): void {
         const event: MenuItemActivatedEvent = {
-            type: MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
+            type: AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
             menuItem: this,
         };
 
@@ -346,7 +347,7 @@ export class MenuItemComponent extends Component {
 
         if (this.params.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
-            this.activateTimeoutId = window.setTimeout(() => this.activate(true), MenuItemComponent.ACTIVATION_DELAY);
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), AgMenuItemComponent.ACTIVATION_DELAY);
         } else {
             // activate immediately
             this.activate(true);
@@ -358,7 +359,7 @@ export class MenuItemComponent extends Component {
 
         if (this.isSubMenuOpen()) {
             // wait to see if the user enters the sub-menu
-            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), MenuItemComponent.ACTIVATION_DELAY);
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), AgMenuItemComponent.ACTIVATION_DELAY);
         } else {
             // de-activate immediately
             this.deactivate();

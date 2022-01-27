@@ -17479,6 +17479,87 @@
     "value": { "type": { "returnType": "string", "optional": false } },
     "text": { "type": { "returnType": "string", "optional": true } }
   },
+  "MenuItemComponentParams": {
+    "isCompact": { "type": { "returnType": "boolean", "optional": true } },
+    "isAnotherSubMenuOpen": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "name": {
+      "description": "/** Name of the menu item */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "disabled": {
+      "description": "/** It the item should be enabled / disabled */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shortcut": {
+      "description": "/** Shortcut (just display text, saying the shortcut here does nothing) */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "action": {
+      "description": "/** Function that gets executed when item is chosen */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "checked": {
+      "description": "/** Set to true to provide a check beside the option */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "icon": {
+      "description": "/** The icon to display, either a DOM element or HTML string */",
+      "type": { "returnType": "HTMLElement | string", "optional": true }
+    },
+    "subMenu": {
+      "description": "/** If this item is a sub menu, contains a list of menu item definitions */",
+      "type": {
+        "returnType": "(MenuItemDef | string)[] | IComponent<any>",
+        "optional": true
+      }
+    },
+    "cssClasses": {
+      "description": "/** CSS classes to apply to the menu item */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Tooltip for the menu item */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
+  "MenuItemSelectedEvent": {
+    "name": { "type": { "returnType": "string", "optional": false } },
+    "disabled": { "type": { "returnType": "boolean", "optional": true } },
+    "shortcut": { "type": { "returnType": "string", "optional": true } },
+    "action": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "checked": { "type": { "returnType": "boolean", "optional": true } },
+    "icon": {
+      "type": { "returnType": "HTMLElement | string", "optional": true }
+    },
+    "subMenu": {
+      "type": {
+        "returnType": "(MenuItemDef | string)[] | IPopupComponent<any>",
+        "optional": true
+      }
+    },
+    "cssClasses": { "type": { "returnType": "string[]", "optional": true } },
+    "tooltip": { "type": { "returnType": "string", "optional": true } },
+    "event": {
+      "type": { "returnType": "MouseEvent | KeyboardEvent", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "MenuItemActivatedEvent": {
+    "menuItem": {
+      "type": { "returnType": "AgMenuItemComponent", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "PanelOptions": {
     "component": { "type": { "returnType": "Component", "optional": true } },
     "hideTitleBar": {
