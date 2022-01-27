@@ -208,12 +208,12 @@ export abstract class AgChartV2 {
         }
 
         // Set `enabled: true` for all option objects where the user has provided values.
-        walk(options, (_, userOpts, mergedOpts) => {
+        jsonWalk(options, (_, userOpts, mergedOpts) => {
             if (!mergedOpts) { return; }
             if ('enabled' in mergedOpts && userOpts.enabled == null) {
                 mergedOpts.enabled = true;
             }
-        }, mergedOptions);
+        }, { skip: ['data'] }, mergedOptions);
 
         // Preserve non-cloneable properties.
         mergedOptions.container = options.container;
