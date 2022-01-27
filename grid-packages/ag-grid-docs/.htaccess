@@ -104,13 +104,13 @@ AddType text/javascript ts jsx
     Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
-    Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/systemjs/
+    Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/
     Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
-    Redirect 301 /ag-grid-angular-webpack-2/ /angular-data-grid/webpack-2/
+    Redirect 301 /ag-grid-angular-webpack-2/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/
-    Redirect 301 /ag-grid-angular-webpack-3/ /angular-data-grid/webpack-3/
+    Redirect 301 /ag-grid-angular-webpack-3/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
-    Redirect 301 /ag-grid-angular-webpack/ /angular-data-grid/webpack/
+    Redirect 301 /ag-grid-angular-webpack/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /ag-grid-angular2-support-v6/ https://medium.com/ag-grid/announcing-ag-grid-v6-and-angular-2-datagrid-support-34ceef54872b
     Redirect 301 /ag-grid-angular2-support-v7/ https://medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480
@@ -190,8 +190,8 @@ AddType text/javascript ts jsx
     Redirect 301 /best-angular-2-data-grid/ /angular-data-grid/getting-started/
     Redirect 301 /best-angular-grid/ /angular-data-grid/getting-started/
     Redirect 301 /best-angularjs-2-grid/ /angular-data-grid/getting-started/
-    Redirect 301 /best-angularjs-data-grid/ /angular-data-grid/angularjs/
-    Redirect 301 /best-angularjs-grid/ /angular-data-grid/angularjs/
+    Redirect 301 /best-angularjs-data-grid/ /angular-data-grid/getting-started/
+    Redirect 301 /best-angularjs-grid/ /angular-data-grid/getting-started/
     Redirect 301 /angular-data-grid/angularjs/ /angular-data-grid/getting-started/
     Redirect 301 /best-javascript-data-grid/ /javascript-data-grid/getting-started/
     Redirect 301 /best-javascript-grid/ /javascript-data-grid/getting-started/
@@ -205,7 +205,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/aggregation/ /angular-data-grid/aggregation/
     Redirect 301 /documentation/angular/aligned-grids/ /angular-data-grid/aligned-grids/
     Redirect 301 /documentation/angular/angular-rxjs/ /angular-data-grid/angular-rxjs/
-    Redirect 301 /documentation/angular/angularjs/ /angular-data-grid/angularjs/
+    Redirect 301 /documentation/angular/angularjs/ /angular-data-grid/getting-started/
     Redirect 301 /documentation/angular/cell-content/ /angular-data-grid/cell-content/
     Redirect 301 /documentation/angular/cell-editing/ /angular-data-grid/cell-editing/
     Redirect 301 /documentation/angular/cell-expressions/ /angular-data-grid/cell-expressions/
@@ -367,7 +367,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/master-detail/ /angular-data-grid/master-detail/
     Redirect 301 /documentation/angular/material-design/ /angular-data-grid/material-design/
     Redirect 301 /documentation/angular/modules-building/ /angular-data-grid/modules-building/
-    Redirect 301 /documentation/angular/modules-more-details/ /angular-data-grid/modules-more-details/
+    Redirect 301 /documentation/angular/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /documentation/angular/modules/ /angular-data-grid/modules/
     Redirect 301 /documentation/angular/overlays/ /angular-data-grid/overlays/
@@ -427,7 +427,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/side-bar/ /angular-data-grid/side-bar/
     Redirect 301 /documentation/angular/status-bar/ /angular-data-grid/status-bar/
     Redirect 301 /documentation/angular/supported-browsers/ /angular-data-grid/supported-browsers/
-    Redirect 301 /documentation/angular/systemjs/ /angular-data-grid/systemjs/
+    Redirect 301 /documentation/angular/systemjs/ /angular-data-grid/
+    Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
     Redirect 301 /documentation/angular/testing/ /angular-data-grid/testing/
     Redirect 301 /documentation/angular/themes-customising/ /angular-data-grid/themes-customising/
     Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes-provided/
@@ -445,9 +446,12 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/value-setters/ /angular-data-grid/value-setters/
     Redirect 301 /documentation/angular/view-refresh/ /angular-data-grid/view-refresh/
     Redirect 301 /documentation/angular/viewport/ /angular-data-grid/viewport/
-    Redirect 301 /documentation/angular/webpack-2/ /angular-data-grid/webpack-2/
-    Redirect 301 /documentation/angular/webpack-3/ /angular-data-grid/webpack-3/
-    Redirect 301 /documentation/angular/webpack/ /angular-data-grid/webpack/
+    Redirect 301 /documentation/angular/webpack-2/ /angular-data-grid/
+    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/ 
+    Redirect 301 /documentation/angular/webpack-3/ /angular-data-grid/
+    Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
+    Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
+    Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
     Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
@@ -618,7 +622,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/master-detail-refresh/ /javascript-data-grid/master-detail-refresh/
     Redirect 301 /documentation/javascript/master-detail/ /javascript-data-grid/master-detail/
     Redirect 301 /documentation/javascript/modules-building/ /javascript-data-grid/modules-building/
-    Redirect 301 /documentation/javascript/modules-more-details/ /javascript-data-grid/modules-more-details/
+    Redirect 301 /documentation/javascript/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /documentation/javascript/modules/ /javascript-data-grid/modules/
     Redirect 301 /documentation/javascript/npm/ /javascript-data-grid/npm/
@@ -864,7 +868,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/master-detail-refresh/ /react-data-grid/master-detail-refresh/
     Redirect 301 /documentation/react/master-detail/ /react-data-grid/master-detail/
     Redirect 301 /documentation/react/modules-building/ /react-data-grid/modules-building/
-    Redirect 301 /documentation/react/modules-more-details/ /react-data-grid/modules-more-details/
+    Redirect 301 /documentation/react/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /react-data-grid/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /documentation/react/modules/ /react-data-grid/modules/
     Redirect 301 /documentation/react/overlays/ /react-data-grid/overlays/
@@ -1111,7 +1115,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/master-detail-refresh/ /vue-data-grid/master-detail-refresh/
     Redirect 301 /documentation/vue/master-detail/ /vue-data-grid/master-detail/
     Redirect 301 /documentation/vue/modules-building/ /vue-data-grid/modules-building/
-    Redirect 301 /documentation/vue/modules-more-details/ /vue-data-grid/modules-more-details/
+    Redirect 301 /documentation/vue/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /vue-data-grid/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /documentation/vue/modules/ /vue-data-grid/modules/
     Redirect 301 /documentation/vue/overlays/ /vue-data-grid/overlays/
@@ -1346,7 +1350,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-master-slave/ /javascript-data-grid/aligned-grids/
     Redirect 301 /javascript-grid-model/ /javascript-data-grid/client-side-model/
     Redirect 301 /javascript-grid-modules-building/ /javascript-data-grid/modules-building/
-    Redirect 301 /javascript-grid-modules-more-details/ /javascript-data-grid/modules-more-details/
+    Redirect 301 /javascript-grid-modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-npm/ /javascript-data-grid/npm/
@@ -1555,7 +1559,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/master-detail-refresh/ /javascript-data-grid/master-detail-refresh/
     Redirect 301 /javascript-grid/modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/modules-building/ /javascript-data-grid/modules-building/
-    Redirect 301 /javascript-grid/modules-more-details/ /javascript-data-grid/modules-more-details/
+    Redirect 301 /javascript-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/overlays/ /javascript-data-grid/overlays/
     Redirect 301 /javascript-grid/packages/ /javascript-data-grid/packages/
@@ -1753,7 +1757,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/master-detail-refresh/ /angular-data-grid/master-detail-refresh/
     Redirect 301 /angular-grid/modules/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/modules-building/ /angular-data-grid/modules-building/
-    Redirect 301 /angular-grid/modules-more-details/ /angular-data-grid/modules-more-details/
+    Redirect 301 /angular-grid/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/overlays/ /angular-data-grid/overlays/
     Redirect 301 /angular-grid/packages/ /angular-data-grid/packages/
@@ -1955,7 +1959,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/master-detail-refresh/ /react-data-grid/master-detail-refresh/
     Redirect 301 /react-grid/modules/ /react-data-grid/modules/
     Redirect 301 /react-grid/modules-building/ /react-data-grid/modules-building/
-    Redirect 301 /react-grid/modules-more-details/ /react-data-grid/modules-more-details/
+    Redirect 301 /react-grid/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /react-data-grid/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /react-grid/overlays/ /react-data-grid/overlays/
     Redirect 301 /react-grid/packages/ /react-data-grid/packages/
@@ -2157,7 +2161,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/master-detail-refresh/ /vue-data-grid/master-detail-refresh/
     Redirect 301 /vue-grid/modules/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/modules-building/ /vue-data-grid/modules-building/
-    Redirect 301 /vue-grid/modules-more-details/ /vue-data-grid/modules-more-details/
+    Redirect 301 /vue-grid/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /vue-data-grid/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/overlays/ /vue-data-grid/overlays/
     Redirect 301 /vue-grid/packages/ /vue-data-grid/packages/
