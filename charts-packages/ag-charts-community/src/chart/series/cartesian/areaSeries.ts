@@ -14,7 +14,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findMinMax } from "../../../util/array";
+import { extent, findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
@@ -22,7 +22,7 @@ import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
-import { isNumber } from "../../../util/value";
+import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 interface AreaSelectionDatum {
@@ -110,6 +110,7 @@ export class AreaSeries extends CartesianSeries {
     private markerSelectionData: MarkerSelectionDatum[] = [];
     private labelSelectionData: LabelSelectionDatum[] = [];
     private yDomain: any[] = [];
+    private xDomain: any[] = [];
 
     directionKeys = {
         x: ['xKey'],
@@ -226,8 +227,12 @@ export class AreaSeries extends CartesianSeries {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
+
+        if (!xAxis || !yAxis) {
+            return false;
+        }
 
         // If the data is an array of rows like so:
         //
@@ -244,13 +249,22 @@ export class AreaSeries extends CartesianSeries {
         // }]
         //
 
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
             if (keysFound && !(xKey in datum)) {
                 keysFound = false;
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
-            return datum[xKey];
+
+            if (isContinuousX) {
+                return isContinuous(datum[xKey]) ? datum[xKey] : undefined;
+            } else {
+                // i.e. category axis
+                return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
+            }
         });
 
         this.yData = data.map(datum => yKeys.map(yKey => {
@@ -260,8 +274,15 @@ export class AreaSeries extends CartesianSeries {
             }
             const value = datum[yKey];
 
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            if (isContinuousY) {
+                return isContinuous(value) ? value : 0;
+            } else {
+                return isDiscrete(value) ? value : String(value);
+            }
         }));
+
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x') : this.xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(this.yData, isContinuous), 'y') : this.yData;
 
         // xData: ['Jan', 'Feb']
         //
@@ -322,7 +343,7 @@ export class AreaSeries extends CartesianSeries {
 
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
-            return this.xData;
+            return this.xDomain;
         } else {
             return this.yDomain;
         }
