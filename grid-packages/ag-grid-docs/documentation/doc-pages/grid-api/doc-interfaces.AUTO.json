@@ -16406,15 +16406,15 @@
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
     "innerRendererComp": {
-      "description": "/** Cell Component to use for inside the Group Cell */",
+      "description": "/** Cell Renderer Component to use for inside the Group Cell */",
       "type": { "returnType": "any", "optional": true }
     },
     "innerRendererCompParams": {
-      "description": "/** Params for Cell Component */",
+      "description": "/** Params for Inner Cell Component */",
       "type": { "returnType": "any", "optional": true }
     },
     "innerRendererCompSelector": {
-      "description": "/** Callback to select Cell Component for inside the Group Cell */",
+      "description": "/** Callback to select Cell Component for inside the Group Cell, should there be a different one for different rows */",
       "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
