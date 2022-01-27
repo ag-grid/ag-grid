@@ -25,8 +25,8 @@ const gridOptions = {
                 checkbox: true,
                 // provide an inner renderer
                 innerRendererComp: myInnerRenderer,
-                // provide an inner renderer selector
-                innerRendererCompSelector: myInnerRendererSelector,
+                // provide an inner renderer
+                innerRendererCompParams: {foo: 'bar'},
                 // provide a footer value getter
                 footerValueGetter: myFooterValueGetter
             }

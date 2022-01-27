@@ -147,3 +147,5 @@
 || Date Component                | date<br/>dateParams                  | dateComp<br/>dateCompParams                  | 
 || Status Bar Component          | statusPanel<br/>statusPanelParams          | statusPanelComp<br/>statusPanelCompParams          | 
 || Tool Panel                    | toolPanel<br/>toolPanelParams            | toolPanelComp<br/>toolPanelCompParams            | 
+|| Group Cell - Inner Renderer   | innerRenderer<br/>innerRendererParams<br/>innerRendererSelector     | innerRendererComp<br/>innerRendererCompParams<br/>innerRendererCompSelector | 
+|| Set Filter - Cell Renderer   | cellRenderer<br/>cellRendererParams         | cellRendererComp<br/>cellRendererCompParams         | 
