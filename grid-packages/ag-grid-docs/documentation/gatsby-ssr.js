@@ -9,6 +9,7 @@ import { withPrefix } from 'gatsby';
 import { Helmet } from 'react-helmet';
 import { dependencies } from './package.json';
 import { siteMetadata } from './gatsby-config';
+import isDevelopment from './src/utils/is-development';
 
 /**
  * This allows to customise the rendering of the body. We insert some scripts at the end of the body. It is better to
@@ -102,6 +103,13 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents }) =>
             rel="stylesheet"
             href={`https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-svg-core@${dependencies['@fortawesome/fontawesome-svg-core']}/styles.min.css`}
             crossOrigin="anonymous" />);
+
+    // Add Plausible.io tracking
+    if (!isDevelopment()) {
+        headComponents.unshift(
+            <script defer data-domain="ag-grid.com" src="https://plausible.io/js/plausible.js"></script>
+        );
+    }
 
     replaceHeadComponents(headComponents);
 };
