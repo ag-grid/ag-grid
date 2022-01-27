@@ -39,7 +39,7 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
-import { jsonDiff, DELETE, jsonMerge, jsonApply, walk } from '../util/json';
+import { jsonDiff, DELETE, jsonMerge, jsonApply, jsonWalk } from '../util/json';
 import { AxesOptionsTypes, SeriesOptionsTypes, DEFAULT_AXES_OPTIONS, DEFAULT_SERIES_OPTIONS, DEFAULT_CARTESIAN_CHART_OPTIONS, DEFAULT_HIERARCHY_CHART_OPTIONS, DEFAULT_POLAR_CHART_OPTIONS, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES } from './agChartV2Defaults';
 import { applySeriesTransform } from './agChartV2Transforms';
 import { Axis } from '../axis';
@@ -75,10 +75,17 @@ type AxisOptionType<T extends Axis<any, any>> =
     T extends TimeAxis ? AgTimeAxisOptions :
     never;
 
-function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianChartOptions {
-    if (input.type == null) { return true; }
+function optionsType(input: AgChartOptions): NonNullable<AgChartOptions['type']> {
+    return input.type || input.series?.[0]?.type || 'cartesian';
+}
 
-    switch (input.type) {
+function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianChartOptions {
+    const specifiedType = optionsType(input);
+    if (specifiedType == null) {
+        return true;
+    }
+
+    switch (specifiedType) {
         case 'cartesian':
         case 'area':
         case 'bar':
@@ -95,7 +102,10 @@ function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianC
 }
 
 function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyChartOptions {
-    if (input.type == null) { return true; }
+    const specifiedType = optionsType(input);
+    if (specifiedType == null) {
+        return false;
+    }
 
     switch (input.type) {
         case 'hierarchy':
@@ -108,7 +118,10 @@ function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyC
 }
 
 function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
-    if (input.type == null) { return true; }
+    const specifiedType = optionsType(input);
+    if (specifiedType == null) {
+        return false;
+    }
 
     switch (input.type) {
         case 'polar':
@@ -177,14 +190,16 @@ export abstract class AgChartV2 {
     private static prepareOptions<T extends AgChartOptions>(options: T): T {
         // console.log('user opts', options);
 
+        const type = optionsType(options);
         const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
             isAgHierarchyChartOptions(options) ? DEFAULT_HIERARCHY_CHART_OPTIONS :
             isAgPolarChartOptions(options) ? DEFAULT_POLAR_CHART_OPTIONS :
             {};
 
-        const defaultOverrides = options.type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
-            options.type === 'scatter' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
-            options.type === 'histogram' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
+        const defaultOverrides =
+            type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
+            type === 'scatter' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
+            type === 'histogram' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
             {};
 
         const { theme, cleanedTheme, axesThemes, seriesThemes } = AgChartV2.prepareTheme(options);
@@ -208,16 +223,20 @@ export abstract class AgChartV2 {
         }
 
         // Set `enabled: true` for all option objects where the user has provided values.
-        jsonWalk(options, (_, userOpts, mergedOpts) => {
+        jsonWalk(
+            options,
+            (_, userOpts, mergedOpts) => {
             if (!mergedOpts) { return; }
             if ('enabled' in mergedOpts && userOpts.enabled == null) {
                 mergedOpts.enabled = true;
             }
-        }, { skip: ['data'] }, mergedOptions);
+            },
+            { skip: ['data'] },
+            mergedOptions,
+        );
 
         // Preserve non-cloneable properties.
-        mergedOptions.container = options.container;
-        mergedOptions.data = options.data;
+        mergedOptions.type = type;
 
         // console.log('prepared opts', mergedOptions);
 
@@ -226,7 +245,7 @@ export abstract class AgChartV2 {
 
     private static prepareTheme<T extends AgChartOptions>(options: T) {
         const theme = getChartTheme(options.theme);
-        const themeConfig = theme.getConfig(options.type || 'cartesian');
+        const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
         return {
             theme,
             axesThemes: themeConfig['axes'] || {},
@@ -423,18 +442,25 @@ function registerListeners<T extends { addEventListener(key: string, cb: SourceE
     }
 }
 
+const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
+    constructors: {
+        'title': Caption,
+        'subtitle': Caption,
+        'shadow': DropShadow,
+    },
+    allowedTypes: {
+        'series[].marker.shape': ['primitive', 'function'],
+        'axis[].tick.count': ['primitive', 'object'],
+    },
+};
 function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
     target: T,
     options?: S,
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
 ): T {
     const applyOpts = {
+        ...JSON_APPLY_OPTIONS,
         skip: ['type' as keyof (T|S), ...(skip || [])], 
-        constructors: {
-            'title': Caption,
-            'subtitle': Caption,
-            'shadow': DropShadow,
-        },
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
@@ -446,12 +472,8 @@ function applySeriesValues<T extends Series, S extends SeriesOptionType<T>>(
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
 ): T {
     const applyOpts = {
+        ...JSON_APPLY_OPTIONS,
         skip: ['type' as keyof (T|S), ...(skip || [])], 
-        constructors: {
-            'title': Caption,
-            'subtitle': Caption,
-            'shadow': DropShadow,
-        },
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
@@ -463,12 +485,8 @@ function applyAxisValues<T extends Axis<any, any>, S extends AxisOptionType<T>>(
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},
 ): T {
     const applyOpts = {
+        ...JSON_APPLY_OPTIONS,
         skip: ['type' as keyof (T|S), ...(skip || [])], 
-        constructors: {
-            'title': Caption,
-            'subtitle': Caption,
-            'shadow': DropShadow,
-        },
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);

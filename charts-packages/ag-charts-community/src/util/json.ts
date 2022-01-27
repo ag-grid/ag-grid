@@ -84,7 +84,7 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
             continue;
         }
 
-        if (rhsType === 'array') {
+        if (rhsType === 'array' || rhsType === 'class-instance') {
             // Don't try to do anything tricky with array diffs!
             take(rhs[prop]);
             continue
@@ -178,9 +178,11 @@ export function jsonMerge<T>(...json: T[]): T {
  * @param target to apply source JSON properties into
  * @param source to be applied
  * @param params.path path for logging/error purposes, to aid with pinpointing problems
+ * @param params.matcherPath path for pattern matching, to lookup allowedTypes override.
  * @param params.skip property names to skip from the source
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
+ * @param params.allowedTypes overrides by path for allowed property types
  */
 export function jsonApply<
     Target,
@@ -190,46 +192,58 @@ export function jsonApply<
     source?: Source,
     params: {
         path?: string,
+        matcherPath?: string,
         skip?: (keyof Source | keyof Target)[],
         constructors?: Record<string, new () => any>,
+        allowedTypes?: Record<string, ReturnType<typeof classify>[]>,
     } = {},
 ): Target {
     const {
         path = undefined,
+        matcherPath = path ? path.replace(/(\[[0-9+]\])/i, '[]') : undefined,
         skip = [],
         constructors = {},
+        allowedTypes = {},
     } = params;
 
     if (target == null) { throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`); }
     if (source == null) { return target; }
-        
+
+    const targetType = classify(target);
     for (const property in source) {
         if (skip.indexOf(property) >= 0) { continue; }
 
         const newValue = source[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
+        const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
         const targetAny = (target as any);
         const currentValue = targetAny[property];
         const ctr = constructors[property];
         try {
-            const targetClass = targetAny.constructor?.name;
+            const targetClass = targetAny.constructor;
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
 
-            if (targetClass != null && targetClass !== 'Object' && !(property in target || targetAny.hasOwnProperty(property))) {
-                throw new Error(`Property doesn't exist in target type: ${targetClass}`);
-            }
-            if (currentValueType != null && newValueType != null && currentValueType !== newValueType) {
-                throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
+            if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
+                throw new Error(`Property doesn't exist in target type: ${targetClass?.name}`);
             }
 
-            if (newValueType === 'array' || currentValue instanceof HTMLElement) {
+            const allowableTypes = [currentValueType, ...allowedTypes[propertyMatcherPath] || []];
+            if (currentValueType === 'class-instance' && newValueType === 'object') {
+                // Allowed, this is the common case! - do not error.
+            } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
+                throw new Error(`Property types don't match, can't apply: allowableTypes=${allowableTypes}, newValueType=${newValueType}`);
+            }
+
+            if (newValueType === 'array') {
+                targetAny[property] = newValue;
+            } else if (newValueType === 'class-instance') {
                 targetAny[property] = newValue;
             } else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    jsonApply(currentValue, newValue as any, {path: propertyPath, skip, constructors });
+                    jsonApply(currentValue, newValue as any, {...params, path: propertyPath, matcherPath: propertyMatcherPath });
                 } else if (ctr != null) {
-                    targetAny[property] = jsonApply(new ctr(), newValue as any, {path: propertyPath, skip, constructors });
+                    targetAny[property] = jsonApply(new ctr(), newValue as any, {...params, path: propertyPath, matcherPath: propertyMatcherPath });
                 } else {
                     targetAny[property] = newValue;
                 }
@@ -291,7 +305,7 @@ type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
-function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | null {
+export function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
     } else if (value instanceof HTMLElement) {
@@ -300,10 +314,12 @@ function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | n
         return 'array';
     } else if (value instanceof Date) {
         return 'primitive';
-    } else if (typeof value === 'object') {
+    } else if (typeof value === 'object' && value.constructor === Object) {
         return 'object';
     } else if (typeof value === 'function') {
         return 'function';
+    } else if (typeof value === 'object' && value.constructor != null) {
+        return 'class-instance';
     }
 
     return 'primitive';

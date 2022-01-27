@@ -5,6 +5,7 @@ import { NumberAxis } from "./axis/numberAxis";
 import { ChartAxisPosition } from "./chartAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { BarLabelPlacement } from "./series/cartesian/barSeries";
+import { AgSeriesTooltip } from "../../../../community-modules/core/src/ts/interfaces/iAgChartOptions";
 
 type CartesianSeriesOptions =
     AgLineSeriesOptions |
@@ -73,11 +74,14 @@ const DEFAULT_NAVIGATOR: AgNavigatorOptions = {
         gripLineLength: 8,
     },
 };
-const DEFAULT_TOOLTIP: AgChartTooltipOptions = {
+const DEFAULT_CHART_TOOLTIP: AgChartTooltipOptions = {
     enabled: true,
     tracking: true,
     delay: 0,
     class: Chart.defaultTooltipClass,
+};
+const DEFAULT_SERIES_TOOLTIP: AgSeriesTooltip = {
+    enabled: true,
 };
 const DEFAULT_TITLE: AgChartCaptionOptions = {
     enabled: false,
@@ -121,7 +125,7 @@ export const DEFAULT_CARTESIAN_CHART_OPTIONS: AgCartesianChartOptions = {
     padding: DEFAULT_PADDING,
     subtitle: DEFAULT_SUBTITLE,
     title: DEFAULT_TITLE,
-    tooltip: DEFAULT_TOOLTIP,
+    tooltip: DEFAULT_CHART_TOOLTIP,
     series: [],
     axes: [{
         type: NumberAxis.type,
@@ -159,11 +163,10 @@ export const DEFAULT_POLAR_CHART_OPTIONS: AgPolarChartOptions = {
     height: 300,
     width: 600,
     legend: DEFAULT_LEGEND,
-    navigator: DEFAULT_NAVIGATOR,
     padding: DEFAULT_PADDING,
     subtitle: DEFAULT_SUBTITLE,
     title: DEFAULT_TITLE,
-    tooltip: DEFAULT_TOOLTIP,
+    tooltip: DEFAULT_CHART_TOOLTIP,
     series: [],
 };
 
@@ -178,7 +181,7 @@ export const DEFAULT_HIERARCHY_CHART_OPTIONS: AgHierarchyChartOptions = {
     padding: DEFAULT_PADDING,
     subtitle: DEFAULT_SUBTITLE,
     title: DEFAULT_TITLE,
-    tooltip: DEFAULT_TOOLTIP,
+    tooltip: DEFAULT_CHART_TOOLTIP,
     series: [],
 };
 
@@ -235,11 +238,8 @@ const DEFAULT_CARTESIAN_SERIES_OPTIONS: CartesianSeriesOptions = {
     lineDash: undefined,
     lineDashOffset: 0,
     highlightStyle: DEFAULT_HIGHLIGHT_STYLE,
-    tooltip: { 
-        enabled: true,
-        renderer: undefined,
-     },
-     label: DEFAULT_LABEL,
+    tooltip: DEFAULT_SERIES_TOOLTIP,
+    label: DEFAULT_LABEL,
 };
 
 const DEFAULT_LINE_SERIES_OPTIONS: AgLineSeriesOptions = {
@@ -343,11 +343,10 @@ const DEFAULT_PIE_SERIES_OPTIONS: AgPieSeriesOptions = {
     strokeWidth: 1,
     lineDash: undefined,
     lineDashOffset: 0,
-    tooltip: DEFAULT_TOOLTIP,
+    tooltip: DEFAULT_SERIES_TOOLTIP,
     highlightStyle: DEFAULT_HIGHLIGHT_STYLE,
     title: {
         enabled: true,
-        showInLegend: false,
         padding: {
             top: 10,
             right: 10,
@@ -385,7 +384,7 @@ const DEFAULT_TREEMAP_SERIES_OPTIONS: AgTreemapSeriesOptions = {
     colorParents: false,
     gradient: true,
     nodePadding: 2,
-    tooltip: DEFAULT_TOOLTIP,
+    tooltip: DEFAULT_SERIES_TOOLTIP,
     highlightStyle: DEFAULT_HIGHLIGHT_STYLE,
     title: {
         enabled: true,

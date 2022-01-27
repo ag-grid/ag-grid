@@ -1,7 +1,6 @@
 import { Chart } from "./chart";
 import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
-import { reactive } from "../util/observable";
 import { Padding } from "../util/padding";
 import { BBox } from "../scene/bbox";
 

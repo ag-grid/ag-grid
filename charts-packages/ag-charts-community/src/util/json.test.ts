@@ -296,14 +296,7 @@ describe('json module', () => {
             const target = new TestApply();
             jsonApply(target, json, { skip: ['str'], constructors: { recurse: TestApply }});
             expect(target.str).toEqual(undefined);
-            expect(target.num).toEqual(json.num);
-            expect(target.date).toEqual(json.date);
-            expect(target.array).toEqual(json.array);
-            expect(target.recurse).toBeInstanceOf(TestApply);
             expect(target.recurse.str).toEqual(undefined);
-            expect(target.recurse.num).toEqual(json.recurse.num);
-            expect(target.recurse.date).toEqual(json.recurse.date);
-            expect(target.recurse.array).toEqual(json.recurse.array);
         });
 
         it('should error on unrecognised properties', () => {
@@ -312,7 +305,7 @@ describe('json module', () => {
 
             expect(() => {
                 jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set: foo; nested error is: Property doesn't exist in target type: TestApply/);
+            }).toThrowError(/unable to set: foo;.* Property doesn't exist in target type: TestApply/);
         });
 
         it('should error on incompatible properties', () => {
@@ -321,7 +314,21 @@ describe('json module', () => {
 
             expect(() => {
                 jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set: recurse; nested error is: Property types don't match, can't apply: currentValueType=object, newValueType=primitive/);
+            }).toThrowError(/unable to set: recurse;.* can't apply: allowableTypes=class-instance, newValueType=primitive/);
         });
+
+        it('should allow application of property type overrides', () => {
+            const target = new TestApply({ recurse: new TestApply({ str: 'string'} )});
+            const json = { recurse: { str: () => 'test' } };
+            const opts = {
+                path: 'series[0]',
+                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                constructors: { recurse: TestApply },
+            };
+
+            jsonApply(target, json as any, opts);
+            expect(target.recurse.str).toEqual(json.recurse.str);
+        });
+
     });
 });
