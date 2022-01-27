@@ -149,6 +149,10 @@ const AG_GRID_LOCALE_EN = {
 
     histogramChart: 'Histogram',
 
+    combinationChart: 'Combination',
+    columnLineCombo: 'Column & Line',
+    AreaColumnCombo: 'Area & Column',
+
     // Charts
     pivotChartTitle: 'Pivot Chart',
     rangeChartTitle: 'Range Chart',
@@ -226,6 +230,7 @@ const AG_GRID_LOCALE_EN = {
     scatterGroup: 'X Y (Scatter)',
     areaGroup: 'Area',
     histogramGroup: 'Histogram',
+    combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
     stackedColumnTooltip: 'Stacked',
     normalizedColumnTooltip: '100% Stacked',
@@ -241,12 +246,18 @@ const AG_GRID_LOCALE_EN = {
     scatterTooltip: 'Scatter',
     bubbleTooltip: 'Bubble',
     histogramTooltip: 'Histogram',
+    columnLineComboTooltip: 'Column & Line',
+    areaColumnComboTooltip: 'Area & Column',
+    customComboTooltip: 'Custom Combination',
     noDataToChart: 'No data available to be charted.',
     pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     chartSettingsToolbarTooltip: 'Menu',
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
+    seriesChartType: 'Series Chart Type',
+    seriesType: 'Series Type',
+    secondaryAxis: 'Secondary Axis',
 
     // ARIA
     ariaHidden: 'hidden',

@@ -16,6 +16,9 @@ export type ChartType =
     | 'stackedArea'
     | 'normalizedArea'
     | 'histogram'
+    | 'columnLineCombo'
+    | 'areaColumnCombo'
+    | 'customCombo'
 
 export type ChartMenuOptions =
       'chartSettings'
@@ -24,3 +27,9 @@ export type ChartMenuOptions =
     | 'chartLink'
     | 'chartUnlink'
     | 'chartDownload';
+
+export interface SeriesChartType {
+    colId: string;
+    chartType: ChartType;
+    secondaryAxis?: boolean;
+}

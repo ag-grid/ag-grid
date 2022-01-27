@@ -1,4 +1,4 @@
-import { _, AgChartThemeOverrides, ChartType } from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
@@ -16,6 +16,7 @@ export interface ChartProxyParams {
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartOptionsToRestore?: AgChartThemeOverrides;
+    seriesChartTypes: SeriesChartType[];
 }
 
 export interface FieldDefinition {
@@ -33,7 +34,8 @@ export interface UpdateChartParams {
     };
     fields: FieldDefinition[];
     chartId?: string;
-    getCrossFilteringContext: () => CrossFilteringContext
+    getCrossFilteringContext: () => CrossFilteringContext,
+    seriesChartTypes: SeriesChartType[];
 }
 
 export abstract class ChartProxy {

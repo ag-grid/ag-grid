@@ -73,7 +73,7 @@ import {
     RowClassParams,
     RowHeightParams
 } from "./entities/gridOptions";
-import { ChartType } from "./interfaces/iChartOptions";
+import { ChartType, SeriesChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
@@ -163,6 +163,8 @@ export interface CreateRangeChartParams extends CreateChartParams {
     suppressChartRanges?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
+    /** The series chart type configurations used in combination charts */
+    seriesChartTypes?: SeriesChartType[];
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */

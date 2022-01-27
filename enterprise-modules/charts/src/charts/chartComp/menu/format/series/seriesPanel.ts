@@ -34,6 +34,8 @@ export class SeriesPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
+    private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
+
     private activePanels: Component[] = [];
     private seriesType: ChartSeriesType;
 
@@ -61,11 +63,11 @@ export class SeriesPanel extends Component {
     }
 
     constructor(private readonly chartController: ChartController, private readonly chartOptionsService: ChartOptionsService,
-                seriesType: ChartSeriesType) {
+                seriesType?: ChartSeriesType) {
 
         super();
 
-        this.seriesType = seriesType;
+        this.seriesType = seriesType || this.getChartSeriesType();
     }
 
     @PostConstruct
@@ -81,7 +83,29 @@ export class SeriesPanel extends Component {
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
+        this.initSeriesSelect();
+
         this.refreshWidgets();
+    }
+
+    private initSeriesSelect() {
+        // only combo charts require series select
+        if (!this.chartController.isComboChart()) { return; }
+
+        const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
+        seriesSelect
+            .setLabel(this.translate('seriesType'))
+            .setLabelAlignment("left")
+            .setLabelWidth('flex')
+            .setInputWidth(100)
+            .addOptions(this.getSeriesSelectOptions())
+            .setValue(`${this.seriesType}`)
+            .onValueChange((newValue: ChartSeriesType) => {
+                this.seriesType = newValue;
+                this.refreshWidgets();
+            });
+
+        this.seriesGroup.addItem(seriesSelect);
     }
 
     private refreshWidgets(): void {
@@ -224,6 +248,33 @@ export class SeriesPanel extends Component {
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {
         this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
+    }
+
+    private getChartSeriesType(): ChartSeriesType {
+        const ct = this.chartController.getSeriesChartTypes()[0].chartType;
+        return (ct === 'columnLineCombo') ? 'column' : (ct === 'areaColumnCombo') ? 'area' : getSeriesType(ct);
+    }
+
+    private getSeriesSelectOptions(): ListOption[] {
+        if (!this.seriesSelectOptions) {
+            // lazy init options as they are only required for combo charts
+            this.seriesSelectOptions = new Map<ChartSeriesType, ListOption>([
+                ['area', {value: 'area', text: this.translate('area', 'Area')}],
+                ['bar', {value: 'bar', text: this.translate('bar', 'Bar')}],
+                ['column', {value: 'column', text: this.translate('column', 'Column')}],
+                ['line', {value: 'line', text: this.translate('line', 'Line')}],
+                ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
+                ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
+                ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
+            ]);
+        }
+
+        const options = new Set<ListOption>();
+        this.chartController.getSeriesChartTypes().forEach(s => {
+            const chartType = getSeriesType(s.chartType);
+            options.add(this.seriesSelectOptions.get(chartType) as ListOption);
+        });
+        return Array.from(options);
     }
 
     private translate(key: string, defaultText?: string) {

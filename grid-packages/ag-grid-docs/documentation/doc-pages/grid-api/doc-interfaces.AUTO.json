@@ -8303,6 +8303,10 @@
       "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
+    "seriesChartTypes": {
+      "description": "/** The series chart type configurations used in combination charts */",
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
+    },
     "chartType": {
       "description": "/** The type of chart to create. */",
       "type": { "returnType": "ChartType", "optional": false }
@@ -11330,6 +11334,11 @@
   },
   "ChartType": {},
   "ChartMenuOptions": {},
+  "SeriesChartType": {
+    "colId": { "type": { "returnType": "string", "optional": false } },
+    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
+    "secondaryAxis": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "GetChartImageDataUrlParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
@@ -11360,7 +11369,10 @@
     "aggFunc": {
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } }
+    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } },
+    "seriesChartTypes": {
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
+    }
   },
   "IChartService": {
     "getChartModels": {
@@ -12698,7 +12710,7 @@
   },
   "IFrameworkOverrides": {
     "setTimeout": {
-      "description": "/** Because Angular uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
+      "description": "/** Because Angular 2+ uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
       "type": {
         "arguments": { "action": "any", "timeout?": "any" },
         "returnType": "void",
