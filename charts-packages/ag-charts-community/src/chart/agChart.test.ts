@@ -1,6 +1,6 @@
 import { describe, expect, test } from "@jest/globals";
 import "jest-canvas-mock";
-import { AgChart } from "./agChart";
+import { AgChart, groupSeriesByType, reduceSeries, processSeriesOptions } from "./agChart";
 import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
@@ -8,6 +8,161 @@ import { LineSeries } from "./series/cartesian/lineSeries";
 import { ChartAxis, ChartAxisPosition } from "./chartAxis";
 import { NumberAxis } from "./axis/numberAxis";
 import { ChartTheme } from "./themes/chartTheme";
+
+const seriesOptions: any = [
+    {
+        type: 'column',
+        xKey: 'quarter',
+        yKey: 'iphone',
+        fill: 'pink',
+        yName: 'Iphone',
+        showInLegend: true,
+    },
+    {
+        type: 'line',
+        xKey: 'quarter',
+        yKey: 'mac',
+        yName: 'Mac',
+    },
+    {
+        type: 'column',
+        xKey: 'quarter',
+        yKey: 'mac',
+        fill: 'red',
+        yName: 'Mac',
+        showInLegend: false,
+    },
+    {
+        type: 'line',
+        xKey: 'quarter',
+        yKey: 'iphone',
+        yName: 'iPhone',
+    },
+    {
+        type: 'column',
+        xKey: 'quarter',
+        yKeys: ['wearables', 'services'],
+        yNames: ['iPad', 'Wearables', 'Services'],
+        hideInLegend: ['services'],
+    },
+];
+
+describe('transform series options', () => {
+    test('groupSeriesByType', () => {
+        const result = groupSeriesByType(seriesOptions);
+        const groupedSeriesOptions = [
+            [
+                {
+                    type: 'column',
+                    xKey: 'quarter',
+                    yKey: 'iphone',
+                    fill: 'pink',
+                    yName: 'Iphone',
+                    showInLegend: true,
+                },
+                {
+                    type: 'column',
+                    xKey: 'quarter',
+                    yKey: 'mac',
+                    fill: 'red',
+                    yName: 'Mac',
+                    showInLegend: false,
+                },
+                {
+                    type: 'column',
+                    xKey: 'quarter',
+                    yKeys: ['wearables', 'services'],
+                    yNames: ['iPad', 'Wearables', 'Services'],
+                    hideInLegend: ['services'],
+                },
+            ],
+            [
+                {
+                    type: 'line',
+                    xKey: 'quarter',
+                    yKey: 'mac',
+                    yName: 'Mac',
+                },
+            ],
+            [
+                {
+                    type: 'line',
+                    xKey: 'quarter',
+                    yKey: 'iphone',
+                    yName: 'iPhone',
+                },
+            ],
+        ];
+
+        expect(result).toEqual(groupedSeriesOptions);
+    });
+
+    test('reduceSeries', () => {
+        const columnSeriesGroup: any[] = [
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'iphone',
+                fill: 'pink',
+                yName: 'Iphone',
+                showInLegend: true,
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKey: 'mac',
+                fill: 'red',
+                yName: 'Mac',
+                showInLegend: false,
+            },
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKeys: ['wearables', 'services'],
+                yNames: ['iPad', 'Wearables', 'Services'],
+                fills: ['blue', 'orange', 'yellow'],
+                hideInLegend: ['services'],
+            },
+        ];
+
+        const result = reduceSeries(columnSeriesGroup, true);
+
+        const columnSeriesOptions = {
+            type: 'column',
+            xKey: 'quarter',
+            yKeys: ['iphone', 'mac', 'wearables', 'services'],
+            fills: ['pink', 'red', 'blue', 'orange', 'yellow'],
+            yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
+            hideInLegend: ['mac', 'services'],
+        };
+
+        expect(result).toEqual(columnSeriesOptions);
+    });
+
+    test('processSeriesOptions', () => {
+        const result = processSeriesOptions(seriesOptions);
+
+        const processedSeriesOptions = [
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKeys: ['iphone', 'mac', 'wearables', 'services'],
+                fills: ['pink', 'red'],
+                yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
+                hideInLegend: ['mac', 'services'],
+            },
+            {
+                type: 'line',
+                xKey: 'quarter',
+                yKey: 'mac',
+                yName: 'Mac',
+            },
+            { type: 'line', xKey: 'quarter', yKey: 'iphone', yName: 'iPhone' },
+        ];
+
+        expect(result).toEqual(processedSeriesOptions);
+    });
+});
 
 const revenueProfitData = [{
     month: 'Jan',
@@ -175,7 +330,7 @@ describe('update', () => {
         const chart = AgChart.create({
             data: revenueProfitData,
             series: [{
-                // series type if optional because `line` is default for `cartesian` charts
+                // series type is optional because `line` is default for `cartesian` charts
                 xKey: 'month',
                 yKey: 'revenue',
                 marker: {
@@ -228,7 +383,7 @@ describe('update', () => {
         AgChart.update(chart, {
             data: revenueProfitData,
             series: [{
-                // series type if optional because `line` is default for `cartesian` charts
+                // series type is optional because `line` is default for `cartesian` charts
                 xKey: 'month',
                 yKey: 'revenue',
                 marker: {
@@ -255,7 +410,7 @@ describe('update', () => {
                 yKeys: ['profit', 'foobar'],
                 fills: ['lime', 'cyan']
             }, {
-                // series type if optional because `line` is default for `cartesian` charts
+                // series type is optional because `line` is default for `cartesian` charts
                 xKey: 'month',
                 yKey: 'revenue',
                 marker: {
