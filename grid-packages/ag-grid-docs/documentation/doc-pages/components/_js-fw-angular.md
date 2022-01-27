@@ -1,11 +1,15 @@
 [[only-angular]]
 |## Mixing JavaScript and Angular
-|When providing Custom Components you have a choice of the following:
 |
+|When providing Custom Components you have a choice of the following:
 |1. Provide an AG Grid component as an Angular Component.
 |1. Provide an AG Grid component in JavaScript.
 |
-|For example if you want to build a Cell Renderer you have the choice to build it using either Angular or using plain JavaScript.
+|When referencing Angular components directly, use `xxxFramework` (eg `cellRendererFramework`).
+|
+|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer`).
+|
+|When looking up JavaScript or Angular components, use `xxx` (eg `cellRenderer`) for both.
 |
 |The following code snippet shows how both JavaScript and Angular Components can be used at the same time:
 |
@@ -18,37 +22,40 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular [comps]="comps" 
+|   <ag-grid-angular [components]="components" [frameworkComponents]="frameworkComponents" 
 |                    ...other properties>
 |   </ag-grid-angular>
 |`
 |})
 |export class AppComponent {
-|   // All components registered together
-|   comps: [
+|   // js components
+|   components: [
 |       'javascriptComponent': JavascriptComponent
+|   ];
+|   // Angular components
+|   frameworkComponents: [
 |       'angularComponent': AngularComponent
 |   ];
 |   columnDefs: [
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
-|           cellRendererComp: 'javascriptComponent', // use JS comp by Name
+|           cellRenderer: 'javascriptComponent', // use JS comp by Name
 |       },
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
-|           cellRendererComp: JavascriptComponent, // use JS comp by Direct Reference
+|           cellRenderer: JavascriptComponent, // use JS comp by Direct Reference
 |       },
 |       {
 |           headerName: "Angular Cell",
 |           field: "value",
-|           cellRendererComp: 'angularComponent', // use Angular comp by Name
+|           cellRenderer: 'angularComponent', // use Angular comp by Name
 |       },
 |       {
 |           headerName: "Angular Cell",
 |           field: "value",
-|           cellRendererComp: AngularComponent, // use Angular comp by Direct Reference
+|           cellRendererFramework: AngularComponent, // use Angular comp by Direct Reference
 |       }
 |   ];
 |

@@ -20,7 +20,7 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|    const [columnDefs] = useState( [{field: 'value', cellRendererComp: CubeComponent}] );
+|    const [columnDefs] = useState( [{field: 'value', cellRendererFramework: CubeComponent}] );
 |
 |    return (
 |         <AgGridReact
@@ -35,7 +35,7 @@
 |
 |### 2. By Name
 |
-|When registering a React component by name you need to first register the component within the grid `comps` property,
+|When registering a React component by name you need to first register the component within the grid `frameworkComponents` property,
 |then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
 |
 |In this example we've registered our `CubeComponent` React Component and given it a name of `cubeComponent` (this can be any name you choose).
@@ -48,7 +48,7 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|   const [comps] = useState({
+|   const [components] = useState({
 |       cubeComponent: CubeComponent    
 |   });
 |
@@ -56,7 +56,7 @@
 |
 |   return (
 |         <AgGridReact
-|            comps={comps}
+|            frameworkComponents={components}
 |            columnDefs={columnDefs}
 |            ...other properties            
 |         />

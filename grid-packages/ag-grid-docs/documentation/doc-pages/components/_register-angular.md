@@ -30,7 +30,7 @@
 |       {
 |           headerName: "Cube",
 |           field: "value",
-|           cellRendererComp: CubeComponent,     
+|           cellRendererFramework: CubeComponent,     
 |       }
 |   ]
 |
@@ -42,7 +42,7 @@
 |
 |### 2. By Name
 |
-|When registering an Angular component by name you need to first register the component within the grid `comps` property,
+|When registering an Angular component by name you need to first register the component within the grid `frameworkComponents` property,
 |then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
 |
 |In this example we've registered our `CubeComponent` Angular Component and given it a name of `cubeComponent` (this can be any name you choose).
@@ -61,14 +61,14 @@
 |`
 |})
 |export class AppComponent {
-|   comps: {
+|   frameworkComponents: {
 |       'cubeComponent': CubeComponent
 |   };          
 |   columnDefs: [
 |       {
 |           headerName: "Cube",
 |           field: "value",
-|           cellRendererComp: 'cubeComponent',     
+|           cellRenderer: 'cubeComponent',     
 |       }
 |   ]
 |
@@ -77,3 +77,4 @@
 |```
 |
 |The advantage of referencing components by name is definitions (eg Column Definitions) can be composed of simple types (ie JSON), which is useful should you wish to persist Column Definitions.
+|

@@ -30,6 +30,12 @@ md-include:register-vue.md
 
 md-include:advantages-vue.md
 
+
+md-include:js-fw-angular.md
+md-include:js-fw-react.md
+md-include:js-fw-vue.md
+md-include:js-fw-common-end.md
+
 ### Providing Additional Parameters
 
 Each Custom Component gets a set of parameters from the grid. For example, for Cell Renderer the grid provides, among other things, the value to be rendered. You can provide additional properties to the Custom Component (e.g. what currency symbol to use) by providing additional parameters specific to your application.
@@ -41,8 +47,8 @@ const gridOptions = {
     columnDefs: [
         { 
             field: 'price',
-            cellRendererComp: PriceCellRenderer,
-            cellRendererCompParams: {
+            cellRenderer: PriceCellRenderer,
+            cellRendererParams: {
                 currency: 'EUR'
             }
         },
@@ -57,28 +63,23 @@ The below table gives a summary of the components, where they are configured and
 
 | Component                     | Where                     | Attribute | 
 | ----------------------------- | ------------------------- | ------------------------ | 
-| Cell Renderer                 | Column Definition         | cellRendererComp<br/>cellRendererCompParams<br/>cellRendererCompSelector         | 
-| Cell Editor                   | Column Definition         | cellEditorComp<br>cellEditorCompParams<br/>cellEditorCompSelector| 
-| Filter                        | Column Definition         | filterComp<br/>filterCompParams              | 
-| Floating Filter               | Column Definition         | floatingFilterComp<br/>floatingFilterCompParams       | 
-| Header Component              | Column Definition         | headerComp<br/>headerCompParams               | 
-| Header Group Component        | Column Definition         | headerGroupComp<br/>headerGroupCompParams         | 
-| Tooltip Component             | Column Definition         | tooltipComp<br/>tooltipCompParams              | 
-| Group Row Cell Renderer       | Grid Option               | groupRowCellComp<br/>groupRowCellCompParams         | 
-| Group Row Inner Cell Renderer | Grid Option               | innerCellComp<br/>innerCellCompParams            | 
-| Detail Cell Renderer          | Grid Option               | detailRowCellComp<br/>detailRowCellCompParams        | 
-| Full Width Cell Renderer      | Grid Option               | fullWidthCellComp<br/>fullWidthCellCompParams        | 
-| Loading Cell Renderer         | Grid Option               | loadingRowCellComp<br/>loadingRowCellCompParams       |
-| Loading Overlay               | Grid Option               | loadingOverlayComp<br/>loadingOverlayCompParams       | 
-| No Rows Overlay               | Grid Option               | noRowsOverlayComp<br/>noRowsOverlayCompParams        |
-| Date Component                | Grid Option               | dateComp<br/>dateCompParams                  | 
-| Status Bar Component          | Grid Option -> Status Bar | statusPanelComp<br/>statusPanelCompParams          | 
-| Tool Panel                    | Grid Option -> Side Bar   | toolPanelComp<br/>toolPanelCompParams            | 
-
-md-include:js-fw-angular.md
-md-include:js-fw-react.md
-md-include:js-fw-vue.md
-md-include:js-fw-common-end.md
+| Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererFramework<br/>cellRendererParams<br/>cellRendererSelector         | 
+| Cell Editor                   | Column Definition         | cellEditor<br>cellEditorFramework<br>cellEditorParams<br/>cellEditorSelector| 
+| Filter                        | Column Definition         | filter<br/>filterFramework<br/>filterParams              | 
+| Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterFramework<br/>floatingFilterParams       | 
+| Header Component              | Column Definition         | headerComponent<br/>headerComponentFramework<br/>headerComponentParams               | 
+| Header Group Component        | Column Definition         | headerGroupComponent<br/>headerGroupComponentFramework<br/>headerGroupComponentParams         | 
+| Tooltip Component             | Column Definition         | tooltipComponent<br/>tooltipComponentFramework<br/>tooltipComponentParams              | 
+| Group Row Cell Renderer       | Grid Option               | groupRowRenderer<br/>groupRowRendererFramework<br/>groupRowRendererParams         | 
+| Group Row Inner Cell Renderer | Grid Option               | innerRenderer<br/>innerRendererFramework<br/>innerRendererParams            | 
+| Detail Cell Renderer          | Grid Option               | detailCellRenderer<br/>detailCellRendererFramework<br/>detailCellRendererParams        | 
+| Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer<br/>fullWidthCellRendererFramework<br/>fullWidthCellRendererParams        | 
+| Loading Cell Renderer         | Grid Option               | loadingCellRenderer<br/>loadingCellRendererFramework<br/>loadingCellRendererParams       |
+| Loading Overlay               | Grid Option               | loadingOverlayComponent<br/>loadingOverlayComponentFramework<br/>loadingOverlayComponentParams       | 
+| No Rows Overlay               | Grid Option               | noRowsOverlayComponent<br/>noRowsOverlayComponentFramework<br/>noRowsOverlayComponentParams        |
+| Date Component                | Grid Option               | dateComponent<br/>dateComponentFramework<br/>dateComponentParams                  | 
+| Status Bar Component          | Grid Option -> Status Bar | statusPanel<br/>statusPanelFramework<br/>statusPanelParams          | 
+| Tool Panel                    | Grid Option -> Side Bar   | toolPanel<br/>toolPanelFramework<br/>toolPanelParams            | 
 
 ## Grid Provided Components
 

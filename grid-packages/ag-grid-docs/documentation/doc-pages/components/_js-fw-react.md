@@ -1,11 +1,15 @@
 [[only-react]]
-|## Mixing JavaScript and React
+||## Mixing JavaScript and React
+|
 |When providing Custom Components you have a choice of the following:
-|
+|1. Provide an AG Grid component as a React Component.
 |1. Provide an AG Grid component in JavaScript.
-|1. Provide an AG Grid component as an React Component.
 |
-|For example if you want to build a cell renderer you have the choice to build the cell renderer using either React or using plain JavaScript.
+|When referencing React components directly, use `xxxFramework` (eg `cellRendererFramework`).
+|
+|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer`).
+|
+|When looking up JavaScript or React components, use `xxx` (eg `cellRenderer`) for both.
 |
 |The following code snippet shows how both JavaScript and React Components can be used at the same time:
 |
@@ -15,11 +19,12 @@
 |import ReactComponent from './ReactComponent';
 |
 |const GridExample = () => {
-|   // other properties & methods
-|   
-|   // All components registered together
-|   const [comps] = useState({
+|   // JS components
+|   const [components] = useState({
 |       'javascriptComponent': JavascriptComponent,
+|   });
+|   // React components
+|   const [components] = useState({
 |       'reactComponent': ReactComponent    
 |   });
 |
@@ -27,29 +32,30 @@
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
-|           cellRendererComp: 'javascriptComponent', // use JS comp by Name
+|           cellRenderer: 'javascriptComponent', // use JS comp by Name
 |       },
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
-|           cellRendererComp: JavascriptComponent, // use JS comp by Direct Reference
+|           cellRenderer: JavascriptComponent, // use JS comp by Direct Reference
 |       },
 |       {
 |           headerName: "React Cell",
 |           field: "value",
-|           cellRendererComp: 'reactComponent', // use React comp by Name
+|           cellRenderer: 'reactComponent', // use React comp by Name
 |       },
 |       {
 |           headerName: "React Cell",
 |           field: "value",
-|           cellRendererComp: ReactComponent, // use React comp by Direct Reference
+|           cellRendererFramework: ReactComponent, // use React comp by Direct Reference
 |       }
 |   ]);
 |
 |    return (
 |        <div className="ag-theme-alpine">
 |            <AgGridReact
-|               comps={comps}
+|               components={components}
+|               frameworkComponents={frameworkComponents}
 |               columnDefs={columnDefs}
 |               ...other properties
 |            />
