@@ -149,7 +149,6 @@ export class UserComponentRegistry extends BeanStub {
 
     private jsComps: { [key: string]: any } = {};
     private fwComps: { [key: string]: any } = {};
-    private jsAndFwComps: { [key: string]: any } = {};
 
     @PostConstruct
     private init(): void {
@@ -160,10 +159,6 @@ export class UserComponentRegistry extends BeanStub {
         if (this.gridOptions.frameworkComponents != null) {
             iterateObject(this.gridOptions.frameworkComponents,
                 (key, component) => this.registerFwComponent(key, component as any));
-        }
-
-        if (this.gridOptions.comps != null) {
-            iterateObject(this.gridOptions.comps, (key, component) => this.registerJsOrFwComponent(key, component));
         }
     }
 
@@ -189,11 +184,6 @@ export class UserComponentRegistry extends BeanStub {
         this.jsComps[name] = component;
     }
 
-    private registerJsOrFwComponent(rawName: string, component: any) {
-        const name = this.translateIfDeprecated(rawName);
-        this.jsAndFwComps[name] = component;
-    }
-
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
@@ -214,12 +204,6 @@ export class UserComponentRegistry extends BeanStub {
         const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name);
         if (registeredViaFrameworkComp!=null) {
             return createResult(registeredViaFrameworkComp, true);
-        }
-
-        const jsOrFwComp = this.jsAndFwComps[name];
-        if (jsOrFwComp) {
-            const fromFramework = !this.agComponentUtils.doesImplementIComponent(jsOrFwComp);
-            return createResult(jsOrFwComp, fromFramework);
         }
 
         const frameworkComponent = this.fwComps[name];

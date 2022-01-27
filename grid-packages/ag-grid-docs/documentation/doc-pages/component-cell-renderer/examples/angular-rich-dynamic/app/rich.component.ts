@@ -29,13 +29,13 @@ export class RichComponent {
             {
                 headerName: "Ratio Component",
                 field: "ratios",
-                cellRendererComp: RatioParentComponent,
+                cellRendererFramework: RatioParentComponent,
                 width: 350
             },
             {
                 headerName: "Clickable Component",
                 field: "name",
-                cellRendererComp: ClickableParentComponent,
+                cellRendererFramework: ClickableParentComponent,
                 width: 330
             }
         ];

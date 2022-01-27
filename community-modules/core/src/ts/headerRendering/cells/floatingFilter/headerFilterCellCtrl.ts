@@ -9,7 +9,7 @@ import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
 import { GridApi, unwrapUserComp } from '../../../gridApi';
-import { IFilter, IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
+import { IFilter, IFilterComp } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
@@ -63,7 +63,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.eFloatingFilterBody = eFloatingFilterBody;
 
         const colDef = this.column.getColDef();
-        const filterExists = !!colDef.filter || !!colDef.filterFramework || !!colDef.filterComp;
+        const filterExists = !!colDef.filter || !!colDef.filterFramework;
         const floatingFilterExists = !!colDef.floatingFilter;
         this.active = filterExists && floatingFilterExists;
 

@@ -57,11 +57,7 @@
   },
   "ComponentType": {
     "meta": {},
-    "type": {
-      "propertyName": "string",
-      "cellRenderer": "boolean",
-      "newPropName": "string"
-    }
+    "type": { "propertyName": "string", "cellRenderer": "boolean" }
   },
   "FrameworkComponentWrapper": {
     "meta": {
@@ -301,8 +297,6 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
-      "tooltipComp?": "any",
-      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]"
     },
     "docs": {
@@ -328,8 +322,6 @@
       "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
-      "headerGroupComp?": "any",
-      "headerGroupCompParams?": "any",
       "headerName?": "string",
       "headerValueGetter?": "string | HeaderValueGetterFunc",
       "headerTooltip?": "string",
@@ -342,8 +334,6 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
-      "tooltipComp?": "any",
-      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]"
     },
     "docs": {
@@ -354,8 +344,6 @@
       "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
       "headerGroupComponentFramework?": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
       "headerGroupComponentParams?": "/** The params used to configure the header group component. */",
-      "headerGroupComp?": "/** The custom header group component to be used for rendering the component header. */",
-      "headerGroupCompParams?": "/** The params used to configure the header group component. */",
       "headerName?": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "headerValueGetter?": "/** Function or expression. Gets the value for display in the header. */",
       "headerTooltip?": "/** Tooltip for the column header */",
@@ -460,15 +448,10 @@
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
-      "cellEditorComp?": "any",
-      "cellEditorCompParams?": "any",
-      "cellEditorCompSelector?": "CellEditorCompSelectorFunc",
       "singleClickEdit?": "boolean",
       "newValueHandler?": "(params: NewValueParams) => boolean",
       "cellEditorPopup?": "boolean",
-      "cellEditorCompPopup?": "boolean",
       "cellEditorPopupPosition?": "string",
-      "cellEditorCompPopupPosition?": "string",
       "onCellValueChanged?": "(event: NewValueParams) => void",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
@@ -479,8 +462,6 @@
       "headerComponent?": "string | { new (): any; }",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
-      "headerComp?": "any",
-      "headerCompParams?": "any",
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
@@ -507,9 +488,6 @@
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
-      "cellRendererComp?": "any",
-      "cellRendererCompParams?": "any",
-      "cellRendererCompSelector?": "CellRendererCompSelectorFunc",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "enableCellChangeFlash?": "boolean",
@@ -564,19 +542,13 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
-      "tooltipComp?": "any",
-      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]",
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "filterComp?": "any",
-      "filterCompParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any",
-      "floatingFilterComp?": "any",
-      "floatingFilterCompParams?": "any"
+      "floatingFilterComponentParams?": "any"
     },
     "docs": {
       "colId?": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
@@ -607,9 +579,6 @@
       "cellEditorFramework?": "/** Framework `cellEditor` to use for this column. */",
       "cellEditorParams?": "/** Params to be passed to the cell editor component. */",
       "cellEditorSelector?": "/** Callback to select which cell editor to be used for a given row within the same column. */",
-      "cellEditorComp?": "/** A Editor Component to use for this column. */",
-      "cellEditorCompParams?": "/** Params to be passed to the Editor Component */",
-      "cellEditorCompSelector?": "/** Callback to select which Cell Editor and Params to use for this column. */",
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "newValueHandler?": "/** @deprecated use `valueSetter` instead\n */",
       "cellEditorPopup?": "/** Set to `true`, to have the cell editor appear in a popup. */",
@@ -624,8 +593,6 @@
       "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
       "headerComponentFramework?": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
       "headerComponentParams?": "/** The parameters to be passed to the header component. */",
-      "headerComp?": "/** The custom header component to be used for rendering the component header. */",
-      "headerCompParams?": "/** The parameters to be passed to the header component. */",
       "menuTabs?": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
       "columnsMenuParams?": "/** Params used to change the behaviour and appearance of the Columns Menu tab. */",
       "suppressMenu?": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
@@ -652,9 +619,6 @@
       "cellRendererFramework?": "/** Framework `cellRenderer` to use for this column. */",
       "cellRendererParams?": "/** Params to be passed to the cell renderer component. */",
       "cellRendererSelector?": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
-      "cellRendererComp?": "/** A Cell Component to use for this column. */",
-      "cellRendererCompParams?": "/** Params to be passed to the Cell Component. */",
-      "cellRendererCompSelector?": "/** Callback to select which Cell Component and Params to use for this column. */",
       "autoHeight?": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
       "wrapText?": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */",
       "enableCellChangeFlash?": "/** Set to `true` to flash a cell when it's refreshed. Default: `false` */",
@@ -710,13 +674,9 @@
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
-      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "filterCompParams?": "/** Params to be passed to the filter component. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
-      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
+      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
     }
   },
   "ColumnFunctionCallbackParams": {
@@ -1371,24 +1331,6 @@
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
-  "CellRendererCompSelectorFunc": {
-    "meta": { "isCallSignature": true },
-    "type": {
-      "arguments": { "params": "ICellRendererParams" },
-      "returnType": "CompSelectorResult | undefined"
-    }
-  },
-  "CellEditorCompSelectorFunc": {
-    "meta": { "isCallSignature": true },
-    "type": {
-      "arguments": { "params": "ICellEditorParams" },
-      "returnType": "CompSelectorResult | undefined"
-    }
-  },
-  "CompSelectorResult": {
-    "meta": {},
-    "type": { "comp?": "any", "params?": "any" }
-  },
   "GridOptions": {
     "meta": {},
     "type": {
@@ -1439,7 +1381,6 @@
       "skipHeaderOnAutoSize?": "boolean",
       "components?": "{ [p: string]: any; }",
       "frameworkComponents?": "{ [p: string]: { new (): any; }; } | any",
-      "comps?": "{ [p: string]: any; }",
       "reactUi?": "boolean",
       "suppressReactUi?": "boolean",
       "editType?": "string",
@@ -1468,9 +1409,6 @@
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
       "loadingCellRendererSelector?": "LoadingCellRendererSelectorFunc",
-      "loadingRowCellComp?": "any",
-      "loadingRowCellCompParams?": "any",
-      "loadingRowCellCompSelector?": "LoadingRowCellCompSelectorFunc",
       "localeText?": "{ [key: string]: string; }",
       "masterDetail?": "boolean",
       "keepDetailRows?": "boolean",
@@ -1501,15 +1439,11 @@
       "loadingOverlayComponent?": "{ new (): ILoadingOverlayComp; } | string",
       "loadingOverlayComponentFramework?": "any",
       "loadingOverlayComponentParams?": "any",
-      "loadingOverlayComp?": "any",
-      "loadingOverlayCompParams?": "any",
       "suppressLoadingOverlay?": "boolean",
       "overlayNoRowsTemplate?": "string",
       "noRowsOverlayComponent?": "{ new (): INoRowsOverlayComp; } | string",
       "noRowsOverlayComponentFramework?": "any",
       "noRowsOverlayComponentParams?": "any",
-      "noRowsOverlayComp?": "any",
-      "noRowsOverlayCompParams?": "any",
       "suppressNoRowsOverlay?": "boolean",
       "pagination?": "boolean",
       "paginationPageSize?": "number",
@@ -1813,7 +1747,6 @@
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to plain JavaScript components. */",
       "frameworkComponents?": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
-      "comps?": "/** A map of component names to components (can be JavaScript OR Framework components). */",
       "reactUi?": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
       "suppressReactUi?": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
@@ -1842,9 +1775,6 @@
       "loadingCellRendererFramework?": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
       "loadingCellRendererParams?": "/** Params to be passed to loading cell renderer component. */",
       "loadingCellRendererSelector?": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
-      "loadingRowCellComp?": "/** Cell Comp to use when data is loading via a DataSource. */",
-      "loadingRowCellCompParams?": "/** Params for Loading Cell Comp. */",
-      "loadingRowCellCompSelector?": "/** Selector for the loading component. */",
       "localeText?": "/** A map of key->value pairs for localising text within the grid. */",
       "masterDetail?": "/** Set to `true` to enable Master Detail. Default: `false` */",
       "keepDetailRows?": "/** Set to `true` to keep detail rows for when they are displayed again. Default: `false` */",
@@ -1875,15 +1805,11 @@
       "loadingOverlayComponent?": "/** Provide a custom loading overlay component. */",
       "loadingOverlayComponentFramework?": "/** Same as `loadingOverlayComponent` but for a framework component. */",
       "loadingOverlayComponentParams?": "/** Customise the parameters provided to the loading overlay component. */",
-      "loadingOverlayComp?": "/** Loading Overlay Component. */",
-      "loadingOverlayCompParams?": "/** Params for Loading Overlay Component */",
       "suppressLoadingOverlay?": "/** Disables the 'loading' overlay. Default: `false` */",
       "overlayNoRowsTemplate?": "/** Provide a template for 'no rows' overlay. */",
       "noRowsOverlayComponent?": "/** Provide a custom no rows overlay component */",
       "noRowsOverlayComponentFramework?": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
       "noRowsOverlayComponentParams?": "/** Customise the parameters provided to the no rows overlay component. */",
-      "noRowsOverlayComp?": "/** Provide a custom no rows overlay component */",
-      "noRowsOverlayCompParams?": "/** Customise the parameters provided to the no rows overlay component. */",
       "suppressNoRowsOverlay?": "/** Disables the 'no rows' overlay. Default: `false` */",
       "pagination?": "/** Set whether pagination is enabled. Default: `false` */",
       "paginationPageSize?": "/** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */",
@@ -2539,13 +2465,6 @@
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
     }
   },
-  "LoadingRowCellCompSelectorFunc": {
-    "meta": { "isCallSignature": true },
-    "type": {
-      "arguments": { "params": "ILoadingCellRendererParams" },
-      "returnType": "CompSelectorResult | undefined"
-    }
-  },
   "IHeaderColumn": {
     "meta": {},
     "type": {
@@ -2637,9 +2556,7 @@
       "iconKey": "string",
       "toolPanel?": "{ new (): IToolPanelComp; } | string",
       "toolPanelFramework?": "any",
-      "toolPanelParams?": "any",
-      "toolPanelComp?": "any",
-      "toolPanelCompParams?": "any"
+      "toolPanelParams?": "any"
     },
     "docs": {
       "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
@@ -2651,9 +2568,7 @@
       "iconKey": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
       "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
       "toolPanelFramework?": "/** Same as `toolPanel` but for framework specific components. */",
-      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */",
-      "toolPanelComp?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
-      "toolPanelCompParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
+      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
     }
   },
   "SideBarDef": {
@@ -7238,25 +7153,17 @@
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "filterComp?": "any",
-      "filterCompParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any",
-      "floatingFilterComp?": "any",
-      "floatingFilterCompParams?": "any"
+      "floatingFilterComponentParams?": "any"
     },
     "docs": {
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
-      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "filterCompParams?": "/** Params to be passed to the filter component. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
-      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
+      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
     }
   },
   "IFilter": {
@@ -7495,11 +7402,7 @@
       "filterParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any",
-      "filterComp?": "any",
-      "filterCompParams?": "any",
-      "floatingFilterComp?": "any",
-      "floatingFilterCompParams?": "any"
+      "floatingFilterComponentParams?": "any"
     },
     "docs": {
       "display?": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
@@ -7509,11 +7412,7 @@
       "filterParams?": "/** Custom parameters to be passed to the child filter component. */",
       "floatingFilterComponent?": "/** Floating filter component to use for the child filter. */",
       "floatingFilterComponentFramework?": "/** Floating framework filter component to use for the child filter. */",
-      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */",
-      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "filterCompParams?": "/** Params to be passed to the filter component. */",
-      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
+      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */"
     }
   },
   "IMultiFilterParams": {
@@ -8700,8 +8599,6 @@
     "type": {
       "statusPanel?": "{ new (): IStatusPanelComp; } | string",
       "statusPanelFramework?": "any",
-      "statusPanelComp?": "any",
-      "statusPanelCompParams?": "any",
       "align?": "string",
       "key?": "string",
       "statusPanelParams?": "any"
@@ -9318,9 +9215,6 @@
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc",
-      "innerRendererComp?": "any",
-      "innerRendererCompParams?": "any",
-      "innerRendererCompSelector?": "CellRendererCompSelectorFunc",
       "scope": "any",
       "padding": "number",
       "value": "any",
@@ -9357,9 +9251,6 @@
       "innerRendererFramework?": "/** Same as `innerRenderer` but for a framework component. */",
       "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
       "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */",
-      "innerRendererComp?": "/** Cell Renderer Component to use for inside the Group Cell */",
-      "innerRendererCompParams?": "/** Params for Inner Cell Component */",
-      "innerRendererCompSelector?": "/** Callback to select Cell Component for inside the Group Cell, should there be a different one for different rows */",
       "padding": "/** @deprecated */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",

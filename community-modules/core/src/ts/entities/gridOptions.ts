@@ -100,7 +100,6 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CompSelectorResult } from "../entities/colDef";
 
 export interface GridOptions {
 
@@ -233,8 +232,6 @@ export interface GridOptions {
     components?: { [p: string]: any; };
     /** A map of component names to framework (Angular, React, Vue etc.) components. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-    /** A map of component names to components (can be JavaScript OR Framework components). */
-    comps?: { [p: string]: any; };
 
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
     reactUi?: boolean;
@@ -319,13 +316,6 @@ export interface GridOptions {
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
 
-    /** Cell Comp to use when data is loading via a DataSource. */
-    loadingRowCellComp?: any;
-    /** Params for Loading Cell Comp. */
-    loadingRowCellCompParams?: any;
-    /** Selector for the loading component. */
-    loadingRowCellCompSelector?: LoadingRowCellCompSelectorFunc;
-
     // *** Localisation *** //
     // just set once
     /** A map of key->value pairs for localising text within the grid. */
@@ -407,11 +397,6 @@ export interface GridOptions {
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
 
-    /** Loading Overlay Component. */
-    loadingOverlayComp?: any;
-    /** Params for Loading Overlay Component */
-    loadingOverlayCompParams?: any;
-
     /** Disables the 'loading' overlay. Default: `false` */
     suppressLoadingOverlay?: boolean;
 
@@ -423,11 +408,6 @@ export interface GridOptions {
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
-
-    /** Provide a custom no rows overlay component */
-    noRowsOverlayComp?: any;
-    /** Customise the parameters provided to the no rows overlay component. */
-    noRowsOverlayCompParams?: any;
 
     /** Disables the 'no rows' overlay. Default: `false` */
     suppressNoRowsOverlay?: boolean;
@@ -1431,8 +1411,4 @@ export interface LoadingCellRendererSelectorResult {
     frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
-}
-
-export interface LoadingRowCellCompSelectorFunc {
-    (params: ILoadingCellRendererParams): CompSelectorResult | undefined;
 }

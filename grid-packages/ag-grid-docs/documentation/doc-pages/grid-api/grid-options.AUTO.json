@@ -187,10 +187,6 @@
     "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
     "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
   },
-  "comps": {
-    "description": "/** A map of component names to components (can be JavaScript OR Framework components). */",
-    "type": { "returnType": "{ [p: string]: any; }" }
-  },
   "reactUi": {
     "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
     "type": { "returnType": "boolean" }
@@ -302,18 +298,6 @@
   "loadingCellRendererSelector": {
     "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
     "type": { "returnType": "LoadingCellRendererSelectorFunc" }
-  },
-  "loadingRowCellComp": {
-    "description": "/** Cell Comp to use when data is loading via a DataSource. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingRowCellCompParams": {
-    "description": "/** Params for Loading Cell Comp. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingRowCellCompSelector": {
-    "description": "/** Selector for the loading component. */",
-    "type": { "returnType": "LoadingRowCellCompSelectorFunc" }
   },
   "localeText": {
     "description": "/** A map of key->value pairs for localising text within the grid. */",
@@ -437,14 +421,6 @@
     "description": "/** Customise the parameters provided to the loading overlay component. */",
     "type": { "returnType": "any" }
   },
-  "loadingOverlayComp": {
-    "description": "/** Loading Overlay Component. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingOverlayCompParams": {
-    "description": "/** Params for Loading Overlay Component */",
-    "type": { "returnType": "any" }
-  },
   "suppressLoadingOverlay": {
     "description": "/** Disables the 'loading' overlay. Default: `false` */",
     "type": { "returnType": "boolean" }
@@ -462,14 +438,6 @@
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
-    "description": "/** Customise the parameters provided to the no rows overlay component. */",
-    "type": { "returnType": "any" }
-  },
-  "noRowsOverlayComp": {
-    "description": "/** Provide a custom no rows overlay component */",
-    "type": { "returnType": "any" }
-  },
-  "noRowsOverlayCompParams": {
     "description": "/** Customise the parameters provided to the no rows overlay component. */",
     "type": { "returnType": "any" }
   },

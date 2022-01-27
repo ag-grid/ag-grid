@@ -4,10 +4,6 @@ title: "Date Component"
 
 You can create your own date components, and AG Grid will use them every time it needs to ask the user for a date value. The date components are currently used in **date filters**.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Date Component
 
 md-include:simple-date-javascript.md

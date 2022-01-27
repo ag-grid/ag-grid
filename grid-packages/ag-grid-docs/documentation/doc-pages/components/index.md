@@ -4,10 +4,6 @@ title: "Components"
 
 You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 The full list of component types you can provide in AG Grid are as follows:
 
 - [Cell Renderer](/component-cell-renderer/): To customises the contents of a cell.

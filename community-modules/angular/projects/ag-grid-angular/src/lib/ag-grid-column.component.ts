@@ -1,4 +1,4 @@
-import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -41,16 +41,30 @@ export class AgGridColumn {
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
+    @Input() public headerGroupComp: any;
+    @Input() public headerGroupCompParams: any;
+    @Input() public cellRendererComp: any;
+    @Input() public cellRendererCompParams: any;
+    @Input() public cellEditorComp: any;
+    @Input() public cellEditorCompParams: any;
     @Input() public filterComp: any;
     @Input() public filterFramework: any;
     @Input() public filterParams: any;
+    @Input() public headerComp: any;
+    @Input() public headerCompParams: any;
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
     @Input() public floatingFilterComp: any;
     @Input() public floatingFilterCompParams: any;
     @Input() public floatingFilterFramework: any;
+    @Input() public tooltipComp: any;
+    @Input() public tooltipCompParams: any;
     @Input() public filter: any;
+    @Input() public cellEditorCompPopupPosition: any;
+    @Input() public cellRendererCompSelector: any;
+    @Input() public cellEditorCompSelector: any;
+    @Input() public cellEditorCompPopup: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
     /** Function or expression. Gets the value for display in the header.     */
@@ -72,8 +86,6 @@ export class AgGridColumn {
     @Input() public tooltipComponent: { new(): ITooltipComp; } | string | undefined;
     @Input() public tooltipComponentFramework: any;
     @Input() public tooltipComponentParams: any;
-    @Input() public tooltipComp: any;
-    @Input() public tooltipCompParams: any;
     /** A list containing a mix of columns and column groups.     */
     @Input() public children: (ColDef | ColGroupDef)[] | undefined;
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API.     */
@@ -88,10 +100,6 @@ export class AgGridColumn {
     @Input() public headerGroupComponentFramework: any;
     /** The params used to configure the header group component.     */
     @Input() public headerGroupComponentParams: any;
-    /** The custom header group component to be used for rendering the component header.     */
-    @Input() public headerGroupComp: any;
-    /** The params used to configure the header group component.     */
-    @Input() public headerGroupCompParams: any;
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      * If both field and colId are missing, a unique ID will be generated.
      * This ID is used to identify the column in the API for sorting, filtering etc.     */
@@ -158,12 +166,6 @@ export class AgGridColumn {
     @Input() public cellEditorParams: any;
     /** Callback to select which cell editor to be used for a given row within the same column.     */
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined;
-    /** A Editor Component to use for this column.     */
-    @Input() public cellEditorComp: any;
-    /** Params to be passed to the Editor Component     */
-    @Input() public cellEditorCompParams: any;
-    /** Callback to select which Cell Editor and Params to use for this column.     */
-    @Input() public cellEditorCompSelector: CellEditorCompSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead
@@ -171,14 +173,12 @@ export class AgGridColumn {
     @Input() public newValueHandler: ((params: NewValueParams) => boolean) | undefined;
     /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined;
-    @Input() public cellEditorCompPopup: boolean | undefined;
     /** Set the position for the popup cell editor. Possible values are
      *   - `over` Popup will be positioned over the cell
      *   - `under` Popup will be positioned below the cell leaving the cell value visible.
      * 
      * Default: `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined;
-    @Input() public cellEditorCompPopupPosition: string | undefined;
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`.     */
     @Input() public onCellValueChanged: ((event: NewValueParams) => void) | undefined;
     /** Callback called when a cell is clicked.     */
@@ -199,10 +199,6 @@ export class AgGridColumn {
     @Input() public headerComponentFramework: any;
     /** The parameters to be passed to the header component.     */
     @Input() public headerComponentParams: any;
-    /** The custom header component to be used for rendering the component header.     */
-    @Input() public headerComp: any;
-    /** The parameters to be passed to the header component.     */
-    @Input() public headerCompParams: any;
     /** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.     */
     @Input() public menuTabs: string[] | undefined;
@@ -263,12 +259,6 @@ export class AgGridColumn {
     @Input() public cellRendererParams: any;
     /** Callback to select which cell renderer to be used for a given row within the same column.     */
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined;
-    /** A Cell Component to use for this column.     */
-    @Input() public cellRendererComp: any;
-    /** Params to be passed to the Cell Component.     */
-    @Input() public cellRendererCompParams: any;
-    /** Callback to select which Cell Component and Params to use for this column.     */
-    @Input() public cellRendererCompSelector: CellRendererCompSelectorFunc | undefined;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */

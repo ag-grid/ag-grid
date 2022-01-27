@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
     },
     {
         lockPosition: true,
-        cellRendererComp: ControlsCellRenderer,
+        cellRenderer: ControlsCellRenderer,
         cellClass: 'locked-col',
         width: 120,
         suppressNavigable: true,

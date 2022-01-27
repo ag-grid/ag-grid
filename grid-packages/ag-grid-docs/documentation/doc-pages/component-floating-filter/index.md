@@ -9,10 +9,6 @@ Floating Filter components allow you to add your own floating filter types to AG
 
 This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Floating Filter 
  
 md-include:simple-floating-filter-javascript.md

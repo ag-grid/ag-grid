@@ -289,6 +289,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public modules: Module[];
 
     // @START@
+    @Input() public comps: any = undefined;
+    @Input() public loadingOverlayComp: any = undefined;
+    @Input() public loadingOverlayCompParams: any = undefined;
+    @Input() public noRowsOverlayComp: any = undefined;
+    @Input() public noRowsOverlayCompParams: any = undefined;
+    @Input() public loadingRowCellComp: any = undefined;
+    @Input() public loadingRowCellCompParams: any = undefined;
     /** Specifies the status bar components to use in the status bar.     */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.     */
@@ -394,8 +401,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** A map of component names to framework (Angular, React, Vue etc.) components.     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    /** A map of component names to components (can be JavaScript OR Framework components).     */
-    @Input() public comps: { [p: string]: any; } | undefined = undefined;
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
      */
     @Input() public reactUi: boolean | undefined = undefined;
@@ -464,10 +469,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
-    /** Cell Comp to use when data is loading via a DataSource.     */
-    @Input() public loadingRowCellComp: any = undefined;
-    /** Params for Loading Cell Comp.     */
-    @Input() public loadingRowCellCompParams: any = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail. Default: `false`     */
@@ -533,10 +534,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
-    /** Loading Overlay Component.     */
-    @Input() public loadingOverlayComp: any = undefined;
-    /** Params for Loading Overlay Component     */
-    @Input() public loadingOverlayCompParams: any = undefined;
     /** Disables the 'loading' overlay. Default: `false`     */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
@@ -547,10 +544,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Provide a custom no rows overlay component     */
-    @Input() public noRowsOverlayComp: any = undefined;
-    /** Customise the parameters provided to the no rows overlay component.     */
-    @Input() public noRowsOverlayCompParams: any = undefined;
     /** Disables the 'no rows' overlay. Default: `false`     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled. Default: `false`     */

@@ -26,15 +26,6 @@ export interface ToolPanelDef {
     toolPanelFramework?: any;
     /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;
-
-    /**
-     * The tool panel component to use as the panel.
-     * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.
-     * To provide your own custom panel component, you reference it here.
-     */
-    toolPanelComp?: any;
-    /** Customise the parameters provided to the `toolPanel` component. */
-    toolPanelCompParams?: any;
 }
 
 export interface SideBarDef {

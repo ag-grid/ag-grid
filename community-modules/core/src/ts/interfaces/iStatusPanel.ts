@@ -5,8 +5,6 @@ import { IComponent } from "./iComponent";
 export interface StatusPanelDef {
     statusPanel?: { new(): IStatusPanelComp } | string;
     statusPanelFramework?: any;
-    statusPanelComp?: any;
-    statusPanelCompParams?: any;
     align?: string;
     key?: string;
     statusPanelParams?: any;

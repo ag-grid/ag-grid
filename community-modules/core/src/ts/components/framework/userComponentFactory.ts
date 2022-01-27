@@ -1,6 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
-import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
+import { CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
 import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
@@ -213,7 +213,7 @@ export class UserComponentFactory extends BeanStub {
                                                     paramsFromSelector: any
                                                 } {
 
-        const {propertyName, newPropName} = type;
+        const {propertyName} = type;
 
         let compName: string | undefined;
         let jsComp: any;
@@ -223,70 +223,37 @@ export class UserComponentFactory extends BeanStub {
 
         // there are two types of js comps, class based and func based. we can only check for
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
-        const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
-        const fwActive = this.frameworkComponentWrapper != null;
+        // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
+        // const fwActive = this.frameworkComponentWrapper != null;
 
         // pull from defObject if available
         if (defObject) {
             const defObjectAny = defObject as any;
 
-            const pullUsingNewCompAttribute = () => {
-                const selectorFunc: CellRendererCompSelectorFunc | CellEditorCompSelectorFunc = defObjectAny[newPropName + 'Selector'];
-                const selectorRes = selectorFunc ? selectorFunc(params) : null;
+            // if selector, use this
+            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
+            const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
-                const assignComp = (comp: any) => {
-                    // comp===true for filters, which means use the default comp
-                    if (comp==null || comp===true) { return; }
-                    if (typeof comp === 'string') {
-                        compName = comp as string;
-                    // we allow functional JS comps when FW is not active
-                    } else if (fwActive && !isJsClassComp(comp)) {
-                        fwComp = comp;
-                    } else {
-                        jsComp = comp;
-                    }
-                };
+            const assignComp = (providedJsComp: any, providedFwComp: any) => {
 
-                if (selectorRes) {
-                    assignComp(selectorRes.comp);
-                    paramsFromSelector = selectorRes.params;
-                } else {
-                    assignComp(defObjectAny[newPropName]);
+                if (typeof providedJsComp === 'string') {
+                    compName = providedJsComp as string;
+                } else if (typeof providedJsComp === 'string') {
+                    compName = providedFwComp as string;
+                // comp===true for filters, which means use the default comp
+                } else if (providedJsComp!=null && providedJsComp!==true) {
+                    jsComp = providedJsComp;
+                } else if (providedFwComp!=null) {
+                    fwComp = providedFwComp;
                 }
             };
-
-            const pullUsingOldCompAttribute = () => {
-                // if selector, use this
-                const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
-                const selectorRes = selectorFunc ? selectorFunc(params) : null;
-
-                const assignComp = (providedJsComp: any, providedFwComp: any) => {
-
-                    if (typeof providedJsComp === 'string') {
-                        compName = providedJsComp as string;
-                    } else if (typeof providedJsComp === 'string') {
-                        compName = providedFwComp as string;
-                    // comp===true for filters, which means use the default comp
-                    } else if (providedJsComp!=null && providedJsComp!==true) {
-                        jsComp = providedJsComp;
-                    } else if (providedFwComp!=null) {
-                        fwComp = providedFwComp;
-                    }
-                };
-                
-                if (selectorRes) {
-                    assignComp(selectorRes.component, selectorRes.frameworkComponent);
-                    paramsFromSelector = selectorRes.params;
-                } else {
-                    // if no selector, or result of selector is empty, take from defObject
-                    assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
-                }
-            };
-
-            pullUsingNewCompAttribute();
-            const compNotAssigned = compName==null && jsComp==null && fwComp==null;
-            if (compNotAssigned) {
-                pullUsingOldCompAttribute();
+            
+            if (selectorRes) {
+                assignComp(selectorRes.component, selectorRes.frameworkComponent);
+                paramsFromSelector = selectorRes.params;
+            } else {
+                // if no selector, or result of selector is empty, take from defObject
+                assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
             }
         }
 
@@ -339,17 +306,14 @@ export class UserComponentFactory extends BeanStub {
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams
         const defObjectAny = defObject as any;
-        const oldUserParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
-        const newUserParams = defObjectAny && defObjectAny[type.newPropName + 'Params'];
+        const userParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
 
-        [oldUserParams, newUserParams].forEach( userParams => {
-            if (typeof userParams === 'function') {
-                const userParamsFromFunc = userParams(paramsFromGrid);
-                mergeDeep(params, userParamsFromFunc);
-            } else if (typeof userParams === 'object') {
-                mergeDeep(params, userParams);
-            }
-        });
+        if (typeof userParams === 'function') {
+            const userParamsFromFunc = userParams(paramsFromGrid);
+            mergeDeep(params, userParamsFromFunc);
+        } else if (typeof userParams === 'object') {
+            mergeDeep(params, userParams);
+        }
 
         mergeDeep(params, paramsFromSelector);
 
@@ -373,7 +337,7 @@ export class UserComponentFactory extends BeanStub {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(compName);
         } else {
-            const usingDefaultFilter = (jsComp==null && fwComp==null) && (def.filter===true || def.filterComp===true);
+            const usingDefaultFilter = (jsComp==null && fwComp==null) && (def.filter===true);
             if (usingDefaultFilter) {
                 const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
                 defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';

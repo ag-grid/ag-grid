@@ -44,9 +44,6 @@ export interface AbstractColDef {
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
 
-    tooltipComp?: any;
-    tooltipCompParams?: any;
-
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
 }
@@ -66,11 +63,6 @@ export interface ColGroupDef extends AbstractColDef {
     headerGroupComponentFramework?: any;
     /** The params used to configure the header group component. */
     headerGroupComponentParams?: any;
-
-    /** The custom header group component to be used for rendering the component header. */
-    headerGroupComp?: any;
-    /** The params used to configure the header group component. */
-    headerGroupCompParams?: any;
 }
 
 export interface IAggFunc {
@@ -204,13 +196,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc;
 
-    /** A Editor Component to use for this column. */
-    cellEditorComp?: any;
-    /** Params to be passed to the Editor Component */
-    cellEditorCompParams?: any;
-    /** Callback to select which Cell Editor and Params to use for this column. */
-    cellEditorCompSelector?: CellEditorCompSelectorFunc;
-
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
     /** @deprecated use `valueSetter` instead */
@@ -220,7 +205,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * Set to `true`, to have the cell editor appear in a popup.
      */
     cellEditorPopup?: boolean;
-    cellEditorCompPopup?: boolean;
     /**
      * Set the position for the popup cell editor. Possible values are
      *  - `over` Popup will be positioned over the cell
@@ -228,7 +212,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *
      * Default: `over`. */
     cellEditorPopupPosition?: string;
-    cellEditorCompPopupPosition?: string;
 
     // *** Columns: Events *** //
 
@@ -258,11 +241,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     headerComponentFramework?: any;
     /** The parameters to be passed to the header component. */
     headerComponentParams?: any;
-
-    /** The custom header component to be used for rendering the component header. */
-    headerComp?: any;
-    /** The parameters to be passed to the header component. */
-    headerCompParams?: any;
 
     /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
@@ -339,13 +317,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellRendererParams?: any;
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc;
-
-    /** A Cell Component to use for this column. */
-    cellRendererComp?: any;
-    /** Params to be passed to the Cell Component. */
-    cellRendererCompParams?: any;
-    /** Callback to select which Cell Component and Params to use for this column. */
-    cellRendererCompSelector?: CellRendererCompSelectorFunc;
 
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */
     autoHeight?: boolean;
@@ -708,17 +679,4 @@ export interface CellEditorSelectorResult {
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;
-}
-
-export interface CellRendererCompSelectorFunc {
-    (params: ICellRendererParams): CompSelectorResult | undefined;
-}
-
-export interface CellEditorCompSelectorFunc {
-    (params: ICellEditorParams): CompSelectorResult | undefined;
-}
-
-export interface CompSelectorResult {
-    comp?: any;
-    params?: any; //Should these both be optional??
 }
