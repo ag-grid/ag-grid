@@ -4,6 +4,7 @@ import { ColDef, GridApi, ICellRendererParams, RowNode } from 'ag-grid-community
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
+import { FindValueSubscriber } from 'rxjs/internal/operators/find';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -37,30 +38,35 @@ class DeltaIndicator {
     getGui() {
         return this.eGui;
     }
+    refresh() { return false; }
 }
 
 // This is a plain JS (not Angular) component
 class DaysSunshineRenderer {
     private eGui!: HTMLElement;
-    init(params: ICellRendererParams & { rendererImage: string }) {
+    init(params: ICellRendererParams) {
         const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
+        const pAny = params as any;
+        this.eGui = createImageSpan(daysSunshine, pAny.rendererImage);
     }
     getGui() {
         return this.eGui;
     }
+    refresh() { return false; }
 }
 
 // This is a plain JS (not Angular) component
 class RainPerTenMmRenderer {
     private eGui!: HTMLElement;
-    init(params: ICellRendererParams & { rendererImage: string }) {
+    init(params: ICellRendererParams) {
         const rainPerTenMm = params.value / 10;
-        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
+        const pAny = params as any;
+        this.eGui = createImageSpan(rainPerTenMm, pAny.rendererImage);
     }
     getGui() {
         return this.eGui;
     }
+    refresh() { return false; }
 }
 
 @Component({
@@ -96,34 +102,34 @@ export class AppComponent {
             headerName: "Max Temp (\u02DAC)",
             field: "Max temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Min Temp (\u02DAC)",
             field: "Min temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Days of Air Frost",
             field: "Days of air frost (days)",
             width: 233,
-            cellRendererComp: DaysFrostRenderer,
-            cellRendererCompParams: { rendererImage: "frost.png" }
+            cellRendererFramework: DaysFrostRenderer,
+            cellRendererParams: { rendererImage: "frost.png" }
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
-            cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: { rendererImage: "sun.png" }
+            cellRenderer: DaysSunshineRenderer,
+            cellRendererParams: { rendererImage: "sun.png" }
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
-            cellRendererComp: RainPerTenMmRenderer,
-            cellRendererCompParams: { rendererImage: "rain.png" }
+            cellRenderer: RainPerTenMmRenderer,
+            cellRendererParams: { rendererImage: "rain.png" }
         }
     ];
 

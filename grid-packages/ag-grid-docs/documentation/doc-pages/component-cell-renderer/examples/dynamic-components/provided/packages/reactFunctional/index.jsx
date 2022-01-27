@@ -67,7 +67,7 @@ const GridExample = () => {
         {
             headerName: "Square",
             field: "value",
-            cellRendererComp: SquareRenderer,
+            cellRendererFramework: SquareRenderer,
             editable: true,
             colId: "square",
             width: 150
@@ -75,28 +75,28 @@ const GridExample = () => {
         {
             headerName: "Cube",
             field: "value",
-            cellRendererComp: CubeRenderer,
+            cellRendererFramework: CubeRenderer,
             colId: "cube",
             width: 150
         },
         {
             headerName: "Row Params",
             field: "row",
-            cellRendererComp: ParamsRenderer,
+            cellRendererFramework: ParamsRenderer,
             colId: "params",
             width: 150
         },
         {
             headerName: "Currency (Pipe)",
             field: "currency",
-            cellRendererComp: CurrencyRenderer,
+            cellRendererFramework: CurrencyRenderer,
             colId: "currency",
             width: 120
         },
         {
             headerName: "Child/Parent",
             field: "value",
-            cellRendererComp: ChildMessageRenderer,
+            cellRendererFramework: ChildMessageRenderer,
             colId: "params",
             editable: false,
             minWidth: 150

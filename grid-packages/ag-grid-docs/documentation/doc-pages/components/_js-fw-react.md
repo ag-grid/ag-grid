@@ -5,11 +5,11 @@
 |1. Provide an AG Grid component as a React Component.
 |1. Provide an AG Grid component in JavaScript.
 |
-|When referencing React components directly, use `xxxFramework` (eg `cellRendererFramework`).
+|When referencing React components directly, use `xxxFramework` (eg `cellRendererFramework = MyReactComp`).
 |
-|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer`).
+|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer = MyJsComp`).
 |
-|When looking up JavaScript or React components, use `xxx` (eg `cellRenderer`) for both.
+|When looking up JavaScript or React components, use `xxx` (eg `cellRenderer = 'myCompName'`) for both.
 |
 |The following code snippet shows how both JavaScript and React Components can be used at the same time:
 |

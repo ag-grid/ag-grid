@@ -101,34 +101,34 @@ const VueExample = {
                     headerName: "Max Temp (\u02DAC)",
                     field: "Max temp (C)",
                     width: 120,
-                    cellRendererComp: 'deltaIndicator'
+                    cellRenderer: 'deltaIndicator'
                 },
                 {
                     headerName: "Min Temp (\u02DAC)",
                     field: "Min temp (C)",
                     width: 120,
-                    cellRendererComp: 'deltaIndicator'
+                    cellRenderer: 'deltaIndicator'
                 },
                 {
                     headerName: "Days of Air Frost",
                     field: "Days of air frost (days)",
                     width: 233,
-                    cellRendererComp: "daysFrostRenderer",
-                    cellRendererCompParams: {rendererImage: "frost.png"}    // Complementing the Cell Renderer parameters
+                    cellRenderer: "daysFrostRenderer",
+                    cellRendererParams: {rendererImage: "frost.png"}    // Complementing the Cell Renderer parameters
                 },
                 {
                     headerName: "Days Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
-                    cellRendererComp: 'daysSunshineRenderer',
-                    cellRendererCompParams: {rendererImage: "sun.png"}      // Complementing the Cell Renderer parameters
+                    cellRenderer: 'daysSunshineRenderer',
+                    cellRendererParams: {rendererImage: "sun.png"}      // Complementing the Cell Renderer parameters
                 },
                 {
                     headerName: "Rainfall (10mm)",
                     field: "Rainfall (mm)",
                     width: 180,
-                    cellRendererComp: 'rainPerTenMmRenderer',
-                    cellRendererCompParams: {rendererImage: "rain.png"}     // Complementing the Cell Renderer parameters
+                    cellRenderer: 'rainPerTenMmRenderer',
+                    cellRendererParams: {rendererImage: "rain.png"}     // Complementing the Cell Renderer parameters
                 }
             ],
             defaultColDef: {

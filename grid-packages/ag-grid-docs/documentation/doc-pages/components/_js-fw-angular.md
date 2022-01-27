@@ -5,11 +5,11 @@
 |1. Provide an AG Grid component as an Angular Component.
 |1. Provide an AG Grid component in JavaScript.
 |
-|When referencing Angular components directly, use `xxxFramework` (eg `cellRendererFramework`).
+|When referencing Angular components directly, use `xxxFramework` (eg `cellRendererFramework = MyAngularComp`).
 |
-|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer`).
+|When referencing JavaScript components directly, use `xxx` (eg `cellRenderer = MyJsComp`).
 |
-|When looking up JavaScript or Angular components, use `xxx` (eg `cellRenderer`) for both.
+|When looking up JavaScript or Angular components, use `xxx` (eg `cellRenderer = 'myCompName'`) for both.
 |
 |The following code snippet shows how both JavaScript and Angular Components can be used at the same time:
 |

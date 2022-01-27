@@ -33,19 +33,19 @@ const VueExample = {
                 {field: "year"},
                 {
                     field: "gold",
-                    cellRendererComp: "medalCellRenderer"
+                    cellRenderer: "medalCellRenderer"
                 },
                 {
                     field: "silver",
-                    cellRendererComp: "medalCellRenderer"
+                    cellRenderer: "medalCellRenderer"
                 },
                 {
                     field: "bronze",
-                    cellRendererComp: "medalCellRenderer"
+                    cellRenderer: "medalCellRenderer"
                 }, {
                     field: "total",
                     minWidth: 175,
-                    cellRendererComp: "totalValueRenderer"
+                    cellRenderer: "totalValueRenderer"
                 }
             ],
             defaultColDef: {
