@@ -104,6 +104,7 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
  * output.
  */
 export const DELETE = Symbol('<delete-property>') as any;
+const NOT_SPECIFIED = Symbol('<unspecified-property>') as any;
 
 /**
  * Merge together the provide JSON object structures, with the precedence of application running
@@ -117,29 +118,53 @@ export const DELETE = Symbol('<delete-property>') as any;
  * @returns the combination of all of the json inputs
  */
 export function jsonMerge<T>(...json: T[]): T {
-    if (json.some(v => v instanceof Array)) {
-        throw new Error(`AG Charts - merge of arrays not supported: ${JSON.stringify(json)}`);
+    const jsonTypes = json.map(v => classify(v));
+    if (jsonTypes.some(v => v === 'array')) {
+        // Clone final array.
+        const finalValue = json[json.length - 1];
+        if (finalValue instanceof Array) {
+            return finalValue.map((v) => {
+                const type = classify(v);
+                return type === 'array' ? jsonMerge([], v) : 
+                    type === 'object' ? jsonMerge({}, v) :
+                    v;
+            }) as any;
+        }
+
+        return finalValue;
     }
 
-    const result = deepClone(json[0]);
+    const result: any = {};
+    const props = new Set(
+        json.map((v) => v != null ? Object.keys(v) : [])
+            .reduce((r, n) => r.concat(n), []),
+    );
 
-    for (const nextJson of json.slice(1)) {
-        for (const nextProp in nextJson) {
-            if (nextJson[nextProp] === DELETE) { 
-                delete result[nextProp];
-            } else if (result[nextProp] instanceof Array) {
-                // Overwrite array properties that already exist.
-                result[nextProp] = deepClone(nextJson[nextProp]);
-            } else if (typeof result[nextProp] === 'object') {
-                // Recursively merge complex objects.
-                result[nextProp] = jsonMerge(result[nextProp], nextJson[nextProp]);
-            } else if (typeof nextJson[nextProp] === 'object') {
-                // Deep clone of nested objects.
-                result[nextProp] = deepClone(nextJson[nextProp]);
-            } else {
-                // Just directly assign/overwrite.
-                result[nextProp] = nextJson[nextProp];
-            }
+    for (const nextProp of props) {
+        const values = json.map(j => j != null && nextProp in j ? (j as any)[nextProp] : NOT_SPECIFIED)
+            .filter(v => v !== NOT_SPECIFIED);
+        
+        if (values.length === 0) {
+            continue;
+        }
+        const lastValue = values[values.length - 1];
+        if (lastValue === DELETE) {
+            continue;
+        }
+
+        const types = values.map(v => classify(v));
+        const type = types[0];
+        if (types.some(t => t !== type && t !== null)) {
+            // Short-circuit if mismatching types.
+            result[nextProp] = lastValue;
+            continue;
+        }
+
+        if (type === 'array' || type === 'object') {
+            result[nextProp] = jsonMerge(...values);
+        } else {
+            // Just directly assign/overwrite.
+            result[nextProp] = lastValue;
         }
     }
 
@@ -165,7 +190,7 @@ export function jsonApply<
     source?: Source,
     params: {
         path?: string,
-        skip?: (keyof Source)[],
+        skip?: (keyof Source | keyof Target)[],
         constructors?: Record<string, new () => any>,
     } = {},
 ): Target {
@@ -219,21 +244,67 @@ export function jsonApply<
     return target;
 }
 
-function deepClone<T>(input: T): T {
-    return JSON.parse(JSON.stringify(input));
+/**
+ * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
+ * Arrays are descended into without a callback, however their elements will have the visit()
+ * callback invoked if they are objects.
+ * 
+ * @param json to traverse
+ * @param visit callback for each non-primitive and non-array object found
+ * @param jsons to traverse in parallel
+ */
+export function jsonWalk(
+    json: any,
+    visit: (classification: Classification, node: any, ...otherNodes: any[]) => void,
+    opts: {
+        skip?: string[],
+    },
+    ...jsons: any[]
+) {
+    const jsonType = classify(json);
+    const skip = opts.skip || [];
+
+    if (jsonType === 'array') {
+        json.forEach((element: any, index: number) => {
+            jsonWalk(element, visit, opts, ...jsons?.map(o => o?.[index]));
+        });
+        return;
+    } else if (jsonType !== 'object') {
+        return;
+    }
+
+    visit(jsonType, json, ...jsons);
+    for (const property in json) {
+        if (skip.indexOf(property) >= 0) { continue; }
+
+        const value = json[property];
+        const otherValues = jsons?.map(o => o?.[property]);
+        const valueType = classify(value);
+
+        if (valueType === 'object' || valueType === 'array') {
+            jsonWalk(value, visit, opts, ...otherValues);
+        }
+    }
 }
 
+type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */
-function classify(value: any): 'array' | 'object' | 'primitive' | null {
-    if (value instanceof Array) {
+function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | null {
+    if (value == null) {
+        return null;
+    } else if (value instanceof HTMLElement) {
+        return 'primitive';
+    } else if (value instanceof Array) {
         return 'array';
+    } else if (value instanceof Date) {
+        return 'primitive';
     } else if (typeof value === 'object') {
         return 'object';
-    } else if (value != null) {
-        return 'primitive';
+    } else if (typeof value === 'function') {
+        return 'function';
     }
 
-    return null;
+    return 'primitive';
 }

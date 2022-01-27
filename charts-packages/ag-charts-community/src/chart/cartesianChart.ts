@@ -292,6 +292,10 @@ export class CartesianChart extends Chart {
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
 
+            if (boundSeries.length === 0) {
+                throw new Error('AG Charts - boundSeries not initialised.');
+            }
+
             if (axis.linkedTo) {
                 axis.domain = axis.linkedTo.domain;
             } else {

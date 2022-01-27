@@ -566,6 +566,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     grouped?: boolean;
     normalizedTo?: number;
     xKey?: string;
+    yKey?: string;
     yKeys?: string[] | string[][];
     xName?: string;
     yNames?: string[] | { [key in string]: string };
@@ -712,7 +713,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
         large?: AgChartLabelOptions;
         medium?: AgChartLabelOptions;
         small?: AgChartLabelOptions;
-        value?: AgChartLabelOptions;
+        color?: AgChartLabelOptions;
     },
     labelKey?: string;
     sizeKey?: string;

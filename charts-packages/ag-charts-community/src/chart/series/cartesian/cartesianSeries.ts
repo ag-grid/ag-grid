@@ -48,7 +48,7 @@ export interface CartesianSeriesMarkerFormat {
 }
 
 export class CartesianSeriesMarker extends SeriesMarker {
-    formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat;
+    formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat = undefined;
 }
 
 export interface CartesianSeriesMarkerFormatterParams extends SeriesMarkerFormatterParams {
