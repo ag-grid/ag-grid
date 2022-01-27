@@ -276,6 +276,12 @@ const AG_GRID_LOCALE_EN = {
     ariaSearch: 'Search',
     ariaSearchFilterValues: 'Search filter values',
 
+    ariaRowGroupDropZonePanelLabel: 'Row Groups',
+    ariaValuesDropZonePanelLabel: 'Values',
+    ariaPivotDropZonePanelLabel: 'Column Labels',
+    ariaDropZoneColumnComponentDescription: 'Press DELETE to remove',
+    ariaDropZoneColumnValueItemDescription: 'Press ENTER to change the aggregation type',
+
     // ARIA Labels for Dialogs
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelCellEditor: 'Cell Editor',

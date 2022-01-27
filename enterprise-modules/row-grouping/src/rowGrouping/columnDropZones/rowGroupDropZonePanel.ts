@@ -50,6 +50,13 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     }
 
+    protected getAriaLabel(): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
+
+        return label;
+    }
+
     public getTooltipParams(): ITooltipParams {
         const res = super.getTooltipParams();
         res.location = 'rowGroupColumnsList';

@@ -69,11 +69,12 @@ export abstract class BaseDropZonePanel extends Component {
     protected abstract updateColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
     protected abstract getIconName(): string;
+    protected abstract getAriaLabel(): string;
 
     @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
-        super(/* html */ `<div class="ag-unselectable"></div>`);
+        super(/* html */ `<div class="ag-unselectable" role="group"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
         this.addElementClasses(this.eColumnDropList, 'list');
@@ -120,6 +121,7 @@ export abstract class BaseDropZonePanel extends Component {
         // if columnModel first, then below will work
         // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
         this.refreshGui();
+        _.setAriaLabel(this.getGui(), this.getAriaLabel());
     }
 
     private addElementClasses(el: HTMLElement, suffix?: string) {

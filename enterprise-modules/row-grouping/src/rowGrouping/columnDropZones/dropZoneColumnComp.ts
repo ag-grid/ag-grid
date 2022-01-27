@@ -46,20 +46,28 @@ export class DropZoneColumnComp extends Component {
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private displayName: string | null;
 
     private popupShowing = false;
 
-    constructor(private column: Column, private dragSourceDropTarget: DropTarget, private ghost: boolean, private valueColumn: boolean, private horizontal: boolean) {
+    constructor(
+        private column: Column,
+        private dragSourceDropTarget: DropTarget,
+        private ghost: boolean,
+        private valueColumn: boolean,
+        private horizontal: boolean
+    ) {
         super();
     }
 
     @PostConstruct
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
-        this.addElementClasses(this.getGui());
+        const eGui = this.getGui();
+        const isFunctionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly()
+
+        this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
         this.addElementClasses(this.eText, 'text');
         this.addElementClasses(this.eButton, 'button');
@@ -70,9 +78,19 @@ export class DropZoneColumnComp extends Component {
         this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
 
-        if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+        if (!this.ghost && !isFunctionsReadOnly) {
             this.addDragSource();
         }
+
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const label = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        let extraDescription = '';
+
+        if (this.valueColumn && !isFunctionsReadOnly) {
+            extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
+        }
+
+        _.setAriaLabel(eGui, `${this.displayName} ${label} ${extraDescription}`);
 
         this.setupTooltip();
     }
@@ -129,14 +147,17 @@ export class DropZoneColumnComp extends Component {
         const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.ENTER) {
-                const isMenu = e.ctrlKey || e.metaKey;
+            const isEnter = e.key === KeyCode.ENTER;
+            const isDelete = e.key === KeyCode.DELETE;
 
-                if (isMenu && this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
-                    this.onShowAggFuncSelection();
-                } else {
-                    this.dispatchEvent(agEvent);
-                }
+            if (isDelete) {
+                e.preventDefault();
+                this.dispatchEvent(agEvent);
+            }
+
+            if (isEnter && this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+                e.preventDefault();
+                this.onShowAggFuncSelection();
             }
         });
 

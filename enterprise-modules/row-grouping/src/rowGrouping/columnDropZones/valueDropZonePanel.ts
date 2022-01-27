@@ -51,6 +51,13 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
+    protected getAriaLabel(): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const label = translate('ariaPivotDropZonePanelLabel', 'Values');
+
+        return label;
+    }
+
     public getTooltipParams(): ITooltipParams {
         const res = super.getTooltipParams();
         res.location = 'valueColumnsList';
