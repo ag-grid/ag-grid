@@ -69,7 +69,7 @@ const VueExample = {
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
                     class="ag-theme-alpine"
-                    :comps="comps"
+                    :components="components"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
                     :defaultColDef="defaultColDef"
@@ -85,7 +85,7 @@ const VueExample = {
     data: function () {
         return {
             gridApi: null,
-            comps: {
+            components: {
                 deltaIndicator: DeltaIndicator,
                 daysSunshineRenderer: DaysSunshineRenderer,
                 rainPerTenMmRenderer: RainPerTenMmRenderer

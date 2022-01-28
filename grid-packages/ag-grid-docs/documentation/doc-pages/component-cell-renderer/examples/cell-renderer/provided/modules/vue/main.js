@@ -74,7 +74,7 @@ const VueExample = {
                     :rowData="rowData"
                     :defaultColDef="defaultColDef"
                     :modules="modules"
-                    :comps="comps"
+                    :components="components"
                     @grid-ready="onGridReady">
             </ag-grid-vue>
         </div>
@@ -86,7 +86,7 @@ const VueExample = {
     },
     data: function () {
         return {
-            comps: {
+            components: {
                 deltaIndicator: DeltaIndicator,
                 daysSunshineRenderer: DaysSunshineRenderer,
                 rainPerTenMmRenderer: RainPerTenMmRenderer

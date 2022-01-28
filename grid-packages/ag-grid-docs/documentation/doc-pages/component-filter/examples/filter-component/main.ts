@@ -5,7 +5,7 @@ const columnDefs: ColDef[] = [
     { field: 'row' },
     {
         field: 'name',
-        filterComp: PartialMatchFilter,
+        filterFramework: PartialMatchFilter,
         menuTabs: ['filterMenuTab'],
     },
 ]

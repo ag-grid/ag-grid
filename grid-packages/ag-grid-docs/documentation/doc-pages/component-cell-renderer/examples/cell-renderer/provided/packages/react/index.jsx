@@ -78,13 +78,13 @@ class GridExample extends Component {
                     headerName: "Max Temp (\u02DAC)",
                     field: "Max temp (C)",
                     width: 120,
-                    cellRendererFramework: DeltaIndicator
+                    cellRenderer: DeltaIndicator
                 },
                 {
                     headerName: "Min Temp (\u02DAC)",
                     field: "Min temp (C)",
                     width: 120,
-                    cellRendererFramework: DeltaIndicator
+                    cellRenderer: DeltaIndicator
                 },
                 {
                     headerName: "Days of Air Frost",
@@ -97,14 +97,14 @@ class GridExample extends Component {
                     headerName: "Days Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
-                    cellRendererFramework: DaysSunshineRenderer,
+                    cellRenderer: DaysSunshineRenderer,
                     cellRendererParams: {rendererImage: "sun.png"}
                 },
                 {
                     headerName: "Rainfall (10mm)",
                     field: "Rainfall (mm)",
                     width: 180,
-                    cellRendererFramework: RainPerTenMmRenderer,
+                    cellRenderer: RainPerTenMmRenderer,
                     cellRendererParams: {rendererImage: "rain.png"}
                 }
             ],
