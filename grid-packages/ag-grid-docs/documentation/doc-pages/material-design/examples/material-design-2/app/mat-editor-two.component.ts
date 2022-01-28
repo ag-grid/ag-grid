@@ -68,7 +68,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Percentage (popup slider editor)",
                 field: "percentage",
-                cellEditorComp: MatSliderComponent,
+                cellEditorFramework: MatSliderComponent,
                 cellEditorParams: {
                     thumbLabel: true
                 },
@@ -77,7 +77,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "On/Off (button toggle header)",
                 field: "on_off",
-                headerComp: MatButtonToggleHeaderComponent,
+                headerComponentFramework: MatButtonToggleHeaderComponent,
                 cellStyle: params => {
                     return { "text-align": this.onOffColumnAlignment };
                 }
@@ -85,7 +85,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Random (progress spinner)",
                 field: "random_col",
-                cellRendererComp: MatProgressSpinnerComponent,
+                cellRendererFramework: MatProgressSpinnerComponent,
                 cellStyle: () => {
                     return { padding: "0px" };
                 }

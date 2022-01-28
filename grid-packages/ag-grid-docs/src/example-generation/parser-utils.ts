@@ -39,6 +39,7 @@ export function convertFrameworkRendersToVanilla(code: string) {
         .replace(/fullWidthCellRendererFramework:/g, 'fullWidthCellRenderer:')
         .replace(/groupRowRendererFramework:/g, 'groupRowRenderer:')
         .replace(/groupRowInnerRendererFramework:/g, 'groupRowInnerRenderer:')
+        .replace(/statusPanelFramework:/g, 'statusPanel:')
         .replace(/innerRendererFramework:/g, 'innerRenderer:')
         .replace(/frameworkComponent:/g, 'component:')
         .replace(/frameworkComponents:/g, 'components:')

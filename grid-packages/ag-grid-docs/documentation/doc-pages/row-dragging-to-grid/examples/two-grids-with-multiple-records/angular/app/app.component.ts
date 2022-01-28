@@ -1,11 +1,11 @@
-import {Component, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams} from '@ag-grid-community/core';
-import {ICellRendererAngularComp} from '@ag-grid-community/angular';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 @Component({
     selector: 'simple-component',
@@ -21,7 +21,7 @@ export class SportRenderer implements ICellRendererAngularComp {
     }
 
     applyTransaction() {
-        this.params.api.applyTransaction({remove: [this.params.node.data]});
+        this.params.api.applyTransaction({ remove: [this.params.node.data] });
     }
 
     refresh() {
@@ -132,8 +132,8 @@ export class AppComponent {
             suppressMenu: true,
             headerCheckboxSelection: true
         },
-        {field: "athlete"},
-        {field: "sport"}
+        { field: "athlete" },
+        { field: "sport" }
     ];
 
     rightColumns: ColDef[] = [
@@ -148,12 +148,12 @@ export class AppComponent {
                 return params.rowNode!.data.athlete;
             },
         },
-        {field: "athlete"},
-        {field: "sport"},
+        { field: "athlete" },
+        { field: "sport" },
         {
             suppressMenu: true,
             maxWidth: 50,
-            cellRendererComp: SportRenderer
+            cellRendererFramework: SportRenderer
         }
     ]
 

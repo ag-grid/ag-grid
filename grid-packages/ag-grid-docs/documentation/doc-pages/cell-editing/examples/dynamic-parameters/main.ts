@@ -16,11 +16,11 @@ const gridOptions: GridOptions = {
     { field: 'name' },
     {
       field: 'gender',
-      cellRenderer: GenderCellRenderer,
+      cellRendererFramework: GenderCellRenderer,
       cellEditor: 'agRichSelectCellEditor',
       cellEditorParams: {
         values: ['Male', 'Female'],
-        cellRenderer: GenderCellRenderer,
+        cellRendererFramework: GenderCellRenderer,
       },
     },
     {
