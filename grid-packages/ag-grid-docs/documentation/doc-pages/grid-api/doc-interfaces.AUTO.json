@@ -2333,14 +2333,6 @@
       "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "detailRowCellComp": {
-      "description": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "detailRowCellCompParams": {
-      "description": "/** Params for Detail Cell Component */",
-      "type": { "returnType": "any", "optional": true }
-    },
     "detailRowHeight": {
       "description": "/** Set fixed height in pixels for each detail row. */",
       "type": { "returnType": "number", "optional": true }
@@ -2601,14 +2593,6 @@
       "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "fullWidthCellComp": {
-      "description": "/** Sets the Cell Comp to use for full width rows. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "fullWidthCellCompParams": {
-      "description": "/** Customise the parameters provided to Full Width Cell Comp. */",
-      "type": { "returnType": "any", "optional": true }
-    },
     "embedFullWidthRows": {
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2686,14 +2670,6 @@
     },
     "groupRowRendererParams": {
       "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowCellComp": {
-      "description": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowCellCompParams": {
-      "description": "/** Customise the parameters provided to the Group Row Comp component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMakeColumnVisibleAfterUnGroup": {
@@ -14206,7 +14182,7 @@
         "optional": true
       }
     },
-    "cellRendererComp": {
+    "cellRendererFramework": {
       "description": "/** Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
       "type": { "returnType": "any", "optional": true }
     },

@@ -329,14 +329,6 @@
     "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
     "type": { "returnType": "any" }
   },
-  "detailRowCellComp": {
-    "description": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
-    "type": { "returnType": "any" }
-  },
-  "detailRowCellCompParams": {
-    "description": "/** Params for Detail Cell Component */",
-    "type": { "returnType": "any" }
-  },
   "detailRowHeight": {
     "description": "/** Set fixed height in pixels for each detail row. */",
     "type": { "returnType": "number" }
@@ -587,14 +579,6 @@
     "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
     "type": { "returnType": "any" }
   },
-  "fullWidthCellComp": {
-    "description": "/** Sets the Cell Comp to use for full width rows. */",
-    "type": { "returnType": "any" }
-  },
-  "fullWidthCellCompParams": {
-    "description": "/** Customise the parameters provided to Full Width Cell Comp. */",
-    "type": { "returnType": "any" }
-  },
   "embedFullWidthRows": {
     "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
     "type": { "returnType": "boolean" }
@@ -671,14 +655,6 @@
   },
   "groupRowRendererParams": {
     "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
-    "type": { "returnType": "any" }
-  },
-  "groupRowCellComp": {
-    "description": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
-    "type": { "returnType": "any" }
-  },
-  "groupRowCellCompParams": {
-    "description": "/** Customise the parameters provided to the Group Row Comp component. */",
     "type": { "returnType": "any" }
   },
   "suppressMakeColumnVisibleAfterUnGroup": {
