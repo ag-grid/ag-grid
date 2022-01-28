@@ -41,30 +41,13 @@ export class AgGridColumn {
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
-    @Input() public headerGroupComp: any;
-    @Input() public headerGroupCompParams: any;
-    @Input() public cellRendererComp: any;
-    @Input() public cellRendererCompParams: any;
-    @Input() public cellEditorComp: any;
-    @Input() public cellEditorCompParams: any;
-    @Input() public filterComp: any;
     @Input() public filterFramework: any;
     @Input() public filterParams: any;
-    @Input() public headerComp: any;
-    @Input() public headerCompParams: any;
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
-    @Input() public floatingFilterComp: any;
-    @Input() public floatingFilterCompParams: any;
     @Input() public floatingFilterFramework: any;
-    @Input() public tooltipComp: any;
-    @Input() public tooltipCompParams: any;
     @Input() public filter: any;
-    @Input() public cellEditorCompPopupPosition: any;
-    @Input() public cellRendererCompSelector: any;
-    @Input() public cellEditorCompSelector: any;
-    @Input() public cellEditorCompPopup: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
     /** Function or expression. Gets the value for display in the header.     */
@@ -387,7 +370,6 @@ export class AgGridColumn {
     static ngAcceptInputType_singleClickEdit: boolean | null | '';
     static ngAcceptInputType_floatingFilter: boolean | null | '';
     static ngAcceptInputType_cellEditorPopup: boolean | null | '';
-    static ngAcceptInputType_cellEditorCompPopup: boolean | null | '';
     static ngAcceptInputType_suppressFillHandle: boolean | null | '';
     // @END@
 
