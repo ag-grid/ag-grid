@@ -187,22 +187,26 @@ On top of the parameters provided by the grid, you can also provide your own par
 |```js
 |colDef = {
 |    ...
-|    headerComponent: MyHeaderComponent;
+|    headerComponentFramework: MyHeaderComponent;
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }
 |}
 |```
 [[only-react]]
-|```jsx
-|{/* the pound symbol will be placed into params */}
-|<AgGridColumn field="age" headerComponent: "myHeaderComponent" headerComponentParams={{currencySymbol: '£'}} />
-|```
+|```js
+|colDef = {
+|    ...
+|    headerComponentFramework: MyHeaderComponent;
+|    headerComponentParams : {
+|        currencySymbol: '£' // the pound symbol will be placed into params
+|    }
+|}|```
 [[only-vue]]
 |```js
 |colDef = {
 |    ...
-|    headerComponent: MyHeaderComponent;
+|    headerComponentFramework: 'MyHeaderComponent';
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }
