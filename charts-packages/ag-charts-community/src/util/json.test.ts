@@ -76,6 +76,19 @@ describe('json module', () => {
                 expect(diff).not.toHaveProperty('unchanging');
                 expect(diff).not.toHaveProperty('hello1.nestedX2.primitive');
             });
+
+            it('should correctly diff function changes in arrays', () => {
+                const source = {
+                    foo: [{ fn: () => 'hello-world!'}],
+                };
+                const target = {
+                    foo: [{ fn: () => 'foo-bar!?!?!'}],
+                };
+
+                const diff = jsonDiff(source, target as any);
+                expect(diff).toMatchSnapshot();
+                expect(diff).toHaveProperty(['foo', '0', 'fn'], target.foo[0].fn);
+            });
         });
     });
 

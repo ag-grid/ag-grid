@@ -177,7 +177,7 @@ export abstract class AgChartV2 {
             return AgChartV2.create(options);
         }
 
-        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions);
+        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, { stringify: ['data']});
         if (deltaOptions == null) {
             return chart as T;
         }
@@ -285,32 +285,29 @@ export abstract class AgChartV2 {
         } = {};
 
         const { palette: { fills, strokes } } = context;
-        const repeatedFills = [...fills, ...fills];
-        const repeatedStrokes = [...strokes, ...strokes];
         
         const inputAny = (input as any);
-        const { colourIndex } = context;
         let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
         switch (input.type) {
             case 'pie':
-                colourCount = Math.min(fills.length, strokes.length);
+                colourCount = Math.max(fills.length, strokes.length);
             case 'area':
             case 'bar':
             case 'column':
-                paletteOptions.fills = repeatedFills.slice(colourIndex, colourIndex + colourCount);
-                paletteOptions.strokes = repeatedStrokes.slice(colourIndex, colourIndex + colourCount);
+                paletteOptions.fills = takeColours(context, fills, colourCount);
+                paletteOptions.strokes = takeColours(context, strokes, colourCount);
                 break;
             case 'histogram':
-                paletteOptions.fill = fills[colourIndex % fills.length];
-                paletteOptions.stroke = strokes[colourIndex % strokes.length];
+                paletteOptions.fill = takeColours(context, fills, 1)[0];
+                paletteOptions.stroke = takeColours(context, strokes, 1)[0];
                 break;
             case 'scatter':
-                paletteOptions.fill = fills[colourIndex % fills.length];
+                paletteOptions.fill = takeColours(context, fills, 1)[0];
             case 'line':
-                paletteOptions.stroke = strokes[colourIndex % strokes.length];
+                paletteOptions.stroke = takeColours(context, strokes, 1)[0];
                 paletteOptions.marker = {
-                    stroke: strokes[colourIndex % strokes.length],
-                    fill: fills[colourIndex % fills.length],
+                    stroke: takeColours(context, strokes, 1)[0],
+                    fill: takeColours(context, fills, 1)[0],
                 };
                 break;
             case 'treemap':
@@ -329,6 +326,16 @@ export abstract class AgChartV2 {
         const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
         return jsonMerge(...defaults, input, removeOptions);
     }
+}
+
+function takeColours(context: PreparationContext, colours: string[], maxCount: number): string[] {
+    const result = [];
+
+    for (let count = 0; count < Math.min(maxCount, colours.length); count++) {
+        result.push(colours[(count + context.colourIndex) % colours.length]);
+    }
+
+    return result;
 }
 
 function applyChartOptions<

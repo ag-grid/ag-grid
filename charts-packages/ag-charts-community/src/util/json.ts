@@ -37,10 +37,27 @@ export type DeepPartial<T> = {
  * 
  * @param source starting point for diff
  * @param target target for diff vs. source
+ * @param opts.stringify properties to stringify for comparison purposes
  * 
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
-export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null {
+export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify: string[] }): Partial<T> | null {
+    const { stringify = [] } = opts || {};
+    const sourceType = classify(source);
+    const targetType = classify(target);
+
+    if (targetType === 'array') {
+        if (sourceType !== 'array' || source.length !== targetType.length) {
+            return [ ...(target as any) ];
+        }
+
+        if (target.some((targetElement: any, i: number) => jsonDiff(source?.[i], targetElement) != null)) {
+            return [ ...(target as any) ];
+        }
+
+        return null;
+    }
+
     const lhs = source || {} as any;
     const rhs = target || {} as any;
 
@@ -59,6 +76,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
             result[prop] = v;
             propsChangedCount++;
         };
+
+        if (stringify.includes(prop)) {
+            if (JSON.stringify(lhs[prop] !== JSON.stringify(rhs[prop]))) { 
+                take(rhs[prop]);
+            }
+            continue;
+        }
 
         const lhsType = classify(lhs[prop]);
         const rhsType = classify(rhs[prop]);
@@ -79,18 +103,13 @@ export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null
             continue
         }
 
-        if (JSON.stringify(lhs[prop]) === JSON.stringify(rhs[prop])) {
-            // Deep-and-expensive object check.
-            continue;
-        }
-
-        if (rhsType === 'array' || rhsType === 'class-instance') {
+        if (rhsType === 'class-instance') {
             // Don't try to do anything tricky with array diffs!
             take(rhs[prop]);
             continue
         }
 
-        const diff = jsonDiff(lhs[prop], rhs[prop]);
+        const diff = jsonDiff(lhs[prop], rhs[prop], { stringify });
         if (diff !== null) {
             take(diff);
         }

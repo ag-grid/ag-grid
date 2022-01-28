@@ -21,6 +21,16 @@ Object {
 }
 `;
 
+exports[`json module #jsonDiff for non-trivial cases should correctly diff function changes in arrays 1`] = `
+Object {
+  "foo": Array [
+    Object {
+      "fn": [Function],
+    },
+  ],
+}
+`;
+
 exports[`json module #jsonDiff for trivial cases should correctly diff primitives 1`] = `
 Object {
   "alice": 2022-01-27T00:00:00.000Z,
