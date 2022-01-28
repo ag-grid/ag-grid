@@ -356,7 +356,6 @@ export class ChartTheme {
             },
             histogram: {
                 ...ChartTheme.getSeriesDefaults(),
-                title: undefined,
                 xKey: '',
                 yKey: '',
                 xName: '',
@@ -370,7 +369,7 @@ export class ChartTheme {
                 binCount: 10,
                 bins: undefined,
                 aggregation: 'sum',
-                    label: {
+                label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,

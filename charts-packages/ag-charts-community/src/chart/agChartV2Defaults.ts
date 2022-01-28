@@ -177,7 +177,6 @@ export const DEFAULT_HIERARCHY_CHART_OPTIONS: AgHierarchyChartOptions = {
     height: 300,
     width: 600,
     legend: DEFAULT_LEGEND,
-    navigator: DEFAULT_NAVIGATOR,
     padding: DEFAULT_PADDING,
     subtitle: DEFAULT_SUBTITLE,
     title: DEFAULT_TITLE,
@@ -301,27 +300,43 @@ const DEFAULT_AREA_SERIES_OPTIONS: AgAreaSeriesOptions = {
 };
 
 const DEFAULT_SCATTER_SERIES_OPTIONS: AgScatterSeriesOptions = {
-    ...DEFAULT_CARTESIAN_SERIES_OPTIONS,
     type: 'scatter',
     title: undefined,
+    xKey: '',
+    yKey: '',
     sizeKey: undefined,
     labelKey: undefined,
+    xName: '',
+    yName: '',
     sizeName: 'Size',
     labelName: 'Label',
+    strokeWidth: 2,
+    fillOpacity: 1,
+    strokeOpacity: 1,
+    highlightStyle: DEFAULT_HIGHLIGHT_STYLE,
+    tooltip: DEFAULT_SERIES_TOOLTIP,
+    label: DEFAULT_LABEL,
     marker: DEFAULT_MARKER,
 }
 
 const DEFAULT_HISTOGRAM_SERIES_OPTIONS: AgHistogramSeriesOptions = {
-    ...DEFAULT_CARTESIAN_SERIES_OPTIONS,
     type: 'histogram',
+    xKey: '',
     yKey: '',
+    xName: '',
     yName: '',
     strokeWidth: 1,
     fillOpacity: 1,
+    strokeOpacity: 1,
+    lineDash: undefined,
+    lineDashOffset: 0,
     areaPlot: false,
     binCount: undefined,
     bins: undefined,
     aggregation: 'sum',
+    highlightStyle: DEFAULT_HIGHLIGHT_STYLE,
+    tooltip: DEFAULT_SERIES_TOOLTIP,
+    label: DEFAULT_LABEL,
     shadow: DEFAULT_DROP_SHADOW,
 };
 

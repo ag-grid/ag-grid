@@ -190,7 +190,10 @@ export abstract class AgChartV2 {
     private static prepareOptions<T extends AgChartOptions>(options: T): T {
         // console.log('user opts', options);
 
+        // Determine type and ensure it's explicit in the options config.
         const type = optionsType(options);
+        options = {...options, type };
+
         const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
             isAgHierarchyChartOptions(options) ? DEFAULT_HIERARCHY_CHART_OPTIONS :
             isAgPolarChartOptions(options) ? DEFAULT_POLAR_CHART_OPTIONS :
@@ -450,7 +453,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
     },
     allowedTypes: {
         'series[].marker.shape': ['primitive', 'function'],
-        'axis[].tick.count': ['primitive', 'object'],
+        'axis[].tick.count': ['primitive', 'class-instance'],
     },
 };
 function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
