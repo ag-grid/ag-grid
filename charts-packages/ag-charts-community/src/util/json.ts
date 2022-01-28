@@ -200,7 +200,7 @@ export function jsonApply<
 ): Target {
     const {
         path = undefined,
-        matcherPath = path ? path.replace(/(\[[0-9+]\])/i, '[]') : undefined,
+        matcherPath = path ? path.replace(/(\[[0-9+]{1,}\])/i, '[]') : undefined,
         skip = [],
         constructors = {},
         allowedTypes = {},
@@ -217,10 +217,10 @@ export function jsonApply<
         const propertyPath = `${path ? path + '.' : ''}${property}`;
         const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
         const targetAny = (target as any);
+        const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];
         const ctr = constructors[property];
         try {
-            const targetClass = targetAny.constructor;
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
 
@@ -228,7 +228,7 @@ export function jsonApply<
                 throw new Error(`Property doesn't exist in target type: ${targetClass?.name}`);
             }
 
-            const allowableTypes = [currentValueType, ...allowedTypes[propertyMatcherPath] || []];
+            const allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
@@ -251,7 +251,7 @@ export function jsonApply<
                 targetAny[property] = newValue;
             }
         } catch (error) {
-            throw new Error(`AG Charts - unable to set: ${propertyPath}; nested error is: ${error.message}`);
+            throw new Error(`AG Charts - unable to set: ${propertyPath} in [${targetClass?.name}]; nested error is: ${error.message}`);
         }
     }
 
@@ -265,6 +265,7 @@ export function jsonApply<
  * 
  * @param json to traverse
  * @param visit callback for each non-primitive and non-array object found
+ * @param opts.skip property names to skip when walking
  * @param jsons to traverse in parallel
  */
 export function jsonWalk(
