@@ -124,10 +124,9 @@ export class ToolPanelColumnComp extends Component {
     private onContextMenu(e: MouseEvent): void {
         const { column, gridOptionsWrapper } = this;
 
-        const isFunctionsReadOnly = gridOptionsWrapper.isFunctionsReadOnly();
-        if (isFunctionsReadOnly || !column.isPrimary) { return; }
+        if (gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(this.column, e, this.focusWrapper));
+        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);

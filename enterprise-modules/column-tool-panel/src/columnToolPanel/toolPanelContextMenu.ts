@@ -20,6 +20,8 @@ type MenuItemProperty = {
     activeFunction: (col: Column) => boolean;
     activateLabel: (name: string) => string;
     deactivateLabel: (name: string) => string;
+    activateFunction: () => void;
+    deActivateFunction: () => void;
     addIcon: string;
     removeIcon: string;
 };
@@ -69,40 +71,71 @@ export class ToolPanelContextMenu extends Component {
             this.columns = [column];
         }
 
-        this.allowGrouping = this.columns.some(col => col.isAllowRowGroup());
-        this.allowValues = this.columns.some(col => col.isAllowValue());
-        this.allowPivoting = this.columnModel.isPivotMode() && this.columns.some(col => col.isAllowPivot());
+        this.allowGrouping = this.columns.some(col => col.isPrimary() && col.isAllowRowGroup());
+        this.allowValues = this.columns.some(col => col.isPrimary() && col.isAllowValue());
+        this.allowPivoting = this.columnModel.isPivotMode() && this.columns.some(col => col.isPrimary() && col.isAllowPivot());
     }
 
     private buildMenuItemMap(): void {
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) => col.isAllowRowGroup(),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup(),
             activeFunction: (col: Column) => col.isRowGroupActive(),
             activateLabel: () => `Group by ${this.displayName}`,
             deactivateLabel: () => `Un-group by ${this.displayName}`,
+            activateFunction: () => {
+                const groupedColumns = this.columnModel.getRowGroupColumns();
+                this.columnModel.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
+            },
+            deActivateFunction: () => {
+                const groupedColumns = this.columnModel.getRowGroupColumns();
+                this.columnModel.setRowGroupColumns(this.removeColumnsFromList(groupedColumns), "toolPanelUi");
+            },
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup'
         });
 
         this.menuItemMap.set('value', {
-            allowedFunction: (col: Column) => col.isAllowValue(),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowValue(),
             activeFunction: (col: Column) => col.isValueActive(),
-            activateLabel: () => `Group by ${this.displayName}`,
+            activateLabel: () => `Add ${this.displayName} to values`,
             deactivateLabel: () => `Remove ${this.displayName} from values`,
+            activateFunction: () => {
+                const valueColumns = this.columnModel.getValueColumns();
+                this.columnModel.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
+            },
+            deActivateFunction: () => {
+                const valueColumns = this.columnModel.getValueColumns();
+                this.columnModel.setValueColumns(this.removeColumnsFromList(valueColumns), "toolPanelUi");
+            },
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel'
         });
 
         this.menuItemMap.set('pivot', {
-            allowedFunction: (col: Column) => this.columnModel.isPivotMode() && col.isAllowPivot(),
+            allowedFunction: (col: Column) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
             activeFunction: (col: Column) => col.isPivotActive(),
             activateLabel: () => `Add ${this.displayName} to labels`,
             deactivateLabel: () => `Remove ${this.displayName} from labels`,
+            activateFunction: () => {
+                const pivotColumns = this.columnModel.getPivotColumns();
+                this.columnModel.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
+            },
+            deActivateFunction: () => {
+                const pivotColumns = this.columnModel.getPivotColumns();
+                this.columnModel.setPivotColumns(this.removeColumnsFromList(pivotColumns), "toolPanelUi");
+            },
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel'
         });
+    }
 
+    private addColumnsToList(columnList: Column[]): Column[] {
+        return [...columnList].concat(this.columns.filter(col => columnList.indexOf(col) === -1));
+    }
+
+    private removeColumnsFromList(columnList: Column[]): Column[] {
+        return columnList.filter(col => this.columns.indexOf(col) === -1);
     }
 
     private displayContextMenu(): void {
@@ -158,16 +191,16 @@ export class ToolPanelContextMenu extends Component {
                 ret.push({
                     name: val.activateLabel(this.displayName!),
                     icon: _.createIconNoSpan(val.addIcon, this.gridOptionsWrapper, null),
-                    action: () => {}
-                })
+                    action: () => val.activateFunction()
+                });
             }
 
             if (isActive) {
                 ret.push({
                     name: val.deactivateLabel(this.displayName!),
                     icon: _.createIconNoSpan(val.removeIcon, this.gridOptionsWrapper, null),
-                    action: () => {}
-                })
+                    action: () => val.deActivateFunction()
+                });
             }
         }
 
