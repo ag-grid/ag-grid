@@ -23,6 +23,23 @@ export function readAsJsFile(srcFile) {
     return jsFile;
 }
 
+export function convertFrameworkRendersToVanilla(code: string) {
+    // Convert examples written in framework form to vanilla property
+    return code.replace(/cellRendererFramework:/g, 'cellRenderer:')
+        .replace(/tooltipComponentFramework:/g, 'tooltipComponent:')
+        .replace(/headerComponentFramework:/g, 'headerComponent:')
+        .replace(/headerGroupComponentFramework:/g, 'headerGroupComponent:')
+        .replace(/cellEditorFramework:/g, 'cellEditor:')
+        .replace(/detailCellRendererFramework:/g, 'detailCellRenderer:')
+        .replace(/loadingOverlayComponentFramework:/g, 'loadingOverlayComponent:')
+        .replace(/noRowsOverlayComponentFramework:/g, 'noRowsOverlayComponent:')
+        .replace(/fullWidthCellRendererFramework:/g, 'fullWidthCellRenderer:')
+        .replace(/groupRowRendererFramework:/g, 'groupRowRenderer:')
+        .replace(/groupRowInnerRendererFramework:/g, 'groupRowInnerRenderer:')
+        .replace(/innerRendererFramework:/g, 'innerRenderer:')
+        .replace(/frameworkComponent:/g, 'component:')
+}
+
 export function parseFile(src) {
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
@@ -439,7 +456,7 @@ function getLowestExpression(exp: any) {
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
-     if (ts.isIdentifier(node)) {
+    if (ts.isIdentifier(node)) {
         const property = node.getText();
         if (property !== 'undefined' && property !== 'null') {
             properties.push(node.getText());
@@ -450,10 +467,10 @@ export function findAllAccessedProperties(node) {
         // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
 
-        if(ts.isArrayLiteralExpression(exp)){
+        if (ts.isArrayLiteralExpression(exp)) {
             // Check if the array has any properties in it that are dependencies
             properties = [...properties, ...findAllAccessedProperties(exp)];
-        }else{
+        } else {
             properties.push(exp.getText())
         }
     }
@@ -490,7 +507,7 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isClassDeclaration(node)) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
-    }    
+    }
     else if (ts.isTypeReferenceNode(node)) {
         // Do nothing for Type references
     }
