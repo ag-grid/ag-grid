@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
   suppressMenuHide: true,
-  comps: {
+  frameworkComponents: {
     agColumnHeader: CustomHeader,
   },
   defaultColDef: {

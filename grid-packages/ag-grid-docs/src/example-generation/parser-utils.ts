@@ -32,12 +32,14 @@ export function convertFrameworkRendersToVanilla(code: string) {
         .replace(/cellEditorFramework:/g, 'cellEditor:')
         .replace(/detailCellRendererFramework:/g, 'detailCellRenderer:')
         .replace(/loadingOverlayComponentFramework:/g, 'loadingOverlayComponent:')
+        .replace(/loadingCellRendererFramework:/g, 'loadingCellRenderer:')
         .replace(/noRowsOverlayComponentFramework:/g, 'noRowsOverlayComponent:')
         .replace(/fullWidthCellRendererFramework:/g, 'fullWidthCellRenderer:')
         .replace(/groupRowRendererFramework:/g, 'groupRowRenderer:')
         .replace(/groupRowInnerRendererFramework:/g, 'groupRowInnerRenderer:')
         .replace(/innerRendererFramework:/g, 'innerRenderer:')
         .replace(/frameworkComponent:/g, 'component:')
+        .replace(/frameworkComponents:/g, 'components:')
 }
 
 export function parseFile(src) {
