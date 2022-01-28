@@ -100,25 +100,25 @@ const columnDefs: ColDef[] = [
     {
         field: 'gold',
         width: 100,
-        filterComp: NumberFilter,
+        filter: NumberFilter,
         suppressMenu: true,
     },
     {
         field: 'silver',
         width: 100,
-        filterComp: NumberFilter,
+        filter: NumberFilter,
         suppressMenu: true,
     },
     {
         field: 'bronze',
         width: 100,
-        filterComp: NumberFilter,
+        filter: NumberFilter,
         suppressMenu: true,
     },
     {
         field: 'total',
         width: 100,
-        filterComp: NumberFilter,
+        filter: NumberFilter,
         suppressMenu: true,
     },
 ]

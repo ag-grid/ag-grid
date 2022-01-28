@@ -7,14 +7,14 @@ const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     minWidth: 150,
-    filterComp: 'agTextColumnFilter',
+    filter: 'agTextColumnFilter',
     filterParams: {
       debounceMs: 2000,
     },
   },
   {
     field: 'age',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: {
       debounceMs: 0,
     },
@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'date',
     minWidth: 180,
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: {
       comparator: function (
         filterLocalDateAtMidnight: Date,
@@ -58,39 +58,39 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
   {
     field: 'gold',
-    floatingFilterComp: NumberFloatingFilter,
+    floatingFilterComponentFramework: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterComp: CustomNumberFilter,
+    filterFramework: CustomNumberFilter,
   },
   {
     field: 'silver',
-    floatingFilterComp: NumberFloatingFilter,
+    floatingFilterComponentFramework: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 3,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterComp: CustomNumberFilter,
+    filterFramework: CustomNumberFilter,
   },
   {
     field: 'bronze',
-    floatingFilterComp: NumberFloatingFilter,
+    floatingFilterComponentFramework: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 2,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterComp: CustomNumberFilter,
+    filterFramework: CustomNumberFilter,
   },
   {
     field: 'total',
-    floatingFilterComp: NumberFloatingFilter,
+    floatingFilterComponentFramework: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterComp: CustomNumberFilter,
+    filterFramework: CustomNumberFilter,
   },
 ]
 
