@@ -77,6 +77,15 @@ describe('json module', () => {
                 expect(diff).not.toHaveProperty('hello1.nestedX2.primitive');
             });
 
+            it('should correctly diff identical arrays', () => {
+                const source = {
+                    foo: [1, 2, 3 , 4],
+                };
+
+                const diff = jsonDiff(source, source);
+                expect(diff).toBeNull();
+            });
+
             it('should correctly diff function changes in arrays', () => {
                 const source = {
                     foo: [{ fn: () => 'hello-world!'}],

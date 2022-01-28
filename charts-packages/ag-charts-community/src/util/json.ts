@@ -47,7 +47,7 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
     const targetType = classify(target);
 
     if (targetType === 'array') {
-        if (sourceType !== 'array' || source.length !== targetType.length) {
+        if (sourceType !== 'array' || source.length !== target.length) {
             return [ ...(target as any) ];
         }
 
@@ -100,13 +100,18 @@ export function jsonDiff<T extends any>(source: T, target: T, opts?: { stringify
         if (rhsType === 'array' && lhs[prop].length !== rhs[prop].length) {
             // Arrays are different sizes, so just take target array.
             take(rhs[prop]);
-            continue
+            continue;
         }
 
         if (rhsType === 'class-instance') {
             // Don't try to do anything tricky with array diffs!
             take(rhs[prop]);
-            continue
+            continue;
+        }
+
+        if (rhsType === 'function' && lhs[prop] !== rhs[prop]) {
+            take(rhs[prop]);
+            continue;
         }
 
         const diff = jsonDiff(lhs[prop], rhs[prop], { stringify });
