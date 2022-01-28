@@ -46,7 +46,7 @@ const gridOptions: GridOptions = {
   statusBar: {
     statusPanels: [
       {
-        statusPanelComp: ClickableStatusBarComponent,
+        statusPanelFramework: ClickableStatusBarComponent,
         key: 'statusBarCompKey',
       },
       {

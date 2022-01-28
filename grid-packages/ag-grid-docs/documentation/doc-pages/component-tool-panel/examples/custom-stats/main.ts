@@ -47,7 +47,7 @@ const gridOptions: GridOptions = {
         labelDefault: 'Custom Stats',
         labelKey: 'customStats',
         iconKey: 'custom-stats',
-        toolPanelComp: CustomStatsToolPanel,
+        toolPanelFramework: CustomStatsToolPanel,
       },
     ],
     defaultToolPanel: 'customStats',

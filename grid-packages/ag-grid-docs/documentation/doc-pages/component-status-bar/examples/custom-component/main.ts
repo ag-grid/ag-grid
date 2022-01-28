@@ -42,13 +42,13 @@ const gridOptions: GridOptions = {
   statusBar: {
     statusPanels: [
       {
-        statusPanelComp: CountStatusBarComponent,
+        statusPanelFramework: CountStatusBarComponent,
       },
       {
-        statusPanelComp: ClickableStatusBarComponent,
+        statusPanelFramework: ClickableStatusBarComponent,
       },
       {
-        statusPanelComp: 'agAggregationComponent',
+        statusPanel: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
         },
