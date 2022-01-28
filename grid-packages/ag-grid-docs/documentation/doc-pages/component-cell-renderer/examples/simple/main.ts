@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   { field: 'gold', cellRendererFramework: MedalCellRenderer },
   { field: 'silver', cellRendererFramework: MedalCellRenderer },
   { field: 'bronze', cellRendererFramework: MedalCellRenderer },
-  { field: 'total', minWidth: 175, cellRenderer: TotalValueRenderer },
+  { field: 'total', minWidth: 175, cellRendererFramework: TotalValueRenderer },
 ]
 
 const gridOptions: GridOptions = {
