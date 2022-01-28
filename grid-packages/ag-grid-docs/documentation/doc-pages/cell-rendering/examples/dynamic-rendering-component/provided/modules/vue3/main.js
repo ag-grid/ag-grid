@@ -31,10 +31,10 @@ const VueExample = {
                 {
                     headerName: "Rendered Value",
                     field: "value",
-                    cellRendererCompSelector: (params) => {
-                        const moodDetails = { comp: 'moodCellRenderer' };
+                    cellRendererSelector: (params) => {
+                        const moodDetails = { component: 'moodCellRenderer' };
                         const genderDetails = {
-                            comp: 'genderCellRenderer',
+                            component: 'genderCellRenderer',
                             params: {
                                 values: [
                                     'Male',

@@ -34,15 +34,15 @@ const VueExample = {
                 {
                     field: "value",
                     editable: true,
-                    cellEditorCompSelector: function (params) {
+                    cellEditorSelector: function (params) {
                         if (params.data.type === 'age') {
                             return {
-                                comp: 'NumericCellEditor',
+                                component: 'NumericCellEditor',
                             };
                         }
                         if (params.data.type === 'gender') {
                             return {
-                                comp: 'agRichSelectCellEditor',
+                                component: 'agRichSelectCellEditor',
                                 params: {
                                     values: ['Male', 'Female'],
                                 },
@@ -50,7 +50,7 @@ const VueExample = {
                         }
                         if (params.data.type === 'mood') {
                             return {
-                                comp: 'MoodEditor',
+                                component: 'MoodEditor',
                             };
                         }
                         return undefined;
