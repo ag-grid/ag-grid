@@ -43,6 +43,8 @@ export function convertFrameworkRendersToVanilla(code: string) {
         .replace(/innerRendererFramework:/g, 'innerRenderer:')
         .replace(/frameworkComponent:/g, 'component:')
         .replace(/frameworkComponents:/g, 'components:')
+        .replace(/toolPanelFramework:/g, 'toolPanel:')
+        .replace(/pinnedRowCellRendererFramework:/g, 'pinnedRowCellRenderer:')
 }
 
 export function parseFile(src) {
