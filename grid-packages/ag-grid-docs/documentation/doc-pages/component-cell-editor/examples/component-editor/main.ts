@@ -9,14 +9,14 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Doubling',
       field: 'number',
-      cellEditor: DoublingEditor,
+      cellEditorFramework: DoublingEditor,
       editable: true,
       width: 300,
     },
     {
       field: 'mood',
-      cellRenderer: MoodRenderer,
-      cellEditor: MoodEditor,
+      cellRendererFramework: MoodRenderer,
+      cellEditorFramework: MoodEditor,
       cellEditorPopup: true,
       editable: true,
       width: 300,
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Numeric',
       field: 'number',
-      cellEditor: NumericEditor,
+      cellEditorFramework: NumericEditor,
       cellEditorPopup: true,
       editable: true,
       width: 280,

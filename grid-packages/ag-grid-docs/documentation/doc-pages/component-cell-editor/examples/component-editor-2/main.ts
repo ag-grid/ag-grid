@@ -30,7 +30,7 @@ const columnDefs: ColDef[] = [
         field: 'gender',
         width: 100,
         editable: true,
-        cellRenderer: GenderRenderer,
+        cellRendererFramework: GenderRenderer,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorPopup: true,
         cellEditorParams: {
@@ -42,14 +42,14 @@ const columnDefs: ColDef[] = [
         field: 'age',
         width: 80,
         editable: true,
-        cellEditor: NumericEditor,
+        cellEditorFramework: NumericEditor,
         cellEditorPopup: true
     },
     {
         field: 'mood',
         width: 100,
-        cellRenderer: MoodRenderer,
-        cellEditor: MoodEditor,
+        cellRendererFramework: MoodRenderer,
+        cellEditorFramework: MoodEditor,
         cellEditorPopup: true,
         editable: true,
     },

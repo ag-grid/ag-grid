@@ -34,27 +34,27 @@ export class AppComponent implements OnDestroy {
         {
             field: "gender",
             width: 100,
-            cellEditorComp: MySimpleEditor
+            cellEditorFramework: MySimpleEditor
         },
         {
             field: "age",
             width: 80,
-            cellEditorComp: MySimpleEditor
+            cellEditorFramework: MySimpleEditor
         },
         {
             field: "mood",
             width: 90,
-            cellEditorComp: MySimpleEditor
+            cellEditorFramework: MySimpleEditor
         },
         {
             field: "country",
             width: 110,
-            cellEditorComp: MySimpleEditor
+            cellEditorFramework: MySimpleEditor
         },
         {
             field: "address",
             width: 502,
-            cellEditorComp: MySimpleEditor
+            cellEditorFramework: MySimpleEditor
         }
     ];
 
