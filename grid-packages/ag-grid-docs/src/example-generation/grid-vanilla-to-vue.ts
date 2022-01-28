@@ -403,8 +403,6 @@ function convertDefaultColDef(defaultColDef, vueComponents): string {
             //     return;
             // }
 
-            console.log(line);
-
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
             line = line.replace(component, `'${component}'`)
             result.push(line);

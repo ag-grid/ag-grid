@@ -48,7 +48,7 @@ const OVERRIDABLE_AG_COMPONENTS = ['agDateInput',
 ];
 
 function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+    const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -60,7 +60,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -83,12 +83,12 @@ function getOnGridReadyCode(bindings: any): string {
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
-        "import Vue from 'vue';",
-        "import { AgGridVue } from '@ag-grid-community/vue';",
+        "import { createApp } from 'vue';",
+        "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
     if (modules) {
@@ -96,7 +96,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         if (modules === true) {
             exampleModules = ['clientside'];
         }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -128,11 +128,11 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
-        "import Vue from 'vue';",
-        "import { AgGridVue } from 'ag-grid-vue';",
+        "import { createApp } from 'vue';",
+        "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
     if (gridSettings.enterprise) {
@@ -258,7 +258,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
