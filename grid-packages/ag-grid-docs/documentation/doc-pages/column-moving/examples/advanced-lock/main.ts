@@ -1,4 +1,4 @@
-import {ColDef, ColumnPinnedEvent, ColumnState, Grid, GridOptions} from '@ag-grid-community/core'
+import { ColDef, ColumnPinnedEvent, ColumnState, Grid, GridOptions } from '@ag-grid-community/core'
 import { ControlsCellRenderer } from './controlsCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
@@ -11,21 +11,21 @@ const columnDefs: ColDef[] = [
     },
     {
         lockPosition: true,
-        cellRenderer: ControlsCellRenderer,
+        cellRendererFramework: ControlsCellRenderer,
         cellClass: 'locked-col',
         width: 120,
         suppressNavigable: true,
     },
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'},
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
 ]
 
 const gridOptions: GridOptions = {
@@ -60,19 +60,19 @@ function onColumnPinned(event: ColumnPinnedEvent) {
     })
 
     if (columnStates.length > 0) {
-        event.columnApi.applyColumnState({state: columnStates})
+        event.columnApi.applyColumnState({ state: columnStates })
     }
 }
 
 function onPinAthlete() {
     gridOptions.columnApi!.applyColumnState({
-        state: [{colId: 'athlete', pinned: 'left'}],
+        state: [{ colId: 'athlete', pinned: 'left' }],
     })
 }
 
 function onUnpinAthlete() {
     gridOptions.columnApi!.applyColumnState({
-        state: [{colId: 'athlete', pinned: null}],
+        state: [{ colId: 'athlete', pinned: null }],
     })
 }
 
