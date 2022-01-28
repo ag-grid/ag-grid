@@ -335,11 +335,6 @@ export interface GridOptions {
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
 
-    /** Provide a custom Detail Cell Component to use when a master row is expanded. */
-    detailRowCellComp?: any;
-    /** Params for Detail Cell Component */
-    detailRowCellCompParams?: any;
-
     /** Set fixed height in pixels for each detail row. */
     detailRowHeight?: number;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
@@ -509,11 +504,6 @@ export interface GridOptions {
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
 
-    /** Sets the Cell Comp to use for full width rows. */
-    fullWidthCellComp?: any;
-    /** Customise the parameters provided to Full Width Cell Comp. */
-    fullWidthCellCompParams?: any;
-
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
     embedFullWidthRows?: boolean;
     /** @deprecated */
@@ -569,11 +559,6 @@ export interface GridOptions {
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
-
-    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */
-    groupRowCellComp?: any;
-    /** Customise the parameters provided to the Group Row Comp component. */
-    groupRowCellCompParams?: any;
 
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;

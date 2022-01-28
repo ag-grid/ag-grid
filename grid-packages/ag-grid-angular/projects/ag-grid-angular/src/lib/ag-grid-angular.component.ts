@@ -289,13 +289,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public modules: Module[];
 
     // @START@
-    @Input() public comps: any = undefined;
-    @Input() public loadingOverlayComp: any = undefined;
-    @Input() public loadingOverlayCompParams: any = undefined;
-    @Input() public noRowsOverlayComp: any = undefined;
-    @Input() public noRowsOverlayCompParams: any = undefined;
-    @Input() public loadingRowCellComp: any = undefined;
-    @Input() public loadingRowCellCompParams: any = undefined;
     /** Specifies the status bar components to use in the status bar.     */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.     */
@@ -483,10 +476,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
-    /** Provide a custom Detail Cell Component to use when a master row is expanded.     */
-    @Input() public detailRowCellComp: any = undefined;
-    /** Params for Detail Cell Component     */
-    @Input() public detailRowCellCompParams: any = undefined;
     /** Set fixed height in pixels for each detail row.     */
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
@@ -622,10 +611,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
-    /** Sets the Cell Comp to use for full width rows.     */
-    @Input() public fullWidthCellComp: any = undefined;
-    /** Customise the parameters provided to Full Width Cell Comp.     */
-    @Input() public fullWidthCellCompParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** @deprecated     */
@@ -675,10 +660,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
-    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`.     */
-    @Input() public groupRowCellComp: any = undefined;
-    /** Customise the parameters provided to the Group Row Comp component.     */
-    @Input() public groupRowCellCompParams: any = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`     */
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
