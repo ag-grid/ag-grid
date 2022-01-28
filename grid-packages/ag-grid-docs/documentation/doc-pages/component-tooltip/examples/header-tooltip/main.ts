@@ -14,7 +14,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athletes',
     headerTooltip: 'Athletes',
-    tooltipComp: CustomTooltip,
+    tooltipComponentFramework: CustomTooltip,
     children: [
       {
         headerName: 'Athlete Col 1',
@@ -28,7 +28,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         field: 'athlete',
         width: 150,
         headerTooltip: 'Athlete 2',
-        tooltipComp: CustomTooltip,
+        tooltipComponentFramework: CustomTooltip,
         tooltipValueGetter: tooltipValueGetter,
       },
     ],
