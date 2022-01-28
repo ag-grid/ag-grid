@@ -1,6 +1,6 @@
-import { getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
-import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
 const GRID_WIDE_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
@@ -24,7 +24,8 @@ const GRID_COMPONENTS = [
     'headerGroupComponent',
     'tooltipComponent',
     'statusPanelFramework',
-    'toolPanelFramework'
+    'toolPanelFramework',
+    'filterFramework'
 ];
 
 const PARAMS_PROPERTIES = [
@@ -81,8 +82,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     const { modules } = gridSettings;
 
     const imports = [
-        "import { createApp } from 'vue';",
-        "import { AgGridVue } from '@ag-grid-community/vue3';",
+        "import Vue from 'vue';",
+        "import { AgGridVue } from '@ag-grid-community/vue';",
     ];
 
     if (modules) {
@@ -102,7 +103,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
         if (gridSettings.enterprise) {
-            throw new Error(`The Vue3 example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
+            throw new Error(`The Vue example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
         }
         imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
         bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
@@ -125,8 +126,8 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     const { gridSettings } = bindings;
 
     const imports = [
-        "import { createApp } from 'vue';",
-        "import { AgGridVue } from 'ag-grid-vue3';",
+        "import Vue from 'vue';",
+        "import { AgGridVue } from 'ag-grid-vue';",
     ];
 
     if (gridSettings.enterprise) {
@@ -158,12 +159,10 @@ function isExternalVueFile(componentFileNames, component) {
     return componentFileNames.length > 0 && componentFileNames.some(fileName => fileName.toUpperCase().includes(component.toUpperCase()));
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents): [string[], string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
-
-    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
 
     bindings.properties
         .filter(property =>
@@ -194,17 +193,12 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toMember(property));
                 propertyAssignments.push(toAssignment(property));
-            } else if (componentFileNames.length > 0 && property.name === 'components') {
-                // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
-                // frameworkComponents for
-                if (bindings.components) {
-                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.components.some(component => component.name === agComponentName))
+            } else if (componentFileNames.length > 0 && (property.name === 'components' || property.name === 'frameworkComponents')) {
+                if (bindings.frameworkComponents) {
+                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.frameworkComponents.some(component => component.name === agComponentName))
                         .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
 
-                    if (userAgComponents.length > 0) {
-                        propertyAttributes.push(':frameworkComponents="frameworkComponents"');
-                        propertyAssignments.push(`this.frameworkComponents = { ${userAgComponents.join('\n,')} } `)
-                    }
+                    vueComponents.push(...userAgComponents);
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
@@ -315,7 +309,7 @@ function isParamsProperty(property) {
 
 }
 
-function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
+function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponents, componentFileNames): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
 
@@ -333,7 +327,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 
         Object.keys(rawColumnDef).forEach(columnProperty => {
             if (columnProperty === 'children') {
-                children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames);
+                children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames, vueComponents, componentFileNames);
             } else {
                 let value = rawColumnDef[columnProperty];
 
@@ -347,7 +341,16 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
                         // values starting with AG_LITERAL_ are actually function references
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
                         // ...all of this is necessary so that we can parse the json string
-                        columnProperties.push(`${columnProperty}:${value.replace('AG_LITERAL_', '')}`);
+                        const parsedValue = `${value.replace('AG_LITERAL_', '')}`;
+                        if (isComponent(columnProperty) && isExternalVueFile(componentFileNames, parsedValue)) {
+                            columnProperties.push(`${columnProperty}:'${parsedValue}'`);
+                            if (!vueComponents.includes(parsedValue)) {
+                                vueComponents.push(parsedValue)
+                            }
+                        } else {
+                            columnProperties.push(`${columnProperty}:${parsedValue}`);
+                        }
+
                     } else if (value.startsWith('AG_FUNCTION_')) {
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
@@ -378,20 +381,50 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
     return columnDefs;
 }
 
-function convertDefaultColDef(defaultColDef): string {
-    return GRID_COMPONENTS.reduce((acc, componentName) => {
-        if (componentName === 'filter') {
-            if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
-                return acc.replace(/componentName\b/g, `${componentName}Framework`);
-            }
-        }
+function convertDefaultColDef(defaultColDef, vueComponents): string {
+    const result = [];
+    const perLine = defaultColDef.split('\n');
+    perLine.forEach(line => {
+        if (line.includes('tooltipComponent') || line.includes('filterFramework')) {
+            // if(line.trim().startsWith('//') || line.includes('filter: true') || line.includes('filter: false') || line.includes("filter: 'ag'")) {
+            //     return;
+            // }
 
-        return acc;
-    }, defaultColDef)
+            const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
+            line = line.replace(component, `'${component}'`)
+            result.push(line);
+
+            if (!vueComponents.includes(component)) {
+                vueComponents.push(component)
+            }
+        } else {
+            result.push(line);
+        }
+    })
+
+    return result.join('\n');
+
+    // GRID_COMPONENTS.forEach((componentName) => {
+    //     if (componentName === 'filter') {
+    //         if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
+    //             defaultColDef.replace(/componentName\b/g, `${componentName}Framework`);
+    //
+    //             // const component = value.match(/.*comp:\s*(.*),/) ? value.match(/.*comp:\s*(.*),/)[1] : value.match(/.*comp:\s*(.*)$/)[1];
+    //
+    //             console.log();
+    //
+    //             // if (!vueComponents.includes(parsedValue)) {
+    //             //     vueComponents.push(parsedValue)
+    //             // }
+    //         }
+    //     }
+    //
+    // })
+    // return defaultColDef;
 }
 
-const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
-    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : null;
+const getColumnDefs = (bindings: any, vueComponents: any[], componentFileNames) => {
+    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name), vueComponents, componentFileNames) : null;
     if (!columnDefs) {
         const columnDefProperty = bindings.properties.filter(property => property.name === 'columnDefs');
         if (columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value) {
@@ -405,15 +438,17 @@ const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
 }
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
-    const columnDefs = getColumnDefs(bindings, utilFunctions);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const columnDefs = getColumnDefs(bindings, vueComponents, componentFileNames);
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
-        const [propertyAssignments, propertyVars, propertyAttributes, vueComponents] = getPropertyBindings(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
