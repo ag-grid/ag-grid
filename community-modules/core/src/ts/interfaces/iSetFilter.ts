@@ -102,7 +102,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to
      * be rendered differently in the filter.
      */
-    cellRendererComp?: any;
+    cellRendererFramework?: any;
     /**
      * Set to `true` to hide the Mini Filter.
      * 
