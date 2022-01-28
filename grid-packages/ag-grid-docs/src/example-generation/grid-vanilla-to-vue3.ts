@@ -3,7 +3,11 @@ import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, to
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
-const GRID_WIDE_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
+const GRID_WIDE_COMPONENTS = [
+    'loadingCellRendererFramework',
+    'loadingOverlayComponentFramework',
+    'noRowsOverlayComponentFramework'
+];
 
 const GRID_COMPONENTS = [
     'detailCellRendererFramework',
@@ -205,9 +209,17 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1) {
-                propertyAttributes.push(`:${property.name}Framework="${property.name}Framework"`);
-                propertyVars.push(`${property.name}Framework: ${property.value}`);
+            } else if (GRID_WIDE_COMPONENTS.includes(property.name)) {
+                const parsedValue = `${property.value.replace('AG_LITERAL_', '')}`;
+
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(`this.${property.name} = '${parsedValue}'`);
+                if (isExternalVueFile(componentFileNames, parsedValue)) {
+                    if (!vueComponents.includes(parsedValue)) {
+                        vueComponents.push(parsedValue)
+                    }
+                }
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
