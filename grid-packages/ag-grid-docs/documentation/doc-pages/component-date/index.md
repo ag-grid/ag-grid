@@ -26,7 +26,7 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |```js
 |const gridOptions = {
 |    // Here is where we specify the component to be used as the date picker widget
-|    comps: {
+|    components: {
 |        agDateInput: CustomDateComponent
 |    }
 |};
@@ -38,45 +38,29 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |    template: `
 |      <ag-grid-angular
 |          class="ag-theme-alpine"
-|          [comps]="comps"
+|          [frameworkComponents]="frameworkComponents"
 |          ...other properties...  
 |      ></ag-grid-angular>
 |    `
 |})
 |export class AppComponent {
-|    private comps = {
+|    private frameworkComponents = {
 |        agDateInput: CustomDateComponent
 |    };
 |```
 [[only-react]]
 |```jsx
 |<AgGridReact
-|    comps={{ agDateInput: CustomDateComponent }}
+|    frameworkComponents={{ agDateInput: CustomDateComponent }}
 |    ...other properties...
 |/>
 |```
 [[only-vue]]
 |```js
 |const MyApp = {
-|    template: `
-|      <ag-grid-vue
-|          :frameworkComponents="frameworkComponents"
-|          ...other properties...  
-|      >
-|      </ag-grid-vue>
-|    `,
 |    components: {
 |        'ag-grid-vue': AgGridVue
-|        myDateComponent: CustomDateComponent
-|    },
-|    data: function () {
-|        return {
-|            frameworkComponents: {
-|                // name is important here - it has to be agDateInput for the grid to recognise and use it in date fields 
-|                agDateInput: 'myDateComponent'
-|            },
-|            // other properties/values
-|        }
+|        agDateInput: CustomDateComponent
 |    },
 |```
 |
