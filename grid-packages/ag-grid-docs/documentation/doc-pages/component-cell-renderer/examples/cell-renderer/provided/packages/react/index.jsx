@@ -78,13 +78,13 @@ class GridExample extends Component {
                     headerName: "Max Temp (\u02DAC)",
                     field: "Max temp (C)",
                     width: 120,
-                    cellRenderer: DeltaIndicator
+                    cellRendererFramework: DeltaIndicator
                 },
                 {
                     headerName: "Min Temp (\u02DAC)",
                     field: "Min temp (C)",
                     width: 120,
-                    cellRenderer: DeltaIndicator
+                    cellRendererFramework: DeltaIndicator
                 },
                 {
                     headerName: "Days of Air Frost",
@@ -97,14 +97,14 @@ class GridExample extends Component {
                     headerName: "Days Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
-                    cellRenderer: DaysSunshineRenderer,
+                    cellRendererFramework: DaysSunshineRenderer,
                     cellRendererParams: {rendererImage: "sun.png"}
                 },
                 {
                     headerName: "Rainfall (10mm)",
                     field: "Rainfall (mm)",
                     width: 180,
-                    cellRenderer: RainPerTenMmRenderer,
+                    cellRendererFramework: RainPerTenMmRenderer,
                     cellRendererParams: {rendererImage: "rain.png"}
                 }
             ],
@@ -133,7 +133,7 @@ class GridExample extends Component {
 
     /**
      * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-     * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
+     * After a data update, cellRendererFramework Components.refresh method will be called to re-render the altered Cells
      */
     frostierYear() {
         const extraDaysFrost = Math.floor(Math.random() * 2) + 1;

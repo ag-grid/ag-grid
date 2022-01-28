@@ -344,6 +344,10 @@ function isExternalVueFile(componentFileNames, component) {
     return componentFileNames.length > 0 && componentFileNames.some(fileName => fileName.toUpperCase().includes(component.toUpperCase()));
 }
 
+function hasFrameworkComponent(object: any) {
+    return GRID_COMPONENTS.some(componentName => object[componentName]);
+}
+
 function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componentFileNames, vueComponents): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
@@ -366,7 +370,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
             } else {
                 let value = rawColumnDef[columnProperty];
 
-                if (isParamsProperty(columnProperty)) {
+                if (isParamsProperty(columnProperty) && hasFrameworkComponent(value)) {
                     if (value.filters) {
                         value.filters.forEach(filter => {
                             Object.keys(filter).forEach(filterProperty => {
@@ -426,6 +430,11 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                         // turn into lambda functions here
                         columnProperties.push(`${columnProperty}:${parseFunction(value)}`);
                     } else {
+                        let propertyName = columnProperty;
+                        // if a framework component then add a "Framework" postfix - ie cellRenderer => cellRendererFramework
+                        if (isComponent(columnProperty) && userComponentNames.indexOf(value) !== -1) {
+                            propertyName = `${columnProperty}Framework`;
+                        }
                         // ensure any double quotes inside the string are replaced with single quotes
                         columnProperties.push(`${columnProperty}:"${value.replace(/(?<!\\)"/g, '\'')}"`);
                     }

@@ -110,6 +110,7 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/_dev" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/dev" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/.cache" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/doc-pages_orig" />
