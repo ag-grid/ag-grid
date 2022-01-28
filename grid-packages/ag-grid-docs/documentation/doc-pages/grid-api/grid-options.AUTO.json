@@ -1060,7 +1060,11 @@
   "localeTextFunc": {
     "description": "/** A callback for localising text within the grid. */",
     "type": {
-      "arguments": { "key": "string", "defaultValue": "string" },
+      "arguments": {
+        "key": "string",
+        "defaultValue": "string",
+        "variableValues?": "string[]"
+      },
       "returnType": "string"
     }
   },

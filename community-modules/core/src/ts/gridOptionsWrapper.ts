@@ -1746,7 +1746,7 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getLocaleTextFunc(): (key: string, defaultValue: string) => string {
+    public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
         }
@@ -1754,7 +1754,9 @@ export class GridOptionsWrapper {
         const { localeText } = this.gridOptions;
 
         return (key: string, defaultValue: string) => {
-            return localeText && localeText[key] ? localeText[key] : defaultValue;
+            let localisedText = localeText && localeText[key];
+
+            return localisedText ?? defaultValue;
         };
     }
 

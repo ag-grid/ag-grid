@@ -804,7 +804,7 @@ export interface GridOptions {
 
     // *** Localisation *** //
     /** A callback for localising text within the grid. */
-    localeTextFunc?: (key: string, defaultValue: string) => string;
+    localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
 
     // *** Miscellaneous *** //
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */

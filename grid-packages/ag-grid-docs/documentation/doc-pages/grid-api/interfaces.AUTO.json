@@ -1592,7 +1592,7 @@
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
       "tabToNextCell?": "(params: TabToNextCellParams) => (CellPosition | null)",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
-      "localeTextFunc?": "(key: string, defaultValue: string) => string",
+      "localeTextFunc?": "(key: string, defaultValue: string, variableValues?: string[]) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "groupRowAggNodes?": "(nodes: RowNode[]) => any",

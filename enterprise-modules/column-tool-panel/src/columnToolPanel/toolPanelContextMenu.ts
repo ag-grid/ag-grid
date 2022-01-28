@@ -77,12 +77,14 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private buildMenuItemMap(): void {
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
             allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup(),
             activeFunction: (col: Column) => col.isRowGroupActive(),
-            activateLabel: () => `Group by ${this.displayName}`,
-            deactivateLabel: () => `Un-group by ${this.displayName}`,
+            activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
+            deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
             activateFunction: () => {
                 const groupedColumns = this.columnModel.getRowGroupColumns();
                 this.columnModel.setRowGroupColumns(this.addColumnsToList(groupedColumns), "toolPanelUi");
@@ -98,8 +100,8 @@ export class ToolPanelContextMenu extends Component {
         this.menuItemMap.set('value', {
             allowedFunction: (col: Column) => col.isPrimary() && col.isAllowValue(),
             activeFunction: (col: Column) => col.isValueActive(),
-            activateLabel: () => `Add ${this.displayName} to values`,
-            deactivateLabel: () => `Remove ${this.displayName} from values`,
+            activateLabel: () => localeTextFunc('addToValues', `Add ${this.displayName} to values`, [this.displayName!]),
+            deactivateLabel: () => localeTextFunc('removeFromValues', `Remove ${this.displayName} from values`, [this.displayName!]),
             activateFunction: () => {
                 const valueColumns = this.columnModel.getValueColumns();
                 this.columnModel.setValueColumns(this.addColumnsToList(valueColumns), "toolPanelUi");
@@ -115,8 +117,8 @@ export class ToolPanelContextMenu extends Component {
         this.menuItemMap.set('pivot', {
             allowedFunction: (col: Column) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
             activeFunction: (col: Column) => col.isPivotActive(),
-            activateLabel: () => `Add ${this.displayName} to labels`,
-            deactivateLabel: () => `Remove ${this.displayName} from labels`,
+            activateLabel: () => localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),
+            deactivateLabel: () => localeTextFunc('removeFromLabels', `Remove ${this.displayName} from labels`, [this.displayName!]),
             activateFunction: () => {
                 const pivotColumns = this.columnModel.getPivotColumns();
                 this.columnModel.setPivotColumns(this.addColumnsToList(pivotColumns), "toolPanelUi");
