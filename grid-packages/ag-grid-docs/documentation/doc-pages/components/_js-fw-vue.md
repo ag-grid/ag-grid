@@ -49,7 +49,7 @@
 |               {
 |                   headerName: "Vue Cell",
 |                   field: "value",
-|                   cellRenderer: 'vueComponent',  // reference/use the Vue component
+|                   cellRendererFramework: 'vueComponent',  // reference/use the Vue component
 |               }
 |           ]
 |       }

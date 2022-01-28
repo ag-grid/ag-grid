@@ -5,9 +5,9 @@ import { TotalValueRenderer } from "./totalValueRenderer_typescript";
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'year' },
-  { field: 'gold', cellRenderer: MedalCellRenderer },
-  { field: 'silver', cellRenderer: MedalCellRenderer },
-  { field: 'bronze', cellRenderer: MedalCellRenderer },
+  { field: 'gold', cellRendererFramework: MedalCellRenderer },
+  { field: 'silver', cellRendererFramework: MedalCellRenderer },
+  { field: 'bronze', cellRendererFramework: MedalCellRenderer },
   { field: 'total', minWidth: 175, cellRenderer: TotalValueRenderer },
 ]
 
