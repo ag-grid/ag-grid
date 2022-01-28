@@ -4,7 +4,7 @@
 |    statusBar: {
 |        statusPanels: [
 |            {
-|                statusPanel: 'statusBarComponent'
+|                statusPanelFramework: 'myStatusBarComponent'
 |            },
 |            {
 |                statusPanel: 'agAggregationComponent',
