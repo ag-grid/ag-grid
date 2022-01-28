@@ -137,7 +137,7 @@ export class PieSeries extends PolarSeries {
         if (oldTitle !== value) {
             if (oldTitle) {
                 oldTitle.removeEventListener('change', this.scheduleUpdate, this);
-                oldTitle.addPropertyListener('showInLegend', updateLegend, this);
+                oldTitle.removePropertyListener('showInLegend', updateLegend, this);
                 this.group.removeChild(oldTitle.node);
             }
 
