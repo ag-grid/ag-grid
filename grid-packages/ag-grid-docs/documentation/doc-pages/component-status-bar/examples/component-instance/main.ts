@@ -50,7 +50,7 @@ const gridOptions: GridOptions = {
         key: 'statusBarCompKey',
       },
       {
-        statusPanelComp: 'agAggregationComponent',
+        statusPanel: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
         },
