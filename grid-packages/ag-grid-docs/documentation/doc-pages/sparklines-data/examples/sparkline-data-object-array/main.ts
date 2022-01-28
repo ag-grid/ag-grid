@@ -7,8 +7,8 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'rateOfChange',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           type: 'column',
           xKey: 'xVal',

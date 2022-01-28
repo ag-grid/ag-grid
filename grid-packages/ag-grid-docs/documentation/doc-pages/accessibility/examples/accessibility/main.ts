@@ -3,7 +3,7 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
-    { field: 'age', minWidth: 50, filterComp: 'agNumberColumnFilter' },
+    { field: 'age', minWidth: 50, filter: 'agNumberColumnFilter' },
     { field: 'country', width: 120 },
     { field: 'year', width: 90 },
     { field: 'date', width: 110 },

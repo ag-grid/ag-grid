@@ -10,26 +10,26 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Case Insensitive (default)',
       field: 'colour',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: false,
-        cellRendererComp: colourCellRenderer,
+        cellRenderer: colourCellRenderer,
       },
     },
     {
       headerName: 'Case Sensitive',
       field: 'colour',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: true,
-        cellRendererComp: colourCellRenderer,
+        cellRenderer: colourCellRenderer,
       },
     },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 225,
-    cellRendererComp: colourCellRenderer,
+    cellRenderer: colourCellRenderer,
     resizable: true,
     floatingFilter: true,
   },
@@ -51,7 +51,7 @@ function colourCellRenderer(params: ICellRendererParams) {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

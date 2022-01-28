@@ -1,37 +1,37 @@
-import {ColDef, Grid, GridOptions} from '@ag-grid-community/core'
-import {CustomHeader} from './customHeader_typescript'
+import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
+import { CustomHeader } from './customHeader_typescript'
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ],
     rowData: null,
     defaultColDef: {
-        headerComp: CustomHeader,
+        headerComponentFramework: CustomHeader,
     },
 }
 
 function onBtUpperNames() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.headerName = c.field!.toUpperCase()
@@ -41,16 +41,16 @@ function onBtUpperNames() {
 
 function onBtLowerNames() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.headerName = c.field
@@ -60,16 +60,16 @@ function onBtLowerNames() {
 
 function onBtFilterOn() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.filter = true
@@ -79,16 +79,16 @@ function onBtFilterOn() {
 
 function onBtFilterOff() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.filter = false
@@ -98,16 +98,16 @@ function onBtFilterOff() {
 
 function onBtResizeOn() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.resizable = true
@@ -117,16 +117,16 @@ function onBtResizeOn() {
 
 function onBtResizeOff() {
     const columnDefs: ColDef[] = [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]
     columnDefs.forEach(function (c) {
         c.resizable = false

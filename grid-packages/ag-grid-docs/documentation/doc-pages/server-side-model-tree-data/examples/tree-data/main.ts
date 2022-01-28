@@ -17,12 +17,12 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
-    filterComp: 'agTextColumnFilter',
+    filter: 'agTextColumnFilter',
     flex: 1,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
-    cellRendererCompParams: {
+    cellRendererParams: {
       innerRenderer: function (params: ICellRendererParams) {
         // display employeeName rather than group key (employeeId)
         return params.data.employeeName

@@ -3,7 +3,7 @@ declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'accountId', maxWidth: 200, cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
     { field: 'name' },
     { field: 'country' },
     { field: 'calls' },
@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   masterDetail: true,
   detailRowAutoHeight: true,
 
-  detailRowCellCompParams: {
+  detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

@@ -11,8 +11,8 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           tooltip: {
             renderer: tooltipRenderer,

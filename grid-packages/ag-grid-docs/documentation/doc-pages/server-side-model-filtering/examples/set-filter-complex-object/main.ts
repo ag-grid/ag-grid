@@ -7,7 +7,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'country',
     valueFormatter: countryValueFormatter,
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: getCountryValuesAsync,
       valueFormatter: countryFilterValueFormatter,

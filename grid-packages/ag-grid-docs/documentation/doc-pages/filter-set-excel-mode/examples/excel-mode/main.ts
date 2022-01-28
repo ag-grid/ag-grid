@@ -5,12 +5,12 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Default',
       field: 'animal',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
     },
     {
       headerName: 'Excel (Windows)',
       field: 'animal',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'windows',
       },
@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Excel (Mac)',
       field: 'animal',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'mac',
       },

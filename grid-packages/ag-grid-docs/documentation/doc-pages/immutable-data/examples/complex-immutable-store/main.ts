@@ -81,7 +81,7 @@ const columnDefs: ColDef[] = [
     cellClass: 'number',
     aggFunc: 'max',
     enableValue: true,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'current',
@@ -90,7 +90,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'previous',
@@ -99,7 +99,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Change',
@@ -109,7 +109,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 1',
@@ -119,7 +119,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 2',
@@ -129,7 +129,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Gain-DX',
@@ -139,7 +139,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'SX / PX',
@@ -149,7 +149,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: '99 Out',
@@ -159,7 +159,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitter ID',
@@ -169,7 +169,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitted Deal ID',
@@ -179,7 +179,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
 
   // some string values, that do not get aggregated
@@ -284,7 +284,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     width: 250,
-    cellRendererCompParams: {
+    cellRendererParams: {
       checkbox: true,
     },
   },

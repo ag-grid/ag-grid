@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
     headerName: 'ID',
     maxWidth: 100,
     valueGetter: 'node.id',
-    cellRendererComp: function (params: ICellRendererParams) {
+    cellRenderer: function (params: ICellRendererParams) {
       if (params.value !== undefined) {
         return params.value
       } else {
@@ -23,19 +23,19 @@ const columnDefs: ColDef[] = [
   { headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true },
   {
     field: 'age',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: {
       filterOptions: ['equals', 'lessThan', 'greaterThan'],
     },
   },
   {
     field: 'country',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: filterParams,
   },
   {
     field: 'year',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: { values: ['2000', '2004', '2008', '2012'] },
   },
   { field: 'date' },

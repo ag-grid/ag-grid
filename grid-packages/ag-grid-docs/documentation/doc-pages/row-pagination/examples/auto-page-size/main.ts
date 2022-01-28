@@ -39,8 +39,8 @@ var autoGroupColumnDef: ColDef = {
   },
   headerCheckboxSelection: true,
   // headerCheckboxSelectionFilteredOnly: true,
-  cellRendererComp: 'agGroupCellRenderer',
-  cellRendererCompParams: {
+  cellRenderer: 'agGroupCellRenderer',
+  cellRendererParams: {
     checkbox: true,
   },
 }

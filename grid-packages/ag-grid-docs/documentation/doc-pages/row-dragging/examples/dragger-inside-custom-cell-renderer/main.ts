@@ -5,7 +5,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     cellClass: 'custom-athlete-cell',
-    cellRendererComp: CustomCellRenderer,
+    cellRendererFramework: CustomCellRenderer,
   },
   { field: 'country' },
   { field: 'year', width: 100 },

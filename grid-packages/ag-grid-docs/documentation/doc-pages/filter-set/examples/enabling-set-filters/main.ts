@@ -4,12 +4,12 @@ const gridOptions: GridOptions = {
   columnDefs: [
     // set filters
     { field: 'athlete', filter: true },
-    { field: 'country', filterComp: 'agSetColumnFilter' },
+    { field: 'country', filter: 'agSetColumnFilter' },
 
     // number filters
-    { field: 'gold', filterComp: 'agNumberColumnFilter' },
-    { field: 'silver', filterComp: 'agNumberColumnFilter' },
-    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
   ],
 
   defaultColDef: {

@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [{ field: 'athlete', filterComp: 'agSetColumnFilter' }]
+const columnDefs: ColDef[] = [{ field: 'athlete', filter: 'agSetColumnFilter' }]
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,

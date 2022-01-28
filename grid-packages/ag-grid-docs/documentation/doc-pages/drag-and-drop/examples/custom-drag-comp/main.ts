@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   rowDragManaged: true,
   columnDefs: [
-    { cellRendererComp: DragSourceRenderer, minWidth: 100 },
+    { cellRendererFramework: DragSourceRenderer, minWidth: 100 },
     { field: 'id' },
     { field: 'color' },
     { field: 'value1' },

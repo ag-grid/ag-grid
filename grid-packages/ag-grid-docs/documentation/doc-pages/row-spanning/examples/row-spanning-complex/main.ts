@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, RowSpanParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, RowSpanParams, ICellRendererComp } from '@ag-grid-community/core'
 
 function rowSpan(params: RowSpanParams) {
     if (params.data.show) {
@@ -8,13 +8,13 @@ function rowSpan(params: RowSpanParams) {
     }
 }
 
-class ShowCellRenderer {
+class ShowCellRenderer implements ICellRendererComp {
     ui: any;
 
     init(params: ICellRendererParams) {
         const cellBlank = !params.value;
         if (cellBlank) {
-            return null
+            return;
         }
 
         this.ui = document.createElement('div')
@@ -31,13 +31,17 @@ class ShowCellRenderer {
     getGui() {
         return this.ui;
     }
+
+    refresh() {
+        return false;
+    }
 }
 
 const columnDefs: ColDef[] = [
     { field: 'localTime' },
     {
         field: 'show',
-        cellRendererComp: ShowCellRenderer,
+        cellRenderer: ShowCellRenderer,
         rowSpan: rowSpan,
         cellClassRules: {
             'show-cell': 'value !== undefined',

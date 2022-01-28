@@ -4,11 +4,11 @@ import { YearFloatingFilter } from "./YearFloatingFilter_typescript";
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filterComp: 'agMultiColumnFilter' },
-    { field: 'sport', filterComp: 'agMultiColumnFilter' },
+    { field: 'athlete', filter: 'agMultiColumnFilter' },
+    { field: 'sport', filter: 'agMultiColumnFilter' },
     {
       field: 'year',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
             floatingFilterComp: YearFloatingFilter,
           },
           {
-            filterComp: 'agNumberColumnFilter',
+            filter: 'agNumberColumnFilter',
           },
         ],
       },

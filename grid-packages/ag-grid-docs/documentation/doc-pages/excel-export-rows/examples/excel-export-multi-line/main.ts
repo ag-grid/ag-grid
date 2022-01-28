@@ -1,5 +1,5 @@
 import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
-import {MultilineCellRenderer} from './multilineCellRenderer_typescript'
+import { MultilineCellRenderer } from './multilineCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
     { field: 'address' },
@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         valueGetter: function (param) {
             return param.data.col1 + '\n' + param.data.col2
         },
-        cellRendererComp: MultilineCellRenderer
+        cellRendererFramework: MultilineCellRenderer
     },
 ]
 

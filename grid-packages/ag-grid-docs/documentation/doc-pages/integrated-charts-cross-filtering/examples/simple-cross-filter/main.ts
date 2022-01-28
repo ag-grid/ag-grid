@@ -10,7 +10,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     sortable: true,
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     floatingFilter: true,
     resizable: true,
   },

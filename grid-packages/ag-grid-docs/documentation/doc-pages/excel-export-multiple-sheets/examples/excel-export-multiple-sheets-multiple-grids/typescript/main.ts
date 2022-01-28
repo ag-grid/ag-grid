@@ -1,4 +1,4 @@
-import {ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams} from "ag-grid-community";
+import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
 
 class SportRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -7,7 +7,7 @@ class SportRenderer implements ICellRendererComp {
         this.eGui = document.createElement('i');
 
         this.eGui.addEventListener('click', function () {
-            params.api.applyTransaction({remove: [params.node.data]});
+            params.api.applyTransaction({ remove: [params.node.data] });
         });
 
         this.eGui.classList.add('far', 'fa-trash-alt');
@@ -35,8 +35,8 @@ const leftColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    {field: "athlete"},
-    {field: "sport"}
+    { field: "athlete" },
+    { field: "sport" }
 ];
 
 const rightColumnDefs: ColDef[] = [
@@ -51,12 +51,12 @@ const rightColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    {field: "athlete"},
-    {field: "sport"},
+    { field: "athlete" },
+    { field: "sport" },
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRendererComp: SportRenderer
+        cellRenderer: SportRenderer
     }
 ];
 
@@ -151,8 +151,8 @@ function onExcelExport() {
     const spreadsheets = [];
 
     spreadsheets.push(
-        leftGridOptions.api!.getSheetDataForExcel({sheetName: 'Athletes'})!,
-        rightGridOptions.api!.getSheetDataForExcel({sheetName: 'Selected Athletes'})!
+        leftGridOptions.api!.getSheetDataForExcel({ sheetName: 'Athletes' })!,
+        rightGridOptions.api!.getSheetDataForExcel({ sheetName: 'Selected Athletes' })!
     );
 
     // could be leftGridOptions or rightGridOptions

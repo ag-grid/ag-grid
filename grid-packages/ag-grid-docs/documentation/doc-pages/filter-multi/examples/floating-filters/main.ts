@@ -3,7 +3,7 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 var dateFilterParams = {
   filters: [
     {
-      filterComp: 'agDateColumnFilter',
+      filter: 'agDateColumnFilter',
       filterParams: {
         comparator: function (filterDate: Date, cellValue: string) {
           if (cellValue == null) return -1
@@ -13,7 +13,7 @@ var dateFilterParams = {
       },
     },
     {
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         comparator: function (a: string, b: string) {
           return getDate(a).getTime() - getDate(b).getTime()
@@ -25,24 +25,24 @@ var dateFilterParams = {
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filterComp: 'agMultiColumnFilter' },
+    { field: 'athlete', filter: 'agMultiColumnFilter' },
     {
       field: 'gold',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filterComp: 'agNumberColumnFilter',
+            filter: 'agNumberColumnFilter',
           },
           {
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
           },
         ],
       },
     },
     {
       field: 'date',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
       filterParams: dateFilterParams,
     },
   ],

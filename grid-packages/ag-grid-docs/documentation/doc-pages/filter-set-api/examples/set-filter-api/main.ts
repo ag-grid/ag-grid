@@ -1,15 +1,15 @@
-import {Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams} from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'athlete',
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
             filterParams: {
                 cellHeight: 20,
             },
         },
-        {field: 'age', maxWidth: 120, filterComp: 'agNumberColumnFilter'},
+        { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         {
             field: 'country',
             valueFormatter: function (params: ValueFormatterParams) {
@@ -17,13 +17,13 @@ const gridOptions: GridOptions = {
             },
             keyCreator: countryKeyCreator,
         },
-        {field: 'year', maxWidth: 120},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold', filterComp: 'agNumberColumnFilter'},
-        {field: 'silver', filterComp: 'agNumberColumnFilter'},
-        {field: 'bronze', filterComp: 'agNumberColumnFilter'},
-        {field: 'total', filterComp: 'agNumberColumnFilter'},
+        { field: 'year', maxWidth: 120 },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        { field: 'silver', filter: 'agNumberColumnFilter' },
+        { field: 'bronze', filter: 'agNumberColumnFilter' },
+        { field: 'total', filter: 'agNumberColumnFilter' },
     ],
     defaultColDef: {
         flex: 1,
@@ -51,7 +51,7 @@ function patchData(data: any[]) {
 
 function selectJohnAndKenny() {
     const instance = gridOptions.api!.getFilterInstance('athlete')!
-    instance.setModel({values: ['John Joe Nevin', 'Kenny Egan']})
+    instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] })
     gridOptions.api!.onFilterChanged()
 }
 
@@ -63,7 +63,7 @@ function selectEverything() {
 
 function selectNothing() {
     const instance = gridOptions.api!.getFilterInstance('athlete')!
-    instance.setModel({values: []})
+    instance.setModel({ values: [] })
     gridOptions.api!.onFilterChanged()
 }
 

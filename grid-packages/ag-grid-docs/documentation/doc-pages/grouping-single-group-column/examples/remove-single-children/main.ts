@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     headerName: 'Group',
     field: 'athlete',
     minWidth: 220,
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
   },
   rowData: getData(),
 

@@ -1,4 +1,4 @@
-import {ColDef, Grid, GridOptions, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType} from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
 
 declare var LINUX_DISTROS: string[];
 declare var CITIES: string[];
@@ -64,7 +64,7 @@ function getMyFilter(): IFilterType {
                 return null;
             }
 
-            return {value: this.eInput.value}
+            return { value: this.eInput.value }
         }
 
         isFilterActive() {
@@ -74,8 +74,8 @@ function getMyFilter(): IFilterType {
         doesFilterPass(params: IDoesFilterPassParams) {
             filterCallCount++
 
-            const {api, colDef, column, columnApi, context} = this.filterParams;
-            const {node} = params;
+            const { api, colDef, column, columnApi, context } = this.filterParams;
+            const { node } = params;
             const value = this.filterParams.valueGetter({
                 api,
                 colDef,
@@ -98,9 +98,9 @@ const myFilter = getMyFilter();
 
 
 const columnDefs: ColDef[] = [
-    {field: 'city', rowGroup: true, hide: true},
-    {field: 'laptop', rowGroup: true, hide: true},
-    {field: 'distro', sort: 'asc', comparator: myComparator},
+    { field: 'city', rowGroup: true, hide: true },
+    { field: 'laptop', rowGroup: true, hide: true },
+    { field: 'distro', sort: 'asc', comparator: myComparator },
     {
         field: 'value',
         enableCellChangeFlash: true,
@@ -138,7 +138,7 @@ function onBtDuplicate() {
     })
 
     timeOperation('Duplicate', function () {
-        api.applyTransaction({add: newItems})
+        api.applyTransaction({ add: newItems })
     })
 }
 
@@ -167,7 +167,7 @@ function onBtUpdate() {
     })
 
     timeOperation('Update', function () {
-        api.applyTransaction({update: updatedItems})
+        api.applyTransaction({ update: updatedItems })
     })
 }
 
@@ -182,7 +182,7 @@ function onBtDelete() {
     }
 
     timeOperation('Delete', function () {
-        api.applyTransaction({remove: selectedRows})
+        api.applyTransaction({ remove: selectedRows })
     })
 }
 
@@ -215,11 +215,11 @@ const gridOptions: GridOptions = {
     suppressRowClickSelection: true,
     autoGroupColumnDef: {
         field: 'name',
-        cellRendererCompParams: {checkbox: true},
+        cellRendererParams: { checkbox: true },
     },
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         params.api.setFilterModel({
-            value: {value: '50'},
+            value: { value: '50' },
         })
 
         timeOperation('Initialisation', function () {

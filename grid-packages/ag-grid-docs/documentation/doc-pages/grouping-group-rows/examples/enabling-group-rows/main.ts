@@ -7,7 +7,7 @@ const gridOptions: GridOptions = {
     {
       field: 'athlete',
       minWidth: 250,
-      cellRendererComp: function (params: ICellRendererParams) {
+      cellRenderer: function (params: ICellRendererParams) {
         return `<span style="margin-left: 60px">${params.value}</span)`
       },
     },

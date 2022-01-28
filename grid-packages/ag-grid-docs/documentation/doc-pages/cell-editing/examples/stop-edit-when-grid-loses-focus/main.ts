@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
     { field: 'athlete', minWidth: 160 },
     { field: 'age' },
     { field: 'country', minWidth: 140 },
-    { field: 'year', cellEditorComp: YearCellEditor },
+    { field: 'year', cellEditor: YearCellEditor },
     { field: 'date', minWidth: 140 },
     { field: 'sport', minWidth: 160 },
     { field: 'gold' },

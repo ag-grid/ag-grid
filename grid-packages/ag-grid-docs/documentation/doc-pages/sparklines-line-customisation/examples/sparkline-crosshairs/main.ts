@@ -12,8 +12,8 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           line: {
             stroke: 'rgb(52, 168, 83)',
@@ -43,8 +43,8 @@ const gridOptions: GridOptions = {
     },
     {
       field: 'rateOfChange',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           line: {
             stroke: 'rgb(168,52,137)',

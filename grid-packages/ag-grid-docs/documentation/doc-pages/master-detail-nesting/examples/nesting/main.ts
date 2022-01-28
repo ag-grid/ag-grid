@@ -43,7 +43,7 @@ var rowData = [
 const gridOptions: GridOptions = {
   rowData: rowData,
   columnDefs: [
-    { field: 'a1', cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'a1', cellRenderer: 'agGroupCellRenderer' },
     { field: 'b1' },
   ],
   defaultColDef: {
@@ -51,11 +51,11 @@ const gridOptions: GridOptions = {
   },
   groupDefaultExpanded: 1,
   masterDetail: true,
-  detailRowCellCompParams: {
+  detailCellRendererParams: {
     // level 2 grid options
     detailGridOptions: {
       columnDefs: [
-        { field: 'a2', cellRendererComp: 'agGroupCellRenderer' },
+        { field: 'a2', cellRenderer: 'agGroupCellRenderer' },
         { field: 'b2' },
       ],
       defaultColDef: {
@@ -64,11 +64,11 @@ const gridOptions: GridOptions = {
       groupDefaultExpanded: 1,
       masterDetail: true,
       detailRowHeight: 240,
-      detailRowCellCompParams: {
+      detailCellRendererParams: {
         // level 3 grid options
         detailGridOptions: {
           columnDefs: [
-            { field: 'a3', cellRendererComp: 'agGroupCellRenderer' },
+            { field: 'a3', cellRenderer: 'agGroupCellRenderer' },
             { field: 'b3' },
           ],
           defaultColDef: {

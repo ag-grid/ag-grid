@@ -4,31 +4,31 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'athlete',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filterComp: 'agTextColumnFilter',
+            filter: 'agTextColumnFilter',
             display: 'subMenu',
           },
           {
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
           },
         ],
       },
     },
     {
       field: 'country',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filterComp: 'agTextColumnFilter',
+            filter: 'agTextColumnFilter',
             display: 'accordion',
             title: 'Expand Me for Text Filters',
           },
           {
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
             display: 'accordion',
           },
         ],
@@ -36,7 +36,7 @@ const gridOptions: GridOptions = {
     },
     {
       field: 'sport',
-      filterComp: 'agMultiColumnFilter',
+      filter: 'agMultiColumnFilter',
     },
   ],
   defaultColDef: {

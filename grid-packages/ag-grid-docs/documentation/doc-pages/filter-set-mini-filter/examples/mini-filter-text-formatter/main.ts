@@ -9,13 +9,13 @@ const gridOptions: GridOptions = {
     // set filter
     {
       field: 'athlete',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: filterParams,
     },
     // number filters
-    { field: 'gold', filterComp: 'agNumberColumnFilter' },
-    { field: 'silver', filterComp: 'agNumberColumnFilter' },
-    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,

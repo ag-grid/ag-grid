@@ -9,7 +9,7 @@ const gridOptions: GridOptions = {
       // it is important to have node.id here, so that when the id changes (which happens
       // when the row is loaded) then the cell is refreshed.
       valueGetter: 'node.id',
-      cellRendererComp: function (params: ICellRendererParams) {
+      cellRenderer: function (params: ICellRendererParams) {
         if (params.value !== undefined) {
           return params.value
         } else {

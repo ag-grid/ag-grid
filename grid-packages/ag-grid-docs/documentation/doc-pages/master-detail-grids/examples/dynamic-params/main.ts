@@ -3,7 +3,7 @@ import { Grid, FirstDataRenderedEvent, GridOptions, ICellRendererParams, IDetail
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },

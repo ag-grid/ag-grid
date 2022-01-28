@@ -12,7 +12,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Item ID',
     field: 'id',
     valueGetter: 'node.id',
-    cellRendererComp: function (params: ICellRendererParams) {
+    cellRenderer: function (params: ICellRendererParams) {
       if (params.value !== undefined) {
         return params.value
       } else {

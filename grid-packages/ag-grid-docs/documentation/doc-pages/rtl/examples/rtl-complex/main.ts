@@ -202,10 +202,10 @@ const autoGroupColumnDef: ColDef = {
             return params.data[params.colDef.field!]
         }
     },
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRendererCompParams: {
+    cellRendererParams: {
         checkbox: true,
     },
 };
@@ -268,7 +268,7 @@ const firstColumn: ColDef = {
     editable: true,
     enableRowGroup: true,
     // enablePivot: true,
-    filterComp: PersonFilter,
+    filter: PersonFilter,
     checkboxSelection: function (params) {
         // we put checkbox on the name if we are not doing no grouping
         return params.columnApi.getRowGroupColumns().length === 0
@@ -295,14 +295,14 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 field: 'language',
                 width: 150,
                 editable: true,
-                filterComp: 'agSetColumnFilter',
-                cellRendererComp: languageCellRenderer,
-                cellEditorComp: 'agSelectCellEditor',
+                filter: 'agSetColumnFilter',
+                cellRenderer: languageCellRenderer,
+                cellEditor: 'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
                 // pivotIndex: 0,
-                cellEditorCompParams: {
+                cellEditorParams: {
                     values: [
                         'English',
                         'Spanish',
@@ -325,14 +325,14 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 field: 'country',
                 width: 150,
                 editable: true,
-                cellRendererComp: CountryCellRenderer,
+                cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditorComp: 'agRichSelectCellEditor',
-                cellEditorCompParams: {
-                    cellRendererComp: CountryCellRenderer,
+                cellEditor: 'agRichSelectCellEditor',
+                cellEditorParams: {
+                    cellRenderer: CountryCellRenderer,
                     values: [
                         'Argentina',
                         'Brazil',
@@ -372,7 +372,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 field: 'game.name',
                 width: 180,
                 editable: true,
-                filterComp: 'agSetColumnFilter',
+                filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function () {
                     return 'alphabet'
@@ -389,7 +389,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
             {
                 headerName: 'Bought',
                 field: 'game.bought',
-                filterComp: 'agSetColumnFilter',
+                filter: 'agSetColumnFilter',
                 editable: true,
                 width: 100,
                 // pinned: 'right',
@@ -398,7 +398,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRendererComp: booleanCellRenderer,
+                cellRenderer: booleanCellRenderer,
                 cellStyle: { 'text-align': 'center' },
                 comparator: booleanComparator,
                 filterParams: { cellRendererComp: booleanFilterCellRenderer },
@@ -414,9 +414,9 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: true,
                 filter: WinningsFilter,
-                cellRendererComp: currencyRenderer,
+                cellRenderer: currencyRenderer,
                 cellStyle: currencyCssFunc,
-                filterParams: { cellRendererComp: currencyRenderer },
+                filterParams: { cellRenderer: currencyRenderer },
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -434,7 +434,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 sortable: false,
                 suppressMenu: true,
                 cellStyle: { 'text-align': 'right' },
-                cellRendererComp: function () {
+                cellRenderer: function () {
                     return 'Abra...'
                 },
             },
@@ -446,7 +446,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 sortable: false,
                 suppressMenu: true,
                 cellStyle: { 'text-align': 'left' },
-                cellRendererComp: function () {
+                cellRenderer: function () {
                     return '...cadabra!'
                 },
             },
@@ -456,7 +456,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
         field: 'rating',
         width: 100,
         editable: true,
-        cellRendererComp: ratingRenderer,
+        cellRenderer: ratingRenderer,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
@@ -464,13 +464,13 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
     },
     {
         field: 'totalWinnings',
-        filterComp: 'agNumberColumnFilter',
+        filter: 'agNumberColumnFilter',
         editable: true,
         newValueHandler: numberNewValueHandler,
         width: 150,
         // aggFunc: 'sum',
         enableValue: true,
-        cellRendererComp: currencyRenderer,
+        cellRenderer: currencyRenderer,
         cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
@@ -489,7 +489,7 @@ months.forEach(function (month) {
         headerName: month,
         field: month.toLocaleLowerCase(),
         width: 100,
-        filterComp: 'agNumberColumnFilter',
+        filter: 'agNumberColumnFilter',
         editable: true,
         enableValue: true,
         // aggFunc: 'sum',
@@ -499,7 +499,7 @@ months.forEach(function (month) {
             'bad-score': 'typeof x === "number" && x < 10000',
         },
         newValueHandler: numberNewValueHandler,
-        cellRendererComp: currencyRenderer,
+        cellRenderer: currencyRenderer,
         cellStyle: { 'text-align': 'right' },
     };
     monthGroup.children.push(child)

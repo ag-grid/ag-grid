@@ -14,12 +14,12 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Age (No Comparator)',
       field: 'age',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
     },
     {
       headerName: 'Age (With Comparator)',
       field: 'age',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: filterParams,
     },
   ],
@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   sideBar: 'filters',
   onGridReady: function (params) {
-     ((params.api.getToolPanelInstance(
+    ((params.api.getToolPanelInstance(
       'filters'
     ) as any) as IFiltersToolPanel).expandFilters()
   },

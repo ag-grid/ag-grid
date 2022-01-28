@@ -13,8 +13,8 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           tooltip: {
             container: body, // confines the tooltip to the document body node instead of the sparkline cell

@@ -34,14 +34,14 @@ const gridOptions: GridOptions = {
       colId: 'array',
       headerName: 'Values Array',
       field: 'animal',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: arrayFilterParams,
     },
     {
       colId: 'callback',
       headerName: 'Values Callback',
       field: 'animal',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: callbackFilterParams,
     },
   ],
@@ -56,7 +56,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

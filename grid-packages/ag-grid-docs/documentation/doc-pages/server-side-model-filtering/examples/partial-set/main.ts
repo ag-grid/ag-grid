@@ -4,7 +4,7 @@ declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {
     field: 'country',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: getCountryValuesAsync,
     },
@@ -12,7 +12,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'sport',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: getSportValuesAsync,
     },

@@ -33,13 +33,13 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Days (Values Not Provided)',
       field: 'days',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: daysValuesNotProvidedFilterParams,
     },
     {
       headerName: 'Days (Values Provided)',
       field: 'days',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: daysValuesProvidedFilterParams,
     },
   ],
@@ -66,7 +66,7 @@ function getRowData() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

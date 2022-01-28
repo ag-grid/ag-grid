@@ -1,5 +1,5 @@
-import {FirstDataRenderedEvent, Grid, GridOptions, IFiltersToolPanel,} from '@ag-grid-community/core'
-import {CountryCellRenderer} from './countryCellRenderer_typescript'
+import { FirstDataRenderedEvent, Grid, GridOptions, IFiltersToolPanel, } from '@ag-grid-community/core'
+import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
 const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',
@@ -28,8 +28,8 @@ const gridOptions: GridOptions = {
         {
             headerName: 'No Cell Renderer',
             field: 'country',
-            cellRendererComp: CountryCellRenderer,
-            filterComp: 'agSetColumnFilter',
+            cellRendererFramework: CountryCellRenderer,
+            filter: 'agSetColumnFilter',
             filterParams: {
                 // no cell renderer!
             },
@@ -37,10 +37,10 @@ const gridOptions: GridOptions = {
         {
             headerName: 'With Cell Renderers',
             field: 'country',
-            cellRendererComp: CountryCellRenderer,
-            filterComp: 'agSetColumnFilter',
+            cellRendererFramework: CountryCellRenderer,
+            filter: 'agSetColumnFilter',
             filterParams: {
-                cellRendererComp: CountryCellRenderer,
+                cellRendererFramework: CountryCellRenderer,
             },
         },
     ],

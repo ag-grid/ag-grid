@@ -6,8 +6,8 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererCompParams: {
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
         sparklineOptions: {
           type: 'bar',
           fill: '#5470c6',

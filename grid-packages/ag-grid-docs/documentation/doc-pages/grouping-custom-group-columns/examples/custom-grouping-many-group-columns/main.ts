@@ -7,13 +7,13 @@ const columnDefs: ColDef[] = [
     // this tells the grid what values to put into the cell
     showRowGroup: 'country',
     // this tells the grid what to use to render the cell
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
   },
   {
     headerName: 'Year',
     minWidth: 200,
     showRowGroup: 'year',
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
   },
   // these are the two columns we use to group by. we also hide them, so there
   // is no duplication with the values above

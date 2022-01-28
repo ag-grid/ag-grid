@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'D',
       field: 'd',
-      cellRendererComp: BoldRenderer,
+      cellRenderer: BoldRenderer,
       // this is needed to avoid toString=[object,object] result with objects
       getQuickFilterText: function (params) {
         return params.value.name
@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'E',
       field: 'e',
-      cellRendererComp: BoldRenderer,
+      cellRenderer: BoldRenderer,
     },
   ],
   defaultColDef: {

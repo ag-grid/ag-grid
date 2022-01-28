@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
       editable: true,
       aggFunc: 'sum',
       valueParser: 'Number(newValue)',
-      filterComp: 'agNumberColumnFilter',
+      filter: 'agNumberColumnFilter',
     },
   },
   rowData: getRowData(),

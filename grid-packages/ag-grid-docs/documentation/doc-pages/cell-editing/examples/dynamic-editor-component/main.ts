@@ -8,7 +8,7 @@ const gridOptions: GridOptions = {
     {
       field: 'value',
       editable: true,
-      cellEditorCompSelector: cellEditorCompSelector,
+      cellEditorSelector: cellEditorSelector,
       cellEditorPopup: true
     }
   ],
@@ -39,16 +39,17 @@ function onCellEditingStopped(event: CellEditingStoppedEvent) {
   console.log('cellEditingStopped')
 }
 
-function cellEditorCompSelector(params: ICellEditorParams) {
+function cellEditorSelector(params: ICellEditorParams) {
   if (params.data.type === 'age') {
     return {
-      comp: NumericCellEditor,
+      frameworkComponent: NumericCellEditor,
     }
   }
 
   if (params.data.type === 'gender') {
     return {
-      comp: 'agRichSelectCellEditor',
+      component
+        : 'agRichSelectCellEditor',
       params: {
         values: ['Male', 'Female'],
       },
@@ -57,7 +58,7 @@ function cellEditorCompSelector(params: ICellEditorParams) {
 
   if (params.data.type === 'mood') {
     return {
-      comp: MoodEditor,
+      frameworkComponent: MoodEditor,
     }
   }
 

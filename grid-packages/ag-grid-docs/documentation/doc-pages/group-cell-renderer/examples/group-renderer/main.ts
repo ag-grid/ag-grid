@@ -6,7 +6,7 @@ class SimpleCellRenderer {
     init(params: ICellRendererParams) {
         const tempDiv = document.createElement('div');
         const color = params.node.group ? 'coral' : 'lightgreen';
-        tempDiv.innerHTML =`<span style="background-color: ${color}; padding: 2px; ">${params.value}</span>`
+        tempDiv.innerHTML = `<span style="background-color: ${color}; padding: 2px; ">${params.value}</span>`
         this.eGui = tempDiv.firstChild!
     }
 
@@ -30,7 +30,7 @@ const columnDefs: ColDef[] = [
     {
         headerName: 'Group Renderer A',
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         minWidth: 220,
     },
 
@@ -39,7 +39,7 @@ const columnDefs: ColDef[] = [
         headerName: 'Group Renderer B',
         field: 'city',
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         minWidth: 220,
     },
 
@@ -49,8 +49,8 @@ const columnDefs: ColDef[] = [
         field: 'city',
         minWidth: 240,
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
-        cellRendererCompParams: {
+        cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: {
             suppressCount: true,
             checkbox: true,
             innerRendererComp: SimpleCellRenderer,

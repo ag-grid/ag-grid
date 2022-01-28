@@ -20,38 +20,38 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'make',
-      cellEditorComp: 'select',
-      cellEditorCompParams: {
+      cellEditor: 'select',
+      cellEditorParams: {
         values: carBrands,
       },
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       refData: carMappings,
     },
     {
       field: 'exteriorColour',
       minWidth: 150,
-      cellEditorComp: 'agRichSelectCellEditor',
+      cellEditor: 'agRichSelectCellEditor',
       cellEditorPopup: true,
-      cellEditorCompParams: {
+      cellEditorParams: {
         values: colours,
-        cellRendererComp: colourCellRenderer,
+        cellRenderer: colourCellRenderer,
       },
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
-        cellRendererComp: colourCellRenderer,
+        cellRenderer: colourCellRenderer,
       },
       refData: colourMappings,
-      cellRendererComp: colourCellRenderer,
+      cellRenderer: colourCellRenderer,
     },
     {
       field: 'interiorColour',
       minWidth: 150,
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
-        cellRendererComp: colourCellRenderer,
+        cellRenderer: colourCellRenderer,
       },
       refData: colourMappings,
-      cellRendererComp: colourCellRenderer,
+      cellRenderer: colourCellRenderer,
     },
     {
       headerName: 'Retail Price',

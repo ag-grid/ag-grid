@@ -20,8 +20,8 @@ const gridOptions: GridOptions = {
     headerName: 'Athlete',
     field: 'athlete',
     minWidth: 250,
-    cellRendererComp: 'agGroupCellRenderer',
-    cellRendererCompParams: {
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
       checkbox: true,
     },
   },

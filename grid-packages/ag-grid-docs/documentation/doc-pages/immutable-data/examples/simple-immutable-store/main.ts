@@ -168,7 +168,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   autoGroupColumnDef: {
     headerName: 'Symbol',
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     field: 'symbol',
   },
   statusBar: {

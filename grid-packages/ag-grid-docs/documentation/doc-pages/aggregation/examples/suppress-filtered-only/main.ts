@@ -2,7 +2,7 @@ import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'country', rowGroup: true, hide: true },
-  { field: 'year', filterComp: 'agNumberColumnFilter' },
+  { field: 'year', filter: 'agNumberColumnFilter' },
   { field: 'gold', aggFunc: 'sum' },
   { field: 'silver', aggFunc: 'sum' },
   { field: 'bronze', aggFunc: 'sum' },
