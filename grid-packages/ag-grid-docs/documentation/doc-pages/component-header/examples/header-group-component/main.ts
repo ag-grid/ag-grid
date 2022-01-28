@@ -4,7 +4,7 @@ import { CustomHeaderGroup } from "./customHeaderGroup_typescript";
 const columnDefs: ColGroupDef[] = [
   {
     headerName: 'Athlete Details',
-    headerGroupComp: CustomHeaderGroup,
+    headerGroupComponentFramework: CustomHeaderGroup,
     children: [
       { field: 'athlete', width: 150 },
       { field: 'age', width: 90, columnGroupShow: 'open' },
@@ -17,7 +17,7 @@ const columnDefs: ColGroupDef[] = [
   },
   {
     headerName: 'Medal details',
-    headerGroupComp: CustomHeaderGroup,
+    headerGroupComponentFramework: CustomHeaderGroup,
     children: [
       { field: 'year', width: 90 },
       { field: 'date', width: 110 },

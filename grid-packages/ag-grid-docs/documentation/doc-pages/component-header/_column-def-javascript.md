@@ -9,13 +9,13 @@
 |
 |    // this column uses a custom header
 |    // component specified in comps
-|    {headerName: "Age", field: "age", headerComp: MyHeaderComponent},
+|    {headerName: "Age", field: "age", headerComponent: MyHeaderComponent},
 |
 |    // you can also specify header components for groups
 |    {
 |        headerName: "Medals",
 |        // custom header component component specified in comps
-|        headerGroupComp: MyHeaderGroupComp,
+|        headerGroupComponent: MyHeaderGroupComponent,
 |        children: [
 |            {headerName: "Gold", field: "gold"},
 |            {headerName: "Silver", field: "silver"},

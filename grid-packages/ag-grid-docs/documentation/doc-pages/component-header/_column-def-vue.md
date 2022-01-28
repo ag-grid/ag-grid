@@ -9,14 +9,14 @@
 |
 |    // this column uses a custom header
 |    // component specified in frameworkComponents
-|    {headerName: "Age", field: "age", headerComp: 'myHeaderComponent'},
+|    {headerName: "Age", field: "age", headerComponentFramework: 'myHeaderComponent'},
 |
 |    // you can also specify header components for groups
 |    {
 |        headerName: "Medals",
 |        // custom header component
 |        // component specified in frameworkComponents
-|        headerGroupComp: 'myHeaderGroupComp',
+|        headerGroupComponentFramework: 'myHeaderGroupComp',
 |        children: [
 |            {headerName: "Gold", field: "gold"},
 |            {headerName: "Silver", field: "silver"},
