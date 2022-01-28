@@ -8,12 +8,9 @@
 |                labelDefault: 'Custom Stats',
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
-|                component: 'customStatsToolPanel',
+|                toolPanelFramework: CustomStatsToolPanel,
 |            }
 |        ]
-|    }}
-|    components: {{
-|        customStatsToolPanel: CustomStatsComponent
 |    }}
 |       ...other props...
 |/>

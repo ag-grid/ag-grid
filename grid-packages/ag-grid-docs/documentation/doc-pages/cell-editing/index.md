@@ -142,10 +142,6 @@ Finally, the example also demonstrates querying which cell is editing:
 
 ## Many Editors One Column
 
-[[note]]
-| How selectors work changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorCompSelector` to a function that returns alternative values for `cellEditorComp` and `cellEditorCompParams`.
 
 The `params` passed to `cellEditorCompSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.

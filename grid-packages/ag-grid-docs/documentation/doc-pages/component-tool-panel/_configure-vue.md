@@ -8,13 +8,10 @@
 |                labelDefault: 'Custom Stats',
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
-|                component: 'customStatsToolPanel',
+|                toolPanelFramework: 'customStatsToolPanel',
 |            }
 |        ]
 |    },
-|    components: {
-|        customStatsToolPanel: CustomStatsComponent
-|    }
 |
 |    // other grid properties
 |}

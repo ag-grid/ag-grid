@@ -61,10 +61,6 @@ Cell renderer components can be referenced by string or directly by class. They 
 
 ## Many Renderers One Column
 
-[[note]]
-| How selectors work changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererCompSelector` to a function that returns alternative values for `cellRendererComp` and `cellRendererCompParams`.
 
 The `params` passed to `cellRendererCompSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
