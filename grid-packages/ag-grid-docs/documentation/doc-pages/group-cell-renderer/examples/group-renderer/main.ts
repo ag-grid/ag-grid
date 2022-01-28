@@ -1,6 +1,6 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
 
-class SimpleCellRenderer {
+class SimpleCellRenderer implements ICellRendererComp {
     eGui: any;
 
     init(params: ICellRendererParams) {
@@ -12,6 +12,10 @@ class SimpleCellRenderer {
 
     getGui() {
         return this.eGui
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }
 
@@ -53,7 +57,7 @@ const columnDefs: ColDef[] = [
         cellRendererParams: {
             suppressCount: true,
             checkbox: true,
-            innerRendererComp: SimpleCellRenderer,
+            innerRenderer: SimpleCellRenderer,
             suppressDoubleClickExpand: true,
             suppressEnterExpand: true,
         },
