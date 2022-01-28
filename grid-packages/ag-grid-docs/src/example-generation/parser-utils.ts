@@ -29,6 +29,8 @@ export function convertFrameworkRendersToVanilla(code: string) {
         .replace(/tooltipComponentFramework:/g, 'tooltipComponent:')
         .replace(/headerComponentFramework:/g, 'headerComponent:')
         .replace(/headerGroupComponentFramework:/g, 'headerGroupComponent:')
+        .replace(/filterFramework:/g, 'filter:')
+        .replace(/floatingFilterComponentFramework:/g, 'floatingFilterComponent:')
         .replace(/cellEditorFramework:/g, 'cellEditor:')
         .replace(/detailCellRendererFramework:/g, 'detailCellRenderer:')
         .replace(/loadingOverlayComponentFramework:/g, 'loadingOverlayComponent:')
