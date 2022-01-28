@@ -22,6 +22,7 @@ const GRID_COMPONENTS = [
     'floatingFilterComponent',
     'headerComponent',
     'headerGroupComponent',
+    'cellRendererFramework',
     'tooltipComponent',
     'statusPanelFramework',
     'toolPanelFramework',
