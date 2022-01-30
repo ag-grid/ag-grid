@@ -30,7 +30,7 @@ export class DropZoneColumnComp extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE = /* html */
-        `<span role="button" tabindex="0">
+        `<span role="option" tabindex="0">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>

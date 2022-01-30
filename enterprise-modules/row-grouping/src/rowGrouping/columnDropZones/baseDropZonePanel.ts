@@ -74,10 +74,11 @@ export abstract class BaseDropZonePanel extends Component {
     @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
-        super(/* html */ `<div class="ag-unselectable" role="group"></div>`);
+        super(/* html */ `<div class="ag-unselectable" aria-role="presentation"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
         this.addElementClasses(this.eColumnDropList, 'list');
+        _.setAriaRole(this.eColumnDropList, 'listbox');
     }
 
     public isHorizontal(): boolean {
@@ -121,7 +122,7 @@ export abstract class BaseDropZonePanel extends Component {
         // if columnModel first, then below will work
         // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
         this.refreshGui();
-        _.setAriaLabel(this.getGui(), this.getAriaLabel());
+        _.setAriaLabel(this.eColumnDropList, this.getAriaLabel());
     }
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
@@ -432,6 +433,15 @@ export abstract class BaseDropZonePanel extends Component {
             this.eColumnDropList.appendChild(columnComponent.getGui());
         });
 
+        this.addAriaLabelsToComponents();
+    }
+
+    private addAriaLabelsToComponents(): void {
+        this.childColumnComponents.forEach((comp, idx) => {
+            const eGui = comp.getGui();
+            _.setAriaPosInSet(eGui, idx + 1);
+            _.setAriaSetSize(eGui, this.childColumnComponents.length);
+        });
     }
 
     private createColumnComponent(column: Column, ghost: boolean): DropZoneColumnComp {
@@ -451,6 +461,7 @@ export abstract class BaseDropZonePanel extends Component {
     private addIconAndTitleToGui(): void {
         const eGroupIcon = this.params.icon;
         const eTitleBar = document.createElement('div');
+        eTitleBar.setAttribute('aria-hidden', 'true');
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
         this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingColumnsEmpty());

@@ -36,6 +36,7 @@ export class GridHeaderDropZones extends Component {
         const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 
         topPanelGui.classList.add('ag-column-drop-wrapper');
+        _.setAriaRole(topPanelGui, 'presentation');
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
         this.createManagedBean(this.rowGroupComp);
