@@ -240,9 +240,15 @@ export class UserComponentFactory extends BeanStub {
 
             const assignComp = (providedJsComp: any, providedFwComp: any) => {
 
+                const xxxFrameworkDeprecatedWarn = ()=> {
+                    const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
+                    doOnce( ()=> console.log(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
+                };
+
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp as string;
-                } else if (typeof providedJsComp === 'string') {
+                } else if (typeof providedFwComp === 'string') {
+                    xxxFrameworkDeprecatedWarn();
                     compName = providedFwComp as string;
                 // comp===true for filters, which means use the default comp
                 } else if (providedJsComp!=null && providedJsComp!==true) {
@@ -253,8 +259,7 @@ export class UserComponentFactory extends BeanStub {
                         jsComp = providedJsComp;
                     }
                 } else if (providedFwComp!=null) {
-                    const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
-                    doOnce( ()=> console.log(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
+                    xxxFrameworkDeprecatedWarn();
                     fwComp = providedFwComp;
                 }
             };

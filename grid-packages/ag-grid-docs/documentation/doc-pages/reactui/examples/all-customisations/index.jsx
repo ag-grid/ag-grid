@@ -58,7 +58,7 @@ function GridExample() {
                 labelDefault: "My Tool Panel",
                 labelKey: "myToolPanel",
                 iconKey: "filter",
-                toolPanelFramework: MyToolPanel
+                toolPanel: MyToolPanel
             }
         ],
         defaultToolPanel: "myToolPanel"
@@ -66,7 +66,7 @@ function GridExample() {
 
     const statusBar = useMemo(() => ({
         statusPanels: [
-            { key: 'myStatusPanel', statusPanelFramework: MyStatusPanel }
+            { key: 'myStatusPanel', statusPanel: MyStatusPanel }
         ]
     }), []);
 
