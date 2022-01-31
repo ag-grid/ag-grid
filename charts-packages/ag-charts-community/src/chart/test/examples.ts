@@ -1,6 +1,7 @@
 import { AgChartOptions } from '../agChartOptions';
 import * as data from './data';
 import month from '../../util/time/month';
+import { year } from '../../util/time/year';
 
 export const BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
@@ -1402,5 +1403,372 @@ export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgChartOptions = {
     ],
     legend: {
         enabled: false,
+    },
+};
+
+// START ADVANCED EXAMPLES =========================================================================
+
+export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
+{
+    const strokes = ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'];
+
+    let strokeIndex = 0;
+    let strokeWidth = 3;
+
+    const options = {
+        container: document.getElementById('myChart'),
+        autoSize: true,
+        title: {
+            text: 'Earthquake Magnitudes by Source (January 2020)',
+            fontSize: 18,
+        },
+        subtitle: {
+            text: 'Source: US Geological Survey',
+        },
+        padding: {
+            left: 40,
+            right: 40,
+        },
+        series: [
+            {
+                data: data.DATA_EARTHQUAKES.ci,
+                type: 'line',
+                title: 'Southern California Seismic Network',
+                xKey: 'time',
+                yKey: 'magnitude',
+                stroke: strokes[strokeIndex++],
+                strokeWidth: strokeWidth,
+                marker: {
+                    enabled: false,
+                    fill: strokes[strokeIndex - 1],
+                },
+            },
+            {
+                data: data.DATA_EARTHQUAKES.hv,
+                type: 'line',
+                title: 'Hawaiian Volcano Observatory Network',
+                xKey: 'time',
+                yKey: 'magnitude',
+                stroke: strokes[strokeIndex++],
+                strokeWidth: strokeWidth,
+                marker: {
+                    enabled: false,
+                    fill: strokes[strokeIndex - 1],
+                },
+            },
+            {
+                data: data.DATA_EARTHQUAKES.nc,
+                type: 'line',
+                title: 'USGS Northern California Network',
+                xKey: 'time',
+                yKey: 'magnitude',
+                stroke: strokes[strokeIndex++],
+                strokeWidth: strokeWidth,
+                marker: {
+                    enabled: false,
+                    fill: strokes[strokeIndex - 1],
+                },
+            },
+            {
+                data: data.DATA_EARTHQUAKES.ok,
+                type: 'line',
+                title: 'Oklahoma Seismic Network',
+                xKey: 'time',
+                yKey: 'magnitude',
+                stroke: strokes[strokeIndex++],
+                strokeWidth: strokeWidth,
+                marker: {
+                    enabled: false,
+                    fill: strokes[strokeIndex - 1],
+                },
+            },
+        ],
+        axes: [
+            {
+                position: 'bottom',
+                type: 'time',
+                label: {
+                    format: '%d/%m',
+                    rotation: 30,
+                },
+            },
+            {
+                position: 'left',
+                type: 'number',
+                title: {
+                    enabled: true,
+                    text: 'Magnitude',
+                },
+            },
+        ],
+        legend: {
+            position: 'bottom',
+            item: {
+                marker: {
+                    strokeWidth: 0,
+                },
+            },
+        },
+    };
+    Object.assign(ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS, options);
+}
+
+export const LOG_AXIS_EXAMPLE: AgChartOptions = {
+    data: data.DATA_WORLD_POPULATION,
+    title: {
+        text: 'World Population Over Time',
+    },
+    subtitle: {
+        text: 'log scale',
+    },
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'population',
+        },
+    ],
+    axes: [
+        {
+            type: 'log',
+            position: 'left',
+            title: {
+                enabled: true,
+                text: 'Population',
+            },
+            label: {
+                format: ',.0f',
+                fontSize: 10,
+            },
+        },
+        {
+            type: 'number',
+            position: 'bottom',
+            title: {
+                enabled: true,
+                text: 'Year',
+            },
+            label: {
+                fontSize: 10,
+            },
+        },
+    ],
+    legend: {
+        enabled: false,
+    },
+};
+
+export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgChartOptions = {
+    autoSize: true,
+    data: data.DATA_LIVESTOCK_INDUSTRY,
+    title: {
+        text: 'Cattle Holdings and Beef Exports (UK)',
+        fontSize: 18,
+    },
+    subtitle: {
+        text: 'Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board',
+    },
+    series: [
+        {
+            type: 'column',
+            xKey: 'year',
+            yKeys: ['male', 'female'],
+            yNames: ['Male cattle', 'Female cattle'],
+            grouped: true,
+            fills: ['#c16068', '#a2bf8a'],
+            strokeWidth: 0,
+        },
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'exportedTonnes',
+            yName: 'Beef exports',
+            stroke: '#80a0c3',
+            strokeWidth: 5,
+            marker: {
+                enabled: false,
+                fill: '#80a0c3',
+            },
+        },
+    ],
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+            keys: ['male', 'female'],
+            title: {
+                enabled: true,
+                text: 'Number of cattle',
+            },
+            label: {
+                formatter: function (params) {
+                    return params.value / 1000 + 'M';
+                },
+            },
+        },
+        {
+            type: 'number',
+            position: 'right',
+            keys: ['exportedTonnes'],
+            title: {
+                enabled: true,
+                text: 'Exports (tonnes)',
+            },
+            label: {
+                formatter: function (params) {
+                    return params.value / 1000 + 'k';
+                },
+            },
+        },
+    ],
+    legend: {
+        position: 'bottom',
+        item: {
+            marker: {
+                shape: 'square',
+                strokeWidth: 0,
+            },
+        },
+    },
+};
+
+export const ADV_CHART_CUSTOMISATION: AgChartOptions = {
+    autoSize: true,
+    data: data.DATA_MARRIAGES_AND_DIVORCES,
+    background: {
+        fill: '#ecf2f9',
+    },
+    padding: {
+        top: 10,
+        bottom: 30,
+        left: 10,
+        right: 10,
+    },
+    title: {
+        text: 'Marriage Statistics (Northern Ireland)',
+        fontFamily: 'Georgia, Times New Roman, Times, Serif',
+        fontSize: 22,
+        color: '#162c53',
+    },
+    subtitle: {
+        text: 'Source: Northern Ireland Statistics and Research Agency',
+        fontSize: 10,
+        color: '#3f7cbf',
+        fontStyle: 'italic',
+    },
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'marriages',
+            yName: 'Marriages',
+            stroke: '#3d7ab0',
+            strokeWidth: 5,
+            marker: {   
+                enabled: false,
+                fill: '#3d7ab0',
+            },
+        },
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'civilPartnerships',
+            yName: 'Civil partnerships',
+            stroke: '#b03d65',
+            strokeWidth: 5,
+            marker: {
+                enabled: false,
+                fill: '#b03d65',
+            },
+        },
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'divorces',
+            yName: 'Divorces',
+            stroke: '#80b03d',
+            strokeWidth: 5,
+            marker: {
+                enabled: false,
+                fill: '#80b03d',
+            },
+        },
+    ],
+    axes: [
+        {
+            position: 'top',
+            type: 'time',
+            tick: {
+                count: year.every(10),
+                width: 3,
+                color: '#3f7cbf',
+            },
+            nice: false,
+            label: {
+                rotation: -30,
+                color: '#3f7cbf',
+                fontWeight: 'bold',
+                fontSize: 14,
+                fontFamily: 'Impact, Charcoal, Sans-Serif',
+            },
+            line: {
+                color: '#3f7cbf',
+            },
+            gridStyle: [
+                { stroke: '#c1d832', lineDash: [6, 3] },
+                { stroke: '#162c53', lineDash: [10, 5] },
+            ],
+        },
+        {
+            position: 'right',
+            type: 'number',
+            tick: {
+                count: 20,
+                size: 10,
+            },
+            nice: false,
+            label: {
+                color: '#3f7cbf',
+                fontWeight: 'bold',
+                fontSize: 14,
+                fontFamily: 'Impact, Charcoal, Sans-Serif',
+                formatter: (params) => (params.index % 2 === 1 ? params.value / 1000 + 'k' : ''),
+            },
+            title: {
+                enabled: true,
+                text: 'Total number',
+                color: '#162c53',
+                fontStyle: 'italic',
+                fontWeight: 'bold',
+                fontSize: 16,
+                fontFamily: 'Georgia, Times New Roman, Times, Serif',
+            },
+            line: {
+                color: '#326baf',
+            },
+        },
+    ],
+    legend: {
+        position: 'bottom',
+        item: {
+            marker: {
+                strokeWidth: 0,
+                padding: 10,
+                shape: 'diamond',
+                size: 20,
+            },
+            paddingX: 40,
+            label: {
+                fontWeight: '600',
+                color: '#3f7cbf',
+                fontSize: 14,
+                fontFamily: 'Georgia, Times New Roman, Times, Serif',
+            },
+        },
+        spacing: 10,
     },
 };

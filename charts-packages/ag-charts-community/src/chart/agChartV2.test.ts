@@ -11,10 +11,7 @@ import { HierarchyChart } from './hierarchyChart';
 expect.extend({ toMatchImageSnapshot });
 
 function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const {
-        axisTypes = ['category', 'number'],
-        seriesTypes = ['bar'],
-    } = params || {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
 
     return (chart: Chart) => {
         expect(chart).toBeInstanceOf(CartesianChart);
@@ -25,9 +22,7 @@ function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]
 }
 
 function polarChartAssertions(params?: { seriesTypes?: string[] }) {
-    const {
-        seriesTypes = ['pie'],
-    } = params || {};
+    const { seriesTypes = ['pie'] } = params || {};
 
     return (chart: Chart) => {
         expect(chart).toBeInstanceOf(PolarChart);
@@ -37,9 +32,7 @@ function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 }
 
 function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
-    const {
-        seriesTypes = ['treemap'],
-    } = params || {};
+    const { seriesTypes = ['treemap'] } = params || {};
 
     return (chart: Chart) => {
         expect(chart).toBeInstanceOf(HierarchyChart);
@@ -166,6 +159,38 @@ const EXAMPLES: Record<string, { options: AgChartOptions; assertions: (chart: Ch
     MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE: {
         options: examples.MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE,
         assertions: hierarchyChartAssertions(),
+    },
+    SIMPLE_HISTOGRAM_CHART_EXAMPLE: {
+        options: examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram'] }),
+    },
+    HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: {
+        options: examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram'] }),
+    },
+    XY_HISTOGRAM_WITH_MEAN_EXAMPLE: {
+        options: examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram'] }),
+    },
+    // START ADVANCED EXAMPLES =====================================================================
+    ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
+        options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 4) }),
+    },
+    LOG_AXIS_EXAMPLE: {
+        options: examples.LOG_AXIS_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['log', 'number'], seriesTypes: ['line'] }),
+    },
+    ADV_COMBINATION_SERIES_CHART_EXAMPLE: {
+        options: examples.ADV_COMBINATION_SERIES_CHART_EXAMPLE,
+        assertions: cartesianChartAssertions({
+            axisTypes: ['category', 'number', 'number'],
+            seriesTypes: ['bar', 'line'],
+        }),
+    },
+    ADV_CHART_CUSTOMISATION: {
+        options: examples.ADV_CHART_CUSTOMISATION,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 3) }),
     }
 };
 
@@ -179,20 +204,21 @@ describe('AgChartV2', () => {
                 const chart = AgChartV2.create<any>(options);
 
                 expect(chart.options).toHaveProperty('container', options.container);
-                expect(chart.options).toHaveProperty('data', options.data);
 
-                if (chart instanceof CartesianChart) {
+                if (options.data) {
+                    expect(chart.options).toHaveProperty('data', options.data);
                     expect(chart.options).toMatchSnapshot({
                         container: expect.any(HTMLElement),
-                        data: expect.any(Array),
-                    });
-                } else if (chart instanceof HierarchyChart) {
-                    expect(chart.options).toMatchSnapshot({
-                        container: expect.any(HTMLElement),
-                        data: expect.any(Object),
+                        data: expect.any(options.data instanceof Array ? Array : Object),
                     });
                 } else {
-                    expect(chart.options).toMatchSnapshot({
+                    const optionsCopy = { ...chart.options };
+                    optionsCopy.series = optionsCopy.series.map((v) => {
+                        const copy = { ...v };
+                        delete copy.data;
+                        return copy;
+                    });
+                    expect(optionsCopy).toMatchSnapshot({
                         container: expect.any(HTMLElement),
                     });
                 }
