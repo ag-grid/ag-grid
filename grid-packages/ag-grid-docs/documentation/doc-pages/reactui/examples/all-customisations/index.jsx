@@ -58,7 +58,7 @@ function GridExample() {
                 labelDefault: "My Tool Panel",
                 labelKey: "myToolPanel",
                 iconKey: "filter",
-                toolPanelFramework: MyToolPanel
+                toolPanel: MyToolPanel
             }
         ],
         defaultToolPanel: "myToolPanel"
