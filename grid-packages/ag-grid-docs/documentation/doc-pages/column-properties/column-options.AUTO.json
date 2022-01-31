@@ -40,7 +40,7 @@
   },
   "tooltipComponent": { "type": { "returnType": "any" } },
   "tooltipComponentFramework": {
-    "description": "/** @deprecated As of v27, us tooltipComponent instead for Framework components\n */",
+    "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "tooltipComponentParams": { "type": { "returnType": "any" } },
@@ -69,7 +69,7 @@
     "type": { "returnType": "any" }
   },
   "headerGroupComponentFramework": {
-    "description": "/** @deprecated The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. As of v27, you can use headerGroupComponent instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "headerGroupComponentParams": {
@@ -189,7 +189,7 @@
     "type": { "returnType": "any" }
   },
   "cellEditorFramework": {
-    "description": "/** @deprecated Framework `cellEditor` to use for this column. As of v27, you can use cellEditor instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `cellEditor` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "cellEditorParams": {
@@ -264,7 +264,7 @@
     "type": { "returnType": "any" }
   },
   "headerComponentFramework": {
-    "description": "/** @deprecated As of v27, you can use headerComponent instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `headerComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "headerComponentParams": {
@@ -369,7 +369,7 @@
     "type": { "returnType": "any" }
   },
   "cellRendererFramework": {
-    "description": "/** @deprecated Framework `cellRenderer` to use for this column. As of v27, you can use cellRenderer instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `cellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "cellRendererParams": {

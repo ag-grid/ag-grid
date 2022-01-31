@@ -180,11 +180,11 @@
     "type": { "returnType": "boolean" }
   },
   "components": {
-    "description": "/** A map of component names to plain JavaScript components. */",
+    "description": "/** A map of component names to components. */",
     "type": { "returnType": "{ [p: string]: any; }" }
   },
   "frameworkComponents": {
-    "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
+    "description": "/** @deprecated As of v27, use `components` for framework components too.\n */",
     "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
   },
   "reactUi": {
@@ -288,7 +288,7 @@
     "type": { "returnType": "any" }
   },
   "loadingCellRendererFramework": {
-    "description": "/** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererParams": {
@@ -320,7 +320,7 @@
     "type": { "returnType": "any" }
   },
   "detailCellRendererFramework": {
-    "description": "/** @deprecated use detailCellRenderer now for Framework components\nFramework `detailCellRenderer` to use when a master row is expanded.\n */",
+    "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererParams": {
@@ -404,7 +404,7 @@
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentFramework": {
-    "description": "/** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components.\n */",
+    "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentParams": {
@@ -424,7 +424,7 @@
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentFramework": {
-    "description": "/** @deprecated as of v27, use noRowsOverlayComponent for Framework Components\nSame as `noRowsOverlayComponent` but for a framework component.\n */",
+    "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
@@ -568,7 +568,7 @@
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererFramework": {
-    "description": "/** @deprecated use fullWidthCellRenderer now for Framework components\nSame as `fullWidthCellRenderer` but for a framework component.\n */",
+    "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererParams": {
@@ -644,7 +644,7 @@
     "type": { "returnType": "any" }
   },
   "groupRowRendererFramework": {
-    "description": "/** @deprecated as of v27, use groupRowRenderer instead for Framework components\nSame as `groupRowRenderer` but for a framework component.\n */",
+    "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererParams": {
@@ -664,7 +664,7 @@
     "type": { "returnType": "any" }
   },
   "groupRowInnerRendererFramework": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
+    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
     "type": { "returnType": "any" }
   },
   "groupMultiAutoColumn": {
