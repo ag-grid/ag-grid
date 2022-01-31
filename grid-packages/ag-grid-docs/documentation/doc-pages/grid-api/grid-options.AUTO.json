@@ -317,12 +317,10 @@
   },
   "detailCellRenderer": {
     "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "type": { "returnType": "any" }
   },
   "detailCellRendererFramework": {
-    "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
+    "description": "/** @deprecated use detailCellRenderer now for Framework components\nFramework `detailCellRenderer` to use when a master row is expanded.\n */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererParams": {
@@ -423,10 +421,10 @@
   },
   "noRowsOverlayComponent": {
     "description": "/** Provide a custom no rows overlay component */",
-    "type": { "returnType": "{ new(): INoRowsOverlayComp; } | string" }
+    "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentFramework": {
-    "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
+    "description": "/** @deprecated as of v27, use noRowsOverlayComponent for Framework Components\nSame as `noRowsOverlayComponent` but for a framework component.\n */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
@@ -567,12 +565,10 @@
   },
   "fullWidthCellRenderer": {
     "description": "/** Sets the Cell Renderer to use for full width rows. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "type": { "returnType": "any" }
   },
   "fullWidthCellRendererFramework": {
-    "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
+    "description": "/** @deprecated use fullWidthCellRenderer now for Framework components\nSame as `fullWidthCellRenderer` but for a framework component.\n */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererParams": {
@@ -645,12 +641,10 @@
   },
   "groupRowRenderer": {
     "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "type": { "returnType": "any" }
   },
   "groupRowRendererFramework": {
-    "description": "/** Same as `groupRowRenderer` but for a framework component. */",
+    "description": "/** @deprecated as of v27, use groupRowRenderer instead for Framework components\nSame as `groupRowRenderer` but for a framework component.\n */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererParams": {
@@ -667,9 +661,7 @@
   },
   "groupRowInnerRenderer": {
     "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "type": { "returnType": "any" }
   },
   "groupRowInnerRendererFramework": {
     "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",

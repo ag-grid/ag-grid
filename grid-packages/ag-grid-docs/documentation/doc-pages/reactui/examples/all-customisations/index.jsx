@@ -66,7 +66,7 @@ function GridExample() {
 
     const statusBar = useMemo(() => ({
         statusPanels: [
-            { key: 'myStatusPanel', statusPanelFramework: MyStatusPanel }
+            { key: 'myStatusPanel', statusPanel: MyStatusPanel }
         ]
     }), []);
 

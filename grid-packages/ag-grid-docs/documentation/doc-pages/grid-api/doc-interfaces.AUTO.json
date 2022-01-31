@@ -2290,13 +2290,10 @@
     },
     "detailCellRenderer": {
       "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "detailCellRendererFramework": {
-      "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
+      "description": "/** @deprecated use detailCellRenderer now for Framework components\nFramework `detailCellRenderer` to use when a master row is expanded.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "detailCellRendererParams": {
@@ -2397,13 +2394,10 @@
     },
     "noRowsOverlayComponent": {
       "description": "/** Provide a custom no rows overlay component */",
-      "type": {
-        "returnType": "{ new(): INoRowsOverlayComp; } | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentFramework": {
-      "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
+      "description": "/** @deprecated as of v27, use noRowsOverlayComponent for Framework Components\nSame as `noRowsOverlayComponent` but for a framework component.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentParams": {
@@ -2547,13 +2541,10 @@
     },
     "fullWidthCellRenderer": {
       "description": "/** Sets the Cell Renderer to use for full width rows. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererFramework": {
-      "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
+      "description": "/** @deprecated use fullWidthCellRenderer now for Framework components\nSame as `fullWidthCellRenderer` but for a framework component.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererParams": {
@@ -2626,13 +2617,10 @@
     },
     "groupRowRenderer": {
       "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererFramework": {
-      "description": "/** Same as `groupRowRenderer` but for a framework component. */",
+      "description": "/** @deprecated as of v27, use groupRowRenderer instead for Framework components\nSame as `groupRowRenderer` but for a framework component.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererParams": {
@@ -2649,10 +2637,7 @@
     },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "groupRowInnerRendererFramework": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
@@ -5170,10 +5155,7 @@
     },
     "toolPanel": {
       "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
-      "type": {
-        "returnType": "{ new(): IToolPanelComp } | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "toolPanelFramework": {
       "description": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components\n */",
@@ -14152,10 +14134,7 @@
     },
     "cellRenderer": {
       "description": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "cellRendererFramework": {
       "description": "/** @deprecated as of v27, use cellRenderer for Framework components also\nSimilar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\nbe rendered differently in the filter.\n */",
@@ -16186,7 +16165,7 @@
       }
     },
     "innerRendererFramework": {
-      "description": "/** Same as `innerRenderer` but for a framework component. */",
+      "description": "/** @deprecated as of v27, use innerRenderer for Framework components\nSame as `innerRenderer` but for a framework component.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "innerRendererParams": {
