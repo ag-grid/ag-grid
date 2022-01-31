@@ -42,7 +42,7 @@ function onCellEditingStopped(event: CellEditingStoppedEvent) {
 function cellEditorSelector(params: ICellEditorParams) {
   if (params.data.type === 'age') {
     return {
-      frameworkComponent: NumericCellEditor,
+      component: NumericCellEditor,
     }
   }
 
@@ -58,7 +58,7 @@ function cellEditorSelector(params: ICellEditorParams) {
 
   if (params.data.type === 'mood') {
     return {
-      frameworkComponent: MoodEditor,
+      component: MoodEditor,
     }
   }
 

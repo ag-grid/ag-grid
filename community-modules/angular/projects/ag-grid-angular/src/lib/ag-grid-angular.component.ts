@@ -390,9 +390,10 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
-    /** A map of component names to plain JavaScript components.     */
+    /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
-    /** A map of component names to framework (Angular, React, Vue etc.) components.     */
+    /** @deprecated As of v27, use `components` for framework components too.
+     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
      */
@@ -456,7 +457,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     /** `cellRenderer` to use when data is loading via a DataSource.     */
     @Input() public loadingCellRenderer: any = undefined;
-    /** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components.
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
      */
     @Input() public loadingCellRendererFramework: any = undefined;
     /** Params to be passed to loading cell renderer component.     */
@@ -473,8 +474,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public keepDetailRowsCount: number | undefined = undefined;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
     @Input() public detailCellRenderer: any = undefined;
-    /** @deprecated use detailCellRenderer now for Framework components
-Framework `detailCellRenderer` to use when a master row is expanded.
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
      */
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
@@ -522,7 +522,7 @@ Framework `detailCellRenderer` to use when a master row is expanded.
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.     */
     @Input() public loadingOverlayComponent: any = undefined;
-    /** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components.
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
      */
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
@@ -533,8 +533,7 @@ Framework `detailCellRenderer` to use when a master row is expanded.
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no rows overlay component     */
     @Input() public noRowsOverlayComponent: any = undefined;
-    /** @deprecated as of v27, use noRowsOverlayComponent for Framework Components
-Same as `noRowsOverlayComponent` but for a framework component.
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
      */
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
@@ -613,8 +612,7 @@ Same as `noRowsOverlayComponent` but for a framework component.
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** Sets the Cell Renderer to use for full width rows.     */
     @Input() public fullWidthCellRenderer: any = undefined;
-    /** @deprecated use fullWidthCellRenderer now for Framework components
-Same as `fullWidthCellRenderer` but for a framework component.
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
      */
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
@@ -664,8 +662,7 @@ Same as `fullWidthCellRenderer` but for a framework component.
     @Input() public rowGroupPanelShow: string | undefined = undefined;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
     @Input() public groupRowRenderer: any = undefined;
-    /** @deprecated as of v27, use groupRowRenderer instead for Framework components
-Same as `groupRowRenderer` but for a framework component.
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
      */
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
@@ -677,7 +674,7 @@ Same as `groupRowRenderer` but for a framework component.
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
     @Input() public groupRowInnerRenderer: any = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
     @Input() public groupRowInnerRendererFramework: any = undefined;
     /** @deprecated - Use groupDisplayType = 'multipleColumns' instead

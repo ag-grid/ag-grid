@@ -67,7 +67,7 @@ export class AgGridColumn {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
     @Input() public suppressFiltersToolPanel: boolean | undefined;
     @Input() public tooltipComponent: any;
-    /** @deprecated As of v27, us tooltipComponent instead for Framework components
+    /** @deprecated As of v27, use `tooltipComponent` for framework components too.
      */
     @Input() public tooltipComponentFramework: any;
     @Input() public tooltipComponentParams: any;
@@ -81,7 +81,7 @@ export class AgGridColumn {
     @Input() public marryChildren: boolean | undefined;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.     */
     @Input() public headerGroupComponent: any;
-    /** @deprecated The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. As of v27, you can use headerGroupComponent instead for Framework Components.
+    /** @deprecated As of v27, use `headerGroupComponent` for framework components too.
      */
     @Input() public headerGroupComponentFramework: any;
     /** The params used to configure the header group component.     */
@@ -146,7 +146,7 @@ export class AgGridColumn {
     @Input() public valueParser: string | ValueParserFunc | undefined;
     /** A `cellEditor` to use for this column.     */
     @Input() public cellEditor: any;
-    /** @deprecated Framework `cellEditor` to use for this column. As of v27, you can use cellEditor instead for Framework Components.
+    /** @deprecated As of v27, use `cellEditor` for framework components too.
      */
     @Input() public cellEditorFramework: any;
     /** Params to be passed to the cell editor component.     */
@@ -182,7 +182,7 @@ export class AgGridColumn {
     @Input() public floatingFilter: boolean | undefined;
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     */
     @Input() public headerComponent: any;
-    /** @deprecated As of v27, you can use headerComponent instead for Framework Components.
+    /** @deprecated As of v27, use `headerComponent` for framework components too.
      */
     @Input() public headerComponentFramework: any;
     /** The parameters to be passed to the header component.     */
@@ -241,7 +241,7 @@ export class AgGridColumn {
     @Input() public cellClassRules: CellClassRules | undefined;
     /** A `cellRenderer` to use for this column.     */
     @Input() public cellRenderer: any;
-    /** @deprecated Framework `cellRenderer` to use for this column. As of v27, you can use cellRenderer instead for Framework Components.
+    /** @deprecated As of v27, use `cellRenderer` for framework components too.
      */
     @Input() public cellRendererFramework: any;
     /** Params to be passed to the cell renderer component.     */

@@ -7,7 +7,7 @@ const columnDefs: ColDef[] = [
     cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          frameworkComponent: CustomPinnedRowRenderer,
+          component: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },
           },
@@ -23,7 +23,7 @@ const columnDefs: ColDef[] = [
     cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          frameworkComponent: CustomPinnedRowRenderer,
+          component: CustomPinnedRowRenderer,
           params: {
             style: { 'font-style': 'italic' },
           },

@@ -228,9 +228,9 @@ export interface GridOptions {
     skipHeaderOnAutoSize?: boolean;
 
     // *** Components *** //
-    /** A map of component names to plain JavaScript components. */
+    /** A map of component names to components. */
     components?: { [p: string]: any; };
-    /** A map of component names to framework (Angular, React, Vue etc.) components. */
+    /** @deprecated As of v27, use `components` for framework components too. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
 
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
@@ -309,7 +309,7 @@ export interface GridOptions {
     // *** Loading Cell Renderers *** //
     /** `cellRenderer` to use when data is loading via a DataSource. */
     loadingCellRenderer?: any;
-    /** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components. */
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */
     loadingCellRendererFramework?: any;
     /** Params to be passed to loading cell renderer component. */
     loadingCellRendererParams?: any;
@@ -330,9 +330,7 @@ export interface GridOptions {
     keepDetailRowsCount?: number;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded. */
     detailCellRenderer?: any;
-    /** 
-     * @deprecated use detailCellRenderer now for Framework components
-     * Framework `detailCellRenderer` to use when a master row is expanded. */
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too. */
     detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
@@ -389,7 +387,7 @@ export interface GridOptions {
     overlayLoadingTemplate?: string;
     /** Provide a custom loading overlay component. */
     loadingOverlayComponent?: any;
-    /** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components. */
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */
     loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
@@ -401,9 +399,7 @@ export interface GridOptions {
     overlayNoRowsTemplate?: string;
     /** Provide a custom no rows overlay component */
     noRowsOverlayComponent?: any;
-    /** 
-     * @deprecated as of v27, use noRowsOverlayComponent for Framework Components
-     * Same as `noRowsOverlayComponent` but for a framework component. */
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
@@ -503,9 +499,7 @@ export interface GridOptions {
     // *** Row Full Width *** //
     /** Sets the Cell Renderer to use for full width rows. */
     fullWidthCellRenderer?: any;
-    /** 
-     * @deprecated use fullWidthCellRenderer now for Framework components
-     * Same as `fullWidthCellRenderer` but for a framework component. */
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */
     fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
@@ -561,9 +555,7 @@ export interface GridOptions {
     rowGroupPanelShow?: string;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */
     groupRowRenderer?: any;
-    /**
-     * @deprecated as of v27, use groupRowRenderer instead for Framework components
-     * Same as `groupRowRenderer` but for a framework component. */
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too. */
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
@@ -575,7 +567,7 @@ export interface GridOptions {
 
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRenderer?: any;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRendererFramework?: any;
     /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
@@ -1400,7 +1392,7 @@ export interface LoadingCellRendererSelectorFunc {
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
     component?: any;
-    /** @deprecated As of v27, there is no need to specify framework components, the grid works this out. */
+    /** @deprecated As of v27, use `component` for framework components too. */
     frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
