@@ -47,6 +47,7 @@ import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
+import { doOnce } from "../../utils/function";
 
 export type DefinitionObject =
     GridOptions
@@ -252,6 +253,8 @@ export class UserComponentFactory extends BeanStub {
                         jsComp = providedJsComp;
                     }
                 } else if (providedFwComp!=null) {
+                    const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
+                    doOnce( ()=> console.log(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
                     fwComp = providedFwComp;
                 }
             };

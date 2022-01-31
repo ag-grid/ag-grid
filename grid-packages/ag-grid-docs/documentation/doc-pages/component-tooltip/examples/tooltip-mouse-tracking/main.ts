@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
     resizable: true,
-    tooltipComponentFramework: CustomTooltip,
+    tooltipComponent: CustomTooltip,
   },
 
   tooltipShowDelay: 1000,

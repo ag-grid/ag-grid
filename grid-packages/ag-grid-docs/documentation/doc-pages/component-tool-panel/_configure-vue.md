@@ -8,7 +8,7 @@
 |                labelDefault: 'Custom Stats',
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
-|                toolPanelFramework: 'customStatsToolPanel',
+|                toolPanel: 'customStatsToolPanel',
 |            }
 |        ]
 |    },

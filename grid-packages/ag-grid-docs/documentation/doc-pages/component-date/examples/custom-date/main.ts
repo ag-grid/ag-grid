@@ -55,7 +55,7 @@ const gridOptions: GridOptions = {
   },
   columnDefs: columnDefs,
   rowData: null,
-  frameworkComponents: {
+  components: {
     agDateInput: CustomDateComponent,
   },
 }

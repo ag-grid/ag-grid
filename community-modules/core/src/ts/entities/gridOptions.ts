@@ -308,8 +308,8 @@ export interface GridOptions {
 
     // *** Loading Cell Renderers *** //
     /** `cellRenderer` to use when data is loading via a DataSource. */
-    loadingCellRenderer?: { new(): ICellRenderer; } | string;
-    /** Framework `cellRenderer` to use when data is loading via a DataSource. */
+    loadingCellRenderer?: any;
+    /** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components. */
     loadingCellRendererFramework?: any;
     /** Params to be passed to loading cell renderer component. */
     loadingCellRendererParams?: any;
@@ -386,8 +386,8 @@ export interface GridOptions {
     /** Provide a template for 'loading' overlay. */
     overlayLoadingTemplate?: string;
     /** Provide a custom loading overlay component. */
-    loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
-    /** Same as `loadingOverlayComponent` but for a framework component. */
+    loadingOverlayComponent?: any;
+    /** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components. */
     loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
@@ -1391,8 +1391,8 @@ export interface LoadingCellRendererSelectorFunc {
 }
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
-    component?: { new(): ICellRenderer; } | string;
-    /** Equivalent of setting `loadingCellRendererFramework` */
+    component?: any;
+    /** @deprecated As of v27, there is no need to specify framework components, the grid works this out. */
     frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;

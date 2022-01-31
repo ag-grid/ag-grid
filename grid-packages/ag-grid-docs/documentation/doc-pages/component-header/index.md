@@ -187,7 +187,7 @@ On top of the parameters provided by the grid, you can also provide your own par
 |```js
 |colDef = {
 |    ...
-|    headerComponentFramework: MyHeaderComponent;
+|    headerComponent: MyHeaderComponent;
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }
@@ -197,7 +197,7 @@ On top of the parameters provided by the grid, you can also provide your own par
 |```js
 |colDef = {
 |    ...
-|    headerComponentFramework: MyHeaderComponent;
+|    headerComponent: MyHeaderComponent;
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }
@@ -206,7 +206,7 @@ On top of the parameters provided by the grid, you can also provide your own par
 |```js
 |colDef = {
 |    ...
-|    headerComponentFramework: 'MyHeaderComponent';
+|    headerComponent: 'MyHeaderComponent';
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }

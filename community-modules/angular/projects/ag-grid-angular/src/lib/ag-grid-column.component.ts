@@ -66,7 +66,9 @@ export class AgGridColumn {
     @Input() public suppressColumnsToolPanel: boolean | undefined;
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
     @Input() public suppressFiltersToolPanel: boolean | undefined;
-    @Input() public tooltipComponent: { new(): ITooltipComp; } | string | undefined;
+    @Input() public tooltipComponent: any;
+    /** @deprecated As of v27, us tooltipComponent instead for Framework components
+     */
     @Input() public tooltipComponentFramework: any;
     @Input() public tooltipComponentParams: any;
     /** A list containing a mix of columns and column groups.     */
@@ -78,8 +80,9 @@ export class AgGridColumn {
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false`     */
     @Input() public marryChildren: boolean | undefined;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.     */
-    @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined;
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used.     */
+    @Input() public headerGroupComponent: any;
+    /** @deprecated The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. As of v27, you can use headerGroupComponent instead for Framework Components.
+     */
     @Input() public headerGroupComponentFramework: any;
     /** The params used to configure the header group component.     */
     @Input() public headerGroupComponentParams: any;
@@ -142,8 +145,9 @@ export class AgGridColumn {
     /** Function or expression. Parses the value for saving.     */
     @Input() public valueParser: string | ValueParserFunc | undefined;
     /** A `cellEditor` to use for this column.     */
-    @Input() public cellEditor: string | { new(): ICellEditorComp; } | undefined;
-    /** Framework `cellEditor` to use for this column.     */
+    @Input() public cellEditor: any;
+    /** @deprecated Framework `cellEditor` to use for this column. As of v27, you can use cellEditor instead for Framework Components.
+     */
     @Input() public cellEditorFramework: any;
     /** Params to be passed to the cell editor component.     */
     @Input() public cellEditorParams: any;
@@ -177,8 +181,9 @@ export class AgGridColumn {
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined;
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     */
-    @Input() public headerComponent: string | { new(): any; } | undefined;
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used.     */
+    @Input() public headerComponent: any;
+    /** @deprecated As of v27, you can use headerComponent instead for Framework Components.
+     */
     @Input() public headerComponentFramework: any;
     /** The parameters to be passed to the header component.     */
     @Input() public headerComponentParams: any;
@@ -236,7 +241,8 @@ export class AgGridColumn {
     @Input() public cellClassRules: CellClassRules | undefined;
     /** A `cellRenderer` to use for this column.     */
     @Input() public cellRenderer: any;
-    /** Framework `cellRenderer` to use for this column.     */
+    /** @deprecated Framework `cellRenderer` to use for this column. As of v27, you can use cellRenderer instead for Framework Components.
+     */
     @Input() public cellRendererFramework: any;
     /** Params to be passed to the cell renderer component.     */
     @Input() public cellRendererParams: any;

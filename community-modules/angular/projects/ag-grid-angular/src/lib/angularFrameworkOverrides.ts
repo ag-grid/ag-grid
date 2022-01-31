@@ -75,6 +75,9 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     isFrameworkComponent(comp: any): boolean {
-        return comp!=null && comp.__annotations__ != null;
+        if (!comp) { return false; }
+        const prototype = comp.prototype;
+        const isAngularComp = prototype && 'agInit' in prototype;
+        return isAngularComp;
     }
 }

@@ -455,8 +455,9 @@ hence this property is deprecated as will be removed in the next major release.
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     /** `cellRenderer` to use when data is loading via a DataSource.     */
-    @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
-    /** Framework `cellRenderer` to use when data is loading via a DataSource.     */
+    @Input() public loadingCellRenderer: any = undefined;
+    /** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components.
+     */
     @Input() public loadingCellRendererFramework: any = undefined;
     /** Params to be passed to loading cell renderer component.     */
     @Input() public loadingCellRendererParams: any = undefined;
@@ -518,8 +519,9 @@ hence this property is deprecated as will be removed in the next major release.
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.     */
-    @Input() public loadingOverlayComponent: { new(): ILoadingOverlayComp; } | string | undefined = undefined;
-    /** Same as `loadingOverlayComponent` but for a framework component.     */
+    @Input() public loadingOverlayComponent: any = undefined;
+    /** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components.
+     */
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;

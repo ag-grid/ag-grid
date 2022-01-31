@@ -7,7 +7,7 @@
 |                labelDefault: 'Custom Stats',
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
-|                toolPanelFramework: CustomStatsComponent,
+|                toolPanel: CustomStatsComponent,
 |            }
 |        ]
 |    }

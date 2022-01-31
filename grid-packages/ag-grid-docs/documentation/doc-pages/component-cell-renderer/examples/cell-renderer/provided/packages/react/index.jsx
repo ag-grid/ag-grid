@@ -90,7 +90,7 @@ class GridExample extends Component {
                     headerName: "Days of Air Frost",
                     field: "Days of air frost (days)",
                     width: 233,
-                    cellRendererFramework: DaysFrostRenderer,
+                    cellRenderer: DaysFrostRenderer,
                     cellRendererParams: {rendererImage: "frost.png"}
                 },
                 {

@@ -48,7 +48,7 @@ const VueExample = {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRendererFramework: "squareRenderer",
+                    cellRenderer: "squareRenderer",
                     editable: true,
                     colId: "square",
                     width: 150
@@ -56,28 +56,28 @@ const VueExample = {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRendererFramework: "cubeRenderer",
+                    cellRenderer: "cubeRenderer",
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRendererFramework: "paramsRenderer",
+                    cellRenderer: "paramsRenderer",
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRendererFramework: "currencyRenderer",
+                    cellRenderer: "currencyRenderer",
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRendererFramework: "childMessageRenderer",
+                    cellRenderer: "childMessageRenderer",
                     colId: "params",
                     editable: false,
                     minWidth: 150

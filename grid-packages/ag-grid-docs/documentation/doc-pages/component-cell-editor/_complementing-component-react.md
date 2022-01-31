@@ -1,7 +1,7 @@
 [[only-react]]
 |```js
 | colDef = {
-|    cellEditorFramework: MyCellEditor,    
+|    cellEditor: MyCellEditor,    
 |    cellEditorParams: {
 |        // make "country" value available to cell editor
 |        country: 'Ireland'

@@ -27,7 +27,7 @@ class GridExample extends Component {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRendererFramework: SquareRenderer,
+                    cellRenderer: SquareRenderer,
                     editable: true,
                     colId: "square",
                     width: 150
@@ -35,28 +35,28 @@ class GridExample extends Component {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRendererFramework: CubeRenderer,
+                    cellRenderer: CubeRenderer,
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRendererFramework: ParamsRenderer,
+                    cellRenderer: ParamsRenderer,
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRendererFramework: CurrencyRenderer,
+                    cellRenderer: CurrencyRenderer,
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRendererFramework: ChildMessageRenderer,
+                    cellRenderer: ChildMessageRenderer,
                     colId: "params",
                     editable: false,
                     minWidth: 150

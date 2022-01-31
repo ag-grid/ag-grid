@@ -26,7 +26,7 @@
 |              {
 |                  headerName: "Colour 1",
 |                  field: "value",
-|                  cellRendererFramework: 'ColourComponent',
+|                  cellRenderer: 'ColourComponent',
 |                  cellRendererParams: {
 |                       color: 'guinnessBlack'
 |                  }
@@ -34,7 +34,7 @@
 |              {
 |                  headerName: "Colour 2",
 |                  field: "value",
-|                  cellRendererFramework: 'ColourComponent',     
+|                  cellRenderer: 'ColourComponent',     
 |                  cellRendererParams: {
 |                       color: 'irishGreen'
 |                  }

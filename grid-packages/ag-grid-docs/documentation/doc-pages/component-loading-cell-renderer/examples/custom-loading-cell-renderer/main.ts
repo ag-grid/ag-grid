@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  loadingCellRendererFramework: CustomLoadingCellRenderer,
+  loadingCellRenderer: CustomLoadingCellRenderer,
   loadingCellRendererParams: {
     loadingMessage: 'One moment please...',
   },

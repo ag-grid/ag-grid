@@ -40,7 +40,8 @@ export interface AbstractColDef {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
-    tooltipComponent?: { new(): ITooltipComp; } | string;
+    tooltipComponent?: any;
+    /** @deprecated As of v27, us tooltipComponent instead for Framework components */
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
 
@@ -58,8 +59,8 @@ export interface ColGroupDef extends AbstractColDef {
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */
-    headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */
+    headerGroupComponent?: any;
+    /** @deprecated The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. As of v27, you can use headerGroupComponent instead for Framework Components. */
     headerGroupComponentFramework?: any;
     /** The params used to configure the header group component. */
     headerGroupComponentParams?: any;
@@ -188,8 +189,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Function or expression. Parses the value for saving. */
     valueParser?: string | ValueParserFunc;
     /** A `cellEditor` to use for this column. */
-    cellEditor?: string | { new(): ICellEditorComp; };
-    /** Framework `cellEditor` to use for this column. */
+    cellEditor?: any;
+    /** @deprecated Framework `cellEditor` to use for this column. As of v27, you can use cellEditor instead for Framework Components. */
     cellEditorFramework?: any;
     /** Params to be passed to the cell editor component. */
     cellEditorParams?: any;
@@ -236,8 +237,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     // *** Column Headers *** //
 
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */
-    headerComponent?: string | { new(): any; };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */
+    headerComponent?: any;
+    /** @deprecated As of v27, you can use headerComponent instead for Framework Components. */
     headerComponentFramework?: any;
     /** The parameters to be passed to the header component. */
     headerComponentParams?: any;
@@ -311,7 +312,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClassRules?: CellClassRules;
     /** A `cellRenderer` to use for this column. */
     cellRenderer?: any;
-    /** Framework `cellRenderer` to use for this column. */
+    /** @deprecated Framework `cellRenderer` to use for this column. As of v27, you can use cellRenderer instead for Framework Components. */
     cellRendererFramework?: any;
     /** Params to be passed to the cell renderer component. */
     cellRendererParams?: any;
@@ -665,8 +666,8 @@ export interface CellEditorSelectorFunc {
 }
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */
-    component?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Equivalent of setting `colDef.cellRendererFramework` */
+    component?: any;
+    /** @deprecated As of v27, there is no need to specify framework components, the grid works this out. */
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellRendererParams` */
     params?: any;
@@ -674,8 +675,8 @@ export interface CellRendererSelectorResult {
 
 export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditor` */
-    component?: { new(): ICellEditorComp; } | string;
-    /** Equivalent of setting `colDef.cellEditorFramework` */
+    component?: any;
+    /** @deprecated As of v27, there is no need to specify framework components, the grid works this out. */
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;

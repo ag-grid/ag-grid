@@ -113,7 +113,7 @@ const VueExample = {
                     headerName: "Days of Air Frost",
                     field: "Days of air frost (days)",
                     width: 233,
-                    cellRendererFramework: "daysFrostRenderer",
+                    cellRenderer: "daysFrostRenderer",
                     cellRendererParams: {rendererImage: "frost.png"}    // Complementing the Cell Renderer parameters
                 },
                 {

@@ -30,7 +30,7 @@
 |   }
 |   data() {
 |       return {
-|           // JavaScript components are registered here
+|           // JavaScript components are registered here, for when looking up component by name
 |           components: [
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
@@ -49,7 +49,7 @@
 |               {
 |                   headerName: "Vue Cell",
 |                   field: "value",
-|                   cellRendererFramework: 'vueComponent',  // reference/use the Vue component
+|                   cellRenderer: 'vueComponent',  // reference/use the Vue component
 |               }
 |           ]
 |       }

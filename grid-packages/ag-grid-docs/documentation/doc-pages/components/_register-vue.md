@@ -46,7 +46,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: 'CubeComponent',     
+|                   cellRenderer: 'CubeComponent',     
 |               }
 |           ]
 |       }
@@ -84,7 +84,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: 'CubeComponent'     
+|                   cellRenderer: 'CubeComponent'     
 |               }
 |           ]
 |       }
@@ -136,7 +136,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: CubeComponent
+|                   cellRenderer: CubeComponent
 |               }
 |           ]
 |       }

@@ -294,7 +294,7 @@
       "toolPanelClass?": "ToolPanelClass",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
-      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
+      "tooltipComponent?": "any",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "pivotKeys?": "string[]"
@@ -309,6 +309,7 @@
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
+      "tooltipComponentFramework?": "/** @deprecated As of v27, us tooltipComponent instead for Framework components\n */",
       "pivotKeys?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */"
     }
   },
@@ -319,7 +320,7 @@
       "groupId?": "string",
       "openByDefault?": "boolean",
       "marryChildren?": "boolean",
-      "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
+      "headerGroupComponent?": "any",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
       "headerName?": "string",
@@ -331,7 +332,7 @@
       "toolPanelClass?": "ToolPanelClass",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
-      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
+      "tooltipComponent?": "any",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "pivotKeys?": "string[]"
@@ -342,7 +343,7 @@
       "openByDefault?": "/** Set to `true` if this group should be opened by default. Default: `false` */",
       "marryChildren?": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
       "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
-      "headerGroupComponentFramework?": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
+      "headerGroupComponentFramework?": "/** @deprecated The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. As of v27, you can use headerGroupComponent instead for Framework Components.\n */",
       "headerGroupComponentParams?": "/** The params used to configure the header group component. */",
       "headerName?": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "headerValueGetter?": "/** Function or expression. Gets the value for display in the header. */",
@@ -353,6 +354,7 @@
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
+      "tooltipComponentFramework?": "/** @deprecated As of v27, us tooltipComponent instead for Framework components\n */",
       "pivotKeys?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */"
     }
   },
@@ -444,7 +446,7 @@
       "editable?": "boolean | EditableCallback",
       "valueSetter?": "string | ValueSetterFunc",
       "valueParser?": "string | ValueParserFunc",
-      "cellEditor?": "string | { new (): ICellEditorComp; }",
+      "cellEditor?": "any",
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
@@ -459,7 +461,7 @@
       "getQuickFilterText?": "(params: GetQuickFilterTextParams) => string",
       "filterValueGetter?": "string | ValueGetterFunc",
       "floatingFilter?": "boolean",
-      "headerComponent?": "string | { new (): any; }",
+      "headerComponent?": "any",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
       "menuTabs?": "string[]",
@@ -484,7 +486,7 @@
       "cellStyle?": "CellStyle | CellStyleFunc",
       "cellClass?": "string | string[] | CellClassFunc",
       "cellClassRules?": "CellClassRules",
-      "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "cellRenderer?": "any",
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
@@ -539,14 +541,14 @@
       "toolPanelClass?": "ToolPanelClass",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
-      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
+      "tooltipComponent?": "any",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "pivotKeys?": "string[]",
-      "filter?": "IFilterType",
+      "filter?": "any",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "floatingFilterComponent?": "IFloatingFilterType",
+      "floatingFilterComponent?": "any",
       "floatingFilterComponentFramework?": "any",
       "floatingFilterComponentParams?": "any"
     },
@@ -576,7 +578,7 @@
       "valueSetter?": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
       "valueParser?": "/** Function or expression. Parses the value for saving. */",
       "cellEditor?": "/** A `cellEditor` to use for this column. */",
-      "cellEditorFramework?": "/** Framework `cellEditor` to use for this column. */",
+      "cellEditorFramework?": "/** @deprecated Framework `cellEditor` to use for this column. As of v27, you can use cellEditor instead for Framework Components.\n */",
       "cellEditorParams?": "/** Params to be passed to the cell editor component. */",
       "cellEditorSelector?": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -591,7 +593,7 @@
       "filterValueGetter?": "/** Function or expression. Gets the value for filtering purposes. */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. Default: `false` */",
       "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
-      "headerComponentFramework?": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
+      "headerComponentFramework?": "/** @deprecated As of v27, you can use headerComponent instead for Framework Components.\n */",
       "headerComponentParams?": "/** The parameters to be passed to the header component. */",
       "menuTabs?": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
       "columnsMenuParams?": "/** Params used to change the behaviour and appearance of the Columns Menu tab. */",
@@ -616,7 +618,7 @@
       "cellClass?": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
       "cellClassRules?": "/** Rules which can be applied to include certain CSS classes. */",
       "cellRenderer?": "/** A `cellRenderer` to use for this column. */",
-      "cellRendererFramework?": "/** Framework `cellRenderer` to use for this column. */",
+      "cellRendererFramework?": "/** @deprecated Framework `cellRenderer` to use for this column. As of v27, you can use cellRenderer instead for Framework Components.\n */",
       "cellRendererParams?": "/** Params to be passed to the cell renderer component. */",
       "cellRendererSelector?": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
       "autoHeight?": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -670,12 +672,13 @@
       "toolPanelClass?": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
       "suppressColumnsToolPanel?": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "suppressFiltersToolPanel?": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
+      "tooltipComponentFramework?": "/** @deprecated As of v27, us tooltipComponent instead for Framework components\n */",
       "pivotKeys?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
+      "filterFramework?": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.\n */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
+      "floatingFilterComponentFramework?": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components.\n */",
       "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
     }
   },
@@ -1308,26 +1311,26 @@
   "CellRendererSelectorResult": {
     "meta": {},
     "type": {
-      "component?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "component?": "any",
       "frameworkComponent?": "any",
       "params?": "any"
     },
     "docs": {
       "component?": "/** Equivalent of setting `colDef.cellRenderer` */",
-      "frameworkComponent?": "/** Equivalent of setting `colDef.cellRendererFramework` */",
+      "frameworkComponent?": "/** @deprecated As of v27, there is no need to specify framework components, the grid works this out.\n */",
       "params?": "/** Equivalent of setting `colDef.cellRendererParams` */"
     }
   },
   "CellEditorSelectorResult": {
     "meta": {},
     "type": {
-      "component?": "{ new (): ICellEditorComp; } | string",
+      "component?": "any",
       "frameworkComponent?": "any",
       "params?": "any"
     },
     "docs": {
       "component?": "/** Equivalent of setting `colDef.cellEditor` */",
-      "frameworkComponent?": "/** Equivalent of setting `colDef.cellEditorFramework` */",
+      "frameworkComponent?": "/** @deprecated As of v27, there is no need to specify framework components, the grid works this out.\n */",
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
@@ -1405,7 +1408,7 @@
       "chartThemes?": "string[]",
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
-      "loadingCellRenderer?": "{ new (): ICellRenderer; } | string",
+      "loadingCellRenderer?": "any",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
       "loadingCellRendererSelector?": "LoadingCellRendererSelectorFunc",
@@ -1434,7 +1437,7 @@
       "suppressChangeDetection?": "boolean",
       "debug?": "boolean",
       "overlayLoadingTemplate?": "string",
-      "loadingOverlayComponent?": "{ new (): ILoadingOverlayComp; } | string",
+      "loadingOverlayComponent?": "any",
       "loadingOverlayComponentFramework?": "any",
       "loadingOverlayComponentParams?": "any",
       "suppressLoadingOverlay?": "boolean",
@@ -1766,7 +1769,7 @@
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
       "loadingCellRenderer?": "/** `cellRenderer` to use when data is loading via a DataSource. */",
-      "loadingCellRendererFramework?": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
+      "loadingCellRendererFramework?": "/** @deprecated Framework `cellRenderer` to use when data is loading via a DataSource. As of v27, you can use loadingCellRenderer instead for Framework Components.\n */",
       "loadingCellRendererParams?": "/** Params to be passed to loading cell renderer component. */",
       "loadingCellRendererSelector?": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "localeText?": "/** A map of key->value pairs for localising text within the grid. */",
@@ -1795,7 +1798,7 @@
       "debug?": "/** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. Default: `false` */",
       "overlayLoadingTemplate?": "/** Provide a template for 'loading' overlay. */",
       "loadingOverlayComponent?": "/** Provide a custom loading overlay component. */",
-      "loadingOverlayComponentFramework?": "/** Same as `loadingOverlayComponent` but for a framework component. */",
+      "loadingOverlayComponentFramework?": "/** @deprecated Same as `loadingOverlayComponent` but for a framework component. As of v27, you can use loadingOverlayComponent instead for Framework Components.\n */",
       "loadingOverlayComponentParams?": "/** Customise the parameters provided to the loading overlay component. */",
       "suppressLoadingOverlay?": "/** Disables the 'loading' overlay. Default: `false` */",
       "overlayNoRowsTemplate?": "/** Provide a template for 'no rows' overlay. */",
@@ -2443,13 +2446,13 @@
   "LoadingCellRendererSelectorResult": {
     "meta": {},
     "type": {
-      "component?": "{ new (): ICellRenderer; } | string",
+      "component?": "any",
       "frameworkComponent?": "any",
       "params?": "any"
     },
     "docs": {
       "component?": "/** Equivalent of setting `loadingCellRenderer` */",
-      "frameworkComponent?": "/** Equivalent of setting `loadingCellRendererFramework` */",
+      "frameworkComponent?": "/** @deprecated As of v27, there is no need to specify framework components, the grid works this out.\n */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
     }
   },
@@ -2555,7 +2558,7 @@
       "width?": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
       "iconKey": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
       "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
-      "toolPanelFramework?": "/** Same as `toolPanel` but for framework specific components. */",
+      "toolPanelFramework?": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components\n */",
       "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
     }
   },
@@ -7138,19 +7141,19 @@
   "IFilterDef": {
     "meta": {},
     "type": {
-      "filter?": "IFilterType",
+      "filter?": "any",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "floatingFilterComponent?": "IFloatingFilterType",
+      "floatingFilterComponent?": "any",
       "floatingFilterComponentFramework?": "any",
       "floatingFilterComponentParams?": "any"
     },
     "docs": {
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
+      "filterFramework?": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.\n */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
+      "floatingFilterComponentFramework?": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components.\n */",
       "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
     }
   },
@@ -7275,7 +7278,8 @@
       "setInterval(action: any, interval?: any)": "AgPromise<number>",
       "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions)": "void",
       "dispatchEvent(eventType: string, listener: () => {}, global: boolean)": "void",
-      "frameworkComponent(name: string)": "any"
+      "frameworkComponent(name: string)": "any",
+      "isFrameworkComponent(comp: any)": "boolean"
     },
     "docs": {
       "setTimeout(action: any, timeout?: any)": "/** Because Angular uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
@@ -8585,11 +8589,14 @@
   "StatusPanelDef": {
     "meta": {},
     "type": {
-      "statusPanel?": "{ new (): IStatusPanelComp; } | string",
+      "statusPanel?": "any",
       "statusPanelFramework?": "any",
       "align?": "string",
       "key?": "string",
       "statusPanelParams?": "any"
+    },
+    "docs": {
+      "statusPanelFramework?": "/** @deprecated As of v27, you can use statusPanel instead for Framework Components.\n */"
     }
   },
   "IStatusPanelParams": {

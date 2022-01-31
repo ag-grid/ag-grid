@@ -3,10 +3,10 @@ import { PersonFilter } from './personFilter_typescript'
 import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 150, filterFramework: PersonFilter },
+  { field: 'athlete', minWidth: 150, filter: PersonFilter },
   { field: 'age', filter: 'agNumberColumnFilter' },
   { field: 'country', minWidth: 150 },
-  { field: 'year', filterFramework: YearFilter },
+  { field: 'year', filter: YearFilter },
   {
     field: 'date',
     minWidth: 130,

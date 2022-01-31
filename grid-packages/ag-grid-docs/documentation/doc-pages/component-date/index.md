@@ -38,20 +38,20 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |    template: `
 |      <ag-grid-angular
 |          class="ag-theme-alpine"
-|          [frameworkComponents]="frameworkComponents"
+|          [components]="components"
 |          ...other properties...  
 |      ></ag-grid-angular>
 |    `
 |})
 |export class AppComponent {
-|    private frameworkComponents = {
+|    private components = {
 |        agDateInput: CustomDateComponent
 |    };
 |```
 [[only-react]]
 |```jsx
 |<AgGridReact
-|    frameworkComponents={{ agDateInput: CustomDateComponent }}
+|    components={{ agDateInput: CustomDateComponent }}
 |    ...other properties...
 |/>
 |```
@@ -65,7 +65,7 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |```
 |
  
-Please see [Provided Components](../components/#grid-provided-components) for more information about overrided AG Grid provided components (as we're doing here
+Please see [Provided Components](../components/#grid-provided-components) for more information about overridden AG Grid provided components (as we're doing here
 by overriding `agDateInput`).
 
 md-include:component-interface-javascript.md

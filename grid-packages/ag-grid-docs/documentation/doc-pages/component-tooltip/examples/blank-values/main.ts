@@ -20,7 +20,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Athlete Col 2',
     field: 'athlete',
     width: 150,
-    tooltipComponentFramework: CustomTooltip,
+    tooltipComponent: CustomTooltip,
     tooltipValueGetter: toolTipValueGetter,
   },
   { field: 'sport', width: 110 },

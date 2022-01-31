@@ -22,7 +22,7 @@ export interface ToolPanelDef {
      * To provide your own custom panel component, you reference it by name here.
      */
     toolPanel?: { new(): IToolPanelComp } | string;
-    /** Same as `toolPanel` but for framework specific components. */
+    /** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components */
     toolPanelFramework?: any;
     /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;

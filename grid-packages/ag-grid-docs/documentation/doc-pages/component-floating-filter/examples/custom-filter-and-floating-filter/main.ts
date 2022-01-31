@@ -6,35 +6,35 @@ const columnDefs: ColDef[] = [
     { field: 'athlete', filter: 'agTextColumnFilter' },
     {
         field: 'gold',
-        floatingFilterComponentFramework: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterFramework: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'silver',
-        floatingFilterComponentFramework: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterFramework: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'bronze',
-        floatingFilterComponentFramework: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterFramework: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'total',
-        floatingFilterComponentFramework: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterFramework: NumberFilterComponent
+        filter: NumberFilterComponent
     },
 ]
 

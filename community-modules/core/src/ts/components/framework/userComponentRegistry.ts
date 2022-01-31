@@ -189,6 +189,9 @@ export class UserComponentRegistry extends BeanStub {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     private registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
+        const warningMessage = `AG Grid: As of v27, registering components via grid property frameworkComponents is deprecated. Instead register both JavaScript AND Framework Components via the components property.`;
+        doOnce( ()=> console.log(warningMessage), `UserComponentRegistry.frameworkComponentsDeprecated`);
+
         const name = this.translateIfDeprecated(rawName);
         this.fwComps[name] = component;
     }

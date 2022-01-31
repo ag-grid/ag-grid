@@ -21,14 +21,14 @@ class GridExample extends Component {
                 {
                     headerName: 'Doubling',
                     field: 'number',
-                    cellEditorFramework: DoublingEditor,
+                    cellEditor: DoublingEditor,
                     editable: true,
                     width: 300,
                 },
                 {
                     field: 'mood',
-                    cellRendererFramework: MoodRenderer,
-                    cellEditorFramework: MoodEditor,
+                    cellRenderer: MoodRenderer,
+                    cellEditor: MoodEditor,
                     cellEditorPopup: true,
                     editable: true,
                     width: 300,
@@ -36,7 +36,7 @@ class GridExample extends Component {
                 {
                     headerName: 'Numeric',
                     field: 'number',
-                    cellEditorFramework: NumericEditor,
+                    cellEditor: NumericEditor,
                     cellEditorPopup: true,
                     editable: true,
                     width: 280,

@@ -58,39 +58,39 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
   {
     field: 'gold',
-    floatingFilterComponentFramework: NumberFloatingFilter,
+    floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterFramework: CustomNumberFilter,
+    filter: CustomNumberFilter,
   },
   {
     field: 'silver',
-    floatingFilterComponentFramework: NumberFloatingFilter,
+    floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 3,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterFramework: CustomNumberFilter,
+    filter: CustomNumberFilter,
   },
   {
     field: 'bronze',
-    floatingFilterComponentFramework: NumberFloatingFilter,
+    floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 2,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterFramework: CustomNumberFilter,
+    filter: CustomNumberFilter,
   },
   {
     field: 'total',
-    floatingFilterComponentFramework: NumberFloatingFilter,
+    floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
     } as CustomFloatingParams,
-    filterFramework: CustomNumberFilter,
+    filter: CustomNumberFilter,
   },
 ]
 

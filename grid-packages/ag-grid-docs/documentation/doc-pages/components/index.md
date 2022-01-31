@@ -30,17 +30,11 @@ md-include:register-vue.md
 
 md-include:advantages-vue.md
 
-
-md-include:js-fw-angular.md
-md-include:js-fw-react.md
-md-include:js-fw-vue.md
-md-include:js-fw-common-end.md
-
-### Providing Additional Parameters
+## Providing Additional Parameters
 
 Each Custom Component gets a set of parameters from the grid. For example, for Cell Renderer the grid provides, among other things, the value to be rendered. You can provide additional properties to the Custom Component (e.g. what currency symbol to use) by providing additional parameters specific to your application.
 
-To provide additional parameters, use the property `<prop-name>Params`.
+To provide additional parameters, use the property `[prop-name]Params`, e.g. `cellRendererParams`.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -56,30 +50,39 @@ const gridOptions = {
 }
 </snippet>
 
+md-include:js-fw-angular.md
+md-include:js-fw-react.md
+md-include:js-fw-vue.md
+md-include:js-fw-common-end.md
 
-### Component Usage
+[[only-react]]
+|## JavaScript Functional Components
+|
+|Function Components are not supported by AG Grid React. This is because the grid has no way to distinguish JavaScript Functional Components from React Functional Components. The grid identifies a JavaScript Class Component by looking for the `getGui()` method. If this method is missing, it assumes a React Component. Thus all functions will be treated as React Components / Hooks.
+|
+## Component Usage
 
 The below table gives a summary of the components, where they are configured and using what attribute.
 
 | Component                     | Where                     | Attribute | 
 | ----------------------------- | ------------------------- | ------------------------ | 
-| Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererFramework<br/>cellRendererParams<br/>cellRendererSelector         | 
-| Cell Editor                   | Column Definition         | cellEditor<br>cellEditorFramework<br>cellEditorParams<br/>cellEditorSelector| 
-| Filter                        | Column Definition         | filter<br/>filterFramework<br/>filterParams              | 
-| Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterFramework<br/>floatingFilterParams       | 
-| Header Component              | Column Definition         | headerComponent<br/>headerComponentFramework<br/>headerComponentParams               | 
-| Header Group Component        | Column Definition         | headerGroupComponent<br/>headerGroupComponentFramework<br/>headerGroupComponentParams         | 
-| Tooltip Component             | Column Definition         | tooltipComponent<br/>tooltipComponentFramework<br/>tooltipComponentParams              | 
-| Group Row Cell Renderer       | Grid Option               | groupRowRenderer<br/>groupRowRendererFramework<br/>groupRowRendererParams         | 
-| Group Row Inner Cell Renderer | Grid Option               | innerRenderer<br/>innerRendererFramework<br/>innerRendererParams            | 
-| Detail Cell Renderer          | Grid Option               | detailCellRenderer<br/>detailCellRendererFramework<br/>detailCellRendererParams        | 
-| Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer<br/>fullWidthCellRendererFramework<br/>fullWidthCellRendererParams        | 
-| Loading Cell Renderer         | Grid Option               | loadingCellRenderer<br/>loadingCellRendererFramework<br/>loadingCellRendererParams       |
-| Loading Overlay               | Grid Option               | loadingOverlayComponent<br/>loadingOverlayComponentFramework<br/>loadingOverlayComponentParams       | 
-| No Rows Overlay               | Grid Option               | noRowsOverlayComponent<br/>noRowsOverlayComponentFramework<br/>noRowsOverlayComponentParams        |
-| Date Component                | Grid Option               | dateComponent<br/>dateComponentFramework<br/>dateComponentParams                  | 
-| Status Bar Component          | Grid Option -> Status Bar | statusPanel<br/>statusPanelFramework<br/>statusPanelParams          | 
-| Tool Panel                    | Grid Option -> Side Bar   | toolPanel<br/>toolPanelFramework<br/>toolPanelParams            | 
+| Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererParams<br/>cellRendererSelector         | 
+| Cell Editor                   | Column Definition         | cellEditor<br>cellEditorParams<br/>cellEditorSelector| 
+| Filter                        | Column Definition         | filter<br/>filterParams              | 
+| Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterParams       | 
+| Header Component              | Column Definition         | headerComponent<br/>headerComponentParams               | 
+| Header Group Component        | Column Definition         | headerGroupComponent<br/>headerGroupComponentParams         | 
+| Tooltip Component             | Column Definition         | tooltipComponent<br/>tooltipComponentParams              | 
+| Group Row Cell Renderer       | Grid Option               | groupRowRenderer<br/>groupRowRendererParams         | 
+| Group Row Inner Cell Renderer | Grid Option               | innerRenderer<br/>innerRendererParams            | 
+| Detail Cell Renderer          | Grid Option               | detailCellRenderer<br/>detailCellRendererParams        | 
+| Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer<br/>fullWidthCellRendererParams        | 
+| Loading Cell Renderer         | Grid Option               | loadingCellRenderer<br/>loadingCellRendererParams       |
+| Loading Overlay               | Grid Option               | loadingOverlayComponent<br/>loadingOverlayComponentParams       | 
+| No Rows Overlay               | Grid Option               | noRowsOverlayComponent<br/>noRowsOverlayComponentParams        |
+| Date Component                | Grid Option               | dateComponent<br/>dateComponentParams                  | 
+| Status Bar Component          | Grid Option -> Status Bar | statusPanel<br/>statusPanelParams          | 
+| Tool Panel                    | Grid Option -> Side Bar   | toolPanel<br/>toolPanelParams            | 
 
 ## Grid Provided Components
 
@@ -212,7 +215,7 @@ The grid comes with pre-registered components that can be used. Each component p
     </tbody>
 </table>
 
-### Overriding Grid Components
+## Overriding Grid Components
 
 It is also possible to override components. Where the grid uses a default value, this means the override component will be used instead. The default components, where overriding makes sense, are as follows:
 

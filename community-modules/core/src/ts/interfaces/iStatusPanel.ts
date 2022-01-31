@@ -3,7 +3,8 @@ import { ColumnApi } from "../columns/columnApi";
 import { IComponent } from "./iComponent";
 
 export interface StatusPanelDef {
-    statusPanel?: { new(): IStatusPanelComp } | string;
+    statusPanel?: any;
+    /** @deprecated As of v27, you can use statusPanel instead for Framework Components.  */
     statusPanelFramework?: any;
     align?: string;
     key?: string;

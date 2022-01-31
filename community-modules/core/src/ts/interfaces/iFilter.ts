@@ -18,8 +18,8 @@ export interface IFilterDef {
      * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.
      * - Set to a `IFilterComp`.
      */
-    filter?: IFilterType;
-    /** Provided a custom framework filter to use for this column. */
+    filter?: any;
+    /** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.  */
     filterFramework?: any;
     /** Params to be passed to the filter component specified in `filter` or `filterFramework`. */
     filterParams?: any;
@@ -28,8 +28,8 @@ export interface IFilterDef {
      * The custom component to be used for rendering the floating filter.
      * If none is specified the default AG Grid is used.
      */
-    floatingFilterComponent?: IFloatingFilterType;
-    /** Floating filter framework component to use for this column. */
+    floatingFilterComponent?: any;
+    /** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components. */
     floatingFilterComponentFramework?: any;
     /** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */
     floatingFilterComponentParams?: any;

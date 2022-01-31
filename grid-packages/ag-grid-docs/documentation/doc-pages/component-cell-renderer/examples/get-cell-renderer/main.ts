@@ -5,9 +5,9 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
   { field: 'country', width: 150 },
   { field: 'year', width: 100 },
-  { field: 'gold', width: 100, cellRendererFramework: MedalCellRenderer },
-  { field: 'silver', width: 100, cellRendererFramework: MedalCellRenderer },
-  { field: 'bronze', width: 100, cellRendererFramework: MedalCellRenderer },
+  { field: 'gold', width: 100, cellRenderer: MedalCellRenderer },
+  { field: 'silver', width: 100, cellRenderer: MedalCellRenderer },
+  { field: 'bronze', width: 100, cellRenderer: MedalCellRenderer },
   { field: 'total', width: 100 },
 ]
 

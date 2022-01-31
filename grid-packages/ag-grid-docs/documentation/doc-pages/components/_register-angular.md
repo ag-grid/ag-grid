@@ -28,9 +28,8 @@
 |export class AppComponent {
 |   columnDefs: [
 |       {
-|           headerName: "Cube",
-|           field: "value",
-|           cellRendererFramework: CubeComponent,     
+|           field: "cube",
+|           cellRenderer: CubeComponent,     
 |       }
 |   ]
 |
@@ -42,7 +41,7 @@
 |
 |### 2. By Name
 |
-|When registering an Angular component by name you need to first register the component within the grid `frameworkComponents` property,
+|When registering an Angular component by name you need to first register the component within the grid `components` property,
 |then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
 |
 |In this example we've registered our `CubeComponent` Angular Component and given it a name of `cubeComponent` (this can be any name you choose).
@@ -56,18 +55,17 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular [frameworkComponents]="frameworkComponents" ...other properties>
+|   <ag-grid-angular [components]="components" ...other properties>
 |   </ag-grid-angular>
 |`
 |})
 |export class AppComponent {
-|   frameworkComponents: {
+|   components: {
 |       'cubeComponent': CubeComponent
 |   };          
 |   columnDefs: [
 |       {
-|           headerName: "Cube",
-|           field: "value",
+|           field: "cube",
 |           cellRenderer: 'cubeComponent',     
 |       }
 |   ]
