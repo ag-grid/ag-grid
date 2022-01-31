@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerCellComp: FileCellRenderer,
+      innerRenderer: FileCellRenderer,
     },
     cellClassRules: {
       'hover-over': function (params) {

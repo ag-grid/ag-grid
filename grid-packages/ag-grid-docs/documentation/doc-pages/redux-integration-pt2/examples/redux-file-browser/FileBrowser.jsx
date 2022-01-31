@@ -25,7 +25,7 @@ class FileBrowser extends Component {
     width: 250,
     cellRendererParams: {
       suppressCount: true,
-      innerCellComp: FileCellRenderer
+      innerRenderer: FileCellRenderer
     }
   };
 

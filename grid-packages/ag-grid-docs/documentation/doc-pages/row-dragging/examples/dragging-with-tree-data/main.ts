@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerCellComp: FileCellRenderer,
+      innerRenderer: FileCellRenderer,
     },
   },
   onRowDragEnd: onRowDragEnd,

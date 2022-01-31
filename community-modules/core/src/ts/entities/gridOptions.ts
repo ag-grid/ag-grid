@@ -329,8 +329,10 @@ export interface GridOptions {
     /** Sets the number of details rows to keep. Default: `10` */
     keepDetailRowsCount?: number;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded. */
-    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Framework `detailCellRenderer` to use when a master row is expanded. */
+    detailCellRenderer?: any;
+    /** 
+     * @deprecated use detailCellRenderer now for Framework components
+     * Framework `detailCellRenderer` to use when a master row is expanded. */
     detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
@@ -398,8 +400,10 @@ export interface GridOptions {
     /** Provide a template for 'no rows' overlay. */
     overlayNoRowsTemplate?: string;
     /** Provide a custom no rows overlay component */
-    noRowsOverlayComponent?: { new(): INoRowsOverlayComp; } | string;
-    /** Same as `noRowsOverlayComponent` but for a framework component. */
+    noRowsOverlayComponent?: any;
+    /** 
+     * @deprecated as of v27, use noRowsOverlayComponent for Framework Components
+     * Same as `noRowsOverlayComponent` but for a framework component. */
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
@@ -498,8 +502,10 @@ export interface GridOptions {
 
     // *** Row Full Width *** //
     /** Sets the Cell Renderer to use for full width rows. */
-    fullWidthCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `fullWidthCellRenderer` but for a framework component. */
+    fullWidthCellRenderer?: any;
+    /** 
+     * @deprecated use fullWidthCellRenderer now for Framework components
+     * Same as `fullWidthCellRenderer` but for a framework component. */
     fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
@@ -554,8 +560,10 @@ export interface GridOptions {
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
     rowGroupPanelShow?: string;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */
-    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `groupRowRenderer` but for a framework component. */
+    groupRowRenderer?: any;
+    /**
+     * @deprecated as of v27, use groupRowRenderer instead for Framework components
+     * Same as `groupRowRenderer` but for a framework component. */
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
@@ -566,7 +574,7 @@ export interface GridOptions {
     treeData?: boolean;
 
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    groupRowInnerRenderer?: any;
     /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
     groupRowInnerRendererFramework?: any;
     /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */

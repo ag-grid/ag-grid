@@ -5,14 +5,14 @@ enterprise: true
 
 When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display the Detail Grid inside one row of the Master Grid. You can provide a customer Detail Cell Renderer to display something else if the default Detail Cell Renderer doesn't do what you want.
 
-Configure the grid to use a customer Detail Cell Renderer using the grid property `detailRowCellComp`.
+Configure the grid to use a customer Detail Cell Renderer using the grid property `detailCellRenderer`.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     // normally left blank, the grid will use the default Detail Cell Renderer
-    detailRowCellComp: 'myCellRendererComp',
+    detailCellRenderer: 'myCellRendererComp',
     // params sent to the Detail Cell Renderer, in this case your MyCellRendererComp
-    detailRowCellCompParams: {},
+    detailCellRendererParams: {},
 }
 </snippet>
 

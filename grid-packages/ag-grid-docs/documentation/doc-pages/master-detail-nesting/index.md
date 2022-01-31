@@ -16,7 +16,7 @@ const gridOptionsLevel3 = {
 // Level 2, configured to be a Master Grid and use Level 3 grid as Detail Grid,
 const gridOptionsLevel2 = {
     masterDetail: true,
-    detailRowCellCompParams: {
+    detailCellRendererParams: {
         detailGridOptions: gridOptionsLevel3,
         getDetailRowData: function (params) {
             ...
@@ -28,7 +28,7 @@ const gridOptionsLevel2 = {
 // Level 1, configured to be a Master Grid and use Level 2 grid as Detail Grid,
 const gridOptionsLevel1 = {
     masterDetail: true,
-    detailRowCellCompParams: {
+    detailCellRendererParams: {
         detailGridOptions: gridOptionsLevel2,
         getDetailRowData: function (params) {
             ...

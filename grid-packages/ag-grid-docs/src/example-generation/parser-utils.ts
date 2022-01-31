@@ -161,7 +161,7 @@ export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
             // If the name matches the initializer then the property will get added via
             // the top level variable matching a gridProperty name
             // This means that we include cellRenderer properties like
-            // detailRowCellComp: DetailCellRenderer,
+            // detailCellRenderer: DetailCellRenderer,
             if (node.name.getText() === node.initializer.getText()) {
                 return false;
             }

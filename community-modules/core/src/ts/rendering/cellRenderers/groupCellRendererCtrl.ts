@@ -58,7 +58,9 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `innerRenderer` but for a framework component. */
+    /** 
+     * @deprecated as of v27, use innerRenderer for Framework components
+     * Same as `innerRenderer` but for a framework component. */
     innerRendererFramework?: any;
     /** Additional params to customise to the `innerRenderer`. */
     innerRendererParams?: any;

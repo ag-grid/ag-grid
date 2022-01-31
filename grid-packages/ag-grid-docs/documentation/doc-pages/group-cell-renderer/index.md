@@ -37,7 +37,7 @@ const gridOptions = {
 
 The set of parameters for the group cell renderer are defined on `GroupCellRendererParams` and include:
 
-<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer","innerRendererFramework", "innerRendererParams","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
+<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer", "innerRendererParams","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
 
 ### Example Group cellRenderer
 

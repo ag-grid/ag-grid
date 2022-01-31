@@ -472,8 +472,10 @@ hence this property is deprecated as will be removed in the next major release.
     /** Sets the number of details rows to keep. Default: `10`     */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
-    @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Framework `detailCellRenderer` to use when a master row is expanded.     */
+    @Input() public detailCellRenderer: any = undefined;
+    /** @deprecated use detailCellRenderer now for Framework components
+Framework `detailCellRenderer` to use when a master row is expanded.
+     */
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
@@ -530,8 +532,10 @@ hence this property is deprecated as will be removed in the next major release.
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no rows overlay component     */
-    @Input() public noRowsOverlayComponent: { new(): INoRowsOverlayComp; } | string | undefined = undefined;
-    /** Same as `noRowsOverlayComponent` but for a framework component.     */
+    @Input() public noRowsOverlayComponent: any = undefined;
+    /** @deprecated as of v27, use noRowsOverlayComponent for Framework Components
+Same as `noRowsOverlayComponent` but for a framework component.
+     */
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
@@ -608,8 +612,10 @@ hence this property is deprecated as will be removed in the next major release.
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** Sets the Cell Renderer to use for full width rows.     */
-    @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Same as `fullWidthCellRenderer` but for a framework component.     */
+    @Input() public fullWidthCellRenderer: any = undefined;
+    /** @deprecated use fullWidthCellRenderer now for Framework components
+Same as `fullWidthCellRenderer` but for a framework component.
+     */
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
@@ -657,8 +663,10 @@ hence this property is deprecated as will be removed in the next major release.
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: string | undefined = undefined;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
-    @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Same as `groupRowRenderer` but for a framework component.     */
+    @Input() public groupRowRenderer: any = undefined;
+    /** @deprecated as of v27, use groupRowRenderer instead for Framework components
+Same as `groupRowRenderer` but for a framework component.
+     */
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
@@ -668,7 +676,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public treeData: boolean | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
-    @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    @Input() public groupRowInnerRenderer: any = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
      */
     @Input() public groupRowInnerRendererFramework: any = undefined;

@@ -24,7 +24,7 @@ Master / Detail can be enabled using the `masterDetail` grid option with detail 
 |    ],
 |
 |    // provide Detail Cell Renderer Params
-|    detailRowCellCompParams: {
+|    detailCellRendererParams: {
 |        // provide the Grid Options to use on the Detail Grid
 |        detailGridOptions: {
 |            columnDefs: [

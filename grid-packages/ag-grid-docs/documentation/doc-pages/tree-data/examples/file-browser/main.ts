@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     cellRendererParams: {
       checkbox: true,
       suppressCount: true,
-      innerCellComp: getFileCellRenderer(),
+      innerRenderer: getFileCellRenderer(),
     },
   },
   rowData: getData(),

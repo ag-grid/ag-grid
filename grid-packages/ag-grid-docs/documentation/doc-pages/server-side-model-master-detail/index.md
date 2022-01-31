@@ -39,7 +39,7 @@ These grid options are illustrated below:
 |    // enable master detail
 |    masterDetail: true,
 |
-|    detailRowCellCompParams: {
+|    detailCellRendererParams: {
 |        detailGridOptions: {
 |            // detail grid columns
 |            columnDefs: [],
@@ -150,7 +150,7 @@ Option 2 - dynamic detail row height, dynamically sets height for all rows
 Option 3 - use autoHeight
 <snippet>
 |const gridOptions = {
-|    detailRowCellCompParams: {
+|    detailCellRendererParams: {
 |        autoHeight: true,
 |    }
 |}
