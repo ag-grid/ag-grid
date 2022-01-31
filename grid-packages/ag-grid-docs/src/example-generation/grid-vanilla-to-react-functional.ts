@@ -198,7 +198,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            debugger
             if (componentFilenames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
             }
