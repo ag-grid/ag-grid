@@ -97,15 +97,7 @@ The same Cell Renderer can used to format the grid cells and filter values, or d
 each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid
 cells have row details that are not present for values inside a Filter List).
 
-Given the following Cell Renderer:
-
-<snippet>
-const countryCellRenderer = params => {
-    return '&lt;span style="font-weight: bold"&gt;' + params.value + '&lt;/span&gt;';
-}
-</snippet>
-
-The following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
+Assuming you have a customer Country Cell Renderer, the following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
 
 <snippet>
 const gridOptions = {
