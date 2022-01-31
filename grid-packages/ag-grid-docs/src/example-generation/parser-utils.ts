@@ -407,6 +407,11 @@ export function findAllVariables(node) {
     if (ts.isVariableDeclaration(node) || ts.isClassDeclaration(node)) {
         allVariables.push(node.name.getText());
     }
+    if (ts.isFunctionDeclaration(node)) {
+        // catch locally defined functions within the main function body
+        // function setMessage(msg: string) { ... }
+        allVariables.push(node.name.getText());
+    }
     if (ts.isParameter(node)) {
         // catch locally defined arrow functions with their params
         //  const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId()
