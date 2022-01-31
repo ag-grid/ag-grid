@@ -182,7 +182,6 @@ function readAsJsFile(tsFilePath) {
 
 function createExampleGenerator(prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
-    const { convertFrameworkRendersToVanilla } = require(`./src/example-generation/parser-utils.ts`);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -383,7 +382,6 @@ function createExampleGenerator(prefix, importTypes) {
 
                     if (tsFile.endsWith('main.ts')) {
                         jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-                        jsFile = convertFrameworkRendersToVanilla(jsFile);
                     }
 
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');

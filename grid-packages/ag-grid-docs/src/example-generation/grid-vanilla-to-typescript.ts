@@ -1,4 +1,4 @@
-import { addBindingImports, convertFrameworkRendersToVanilla, ImportType } from './parser-utils';
+import { addBindingImports, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
 export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
@@ -25,7 +25,6 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
         // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
         // (\n}\)) Match a }) on a new line with no indentation
         .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
-    unWrapped = convertFrameworkRendersToVanilla(unWrapped);
 
     if (unWrapped.includes('DOMContentLoaded')) {
         console.error('DomContentLoaded replace failed for', mainFilePath);
