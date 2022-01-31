@@ -316,7 +316,7 @@ export function convertDefaultColDef(defaultColDef, vueComponents): string {
     const perLine = defaultColDef.split('\n');
     perLine.forEach(line => {
         if (line.includes('tooltipComponent') ||
-            (line.includes('filter') && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true"))) {
+            (line.includes('filter') && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true")) && !line.includes('filterMenuTab')) {
 
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
             line = line.replace(component, `'${component}'`)
