@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
         return isFullWidth(rowNode.data)
     },
     // see AG Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRendererFramework: FullWidthCellRenderer,
+    fullWidthCellRenderer: FullWidthCellRenderer,
 }
 
 function isFullWidth(data: any) {

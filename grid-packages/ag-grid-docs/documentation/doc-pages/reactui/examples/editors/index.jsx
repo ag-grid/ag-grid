@@ -62,11 +62,11 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
         {
             field: 'gold',
             editable: true,
-            cellEditorFramework: MyReactEditor
+            cellEditor: MyReactEditor
         },
         {
             field: 'silver',
-            cellEditorFramework: MyReactEditor,
+            cellEditor: MyReactEditor,
             cellEditorPopup: true
         }
     ], []);

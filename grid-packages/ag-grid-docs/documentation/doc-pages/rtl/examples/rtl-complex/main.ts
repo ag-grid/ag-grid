@@ -358,7 +358,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 },
                 // pinned: 'left',
                 filterParams: {
-                    cellRendererComp: CountryCellRenderer,
+                    cellRenderer: CountryCellRenderer,
                 },
             },
         ],
@@ -460,7 +460,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: { cellRendererComp: ratingFilterRenderer },
+        filterParams: { cellRenderer: ratingFilterRenderer },
     },
     {
         field: 'totalWinnings',

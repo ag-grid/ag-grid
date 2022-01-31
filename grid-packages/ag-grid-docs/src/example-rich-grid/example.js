@@ -81,7 +81,7 @@
     var columnDefsMobile = [
         {
             headerName: 'Contact Info',
-            cellRendererComp: ContactInfoRenderer,
+            cellRenderer: ContactInfoRenderer,
             field: 'name',
             sort: 'asc',
             autoHeight: true,
@@ -91,7 +91,7 @@
             headerName: "Skills",
             width: 100,
             sortable: false,
-            cellRendererComp: skillsCellRenderer,
+            cellRenderer: skillsCellRenderer,
             suppressSizeToFit: true
         },
         {
@@ -99,7 +99,7 @@
             field: "proficiency",
             filterComp: "number",
             width: 150,
-            cellRendererCompParams: {
+            cellRendererParams: {
                 sparklineOptions: {
                     type: 'bar',
                     valueAxisDomain: [0, 100],
@@ -128,7 +128,7 @@
             headerName: "Country",
             field: "country",
             width: 150,
-            cellRendererComp: countryCellRenderer,
+            cellRenderer: countryCellRenderer,
             cellStyle: {
                 display: 'flex',
                 alignItems: 'center'
@@ -156,7 +156,7 @@
                     headerName: "Country",
                     field: "country",
                     width: 150,
-                    cellRendererComp: countryCellRenderer,
+                    cellRenderer: countryCellRenderer,
                     filterCompParams: { cellRenderer: countryCellRenderer, cellHeight: 20 }
                 }
             ]
@@ -168,7 +168,7 @@
                     headerName: "Skills",
                     width: 130,
                     sortable: false,
-                    cellRendererComp: skillsCellRenderer,
+                    cellRenderer: skillsCellRenderer,
                     filterComp: SkillFilter
                 },
                 {
@@ -176,8 +176,8 @@
                     field: "proficiency",
                     filter: "number",
                     width: 150,
-                    cellRendererComp: 'agSparklineCellRenderer',
-                    cellRendererCompParams: {
+                    cellRenderer: 'agSparklineCellRenderer',
+                    cellRendererParams: {
                         sparklineOptions: {
                             type: 'bar',
                             valueAxisDomain: [0, 100],

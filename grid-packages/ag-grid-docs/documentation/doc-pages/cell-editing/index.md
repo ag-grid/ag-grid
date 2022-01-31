@@ -142,16 +142,16 @@ Finally, the example also demonstrates querying which cell is editing:
 
 ## Many Editors One Column
 
-It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorCompSelector` to a function that returns alternative values for `cellEditorComp` and `cellEditorCompParams`.
+It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorSelector` to a function that returns alternative values for `cellEditor` and `cellEditorParams`.
 
-The `params` passed to `cellEditorCompSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
+The `params` passed to `cellEditorSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
 
-The result is an object with `comp` and `params` to use instead of `cellEditorComp` and `cellEditorCompParams`.
+The result is an object with `comp` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 
 This following shows the Selector always returning back an AG Rich Select Cell Editor:
 
 ```js
-cellEditorCompSelector: params => {
+cellEditorSelector: params => {
     return {
         comp: 'agRichSelect',
         params: { values: ['Male', 'Female'] }
@@ -162,7 +162,7 @@ cellEditorCompSelector: params => {
 However a selector only makes sense when a selection is made. The following demonstrates selecting between Cell Editors:
 
 ```js
-cellEditorCompSelector: params => {
+cellEditorSelector: params => {
 
     const type = params.data.type;
 
@@ -188,7 +188,7 @@ cellEditorCompSelector: params => {
 Here is a full example:
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-- `colDef.cellEditorCompSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
+- `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 - Edit a cell by double clicking to observe the different editors used. 
 
 <grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>

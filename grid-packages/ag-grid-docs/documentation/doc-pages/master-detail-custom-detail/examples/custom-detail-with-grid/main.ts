@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
   },
   masterDetail: true,
   detailRowHeight: 310,
-  detailCellRendererFramework: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   onFirstDataRendered: onFirstDataRendered,
 }
 

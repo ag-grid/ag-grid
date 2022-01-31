@@ -3,7 +3,7 @@ import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  detailCellRendererFramework: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 150,
   animateRows: true,
   columnDefs: [

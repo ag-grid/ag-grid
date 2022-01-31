@@ -37,8 +37,8 @@ function MyRenderer(params) {
     }, []);
 
     const columnDefs = useMemo( ()=> [
-        { field: 'name', cellRendererFramework: 'agGroupCellRenderer' },
-        { field: 'account', cellRendererFramework: MyRenderer },
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account', cellRenderer: MyRenderer },
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ], []);
@@ -60,7 +60,7 @@ function MyRenderer(params) {
             },
             { 
                 field: "direction", 
-                cellRendererFramework: MyRenderer
+                cellRenderer: MyRenderer
             },
             {
                 field: "number",

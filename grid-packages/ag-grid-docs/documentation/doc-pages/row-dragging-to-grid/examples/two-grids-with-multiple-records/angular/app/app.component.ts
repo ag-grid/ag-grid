@@ -153,7 +153,7 @@ export class AppComponent {
         {
             suppressMenu: true,
             maxWidth: 50,
-            cellRendererFramework: SportRenderer
+            cellRenderer: SportRenderer
         }
     ]
 

@@ -135,7 +135,7 @@ const VueExample = {
                 {
                     suppressMenu: true,
                     maxWidth: 50,
-                    cellRendererComp: 'SportRenderer'
+                    cellRenderer: 'SportRenderer'
                 }
             ]
         };

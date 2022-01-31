@@ -588,7 +588,7 @@ title: "Testing AG Grid"
 |             columnDefs: [{
 |                 field: "age",
 |                 editable: true,
-|                 cellEditorFramework: EditorComponent
+|                 cellEditor: EditorComponent
 |             }],
 |             rowData: [{ age: 24 }]
 |         };
@@ -844,7 +844,7 @@ title: "Testing AG Grid"
 |                 {
 |                     field: 'price',
 |                     editable: true,
-|                     cellEditorFramework: 'Editor'
+|                     cellEditor: 'Editor'
 |                 }
 |             ];
 |

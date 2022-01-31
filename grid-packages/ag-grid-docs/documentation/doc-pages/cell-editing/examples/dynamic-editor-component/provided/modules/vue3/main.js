@@ -98,7 +98,7 @@ const VueExample = {
     }
 }
 
-window.cellEditorCompSelector = function cellEditorCompSelector(params) {
+window.cellEditorSelector = function cellEditorSelector(params) {
     if (params.data.type === 'age') {
         return {
             comp: NumericCellEditor,

@@ -54,7 +54,7 @@ const rightColumnDefs = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRendererComp: SportRenderer
+        cellRenderer: SportRenderer
     }
 ];
 

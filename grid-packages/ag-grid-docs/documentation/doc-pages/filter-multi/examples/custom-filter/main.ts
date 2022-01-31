@@ -12,8 +12,8 @@ const gridOptions: GridOptions = {
       filterParams: {
         filters: [
           {
-            filterComp: YearFilter,
-            floatingFilterComp: YearFloatingFilter,
+            filter: YearFilter,
+            floatingFilterComponent: YearFloatingFilter,
           },
           {
             filter: 'agNumberColumnFilter',

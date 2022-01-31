@@ -42,7 +42,7 @@ class GridWithNoComponentContainerSpecified extends Component {
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: CellRenderer,
+                cellRenderer: CellRenderer,
             }],
             rowData: [{age: 24}]
         };

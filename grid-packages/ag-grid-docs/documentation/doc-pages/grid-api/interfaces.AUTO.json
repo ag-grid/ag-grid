@@ -4628,7 +4628,9 @@
     }
   },
   "GridParams": {
-    "meta": {},
+    "meta": {
+      "doc": "/** cellRendererComp cellRendererCompParams cellRendererCompSelector\n * cellEditorComp cellEditorCompParams cellEditorCompSelector\n * filterComp filterCompParams\n * floatingFilterComp floatingFilterCompParams\n * headerComp headerCompParams\n * headerGroupComp headerGroupCompParams\n * tooltipComp tooltipCompParams\n * groupRowCellComp groupRowCellCompParams\n * innerCellComp innerCellCompParams\n * detailRowCellComp detailRowCellCompParams\n * fullWidthCellComp fullWidthCellCompParams\n * loadingRowCellComp loadingRowCellCompParams\n * loadingOverlayComp loadingOverlayCompParams\n * noRowsOverlayComp noRowsOverlayCompParams\n * dateComp dateCompParams\n * statusPanelComp statusPanelCompParams\n * toolPanelComp toolPanelCompParams\n * innerRendererComp innerRendererCompParams innerRendererCompSelector\n * cellRendererComp cellRendererCompParams */"
+    },
     "type": {
       "globalEventListener?": "Function",
       "$scope?": "any",
@@ -7997,7 +7999,7 @@
       "cellHeight?": "/** The height of values in the Filter List in pixels. */",
       "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want.\n * \n * Default: `false` */",
       "cellRenderer?": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
-      "cellRendererFramework?": "/** Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
+      "cellRendererFramework?": "/** @deprecated as of v27, use cellRenderer for Framework components also\nSimilar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\nbe rendered differently in the filter.\n */",
       "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n * \n * Default: `false` */",
       "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * \n * Default: `false` */",
       "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",

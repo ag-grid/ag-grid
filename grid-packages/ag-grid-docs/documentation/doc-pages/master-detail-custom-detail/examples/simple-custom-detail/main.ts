@@ -3,7 +3,7 @@ import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  detailCellRendererFramework: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },

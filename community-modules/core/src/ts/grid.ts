@@ -94,6 +94,32 @@ import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 
+/**
+ * 
+
+
+cellRendererComp cellRendererCompParams cellRendererCompSelector
+cellEditorComp cellEditorCompParams cellEditorCompSelector
+filterComp filterCompParams
+floatingFilterComp floatingFilterCompParams
+headerComp headerCompParams
+headerGroupComp headerGroupCompParams
+tooltipComp tooltipCompParams
+groupRowCellComp groupRowCellCompParams
+innerCellComp innerCellCompParams
+detailRowCellComp detailRowCellCompParams
+fullWidthCellComp fullWidthCellCompParams
+loadingRowCellComp loadingRowCellCompParams
+loadingOverlayComp loadingOverlayCompParams
+noRowsOverlayComp noRowsOverlayCompParams
+dateComp dateCompParams
+statusPanelComp statusPanelCompParams
+toolPanelComp toolPanelCompParams
+innerRendererComp innerRendererCompParams innerRendererCompSelector
+cellRendererComp cellRendererCompParams
+
+* 
+ */
 export interface GridParams {
     // used by Web Components
     globalEventListener?: Function;

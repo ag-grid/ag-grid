@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
     ],
     rowData: null,
     defaultColDef: {
-        headerComponentFramework: CustomHeader,
+        headerComponent: CustomHeader,
     },
 }
 

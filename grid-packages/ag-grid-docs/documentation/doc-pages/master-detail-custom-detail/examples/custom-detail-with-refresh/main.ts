@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
   },
   enableCellChangeFlash: true,
   masterDetail: true,
-  detailCellRendererFramework: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 70,
   groupDefaultExpanded: 1,
   onFirstDataRendered: onFirstDataRendered,

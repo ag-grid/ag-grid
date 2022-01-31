@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         valueGetter: function (param) {
             return param.data.col1 + '\n' + param.data.col2
         },
-        cellRendererFramework: MultilineCellRenderer
+        cellRenderer: MultilineCellRenderer
     },
 ]
 

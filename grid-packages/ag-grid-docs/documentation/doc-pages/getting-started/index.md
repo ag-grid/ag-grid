@@ -601,8 +601,8 @@ title: "Get Started with AG Grid"
 | const autoGroupColumnDef = {
 |     headerName: "Model",
 |     field: "model",
-|     cellRendererComp:'agGroupCellRenderer',
-|     cellRendererCompParams: {
+|     cellRenderer:'agGroupCellRenderer',
+|     cellRendererParams: {
 |         checkbox: true
 |     }
 | }
@@ -650,8 +650,8 @@ title: "Get Started with AG Grid"
 |        const autoGroupColumnDef = {
 |            headerName: "Model",
 |            field: "model",
-|            cellRendererComp:'agGroupCellRenderer',
-|            cellRendererCompParams: {
+|            cellRenderer:'agGroupCellRenderer',
+|            cellRendererParams: {
 |                checkbox: true
 |            }
 |        }
@@ -1157,8 +1157,8 @@ title: "Get Started with AG Grid"
 |     autoGroupColumnDef: ColDef = {
 |         headerName: 'Model',
 |         field: 'model',
-|         cellRendererComp: 'agGroupCellRenderer',
-|         cellRendererCompParams: {
+|         cellRenderer: 'agGroupCellRenderer',
+|         cellRendererParams: {
 |             checkbox: true
 |         }
 |     };
@@ -1604,7 +1604,7 @@ title: "Get Started with AG Grid"
 |
 |+ const autoGroupColumnDef = useMemo(()=> ({
 |+     field: "model", // show model in group column at leaf levels
-|+     cellRendererCompParams: {
+|+     cellRendererParams: {
 |+         checkbox: true // put in checkbox selection in group column
 |+     }
 |+ }), [])
@@ -2188,8 +2188,8 @@ title: "Get Started with AG Grid"
 |+               autoGroupColumnDef: {
 |+                   headerName: 'Model',
 |+                   field: 'model',
-|+                   cellRendererComp: 'agGroupCellRenderer',
-|+                   cellRendererCompParams: {
+|+                   cellRenderer: 'agGroupCellRenderer',
+|+                   cellRendererParams: {
 |+                       checkbox: true
 |+                   }
 |+               }

@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
             cellEditorPopup: true,
             cellEditorParams: {
                 values: colours,
-                cellRendererFramework: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             },
             filter: 'agSetColumnFilter',
             filterParams: {
@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
                 valueFormatter: function (params) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRendererFramework: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             } as ISetFilterParams,
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRendererFramework: ColourCellRenderer,
+            cellRenderer: ColourCellRenderer,
         },
         {
             field: 'interiorColour',
@@ -84,7 +84,7 @@ const gridOptions: GridOptions = {
                 valueFormatter: function (params: ValueFormatterParams) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRendererFramework: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             },
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -92,7 +92,7 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRendererFramework: ColourCellRenderer,
+            cellRenderer: ColourCellRenderer,
         },
         {
             headerName: 'Retail Price',

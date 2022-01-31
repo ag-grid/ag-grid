@@ -13,7 +13,7 @@ const columnDefs: ColDef[] = [
         minWidth: 70,
         width: 70,
         maxWidth: 70,
-        cellRendererFramework: CountryCellRenderer,
+        cellRenderer: CountryCellRenderer,
         cellRendererParams: {
             base64flags: base64flags,
             countryCodes: countryCodes

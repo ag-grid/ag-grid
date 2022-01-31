@@ -61,16 +61,16 @@ Cell renderer components can be referenced by string or directly by class. They 
 
 ## Many Renderers One Column
 
-It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererCompSelector` to a function that returns alternative values for `cellRendererComp` and `cellRendererCompParams`.
+It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererSelector` to a function that returns alternative values for `cellRenderer` and `cellRendererParams`.
 
-The `params` passed to `cellRendererCompSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
+The `params` passed to `cellRendererSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
 
-The result is an object with `comp` and `params` to use instead of `cellRendererComp` and `cellRendererCompParams`.
+The result is an object with `comp` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
 ```js
-cellRendererCompSelector: params => {
+cellRendererSelector: params => {
     return {
         comp: GenderCellRenderer,
         params: {values: ['Male', 'Female']}
@@ -81,7 +81,7 @@ cellRendererCompSelector: params => {
 However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
 
 ```js
-cellRendererCompSelector: params => {
+cellRendererSelector: params => {
 
     const type = params.data.type;
 
@@ -104,8 +104,8 @@ cellRendererCompSelector: params => {
 
 Here is a full example.
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-- `colDef.cellRendererCompSelector` is a function that selects the renderer based on the row data.
-- The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererCompSelector`
+- `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
+- The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
 <grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335 }'></grid-example>
 

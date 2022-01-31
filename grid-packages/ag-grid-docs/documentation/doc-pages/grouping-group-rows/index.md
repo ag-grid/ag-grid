@@ -67,7 +67,7 @@ const gridOptions = {
 
 ### Providing Cell Renderer
 
-To provide your own Cell Renderer, use the grid properties `groupRowRenderer`, `groupRowRendererFramework` and `groupRowRendererParams`.
+To provide your own Cell Renderer, use the grid properties `groupRowRenderer` and `groupRowRendererParams`.
 
 Using your own Cell Renderer hands over rendering of the group row to your custom Cell Renderer. However, that also means
 the customer Cell Renderer will also need to provide expand / collapse functionality.

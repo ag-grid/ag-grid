@@ -10,7 +10,7 @@ const gridOptions: GridOptions = {
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
     { field: 'account' },
-    { field: 'calls', cellRendererFramework: CallsCellRenderer },
+    { field: 'calls', cellRenderer: CallsCellRenderer },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
   ],
   defaultColDef: {

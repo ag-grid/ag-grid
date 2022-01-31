@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   masterDetail: true,
-  detailCellRendererFramework: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 70,
   groupDefaultExpanded: 1,
   onFirstDataRendered: onFirstDataRendered,

@@ -39,7 +39,7 @@ class GridWithStatelessFunction extends Component {
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: (props) => <span>Age: {props.value}</span>,
+                cellRenderer: (props) => <span>Age: {props.value}</span>,
             }],
             rowData: [{age: 24}]
         };

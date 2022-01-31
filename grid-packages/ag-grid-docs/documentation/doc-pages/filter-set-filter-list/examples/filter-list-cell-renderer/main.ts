@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
         {
             headerName: 'No Cell Renderer',
             field: 'country',
-            cellRendererFramework: CountryCellRenderer,
+            cellRenderer: CountryCellRenderer,
             filter: 'agSetColumnFilter',
             filterParams: {
                 // no cell renderer!
@@ -37,10 +37,10 @@ const gridOptions: GridOptions = {
         {
             headerName: 'With Cell Renderers',
             field: 'country',
-            cellRendererFramework: CountryCellRenderer,
+            cellRenderer: CountryCellRenderer,
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRendererFramework: CountryCellRenderer,
+                cellRenderer: CountryCellRenderer,
             },
         },
     ],

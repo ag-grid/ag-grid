@@ -64,13 +64,13 @@ Groups are explained in more detail in the section [Column Groups](/column-group
 |             field="skills"
 |             :width="120"
 |             suppressSorting
-|             cellRendererFramework="SkillsCellRenderer"
+|             cellRenderer="SkillsCellRenderer"
 |             :menuTabs="['filterMenuTab']">
 |         </ag-grid-column>
 |         <ag-grid-column
 |             field="proficiency"
 |             :width="135"
-|             cellRendererFramework="ProficiencyCellRenderer"
+|             cellRenderer="ProficiencyCellRenderer"
 |             :menuTabs="['filterMenuTab']">
 |         </ag-grid-column>
 |     </ag-grid-column>

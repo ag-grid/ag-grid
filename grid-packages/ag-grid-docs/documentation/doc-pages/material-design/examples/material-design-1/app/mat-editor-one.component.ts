@@ -34,18 +34,18 @@ export class MatEditorComponentOne {
             {
                 headerName: "Checkbox (inline editing)",
                 field: "on_off",
-                cellRendererFramework: MatCheckboxComponent
+                cellRenderer: MatCheckboxComponent
             },
             {
                 headerName: "Full Name (popup input editor)",
                 field: "full_name",
-                cellEditorFramework: MatInputComponent,
+                cellEditor: MatInputComponent,
                 editable: true
             },
             {
                 headerName: "Fruit (popup radio editor)",
                 field: "fruit",
-                cellEditorFramework: MatRadioComponent,
+                cellEditor: MatRadioComponent,
                 cellEditorParams: {
                     fruits: ["Apple", "Orange", "Banana"]
                 },
@@ -54,7 +54,7 @@ export class MatEditorComponentOne {
             {
                 headerName: "Vegetables (popup select editor)",
                 field: "vegetable",
-                cellEditorFramework: MatSelectComponent,
+                cellEditor: MatSelectComponent,
                 cellEditorParams: {
                     vegetables: ["Carrot", "Broccoli", "Potato"]
                 },

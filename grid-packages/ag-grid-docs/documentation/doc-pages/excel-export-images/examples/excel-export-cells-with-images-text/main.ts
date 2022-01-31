@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'country',
         cellClass: 'countryCell',
-        cellRendererFramework: CountryCellRenderer,
+        cellRenderer: CountryCellRenderer,
     },
     { field: 'age' },
     { field: 'year' },

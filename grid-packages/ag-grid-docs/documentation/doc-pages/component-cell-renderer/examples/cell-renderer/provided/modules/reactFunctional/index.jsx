@@ -118,7 +118,7 @@ const GridExample = () => {
 
     /**
      * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-     * After a data update, cellRendererFramework Components.refresh method will be called to re-render the altered Cells
+     * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
      */
     const frostierYear = () => {
         const extraDaysFrost = Math.floor(Math.random() * 2) + 1;

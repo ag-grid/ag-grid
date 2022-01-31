@@ -28,7 +28,7 @@ function GridExample() {
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
         { field: 'athlete' },
-        { field: 'age', cellRendererFramework: MyRenderer },
+        { field: 'age', cellRenderer: MyRenderer },
         { field: 'country' },
         { field: 'year' },
         { field: 'date' },

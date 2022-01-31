@@ -5,7 +5,7 @@ export class VueComponentFactory {
     private static getComponentDefinition(component: any, parent: any) {
         let componentDefinition: any;
 
-        // when referencing components by name - ie: cellRendererFramework: 'MyComponent'
+        // when referencing components by name - ie: cellRenderer: 'MyComponent'
         if (typeof component === 'string') {
             // look up the definition in Vue
             componentDefinition = this.searchForComponentInstance(parent, component);
