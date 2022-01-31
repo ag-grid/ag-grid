@@ -310,7 +310,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Rules which can be applied to include certain CSS classes. */
     cellClassRules?: CellClassRules;
     /** A `cellRenderer` to use for this column. */
-    cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    cellRenderer?: any;
     /** Framework `cellRenderer` to use for this column. */
     cellRendererFramework?: any;
     /** Params to be passed to the cell renderer component. */

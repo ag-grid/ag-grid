@@ -18,4 +18,8 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     public frameworkComponent(name: string): any {
         return !!VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
     }
+
+    public isFrameworkComponent(comp: any): boolean {
+        return comp!=null && comp.__annotations__ != null;
+    }
 }

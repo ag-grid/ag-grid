@@ -235,7 +235,7 @@ export class AgGridColumn {
     /** Rules which can be applied to include certain CSS classes.     */
     @Input() public cellClassRules: CellClassRules | undefined;
     /** A `cellRenderer` to use for this column.     */
-    @Input() public cellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined;
+    @Input() public cellRenderer: any;
     /** Framework `cellRenderer` to use for this column.     */
     @Input() public cellRendererFramework: any;
     /** Params to be passed to the cell renderer component.     */

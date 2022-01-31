@@ -73,4 +73,8 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
             }
         }
     }
+
+    isFrameworkComponent(comp: any): boolean {
+        return comp!=null && comp.__annotations__ != null;
+    }
 }

@@ -213,7 +213,8 @@ export class UserComponentRegistry extends BeanStub {
 
         const jsComponent = this.jsComps[name];
         if (jsComponent) {
-            return createResult(jsComponent, false);
+            const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(jsComponent);
+            return createResult(jsComponent, isFwkComp);
         }
 
         const defaultComponent = this.agGridDefaults[name];

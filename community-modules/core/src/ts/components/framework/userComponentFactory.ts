@@ -66,6 +66,8 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
+const ANNOTATIONS = '__annotations__';
+
 @Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
 
@@ -225,6 +227,7 @@ export class UserComponentFactory extends BeanStub {
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
         // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
         // const fwActive = this.frameworkComponentWrapper != null;
+        // const hasFwkAnnotations = (comp: any) => comp.__annotations__ != null;
 
         // pull from defObject if available
         if (defObject) {
@@ -242,7 +245,12 @@ export class UserComponentFactory extends BeanStub {
                     compName = providedFwComp as string;
                 // comp===true for filters, which means use the default comp
                 } else if (providedJsComp!=null && providedJsComp!==true) {
-                    jsComp = providedJsComp;
+                    const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
+                    if (isFwkComp) {
+                        fwComp = providedJsComp;
+                    } else {
+                        jsComp = providedJsComp;
+                    }
                 } else if (providedFwComp!=null) {
                     fwComp = providedFwComp;
                 }
