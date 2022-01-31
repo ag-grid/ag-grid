@@ -65,14 +65,14 @@ It is also possible to use different renderers for different rows in the same co
 
 The `params` passed to `cellRendererSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
 
-The result is an object with `comp` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
+The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
 ```js
 cellRendererSelector: params => {
     return {
-        comp: GenderCellRenderer,
+        component: GenderCellRenderer,
         params: {values: ['Male', 'Female']}
     };
 }
@@ -87,14 +87,14 @@ cellRendererSelector: params => {
 
     if (type === 'gender') {
         return {
-            comp: GenderCellRenderer,
+            component: GenderCellRenderer,
             params: {values: ['Male', 'Female']}
         };
     }
 
     if (type === 'mood') {
         return {
-            comp: MoodCellRenderer
+            component: MoodCellRenderer
         };
     }
 

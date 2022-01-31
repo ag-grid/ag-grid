@@ -146,14 +146,14 @@ It is also possible to use different editors for different rows in the same colu
 
 The `params` passed to `cellEditorSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
 
-The result is an object with `comp` and `params` to use instead of `cellEditor` and `cellEditorParams`.
+The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 
 This following shows the Selector always returning back an AG Rich Select Cell Editor:
 
 ```js
 cellEditorSelector: params => {
     return {
-        comp: 'agRichSelect',
+        component: 'agRichSelect',
         params: { values: ['Male', 'Female'] }
     };
 }
@@ -172,13 +172,13 @@ cellEditorSelector: params => {
 
     if (params.data.type === 'gender') {
         return {
-            comp: 'agRichSelect',
+            component: 'agRichSelect',
             params: { values: ['Male', 'Female'] }
         };
     }
 
     if (params.data.type === 'mood') {
-        return { comp: MoodEditor };
+        return { component: MoodEditor };
     }
 
     return undefined;
