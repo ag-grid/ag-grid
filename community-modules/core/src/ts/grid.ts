@@ -131,7 +131,7 @@ export class Grid {
         new GridCoreCreator().create(eGridDiv, gridOptions, context => {
             const gridComp = new GridComp(eGridDiv);
             context.createBean(gridComp);
-        }, params);
+        }, undefined, params);
     }
 
     public destroy(): void {
@@ -145,7 +145,7 @@ export class Grid {
 // their own UI
 export class GridCoreCreator {
 
-    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, uiCallback: (context: Context) => void, params?: GridParams): void {
+    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context)=>void, params?: GridParams): void {
 
         const debug = !!gridOptions.debug;
 
@@ -171,7 +171,7 @@ export class GridCoreCreator {
         this.registerStackComponents(beans, registeredModules);
         this.registerControllers(beans, registeredModules);
 
-        uiCallback(context);
+        createUi(context);
 
         // we wait until the UI has finished initialising before setting in columns and rows
         beans.ctrlsService.whenReady(() => {
@@ -180,6 +180,8 @@ export class GridCoreCreator {
             const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
+
+        if (acceptChanges) { acceptChanges(context); }
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {

@@ -22,6 +22,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     private portalManager: PortalManager;
 
     private whenReadyFuncs: (()=>void)[] = [];
+    private ready = false;
 
     constructor(public props: any) {
         super(props);
@@ -65,9 +66,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this.props);
 
-        // don't need the return value
-        const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(this.eGui.current!, this.gridOptions, context => {
+        const createUiCallback = (context: Context) => {
             this.setState({context: context});
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
@@ -77,12 +76,24 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
                 this.columnApi = this.gridOptions.columnApi!;
                 this.props.setGridApi(this.api, this.columnApi);    
                 this.destroyFuncs.push(() => this.api.destroy());
-
-                this.whenReadyFuncs.forEach( f => f() );
-                this.whenReadyFuncs = [];
             });
+        };
 
-        }, gridParams);
+        // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
+        // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
+        // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
+        const acceptChangesCallback = (context: Context)=> {
+            const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
+            ctrlsService.whenReady( ()=> {
+                this.whenReadyFuncs.forEach( f => f() );
+                this.whenReadyFuncs.length = 0;
+                this.ready = true;
+            });
+        }
+
+        // don't need the return value
+        const gridCoreCreator = new GridCoreCreator();
+        gridCoreCreator.create(this.eGui.current!, this.gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     }
 
     public componentWillUnmount() {
@@ -178,7 +189,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     private processWhenReady(func: ()=>void): void {
-        if (this.api) {
+        if (this.ready) {
             func();
         } else {
             this.whenReadyFuncs.push(func);
