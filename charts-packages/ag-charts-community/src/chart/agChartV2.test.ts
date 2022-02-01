@@ -227,33 +227,6 @@ const EXAMPLES: Record<string, TestCase> = {
 describe('AgChartV2', () => {
     describe('#create', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
-            it(`for ${exampleName} it should prepare options as expected`, async () => {
-                const options: AgChartOptions = example.options;
-                options.container = document.createElement('div');
-
-                const chart = AgChartV2.create<any>(options);
-
-                expect(chart.options).toHaveProperty('container', options.container);
-
-                if (options.data) {
-                    expect(chart.options).toHaveProperty('data', options.data);
-                    expect(chart.options).toMatchSnapshot({
-                        container: expect.any(HTMLElement),
-                        data: expect.any(options.data instanceof Array ? Array : Object),
-                    });
-                } else {
-                    const optionsCopy = { ...chart.options };
-                    optionsCopy.series = optionsCopy.series.map((v) => {
-                        const copy = { ...v };
-                        delete copy.data;
-                        return copy;
-                    });
-                    expect(optionsCopy).toMatchSnapshot({
-                        container: expect.any(HTMLElement),
-                    });
-                }
-            });
-
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
                 const chart = AgChartV2.create<any>(options);

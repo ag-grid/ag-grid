@@ -1,28 +1,12 @@
-import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions, AgChartThemePalette, AgLineSeriesOptions, AgBarSeriesOptions, AgAreaSeriesOptions, AgScatterSeriesOptions, AgHistogramSeriesOptions, AgPieSeriesOptions, AgTreemapSeriesOptions, AgLogAxisOptions, AgNumberAxisOptions, AgCategoryAxisOptions, AgGroupedCategoryAxisOptions, AgTimeAxisOptions } from "../agChartOptions";
+import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesianChartOptions, AgChartThemePalette, AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from "../agChartOptions";
 import { CartesianChart } from "../cartesianChart";
 import { PolarChart } from "../polarChart";
 import { HierarchyChart } from "../hierarchyChart";
-import { GroupedCategoryChart } from "../groupedCategoryChart";
-import { Series } from "../series/series";
-
-// TODO: Move these out of the old implementation?
-import { AgChart, processSeriesOptions, getChartTheme } from '../agChart';
-import { LineSeries } from "../series/cartesian/lineSeries";
-import { Axis } from "../../axis";
-import { LogAxis } from "../axis/logAxis";
 import { SeriesOptionsTypes, DEFAULT_CARTESIAN_CHART_OPTIONS, DEFAULT_HIERARCHY_CHART_OPTIONS, DEFAULT_POLAR_CHART_OPTIONS, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES, DEFAULT_SERIES_OPTIONS, DEFAULT_AXES_OPTIONS, AxesOptionsTypes } from "./defaults";
 import { jsonMerge, DELETE, jsonWalk } from "../../util/json";
 import { applySeriesTransform } from "./transforms";
-import { BarSeries } from "../series/cartesian/barSeries";
-import { AreaSeries } from "../series/cartesian/areaSeries";
-import { ScatterSeries } from "../series/cartesian/scatterSeries";
-import { HistogramSeries } from "../series/cartesian/histogramSeries";
-import { PieSeries } from "../series/polar/pieSeries";
-import { TreemapSeries } from "../series/hierarchy/treemapSeries";
-import { NumberAxis } from "../axis/numberAxis";
-import { CategoryAxis } from "../axis/categoryAxis";
-import { GroupedCategoryAxis } from "../axis/groupedCategoryAxis";
-import { TimeAxis } from "../axis/timeAxis";
+import { getChartTheme } from "./themes";
+import { processSeriesOptions } from "./prepareSeries";
 
 export type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -86,6 +70,10 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
+export function isSeriesOptionType(input: string): input is NonNullable<SeriesOptionsTypes['type']> {
+    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+}
+
 function countArrayElements<T extends any[]|any[][]>(input: T): number {
     let count = 0;
     for (const next of input) {
@@ -102,7 +90,7 @@ function countArrayElements<T extends any[]|any[][]>(input: T): number {
 function takeColours(context: PreparationContext, colours: string[], maxCount: number): string[] {
     const result = [];
 
-    for (let count = 0; count < Math.min(maxCount, colours.length); count++) {
+    for (let count = 0; count < maxCount; count++) {
         result.push(colours[(count + context.colourIndex) % colours.length]);
     }
 
@@ -136,7 +124,10 @@ export function prepareOptions<T extends AgChartOptions>(options: T): T {
     // Special cases where we have arrays of elements which need their own defaults.
     mergedOptions.series = processSeriesOptions(mergedOptions.series || [])
         .map((s: SeriesOptionsTypes) => {
-            const type = s.type || 'line';
+            const optionsType = options.type || '';
+            const type = s.type ? s.type :
+                 isSeriesOptionType(optionsType) ? optionsType :
+                 'line';
             const series = { ...s, type };
             return prepareSeries(context, series, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
         });

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
 import "jest-canvas-mock";
-import { AgChart, groupSeriesByType, reduceSeries, processSeriesOptions } from "./agChart";
 import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
@@ -8,161 +7,7 @@ import { LineSeries } from "./series/cartesian/lineSeries";
 import { ChartAxis, ChartAxisPosition } from "./chartAxis";
 import { NumberAxis } from "./axis/numberAxis";
 import { ChartTheme } from "./themes/chartTheme";
-
-const seriesOptions: any = [
-    {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'iphone',
-        fill: 'pink',
-        yName: 'Iphone',
-        showInLegend: true,
-    },
-    {
-        type: 'line',
-        xKey: 'quarter',
-        yKey: 'mac',
-        yName: 'Mac',
-    },
-    {
-        type: 'column',
-        xKey: 'quarter',
-        yKey: 'mac',
-        fill: 'red',
-        yName: 'Mac',
-        showInLegend: false,
-    },
-    {
-        type: 'line',
-        xKey: 'quarter',
-        yKey: 'iphone',
-        yName: 'iPhone',
-    },
-    {
-        type: 'column',
-        xKey: 'quarter',
-        yKeys: ['wearables', 'services'],
-        yNames: ['iPad', 'Wearables', 'Services'],
-        hideInLegend: ['services'],
-    },
-];
-
-describe('transform series options', () => {
-    test('groupSeriesByType', () => {
-        const result = groupSeriesByType(seriesOptions);
-        const groupedSeriesOptions = [
-            [
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'iphone',
-                    fill: 'pink',
-                    yName: 'Iphone',
-                    showInLegend: true,
-                },
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKey: 'mac',
-                    fill: 'red',
-                    yName: 'Mac',
-                    showInLegend: false,
-                },
-                {
-                    type: 'column',
-                    xKey: 'quarter',
-                    yKeys: ['wearables', 'services'],
-                    yNames: ['iPad', 'Wearables', 'Services'],
-                    hideInLegend: ['services'],
-                },
-            ],
-            [
-                {
-                    type: 'line',
-                    xKey: 'quarter',
-                    yKey: 'mac',
-                    yName: 'Mac',
-                },
-            ],
-            [
-                {
-                    type: 'line',
-                    xKey: 'quarter',
-                    yKey: 'iphone',
-                    yName: 'iPhone',
-                },
-            ],
-        ];
-
-        expect(result).toEqual(groupedSeriesOptions);
-    });
-
-    test('reduceSeries', () => {
-        const columnSeriesGroup: any[] = [
-            {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'iphone',
-                fill: 'pink',
-                yName: 'Iphone',
-                showInLegend: true,
-            },
-            {
-                type: 'column',
-                xKey: 'quarter',
-                yKey: 'mac',
-                fill: 'red',
-                yName: 'Mac',
-                showInLegend: false,
-            },
-            {
-                type: 'column',
-                xKey: 'quarter',
-                yKeys: ['wearables', 'services'],
-                yNames: ['iPad', 'Wearables', 'Services'],
-                fills: ['blue', 'orange', 'yellow'],
-                hideInLegend: ['services'],
-            },
-        ];
-
-        const result = reduceSeries(columnSeriesGroup, true);
-
-        const columnSeriesOptions = {
-            type: 'column',
-            xKey: 'quarter',
-            yKeys: ['iphone', 'mac', 'wearables', 'services'],
-            fills: ['pink', 'red', 'blue', 'orange', 'yellow'],
-            yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
-            hideInLegend: ['mac', 'services'],
-        };
-
-        expect(result).toEqual(columnSeriesOptions);
-    });
-
-    test('processSeriesOptions', () => {
-        const result = processSeriesOptions(seriesOptions);
-
-        const processedSeriesOptions = [
-            {
-                type: 'column',
-                xKey: 'quarter',
-                yKeys: ['iphone', 'mac', 'wearables', 'services'],
-                fills: ['pink', 'red'],
-                yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
-                hideInLegend: ['mac', 'services'],
-            },
-            {
-                type: 'line',
-                xKey: 'quarter',
-                yKey: 'mac',
-                yName: 'Mac',
-            },
-            { type: 'line', xKey: 'quarter', yKey: 'iphone', yName: 'iPhone' },
-        ];
-
-        expect(result).toEqual(processedSeriesOptions);
-    });
-});
+import { AgChartV2 } from "./agChartV2";
 
 const revenueProfitData = [{
     month: 'Jan',
@@ -206,7 +51,7 @@ const data2 = [{
 
 describe('update', () => {
     test('cartesian chart top-level properties', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
             data: revenueProfitData,
@@ -230,7 +75,7 @@ describe('update', () => {
                 }
             }
         });
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             width: 500,
             height: 500,
             autoSize: false,
@@ -292,7 +137,7 @@ describe('update', () => {
         expect(chart.background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'month',
@@ -327,7 +172,7 @@ describe('update', () => {
     });
 
     test('series', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             data: revenueProfitData,
             series: [{
                 // series type is optional because `line` is default for `cartesian` charts
@@ -348,7 +193,7 @@ describe('update', () => {
         const firstSeries = chart.series[0];
         const secondSeries = chart.series[1];
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
@@ -380,7 +225,7 @@ describe('update', () => {
         expect((chart.series[2] as any).xKey).toBe('month');
         expect((chart.series[2] as any).yKeys).toEqual(['foobar']);
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 // series type is optional because `line` is default for `cartesian` charts
@@ -402,7 +247,7 @@ describe('update', () => {
         expect(chart.series[0]).toBe(firstSeries);
         expect(chart.series[1]).toBe(secondSeries);
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 type: 'column', // have to specify type explicitly here
@@ -431,7 +276,7 @@ describe('update', () => {
 
         const lineSeries = chart.series[1];
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 type: 'area', // have to specify type explicitly here
@@ -456,7 +301,7 @@ describe('update', () => {
     });
 
     test('axes', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             data: revenueProfitData,
             series: [{
                 xKey: 'month',
@@ -464,7 +309,7 @@ describe('update', () => {
             }]
         });
 
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',
@@ -495,7 +340,7 @@ describe('update', () => {
             stroke: 'rgb(219, 219, 219)',
             lineDash: [4, 2]
         }]);
-        AgChart.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',

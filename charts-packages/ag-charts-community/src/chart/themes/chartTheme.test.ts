@@ -1,10 +1,10 @@
 import { describe, expect, test } from "@jest/globals";
-import { AgChart } from "../agChart";
 import { AgCartesianChartOptions, AgCartesianSeriesMarkerFormatter, AgChartTheme, AgPolarChartOptions } from "../agChartOptions";
 import { AreaSeries } from "../series/cartesian/areaSeries";
 import { BarSeries } from "../series/cartesian/barSeries";
 import { PieSeries } from "../series/polar/pieSeries";
 import { ChartTheme } from "./chartTheme";
+import { AgChartV2 } from "../agChartV2";
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -98,7 +98,7 @@ describe("cartesian overrides", () => {
     };
 
     const serializedOptions = JSON.stringify(cartesianChartOptions);
-    const chart = AgChart.create(cartesianChartOptions);
+    const chart = AgChartV2.create(cartesianChartOptions);
 
     test("Options are not mutated after AgChart.create", () => {
         expect(JSON.stringify(cartesianChartOptions)).toBe(serializedOptions);
@@ -179,7 +179,7 @@ describe("polar overrides", () => {
     };
 
     const serializedOptions = JSON.stringify(polarChartOptions);
-    const chart = AgChart.create(polarChartOptions);
+    const chart = AgChartV2.create(polarChartOptions);
 
     test("Options are not mutated after AgChart.create", () => {
         expect(JSON.stringify(polarChartOptions)).toBe(serializedOptions);
@@ -194,7 +194,7 @@ describe("polar overrides", () => {
 
         expect(chart.series[0].type).toBe('pie');
         expect((chart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
-        expect((chart.series[0] as PieSeries).strokes).toEqual(['cyan']);
+        expect((chart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
         expect((chart.series[0] as PieSeries).label.enabled).toBe(true);
         expect((chart.series[0] as PieSeries).label.color).toBe('yellow');
         expect((chart.series[0] as PieSeries).label.fontSize).toBe(18);
@@ -287,8 +287,8 @@ describe("common overrides", () => {
         }]
     };
 
-    const cartesianChart = AgChart.create(cartesianChartOptions);
-    const polarChart = AgChart.create(polarChartOptions);
+    const cartesianChart = AgChartV2.create(cartesianChartOptions);
+    const polarChart = AgChartV2.create(polarChartOptions);
 
     test("Cartesian chart instance properties", () => {
         expect(cartesianChart.title && cartesianChart.title.enabled).toBe(true);
@@ -316,7 +316,7 @@ describe("common overrides", () => {
 
         expect(polarChart.series[0].type).toBe('pie');
         expect((polarChart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
-        expect((polarChart.series[0] as PieSeries).strokes).toEqual(['cyan']);
+        expect((polarChart.series[0] as PieSeries).strokes).toEqual(['cyan', 'cyan', 'cyan']);
         expect((polarChart.series[0] as PieSeries).label.enabled).toBe(true);
         expect((polarChart.series[0] as PieSeries).label.color).toBe('yellow');
         expect((polarChart.series[0] as PieSeries).label.fontSize).toBe(18);
@@ -393,7 +393,7 @@ describe('Position specific axis styling', () => {
     const defaultTheme = new ChartTheme();
 
     test('Themed bottom category, unthemed left number', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             theme,
             data,
             series: [{
@@ -415,7 +415,7 @@ describe('Position specific axis styling', () => {
     });
 
     test('Specialized chart type themed bottom category, unthemed left number', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             type: 'area',
             theme,
             data,
@@ -437,7 +437,7 @@ describe('Position specific axis styling', () => {
     });
 
     test('Themed right number, unthemed top category', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             theme,
             data,
             axes: [{
@@ -466,7 +466,7 @@ describe('Position specific axis styling', () => {
     });
 
     test('Partially themed axes', () => {
-        const chart = AgChart.create({
+        const chart = AgChartV2.create({
             theme,
             data,
             axes: [{

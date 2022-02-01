@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AgChartV2 #create for ADV_CHART_CUSTOMISATION it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_CHART_CUSTOMISATION it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -371,7 +371,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_COMBINATION_SERIES_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_COMBINATION_SERIES_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -753,7 +753,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_CUSTOM_MARKER_SHAPES_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -1312,7 +1312,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_CUSTOM_TOOLTIPS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -1610,7 +1610,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -1870,7 +1870,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -2279,7 +2279,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -2808,7 +2808,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -3078,7 +3078,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for BAR_CHART_WITH_LABELS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for BAR_CHART_WITH_LABELS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -3348,7 +3348,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -3599,7 +3599,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -3865,7 +3865,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -4140,7 +4140,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for GROUPED_BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for GROUPED_BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -4416,7 +4416,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for GROUPED_COLUMN_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for GROUPED_COLUMN_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -4721,7 +4721,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -4994,7 +4994,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for LINE_GRAPH_WITH_GAPS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -6039,7 +6039,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for LOG_AXIS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -6301,7 +6301,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "background": Object {
@@ -6467,7 +6467,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -6766,7 +6766,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -7044,7 +7044,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -7334,7 +7334,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -7791,7 +7791,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_COLUMN_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_COLUMN_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -8062,7 +8062,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_DOUGHNUT_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_DOUGHNUT_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "background": Object {
@@ -8240,7 +8240,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_HISTOGRAM_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -8501,7 +8501,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_LINE_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_LINE_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -8814,7 +8814,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_PIE_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_PIE_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "background": Object {
@@ -8991,7 +8991,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for SIMPLE_SCATTER_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for SIMPLE_SCATTER_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -9251,7 +9251,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for STACKED_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for STACKED_AREA_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -9538,7 +9538,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for STACKED_BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for STACKED_BAR_CHART_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -9820,7 +9820,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for STACKED_COLUMN_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for STACKED_COLUMN_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
@@ -10105,7 +10105,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should prepare options as expected 1`] = `
+exports[`prepare #prepareOptions for XY_HISTOGRAM_WITH_MEAN_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [
