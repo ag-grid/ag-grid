@@ -1282,15 +1282,6 @@
                 "showInCollapsed": true
               },
               {
-                "title": "Styling Components",
-                "box-title": "Tooltip",
-                "url": "/component-styling/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
                 "title": "Higher Order Components",
                 "url": "/framework-hoc/",
                 "showInCollapsed": true,
