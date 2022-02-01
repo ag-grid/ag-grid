@@ -6,12 +6,12 @@ import * as JSON5 from "json5";
 export const GRID_WIDE_COMPONENTS = [
     'loadingCellRenderer',
     'loadingOverlayComponent',
-    'noRowsOverlayComponent'
+    'noRowsOverlayComponent',
+    'fullWidthCellRenderer',
+    'detailCellRenderer'
 ];
 
 export const GRID_COMPONENTS = [
-    'detailCellRenderer',
-    'fullWidthCellRenderer',
     'groupRowRenderer',
     'groupRowInnerRenderer',
     'loadingCellRenderer',
@@ -243,7 +243,13 @@ export function isParamsProperty(property) {
     return PARAMS_PROPERTIES.indexOf(property) !== -1;
 
 }
-
+export function addToVueComponents(componentFileNames, vueComponents, property, componentName) {
+    if (isComponent(property) && isExternalVueFile(componentFileNames, componentName)) {
+        if (!vueComponents.includes(componentName)) {
+            vueComponents.push(componentName)
+        }
+    }
+}
 export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponents, componentFileNames): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
@@ -266,8 +272,23 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
             } else {
                 let value = rawColumnDef[columnProperty];
 
-                if (isParamsProperty(columnProperty) && value.cellRenderer) {
-                    value.cellRenderer = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
+                if (isParamsProperty(columnProperty)) {
+                    if (value.cellRenderer) {
+                        value.cellRenderer = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
+                        addToVueComponents(componentFileNames,vueComponents, 'cellRenderer', value.cellRenderer);
+                    }
+                    if(value.filters) {
+                        value.filters.forEach(filter => {
+                            if (filter.floatingFilterComponent) {
+                                filter.floatingFilterComponent = `${filter.floatingFilterComponent.replace('AG_LITERAL_', '')}`;
+                                addToVueComponents(componentFileNames,vueComponents, 'floatingFilterComponent', filter.floatingFilterComponent);
+                            }
+                            if (filter.filter) {
+                                filter.filter = `${filter.filter.replace('AG_LITERAL_', '')}`;
+                                addToVueComponents(componentFileNames,vueComponents, 'filter', filter.filter);
+                            }
+                        })
+                    }
                 }
 
                 if (typeof value === "string") {
@@ -316,6 +337,7 @@ export function convertDefaultColDef(defaultColDef, vueComponents): string {
     const perLine = defaultColDef.split('\n');
     perLine.forEach(line => {
         if (line.includes('tooltipComponent') ||
+            (line.includes('headerComponent') && !line.includes('headerComponentParams')) ||
             (line.includes('filter') && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true")) && !line.includes('filterMenuTab')) {
 
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
