@@ -1782,6 +1782,24 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
     let colourIndex = 0;
     let markerSize = 10;
 
+    class Heart extends Marker {
+        rad(degree: number) {
+            return (degree / 180) * Math.PI;
+        }
+
+        updatePath() {
+            const { x, path, size, rad } = this;
+            const r = size / 4;
+            const y = this.y + r / 2;
+
+            path.clear();
+            path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0);
+            path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0);
+            path.lineTo(x, y + r);
+            path.closePath();
+        }
+    }
+
     Object.assign(ADV_CUSTOM_MARKER_SHAPES_EXAMPLE, {
         autoSize: true,
         data: data.DATA_ALCOHOL_BULLETIN,
@@ -1879,7 +1897,7 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
                 stroke: fills[colourIndex],
                 marker: {
                     size: markerSize,
-                    shape: heartFactory(),
+                    shape: Heart,
                     fill: fills[colourIndex],
                     stroke: strokes[colourIndex++],
                 },
@@ -1901,32 +1919,11 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
                     text: 'Volume (hectolitres)',
                 },
                 label: {
-                    formatter: (params) => params.value / 1000000 + 'M',
+                    formatter: (params: any) => params.value / 1000000 + 'M',
                 },
             },
         ],
     });
-
-    function heartFactory() {
-        class Heart extends Marker {
-            rad(degree) {
-                return (degree / 180) * Math.PI;
-            }
-
-            updatePath() {
-                const { x, path, size, rad } = this;
-                const r = size / 4;
-                const y = this.y + r / 2;
-
-                path.clear();
-                path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0);
-                path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0);
-                path.lineTo(x, y + r);
-                path.closePath();
-            }
-        }
-        return Heart;
-    }
 }
 
 export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
@@ -2010,37 +2007,29 @@ export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
     },
 };
 
+function calculateMarkerColour(size: number) {
+    const minSize = 5;
+    const maxSize = 100;
+
+    const colours = [
+        '#33CC00',
+        '#5CC200',
+        '#85B800',
+        '#ADAD00',
+        '#D6A300',
+        '#FF9900',
+        '#FF7300',
+        '#FF4D00',
+        '#FF2600',
+        '#FF0000',
+    ];
+
+    const position = Math.floor(colours.length * ((size - minSize) / (maxSize - minSize)));
+    return colours[position];
+}
+
 export const ADV_PER_MARKER_CUSTOMISATION: AgChartOptions = {};
 {
-    var minSize = 5;
-    var maxSize = 100;
-
-    function calculateColour(size) {
-        const colours = {
-            0.1: '#33CC00',
-            0.2: '#5CC200',
-            0.3: '#85B800',
-            0.4: '#ADAD00',
-            0.5: '#D6A300',
-            0.6: '#FF9900',
-            0.7: '#FF7300',
-            0.8: '#FF4D00',
-            0.9: '#FF2600',
-            1: '#FF0000',
-        };
-
-        const position = (size - minSize) / (maxSize - minSize);
-
-        const keys = Object.keys(colours)
-            .map(function (key) {
-                return parseFloat(key);
-            })
-            .sort();
-        const matchingKey = keys.find((key) => key > position);
-
-        return colours[matchingKey];
-    }
-
     Object.assign(ADV_PER_MARKER_CUSTOMISATION, {
         autoSize: true,
         data: data.DATA_EARTHQUAKES.filter((d) => d.magnitude > 4),
@@ -2061,10 +2050,10 @@ export const ADV_PER_MARKER_CUSTOMISATION: AgChartOptions = {};
                 sizeKey: 'magnitude',
                 sizeName: 'Magnitude',
                 marker: {
-                    size: minSize,
-                    maxSize: maxSize,
-                    formatter: (params) => ({
-                        fill: params.highlighted ? params.fill : calculateColour(params.size),
+                    size: 5,
+                    maxSize: 100,
+                    formatter: (params: any) => ({
+                        fill: params.highlighted ? params.fill : calculateMarkerColour(params.size),
                     }),
                     strokeWidth: 0,
                 },
