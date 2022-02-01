@@ -71,7 +71,12 @@ async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<vo
     });
 }
 
-const EXAMPLES: Record<string, { options: AgChartOptions; assertions: (chart: Chart) => void }> = {
+type TestCase = {
+    options: AgChartOptions;
+    assertions: (chart: Chart) => void;
+    extraScreenshotActions?: (chart: Chart) => void;
+};
+const EXAMPLES: Record<string, TestCase> = {
     BAR_CHART_EXAMPLE: {
         options: examples.BAR_CHART_EXAMPLE,
         assertions: cartesianChartAssertions(),
@@ -191,6 +196,21 @@ const EXAMPLES: Record<string, { options: AgChartOptions; assertions: (chart: Ch
     ADV_CHART_CUSTOMISATION: {
         options: examples.ADV_CHART_CUSTOMISATION,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 3) }),
+    },
+    ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: {
+        options: examples.ADV_CUSTOM_MARKER_SHAPES_EXAMPLE,
+        assertions: cartesianChartAssertions({ seriesTypes: repeat('line', 7) }),
+    },
+    ADV_CUSTOM_TOOLTIPS_EXAMPLE: {
+        options: examples.ADV_CUSTOM_TOOLTIPS_EXAMPLE,
+        assertions: cartesianChartAssertions(),
+        extraScreenshotActions: (chart) => {
+            // TODO - hover and reveal tooltip.
+        },
+    },
+    ADV_PER_MARKER_CUSTOMISATION: {
+        options: examples.ADV_PER_MARKER_CUSTOMISATION,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
     }
 };
 
@@ -231,19 +251,28 @@ describe('AgChartV2', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const canvas = chart.scene.canvas;
+                    const imageDataUrl = canvas.getDataURL('image/png');
+                    const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
+    
+                    (expect(imageData) as any).toMatchImageSnapshot();
+                };
+
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = 800;
                 options.height = 600;
 
                 const chart = AgChartV2.create<any>(options) as Chart;
-                await waitForChartStability(chart);
+                await compare();
 
-                const canvas = chart.scene.canvas;
-                const imageDataUrl = canvas.getDataURL('image/png');
-                const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
-
-                (expect(imageData) as any).toMatchImageSnapshot();
+                if (example.extraScreenshotActions) {
+                    example.extraScreenshotActions(chart);
+                    await compare();
+                }
             });
         }
     });

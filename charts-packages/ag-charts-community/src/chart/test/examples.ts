@@ -2,6 +2,7 @@ import { AgChartOptions } from '../agChartOptions';
 import * as data from './data';
 import month from '../../util/time/month';
 import { year } from '../../util/time/year';
+import { Marker } from '../marker/marker';
 
 export const BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
@@ -1431,7 +1432,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
         },
         series: [
             {
-                data: data.DATA_EARTHQUAKES.ci,
+                data: data.DATA_EARTHQUAKES_GROUPED.ci,
                 type: 'line',
                 title: 'Southern California Seismic Network',
                 xKey: 'time',
@@ -1444,7 +1445,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES.hv,
+                data: data.DATA_EARTHQUAKES_GROUPED.hv,
                 type: 'line',
                 title: 'Hawaiian Volcano Observatory Network',
                 xKey: 'time',
@@ -1457,7 +1458,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES.nc,
+                data: data.DATA_EARTHQUAKES_GROUPED.nc,
                 type: 'line',
                 title: 'USGS Northern California Network',
                 xKey: 'time',
@@ -1470,7 +1471,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES.ok,
+                data: data.DATA_EARTHQUAKES_GROUPED.ok,
                 type: 'line',
                 title: 'Oklahoma Seismic Network',
                 xKey: 'time',
@@ -1668,7 +1669,7 @@ export const ADV_CHART_CUSTOMISATION: AgChartOptions = {
             yName: 'Marriages',
             stroke: '#3d7ab0',
             strokeWidth: 5,
-            marker: {   
+            marker: {
                 enabled: false,
                 fill: '#3d7ab0',
             },
@@ -1772,3 +1773,324 @@ export const ADV_CHART_CUSTOMISATION: AgChartOptions = {
         spacing: 10,
     },
 };
+
+export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
+{
+    const fills = ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'];
+    const strokes = ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f'];
+
+    let colourIndex = 0;
+    let markerSize = 10;
+
+    Object.assign(ADV_CUSTOM_MARKER_SHAPES_EXAMPLE, {
+        autoSize: true,
+        data: data.DATA_ALCOHOL_BULLETIN,
+        title: {
+            text: 'Taxed Alcohol Consumption (UK)',
+            fontSize: 18,
+        },
+        subtitle: {
+            text: 'Source: HM Revenue & Customs',
+        },
+        series: [
+            {
+                type: 'line',
+                title: 'Still wine',
+                xKey: 'year',
+                yKey: 'stillWine',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'circle',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Sparkling wine',
+                xKey: 'year',
+                yKey: 'sparklingWine',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'cross',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Made-wine',
+                xKey: 'year',
+                yKey: 'madeWine',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'diamond',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Whisky',
+                xKey: 'year',
+                yKey: 'whisky',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'plus',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Potable spirits',
+                xKey: 'year',
+                yKey: 'potableSpirits',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'square',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Beer',
+                xKey: 'year',
+                yKey: 'beer',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: 'triangle',
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+            {
+                type: 'line',
+                title: 'Cider',
+                xKey: 'year',
+                yKey: 'cider',
+                stroke: fills[colourIndex],
+                marker: {
+                    size: markerSize,
+                    shape: heartFactory(),
+                    fill: fills[colourIndex],
+                    stroke: strokes[colourIndex++],
+                },
+            },
+        ],
+        axes: [
+            {
+                position: 'bottom',
+                type: 'category',
+                label: {
+                    rotation: -30,
+                },
+            },
+            {
+                position: 'left',
+                type: 'number',
+                title: {
+                    enabled: true,
+                    text: 'Volume (hectolitres)',
+                },
+                label: {
+                    formatter: (params) => params.value / 1000000 + 'M',
+                },
+            },
+        ],
+    });
+
+    function heartFactory() {
+        class Heart extends Marker {
+            rad(degree) {
+                return (degree / 180) * Math.PI;
+            }
+
+            updatePath() {
+                const { x, path, size, rad } = this;
+                const r = size / 4;
+                const y = this.y + r / 2;
+
+                path.clear();
+                path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0);
+                path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0);
+                path.lineTo(x, y + r);
+                path.closePath();
+            }
+        }
+        return Heart;
+    }
+}
+
+export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
+    autoSize: true,
+    data: data.DATA_WASTE_ELECTRICAL_EQUIPMENT,
+    title: {
+        text: 'WEEE Collected in UK (2019)',
+        fontSize: 18,
+    },
+    subtitle: {
+        text: 'Source: Environmental Agency',
+    },
+    tooltip: {
+        class: 'my-tooltip',
+    },
+    series: [
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKeys: [
+                'largeHousehold',
+                'smallHousehold',
+                'itTelecomms',
+                'consumer',
+                'tools',
+                'displays',
+                'cooling',
+                'gasLampsLed',
+            ],
+            yNames: [
+                'Large household appliances',
+                'Small household appliances',
+                'IT and telecomms equipment',
+                'Consumer equipment',
+                'Electrical and electronic tools',
+                'Display equipment',
+                'Cooling appliances containing refrigerants',
+                'Gas discharge lamps and LED light sources',
+            ],
+            tooltip: {
+                renderer: (params: any) => {
+                    const formatThousands = (value: number) => {
+                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    };
+
+                    var tooltipHtml = [
+                        '<div class="my-tooltip">',
+                        '<span class="my-tooltip__title" style="color: ' + params.color + '">' + params.yName,
+                        '(' +
+                            params.datum[params.xKey] +
+                            '):</span> ' +
+                            formatThousands(params.datum[params.yKey]) +
+                            ' tonnes',
+                        '</div>',
+                    ];
+
+                    return tooltipHtml.join('\n');
+                },
+            },
+        },
+    ],
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+            title: {
+                enabled: true,
+                text: 'Waste collected (tonnes)',
+            },
+            label: {
+                formatter: (params: any) => params.value / 1000 + 'k',
+            },
+        },
+    ],
+    legend: {
+        position: 'bottom',
+    },
+};
+
+export const ADV_PER_MARKER_CUSTOMISATION: AgChartOptions = {};
+{
+    var minSize = 5;
+    var maxSize = 100;
+
+    function calculateColour(size) {
+        const colours = {
+            0.1: '#33CC00',
+            0.2: '#5CC200',
+            0.3: '#85B800',
+            0.4: '#ADAD00',
+            0.5: '#D6A300',
+            0.6: '#FF9900',
+            0.7: '#FF7300',
+            0.8: '#FF4D00',
+            0.9: '#FF2600',
+            1: '#FF0000',
+        };
+
+        const position = (size - minSize) / (maxSize - minSize);
+
+        const keys = Object.keys(colours)
+            .map(function (key) {
+                return parseFloat(key);
+            })
+            .sort();
+        const matchingKey = keys.find((key) => key > position);
+
+        return colours[matchingKey];
+    }
+
+    Object.assign(ADV_PER_MARKER_CUSTOMISATION, {
+        autoSize: true,
+        data: data.DATA_EARTHQUAKES.filter((d) => d.magnitude > 4),
+        title: {
+            text: 'Worldwide Earthquakes (first week of February 2020)',
+            fontSize: 18,
+        },
+        subtitle: {
+            text: 'Source: US Geological Survey',
+        },
+        series: [
+            {
+                type: 'scatter',
+                xKey: 'depth',
+                xName: 'Depth',
+                yKey: 'minDistance',
+                yName: 'Minimum Distance',
+                sizeKey: 'magnitude',
+                sizeName: 'Magnitude',
+                marker: {
+                    size: minSize,
+                    maxSize: maxSize,
+                    formatter: (params) => ({
+                        fill: params.highlighted ? params.fill : calculateColour(params.size),
+                    }),
+                    strokeWidth: 0,
+                },
+                fillOpacity: 0.7,
+            },
+        ],
+        axes: [
+            {
+                position: 'bottom',
+                type: 'number',
+                title: {
+                    enabled: true,
+                    text: 'Depth (m)',
+                },
+            },
+            {
+                position: 'left',
+                type: 'number',
+                title: {
+                    enabled: true,
+                    text: 'Minimum distance (km)',
+                },
+            },
+        ],
+        legend: {
+            enabled: false,
+        },
+    });
+}
