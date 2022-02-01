@@ -212,7 +212,7 @@ render() {
                 {/* return id required for tree data and immutable data */}
                 getRowNodeId={data => data.id}
                 {/* specify our FileCellRenderer component */}
-                frameworkComponents={this.frameworkComponents}>
+                components={this.components}>
             </AgGridReact>
         </div>
     )
@@ -343,12 +343,12 @@ export default class FileCellRenderer extends Component {
 }
 ```
 
-The Cell Renderer is supplied to the grid through: `frameworkComponents={this.frameworkComponents}`. Where `frameworkComponents` is just an object referencing the imported component:
+The Cell Renderer is supplied to the grid through: `components={this.components}`. Where `components` is just an object referencing the imported component:
 
 ```js
 import FileCellRenderer from './FileCellRenderer.jsx';
 
-frameworkComponents = {
+components = {
     fileCellRenderer: FileCellRenderer
 };
 ```

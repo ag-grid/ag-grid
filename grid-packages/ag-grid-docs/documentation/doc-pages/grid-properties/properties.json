@@ -186,8 +186,7 @@
                 "url": "/components/"
             }
         },
-        "components": {},
-        "frameworkComponents": {}
+        "components": {}
     },
     "editing": {
         "meta": {
