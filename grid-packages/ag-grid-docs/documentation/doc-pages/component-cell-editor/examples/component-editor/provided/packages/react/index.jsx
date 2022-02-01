@@ -20,6 +20,7 @@ class GridExample extends Component {
                     headerName: 'Doubling',
                     field: 'number',
                     cellEditor: DoublingEditor,
+                    cellEditorPopup: true,
                     editable: true,
                     width: 300,
                 },
