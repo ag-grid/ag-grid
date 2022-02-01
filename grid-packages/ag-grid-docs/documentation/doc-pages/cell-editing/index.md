@@ -167,7 +167,7 @@ cellEditorSelector: params => {
     const type = params.data.type;
 
     if (params.data.type === 'age') {
-        return { comp: NumericCellEditor };
+        return { component: NumericCellEditor };
     }
 
     if (params.data.type === 'gender') {
