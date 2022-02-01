@@ -1,4 +1,4 @@
-import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition, AgChartV2 } from "ag-charts-community";
+import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
@@ -24,7 +24,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         let chart: CartesianChart;
 
         if ((window as any).test === true) {
-            chart = AgChartV2.create({
+            chart = AgChart.create({
                 type: 'cartesian',
                 container: this.chartProxyParams.parentElement,
                 theme: this.chartTheme,
@@ -55,7 +55,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                 axes: this.getAxes(params),
             }
 
-            AgChartV2.update<CartesianChart>(this.chart, options);
+            AgChart.update(this.chart as CartesianChart, options);
         } else {
             options = {
                 container: this.chartProxyParams.parentElement,
