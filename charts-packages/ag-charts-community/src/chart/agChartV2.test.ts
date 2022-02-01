@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
@@ -71,10 +71,16 @@ async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<vo
     });
 }
 
+function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number, offsetY: number}): MouseEvent {
+    const event = new MouseEvent('mousemove');
+    Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
+    return event;
+}
+
 type TestCase = {
     options: AgChartOptions;
     assertions: (chart: Chart) => void;
-    extraScreenshotActions?: (chart: Chart) => void;
+    extraScreenshotActions?: (chart: Chart) => Promise<void>;
 };
 const EXAMPLES: Record<string, TestCase> = {
     BAR_CHART_EXAMPLE: {
@@ -204,8 +210,12 @@ const EXAMPLES: Record<string, TestCase> = {
     ADV_CUSTOM_TOOLTIPS_EXAMPLE: {
         options: examples.ADV_CUSTOM_TOOLTIPS_EXAMPLE,
         assertions: cartesianChartAssertions(),
-        extraScreenshotActions: (chart) => {
-            // TODO - hover and reveal tooltip.
+        extraScreenshotActions: async (chart) => {
+            // Reveal tooltip.
+            chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: 200, offsetY: 300}));
+            chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: 201, offsetY: 301}));
+
+            return new Promise((resolve) => { setTimeout(resolve, 50) });
         },
     },
     ADV_PER_MARKER_CUSTOMISATION: {
@@ -270,7 +280,7 @@ describe('AgChartV2', () => {
                 await compare();
 
                 if (example.extraScreenshotActions) {
-                    example.extraScreenshotActions(chart);
+                    await example.extraScreenshotActions(chart);
                     await compare();
                 }
             });
