@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -27,7 +27,7 @@
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
                 // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // vuejs
                 'vue': 'npm:vue@2.6.12/dist/vue.min.js',
