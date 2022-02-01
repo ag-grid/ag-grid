@@ -1,9 +1,9 @@
 // noinspection ES6UnusedImports
-import React, {useState} from 'react'
-import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
+import React, { useState } from 'react'
+import { mount } from 'cypress-react-unit-test'
+import { AgGridColumn, AgGridReact } from "../..";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { cssProperty, ensureGridApiHasBeenSet, getTextWidth } from "./utils";
 
 class CRF extends React.Component {
     render() {
@@ -16,9 +16,9 @@ const App = () => {
     const [gridColumnApi, setGridColumnApi] = useState(null);
 
     const [rowData, setRowData] = useState([
-        {value: "Toyota"},
-        {value: "Ford"},
-        {value: "Porsche"}
+        { value: "Toyota" },
+        { value: "Ford" },
+        { value: "Porsche" }
     ]);
 
     function onGridReady(params) {
@@ -27,7 +27,7 @@ const App = () => {
     }
 
     return (
-        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+        <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
             <AgGridReact
                 ref={(element) => {
                     window.gridComponentInstance = element
@@ -41,8 +41,8 @@ const App = () => {
                 }}>
                 <AgGridColumn
                     field="value"
-                    cellRendererComp='crf'
-                    cellStyle={{"white-space": "normal"}}
+                    cellRenderer='crf'
+                    cellStyle={{ "white-space": "normal" }}
                     autoHeight
                 ></AgGridColumn>
             </AgGridReact>
@@ -54,7 +54,7 @@ describe('Autoheight Grid', () => {
     beforeEach((done) => {
         window.gridComponentInstance = null;
 
-        mount(<App/>, {
+        mount(<App />, {
             stylesheets: [
                 'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
                 'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'

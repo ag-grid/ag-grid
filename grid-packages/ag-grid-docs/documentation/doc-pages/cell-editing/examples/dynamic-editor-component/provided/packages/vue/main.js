@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import {AgGridVue} from 'ag-grid-vue';
+import { AgGridVue } from 'ag-grid-vue';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
@@ -91,28 +91,6 @@ const VueExample = {
 
         },
     }
-}
-
-window.cellEditorSelector = function cellEditorSelector(params) {
-    if (params.data.type === 'age') {
-        return {
-            comp: NumericCellEditor,
-        };
-    }
-    if (params.data.type === 'gender') {
-        return {
-            comp: 'agRichSelectCellEditor',
-            params: {
-                values: ['Male', 'Female'],
-            },
-        };
-    }
-    if (params.data.type === 'mood') {
-        return {
-            comp: MoodEditor,
-        };
-    }
-    return undefined;
 }
 
 new Vue({
