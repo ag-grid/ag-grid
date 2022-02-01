@@ -179,7 +179,7 @@ export default class extends Component {
             </div>
             <div style={{ height: '100%' }} className="inner-col" ref={this[`e${side}Grid`]}>
                 <AgGridReact
-                    defaultColDef={{ ...defaultColDef }}
+                    defaultColDef={defaultColDef}
                     getRowNodeId={this.getRowNodeId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
