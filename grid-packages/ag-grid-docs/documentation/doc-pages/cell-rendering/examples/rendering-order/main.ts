@@ -1,6 +1,26 @@
-import {Grid, GridOptions} from '@ag-grid-community/core'
+import {Grid, GridOptions, ICellRenderer, ICellRendererParams} from '@ag-grid-community/core'
 
 let count = 0
+
+class SlowCellRenderer implements ICellRenderer {
+
+    private eGui!: HTMLElement;
+
+    init(p: ICellRendererParams) {
+        const start = new Date().valueOf();
+        while ((new Date().valueOf() - start) < 15) {
+        this.eGui = document.createElement('span');
+        }
+        this.eGui = document.createElement('span');
+        this.eGui.innerHTML = `${++count}`;
+    }
+
+    getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    refresh(): boolean { return false; }
+}
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -28,19 +48,12 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 80,
-        valueFormatter: function () {
-            const start = new Date().valueOf();
-            while ((new Date().valueOf() - start) < 15) {
-            }
-            return `${++count}`;
-        }
-
+        cellRenderer: SlowCellRenderer
     },
     rowData: getRowData(),
     rowSelection: 'single',
     rowBuffer: 0,
 }
-
 
 function getRowData() {
     // 1000 blank rows for the grid
