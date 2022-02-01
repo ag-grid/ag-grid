@@ -21,6 +21,8 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
 
     private portalManager: PortalManager;
 
+    private whenReadyFuncs: (()=>void)[] = [];
+
     constructor(public props: any) {
         super(props);
         this.state = {context: undefined};
@@ -74,7 +76,10 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
                 this.props.setGridApi(this.api, this.columnApi);    
-                this.destroyFuncs.push(() => this.api.destroy());    
+                this.destroyFuncs.push(() => this.api.destroy());
+
+                this.whenReadyFuncs.forEach( f => f() );
+                this.whenReadyFuncs = [];
             });
 
         }, gridParams);
@@ -167,8 +172,16 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     private processChanges(changes: {}) {
-        if (this.api) {
+        this.processWhenReady( ()=>
             ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+        );
+    }
+
+    private processWhenReady(func: ()=>void): void {
+        if (this.api) {
+            func();
+        } else {
+            this.whenReadyFuncs.push(func);
         }
     }
 
