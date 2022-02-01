@@ -801,8 +801,8 @@ title: "Get Started with AG Grid"
 | ```
 |
 | [[note]]
-| | The `withComponents` call is necessary for the grid to be able to use Angular
-| | components as cells / headers \(pre Ivy only\) - you can ignore it for now.
+| | The `withComponents` call is only necessary for Angular <= v8 or if Ivy has been disabled (`enableIvy:false`). If this is the case you must use `withComponents` to enable the grid to use Angular
+| | components as cells / headers  otherwise you can ignore it and just import `AgGridModule`.
 |
 | The next step is to add the AG Grid styles - replace the content of
 | `src/styles.scss` with the following code:
