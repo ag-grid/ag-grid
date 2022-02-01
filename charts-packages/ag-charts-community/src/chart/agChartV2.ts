@@ -4,7 +4,6 @@ import {
     AgPolarChartOptions,
     AgHierarchyChartOptions,
     AgCartesianAxisOptions,
-    AgChartThemePalette,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
@@ -39,16 +38,10 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
-import { jsonDiff, DELETE, jsonMerge, jsonApply, jsonWalk } from '../util/json';
-import { AxesOptionsTypes, SeriesOptionsTypes, DEFAULT_AXES_OPTIONS, DEFAULT_SERIES_OPTIONS, DEFAULT_CARTESIAN_CHART_OPTIONS, DEFAULT_HIERARCHY_CHART_OPTIONS, DEFAULT_POLAR_CHART_OPTIONS, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES } from './agChartV2Defaults';
-import { applySeriesTransform } from './agChartV2Transforms';
+import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
-
-// TODO: Move these out of the old implementation?
-import { AgChart, processSeriesOptions, getChartTheme } from './agChart';
-
-type ChartType = CartesianChart | PolarChart | HierarchyChart;
+import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, ChartType, optionsType } from './mapping/prepare';
 
 type ChartOptionType<T extends ChartType> =
     T extends GroupedCategoryChart ? AgCartesianChartOptions :
@@ -75,87 +68,9 @@ type AxisOptionType<T extends Axis<any, any>> =
     T extends TimeAxis ? AgTimeAxisOptions :
     never;
 
-function optionsType(
-    input: { type?: AgChartOptions['type'], series?: { type?: SeriesOptionsTypes['type']}[]}
-): NonNullable<AgChartOptions['type']> {
-    return input.type || input.series?.[0]?.type || 'cartesian';
-}
-
-function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianChartOptions {
-    const specifiedType = optionsType(input);
-    if (specifiedType == null) {
-        return true;
-    }
-
-    switch (specifiedType) {
-        case 'cartesian':
-        case 'area':
-        case 'bar':
-        case 'column':
-        case 'groupedCategory':
-        case 'histogram':
-        case 'line':
-        case 'scatter':
-            return true;
-
-        default:
-            return false;
-    }
-}
-
-function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyChartOptions {
-    const specifiedType = optionsType(input);
-    if (specifiedType == null) {
-        return false;
-    }
-
-    switch (input.type) {
-        case 'hierarchy':
-        case 'treemap':
-            return true;
-
-        default:
-            return false;
-    }
-}
-
-function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
-    const specifiedType = optionsType(input);
-    if (specifiedType == null) {
-        return false;
-    }
-
-    switch (input.type) {
-        case 'polar':
-        case 'pie':
-            return true;
-
-        default:
-            return false;
-    }
-}
-
-function countArrayElements<T extends any[]|any[][]>(input: T): number {
-    let count = 0;
-    for (const next of input) {
-        if (next instanceof Array) {
-            count += countArrayElements(next);
-        }
-        if (next != null) {
-            count++;
-        }
-    }
-    return count;
-}
-
-interface PreparationContext {
-    colourIndex: number;
-    palette: AgChartThemePalette;
-}
-
 export abstract class AgChartV2 {
     static create<T extends ChartType>(options: ChartOptionType<T>): T {
-        const mergedOptions = AgChartV2.prepareOptions(options);
+        const mergedOptions = prepareOptions(options);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
             isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
@@ -170,7 +85,7 @@ export abstract class AgChartV2 {
     }
 
     static update<T extends ChartType>(chart: Chart, options: ChartOptionType<T>): T {
-        const mergedOptions = AgChartV2.prepareOptions(options);
+        const mergedOptions = prepareOptions(options);
 
         if (options.type && options.type !== chart.options.type) {
             chart.destroy();
@@ -191,151 +106,6 @@ export abstract class AgChartV2 {
         }
         return applyChartOptions(chart, update as ChartOptionType<typeof chart>)
     }
-
-    private static prepareOptions<T extends AgChartOptions>(options: T): T {
-        // console.log('user opts', options);
-
-        // Determine type and ensure it's explicit in the options config.
-        const type = optionsType(options);
-        options = {...options, type };
-
-        const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
-            isAgHierarchyChartOptions(options) ? DEFAULT_HIERARCHY_CHART_OPTIONS :
-            isAgPolarChartOptions(options) ? DEFAULT_POLAR_CHART_OPTIONS :
-            {};
-
-        const defaultOverrides =
-            type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
-            type === 'scatter' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
-            type === 'histogram' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
-            {};
-
-        const { theme, cleanedTheme, axesThemes, seriesThemes } = AgChartV2.prepareTheme(options);
-        const context: PreparationContext = { colourIndex: 0, palette: theme.palette };        
-        const mergedOptions = jsonMerge(defaultOptions as T, defaultOverrides, cleanedTheme, options);
-
-        // Special cases where we have arrays of elements which need their own defaults.
-        mergedOptions.series = processSeriesOptions(mergedOptions.series || [])
-            .map((s: SeriesOptionsTypes) => {
-                // TODO: Handle graph/series hierarchy properly?
-                const type = s.type || 'line';
-                const series = { ...s, type };
-                return AgChartV2.prepareSeries(context, series, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
-            });
-        if (isAgCartesianChartOptions(mergedOptions)) {
-            (mergedOptions.axes || []).forEach((a, i) => {
-                const type = a.type || 'number';
-                const axis = { ...a, type };
-                // TODO: Handle removal of spurious properties more gracefully.
-                const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
-                mergedOptions.axes![i] = AgChartV2.prepareAxis(axis, DEFAULT_AXES_OPTIONS[type], axesTheme);
-            });
-        }
-
-        // Set `enabled: true` for all option objects where the user has provided values.
-        jsonWalk(
-            options,
-            (_, userOpts, mergedOpts) => {
-            if (!mergedOpts) { return; }
-            if ('enabled' in mergedOpts && userOpts.enabled == null) {
-                mergedOpts.enabled = true;
-            }
-            },
-            { skip: ['data'] },
-            mergedOptions,
-        );
-
-        // Preserve non-cloneable properties.
-        mergedOptions.type = type;
-
-        // console.log('prepared opts', mergedOptions);
-
-        return mergedOptions;
-    }
-
-    private static prepareTheme<T extends AgChartOptions>(options: T) {
-        const theme = getChartTheme(options.theme);
-        const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
-        return {
-            theme,
-            axesThemes: themeConfig['axes'] || {},
-            seriesThemes: themeConfig['series'] || {},
-            cleanedTheme: jsonMerge(themeConfig, { axes: DELETE, series: DELETE }),
-        };
-    }
-
-    private static prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext, input: T, ...defaults: T[]): T {
-        const paletteOptions = AgChartV2.calculateSeriesPalette(context, input);
-
-        // Part of the options interface, but not directly consumed by the series implementations.
-        const removeOptions = { stacked: DELETE } as T;
-        const mergedResult = jsonMerge(...defaults, paletteOptions, input, removeOptions);
-
-        return applySeriesTransform(mergedResult);
-    }
-
-    private static calculateSeriesPalette<T extends SeriesOptionsTypes>(context: PreparationContext, input: T): T {
-        let paletteOptions: {
-            stroke?: string;
-            fill?: string;
-            fills?: string[];
-            strokes?: string[];
-            marker?: { fill?: string; stroke?: string; };
-            callout?: { colors?: string[]; };
-        } = {};
-
-        const { palette: { fills, strokes } } = context;
-        
-        const inputAny = (input as any);
-        let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
-        switch (input.type) {
-            case 'pie':
-                colourCount = Math.max(fills.length, strokes.length);
-            case 'area':
-            case 'bar':
-            case 'column':
-                paletteOptions.fills = takeColours(context, fills, colourCount);
-                paletteOptions.strokes = takeColours(context, strokes, colourCount);
-                break;
-            case 'histogram':
-                paletteOptions.fill = takeColours(context, fills, 1)[0];
-                paletteOptions.stroke = takeColours(context, strokes, 1)[0];
-                break;
-            case 'scatter':
-                paletteOptions.fill = takeColours(context, fills, 1)[0];
-            case 'line':
-                paletteOptions.stroke = takeColours(context, strokes, 1)[0];
-                paletteOptions.marker = {
-                    stroke: takeColours(context, strokes, 1)[0],
-                    fill: takeColours(context, fills, 1)[0],
-                };
-                break;
-            case 'treemap':
-                break;
-            case 'ohlc':
-            default:
-                throw new Error('AG Charts - unknown series type: ' + input.type);
-        }
-        context.colourIndex += colourCount;
-
-        return paletteOptions as T;
-    }
-
-    private static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
-        // Remove redundant theme overload keys.
-        const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
-        return jsonMerge(...defaults, input, removeOptions);
-    }
-}
-
-function takeColours(context: PreparationContext, colours: string[], maxCount: number): string[] {
-    const result = [];
-
-    for (let count = 0; count < Math.min(maxCount, colours.length); count++) {
-        result.push(colours[(count + context.colourIndex) % colours.length]);
-    }
-
-    return result;
 }
 
 function applyChartOptions<

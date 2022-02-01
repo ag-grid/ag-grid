@@ -1,11 +1,11 @@
-import { AgBaseChartOptions, AgChartPaddingOptions, AgChartLegendOptions, AgNavigatorOptions, AgChartTooltipOptions, AgChartCaptionOptions, FontWeight, AgCartesianChartOptions, AgLineSeriesOptions, AgBarSeriesOptions, AgNumberAxisOptions, AgCategoryAxisOptions, AgLogAxisOptions, AgGroupedCategoryAxisOptions, AgTimeAxisOptions, AgChartOptions, AgAreaSeriesOptions, AgDropShadowOptions, AgCartesianSeriesMarker, AgBaseSeriesOptions, AgHistogramSeriesOptions, AgCartesianSeriesOptions, AgScatterSeriesOptions, AgPieSeriesOptions, AgTreemapSeriesOptions, AgPolarChartOptions, AgHierarchyChartOptions, AgCartesianAxisOptions } from "./agChartOptions";
-import { LegendPosition } from "./legend";
-import { Chart } from "./chart";
-import { NumberAxis } from "./axis/numberAxis";
-import { ChartAxisPosition } from "./chartAxis";
-import { CategoryAxis } from "./axis/categoryAxis";
-import { BarLabelPlacement } from "./series/cartesian/barSeries";
-import { AgSeriesTooltip } from "../../../../community-modules/core/src/ts/interfaces/iAgChartOptions";
+import { AgBaseChartOptions, AgChartPaddingOptions, AgChartLegendOptions, AgNavigatorOptions, AgChartTooltipOptions, AgChartCaptionOptions, FontWeight, AgCartesianChartOptions, AgLineSeriesOptions, AgBarSeriesOptions, AgNumberAxisOptions, AgCategoryAxisOptions, AgLogAxisOptions, AgGroupedCategoryAxisOptions, AgTimeAxisOptions, AgChartOptions, AgAreaSeriesOptions, AgDropShadowOptions, AgCartesianSeriesMarker, AgBaseSeriesOptions, AgHistogramSeriesOptions, AgCartesianSeriesOptions, AgScatterSeriesOptions, AgPieSeriesOptions, AgTreemapSeriesOptions, AgPolarChartOptions, AgHierarchyChartOptions, AgCartesianAxisOptions } from "../agChartOptions";
+import { LegendPosition } from "../legend";
+import { Chart } from "../chart";
+import { NumberAxis } from "../axis/numberAxis";
+import { ChartAxisPosition } from "../chartAxis";
+import { CategoryAxis } from "../axis/categoryAxis";
+import { BarLabelPlacement } from "../series/cartesian/barSeries";
+import { AgSeriesTooltip } from "../../../../../community-modules/core/src/ts/interfaces/iAgChartOptions";
 
 type CartesianSeriesOptions =
     AgLineSeriesOptions |

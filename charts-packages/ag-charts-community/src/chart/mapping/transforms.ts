@@ -9,8 +9,8 @@ import {
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
     AgOHLCSeriesOptions,
-} from './agChartOptions';
-import { BarLabelPlacement } from './series/cartesian/barSeries';
+} from '../agChartOptions';
+import { BarLabelPlacement } from '../series/cartesian/barSeries';
 
 type Transforms<Source, Result extends {[R in keyof Source]?: any}, Keys extends keyof Source & keyof Result = keyof Source & keyof Result> = {
     [Property in Keys]: (p: Source[Property], src: Source) => Result[Property];

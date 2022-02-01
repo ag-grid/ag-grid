@@ -1610,7 +1610,7 @@ Object {
 }
 `;
 
-exports[`AgChartV2 #create for ADV_PER_MARKER_CUSTOMISATION it should prepare options as expected 1`] = `
+exports[`AgChartV2 #create for ADV_PER_MARKER_CUSTOMISATION_EXAMPLE it should prepare options as expected 1`] = `
 Object {
   "autoSize": true,
   "axes": Array [

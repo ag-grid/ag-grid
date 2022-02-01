@@ -1087,7 +1087,7 @@ export abstract class Chart extends Observable {
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node, event);
+                        this.onSeriesDatumPick(event, node.datum, node, event);
                 } else if (pick.series.tooltip.enabled) { // cursor moved within the same node
                     this.tooltip.show(event);
                 }

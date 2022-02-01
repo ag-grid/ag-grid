@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
@@ -218,7 +218,7 @@ const EXAMPLES: Record<string, TestCase> = {
             return new Promise((resolve) => { setTimeout(resolve, 50) });
         },
     },
-    ADV_PER_MARKER_CUSTOMISATION: {
+    ADV_PER_MARKER_CUSTOMISATION_EXAMPLE: {
         options: examples.ADV_PER_MARKER_CUSTOMISATION,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['scatter'] }),
     }
