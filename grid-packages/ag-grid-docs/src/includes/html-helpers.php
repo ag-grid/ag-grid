@@ -55,6 +55,7 @@ META;
     echo <<<META
     <script>var dataLayer = [${GLOBALS['GTM_DATA_LAYER']}]</script>
     ${GLOBALS['GTM_SCRIPT']}
+    <script defer data-domain="ag-grid.com" src="https://plausible.io/js/plausible.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
