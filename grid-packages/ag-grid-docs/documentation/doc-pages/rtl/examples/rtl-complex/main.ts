@@ -401,7 +401,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 cellRenderer: booleanCellRenderer,
                 cellStyle: { 'text-align': 'center' },
                 comparator: booleanComparator,
-                filterParams: { cellRendererComp: booleanFilterCellRenderer },
+                filterParams: { cellRenderer: booleanFilterCellRenderer },
             },
         ],
     },
