@@ -228,7 +228,6 @@ export class UserComponentFactory extends BeanStub {
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
         // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
         // const fwActive = this.frameworkComponentWrapper != null;
-        // const hasFwkAnnotations = (comp: any) => comp.__annotations__ != null;
 
         // pull from defObject if available
         if (defObject) {
@@ -242,7 +241,7 @@ export class UserComponentFactory extends BeanStub {
 
                 const xxxFrameworkDeprecatedWarn = ()=> {
                     const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
-                    doOnce( ()=> console.log(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
+                    doOnce( ()=> console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
                 };
 
                 if (typeof providedJsComp === 'string') {
@@ -265,7 +264,13 @@ export class UserComponentFactory extends BeanStub {
             };
             
             if (selectorRes) {
-                assignComp(selectorRes.component, selectorRes.frameworkComponent);
+                if (selectorRes.frameworkComponent!=null) {
+                    const warningMessage = `AG Grid: As of v27, the return for ${propertyName}Selector has attributes [component, params] only. The attribute frameworkComponent is deprecated. You should now return back Framework Components using the 'component' attribute and the grid works out if it's a framework component or not.`;
+                    doOnce( ()=> console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkSelectorDeprecated`);
+                    assignComp(selectorRes.frameworkComponent, undefined);
+                } else {
+                    assignComp(selectorRes.component, undefined);
+                }
                 paramsFromSelector = selectorRes.params;
             } else {
                 // if no selector, or result of selector is empty, take from defObject
