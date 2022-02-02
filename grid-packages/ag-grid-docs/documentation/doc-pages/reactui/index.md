@@ -5,12 +5,12 @@ frameworks: ["react"]
 
 When using AG Grid React, all of the grid's core rendering (headers, rows, cells etc) is rendered using React.
 
-AG Grid React shares the same 'services layer' as the other frameworks. This means the features of AG Grid React are identical to the features in AG Grid's other framework flavours. However because the rendering is done 100% in React, the grid works as a native React Component.
+AG Grid React shares the same 'business logic layer' as the other AG Grid versions (Angular, Vue, or just JavaScript) frameworks. This means the features of AG Grid React are identical to the features in AG Grid's other framework flavours. However because the rendering is done 100% in React, the grid works as a native React Component.
 
 The remainder of this page takes a deeper look at the grid's React rendering, including React Render Cycles and also React Developer Tools.
 
 [[note]]
-| Don't like our new React Rendering introduced in v27? You can turn it off with `suppressReactUi=true`. However we advise against this as we plan to drop support for the old rendering engine in v28.
+| Don't like our new React Rendering introduced in v27? You can turn it off with `suppressReactUi=true`. However we advise against this long term, as we plan to drop support for the old rendering engine in v28.
 
 ## Show Me
 
