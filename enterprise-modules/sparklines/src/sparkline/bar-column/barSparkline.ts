@@ -14,7 +14,7 @@ export class BarSparkline extends BarColumnSparkline {
     }
 
     protected updateXScaleRange() {
-        const { xScale, seriesRect, paddingOuter, paddingInner, data } = this;
+        const { xScale, seriesRect, paddingOuter, paddingInner, xData } = this;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
@@ -22,7 +22,7 @@ export class BarSparkline extends BarColumnSparkline {
         } else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - seriesRect.height / data!.length];
+            xScale.range = [0, seriesRect.height - seriesRect.height / xData!.length];
         }
     }
 
