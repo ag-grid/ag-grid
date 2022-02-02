@@ -16,18 +16,18 @@
 |    rowSelection="multiple" // simple attributes, not bound to any state or prop
 |
 |    // these are bound props, so can use anything in React state or props
-|    columnDefs={this.props.columnDefs}
-|    showToolPanel={this.state.showToolPanel}
+|    columnDefs={columnDefs}
+|    showToolPanel={showToolPanel}
 |
 |    // this is a callback
-|    getRowHeight={this.myGetRowHeightFunction}
+|    getRowHeight={myGetRowHeightFunction}
 |
 |    // these are registering event callbacks
-|    onCellClicked={this.onCellClicked}
-|    onColumnResized={this.onColumnEvent}
+|    onCellClicked={onCellClicked}
+|    onColumnResized={onColumnEvent}
 |
 |    // inside onGridReady, you receive the grid APIs if you want them
-|    onGridReady={this.onGridReady}
+|    onGridReady={onGridReady}
 | />
 | ```
 |

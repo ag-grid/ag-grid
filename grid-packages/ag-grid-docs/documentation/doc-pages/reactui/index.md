@@ -1,5 +1,5 @@
 ---
-title: "100% React"
+title: "Rendering"
 frameworks: ["react"]
 ---
 
