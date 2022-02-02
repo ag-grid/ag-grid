@@ -70,7 +70,8 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
-export function isSeriesOptionType(input: string): input is NonNullable<SeriesOptionsTypes['type']> {
+export function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
+    if (input == null) { return false; }
     return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
 }
 
@@ -104,6 +105,7 @@ interface PreparationContext {
 
 export function prepareOptions<T extends AgChartOptions>(options: T): T {
     // Determine type and ensure it's explicit in the options config.
+    const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
     options = {...options, type };
 
@@ -111,6 +113,11 @@ export function prepareOptions<T extends AgChartOptions>(options: T): T {
         isAgHierarchyChartOptions(options) ? DEFAULT_HIERARCHY_CHART_OPTIONS :
         isAgPolarChartOptions(options) ? DEFAULT_POLAR_CHART_OPTIONS :
         {};
+
+    const defaultSeriesType = isAgCartesianChartOptions(options) ? 'line' :
+        isAgHierarchyChartOptions(options) ? 'treemap' :
+        isAgPolarChartOptions(options) ? 'pie' :
+        'line';
 
     const defaultOverrides =
         type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
@@ -124,10 +131,9 @@ export function prepareOptions<T extends AgChartOptions>(options: T): T {
     // Special cases where we have arrays of elements which need their own defaults.
     mergedOptions.series = processSeriesOptions(mergedOptions.series || [])
         .map((s: SeriesOptionsTypes) => {
-            const optionsType = options.type || '';
             const type = s.type ? s.type :
-                 isSeriesOptionType(optionsType) ? optionsType :
-                 'line';
+                isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
+                defaultSeriesType;
             const series = { ...s, type };
             return prepareSeries(context, series, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
         });
