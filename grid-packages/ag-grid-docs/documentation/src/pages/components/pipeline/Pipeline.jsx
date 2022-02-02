@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, { useEffect, useState } from "react"
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
@@ -225,13 +225,13 @@ const Pipeline = ({ location }) => {
     }
 
     const checkboxes = [
-        {id: 'featureRequest', label: 'Feature Requests', checked: true},
-        {id: 'defect', label: 'Defects', checked: true},
-        {id: 'nextRelease', label: 'Next Release', checked: false}
+        { id: 'featureRequest', label: 'Feature Requests', checked: true },
+        { id: 'defect', label: 'Defects', checked: true },
+        { id: 'nextRelease', label: 'Next Release', checked: false }
     ]
 
-    const createLabeledCheckbox = (checkboxConfig) =>{
-        const {id, label, checked} = checkboxConfig;
+    const createLabeledCheckbox = (checkboxConfig) => {
+        const { id, label, checked } = checkboxConfig;
         const key = `${id}-checkbox`
         return (
             <div className={styles["single-checkbox-label-container"]} key={key}>
@@ -241,8 +241,8 @@ const Pipeline = ({ location }) => {
                         type="checkbox"
                         className={styles["checkbox-class"]}
                         defaultChecked={checked}
-                        onChange={event=> onCheckboxChange(event,id)}
-                        >
+                        onChange={event => onCheckboxChange(event, id)}
+                    >
                     </input>
                     {label}
                 </label>
@@ -289,7 +289,7 @@ const Pipeline = ({ location }) => {
                         columnDefs={COLUMN_DEFS}
                         isRowMaster={isRowMaster}
                         detailRowAutoHeight={true}
-                        frameworkComponents={{
+                        components={{
                             myDetailCellRenderer: DetailCellRenderer,
                             paddingCellRenderer: PaddingCellRenderer,
                             chevronButtonRenderer: ChevronButtonCellRenderer,

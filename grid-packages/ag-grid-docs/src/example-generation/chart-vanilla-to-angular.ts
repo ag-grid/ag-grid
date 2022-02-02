@@ -52,9 +52,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const propertyAssignments = [];
 
         properties.forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
 
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));

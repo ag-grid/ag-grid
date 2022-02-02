@@ -29,9 +29,6 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
     bindings.properties
         .forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
 
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));

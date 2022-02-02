@@ -1,7 +1,7 @@
-import {getFunctionName, isInstanceMethod, removeFunctionKeyword} from './parser-utils';
-import {templatePlaceholder} from './chart-vanilla-src-parser';
-import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember} from './vue-utils';
-import {wrapOptionsUpdateCode} from './chart-utils';
+import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { templatePlaceholder } from './chart-vanilla-src-parser';
+import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember } from './vue-utils';
+import { wrapOptionsUpdateCode } from './chart-utils';
 
 function processFunction(code: string): string {
     return wrapOptionsUpdateCode(removeFunctionKeyword(code));
@@ -29,9 +29,6 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
     bindings.properties
         .forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
 
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));

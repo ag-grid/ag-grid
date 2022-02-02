@@ -6,11 +6,11 @@ You can create your own custom components to customise the behaviour of the grid
 
 The full list of component types you can provide in AG Grid are as follows:
 
-- [Cell Renderer](/component-cell-renderer/): To customises the contents of a cell.
-- [Cell Editor](/component-cell-editor/): To customises editing of a cell.
+- [Cell Renderer](/component-cell-renderer/): To customise the contents of a cell.
+- [Cell Editor](/component-cell-editor/): To customise the editing of a cell.
 - [Date Component](/component-date/): To customise the date selection component in the date filter.
 - [Filter Component](/component-filter/): For custom column filter that appears inside the column menu.
-- [Floating Filter](/component-floating-filter/): For custom column filter that appears inside the column menu.
+- [Floating Filter](/component-floating-filter/): For custom column floating filter that appears inside the column menu.
 - [Header Component](/component-header/): To customise the header of a column and column groups.
 - [Loading Cell Renderer](/component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
 - [Overlay Component](/component-overlay/): To customise loading and no rows overlay components.
@@ -114,7 +114,7 @@ The grid comes with pre-registered components that can be used. Each component p
             <td colspan="2"><h3>Column Filters</h3></td>
         </tr>
         <tr>
-            <td>agSetColumnFilter</td>
+            <td>agSetColumnFilter<enterprise-icon></enterprise-icon></td>
             <td>Set filter (default when using AG Grid Enterprise).</td>
         </tr>
         <tr>
@@ -133,7 +133,7 @@ The grid comes with pre-registered components that can be used. Each component p
             <td colspan="2"><h3>Floating Filters</h3></td>
         </tr>
         <tr>
-            <td>agSetColumnFloatingFilter</td>
+            <td>agSetColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
             <td>Floating set filter.</td>
         </tr>
         <tr>
@@ -164,8 +164,8 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Cell renderer for displaying group information.</td>
         </tr>
         <tr>
-            <td>agLoadingCellRenderer</td>
-            <td>Cell editor for loading row when using Enterprise row model.</td>
+            <td>agLoadingCellRenderer<enterprise-icon></enterprise-icon></td>
+            <td>Cell renderer for loading row when using Enterprise row model.</td>
         </tr>
         <tr>
             <td colspan="2"><h3>Overlays</h3></td>
@@ -230,7 +230,7 @@ It is also possible to override components. Where the grid uses a default value,
  
 [[only-vue]]
 |[[note]]
-||Overridable grid components are the only components you need to additionally specify with `frameworkComponents` in order to tie their usage to the 
+||Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the 
 ||actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 ||
 ||For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
