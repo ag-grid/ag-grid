@@ -296,9 +296,10 @@ sparklineOptions: {
 
 A progress bar can be used to visualise and compare values across multiple sparklines in the grid. It can illustrate values which have a fixed domain such as percentages and scores.
 
-The following example shows how to build progress bars using bar sparklines.
+The following example shows how to build progress bars using bar sparklines. Note that:
 
-- Note that `valueAxisDomain` has been set to `[0, 100]`, indicating that the supplied data across all sparklines will contain values from `0` to `100`.
+- In order to display a progress bar in a sparkline, the data array should only contain a single value, more values in the data array will produce additional bars in the same sparkline.
+- `valueAxisDomain` has been set to `[0, 100]`, indicating that the supplied data across all sparklines will contain values from `0` to `100`.
 - This allows easy comparisons of percentages across the different sparklines in the grid column as all sparklines will have the same domain.
 - A `formatter` callback function is supplied to return format styles of type `BarFormat`, based on the data represented by individual bars.
 - The `formatter` uses the `yValue` provided in the params object to dynamically set the fill color of each progress bar.
