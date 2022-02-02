@@ -270,8 +270,7 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
             if (columnProperty === 'children') {
                 children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames, vueComponents, componentFileNames);
             } else {
-                let value = rawColumnDef[columnProperty];
-
+                const value = rawColumnDef[columnProperty];
                 if (isParamsProperty(columnProperty)) {
                     if (value.cellRenderer) {
                         value.cellRenderer = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
@@ -307,9 +306,21 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                         }
 
                     } else if (value.startsWith('AG_FUNCTION_')) {
+                        let parsedValue = parseFunction(value);
+
+                        if(columnProperty === 'cellRendererSelector') {
+                            const component = parsedValue.match(/.*component:\s*(.*),/) ? parsedValue.match(/.*:\s*(.*),/)[1] : parsedValue.match(/.*:\s*(.*)$/)[1]
+                            if(component) {
+                                parsedValue = parsedValue.replace(component, `'${component}'`);
+                                if (isExternalVueFile(componentFileNames, component) && !vueComponents.includes(component)) {
+                                    vueComponents.push(component)
+                                }
+                            }
+                        }
+
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
-                        columnProperties.push(`${columnProperty}:${parseFunction(value)}`);
+                        columnProperties.push(`${columnProperty}:${parsedValue}`);
                     } else {
                         // }
                         // ensure any double quotes inside the string are replaced with single quotes
