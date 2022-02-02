@@ -27,7 +27,7 @@ function GridExample() {
         { field: 'athlete', tooltipField: 'athlete' },
         { field: 'age', tooltipField: 'athlete' },
         { field: 'country', tooltipField: 'athlete' },
-        { field: 'year', filterFramework: YearFilter, floatingFilter: true, floatingFilterComponentFramework: YearFloatingFilter, tooltipField: 'athlete' },
+        { field: 'year', filter: YearFilter, floatingFilter: true, floatingFilterComponent: YearFloatingFilter, tooltipField: 'athlete' },
     ], []);
 
     // never changes, so we can use useMemo
@@ -111,8 +111,8 @@ function GridExample() {
                 statusBar={statusBar}
                 className="ag-theme-alpine my-grid"
                 animateRows="true"
-                loadingOverlayComponentFramework={MyLoadingOverlay}
-                noRowsOverlayComponentFramework={MyNoRowsOverlay}
+                loadingOverlayComponent={MyLoadingOverlay}
+                noRowsOverlayComponent={MyNoRowsOverlay}
                 modules={[ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, StatusBarModule, MenuModule]}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
