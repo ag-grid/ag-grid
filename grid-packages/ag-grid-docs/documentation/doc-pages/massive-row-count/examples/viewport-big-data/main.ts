@@ -35,16 +35,14 @@ document.addEventListener('DOMContentLoaded', function () {
   new Grid(gridDiv, gridOptions)
 })
 
-function createViewportDatasource() {
-
-  class MyViewportDataSource implements IViewportDatasource {
-    initParams!: IViewportDatasourceParams
-    init(params: IViewportDatasourceParams) {
-      this.initParams = params
+function createViewportDatasource(): IViewportDatasource {
+  let initParams: IViewportDatasourceParams;
+  return {
+    init: (params: IViewportDatasourceParams) => {
+      initParams = params
       var oneMillion = 1000 * 1000
       params.setRowCount(oneMillion)
-    }
-
+    },
     setViewportRange(
       firstRow: number,
       lastRow: number
@@ -60,11 +58,8 @@ function createViewportDatasource() {
         rowData[rowIndex] = item
       }
 
-      this.initParams.setRowData(rowData)
-    }
-
-    destroy() { }
+      initParams.setRowData(rowData)
+    },
+    destroy: ()=> {}
   }
-
-  return new MyViewportDataSource()
 }
