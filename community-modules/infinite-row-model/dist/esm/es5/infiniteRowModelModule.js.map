@@ -1,0 +1,1 @@
+{"version":3,"file":"infiniteRowModelModule.js","sourceRoot":"","sources":["../../../src/infiniteRowModelModule.ts"],"names":[],"mappings":"AAAA,OAAO,EAAU,WAAW,EAAE,MAAM,yBAAyB,CAAC;AAC9D,OAAO,EAAE,gBAAgB,EAAE,MAAM,qCAAqC,CAAC;AAEvE,MAAM,CAAC,IAAM,sBAAsB,GAAW;IAC1C,UAAU,EAAE,WAAW,CAAC,sBAAsB;IAC9C,SAAS,EAAE,EAAC,QAAQ,EAAE,gBAAgB,EAAC;CAC1C,CAAC"}

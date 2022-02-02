@@ -1,0 +1,1 @@
+{"version":3,"sources":["reactUi/beansContext.tsx"],"names":[],"mappings":";;;;;;AAAA,kDAA0B;AAGb,QAAA,YAAY,GAAG,eAAK,CAAC,aAAa,CAAQ,EAAW,CAAC,CAAC","file":"beansContext.js","sourcesContent":["import React from 'react';\nimport { Beans } from '@ag-grid-community/core';\n\nexport const BeansContext = React.createContext<Beans>({} as Beans);\n"]}

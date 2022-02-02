@@ -1,0 +1,34 @@
+import { Component } from "@ag-grid-community/core";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartController } from "../../../chartController";
+import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+export declare class SeriesPanel extends Component {
+    private readonly chartController;
+    private readonly chartOptionsService;
+    static TEMPLATE: string;
+    private seriesGroup;
+    private chartTranslationService;
+    private activePanels;
+    private seriesType;
+    private widgetFuncs;
+    private seriesWidgetMappings;
+    constructor(chartController: ChartController, chartOptionsService: ChartOptionsService, seriesType: ChartSeriesType);
+    private init;
+    private refreshWidgets;
+    private initTooltips;
+    private initStrokeWidth;
+    private initLineWidth;
+    private initLineDash;
+    private initLineOpacity;
+    private initFillOpacity;
+    private initLabels;
+    private initShadow;
+    private initMarkers;
+    private initBins;
+    private addWidget;
+    private getSeriesOption;
+    private setSeriesOption;
+    private translate;
+    private destroyActivePanels;
+    protected destroy(): void;
+}

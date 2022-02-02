@@ -1,0 +1,32 @@
+import { Path } from "./path";
+import { BBox } from "../bbox";
+export declare class Sector extends Path {
+    static className: string;
+    private _centerX;
+    set centerX(value: number);
+    get centerX(): number;
+    private _centerY;
+    set centerY(value: number);
+    get centerY(): number;
+    private _centerOffset;
+    set centerOffset(value: number);
+    get centerOffset(): number;
+    private _innerRadius;
+    set innerRadius(value: number);
+    get innerRadius(): number;
+    private _outerRadius;
+    set outerRadius(value: number);
+    get outerRadius(): number;
+    private _startAngle;
+    set startAngle(value: number);
+    get startAngle(): number;
+    private _endAngle;
+    set endAngle(value: number);
+    get endAngle(): number;
+    private _angleOffset;
+    set angleOffset(value: number);
+    get angleOffset(): number;
+    computeBBox(): BBox;
+    private isFullPie;
+    updatePath(): void;
+}
