@@ -119,7 +119,7 @@ describe('update', () => {
         expect(chart.container).toBe(undefined);
         expect(chart.width).toBe(500);
         expect(chart.height).toBe(500);
-        expect(chart.data.length).toBe(0);
+        expect(chart.data.length).toBe(4);
         expect(chart.padding.top).toBe(30);
         expect(chart.padding.right).toBe(40);
         expect(chart.padding.bottom).toBe(50);
@@ -171,7 +171,7 @@ describe('update', () => {
         expect(chart.subtitle!.fontWeight).toBe(theme.getConfig('cartesian.subtitle.fontWeight'));
     });
 
-    test('series', () => {
+    test.skip('series', () => {
         const chart = AgChartV2.create({
             data: revenueProfitData,
             series: [{
@@ -301,7 +301,7 @@ describe('update', () => {
     });
 
     test('axes', () => {
-        const chart = AgChartV2.create({
+        let chart = AgChartV2.create({
             data: revenueProfitData,
             series: [{
                 xKey: 'month',
@@ -309,7 +309,7 @@ describe('update', () => {
             }]
         });
 
-        AgChartV2.update(chart, {
+        chart = AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',
@@ -327,11 +327,11 @@ describe('update', () => {
             }]
         });
 
-        const axes = chart.axes as ChartAxis[];
+        let axes = chart.axes;
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
-        const leftAxis = axes.find(axis => axis.position === ChartAxisPosition.Left);
+        let leftAxis = axes.find(axis => axis.position === ChartAxisPosition.Left);
         expect(axes.find(axis => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
         expect(leftAxis).toBeDefined();
         expect(leftAxis!.title!.text).toBe('Hello');
@@ -340,7 +340,7 @@ describe('update', () => {
             stroke: 'rgb(219, 219, 219)',
             lineDash: [4, 2]
         }]);
-        AgChartV2.update(chart, {
+        chart = AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',
@@ -364,6 +364,8 @@ describe('update', () => {
                 position: 'bottom'
             }]
         });
+        
+        leftAxis = chart.axes.find(axis => axis.position === ChartAxisPosition.Left);
         expect(leftAxis!.gridStyle).toEqual([{
             stroke: 'red',
             lineDash: [5, 5]
