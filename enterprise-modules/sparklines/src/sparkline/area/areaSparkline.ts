@@ -196,7 +196,7 @@ export class AreaSparkline extends Sparkline {
                     point: { x, y },
                 });
 
-                // set node data only if yDatum is not not undefined. These values are used in the updateSelection() method to update markers
+                // set node data only if yDatum is not undefined. These values are used in the updateSelection() method to update markers
                 nodeData.push({
                     seriesDatum: { x: xDatum, y: yDatum },
                     point: { x, y },
