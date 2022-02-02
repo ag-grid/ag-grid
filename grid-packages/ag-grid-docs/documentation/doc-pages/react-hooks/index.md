@@ -1,50 +1,117 @@
 ---
-title: "React Hooks"
+title: "Best Practices"
 frameworks: ["react"]
 ---
 
-AG Grid fits perfectly into the React rendering ecosystem. This page explains best practices for using React Hooks with AG Grid.
+AG Grid fits perfectly into the React rendering ecosystem. This page explains best practices for using React with AG Grid.
 
-## Functional Components
+This page assumes you are using React Hooks and not React Classes.
 
-When customising AG Grid, you can use both React Functional Components or React Class Components.
+## Setting Row Data
 
-[[only-react]]
+When setting Row Data, we recommend using `useState`.
+
 ```jsx
-import React, { useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridReact } from 'ag-grid-react';
-
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-
 const App = () => {
-    const [rowData] = useState([
+    const [rowData, setRowData] = useState([
         {make: "Toyota", model: "Celica", price: 35000},
         {make: "Ford", model: "Mondeo", price: 32000},
         {make: "Porsche", model: "Boxter", price: 72000}
     ]);
 
-    const [columnDefs] = useState([
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' }
-    ]);
+    // ... other setup
 
     return (
         <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
             <AgGridReact
                 rowData={rowData}
-                columnDefs={columnDefs}>
+                // ... other props
+                >
             </AgGridReact>
         </div>
     );
 };
- 
-render(<App />, document.getElementById('root'));
 ```
 
->> Code - simple Classes with React
+All examples in the documentation use `useState` for Row Data and Column Definitions. However all code snippets in the documentation leave these hooks out for easier reading.
+
+## Column Definitions
+
+When setting Column Definitions, we recommend using `useState` and JavaScript / JSON definitions (not HTML Markup).
+
+```jsx
+const App = () => {
+    const [columnDefs, setColumnDefs] = useState([
+        {field: 'make'},
+        {field: 'model'},
+    ]);
+
+    return ( <AgGridReact columnDefs={columnDefs} /> );
+};
+```
+
+If you do not put Column Definitions into state then the grid will be provided with a new set of Column Definitions each time the parent component is rendered. This will result in unexpected behaviour in the grid, such as the column state (column order, width etc) getting reset.
+
+```jsx
+const App = () => {
+    // do NOT do this, will result in extra Grid processing
+    const columnDefs = [
+        {field: 'make'},
+        {field: 'model'},
+    ];
+
+    return ( <AgGridReact columnDefs={columnDefs} /> );
+};
+```
+
+All examples in the documentation use `useState` for Row Data and Column Definitions. However all code snippets in the documentation leave these hooks out for easier reading.
+
+We do not recommend HTML Markup. This is for the same reason as above, in that each time the parent component is rendered, a new set of Column Definitions is created and passed to the grid, potentially resetting state of the Columns.
+
+```jsx
+// do NOT define Columns in HTML like this
+const App = () => {
+    return (
+        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+            <AgGridReact>
+                <AgGridColumn field="make"></AgGridColumn>
+                <AgGridColumn field="model"></AgGridColumn>
+            </AgGridReact>
+        </div>
+    );
+};
+```
+
+If you are currently using HTML Column Definitions, it's fine to continue if you are not experiencing any unexpected Column State changes. We do not intend dropping support for HTML Column Definitions. However going forward, you should prefer JavaScript Definitions and `useState`.
+
+## Use Callback
+
+## useState vs useMemo
+
+For all the attributes where we recommend using `useState`, you could also use `useMemo`. Which one to use is up to you. We find `useState` is more in line with React applications where the Parent Application changes state for a Child Component.
+
+## Components
+
+```jsx
+const MyCellRenderer = p => <span>{p.value}</span>;
+
+const App = () => {
+    const [columnDefs] = useState([
+        
+        // reference the Cell Renderer above
+        { field: 'make', cellRenderer: MyCellRenderer },
+        
+        // or put inline
+        { field: 'model', cellRenderer: p => <span>{p.value}</span> },
+
+        // optionally for best performance, memo() the renderer, so render
+        // cycles don't occur unnecessarily
+        { field: 'price', cellRenderer: memo(MyCellRenderer) }
+    ]);
+
+    return ( <AgGridReact columnDefs={columnDefs} /> );
+};
+```
 
 
 ## Use State, Use Memo
