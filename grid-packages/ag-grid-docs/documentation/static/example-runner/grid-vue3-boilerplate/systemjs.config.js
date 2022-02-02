@@ -30,7 +30,7 @@
                 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // vuejs
-                'vue': 'npm:vue@3.0.0/dist/vue.esm-browser.prod.js',
+                'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
                 '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
 
                 // vue class component
