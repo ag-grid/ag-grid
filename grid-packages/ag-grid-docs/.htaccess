@@ -792,7 +792,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/component-loading-cell-renderer/ /react-data-grid/component-loading-cell-renderer/
     Redirect 301 /documentation/react/component-overlay/ /react-data-grid/component-overlay/
     Redirect 301 /documentation/react/component-status-bar/ /react-data-grid/component-status-bar/
-    Redirect 301 /documentation/react/component-styling/ /react-data-grid/component-styling/
+    Redirect 301 /documentation/react/component-styling/ /react-data-grid/
     Redirect 301 /documentation/react/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /documentation/react/component-tooltip/ /react-data-grid/component-tooltip/
     Redirect 301 /documentation/react/component-types/ /react-data-grid/component-types/
@@ -1869,7 +1869,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/component-loading-cell-renderer/ /react-data-grid/component-loading-cell-renderer/
     Redirect 301 /react-grid/component-overlay/ /react-data-grid/component-overlay/
     Redirect 301 /react-grid/component-status-bar/ /react-data-grid/component-status-bar/
-    Redirect 301 /react-grid/component-styling/ /react-data-grid/component-styling/
+    Redirect 301 /react-grid/component-styling/ /react-data-grid/
     Redirect 301 /react-grid/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /react-grid/component-tooltip/ /react-data-grid/component-tooltip/
     Redirect 301 /react-grid/component-types/ /react-data-grid/component-types/
