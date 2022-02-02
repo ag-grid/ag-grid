@@ -68,6 +68,18 @@ type AxisOptionType<T extends Axis<any, any>> =
     T extends TimeAxis ? AgTimeAxisOptions :
     never;
 
+function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
+    if (isAgCartesianChartOptions(options)) {
+        return 'cartesian';
+    } else if (isAgPolarChartOptions(options)) {
+        return 'polar';
+    } else if (isAgHierarchyChartOptions(options)) {
+        return 'hierarchy';
+    }
+
+    throw new Error('AG Chart - unknown type of chart for options with type: ' + options.type);
+}
+
 export abstract class AgChartV2 {
     static create<T extends ChartType>(options: ChartOptionType<T>): T {
         const mergedOptions = prepareOptions(options);
@@ -87,7 +99,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, options: ChartOptionType<T>): T {
         const mergedOptions = prepareOptions(options);
 
-        if (options.type && options.type !== chart.options.type) {
+        if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
             chart.destroy();
             return AgChartV2.create(options);
         }

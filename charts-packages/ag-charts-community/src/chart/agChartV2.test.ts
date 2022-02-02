@@ -7,6 +7,7 @@ import { Chart } from './chart';
 import * as examples from './test/examples';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
+import { repeat, mouseMoveEvent, waitForChartStability } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -39,42 +40,6 @@ function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
         expect(chart.axes).toHaveLength(0);
         expect(chart.series.map((s) => s.type)).toEqual(seriesTypes);
     };
-}
-
-function repeat<T>(value: T, count: number): T[] {
-    const result = new Array(count);
-    for (let idx = 0; idx < count; idx++) {
-        result[idx] = value;
-    }
-    return result;
-}
-
-async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
-    return new Promise((resolve, reject) => {
-        let retryMs = 10;
-        let startMs = Date.now();
-        const cb = () => {
-            if (!chart.layoutPending && !chart.dataPending && !chart.scene.dirty) {
-                resolve();
-            }
-
-            const timeMs = Date.now() - startMs;
-            if (timeMs >= timeoutMs) {
-                reject('timeout reached');
-            }
-
-            retryMs *= 2;
-            setTimeout(cb, retryMs);
-        };
-
-        cb();
-    });
-}
-
-function mouseMoveEvent({ offsetX, offsetY }: { offsetX: number, offsetY: number}): MouseEvent {
-    const event = new MouseEvent('mousemove');
-    Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
-    return event;
 }
 
 type TestCase = {
