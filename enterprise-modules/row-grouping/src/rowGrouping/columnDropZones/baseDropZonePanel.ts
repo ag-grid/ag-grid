@@ -12,7 +12,9 @@ import {
     FocusService,
     GridOptionsWrapper,
     HorizontalDirection,
+    KeyCode,
     LoggerFactory,
+    ManagedFocusFeature,
     PositionableFeature,
     VerticalDirection,
     _
@@ -110,6 +112,13 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            {
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
+        ));
+
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
         this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
@@ -123,6 +132,32 @@ export abstract class BaseDropZonePanel extends Component {
         // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
         this.refreshGui();
         _.setAriaLabel(this.eColumnDropList, this.getAriaLabel());
+    }
+
+    private handleKeyDown(e: KeyboardEvent) {
+        const isVertical = !this.horizontal;
+
+        let isNext = e.key === KeyCode.DOWN;
+        let isPrevious = e.key === KeyCode.UP;
+
+        if (!isVertical) {
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            isNext = e.key === KeyCode.RIGHT || (isRtl && e.key === KeyCode.LEFT);
+            isPrevious = e.key === KeyCode.LEFT || (isRtl && e.key === KeyCode.RIGHT);
+        }
+
+        if (!isNext && !isPrevious) { return; }
+
+        const el = this.focusService.findNextFocusableElement(
+            this.getFocusableElement(),
+            false,
+            isPrevious
+        );
+
+        if (el) {
+            e.preventDefault();
+            el.focus();
+        }
     }
 
     private addElementClasses(el: HTMLElement, suffix?: string) {

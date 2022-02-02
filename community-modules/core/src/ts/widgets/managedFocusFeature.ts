@@ -16,7 +16,7 @@ export class ManagedFocusFeature extends BeanStub {
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
-    @Autowired('focusService') protected readonly focusService: FocusService;
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(
         private readonly eFocusableElement: HTMLElement,
