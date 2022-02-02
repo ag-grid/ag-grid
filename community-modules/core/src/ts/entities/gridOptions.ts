@@ -920,7 +920,7 @@ export interface GridOptions {
 
     // *** Components *** //
     /**
-     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
      */
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;

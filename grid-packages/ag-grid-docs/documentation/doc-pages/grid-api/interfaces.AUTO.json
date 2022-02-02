@@ -1992,7 +1992,7 @@
       "onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent)": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent)": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
-      "onComponentStateChanged?(event: ComponentStateChangedEvent)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+      "onComponentStateChanged?(event: ComponentStateChangedEvent)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "onCellValueChanged?(event: CellValueChangedEvent)": "/** Value has changed after editing. */",
       "onRowValueChanged?(event: RowValueChangedEvent)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent)": "/** Editing a cell has started. */",

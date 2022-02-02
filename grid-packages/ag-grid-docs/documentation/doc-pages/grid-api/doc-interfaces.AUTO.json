@@ -3535,7 +3535,7 @@
       "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
     },
     "onComponentStateChanged": {
-      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
@@ -3544,7 +3544,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "componentStateChanged": {
-      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
