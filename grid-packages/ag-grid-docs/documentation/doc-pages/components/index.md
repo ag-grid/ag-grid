@@ -21,12 +21,13 @@ The full list of component types you can provide in AG Grid are as follows:
 The remainder of this page gives information that is common across all the component types.
 
 md-include:declare-vue.md
-md-include:declare-angular.md
 
 md-include:register-javascript.md
 md-include:register-angular.md
 md-include:register-react.md 
 md-include:register-vue.md
+
+md-include:declare-angular.md
 
 md-include:advantages-vue.md
 
@@ -225,7 +226,7 @@ It is also possible to override components. Where the grid uses a default value,
 - **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
 - **agLoadingOverlay**: To change the default 'loading' overlay.
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
-- **agTextCellEditor**: To change the default text cell editor. 
+- **agTextCellEditor**: To change the default text cell editor.
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
  
 [[only-vue]]
