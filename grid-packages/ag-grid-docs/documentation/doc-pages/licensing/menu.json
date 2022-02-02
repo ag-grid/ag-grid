@@ -13,6 +13,24 @@
             "pane": "left"
           },
           {
+            "title": "Rendering",
+            "icon": "react",
+            "url": "/reactui/",
+            "pane": "left",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Hooks",
+            "icon": "react",
+            "url": "/react-hooks/",
+            "pane": "left",
+            "frameworks": [
+              "react"
+            ]
+          },          
+          {
             "title": "Video Tutorial",
             "url": "{video-tutorial}",
             "icon": "youtube",
@@ -28,15 +46,6 @@
               "javascript"
             ],
             "pane": "left"
-          },
-          {
-            "title": "100% React",
-            "icon": "react",
-            "url": "/reactui/",
-            "pane": "left",
-            "frameworks": [
-              "react"
-            ]
           },
           {
             "title": "Stackblitz Example",
@@ -1284,14 +1293,6 @@
               {
                 "title": "Higher Order Components",
                 "url": "/framework-hoc/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Hooks / Functional Components",
-                "url": "/react-hooks/",
                 "showInCollapsed": true,
                 "frameworks": [
                   "react"

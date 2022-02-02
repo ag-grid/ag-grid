@@ -55,7 +55,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 #### Install dependencies
 
-    $ npm i --save ag-grid-community ag-grid-react react-dom-factories
+    $ npm i --save ag-grid-community ag-grid-react
 
 #### Import the grid and styles
 

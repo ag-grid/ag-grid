@@ -73,7 +73,7 @@ function getData(count: number) {
   return rowData
 }
 
-function setRowData(rowCount: number) {
+function updateRowData(rowCount: number) {
   gridOptions.api!.setRowData(getData(rowCount));
 
   document.querySelector('#currentRowCount')!.innerHTML = `${rowCount}`;

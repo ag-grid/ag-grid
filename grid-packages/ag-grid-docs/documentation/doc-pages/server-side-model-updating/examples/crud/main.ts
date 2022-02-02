@@ -21,6 +21,11 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
   serverSideStoreType: 'partial',
+  getRowNodeId: getRowNodeId
+}
+
+function getRowNodeId(data: any) {
+  return data.id;
 }
 
 // setup the grid after the page has finished loading
@@ -31,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
+      // add id to data
+      let idSequence = 0;
+      data.forEach(function (item: any) {
+        item.id = idSequence++
+      });
       var datasource = createMyDataSource(data)
       gridOptions.api!.setServerSideDatasource(datasource)
     })
