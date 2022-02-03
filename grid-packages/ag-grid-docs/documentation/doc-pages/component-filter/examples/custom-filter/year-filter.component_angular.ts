@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { AgFilterComponent } from "@ag-grid-community/angular";
+import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
@@ -17,7 +17,7 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
       </div>
     `
 })
-export class YearFilter implements AgFilterComponent {
+export class YearFilter implements IFilterAngularComp {
   params!: IFilterParams;
   year = 'All';
 

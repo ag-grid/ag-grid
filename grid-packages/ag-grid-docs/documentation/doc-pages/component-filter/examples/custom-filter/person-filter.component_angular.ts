@@ -1,6 +1,6 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
 
-import { AgFilterComponent } from "@ag-grid-community/angular";
+import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc } from "@ag-grid-community/core";
 
 @Component({
@@ -20,7 +20,7 @@ import { IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc } from "
       </div>
     `
 })
-export class PersonFilter implements AgFilterComponent {
+export class PersonFilter implements IFilterAngularComp {
     params!: IFilterParams;
     filterText = '';
 
