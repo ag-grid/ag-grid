@@ -1,8 +1,15 @@
 import { VanillaFrameworkOverrides } from "@ag-grid-community/core";
-import GroupCellRenderer from "./cellRenderer/groupCellRenderer";
-import DetailCellRenderer from "./cellRenderer/detailCellRenderer";
+import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
+import DetailCellRenderer from "../reactUi/cellRenderer/detailCellRenderer";
 
 export class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
+
+    private readonly reactUi: boolean;
+
+    constructor(reactUi: boolean) {
+        super();
+        this.reactUi = reactUi;
+    }
 
     private frameworkComponents: any = {
         agGroupCellRenderer: GroupCellRenderer,
@@ -11,6 +18,7 @@ export class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     };
 
     public frameworkComponent(name: string): any {
+        if (!this.reactUi) { return; }
         return this.frameworkComponents[name];
     }
 

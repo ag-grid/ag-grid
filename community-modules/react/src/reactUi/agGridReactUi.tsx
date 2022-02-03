@@ -6,7 +6,7 @@ import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
 import GridComp from './gridComp';
-import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
+import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
 export class AgGridReactUi extends Component<AgReactUiProps, { context: Context | undefined }> {
 
@@ -54,7 +54,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this.portalManager)
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides()
+            frameworkOverrides: new ReactFrameworkOverrides(true)
         };
 
         this.gridOptions = this.props.gridOptions || {};

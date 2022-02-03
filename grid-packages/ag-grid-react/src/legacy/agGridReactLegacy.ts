@@ -17,6 +17,7 @@ import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/c
 import { AgGridReactProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
+import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
@@ -75,7 +76,8 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
                 agGridReact: this,
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this, this.portalManager)
             },
-            modules
+            modules,
+            frameworkOverrides: new ReactFrameworkOverrides(false)
         };
 
         const gridOptions = this.props.gridOptions || {};
