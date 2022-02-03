@@ -22,7 +22,7 @@
             ]
           },
           {
-            "title": "Best Practices",
+            "title": "Hooks",
             "icon": "react",
             "url": "/react-hooks/",
             "pane": "left",

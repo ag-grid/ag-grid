@@ -1,9 +1,9 @@
 ---
-title: "Best Practices"
+title: "React Hooks"
 frameworks: ["react"]
 ---
 
-AG Grid fits perfectly into the React rendering ecosystem. This page explains best practices for using React with AG Grid.
+AG Grid fits perfectly into the React rendering ecosystem. This page explains best practices for using React Hooks with AG Grid.
 
 This page assumes you are using React Hooks and not React Classes.
 

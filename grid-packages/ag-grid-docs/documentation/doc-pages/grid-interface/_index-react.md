@@ -31,6 +31,10 @@
 | />
 | ```
 |
+| ## React Hooks
+|
+| When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](/react-hooks/) for best practices on using React Hooks with the grid.
+|
 | ## Access the Grid & Column API
 |
 | The API of the grid can be referenced through the component's React Reference.
@@ -40,6 +44,12 @@
 | const gridRef = useRef();
 |
 | const myListener = ()=> {
+|     // api and columnApi on the gridRef object
+|     const {api, columnApi} = gridRef.current;
+|
+|     // api's will be null before grid initialised
+|     if (api==null || columnApi==null) { return; }
+|
 |     // access the Grid API
 |     gridRef.api.deselectAll();
 |
@@ -113,6 +123,8 @@
 | <AgGridReact
 |     gridOptions={gridOptions}
 | ```
+|
+| Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.rowData` will only get used once when the grid is initialised, not if you change `gridOptions.rowData` after the grid is initialised. For this reason, while using React, it's best only use Grid Options for properties that do not change.
 |
 | Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
 |
