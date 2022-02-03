@@ -25,7 +25,7 @@ const App = () => {
 
 For application that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState` over `useMemo` as loading data usually aligns with changing state in your application.
 
-All examples in the documentation use `useState` for Row Data and Column Definitions. However all code snippets in the documentation leave these hooks out for easier reading.
+All examples in the documentation use `useState` for Row Data. However all code snippets in the documentation leave these hooks out for easier reading.
 
 ## Column Definitions
 
@@ -61,7 +61,7 @@ const App = () => {
 
 All examples in the documentation use `useState` for Column Definitions. However all code snippets in the documentation leave these hooks out for easier reading.
 
-It is also possible to define Columns using HTML Markup. We do not recommend this. This is for the same reason as above, in that each time the parent component is rendered, a new set of Column Definitions is created and passed to the grid, potentially resetting state of the Columns.
+It is also possible to define Columns using HTML Markup. We do not recommend this. This is for the same reason as above, in that each time the parent component is rendered, a new set of Column Definitions is created and passed to the grid, potentially resetting state of the Columns. By providing Column Definitions via JavaScript and via a grid property and using React Hooks `useState` and / or `useMemo`), provides control on when new Column Definitions are provided to the grid.
 
 ```jsx
 // do NOT define Columns in HTML like this
