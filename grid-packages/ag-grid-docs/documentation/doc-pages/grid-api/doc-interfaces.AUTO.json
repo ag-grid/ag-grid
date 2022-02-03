@@ -7143,7 +7143,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IFloatingFilterParams<P>" },
         "returnType": "AgPromise<void> | void",
@@ -7506,7 +7506,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7518,7 +7518,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -7530,7 +7530,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -7661,7 +7661,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7673,7 +7673,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -7685,7 +7685,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -8723,7 +8723,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IHeaderParams" },
         "returnType": "AgPromise<void> | void",
@@ -8833,7 +8833,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IHeaderGroupParams" },
         "returnType": "AgPromise<void> | void",
@@ -11127,7 +11127,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -11619,7 +11619,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -12246,7 +12246,7 @@
   },
   "IFilter": {
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12258,7 +12258,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12270,7 +12270,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -12291,7 +12291,7 @@
   },
   "IFilterComp": {
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12303,7 +12303,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12315,7 +12315,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -12351,7 +12351,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IFilterParams" },
         "returnType": "AgPromise<void> | void",
@@ -12759,7 +12759,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12771,7 +12771,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12783,7 +12783,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -12963,7 +12963,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -14061,7 +14061,7 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -14073,7 +14073,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -15144,7 +15144,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IStatusPanelParams" },
         "returnType": "AgPromise<void> | void",
@@ -15186,7 +15186,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IToolPanelParams" },
         "returnType": "AgPromise<void> | void",
@@ -16416,7 +16416,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ICellRendererParams" },
         "returnType": "AgPromise<void> | void",
@@ -16599,7 +16599,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IDateParams" },
         "returnType": "AgPromise<void> | void",
@@ -16703,7 +16703,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ILoadingOverlayParams" },
         "returnType": "AgPromise<void> | void",
@@ -16736,7 +16736,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "INoRowsOverlayParams" },
         "returnType": "AgPromise<void> | void",
@@ -16992,7 +16992,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ITooltipParams" },
         "returnType": "AgPromise<void> | void",

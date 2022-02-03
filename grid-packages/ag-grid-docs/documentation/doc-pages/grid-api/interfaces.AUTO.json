@@ -4131,7 +4131,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IFloatingFilterParams<P>)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IFloatingFilterParams<P>)": "/** The init(params) method is called on the component once. */"
     }
   },
   "BaseFloatingFilterChange": {
@@ -4352,11 +4352,11 @@
     "docs": {
       "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
     }
@@ -4441,11 +4441,11 @@
     "docs": {
       "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
       "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
@@ -5035,7 +5035,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "SelectionCount": {
@@ -5084,7 +5084,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "IHeaderFilterCellComp": {
@@ -6573,7 +6573,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
   "ChartType": {
@@ -6767,7 +6767,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
   "IContextMenuFactory": {
@@ -7169,11 +7169,11 @@
       "getModelAsString?(model: any)": "string"
     },
     "docs": {
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
     }
@@ -7195,17 +7195,17 @@
       "init?(params: IFilterParams)": "AgPromise<void> | void"
     },
     "docs": {
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IFilterParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IFilterParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "IDoesFilterPassParams": {
@@ -7375,11 +7375,11 @@
       "getChildFilterInstance(index: number)": "/** @returns the child filter instance at the given index.\n */",
       "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
     }
@@ -7477,7 +7477,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: T)": "/** The init(params) method is called on the component once. */"
     }
   },
   "IRangeService": {
@@ -7924,10 +7924,10 @@
       "setMiniFilter(newMiniFilter: string | null)": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
       "getModelFromUi()": "/** Returns the current UI state (potentially un-applied). */",
       "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
-      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
     }
@@ -8619,7 +8619,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "IToolPanelParams": {
@@ -8640,7 +8640,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IToolPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IToolPanelParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "ToolPanelColumnCompParams": {
@@ -9350,7 +9350,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: ICellRendererParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: ICellRendererParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "ICellRendererFunc": {
@@ -9454,7 +9454,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IDateParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "init?(params: IDateParams)": "/** The init(params) method is called on the component once. */",
       "getDate()": "/** Returns the current date represented by this editor */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */"
@@ -9503,7 +9503,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: ILoadingOverlayParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: ILoadingOverlayParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "INoRowsOverlayParams": { "meta": {}, "type": { "api": "GridApi" } },
@@ -9519,7 +9519,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: INoRowsOverlayParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: INoRowsOverlayParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "LoadingType": {
@@ -9658,7 +9658,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: ITooltipParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: ITooltipParams)": "/** The init(params) method is called on the component once. */"
     }
   },
   "LoadCompleteEvent": {

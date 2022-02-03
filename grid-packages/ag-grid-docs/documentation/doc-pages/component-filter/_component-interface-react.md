@@ -32,6 +32,9 @@
 |    // Client Side Row Model, use gridApi.forEachLeafNode(callback)
 |    onNewRowsLoaded?(): void;
 |
+|    // Called whenever any filter is changed.
+|    onAnyFilterChanged?(): void;
+|
 |    // Gets called when the column is destroyed. If your custom filter needs to do
 |    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
 |    // made 'not visible', as the GUI is kept to be shown again if the user selects

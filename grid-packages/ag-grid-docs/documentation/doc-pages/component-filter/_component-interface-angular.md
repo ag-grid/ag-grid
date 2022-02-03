@@ -4,7 +4,7 @@
 |The interface for a custom filter component is as follows:
 |
 |```ts
-|interface AgFilterComponent {
+|interface IFilterAngularComp {
 |    // params for filter operations (see below for more details)
 |    agInit(params: IFilterParams): void;
 |
@@ -35,6 +35,9 @@
 |    // Country filter). To get the list of available values from within this method from the
 |    // Client Side Row Model, use gridApi.forEachLeafNode(callback)
 |    onNewRowsLoaded?(): void;
+|
+|    // Called whenever any filter is changed.
+|    onAnyFilterChanged?(): void;
 |
 |    // Gets called when the column is destroyed. If your custom filter needs to do
 |    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
