@@ -44,7 +44,7 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |    `
 |})
 |export class AppComponent {
-|    private components = {
+|    public components = {
 |        agDateInput: CustomDateComponent
 |    };
 |```
