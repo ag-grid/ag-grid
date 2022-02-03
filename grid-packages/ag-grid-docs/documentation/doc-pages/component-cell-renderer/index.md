@@ -93,13 +93,14 @@ md-include:data-in-renderer-angular.md
 md-include:data-in-renderer-react.md
 md-include:data-in-renderer-vue.md
 
+md-include:renderer-function-javascript.md
+md-include:renderer-function-angular.md
+md-include:renderer-function-vue.md 
+
 <!-- 
 // taking these out, as they are regarding using JavaScript Function inside Framework Grid,
 // which isn't supported with the new xxxComp attributes.
-md-include:renderer-function-javascript.md
-md-include:renderer-function-angular.md
 md-include:renderer-function-react.md
-md-include:renderer-function-vue.md 
 -->
 
 [[only-javascript]]
