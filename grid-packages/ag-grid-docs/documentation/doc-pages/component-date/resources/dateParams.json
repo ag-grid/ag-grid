@@ -1,0 +1,13 @@
+{
+    "_config_": {},
+    "IDateParams": {
+        "filterParams": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IRowModel"
+                ],
+                "include": []
+            }
+        }
+    }
+}
