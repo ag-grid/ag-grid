@@ -31,8 +31,8 @@ export class DropZoneColumnComp extends Component {
 
     private static TEMPLATE = /* html */
         `<span role="option" tabindex="0">
-          <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle"></span>
-          <span ref="eText" class="ag-column-drop-cell-text"></span>
+          <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
+          <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
         </span>`;
 
@@ -48,7 +48,6 @@ export class DropZoneColumnComp extends Component {
     @RefSelector('eButton') private eButton: HTMLElement;
 
     private displayName: string | null;
-
     private popupShowing = false;
 
     constructor(
@@ -84,13 +83,15 @@ export class DropZoneColumnComp extends Component {
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const label = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        const { name, aggFuncName } = this.getColumnAndAggFuncName();
+
         let extraDescription = '';
 
         if (this.valueColumn && !isFunctionsReadOnly) {
             extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
         }
 
-        _.setAriaLabel(eGui, `${this.displayName} ${label} ${extraDescription}`);
+        _.setAriaLabel(eGui, `${aggFuncName} ${name} ${label} ${extraDescription}`);
 
         this.setupTooltip();
     }
@@ -173,27 +174,30 @@ export class DropZoneColumnComp extends Component {
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
-    private setTextValue(): void {
-        let displayValue: string | null;
+    private getColumnAndAggFuncName(): { name: string, aggFuncName: string } {
+        const name = this.displayName as string;
+        let aggFuncName: string = '';
 
         if (this.valueColumn) {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
-
-            displayValue = `${aggFuncStringTranslated}(${this.displayName})`;
-        } else {
-            displayValue = this.displayName;
+            aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
+        return { name, aggFuncName };
+    }
+
+    private setTextValue(): void {
+        const { name, aggFuncName } = this.getColumnAndAggFuncName();
+        const displayValue = this.valueColumn ? `${aggFuncName}(${name})` : name;
         const displayValueSanitised: any = _.escapeString(displayValue);
+
         this.eText.innerHTML = displayValueSanitised;
     }
 
     private onShowAggFuncSelection(): void {
-
         if (this.popupShowing) { return; }
 
         this.popupShowing = true;
@@ -291,6 +295,7 @@ export class DropZoneColumnComp extends Component {
         const aggFuncString = value.toString();
         const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
+
         return comp;
     }
 
