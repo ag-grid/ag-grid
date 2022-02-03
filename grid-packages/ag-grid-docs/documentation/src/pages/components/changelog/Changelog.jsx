@@ -353,7 +353,7 @@ const Changelog = ({ location }) => {
                         columnDefs={COLUMN_DEFS}
                         rowData={rowData}
                         suppressReactUi={true}
-                        frameworkComponents={{
+                        components={{
                             myDetailCellRenderer: DetailCellRenderer,
                             paddingCellRenderer: PaddingCellRenderer,
                             chevronButtonCellRenderer: ChevronButtonCellRenderer,

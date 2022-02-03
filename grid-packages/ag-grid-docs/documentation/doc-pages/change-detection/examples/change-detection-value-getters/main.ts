@@ -12,7 +12,6 @@ const gridOptions: GridOptions = {
       headerName: 'Total',
       valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',
       editable: false,
-      aggFunc: 'sum',
       cellClass: 'total-col',
     },
   ],
@@ -23,7 +22,6 @@ const gridOptions: GridOptions = {
   columnTypes: {
     valueColumn: {
       editable: true,
-      aggFunc: 'sum',
       valueParser: 'Number(newValue)',
       filter: 'agNumberColumnFilter',
     },

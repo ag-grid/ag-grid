@@ -31,6 +31,11 @@ const gridOptions: GridOptions = {
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   suppressAggFuncInHeader: true,
   animateRows: true,
+  getRowNodeId: getRowNodeId
+}
+
+function getRowNodeId(data: any) {
+  return Math.random().toString();
 }
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
@@ -88,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
+
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)
 

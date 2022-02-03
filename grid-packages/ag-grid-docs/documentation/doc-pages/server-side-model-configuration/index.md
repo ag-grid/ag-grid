@@ -15,9 +15,11 @@ Applications can fine-tune the Server-Side Row Model based on specific applicati
 
 When experimenting with different configurations it is useful to enable debug mode as follows:
 
-```js
-gridOptions.debug = true;
-```
+<snippet>
+const gridOptions = {
+    debug: true
+}
+</snippet>
 
 The screenshot below is taken from the browser's dev console when `debug` is enabled:
 

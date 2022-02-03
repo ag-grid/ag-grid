@@ -19,7 +19,6 @@ const gridOptions: GridOptions = {
   serverSideStoreType: 'partial',
   treeData: true,
   columnDefs: columnDefs,
-  rowSelection: 'multiple',
   animateRows: true,
   cacheBlockSize: 10,
   isServerSideGroupOpenByDefault: function (params) {

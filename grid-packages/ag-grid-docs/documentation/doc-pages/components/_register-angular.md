@@ -11,12 +11,12 @@
 |
 |When registering an Angular Component by reference you simply pass the Component to the place you want it used (i.e. Cell Renderer, Filter etc).
 |
-|In this example we're specifying that we want our `CubeComponent` Angular Component as a Cell Renderer in the `Cube` column:
+|In this example we're specifying that we want our Angular `CubeComponent` as a Cell Renderer in the `Cube` column:
 |
 |```tsx
 |//...other imports
-|import {Component} from '@angular/core';
-|import CubeComponent from './CubeComponent';
+|import { Component } from '@angular/core';
+|import { CubeComponent } from './cube.component';
 |
 |@Component({
 |selector: 'app-root',
@@ -44,13 +44,13 @@
 |When registering an Angular component by name you need to first register the component within the grid `components` property,
 |then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
 |
-|In this example we've registered our `CubeComponent` Angular Component and given it a name of `cubeComponent` (this can be any name you choose).
+|In this example we've registered our Angular `CubeComponent` and given it a name of `cubeComponent` (this can be any name you choose).
 |We then specify that we want the previously registered `cubeComponent` to be used as a Cell Renderer in the `Cube` column:
 |
 |```tsx
 |//...other imports
-|import {Component} from '@angular/core';
-|import CubeComponent from './CubeComponent';
+|import { Component } from '@angular/core';
+|import { CubeComponent } from './cube.component';
 |
 |@Component({
 |selector: 'app-root',

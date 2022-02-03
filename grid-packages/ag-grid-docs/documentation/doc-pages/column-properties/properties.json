@@ -98,12 +98,6 @@
                 "url": "/component-header/"
             }
         },
-        "headerComponentFramework": {
-            "more": {
-                "name": "Header Component",
-                "url": "/component-header/"
-            }
-        },
         "headerComponentParams": {},
         "menuTabs": {},
         "columnsMenuParams": {
@@ -216,12 +210,6 @@
                 "include": []
             }
         },
-        "cellRendererFramework": {
-            "more": {
-                "name": "Cell Renderer",
-                "url": "/cell-rendering/"
-            }
-        },
         "cellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
@@ -283,12 +271,6 @@
                 "url": "/filtering/#configuring-filters-on-columns"
             }
         },
-        "filterFramework": {
-            "more": {
-                "name": "Custom Filter",
-                "url": "/component-filter"
-            }
-        },
         "filterParams": {
             "more": {
                 "name": "Filter Parameters",
@@ -322,12 +304,6 @@
                 "include": []
             }
         },
-        "floatingFilterComponentFramework": {
-            "more": {
-                "name": "Floating Filter Component",
-                "url": "/component-floating-filter/"
-            }
-        },
         "floatingFilterComponentParams": {
             "more": {
                 "name": "Floating Filter Parameters",
@@ -357,12 +333,6 @@
                     "ICellEditorComp"
                 ],
                 "include": []
-            }
-        },
-        "cellEditorFramework": {
-            "more": {
-                "name": "Cell Editors",
-                "url": "/component-cell-editor/"
             }
         },
         "cellEditorParams": {},
@@ -473,7 +443,6 @@
                 "include": []
             }
         },
-        "headerGroupComponentFramework": {},
         "headerGroupComponentParams": {}
     }
 }

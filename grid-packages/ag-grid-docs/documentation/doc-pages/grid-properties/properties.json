@@ -347,12 +347,6 @@
                 "url": "/component-loading-cell-renderer/"
             }
         },
-        "loadingCellRendererFramework": {
-            "more": {
-                "name": "Loading Cell Renderer",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
         "loadingCellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
@@ -396,12 +390,6 @@
                     "ICellRendererComp"
                 ],
                 "include": []
-            }
-        },
-        "detailCellRendererFramework": {
-            "more": {
-                "name": "Custom Detail",
-                "url": "/master-detail-custom-detail/"
             }
         },
         "detailCellRendererParams": {
@@ -503,7 +491,6 @@
                 "include": []
             }
         },
-        "loadingOverlayComponentFramework": {},
         "loadingOverlayComponentParams": {},
         "suppressLoadingOverlay": {},
         "overlayNoRowsTemplate": {},
@@ -519,7 +506,6 @@
                 "include": []
             }
         },
-        "noRowsOverlayComponentFramework": {},
         "noRowsOverlayComponentParams": {},
         "suppressNoRowsOverlay": {}
     },
@@ -733,7 +719,6 @@
                 "include": []
             }
         },
-        "fullWidthCellRendererFramework": {},
         "fullWidthCellRendererParams": {}
     },
     "rowGrouping": {
@@ -840,7 +825,6 @@
                 "include": []
             }
         },
-        "groupRowRendererFramework": {},
         "groupRowRendererParams": {},
         "suppressDragLeaveHidesColumns": {
             "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",

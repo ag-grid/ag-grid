@@ -15,9 +15,7 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector,
-    PopupService,
-    FocusService,
+    RefSelector
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";

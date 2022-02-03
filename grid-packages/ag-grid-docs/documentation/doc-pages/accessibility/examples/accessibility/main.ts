@@ -8,9 +8,9 @@ const gridOptions: GridOptions = {
     { field: 'year', width: 90 },
     { field: 'date', width: 110 },
     { field: 'sport', width: 110 },
-    { field: 'gold', width: 110, aggFunc: 'sum' },
-    { field: 'silver', width: 110, aggFunc: 'sum' },
-    { field: 'bronze', width: 110, aggFunc: 'sum' },
+    { field: 'gold', width: 110 },
+    { field: 'silver', width: 110 },
+    { field: 'bronze', width: 110 },
   ],
   defaultColDef: {
     editable: true,

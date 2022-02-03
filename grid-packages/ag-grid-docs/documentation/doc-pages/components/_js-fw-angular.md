@@ -9,9 +9,9 @@
 |
 |```tsx
 |//...other imports
-|import {Component} from '@angular/core';
+|import { Component } from '@angular/core';
 |import JavascriptComponent from './JavascriptComponent.js';
-|import AngularComponent from './AngularComponent';
+|import { AngularComponent }  from './angular.component';
 |
 |@Component({
 |selector: 'app-root',
