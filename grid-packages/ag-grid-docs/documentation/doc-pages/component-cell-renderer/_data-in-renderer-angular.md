@@ -8,11 +8,16 @@
 |    selector: 'my-app',
 |    template: `<span>{{params?.data?.theBoldValue}}</span>`
 |})
-|class CellRendererComponent {
+|class CellRendererComponent implements ICellRendererAngularComp {
 |    params: ICellRendererParams;
 |
 |    agInit(ICellRendererParams) {
 |        this.params = params;
+|    }
+|
+|    refresh(ICellRendererParams) {
+|        // Let AG Grid take care of refreshing by recreating our cell renderer.
+|        return false;
 |    }
 |}
 |```

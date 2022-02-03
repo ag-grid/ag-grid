@@ -23,6 +23,7 @@ import {
 } from "@ag-grid-community/core";
 
 export interface AgFrameworkComponent<T> {
+    /** Mandatory - Params for rendering this component. */
     agInit(params: T): void;
 
     /* deprecated */
@@ -79,5 +80,5 @@ export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelPa
 }
 
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {
-    
+
 }
