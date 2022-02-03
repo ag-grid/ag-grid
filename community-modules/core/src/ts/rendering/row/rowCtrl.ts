@@ -889,6 +889,8 @@ export class RowCtrl extends BeanStub {
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
 
+        if (this.rowType !== RowType.FullWidthDetail) { return; }
+
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
 
         const checkRowSizeFunc = () => {
