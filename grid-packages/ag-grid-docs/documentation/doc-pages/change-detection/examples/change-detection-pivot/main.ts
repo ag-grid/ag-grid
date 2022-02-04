@@ -65,16 +65,18 @@ function random() {
 function getRowData() {
   var rowData = []
   for (var i = 1; i <= 100; i++) {
-    var row = createRow(i)
+    var row = createRow()
     rowData.push(row)
   }
   return rowData
 }
 
-function createRow(i: number): Student {
+var studentId;
+function createRow() {
+  studentId = studentId ? studentId : 10023;
   var randomNumber = random()
   return {
-    student: i + 10023,
+    student: studentId++,
     points: (randomNumber % 60) + 40,
     course: ['Science', 'History'][randomNumber % 3 === 0 ? 0 : 1],
     yearGroup: 'Year ' + ((randomNumber % 4) + 1), // 'Year 1' to 'Year 4'
