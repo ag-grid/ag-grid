@@ -162,7 +162,7 @@ const gridOptions = {
 
 Also note the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data.
 
-## Example: File Browser
+## File Browser Example
 
 The following example presents a more complex example which includes Aggregation and Filtering:
 
