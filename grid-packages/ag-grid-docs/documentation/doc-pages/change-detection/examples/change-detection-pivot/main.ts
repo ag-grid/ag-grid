@@ -71,7 +71,7 @@ function getRowData() {
   return rowData
 }
 
-var studentId;
+var studentId: number;
 function createRow() {
   studentId = studentId ? studentId : 10023;
   var randomNumber = random()
