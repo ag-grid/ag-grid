@@ -6,6 +6,7 @@ import stackblitzSvg from './stackblitz.svg';
 import reactuiSvg from './reactui.svg';
 import thinksterSvg from './thinkster.svg';
 import youtubeSvg from './youtube.svg';
+import reactHooksSvg from './reactHooks.svg'
 
 import plunkerSvg from './plunker.svg'
 
@@ -17,6 +18,7 @@ const logos = {
     plunker: plunkerSvg,
     stackblitz: stackblitzSvg,
     reactui: reactuiSvg,
+    reactHooks: reactHooksSvg,
     thinkster: thinksterSvg,
     youtube: youtubeSvg
 };

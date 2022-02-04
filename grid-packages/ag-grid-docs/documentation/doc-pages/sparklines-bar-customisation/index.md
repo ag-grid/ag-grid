@@ -301,8 +301,7 @@ The following example shows how to build progress bars using bar sparklines. Not
 - In order to display a progress bar in a sparkline, the data array should only contain a single value, more values in the data array will produce additional bars in the same sparkline.
 - `valueAxisDomain` has been set to `[0, 100]`, indicating that the supplied data across all sparklines will contain values from `0` to `100`.
 - This allows easy comparisons of percentages across the different sparklines in the grid column as all sparklines will have the same domain.
-- A `formatter` callback function is supplied to return format styles of type `BarFormat`, based on the data represented by individual bars.
-- The `formatter` uses the `yValue` provided in the params object to dynamically set the fill color of each progress bar.
+- The `formatter` callback function is used to dynamically set the fill color of each progress bar to different color values based on the data `yValue` .
 - Percentage Y values are displayed on the inside end of each bar by configuring `label` options.
 - The axis line and padding are removed to allow more space in each cell for the progress bar.
 
