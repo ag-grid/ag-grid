@@ -13,7 +13,7 @@ frameworks: ["angular", "vue"]
 |```tsx
 |//...other imports
 |import {Component} from '@angular/core';
-|import CubeComponent from './CubeComponent';
+|import {CubeComponent} from './cube.component';
 |
 |@Component({
 |   selector: 'app-root',
