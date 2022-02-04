@@ -47,11 +47,11 @@
 |    ]
 |})
 |export class CustomHeader implements IHeaderAngularComp {
-|    private params: any;
+|    public params: IHeaderParams;
 |
-|    private ascSort: string;
-|    private descSort: string;
-|    private noSort: string;
+|    public ascSort: string;
+|    public descSort: string;
+|    public noSort: string;
 |
 |    @ViewChild('menuButton', {read: ElementRef}) public menuButton;
 |
