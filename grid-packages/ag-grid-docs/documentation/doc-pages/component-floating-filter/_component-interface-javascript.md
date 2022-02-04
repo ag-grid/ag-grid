@@ -4,12 +4,12 @@
 |The interface for a custom filter component is as follows:
 |
 |```ts
-|interface IFloatingFilterComp {
+|interface IFloatingFilterComp<ParentFilter = any> {
 |    // Mandatory methods
 |
 |    // The init(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
-|    init(params: IFloatingFilterParams): void;
+|    init(params: IFloatingFilterParams<ParentFilter>): void;
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter

@@ -1,5 +1,5 @@
 [[only-javascript]]
-|Below is a simple example of cell renderer class:
+|Below is an example of floating filter component:
 |
 |```js
 |class NumberFloatingFilterComponent {

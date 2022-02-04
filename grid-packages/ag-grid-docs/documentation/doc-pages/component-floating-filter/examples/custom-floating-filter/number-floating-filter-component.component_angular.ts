@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { AgFloatingFilterComponent } from "@ag-grid-community/angular";
+import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
 import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
 
 export interface CustomParams {
@@ -12,7 +12,7 @@ export interface CustomParams {
     template: `&gt; <input [style.color]="params.color" style="width: 30px" type="number" min="0" [(ngModel)]="currentValue"
                            (input)="onInputBoxChanged($event)"/>`
 })
-export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
+export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
     params!: IFloatingFilterParams<ISimpleFilter> & CustomParams;
     currentValue: number | null | string = null;
     style: any;
@@ -35,7 +35,7 @@ export class NumberFloatingFilterComponent implements AgFloatingFilterComponent 
     }
 
     onInputBoxChanged() {
-        if (!!!this.currentValue) {
+        if (!this.currentValue) {
             // Remove the filter
             this.params.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged(null, null);
