@@ -2,11 +2,11 @@
 |Below is a simple example of filter component class:
 |
 |```js
-|import {AgFilterComponent} from "@ag-grid-community/angular";
+|import {IFilterAngularComp} from "@ag-grid-community/angular";
 |import {IDoesFilterPassParams, IFilterParams} from "@ag-grid-community/core";
 |
 |@Component({
-|    selector: 'year-component',
+|    selector: 'year-filter',
 |    template: `
 |      <div style="display: inline-block; width: 400px;">
 |           <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter</div>
@@ -19,7 +19,7 @@
 |      </div>
 |    `
 |})
-|export class YearFilter implements AgFilterComponent {
+|export class YearFilter implements IFilterAngularComp {
 |    params: IFilterParams;
 |    year: string = 'All';
 |

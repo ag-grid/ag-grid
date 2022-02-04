@@ -19,7 +19,8 @@ export class RichComponent {
     constructor() {
         this.gridOptions = {
             rowData: RichComponent.createRowData(),
-            columnDefs: RichComponent.createColumnDefs()
+            columnDefs: RichComponent.createColumnDefs(),
+            rowHeight: 50
         };
     }
 

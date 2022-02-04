@@ -14,22 +14,25 @@
 |    getGui(): HTMLElement;
 |
 |    // Returns the current date represented by this editor
-|    getDate(): Date;
+|    getDate(): Date | null;
 |
 |    // Sets the date represented by this component
-|    setDate(date: Date): void;
+|    setDate(date: Date | null): void;
 |
 |    // Optional methods
 |
+|    // Sets the disabled state of this component
+|    setDisabled?(disabled: boolean): void;
+|
 |    // Sets the input text placeholder
-|    setInputPlaceholder(placeholder: string): void;
+|    setInputPlaceholder?(placeholder: string): void;
 |
 |    // Sets the input text aria label
-|    setInputAriaLabel(label: string): void;
+|    setInputAriaLabel?(label: string): void;
 |
 |    // Gets called when the component is destroyed. If your custom component needs to do
 |    // any resource cleaning up, do it here.
-|    destroy(): void;
+|    destroy?(): void;
 |}
 |```
 |

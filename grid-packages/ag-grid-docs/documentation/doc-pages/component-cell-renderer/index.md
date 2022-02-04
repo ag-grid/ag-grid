@@ -93,20 +93,21 @@ md-include:data-in-renderer-angular.md
 md-include:data-in-renderer-react.md
 md-include:data-in-renderer-vue.md
 
+md-include:renderer-function-javascript.md
+md-include:renderer-function-angular.md
+md-include:renderer-function-vue.md 
+
 <!-- 
 // taking these out, as they are regarding using JavaScript Function inside Framework Grid,
 // which isn't supported with the new xxxComp attributes.
-md-include:renderer-function-javascript.md
-md-include:renderer-function-angular.md
 md-include:renderer-function-react.md
-md-include:renderer-function-vue.md 
 -->
 
 [[only-javascript]]
 |[[note]]
 || You might be wondering how the grid knows if you have provided a Cell Renderer component class or
 || a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
-|| for the getGui() method in the prototype of the function (the only mandatory method in the cell renderer
+|| for the getGui() method in the prototype of the function (a mandatory method in the cell renderer
 || interface). If the getGui() method exists, it assumes a component, otherwise it assumes a function.
 
 ## Complex Cell Renderer Example
@@ -140,13 +141,13 @@ if (instances.length > 0) {
 }
 ```
 
-Not that this method will only return instances of the cell renderer that exists. Due to row and column virtualisation, renderers will only exists for the user can actually see due to horizontal and vertical scrolling.
+Note that this method will only return instances of the cell renderer that exists. Due to row and column virtualisation, renderers will only exist for cells that the user can actually see due to horizontal and vertical scrolling.
 
 The example below demonstrates custom methods on cell renderers called by the application. The following can be noted:
 
 - The medal columns are all using the user defined `MedalCellRenderer`. The cell renderer has an arbitrary method `medalUserFunction()` which prints some data to the console.
 - The **Gold** method executes a method on all instances of the cell renderer in the gold column.
-- The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled past the first row.
+- The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
 - The **All Cells** method executes a method on all instances of all cell renderers.
 
 <grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>

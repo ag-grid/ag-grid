@@ -64,7 +64,7 @@ There are two ways you can get fix this problem:
 |         Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
 |     `
 | })
-| class PartialMatchFilterComponent implements AgFilterComponent {
+| class PartialMatchFilterComponent implements IFilterAngularComp {
 |     ... // standard filter methods hidden
 |
 |     // put a custom method on the filter
@@ -75,7 +75,7 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance('name'); // assume filter on name column
+|     const angularFilterInstance = api.getFilterInstance('name') as PartialMatchFilterComponent; // assume filter on name column
 |     angularFilterInstance.myMethod();
 | }
 | ```

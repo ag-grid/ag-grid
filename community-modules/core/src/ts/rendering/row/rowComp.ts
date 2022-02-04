@@ -68,9 +68,7 @@ export class RowComp extends Component {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
-                if (this.rowCtrl.getRowType() === RowType.FullWidthDetail) {
-                    this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 this.setFullWidthRowComp(cellRenderer);
             } else {
                 this.beans.context.destroyBean(cellRenderer);

@@ -3,7 +3,7 @@
 |
 |```js
 |import {Component} from "@angular/core";
-|import {AgRendererComponent} from '@ag-grid-community/angular';
+|import {ICellRendererAngularComp} from '@ag-grid-community/angular';
 |import {ICellRendererParams} from "@ag-grid-community/core";
 |
 |@Component({
@@ -15,7 +15,7 @@
 |          </span>
 |    `
 |})
-|export class TotalValueRenderer implements AgRendererComponent {
+|export class TotalValueRenderer implements ICellRendererAngularComp {
 |    private cellValue: string;
 |
 |    // gets called once before the renderer is used
