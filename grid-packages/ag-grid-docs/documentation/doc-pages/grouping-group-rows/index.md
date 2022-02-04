@@ -15,8 +15,8 @@ To display each row group using group rows set `groupDisplayType = 'groupRows'` 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'sport' },
         { field: 'total' }
     ],
