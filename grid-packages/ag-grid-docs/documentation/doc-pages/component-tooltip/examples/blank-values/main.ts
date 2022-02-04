@@ -13,13 +13,13 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Athlete Col 1',
     field: 'athlete',
-    width: 150,
+    minWidth: 150,
     tooltipField: 'athlete',
   },
   {
     headerName: 'Athlete Col 2',
     field: 'athlete',
-    width: 150,
+    minWidth: 150,
     tooltipComponent: CustomTooltip,
     tooltipValueGetter: toolTipValueGetter,
   },

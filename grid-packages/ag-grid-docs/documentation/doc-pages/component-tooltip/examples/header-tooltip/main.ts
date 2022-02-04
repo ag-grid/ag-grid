@@ -19,14 +19,14 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       {
         headerName: 'Athlete Col 1',
         field: 'athlete',
-        width: 150,
+        minWidth: 150,
         headerTooltip: 'Athlete 1',
         tooltipField: 'athlete',
       },
       {
         headerName: 'Athlete Col 2',
         field: 'athlete',
-        width: 150,
+        minWidth: 150,
         headerTooltip: 'Athlete 2',
         tooltipComponent: CustomTooltip,
         tooltipValueGetter: tooltipValueGetter,
