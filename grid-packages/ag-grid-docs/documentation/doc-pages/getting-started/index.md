@@ -1269,12 +1269,11 @@ title: "Get Started with AG Grid"
 |
 | ## Getting Started
 |
-| <video-section id="6PA45adHun8" title="Getting Started Video Tutorial">
+| <video-section id="GTu79aWJT1E" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered) to a new React project, 
-| and configure some of the essential features of it. We will show you some of the
-|     fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the
-|     grid's visual appearance using Sass variables.
+|     and configure some essential features before showing you the fundamentals of the grid (passing properties, 
+|     using the API, etc...). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 | </video-section>
 |
 | <br/><br/>
