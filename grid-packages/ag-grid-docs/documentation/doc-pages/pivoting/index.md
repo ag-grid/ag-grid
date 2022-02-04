@@ -216,4 +216,4 @@ The example below shows mixing in different options for the row group column. Fo
 
 While pivoting, you can do delta changes to your data and have the grid reflect this delta changes with animations.
 
-This is demonstrated in the section on [Change Detection and Pivot](/change-detection/#change-detection-and-pivot), so rather that repeat, check out the example there.
+This is demonstrated in the section on [Change Detection and Pivot](/change-detection/#change-detection-and-pivot), so rather than repeat that, check out the example there.

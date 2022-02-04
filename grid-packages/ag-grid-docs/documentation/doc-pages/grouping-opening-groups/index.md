@@ -12,8 +12,8 @@ To open all groups down to a given group level use the `groupDefaultExpanded` gr
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', hide: true, rowGroup: true },
+        { field: 'year', hide: true, rowGroup: true },
         { field: 'sport' },
         { field: 'total' }
     ],
