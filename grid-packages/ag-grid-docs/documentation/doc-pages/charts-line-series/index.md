@@ -178,7 +178,7 @@ The time axis automatically selects an appropriate label format depending on the
 
 The chart will update whenever new data is supplied via the chart's or series' `data` property.
 
-<chart-example title='Real-Time Chart: Core Voltage' name='real-time' type='generated'></chart-example>
+<chart-example title='Real-Time Chart: Core Voltage' name='real-time' type='mixed'></chart-example>
 
 This example uses the `'time'` axis which is configured to show a tick every 5 seconds and to use the `%H:%M:%S` label format to show colon separated hours, minutes and seconds.
 
