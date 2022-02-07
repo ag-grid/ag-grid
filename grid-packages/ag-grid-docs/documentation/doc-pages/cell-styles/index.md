@@ -182,4 +182,4 @@ Below shows both cssClassRules snippets above in a full working example. The exa
 - Gold sets `cellStyle` implicitly. It is not dependent on the cell value.
 - Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
-<grid-example title='Cell Styling' name='cell-styling' type='generated'></grid-example>
+<grid-example title='Cell Styling' name='cell-styling' type='mixed'></grid-example>
