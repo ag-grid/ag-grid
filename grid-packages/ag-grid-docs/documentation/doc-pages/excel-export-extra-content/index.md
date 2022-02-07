@@ -51,7 +51,7 @@ The header and footer object accepts the following placeholders:
 
 In addition to exporting the Grid in the Excel file, you can also provide additional content on a separate sheet of the Excel file. This can be useful when you'd like to add a cover page to provide your users additional details on the data in this file.
 
-<grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"]}'></grid-example>
+<grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu", "setfilter"]}'></grid-example>
 
 ## Next Up
 
