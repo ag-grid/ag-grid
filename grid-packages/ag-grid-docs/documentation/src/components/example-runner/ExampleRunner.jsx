@@ -130,6 +130,10 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
         const vue3ExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, false, true, false);
 
         writeIndexHtmlFile(vue3ExampleInfo);
+    } else if (type === 'multi' && framework === 'javascript') {
+        const typescriptExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, true);
+
+        writeIndexHtmlFile(typescriptExampleInfo);
     }
 };
 
