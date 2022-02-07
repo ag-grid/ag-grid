@@ -37,7 +37,6 @@ rowNode.setSelected(true);
 
 ## Iterating Rows
 
-
 Sometimes you may want to iterate through all the Row Nodes in the grid. This can be done using the grid's iteration APIs. The iteration APIs go through every Row Node, regardless of whether the Row Node is displayed or not. For example, if grouping and the group is closed, the group's children are not displayed by the grid, however the children are included in the iteration 'for-each' methods.
 
 <snippet>
@@ -79,5 +78,5 @@ The example below shows the different For-Each API methods as follows:
 
 In the example, try applying some sorts and filters, and see how this impacts the different operations.
 
-<grid-example title='Using For-Each' name='using-for-each' type='generated' options='{ "enterprise": true, "modules": ["clientside",  "rowgrouping"], "exampleHeight": 590 }'></grid-example>
+<grid-example title='Using For-Each' name='using-for-each' type='generated' options='{ "enterprise": true, "modules": ["clientside",  "menu", "setfilter", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 

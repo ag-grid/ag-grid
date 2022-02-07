@@ -41,7 +41,7 @@ This example passes a `chartContainer` to the API to place the chart in a locati
 - The two pie charts have legends beneath. This is configured in the `chartThemeOverrides`.
 
 
-<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "exampleHeight": 700 }'></grid-example>
+<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
 
 ## Pivot Charts
 

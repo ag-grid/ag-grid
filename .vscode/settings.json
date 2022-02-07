@@ -4,7 +4,10 @@
     "search.exclude": {
         "**/node_modules": true,
         "**/build": true,
-        "**/dist": true
+        "**/dist": true,
+        "**/ag-grid-docs/_dev/**": true,
+        "**/ag-grid-docs/public/**": true,
+        "**/ag-grid-docs/.cache/**": true
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "[typescript]": {

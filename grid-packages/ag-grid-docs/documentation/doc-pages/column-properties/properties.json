@@ -374,6 +374,8 @@
                 "sum",
                 "min",
                 "max",
+                "count",
+                "avg",
                 "first",
                 "last"
             ]

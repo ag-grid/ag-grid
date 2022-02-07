@@ -23,13 +23,13 @@
           },
           {
             "title": "Hooks",
-            "icon": "react",
+            "icon": "reactHooks",
             "url": "/react-hooks/",
             "pane": "left",
             "frameworks": [
               "react"
             ]
-          },          
+          },
           {
             "title": "Video Tutorial",
             "url": "{video-tutorial}",

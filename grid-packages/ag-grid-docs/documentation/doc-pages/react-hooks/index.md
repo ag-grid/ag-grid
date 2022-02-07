@@ -136,7 +136,7 @@ For callbacks (both [Event Listeners](/grid-events/) and [Grid Callbacks](/grid-
 
 Not using `useCallback()` has no adverse effect on the grid, as changing such does not have any impact on the grid state (unlike Row Data and Column Definitions, which when changed, have immediate impact on the grid). Changing a callback means the new callback will be used next time it is needed.
 
-If you do use `useCallback()`, make sure you set correct dependencies in order to avoid stale closures. We get many support issues due application bugs resulting from stale closures.
+If you do use `useCallback()`, make sure you set correct dependencies in order to avoid stale closures. We get many support issues due to application bugs resulting from stale closures.
 
 ```jsx
 const App = () => {
@@ -199,7 +199,7 @@ const App = () => {
 
 ## Immutable Data
 
-When using the grid against an Immutable Store, it's best to set `immutableData=true` and providing the callback `getRowNodeId()` to allow the grid to identify rows.
+When using the grid against an Immutable Store, it's best to set `immutableData=true` and provide the callback `getRowNodeId()` to allow the grid to identify rows.
 
 With both of these configured, the grid is able to identify Rows between new lists of Row Data. For example if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows that exist in both the old and new lists of Row Data.
 

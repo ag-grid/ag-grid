@@ -237,7 +237,7 @@ The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pr
 
 <grid-example title='Enter Key Navigation' name='enter-key-navigation' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 
-## Example: Datepicker Cell Editing
+## Datepicker Cell Editing Example
 
 The example below illustrates:
 

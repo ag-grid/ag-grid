@@ -14,9 +14,9 @@ row 'Group By' order, use `rowGroupIndex` with / without `rowGroup = true` as sh
 const gridOptions = {
     columnDefs: [
         // index = 1, gets grouped second
-        { field: "country", rowGroupIndex: 1 },
+        { field: "country", hide: true, rowGroupIndex: 1 },
         // index = 0, gets grouped first
-        { field: "year", rowGroupIndex: 0 },
+        { field: "year", hide: true, rowGroupIndex: 0 },
     ]
 }
 </snippet>

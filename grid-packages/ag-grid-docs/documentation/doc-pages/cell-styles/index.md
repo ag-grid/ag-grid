@@ -172,7 +172,7 @@ effect:
 | cellStyle: params => params.value > 80 ? { color: 'red' } : { color: 'black' }
 | ```
 
-## Example Cell Styling
+## Cell Styling Example
 
 Below shows both cssClassRules snippets above in a full working example. The example demonstrates the following:
 

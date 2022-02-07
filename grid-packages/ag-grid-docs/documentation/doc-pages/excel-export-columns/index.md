@@ -30,6 +30,26 @@ Note the following:
 
 <grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
+## Collapsible Columns
+
+Grouped columns can be exported, but there are some requirements to get them to work correctly on Excel.
+
+1. The option `allColumns: true` has to be specified, otherwise collapsed columns will not be exported. The hidden columns could also be manually specified via the [columnKeys](../excel-export-api/#reference-excelExportParams-columnKeys) property.
+
+1. Excel doesn't have a `columnGroupShow: 'closed'` equivalent, so this option will not work the same when collapsing columns in Excel.
+
+1. If two collapsible groups are side-by-side, Excel will merge these two groups into one.
+
+Note the following: 
+
+- The exported document will contain the `Total` column, and this column will not be included in the "collapsible" group.
+
+[[note]]
+| When using pivoting to export secondary columns, only currently visible columns are exported as grouped. Collapsed columns aren’t exported at all.
+
+<grid-example title='Excel Export - Collapsible Columns' name='excel-export-collapsible-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
+
+
 ## Next Up
 
 Continue to the next section: [Data Types](../excel-export-data-types/).

@@ -55,7 +55,6 @@ function ageRangeValueGetter(params: ValueGetterParams) {
   }
 }
 
-var studentIdSequence = 10023
 // pretty basic, but deterministic (so same numbers each time we run), random number generator
 var seed: number;
 function random() {
@@ -72,16 +71,17 @@ function getRowData() {
   return rowData
 }
 
-function createRow(): Student {
+var studentId: number;
+function createRow() {
+  studentId = studentId ? studentId : 10023;
   var randomNumber = random()
-  var result = {
-    student: studentIdSequence++,
+  return {
+    student: studentId++,
     points: (randomNumber % 60) + 40,
     course: ['Science', 'History'][randomNumber % 3 === 0 ? 0 : 1],
     yearGroup: 'Year ' + ((randomNumber % 4) + 1), // 'Year 1' to 'Year 4'
     age: (randomNumber % 25) + 15, // 15 to 40
-  }
-  return result
+  };
 }
 
 function pivotMode() {

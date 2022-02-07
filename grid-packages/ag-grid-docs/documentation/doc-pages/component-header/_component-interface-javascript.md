@@ -5,16 +5,18 @@
 |
 |```ts
 |interface IHeaderComp {
-|    // optional method, gets called once with params
+|    // Optional method, gets called once with params
 |    init?(params: IHeaderParams): void;
 |    
-|    // can get called more than once, you should return the HTML element
+|    // Return the DOM element of your component, this is what the grid puts into the DOM
+|    // Can get called more than once
 |    getGui(): HTMLElement;
 |    
-|    // gets called when a new Column Definition has been set for this header
-|    refresh(params: IHeaderParams): HTMLElement;
+|    // Gets called when a new Column Definition has been set for this header.
+|    // If you handle the refresh of your header return true otherwise return false and the grid will re-create your header from scratch.
+|    refresh(params: IHeaderParams): boolean;
 |    
-|    // optional method, gets called once, when component is destroyed
+|    // Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here
 |    destroy?(): void;
 |}
 |```
