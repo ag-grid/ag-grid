@@ -379,10 +379,8 @@ function createExampleGenerator(prefix, importTypes) {
                 const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
                     let jsFile = readAsJsFile(tsFile);
-
-                    if (tsFile.endsWith('main.ts')) {
-                        jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-                    }
+                    // replace Typescript new Grid( with Javascript new agGrid.Grid(
+                    jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
