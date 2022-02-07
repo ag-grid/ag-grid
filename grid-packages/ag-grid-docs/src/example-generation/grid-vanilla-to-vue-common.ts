@@ -297,18 +297,27 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                 const value = rawColumnDef[columnProperty];
                 if (isParamsProperty(columnProperty)) {
                     if (value.cellRenderer) {
-                        value.cellRenderer = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
-                        addToVueComponents(componentFileNames, vueComponents, 'cellRenderer', value.cellRenderer);
+                        const component = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
+                        if (isExternalVueFile(componentFileNames, component)) {
+                            value.cellRenderer = component;
+                            addToVueComponents(componentFileNames, vueComponents, 'cellRenderer', value.cellRenderer);
+                        }
                     }
                     if (value.filters) {
                         value.filters.forEach(filter => {
                             if (filter.floatingFilterComponent) {
-                                filter.floatingFilterComponent = `${filter.floatingFilterComponent.replace('AG_LITERAL_', '')}`;
-                                addToVueComponents(componentFileNames, vueComponents, 'floatingFilterComponent', filter.floatingFilterComponent);
+                                const component = `${filter.floatingFilterComponent.replace('AG_LITERAL_', '')}`;
+                                if (isExternalVueFile(componentFileNames, component)) {
+                                    filter.floatingFilterComponent = component;
+                                    addToVueComponents(componentFileNames, vueComponents, 'floatingFilterComponent', filter.floatingFilterComponent);
+                                }
                             }
                             if (filter.filter) {
-                                filter.filter = `${filter.filter.replace('AG_LITERAL_', '')}`;
-                                addToVueComponents(componentFileNames, vueComponents, 'filter', filter.filter);
+                                const component = `${filter.filter.replace('AG_LITERAL_', '')}`;
+                                if (isExternalVueFile(componentFileNames, component)) {
+                                    filter.filter = component;
+                                    addToVueComponents(componentFileNames, vueComponents, 'filter', filter.filter);
+                                }
                             }
                         })
                     }
@@ -367,21 +376,24 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
     return columnDefs;
 }
 
-export function convertDefaultColDef(defaultColDef, vueComponents): string {
+export function convertDefaultColDef(defaultColDef, vueComponents, componentFileNames): string {
     const result = [];
     const perLine = defaultColDef.split('\n');
     perLine.forEach(line => {
         if (line.includes('tooltipComponent') ||
+            (line.includes('cellRenderer') && !line.includes("'ag")) ||
             (line.includes('headerComponent') && !line.includes('headerComponentParams')) ||
             (line.includes('filter') && !line.includes("'ag") && !line.trim().startsWith("//") && !line.includes("true")) && !line.includes('filterMenuTab')) {
 
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
-            line = line.replace(component, `'${component}'`)
-            result.push(line);
+            if (isExternalVueFile(componentFileNames, component)) {
+                line = line.replace(component, `'${component}'`)
 
-            if (!vueComponents.includes(component)) {
-                vueComponents.push(component)
+                if (!vueComponents.includes(component)) {
+                    vueComponents.push(component)
+                }
             }
+            result.push(line);
         } else {
             result.push(line);
         }
