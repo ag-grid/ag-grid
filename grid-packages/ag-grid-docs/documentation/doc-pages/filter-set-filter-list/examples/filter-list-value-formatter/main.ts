@@ -5,10 +5,6 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core'
 
-var countryFilterParams = {
-  valueFormatter: countryValueFormatter,
-}
-
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -25,7 +21,9 @@ const gridOptions: GridOptions = {
       field: 'country',
       valueFormatter: countryValueFormatter,
       filter: 'agSetColumnFilter',
-      filterParams: countryFilterParams,
+      filterParams: {
+        valueFormatter: countryValueFormatter,
+      },
     },
   ],
   defaultColDef: {
