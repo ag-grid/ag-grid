@@ -33,7 +33,7 @@ const urlMap = {
         'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular'
     },
     react: {
-        'video-tutorial': 'https://youtu.be/6PA45adHun8',
+        'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
         'example': 'https://stackblitz.com/edit/ag-grid-react-hello-world',
         'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started'
     },
