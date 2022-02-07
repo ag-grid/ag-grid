@@ -63,12 +63,7 @@
             box-shadow: ag-param(input-focus-box-shadow);
             @include ag-color-property(border-color, input-focus-border-color);
         }
-    }
 
-    input[class^='ag-'][type='date'],
-    input[class^='ag-'][type='datetime-local'] {
-        @extend  %ag-text-invalid !optional;
-        
         &:invalid {
             border-width: 2px;
             border-style: solid;
