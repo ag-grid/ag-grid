@@ -283,7 +283,7 @@ The following example demonstrates the difference in behaviour between `caseSens
 - The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
   - Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
-<grid-example title='Enabling SetFilter Case-Sensitivity' name='case-sensitive-set-filter-list' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Enabling SetFilter Case-Sensitivity' name='case-sensitive-set-filter-list' type='mixed' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 If case differences need to be normalised to remove redundant values from the data-source for filtering, a [Value Formatter](#value-formatter) should be used.
 
