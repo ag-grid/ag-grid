@@ -27,7 +27,7 @@
                 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // vuejs
-                'vue': 'npm:vue/dist/vue.min.js',
+                'vue': 'npm:vue@2.6.12/dist/vue.min.js',
 
                 // vue property decorator
                 'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
