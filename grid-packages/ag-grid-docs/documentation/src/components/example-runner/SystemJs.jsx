@@ -47,7 +47,6 @@ const localConfiguration = {
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
-        "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
         "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/client-side-row-model/dist/client-side-row-model.cjs.js`,
         "@ag-grid-community/core": `${localPrefix}/@ag-grid-community/core/dist/core.cjs.js`,
         "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export/dist/csv-export.cjs.js`,
@@ -57,12 +56,10 @@ const localConfiguration = {
     },
     gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
-        "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
         "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/client-side-row-model/dist/client-side-row-model.cjs.js`,
         "@ag-grid-community/core": `${localPrefix}/@ag-grid-community/core/dist/core.cjs.js`,
         "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export/dist/csv-export.cjs.js`,
         "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model/dist/infinite-row-model.cjs.js`,
-        "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`,
         "@ag-grid-enterprise/charts": `${localPrefix}/@ag-grid-enterprise/charts/dist/charts.cjs.js`,
         "@ag-grid-enterprise/clipboard": `${localPrefix}/@ag-grid-enterprise/clipboard/dist/clipboard.cjs.js`,
         "@ag-grid-enterprise/column-tool-panel": `${localPrefix}/@ag-grid-enterprise/column-tool-panel/dist/column-tool-panel.cjs.js`,
@@ -174,6 +171,15 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options })
     const configuration = isUsingPublishedPackages() ? publishedConfiguration : localConfiguration;
 
     if (isDevelopment()) {
+        configuration.gridCommunityPaths = {
+            ...configuration.gridCommunityPaths,
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`
+        };
+        configuration.gridEnterprisePaths = {
+            ...configuration.gridEnterprisePaths,
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
+            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`
+        }
         configuration.gridMap = {
             ...configuration.gridMap,
             /* START OF GRID MODULES DEV - DO NOT DELETE */

@@ -131,6 +131,28 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
+            } else if (property.name === 'groupRowRendererParams') {
+                debugger
+                const perLine = property.value.split('\n');
+                const result = [];
+                perLine.forEach(line => {
+                    if (line.includes('innerRenderer')) {
+                        const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
+                        line = line.replace(component, `'${component}'`)
+                        result.push(line);
+
+                        if (!vueComponents.includes(component)) {
+                            vueComponents.push(component)
+                        }
+                    } else {
+                        result.push(line);
+                    }
+                })
+                const newValue = result.join('\n');
+
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(`this.${property.name} = ${newValue}`);
             } else if (GRID_WIDE_COMPONENTS.includes(property.name)) {
                 const parsedValue = `${property.value.replace('AG_LITERAL_', '')}`;
 
@@ -243,6 +265,7 @@ export function isParamsProperty(property) {
     return PARAMS_PROPERTIES.indexOf(property) !== -1;
 
 }
+
 export function addToVueComponents(componentFileNames, vueComponents, property, componentName) {
     if (isComponent(property) && isExternalVueFile(componentFileNames, componentName)) {
         if (!vueComponents.includes(componentName)) {
@@ -250,6 +273,7 @@ export function addToVueComponents(componentFileNames, vueComponents, property, 
         }
     }
 }
+
 export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponents, componentFileNames): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
@@ -274,17 +298,17 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                 if (isParamsProperty(columnProperty)) {
                     if (value.cellRenderer) {
                         value.cellRenderer = `${value.cellRenderer.replace('AG_LITERAL_', '')}`;
-                        addToVueComponents(componentFileNames,vueComponents, 'cellRenderer', value.cellRenderer);
+                        addToVueComponents(componentFileNames, vueComponents, 'cellRenderer', value.cellRenderer);
                     }
-                    if(value.filters) {
+                    if (value.filters) {
                         value.filters.forEach(filter => {
                             if (filter.floatingFilterComponent) {
                                 filter.floatingFilterComponent = `${filter.floatingFilterComponent.replace('AG_LITERAL_', '')}`;
-                                addToVueComponents(componentFileNames,vueComponents, 'floatingFilterComponent', filter.floatingFilterComponent);
+                                addToVueComponents(componentFileNames, vueComponents, 'floatingFilterComponent', filter.floatingFilterComponent);
                             }
                             if (filter.filter) {
                                 filter.filter = `${filter.filter.replace('AG_LITERAL_', '')}`;
-                                addToVueComponents(componentFileNames,vueComponents, 'filter', filter.filter);
+                                addToVueComponents(componentFileNames, vueComponents, 'filter', filter.filter);
                             }
                         })
                     }
@@ -308,9 +332,9 @@ export function convertColumnDefs(rawColumnDefs, userComponentNames, vueComponen
                     } else if (value.startsWith('AG_FUNCTION_')) {
                         let parsedValue = parseFunction(value);
 
-                        if(columnProperty === 'cellRendererSelector') {
+                        if (columnProperty === 'cellRendererSelector') {
                             const component = parsedValue.match(/.*component:\s*(.*),/) ? parsedValue.match(/.*:\s*(.*),/)[1] : parsedValue.match(/.*:\s*(.*)$/)[1]
-                            if(component) {
+                            if (component) {
                                 parsedValue = parsedValue.replace(component, `'${component}'`);
                                 if (isExternalVueFile(componentFileNames, component) && !vueComponents.includes(component)) {
                                     vueComponents.push(component)

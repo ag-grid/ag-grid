@@ -39,26 +39,11 @@ interface ILoadingCellRendererParams {
 
 It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. For this you'll make use of the
 
-```ts
-loadingCellRendererSelector: (params) => {
-    const useCustomRenderer = ...some condition/check...
-    if (useCustomRenderer) {
-        return {
-            // the component to use - registered previously
-            component: 'customLoadingCellRenderer',
-            params: {
-                // parameters to supply to the custom loading cell renderer
-                loadingMessage: '--- CUSTOM ERROR MESSAGE ---',
-            },
-        };
-        } else {
-            // no loading cell renderer 
-            return undefined;
-        }
-    }
-}
-```
-
+[[only-angular-or-react]]
+md-include:component-dynamic-angular-react-js.md
+[[only-javascript]]
+md-include:component-dynamic-angular-react-js.md
+md-include:component-dynamic-vue.md
 
 ## Registering Loading Cell Renderer Components
 

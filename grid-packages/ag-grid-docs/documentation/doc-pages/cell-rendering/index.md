@@ -63,7 +63,7 @@ Cell renderer components can be referenced by string or directly by class. They 
 
 It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererSelector` to a function that returns alternative values for `cellRenderer` and `cellRendererParams`.
 
-The `params` passed to `cellRendererSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
+The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](/component-cell-renderer/). Typically the selector will use this to check the rows contents and choose a renderer accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 

@@ -78,4 +78,4 @@ The following points should be noted:
 
 
 
-<grid-example title='Basic Full Width' name='basic-full-width' type='mixed' options=' { "exampleHeight" : 595 }'></grid-example>
+<grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>

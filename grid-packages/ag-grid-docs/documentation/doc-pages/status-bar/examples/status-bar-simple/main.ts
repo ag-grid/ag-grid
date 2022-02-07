@@ -4,14 +4,14 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 200 },
     { field: 'age', filter: 'agNumberColumnFilter' },
-    { field: 'country', enableRowGroup: true, minWidth: 200 },
-    { field: 'year', enableRowGroup: true },
+    { field: 'country', minWidth: 200 },
+    { field: 'year' },
     { field: 'date', minWidth: 180 },
     { field: 'sport', minWidth: 200 },
-    { field: 'gold', enableValue: true },
-    { field: 'silver', enableValue: true },
-    { field: 'bronze', enableValue: true },
-    { field: 'total', enableValue: true },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
   ],
   defaultColDef: {
     flex: 1,
@@ -28,24 +28,6 @@ const gridOptions: GridOptions = {
       { statusPanel: 'agFilteredRowCountComponent' },
       { statusPanel: 'agSelectedRowCountComponent' },
       { statusPanel: 'agAggregationComponent' },
-    ],
-  },
-  sideBar: {
-    toolPanels: [
-      {
-        id: 'columns',
-        labelDefault: 'Columns',
-        labelKey: 'columns',
-        iconKey: 'columns',
-        toolPanel: 'agColumnsToolPanel',
-      },
-      {
-        id: 'filters',
-        labelDefault: 'Filters',
-        labelKey: 'filters',
-        iconKey: 'filter',
-        toolPanel: 'agFiltersToolPanel',
-      },
     ],
   },
 }

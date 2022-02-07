@@ -19,9 +19,8 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
     return <html lang="en">
         <head>
             <MetaData title="Typescript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
-            <ExampleStyle rootId="app" />
+            <ExampleStyle />
             <TypescriptStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
-            <Styles files={styleFiles} />
             <Extras options={options} />
         </head>
         <TypescriptBody

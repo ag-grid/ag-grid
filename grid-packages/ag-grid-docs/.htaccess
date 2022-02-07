@@ -829,7 +829,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/filter-text/ /react-data-grid/filter-text/
     Redirect 301 /documentation/react/filtering-overview/ /react-data-grid/filtering-overview/
     Redirect 301 /documentation/react/filtering/ /react-data-grid/filtering/
-    Redirect 301 /documentation/react/fine-tuning/ /react-data-grid/fine-tuning/
+    Redirect 301 /documentation/react/fine-tuning/ /react-data-grid/react-hooks/
+    Redirect 301 /documentation/react-data-grid/fine-tuning/ /react-data-grid/react-hooks/
     Redirect 301 /documentation/react/flashing-cells/ /react-data-grid/flashing-cells/
     Redirect 301 /documentation/react/floating-filters/ /react-data-grid/floating-filters/
     Redirect 301 /documentation/react/framework-hoc/ /react-data-grid/framework-hoc/
@@ -2244,7 +2245,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-data-grid/getting-started/
     Redirect 301 /react-column-configuration/ /react-data-grid/getting-started/
-    Redirect 301 /react-fine-tuning/ /react-data-grid/fine-tuning/
+    Redirect 301 /react-fine-tuning/ /react-data-grid/react-hooks/
     Redirect 301 /react-getting-started/ /react-data-grid/getting-started/
     Redirect 301 /react-hooks/ /react-data-grid/react-hooks/
     Redirect 301 /react-redux-integration-pt1/ /react-data-grid/redux-integration-pt1/

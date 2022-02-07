@@ -35,13 +35,13 @@ export class SportRenderer implements ICellRendererAngularComp {
         <div class="top-container">
             <div class="example-toolbar panel panel-default">
                 <div class="panel-body">
-                    <input type="radio" name="radio" checked #eMoveRadio>
+                    <input type="radio" id="move" name="radio" checked #eMoveRadio>
                     <label for="move">Remove Source Rows</label>
-                    <input type="radio" name="radio" #eDeselectRadio>
+                    <input type="radio" id="deselect" name="radio" #eDeselectRadio>
                     <label for="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" name="radio">
+                    <input type="radio" id="none" name="radio">
                     <label for="none">None</label>
-                    <input type="checkbox" checked #eSelectCheckbox (change)="checkboxSelectChange()">
+                    <input type="checkbox" id="toggleCheck" checked #eSelectCheckbox (change)="checkboxSelectChange()">
                     <label for="toggleCheck">Checkbox Select</label>
                     <span class="input-group-button">
                         <button type="button" class="btn btn-default reset" style="margin-left: 5px;" (click)="reset()">

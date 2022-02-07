@@ -76,6 +76,7 @@ const columnDefs: ColDef[] = [
         field: 'address',
         editable: true,
         cellEditor: 'agLargeTextCellEditor',
+        cellEditorPopup: true,
         cellEditorParams: {
             maxLength: '300', // override the editor defaults
             cols: '50',

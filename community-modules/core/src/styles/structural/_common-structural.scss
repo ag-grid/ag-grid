@@ -654,8 +654,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-sparkline-wrapper {
+    position: absolute;
     height: 100%;
     width: 100%;
+    left: 0;
+    top: 0;
 }
 
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {

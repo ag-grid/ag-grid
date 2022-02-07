@@ -62,7 +62,6 @@ const gridOptions: GridOptions = {
   infiniteInitialRowCount: 1,
   maxBlocksInCache: 2,
   pagination: true,
-  cacheBlockSize: 10,
   // debug: true,
   getRowNodeId: function (item) {
     return item.id

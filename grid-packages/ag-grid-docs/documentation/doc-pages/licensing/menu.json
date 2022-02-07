@@ -1874,14 +1874,6 @@
             ]
           },
           {
-            "title": "Fine Tuning",
-            "url": "/fine-tuning/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
             "title": "Redux Integration Part 1",
             "url": "/redux-integration-pt1/",
             "showInCollapsed": true,

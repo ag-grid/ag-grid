@@ -13,6 +13,7 @@ frameworks: ["angular", "vue"]
 |```tsx
 |//...other imports
 |import {Component} from '@angular/core';
+|import {ICellRendererAngularComp} from '@ag-grid-community/angular';
 |import {CubeComponent} from './cube.component';
 |
 |@Component({
@@ -41,7 +42,7 @@ frameworks: ["angular", "vue"]
 |       ...component template...
 |   `
 |})
-|export class CellRendererComponent {
+|export class CellRendererComponent implements ICellRendererAngularComp {
 |   params: any;
 |   componentParent: any;
 |

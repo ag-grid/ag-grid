@@ -69,7 +69,7 @@ The parameters are as follows:
 - `isInverted`: `true` for Ascending, `false` for Descending.
 
 
-### Example: Custom Sorting
+### Custom Sorting Example
 
 Example below shows the following:
 
@@ -79,7 +79,7 @@ Example below shows the following:
 
 <grid-example title='Custom Sorting' name='custom-sorting' type='generated'></grid-example>
 
-### Example: Custom Sorting Groups
+### Custom Sorting Groups Example
 
 When [Row Grouping](/grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
 

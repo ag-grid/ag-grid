@@ -161,4 +161,4 @@ The following example demonstrates all of the provided filters with `readOnly: t
 - [Floating Filters](/floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
 - Buttons above the grid provide API interactions to configure the filters.
 
-<grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "multifilter"] }'></grid-example>

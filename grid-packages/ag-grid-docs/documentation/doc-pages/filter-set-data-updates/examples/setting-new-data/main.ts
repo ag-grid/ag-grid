@@ -36,8 +36,8 @@ function setNewData() {
 }
 
 function reset() {
-  gridOptions.api!.setFilterModel([])
-  gridOptions.api!.setRowData(getRowData())
+  gridOptions.api!.setFilterModel(null);
+  gridOptions.api!.setRowData(getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
