@@ -2,8 +2,8 @@ import {ICellRendererComp, ICellRendererParams} from "@ag-grid-community/core";
 
 export class FullWidthCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;
-    private cssClass: string;
-    private message: string;
+    private cssClass!: string;
+    private message!: string;
 
     init(params: ICellRendererParams) {
         // pinned rows will have node.rowPinned set to either 'top' or 'bottom' - see docs for row pinning

@@ -11,8 +11,8 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         </div>`
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    private cssClass: string;
-    private message: string;
+    private cssClass!: string;
+    private message!: string;
 
     agInit(params: ICellRendererParams): void {
         this.cssClass = params.node.rowPinned ? 'example-full-width-pinned-row' :
