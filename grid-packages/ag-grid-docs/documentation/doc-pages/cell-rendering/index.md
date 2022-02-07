@@ -7,11 +7,26 @@ By default the grid renders values into the cells as strings. If you want someth
 <api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
 The cell editor for a column is set via `colDef.cellRenderer` and can be any of the following types:
-
-1. `undefined`: Grid renders the value as a string.
-1. `String`: The name of a cell renderer component.
-1. `Class`: Direct reference to a cell renderer component.
-1. `Function`: A function that returns either an HTML string or DOM element for display.
+ 
+[[only-javascript]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-angular]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-vue]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a registered Vue cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-react]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns JSX for display.
 
 The code snippet below demonstrates each of these method types.
 
@@ -69,38 +84,14 @@ The result is an object with `component` and `params` to use instead of `cellRen
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
-```js
-cellRendererSelector: params => {
-    return {
-        component: GenderCellRenderer,
-        params: {values: ['Male', 'Female']}
-    };
-}
-```
-
-However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
-
-```js
-cellRendererSelector: params => {
-
-    const type = params.data.type;
-
-    if (type === 'gender') {
-        return {
-            component: GenderCellRenderer,
-            params: {values: ['Male', 'Female']}
-        };
-    }
-
-    if (type === 'mood') {
-        return {
-            component: MoodCellRenderer
-        };
-    }
-
-    return undefined;
-}
-```
+[[only-javascript]]
+md-include:selector-common.md
+[[only-angular]]
+md-include:selector-common.md
+[[only-react]]
+md-include:selector-common.md
+[[only-vue]]
+md-include:selector-vue.md
 
 Here is a full example.
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
