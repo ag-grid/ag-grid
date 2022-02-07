@@ -44,7 +44,8 @@ function addDRow() {
 }
 
 function reset() {
-  gridOptions.api!.setRowData(getRowData())
+  gridOptions.api!.setFilterModel(null);
+  gridOptions.api!.setRowData(getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
