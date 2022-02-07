@@ -87,7 +87,7 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): (impo
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
     const columnDefs = getColumnDefs(bindings, vueComponents, componentFileNames);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents) : null;
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);

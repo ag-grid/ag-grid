@@ -486,7 +486,7 @@ title: "Get Started with AG Grid"
 |   new agGrid.Grid(eGridDiv, gridOptions);
 |
 |   // fetch the row data to use and one ready provide it to the Grid via the Grid API
-|   fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|   fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |       .then(response => response.json())
 |       .then(data => {
 |           gridOptions.api.setRowData(data);
@@ -670,7 +670,7 @@ title: "Get Started with AG Grid"
 |        // create the grid passing in the div to use together with the columns & data we want to use
 |        new agGrid.Grid(eGridDiv, gridOptions);
 |        
-|        fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |            .then(response => response.json())
 |            .then(data => {
 |               gridOptions.api.setRowData(data);
@@ -1478,7 +1478,7 @@ title: "Get Started with AG Grid"
 | -  const [rowData, setRowData] = useState([]);
 |
 | + useEffect(() => {
-| +     fetch('https://www.ag-grid.com/example-assets/row-data.json')
+| +     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 | +     .then(result => result.json())
 | +     .then(rowData => setRowData(rowData))
 | + }, []);
@@ -1514,7 +1514,7 @@ title: "Get Started with AG Grid"
 |    ]);     
 |
 |    useEffect(() => {
-|        fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |            .then(result => result.json())
 |            .then(rowData => setRowData(rowData))
 |    }, []);

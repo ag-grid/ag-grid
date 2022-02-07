@@ -59,6 +59,16 @@ From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impa
 
 To have an editor appear in a popup, have the `isPopup()` method return `true`. If you want editing to be done within a cell, either return `false` or don't provide this method at all.
 
+### Configure Popup
+
+[[only-react]]
+|Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure that an Editor is in a popup in one of the following ways:
+|1. For [Custom Cell Editors](/component-cell-editor/), implement the `isPopup()` method on the Custom Cell Editor OR specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+|1. For [Provided Cell Editors](/provided-cell-editors/), you do not need to to anything, as `isPopup` is already implemented on these.
+
 ## Tab Navigation
 
 While editing, if you hit <kbd>Tab</kbd>, the editing will stop for the current cell and start on the next cell. If you hold down <kbd>Shift</kbd>+<kbd>Tab</kbd>, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
