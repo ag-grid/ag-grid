@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'make',
-            cellEditor: 'select',
+            cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: carBrands,
             },

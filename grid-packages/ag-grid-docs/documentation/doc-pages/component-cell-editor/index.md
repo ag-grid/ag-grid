@@ -44,6 +44,44 @@ md-include:complementing-component-angular.md
 md-include:complementing-component-react.md
 md-include:complementing-component-vue.md
 
+
+## Configure Popup
+
+[[only-react]]
+|Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure that a Custom Cell Editor is in a popup in one of the following ways:
+|1. Implement the `isPopup()` method on the Custom Cell Editor and return `true`.
+|1. Specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+```js
+ colDef = {
+    cellEditorPopup: true,
+    // ...other props
+}
+```
+
+## Configure Popup Position
+
+By default Popup Editors appear over the editing Cell. It is also possible to have the Cell Editor appear below the Cell, so the user can see the Cell contents while editing.
+
+[[only-react]]
+|Configure the Popup Editor to appear below the Cell by setting `cellEditorPopupPosition='under'` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure the Popup Editor to appear below the Cell in one of the following ways:
+|1. Implement the `getPopupPosition()` method on the Custom Cell Editor and return `under`.
+|1. Specify `cellEditorPopupPosition='undef'` on the [Column Definition](/column-definitions/).
+
+```js
+ colDef = {
+    cellEditorPopupPosition: 'under',
+    // ...other props
+}
+```
+
+
 ## Keyboard Navigation While Editing
 
 If you provide a cell editor, you may wish to disable some of the grids keyboard navigation. For example, if you are providing a simple text editor, you may wish the grid to do nothing when you press the right and left arrows (the default is the grid will move to the next / previous cell) as you may want the right and left arrows to move the cursor inside your editor. In other cell editors, you may wish the grid to behave as normal.

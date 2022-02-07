@@ -1,5 +1,5 @@
 import {ColDef, Grid, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
-import { FullWidthCellRenderer } from './fullWidthRenderer_typescript'
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const rowData = createData(100, 'body')
 const pinnedTopRowData = createData(3, 'pinned')
