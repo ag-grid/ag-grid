@@ -48,7 +48,7 @@ class DatePicker implements ICellEditorComp {
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },
-    { field: 'date', editable: true, cellEditor: DatePicker },
+    { field: 'date', editable: true, cellEditor: DatePicker, cellEditorPopup: true },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
     { field: 'year', maxWidth: 120 },
