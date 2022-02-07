@@ -76,6 +76,7 @@ function onBtAdd() {
   // insert new row in the source data, at the top of the page
   window.rowDataServerSide.splice(selectedRow.rowIndex, 0, {
     athlete: 'New Item' + newItemCount,
+    id: '' + Math.random()
   })
   newItemCount++
 
