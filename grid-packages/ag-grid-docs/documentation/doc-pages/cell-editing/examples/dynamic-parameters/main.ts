@@ -18,14 +18,17 @@ const gridOptions: GridOptions = {
       field: 'gender',
       cellRenderer: GenderCellRenderer,
       cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
       cellEditorParams: {
         values: ['Male', 'Female'],
         cellRenderer: GenderCellRenderer,
+        cellEditorPopup: true
       },
     },
     {
       field: 'country',
       cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
       cellEditorParams: {
         cellHeight: 50,
         values: ['Ireland', 'USA'],
@@ -34,9 +37,10 @@ const gridOptions: GridOptions = {
     {
       field: 'city',
       cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
       cellEditorParams: cellCellEditorParams,
     },
-    { field: 'address', cellEditor: 'agLargeTextCellEditor', minWidth: 550 },
+    { field: 'address', cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, minWidth: 550 },
   ],
   defaultColDef: {
     flex: 1,
