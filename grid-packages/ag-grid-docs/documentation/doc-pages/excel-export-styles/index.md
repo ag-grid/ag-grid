@@ -7,7 +7,7 @@ Excel Export provides a special mechanism to add styles to the exported spreadsh
 
 ## Defining styles
 
-The main reason to export to Excel with styles is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration, the Excel Export reuses the [cellClassRules](/cell-styles/#cell-class-rules) and the [cellClass](/cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles`: <a href="#excelstyle">ExcelStyle[]</a> property in the [gridOptions](/grid-properties/).
+The main reason to export to Excel with styles is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration, the Excel Export reuses the [cellClassRules](/cell-styles/#cell-class-rules) and the [cellClass](/cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles`: [ExcelStyle[]](/excel-export-api/#excelstyle) property in the [gridOptions](/grid-properties/).
 
 ## Resolving Excel Styles
 

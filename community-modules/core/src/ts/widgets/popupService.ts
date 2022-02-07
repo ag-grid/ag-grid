@@ -67,7 +67,7 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
-
+ 
     // an aria label should be added to provided context to screen readers
     ariaLabel: string;
 }
