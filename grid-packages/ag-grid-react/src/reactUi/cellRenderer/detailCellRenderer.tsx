@@ -53,8 +53,12 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         if (gridOptionsWrapper.isDetailRowAutoHeight()) {
             const checkRowSizeFunc = () => {
-                const clientHeight = eGuiRef.current!.clientHeight;
-    
+                // when disposed, current is null, so nothing to do, and the resize observer will
+                // be disposed of soon
+                if (eGuiRef.current==null) { return; }
+
+                const clientHeight = eGuiRef.current.clientHeight;
+
                 // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
                 // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
                 // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
