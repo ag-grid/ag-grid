@@ -36,7 +36,7 @@ function GridExample() {
         sortable: true,
         filter: true,
         flex: 1,
-        tooltipComponentFramework: MyTooltip
+        tooltipComponent: MyTooltip
     }), []);
 
     // changes, needs to be state
