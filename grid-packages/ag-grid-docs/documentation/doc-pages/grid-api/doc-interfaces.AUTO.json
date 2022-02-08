@@ -497,12 +497,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column header or cell. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {
@@ -582,12 +586,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column header or cell. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {
@@ -1228,12 +1236,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column header or cell. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {

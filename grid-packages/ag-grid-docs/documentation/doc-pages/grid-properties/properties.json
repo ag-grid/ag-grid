@@ -46,15 +46,6 @@
                 "url": "/column-menu/"
             }
         },
-        "enableBrowserTooltips": {
-            "more": {
-                "name": "Tooltip Component",
-                "url": "/component-tooltip/"
-            }
-        },
-        "tooltipShowDelay": {},
-        "tooltipHideDelay": {},
-        "tooltipMouseTrack": {},
         "popupParent": {
             "more": {
                 "name": "Popup Parent",
@@ -1155,5 +1146,18 @@
             "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/). Default: `false`"
         },
         "columnHoverHighlight": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Tooltips",
+            "page": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip/"
+            }
+        },
+        "enableBrowserTooltips": {},
+        "tooltipShowDelay": {},
+        "tooltipHideDelay": {},
+        "tooltipMouseTrack": {}
     }
 }

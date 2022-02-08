@@ -40,13 +40,6 @@
                 "url": "/change-detection/#comparing-values"
             }
         },
-        "tooltipField": {},
-        "tooltipValueGetter": {
-            "more": {
-                "name": "Tooltip Component",
-                "url": "/component-tooltip"
-            }
-        },
         "checkboxSelection": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
@@ -81,6 +74,25 @@
             }
         },
         "chartDataType": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Columns: Tooltips"
+        },
+        "tooltipField": {},
+        "tooltipValueGetter": {
+            "more": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip"
+            }
+        },
+        "tooltipComponent": {
+            "more": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip"
+            }
+        },
+        "tooltipComponentParams": {}
     },
     "header": {
         "meta": {
@@ -202,12 +214,6 @@
             "more": {
                 "name": "Cell Renderer",
                 "url": "/cell-rendering/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
             }
         },
         "cellRendererParams": {
@@ -220,14 +226,6 @@
             "more": {
                 "name": "Many Renderers One Column",
                 "url": "/cell-rendering/#many-renderers-one-column"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": [
-                    "ICellRendererParams"
-                ]
             }
         },
         "autoHeight": {},
@@ -296,12 +294,6 @@
             "more": {
                 "name": "Floating Filter Component",
                 "url": "/component-floating-filter/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "IFloatingFilterComp"
-                ],
-                "include": []
             }
         },
         "floatingFilterComponentParams": {
@@ -327,12 +319,6 @@
             "more": {
                 "name": "Cell Editors",
                 "url": "/component-cell-editor/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellEditorComp"
-                ],
-                "include": []
             }
         },
         "cellEditorParams": {},
@@ -340,12 +326,6 @@
             "more": {
                 "name": "Many Editors One Column",
                 "url": "/cell-editing/#many-editors-one-column"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellEditorComp"
-                ],
-                "include": []
             }
         },
         "cellEditorPopup": {},
@@ -429,7 +409,14 @@
         "columnGroupShow": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
-        "suppressFiltersToolPanel": {}
+        "suppressFiltersToolPanel": {},
+        "tooltipComponent": {
+            "more": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip"
+            }
+        },
+        "tooltipComponentParams": {}
     },
     "groupsHeader": {
         "meta": {
@@ -437,14 +424,8 @@
         },
         "headerName": {},
         "headerClass": {},
-        "headerGroupComponent": {
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "IHeaderGroupComp"
-                ],
-                "include": []
-            }
-        },
+        "headerTooltip": {},
+        "headerGroupComponent": {},
         "headerGroupComponentParams": {}
     }
 }

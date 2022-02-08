@@ -1,17 +1,16 @@
-import { RowNode } from "./rowNode";
-import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
-import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { Column } from "./column";
-import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
-import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { IRowDragItem } from "../rendering/row/rowDragComp";
+import { GridApi } from "../gridApi";
+import { ICellEditorParams } from "../interfaces/iCellEditor";
 import { IFilterDef } from '../interfaces/iFilter';
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
+import { IRowDragItem } from "../rendering/row/rowDragComp";
+import { ITooltipParams } from "../rendering/tooltipComponent";
+import { Column } from "./column";
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { IHeaderGroupComp } from "../headerRendering/cells/columnGroup/headerGroupComp";
+import { RowNode } from "./rowNode";
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *
@@ -40,9 +39,11 @@ export interface AbstractColDef {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
+    /** Provide your own tooltip component for the column header or cell.  */
     tooltipComponent?: any;
     /** @deprecated As of v27, use `tooltipComponent` for framework components too. */
     tooltipComponentFramework?: any;
+    /** The params used to configure `tooltipComponent`. */
     tooltipComponentParams?: any;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */

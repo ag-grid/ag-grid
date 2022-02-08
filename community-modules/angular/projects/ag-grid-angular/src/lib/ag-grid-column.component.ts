@@ -66,10 +66,12 @@ export class AgGridColumn {
     @Input() public suppressColumnsToolPanel: boolean | undefined;
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
     @Input() public suppressFiltersToolPanel: boolean | undefined;
+    /** Provide your own tooltip component for the column header or cell.     */
     @Input() public tooltipComponent: any;
     /** @deprecated As of v27, use `tooltipComponent` for framework components too.
      */
     @Input() public tooltipComponentFramework: any;
+    /** The params used to configure `tooltipComponent`.     */
     @Input() public tooltipComponentParams: any;
     /** A list containing a mix of columns and column groups.     */
     @Input() public children: (ColDef | ColGroupDef)[] | undefined;
