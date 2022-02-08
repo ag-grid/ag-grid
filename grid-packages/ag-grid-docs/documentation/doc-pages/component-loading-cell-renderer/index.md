@@ -27,9 +27,6 @@ md-include:component-interface-vue.md
 
 ```ts
 interface ILoadingCellRendererParams {
-    // an optional template for the loading cell renderer
-    loadingMessage?: string
-
     // The grid API
     api: GridApi;
 }
