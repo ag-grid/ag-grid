@@ -40,6 +40,10 @@ function onBtExport() {
     sportFilterInstance.setModel({ values: [sport] })
     gridOptions.api!.onFilterChanged()
 
+    if (sportFilterInstance.getModel() == null) {
+      throw new Error('Example error: Filter not applied');
+    }
+
     const sheet = gridOptions.api!.getSheetDataForExcel({
       sheetName: sport,
     });

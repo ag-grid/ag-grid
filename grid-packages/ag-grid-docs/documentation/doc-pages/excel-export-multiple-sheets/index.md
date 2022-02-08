@@ -38,7 +38,7 @@ Note the following:
 - The exported Excel file will contain one sheet for each sport result.
 - Each sheet was exported using the sport name as the name of the sheet.
 
-<grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"] }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "setfilter"] }'></grid-example>
 
 ## Multiple Grids to Multiple Sheets
 

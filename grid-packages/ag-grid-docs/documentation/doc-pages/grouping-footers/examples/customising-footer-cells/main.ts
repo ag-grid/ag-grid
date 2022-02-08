@@ -1,5 +1,5 @@
 import {Grid, GridOptions} from '@ag-grid-community/core'
-import { MyInnerRenderer } from "./myInnerRenderer_typescript";
+import {MyInnerRenderer} from "./myInnerRenderer_typescript";
 
 const gridOptions: GridOptions = {
     columnDefs: [
