@@ -61,30 +61,8 @@ In most cases [Customising Footer Values](../grouping-footers/#customising-foote
 also possible to customise the footer cell using the `innerCellRenderer` supplied to the 
 [Group Cell Renderer](/group-cell-renderer/) params as shown below:
 
-<snippet>
-const gridOptions = {
-    autoGroupColumnDef: { 
-        cellRendererParams: {
-            innerRenderer: params => {
-                if (params.node.footer) {
-                    const isRootLevel = params.node.level === -1;
-                    if (isRootLevel) {
-                        // Grand Total Cells
-                        return `&lt;span style="color:navy; font-weight:bold"&gt;Grand Total&lt;/span&gt;`;
-                    }
-                    // Subtotal Cells
-                    return `&lt;span style="color:navy"&gt;Sub Total ${params.value}&lt;/span&gt;`;
-                }
-                // Non-Footer Group Cells
-                return params.value;
-            }
-        }
-    },
-}
-</snippet>
-
-Note in the snippet above that the `innerRenderer` contains special handling to display Grand Total, Subtotal and
-non-footer cells differently. This is demonstrated in the example below.
+In the example below the `innerRenderer` contains special handling to display Grand Total, Subtotal and
+non-footer cells differently.
 
 <grid-example title='Customising Footer Cells' name='customising-footer-cells' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
