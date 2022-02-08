@@ -36,19 +36,19 @@ const VueExample = {
             columnDefs: [{
                 headerName: "Doubling",
                 field: "number",
-                cellEditorFramework: "doublingEditor",
+                cellEditor: "doublingEditor",
                 editable: true,
                 width: 300
             }, {
                 field: "mood",
-                cellRendererFramework: "moodRenderer",
-                cellEditorFramework: "moodEditor",
+                cellRenderer: "moodRenderer",
+                cellEditor: "moodEditor",
                 editable: true,
                 width: 300
             }, {
                 headerName: "Numeric",
                 field: "number",
-                cellEditorFramework: "numericEditor",
+                cellEditor: "numericEditor",
                 editable: true,
                 width: 280
             }],

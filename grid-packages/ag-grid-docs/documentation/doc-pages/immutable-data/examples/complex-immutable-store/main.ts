@@ -1,12 +1,12 @@
 import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
 
-var MIN_BOOK_COUNT = 10
-var MAX_BOOK_COUNT = 20
+const MIN_BOOK_COUNT = 10;
+const MAX_BOOK_COUNT = 20;
 
-var MIN_TRADE_COUNT = 1
-var MAX_TRADE_COUNT = 10
+const MIN_TRADE_COUNT = 1;
+const MAX_TRADE_COUNT = 10;
 
-var products = [
+const products = [
   'Palm Oil',
   'Rubber',
   'Wool',
@@ -35,19 +35,19 @@ var products = [
   'Cotton No.2',
   'Sugar No.11',
   'Sugar No.14',
-]
+];
 
-var portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid']
+const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
 
 // as we create books, we remember what products they belong to, so we can
 // add to these books later when use clicks one of the buttons
-var productToPortfolioToBooks: any = {}
+const productToPortfolioToBooks: any = {};
 
 // start the book id's and trade id's at some future random number,
 // looks more realistic than starting them at 0
-var nextBookId = 62472
-var nextTradeId = 24287
-var nextBatchId = 101
+let nextBookId = 62472;
+let nextTradeId = 24287;
+let nextBatchId = 101;
 
 const columnDefs: ColDef[] = [
   // these are the row groups, so they are all hidden (they are showd in the group column)
@@ -81,7 +81,7 @@ const columnDefs: ColDef[] = [
     cellClass: 'number',
     aggFunc: 'max',
     enableValue: true,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'current',
@@ -90,7 +90,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'previous',
@@ -99,7 +99,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Change',
@@ -109,7 +109,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 1',
@@ -119,7 +119,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 2',
@@ -129,7 +129,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Gain-DX',
@@ -139,7 +139,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'SX / PX',
@@ -149,7 +149,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: '99 Out',
@@ -159,7 +159,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitter ID',
@@ -169,7 +169,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitted Deal ID',
@@ -179,7 +179,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
 
   // some string values, that do not get aggregated
@@ -202,27 +202,27 @@ function changeValueGetter(params: ValueGetterParams) {
 
 // a list of the data, that we modify as we go. if you are using an immutable
 // data store (such as Redux) then this would be similar to your store of data.
-var globalRowData: any[] = [];
+let globalRowData: any[] = [];
 
 // build up the test data
 function createRowData() {
   globalRowData = []
-  var thisBatch = nextBatchId++
-  for (var i = 0; i < products.length; i++) {
-    var product = products[i]
+  const thisBatch = nextBatchId++;
+  for (let i = 0; i < products.length; i++) {
+    const product = products[i];
     productToPortfolioToBooks[product] = {}
-    for (var j = 0; j < portfolios.length; j++) {
-      var portfolio = portfolios[j]
+    for (let j = 0; j < portfolios.length; j++) {
+      const portfolio = portfolios[j];
       productToPortfolioToBooks[product][portfolio] = []
 
-      var bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT)
+      const bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
 
-      for (var k = 0; k < bookCount; k++) {
-        var book = createBookName()
+      for (let k = 0; k < bookCount; k++) {
+        const book = createBookName();
         productToPortfolioToBooks[product][portfolio].push(book)
-        var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT)
-        for (var l = 0; l < tradeCount; l++) {
-          var trade = createTradeRecord(product, portfolio, book, thisBatch)
+        const tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
+        for (let l = 0; l < tradeCount; l++) {
+          const trade = createTradeRecord(product, portfolio, book, thisBatch);
           globalRowData.push(trade)
         }
       }
@@ -236,9 +236,9 @@ function randomBetween(min: number, max: number) {
 }
 
 function createTradeRecord(product: any, portfolio: any, book: any, batch: any) {
-  var current = Math.floor(Math.random() * 100000) + 100
-  var previous = current + Math.floor(Math.random() * 10000) - 2000
-  var trade = {
+  const current = Math.floor(Math.random() * 100000) + 100;
+  const previous = current + Math.floor(Math.random() * 10000) - 2000;
+  const trade = {
     product: product,
     portfolio: portfolio,
     book: book,
@@ -255,7 +255,7 @@ function createTradeRecord(product: any, portfolio: any, book: any, batch: any) 
     sxPx: randomBetween(100, 1000),
     _99Out: randomBetween(100, 1000),
     batch: batch,
-  }
+  };
   return trade
 }
 
@@ -284,7 +284,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     width: 250,
-    cellRendererCompParams: {
+    cellRendererParams: {
       checkbox: true,
     },
   },
@@ -311,21 +311,21 @@ function updateData() {
 }
 
 function updateSomeItems() {
-  var updateCount = randomBetween(1, 6)
-  var itemsToUpdate = []
-  for (var k = 0; k < updateCount; k++) {
+  const updateCount = randomBetween(1, 6);
+  const itemsToUpdate = [];
+  for (let k = 0; k < updateCount; k++) {
     if (globalRowData.length === 0) {
       continue
     }
-    var indexToUpdate = Math.floor(Math.random() * globalRowData.length)
-    var itemToUpdate = globalRowData[indexToUpdate]
+    const indexToUpdate = Math.floor(Math.random() * globalRowData.length);
+    const itemToUpdate = globalRowData[indexToUpdate];
 
     // make a copy of the item, and make some changes, so we are behaving
     // similar to how the
-    var updatedItem = updateImmutableObject(itemToUpdate, {
+    const updatedItem = updateImmutableObject(itemToUpdate, {
       previous: itemToUpdate.current,
       current: itemToUpdate.current + randomBetween(0, 1000) - 500,
-    })
+    });
     globalRowData[indexToUpdate] = updatedItem
 
     itemsToUpdate.push(updatedItem)
@@ -334,15 +334,15 @@ function updateSomeItems() {
 }
 
 function addSomeItems() {
-  var addCount = randomBetween(1, 6)
-  var itemsToAdd = []
-  var batch = nextBatchId++
-  for (var j = 0; j < addCount; j++) {
-    var portfolio = portfolios[Math.floor(Math.random() * portfolios.length)]
-    var books = productToPortfolioToBooks['Palm Oil'][portfolio]
-    var book = books[Math.floor(Math.random() * books.length)]
-    var product = products[Math.floor(Math.random() * products.length)]
-    var trade = createTradeRecord(product, portfolio, book, batch)
+  const addCount = randomBetween(1, 6);
+  const itemsToAdd = [];
+  const batch = nextBatchId++;
+  for (let j = 0; j < addCount; j++) {
+    const portfolio = portfolios[Math.floor(Math.random() * portfolios.length)];
+    const books = productToPortfolioToBooks['Palm Oil'][portfolio];
+    const book = books[Math.floor(Math.random() * books.length)];
+    const product = products[Math.floor(Math.random() * products.length)];
+    const trade = createTradeRecord(product, portfolio, book, batch);
     itemsToAdd.push(trade)
     globalRowData.push(trade)
   }
@@ -350,14 +350,14 @@ function addSomeItems() {
 }
 
 function removeSomeItems() {
-  var removeCount = randomBetween(1, 6)
-  var itemsToRemove = []
-  for (var i = 0; i < removeCount; i++) {
+  const removeCount = randomBetween(1, 6);
+  const itemsToRemove = [];
+  for (let i = 0; i < removeCount; i++) {
     if (globalRowData.length === 0) {
       continue
     }
-    var indexToRemove = randomBetween(0, globalRowData.length)
-    var itemToRemove = globalRowData[indexToRemove]
+    const indexToRemove = randomBetween(0, globalRowData.length);
+    const itemToRemove = globalRowData[indexToRemove];
     globalRowData.splice(indexToRemove, 1)
     itemsToRemove.push(itemToRemove)
   }
@@ -367,7 +367,7 @@ function removeSomeItems() {
 // makes a copy of the original and merges in the new values
 function updateImmutableObject(original: any, newValues: any) {
   // start with new object
-  var newObject: any = {}
+  const newObject: any = {};
 
   // copy in the old values
   Object.keys(original).forEach(function (key) {
@@ -384,6 +384,6 @@ function updateImmutableObject(original: any, newValues: any) {
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new Grid(eGridDiv, gridOptions)
 })

@@ -20,17 +20,17 @@ var dateFilterParams = {
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 180 },
-  { field: 'age', filterComp: 'agNumberColumnFilter', maxWidth: 80 },
+  { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
   { field: 'country' },
   { field: 'year', maxWidth: 90 },
   {
     field: 'date',
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: dateFilterParams,
   },
-  { field: 'gold', filterComp: 'agNumberColumnFilter' },
-  { field: 'silver', filterComp: 'agNumberColumnFilter' },
-  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+  { field: 'gold', filter: 'agNumberColumnFilter' },
+  { field: 'silver', filter: 'agNumberColumnFilter' },
+  { field: 'bronze', filter: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {

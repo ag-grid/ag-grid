@@ -275,13 +275,6 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/hannah.png' alt="Hannah Conway-Laws, Customer Experience Manager"/>
-                            </div>
-                            <h3>Hannah Conway-Laws</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
                                 <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
                             </div>
                             <h3>Seweety Kumar</h3>
@@ -292,7 +285,7 @@
                                 <img src='images/team/kathryn.png' alt="Kathryn Knapman, Customer Experience Manager"/>
                             </div>
                             <h3>Kathryn Knapman</h3>
-                            <h4>Customer Experience Manager</h4>
+                            <h4>PA to CEO and Office Manager</h4>
                         </div>
                     </div>
                 </article>

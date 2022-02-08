@@ -8,24 +8,24 @@ const columnDefs: ColDef[] = [
     field: 'bid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'mid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'ask',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'volume',
     cellClass: 'cell-number',
-    cellRendererComp: 'agAnimateSlideCellRenderer',
+    cellRenderer: 'agAnimateSlideCellRenderer',
   },
 ]
 

@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
   },
   groupDisplayType: 'groupRows',
   groupRowRendererParams: {
-    innerCellComp: GroupRowInnerRenderer,
+    innerRenderer: GroupRowInnerRenderer,
     suppressCount: true,
     flagCodes: {
       Andorra: 'ad',

@@ -18,48 +18,32 @@ export interface IFilterDef {
      * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.
      * - Set to a `IFilterComp`.
      */
-    filter?: IFilterType;
-    /** Provided a custom framework filter to use for this column. */
+    filter?: any;
+    /** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.  */
     filterFramework?: any;
     /** Params to be passed to the filter component specified in `filter` or `filterFramework`. */
     filterParams?: any;
 
     /**
-     * Filter component to use for this column.
-     * - Set to `true` to use the default filter.
-     * - Provide name (string) to use registered filter.
-     * - Provide User Component to provide custom filter.
-     */
-    filterComp?: any;
-    /** Params to be passed to the filter component. */
-    filterCompParams?: any;
-
-    /**
      * The custom component to be used for rendering the floating filter.
      * If none is specified the default AG Grid is used.
      */
-    floatingFilterComponent?: IFloatingFilterType;
-    /** Floating filter framework component to use for this column. */
+    floatingFilterComponent?: any;
+    /** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components. */
     floatingFilterComponentFramework?: any;
     /** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */
     floatingFilterComponentParams?: any;
-
-    
-    /**
-     * The custom component to be used for rendering the floating filter.
-     * If none is specified the default AG Grid is used.
-     */
-    floatingFilterComp?: any;
-    /** Params to be passed to Floating Filter Component. */
-    floatingFilterCompParams?: any;
 }
 
 export interface IFilter {
 
-    /** Returns `true` if the filter is currently active, otherwise `false`. */
+    /**
+     * Returns `true` if the filter is currently active, otherwise `false`. 
+     * If active then 1) the grid will show the filter icon in the column header 
+     * and 2) the filter will be included in the filtering of the data.
+    */
     isFilterActive(): boolean;
 
-    // mandatory methods
     /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      filter fails, then the row will be excluded from the final set. The method is provided a
      params object with attributes node (the rodNode the grid creates that wraps the data) and data
@@ -68,7 +52,7 @@ export interface IFilter {
 
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
-     * not active.
+     * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called.
      */
     getModel(): any;
 
@@ -82,7 +66,7 @@ export interface IFilter {
      state after rows are loaded, it can do it here. For example the set filters uses this
      to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
      Country filter). To get the list of available values from within this method from the
-    Client Side Row Model, use gridApi.forEachLeafNode(callback).
+    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.
     */
     onNewRowsLoaded?(): void;
 

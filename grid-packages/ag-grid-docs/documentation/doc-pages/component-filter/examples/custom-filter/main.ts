@@ -3,14 +3,14 @@ import { PersonFilter } from './personFilter_typescript'
 import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 150, filterComp: PersonFilter },
-  { field: 'age', filterComp: 'agNumberColumnFilter' },
+  { field: 'athlete', minWidth: 150, filter: PersonFilter },
+  { field: 'age', filter: 'agNumberColumnFilter' },
   { field: 'country', minWidth: 150 },
-  { field: 'year', filterComp: YearFilter },
+  { field: 'year', filter: YearFilter },
   {
     field: 'date',
     minWidth: 130,
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: {
       comparator: function (
         filterLocalDateAtMidnight: Date,
@@ -39,10 +39,10 @@ const columnDefs: ColDef[] = [
     },
   },
   { field: 'sport' },
-  { field: 'gold', filterComp: 'agNumberColumnFilter' },
-  { field: 'silver', filterComp: 'agNumberColumnFilter' },
-  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
-  { field: 'total', filterComp: 'agNumberColumnFilter' },
+  { field: 'gold', filter: 'agNumberColumnFilter' },
+  { field: 'silver', filter: 'agNumberColumnFilter' },
+  { field: 'bronze', filter: 'agNumberColumnFilter' },
+  { field: 'total', filter: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {

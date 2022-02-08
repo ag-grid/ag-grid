@@ -10,7 +10,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Set Filter Column',
       field: 'col1',
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       editable: true,
       flex: 1,
     },
@@ -44,11 +44,12 @@ function addDRow() {
 }
 
 function reset() {
-  gridOptions.api!.setRowData(getRowData())
+  gridOptions.api!.setFilterModel(null);
+  gridOptions.api!.setRowData(getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

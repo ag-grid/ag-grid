@@ -149,7 +149,6 @@ export class UserComponentRegistry extends BeanStub {
 
     private jsComps: { [key: string]: any } = {};
     private fwComps: { [key: string]: any } = {};
-    private jsAndFwComps: { [key: string]: any } = {};
 
     @PostConstruct
     private init(): void {
@@ -160,10 +159,6 @@ export class UserComponentRegistry extends BeanStub {
         if (this.gridOptions.frameworkComponents != null) {
             iterateObject(this.gridOptions.frameworkComponents,
                 (key, component) => this.registerFwComponent(key, component as any));
-        }
-
-        if (this.gridOptions.comps != null) {
-            iterateObject(this.gridOptions.comps, (key, component) => this.registerJsOrFwComponent(key, component));
         }
     }
 
@@ -189,16 +184,14 @@ export class UserComponentRegistry extends BeanStub {
         this.jsComps[name] = component;
     }
 
-    private registerJsOrFwComponent(rawName: string, component: any) {
-        const name = this.translateIfDeprecated(rawName);
-        this.jsAndFwComps[name] = component;
-    }
-
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     private registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
+        const warningMessage = `AG Grid: As of v27, registering components via grid property frameworkComponents is deprecated. Instead register both JavaScript AND Framework Components via the components property.`;
+        doOnce( ()=> console.warn(warningMessage), `UserComponentRegistry.frameworkComponentsDeprecated`);
+
         const name = this.translateIfDeprecated(rawName);
         this.fwComps[name] = component;
     }
@@ -216,12 +209,6 @@ export class UserComponentRegistry extends BeanStub {
             return createResult(registeredViaFrameworkComp, true);
         }
 
-        const jsOrFwComp = this.jsAndFwComps[name];
-        if (jsOrFwComp) {
-            const fromFramework = !this.agComponentUtils.doesImplementIComponent(jsOrFwComp);
-            return createResult(jsOrFwComp, fromFramework);
-        }
-
         const frameworkComponent = this.fwComps[name];
         if (frameworkComponent) {
             return createResult(frameworkComponent, true);
@@ -229,7 +216,8 @@ export class UserComponentRegistry extends BeanStub {
 
         const jsComponent = this.jsComps[name];
         if (jsComponent) {
-            return createResult(jsComponent, false);
+            const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(jsComponent);
+            return createResult(jsComponent, isFwkComp);
         }
 
         const defaultComponent = this.agGridDefaults[name];

@@ -16,8 +16,8 @@
 |    columnDefs: [
 |        {
 |            field: 'country',
-|            cellRendererComp: CountryCellRenderer,
-|            filterComp: CountryFilter
+|            cellRenderer: CountryCellRenderer,
+|            filter: CountryFilter
 |        },
 |    ],
 |
@@ -29,13 +29,13 @@
 |
 |### 2. By Name
 |
-|A Component is registered with the grid by providing it through the `comps` grid property. The `comps` grid property contains a map of Component Names to Component Classes. Components of all types (editors, renderers, filters etc) are all stored together and must have unique names.
+|A Component is registered with the grid by providing it through the `components` grid property. The `components` grid property contains a map of Component Names to Component Classes. Components of all types (editors, renderers, filters etc) are all stored together and must have unique names.
 |
 |```js
 |gridOptions = {
 |
 |    // register the components using 'components' grid property
-|    comps: {
+|    components: {
 |        // 'countryCellRenderer' is mapped to class CountryCellRenderer
 |        countryCellRenderer: CountryCellRenderer,
 |        // 'countryFilter' is mapped to class CountryFilter
@@ -46,8 +46,8 @@
 |    columnDefs: [
 |        {
 |            field: 'country',
-|            cellRendererComp: 'countryCellRenderer',
-|            filterComp: 'countryFilter'
+|            cellRenderer: 'countryCellRenderer',
+|            filter: 'countryFilter'
 |        },
 |    ],
 |

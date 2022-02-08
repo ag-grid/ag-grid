@@ -75,7 +75,7 @@ const gridOptions = {
     autoGroupColumnDef: {
         headerName: "My Group",
         width: 300,
-        cellRendererCompParams: {
+        cellRendererParams: {
             suppressCount: true
         }
     }
@@ -162,7 +162,7 @@ const gridOptions = {
 
 Also note the [Set Filter](/filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data.
 
-## Example: File Browser
+## File Browser Example
 
 The following example presents a more complex example which includes Aggregation and Filtering:
 
@@ -203,7 +203,7 @@ Click selection is supported with tree data. However when you are displaying tre
 |
 |    // have checkbox on the group column
 |    autoGroupColumnDef: {
-|        cellRendererCompParams: {
+|        cellRendererParams: {
 |            checkbox: true,
 |        }
 |    }

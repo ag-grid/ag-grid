@@ -3,38 +3,38 @@ import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_t
 import { NumberFilterComponent } from "./numberFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', filterComp: 'agTextColumnFilter' },
+    { field: 'athlete', filter: 'agTextColumnFilter' },
     {
         field: 'gold',
-        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterComp: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'silver',
-        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterComp: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'bronze',
-        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterComp: NumberFilterComponent
+        filter: NumberFilterComponent
     },
     {
         field: 'total',
-        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponent: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        filterComp: NumberFilterComponent
+        filter: NumberFilterComponent
     },
 ]
 

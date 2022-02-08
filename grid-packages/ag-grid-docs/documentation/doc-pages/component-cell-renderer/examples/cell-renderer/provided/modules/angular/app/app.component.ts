@@ -4,7 +4,7 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, ICellRendererParams, Module, RowNode } from '@ag-grid-community/core';
+import { ColDef, GridApi, ICellRenderer, ICellRendererParams, Module, RowNode } from '@ag-grid-community/core';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -21,7 +21,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
 };
 
 // This is a plain JS (not Angular) component
-class DeltaIndicator {
+class DeltaIndicator implements ICellRenderer {
     private eGui!: HTMLElement;
     init(params: ICellRendererParams) {
         const element = document.createElement('span');
@@ -38,22 +38,25 @@ class DeltaIndicator {
     getGui() {
         return this.eGui;
     }
+    refresh() { return false; }
 }
 
 // This is a plain JS (not Angular) component
-class DaysSunshineRenderer {
+class DaysSunshineRenderer implements ICellRenderer {
     private eGui!: HTMLElement;
-    init(params: ICellRendererParams & { rendererImage: string }) {
+    init(params: ICellRendererParams) {
+        const pAny = params as any;
         const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
+        this.eGui = createImageSpan(daysSunshine, pAny.rendererImage);
     }
     getGui() {
         return this.eGui;
     }
+    refresh() {return false;}
 }
 
 // This is a plain JS (not Angular) component
-class RainPerTenMmRenderer {
+class RainPerTenMmRenderer implements ICellRenderer {
     private eGui!: HTMLElement;
     init(params: ICellRendererParams & { rendererImage: string }) {
         const rainPerTenMm = params.value / 10;
@@ -62,6 +65,7 @@ class RainPerTenMmRenderer {
     getGui() {
         return this.eGui;
     }
+    refresh() { return false; }
 }
 
 @Component({
@@ -101,34 +105,34 @@ export class AppComponent {
             headerName: "Max Temp (\u02DAC)",
             field: "Max temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Min Temp (\u02DAC)",
             field: "Min temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Days of Air Frost",
             field: "Days of air frost (days)",
             width: 233,
-            cellRendererComp: DaysFrostRenderer,
-            cellRendererCompParams: { rendererImage: "frost.png" }
+            cellRenderer: DaysFrostRenderer,
+            cellRendererParams: { rendererImage: "frost.png" }
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
-            cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: { rendererImage: "sun.png" }
+            cellRenderer: DaysSunshineRenderer,
+            cellRendererParams: { rendererImage: "sun.png" }
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
-            cellRendererComp: RainPerTenMmRenderer,
-            cellRendererCompParams: { rendererImage: "rain.png" }
+            cellRenderer: RainPerTenMmRenderer,
+            cellRendererParams: { rendererImage: "rain.png" }
         }
     ];
 

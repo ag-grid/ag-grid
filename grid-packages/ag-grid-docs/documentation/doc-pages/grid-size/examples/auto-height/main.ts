@@ -6,22 +6,22 @@ const columnDefs: ColGroupDef[] = [
     children: [
       { headerName: 'ID', field: 'id' },
       { field: 'make' },
-      { field: 'price', filterComp: 'agNumberColumnFilter' },
+      { field: 'price', filter: 'agNumberColumnFilter' },
     ],
   },
   {
     headerName: 'Extra',
     children: [
-      { field: 'val1', filterComp: 'agNumberColumnFilter' },
-      { field: 'val2', filterComp: 'agNumberColumnFilter' },
-      { field: 'val3', filterComp: 'agNumberColumnFilter' },
-      { field: 'val4', filterComp: 'agNumberColumnFilter' },
-      { field: 'val5', filterComp: 'agNumberColumnFilter' },
-      { field: 'val6', filterComp: 'agNumberColumnFilter' },
-      { field: 'val7', filterComp: 'agNumberColumnFilter' },
-      { field: 'val8', filterComp: 'agNumberColumnFilter' },
-      { field: 'val9', filterComp: 'agNumberColumnFilter' },
-      { field: 'val10', filterComp: 'agNumberColumnFilter' },
+      { field: 'val1', filter: 'agNumberColumnFilter' },
+      { field: 'val2', filter: 'agNumberColumnFilter' },
+      { field: 'val3', filter: 'agNumberColumnFilter' },
+      { field: 'val4', filter: 'agNumberColumnFilter' },
+      { field: 'val5', filter: 'agNumberColumnFilter' },
+      { field: 'val6', filter: 'agNumberColumnFilter' },
+      { field: 'val7', filter: 'agNumberColumnFilter' },
+      { field: 'val8', filter: 'agNumberColumnFilter' },
+      { field: 'val9', filter: 'agNumberColumnFilter' },
+      { field: 'val10', filter: 'agNumberColumnFilter' },
     ],
   },
 ]
@@ -73,7 +73,7 @@ function getData(count: number) {
   return rowData
 }
 
-function setRowData(rowCount: number) {
+function updateRowData(rowCount: number) {
   gridOptions.api!.setRowData(getData(rowCount));
 
   document.querySelector('#currentRowCount')!.innerHTML = `${rowCount}`;

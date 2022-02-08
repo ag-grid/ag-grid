@@ -22,8 +22,8 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  loadingRowCellComp: CustomLoadingCellRenderer,
-  loadingRowCellCompParams: {
+  loadingCellRenderer: CustomLoadingCellRenderer,
+  loadingCellRendererParams: {
     loadingMessage: 'One moment please...',
   },
 

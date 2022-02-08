@@ -30,17 +30,19 @@ const deltaIndicator = (params: ICellRendererParams) => {
 /**
  *  Cell Renderer by Property (using the api)
  */
-function daysSunshineRenderer(params: ImageCellRendererParams) {
+function daysSunshineRenderer(params: ICellRendererParams): HTMLElement {
+  const p2 = params as ImageCellRendererParams;
   const daysSunshine = params.value / 24
-  return createImageSpan(daysSunshine, params.rendererImage)
+  return createImageSpan(daysSunshine, p2.rendererImage)
 }
 
 /**
  *  Cell Renderer by Property (using the grid options parameter)
  */
-function rainPerTenMmRenderer(params: ImageCellRendererParams) {
+function rainPerTenMmRenderer(params: ICellRendererParams) {
+  const p2 = params as ImageCellRendererParams;
   const rainPerTenMm = params.value / 10
-  return createImageSpan(rainPerTenMm, params.rendererImage)
+  return createImageSpan(rainPerTenMm, p2.rendererImage)
 }
 
 const columnDefs: ColDef[] = [
@@ -54,20 +56,20 @@ const columnDefs: ColDef[] = [
     headerName: 'Max Temp (˚C)',
     field: 'Max temp (C)',
     width: 120,
-    cellRendererComp: deltaIndicator, // Function cell renderer
+    cellRenderer: deltaIndicator, // Function cell renderer
   },
   {
     headerName: 'Min Temp (˚C)',
     field: 'Min temp (C)',
     width: 120,
-    cellRendererComp: deltaIndicator, // Function cell renderer
+    cellRenderer: deltaIndicator, // Function cell renderer
   },
   {
     headerName: 'Days of Air Frost',
     field: 'Days of air frost (days)',
     width: 233,
-    cellRendererComp: DaysFrostRenderer, // Component Cell Renderer
-    cellRendererCompParams: {
+    cellRenderer: DaysFrostRenderer, // Component Cell Renderer
+    cellRendererParams: {
       rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
     },
   },
@@ -75,8 +77,8 @@ const columnDefs: ColDef[] = [
     headerName: 'Days Sunshine',
     field: 'Sunshine (hours)',
     width: 190,
-    cellRendererComp: daysSunshineRenderer,
-    cellRendererCompParams: {
+    cellRenderer: daysSunshineRenderer,
+    cellRendererParams: {
       rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
     },
   },
@@ -84,8 +86,8 @@ const columnDefs: ColDef[] = [
     headerName: 'Rainfall (10mm)',
     field: 'Rainfall (mm)',
     width: 180,
-    cellRendererComp: rainPerTenMmRenderer,
-    cellRendererCompParams: {
+    cellRenderer: rainPerTenMmRenderer,
+    cellRendererParams: {
       rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
     },
   },

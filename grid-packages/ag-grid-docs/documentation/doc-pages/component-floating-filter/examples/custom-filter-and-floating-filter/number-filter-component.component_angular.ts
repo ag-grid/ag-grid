@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { AgFilterComponent } from "@ag-grid-community/angular";
+import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams, RowNode } from "@ag-grid-community/core";
 
 @Component({
@@ -14,7 +14,7 @@ import { IDoesFilterPassParams, IFilterParams, RowNode } from "@ag-grid-communit
       </div>
     `
 })
-export class NumberFilterComponent implements AgFilterComponent {
+export class NumberFilterComponent implements IFilterAngularComp {
     params!: IFilterParams;
     filterText: number | null | string = null;
 

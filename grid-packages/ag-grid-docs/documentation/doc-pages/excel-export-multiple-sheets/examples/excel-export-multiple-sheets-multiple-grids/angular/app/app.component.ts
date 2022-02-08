@@ -1,9 +1,9 @@
-import {Component, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {CsvExportModule} from '@ag-grid-community/csv-export';
-import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterprise/excel-export';
-import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams} from '@ag-grid-community/core';
+import { Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
@@ -25,7 +25,7 @@ export class SportRenderer implements ICellRendererAngularComp {
 
     applyTransaction() {
         console.log("here!!");
-        this.params.api.applyTransaction({remove: [this.params.node.data]});
+        this.params.api.applyTransaction({ remove: [this.params.node.data] });
     }
 
     refresh() {
@@ -119,8 +119,8 @@ export class AppComponent {
                 return params.rowNode!.data.athlete;
             },
         },
-        {field: "athlete"},
-        {field: "sport"}
+        { field: "athlete" },
+        { field: "sport" }
     ];
 
     rightColumns: ColDef[] = [
@@ -135,12 +135,12 @@ export class AppComponent {
                 return params.rowNode!.data.athlete;
             },
         },
-        {field: "athlete"},
-        {field: "sport"},
+        { field: "athlete" },
+        { field: "sport" },
         {
             suppressMenu: true,
             maxWidth: 50,
-            cellRendererComp: SportRenderer
+            cellRenderer: SportRenderer
         }
     ]
 
@@ -207,8 +207,8 @@ export class AppComponent {
         var spreadsheets = [];
 
         spreadsheets.push(
-            this.leftApi.getSheetDataForExcel({sheetName: 'Athletes'})!,
-            this.rightApi.getSheetDataForExcel({sheetName: 'Selected Athletes'})!
+            this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' })!,
+            this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })!
         );
 
         exportMultipleSheetsAsExcel({

@@ -1,17 +1,21 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
 
-class SimpleCellRenderer {
+class SimpleCellRenderer implements ICellRendererComp {
     eGui: any;
 
     init(params: ICellRendererParams) {
         const tempDiv = document.createElement('div');
         const color = params.node.group ? 'coral' : 'lightgreen';
-        tempDiv.innerHTML =`<span style="background-color: ${color}; padding: 2px; ">${params.value}</span>`
+        tempDiv.innerHTML = `<span style="background-color: ${color}; padding: 2px; ">${params.value}</span>`
         this.eGui = tempDiv.firstChild!
     }
 
     getGui() {
         return this.eGui
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }
 
@@ -30,7 +34,7 @@ const columnDefs: ColDef[] = [
     {
         headerName: 'Group Renderer A',
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         minWidth: 220,
     },
 
@@ -39,7 +43,7 @@ const columnDefs: ColDef[] = [
         headerName: 'Group Renderer B',
         field: 'city',
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         minWidth: 220,
     },
 
@@ -49,11 +53,11 @@ const columnDefs: ColDef[] = [
         field: 'city',
         minWidth: 240,
         showRowGroup: true,
-        cellRendererComp: 'agGroupCellRenderer',
-        cellRendererCompParams: {
+        cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: {
             suppressCount: true,
             checkbox: true,
-            innerRendererComp: SimpleCellRenderer,
+            innerRenderer: SimpleCellRenderer,
             suppressDoubleClickExpand: true,
             suppressEnterExpand: true,
         },

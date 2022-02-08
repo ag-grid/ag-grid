@@ -1,7 +1,7 @@
 import { ColumnModel } from "../../columns/columnModel";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
+import { Autowired, PreDestroy } from "../../context/context";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
@@ -240,6 +240,14 @@ export class HeaderRowCtrl extends BeanStub {
 
         const ctrlsToDisplay = getAllValuesInObject(this.headerCellCtrls);
         this.comp.setHeaderCtrls(ctrlsToDisplay);
+    }
+
+    @PreDestroy
+    private destroyCtrls(): void {
+        iterateObject(this.headerCellCtrls, (key, ctrl)=> {
+            this.destroyBean(ctrl);
+        });
+        this.headerCellCtrls = {};
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {

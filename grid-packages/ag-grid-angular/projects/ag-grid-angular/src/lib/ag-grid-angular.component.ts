@@ -390,12 +390,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
-    /** A map of component names to plain JavaScript components.     */
+    /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
-    /** A map of component names to framework (Angular, React, Vue etc.) components.     */
+    /** @deprecated As of v27, use `components` for framework components too.
+     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    /** A map of component names to components (can be JavaScript OR Framework components).     */
-    @Input() public comps: { [p: string]: any; } | undefined = undefined;
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
      */
     @Input() public reactUi: boolean | undefined = undefined;
@@ -456,18 +455,16 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** `cellRenderer` to use when data is loading via a DataSource.     */
-    @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
-    /** Framework `cellRenderer` to use when data is loading via a DataSource.     */
+    /** Provide your own loading cell renderer to use when data is loading via a DataSource.
+     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
+    @Input() public loadingCellRenderer: any = undefined;
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
+     */
     @Input() public loadingCellRendererFramework: any = undefined;
-    /** Params to be passed to loading cell renderer component.     */
+    /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
-    /** Cell Comp to use when data is loading via a DataSource.     */
-    @Input() public loadingRowCellComp: any = undefined;
-    /** Params for Loading Cell Comp.     */
-    @Input() public loadingRowCellCompParams: any = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail. Default: `false`     */
@@ -476,16 +473,14 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public keepDetailRows: boolean | undefined = undefined;
     /** Sets the number of details rows to keep. Default: `10`     */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
-    /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
-    @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Framework `detailCellRenderer` to use when a master row is expanded.     */
+    /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
+     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
+    @Input() public detailCellRenderer: any = undefined;
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
+     */
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
-    /** Provide a custom Detail Cell Component to use when a master row is expanded.     */
-    @Input() public detailRowCellComp: any = undefined;
-    /** Params for Detail Cell Component     */
-    @Input() public detailRowCellCompParams: any = undefined;
     /** Set fixed height in pixels for each detail row.     */
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
@@ -527,30 +522,26 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public debug: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
-    /** Provide a custom loading overlay component.     */
-    @Input() public loadingOverlayComponent: { new(): ILoadingOverlayComp; } | string | undefined = undefined;
-    /** Same as `loadingOverlayComponent` but for a framework component.     */
+    /** Provide a custom loading overlay component.
+     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
+    @Input() public loadingOverlayComponent: any = undefined;
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
+     */
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
-    /** Loading Overlay Component.     */
-    @Input() public loadingOverlayComp: any = undefined;
-    /** Params for Loading Overlay Component     */
-    @Input() public loadingOverlayCompParams: any = undefined;
     /** Disables the 'loading' overlay. Default: `false`     */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
-    /** Provide a custom no rows overlay component     */
-    @Input() public noRowsOverlayComponent: { new(): INoRowsOverlayComp; } | string | undefined = undefined;
-    /** Same as `noRowsOverlayComponent` but for a framework component.     */
+    /** Provide a custom no rows overlay component.
+     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
+    @Input() public noRowsOverlayComponent: any = undefined;
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
+     */
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Provide a custom no rows overlay component     */
-    @Input() public noRowsOverlayComp: any = undefined;
-    /** Customise the parameters provided to the no rows overlay component.     */
-    @Input() public noRowsOverlayCompParams: any = undefined;
     /** Disables the 'no rows' overlay. Default: `false`     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled. Default: `false`     */
@@ -623,16 +614,14 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public rowDragEntireRow: boolean | undefined = undefined;
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
-    /** Sets the Cell Renderer to use for full width rows.     */
-    @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Same as `fullWidthCellRenderer` but for a framework component.     */
+    /** Provide your own cell renderer component to use for full width rows.
+     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
+    @Input() public fullWidthCellRenderer: any = undefined;
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
+     */
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
-    /** Sets the Cell Comp to use for full width rows.     */
-    @Input() public fullWidthCellComp: any = undefined;
-    /** Customise the parameters provided to Full Width Cell Comp.     */
-    @Input() public fullWidthCellCompParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** @deprecated     */
@@ -676,24 +665,22 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: string | undefined = undefined;
-    /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
-    @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** Same as `groupRowRenderer` but for a framework component.     */
+    /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
+    @Input() public groupRowRenderer: any = undefined;
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
+     */
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
-    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`.     */
-    @Input() public groupRowCellComp: any = undefined;
-    /** Customise the parameters provided to the Group Row Comp component.     */
-    @Input() public groupRowCellCompParams: any = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`     */
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
-    @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
+    @Input() public groupRowInnerRenderer: any = undefined;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
     @Input() public groupRowInnerRendererFramework: any = undefined;
     /** @deprecated - Use groupDisplayType = 'multipleColumns' instead
@@ -885,7 +872,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Suppress the grid taking action for the relevant keyboard event when a cell is focused.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
     /** A callback for localising text within the grid.     */
-    @Input() public localeTextFunc: ((key: string, defaultValue: string) => string) | undefined = undefined;
+    @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
@@ -973,7 +960,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent> = new EventEmitter<VirtualColumnsChangedEvent>();
     /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
-    /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+    /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
     /** Value has changed after editing.     */

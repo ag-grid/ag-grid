@@ -77,34 +77,34 @@ const GridExample = () => {
             headerName: "Max Temp (\u02DAC)",
             field: "Max temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Min Temp (\u02DAC)",
             field: "Min temp (C)",
             width: 120,
-            cellRendererComp: DeltaIndicator
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Days of Air Frost",
             field: "Days of air frost (days)",
             width: 233,
-            cellRendererComp: DaysFrostRenderer,
-            cellRendererCompParams: { rendererImage: "frost.png" }
+            cellRenderer: DaysFrostRenderer,
+            cellRendererParams: { rendererImage: "frost.png" }
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
-            cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: { rendererImage: "sun.png" }
+            cellRenderer: DaysSunshineRenderer,
+            cellRendererParams: { rendererImage: "sun.png" }
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
-            cellRendererComp: RainPerTenMmRenderer,
-            cellRendererCompParams: { rendererImage: "rain.png" }
+            cellRenderer: RainPerTenMmRenderer,
+            cellRendererParams: { rendererImage: "rain.png" }
         }
     ]);
 

@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -23,7 +23,7 @@
         map: assign(
             {
                 // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // babel transpiler
                 'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
@@ -32,10 +32,9 @@
                 // react
                 react: 'npm:react@16.13.1',
                 'react-dom': 'npm:react-dom@16.13.1',
-                'react-dom-factories': 'npm:react-dom-factories',
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
-                'prop-types': 'npm:prop-types',
+                'prop-types': 'npm:prop-types@15.8.1',
 
                 app: appLocation + 'app'
             },

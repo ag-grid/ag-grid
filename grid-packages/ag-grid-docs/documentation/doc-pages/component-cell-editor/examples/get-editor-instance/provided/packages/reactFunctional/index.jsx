@@ -78,27 +78,27 @@ const GridExample = () => {
         {
             field: "gender",
             width: 100,
-            cellEditorComp: MySimpleEditor
+            cellEditor: MySimpleEditor
         },
         {
             field: "age",
             width: 80,
-            cellEditorComp: MySimpleEditor
+            cellEditor: MySimpleEditor
         },
         {
             field: "mood",
             width: 90,
-            cellEditorComp: MySimpleEditor
+            cellEditor: MySimpleEditor
         },
         {
             field: "country",
             width: 110,
-            cellEditorComp: MySimpleEditor
+            cellEditor: MySimpleEditor
         },
         {
             field: "address",
             width: 502,
-            cellEditorComp: MySimpleEditor
+            cellEditor: MySimpleEditor
         }
     ]);
 

@@ -9,8 +9,9 @@
 |    // See below for details on the parameters.
 |    agInit(params: IHeaderParams): void;
 |
-|    // gets called when a new Column Definition has been set for this header
-|    refresh(params: IHeaderParams): HTMLElement;
+|    // Gets called when a new Column Definition has been set for this header.
+|    // If you handle the refresh of your header return true otherwise return false and the grid will re-create your header from scratch.
+|    refresh(params: IHeaderParams): boolean;
 |}
 |```
 |

@@ -5,7 +5,7 @@ const gridOptions: GridOptions = {
     // one column for showing the groups
     {
       headerName: 'Group',
-      cellRendererComp: 'agGroupCellRenderer',
+      cellRenderer: 'agGroupCellRenderer',
       showRowGroup: true,
       minWidth: 210,
     },

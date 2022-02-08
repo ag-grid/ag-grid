@@ -68,7 +68,7 @@
         map: assign(
             {
                 // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // angular bundles
                 "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.js",
@@ -85,7 +85,6 @@
                 "@angular/forms": "npm:@angular/forms@" + ANGULAR_VERSION + "/bundles/forms.umd.js",
                 "@angular/upgrade": "npm:@angular/upgrade@" + ANGULAR_VERSION + "/bundles/upgrade.umd.js",
                 "@angular/upgrade/static": "npm:@angular/upgrade@" + ANGULAR_VERSION + "/bundles/upgrade-static.umd.js",
-                "angular-in-memory-web-api": "npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js",
                 // material design
                 "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-core.umd.js",
                 "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-radio.umd.min.js",
@@ -115,11 +114,6 @@
                 // "@angular/cdk/table": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-table.umd.js",
                 // "@angular/cdk/tree": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-tree.umd.js",
                 // "@angular/cdk/stepper": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-stepper.umd.js",
-
-                // ngx bootstrap
-                "ngx-bootstrap": "npm:ngx-bootstrap@2.0.0-rc.0",
-                // ng2 typeahead
-                "ng2-typeahead": "npm:ng2-typeahead@1.2.0",
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",

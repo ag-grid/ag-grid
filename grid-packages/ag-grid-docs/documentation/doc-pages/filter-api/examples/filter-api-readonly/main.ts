@@ -7,24 +7,24 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', filter: true, filterParams: defaultFilterParams },
   {
     field: 'age',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'country',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'year',
     maxWidth: 120,
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'date',
     minWidth: 215,
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: {
       readOnly: true,
       comparator: dateComparator,
@@ -34,11 +34,11 @@ const columnDefs: ColDef[] = [
   {
     field: 'sport',
     suppressMenu: true,
-    filterComp: 'agMultiColumnFilter',
+    filter: 'agMultiColumnFilter',
     filterParams: {
       filters: [
-        { filterComp: 'agTextColumnFilter', filterParams: { readOnly: true } },
-        { filterComp: 'agSetColumnFilter', filterParams: { readOnly: true } },
+        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } },
+        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } },
       ],
       readOnly: true,
     },

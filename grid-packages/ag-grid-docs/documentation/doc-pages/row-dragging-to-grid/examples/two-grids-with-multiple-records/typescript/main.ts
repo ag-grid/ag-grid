@@ -1,4 +1,6 @@
 import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 class SportRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -7,7 +9,7 @@ class SportRenderer implements ICellRendererComp {
         this.eGui = document.createElement('i');
 
         this.eGui.addEventListener('click', function () {
-            params.api.applyTransaction({remove: [params.node.data]});
+            params.api.applyTransaction({ remove: [params.node.data] });
         });
 
         this.eGui.classList.add('far', 'fa-trash-alt');
@@ -42,8 +44,8 @@ const leftColumnDefs: ColDef[] = [
         suppressMenu: true,
         headerCheckboxSelection: true
     },
-    {field: "athlete"},
-    {field: "sport"}
+    { field: "athlete" },
+    { field: "sport" }
 ];
 
 const rightColumnDefs: ColDef[] = [
@@ -58,12 +60,12 @@ const rightColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    {field: "athlete"},
-    {field: "sport"},
+    { field: "athlete" },
+    { field: "sport" },
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRendererComp: SportRenderer
+        cellRenderer: SportRenderer
     }
 ];
 

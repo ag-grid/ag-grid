@@ -189,10 +189,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         }
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
-
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {

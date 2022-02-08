@@ -124,8 +124,8 @@ class GridWithStatefulComponent extends Component {
             columnDefs: [{
                 field: "age",
                 editable: true,
-                cellRendererFramework: CellRenderer,
-                cellEditorFramework: EditorComponent
+                cellRenderer: CellRenderer,
+                cellEditor: EditorComponent
             }],
             rowData: [{ age: 24 }]
         };

@@ -142,10 +142,6 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
         }
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (componentFilenames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
-
             if (property.value === 'true' || property.value === 'false') {
                 componentAttributes.push(`${property.name}={${property.value}}`);
             } else if (property.value === null) {

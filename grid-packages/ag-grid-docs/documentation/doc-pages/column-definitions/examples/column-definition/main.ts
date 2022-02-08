@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filterComp: 'agTextColumnFilter',
+        filter: 'agTextColumnFilter',
         // enable floating filters by default
         floatingFilter: true,
         // make columns resizable
@@ -47,12 +47,12 @@ const gridOptions: GridOptions = {
 
     // define specific column types
     columnTypes: {
-        numberColumn: { width: 130, filterComp: 'agNumberColumnFilter' },
+        numberColumn: { width: 130, filter: 'agNumberColumnFilter' },
         medalColumn: { width: 100, columnGroupShow: 'open', filter: false },
         nonEditableColumn: { editable: false },
         dateColumn: {
             // specify we want to use the date filter
-            filterComp: 'agDateColumnFilter',
+            filter: 'agDateColumnFilter',
 
             // add extra parameters for the date filter
             filterParams: {

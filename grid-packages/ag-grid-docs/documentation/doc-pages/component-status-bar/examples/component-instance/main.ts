@@ -46,11 +46,11 @@ const gridOptions: GridOptions = {
   statusBar: {
     statusPanels: [
       {
-        statusPanelComp: ClickableStatusBarComponent,
+        statusPanel: ClickableStatusBarComponent,
         key: 'statusBarCompKey',
       },
       {
-        statusPanelComp: 'agAggregationComponent',
+        statusPanel: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
         },

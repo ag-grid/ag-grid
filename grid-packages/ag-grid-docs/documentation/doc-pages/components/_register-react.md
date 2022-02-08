@@ -11,7 +11,7 @@
 |
 |When registering a React Component by reference you simply pass the Component to the place you want it used (i.e. Cell Renderer, Filter etc).
 |
-|In this example we're specifying that we want our `CubeComponent` React Component as a Cell Renderer in the `Cube` column:
+|In this example we're specifying that we want our React `CubeComponent` as a Cell Renderer in the `Cube` column:
 |
 |```jsx
 |//...other imports
@@ -20,7 +20,7 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|    const [columnDefs] = useState( [{field: 'value', cellRendererComp: CubeComponent}] );
+|    const [columnDefs] = useState( [{field: 'value', cellRenderer: CubeComponent}] );
 |
 |    return (
 |         <AgGridReact
@@ -35,10 +35,10 @@
 |
 |### 2. By Name
 |
-|When registering a React component by name you need to first register the component within the grid `comps` property,
+|When registering a React component by name you need to first register the component within the grid `components` property,
 |then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
 |
-|In this example we've registered our `CubeComponent` React Component and given it a name of `cubeComponent` (this can be any name you choose).
+|In this example we've registered our React `CubeComponent` and given it a name of `cubeComponent` (this can be any name you choose).
 |We then specify that we want the previously registered `cubeComponent` to be used as a Cell Renderer in the `Cube` column:
 |
 |```jsx
@@ -48,15 +48,15 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|   const [comps] = useState({
+|   const [components] = useState({
 |       cubeComponent: CubeComponent    
 |   });
 |
-|   const [columnDefs] = useState( [{field: 'value', cellRendererComp: 'cubeComponent'}] );
+|   const [columnDefs] = useState( [{field: 'value', cellRenderer: 'cubeComponent'}] );
 |
 |   return (
 |         <AgGridReact
-|            comps={comps}
+|            components={components}
 |            columnDefs={columnDefs}
 |            ...other properties            
 |         />

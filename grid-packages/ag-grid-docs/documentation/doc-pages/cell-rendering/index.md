@@ -7,11 +7,26 @@ By default the grid renders values into the cells as strings. If you want someth
 <api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
 The cell editor for a column is set via `colDef.cellRenderer` and can be any of the following types:
-
-1. `undefined`: Grid renders the value as a string.
-1. `String`: The name of a cell renderer component.
-1. `Class`: Direct reference to a cell renderer component.
-1. `Function`: A function that returns either an HTML string or DOM element for display.
+ 
+[[only-javascript]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-angular]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-vue]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a registered Vue cell renderer component.
+|1. `Function`: A function that returns either an HTML string or DOM element for display.
+[[only-react]]
+|1. `undefined`: Grid renders the value as a string.
+|1. `String`: The name of a cell renderer component.
+|1. `Class`: Direct reference to a cell renderer component.
+|1. `Function`: A function that returns JSX for display.
 
 The code snippet below demonstrates each of these method types.
 
@@ -31,7 +46,7 @@ const gridOptions = {
         // 3 - Class - Provide your own cell renderer component directly without registering.
         {
             field: 'sport',
-            cellRendererComp: MyCustomCellRendererClass,
+            cellRenderer: MyCustomCellRendererClass,
         },
         // 4 - Function - A function that returns an HTML string or DOM element for display
         {
@@ -61,55 +76,27 @@ Cell renderer components can be referenced by string or directly by class. They 
 
 ## Many Renderers One Column
 
-[[note]]
-| How selectors work changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
+It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererSelector` to a function that returns alternative values for `cellRenderer` and `cellRendererParams`.
 
-It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererCompSelector` to a function that returns alternative values for `cellRendererComp` and `cellRendererCompParams`.
+The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](/component-cell-renderer/). Typically the selector will use this to check the rows contents and choose a renderer accordingly.
 
-The `params` passed to `cellRendererCompSelector` are the same as those passed to the (Cell Renderer Component)[../component-cell-renderer/]. Typically the selector will use this to check the rows contents and choose a renderer accordingly.
-
-The result is an object with `comp` and `params` to use instead of `cellRendererComp` and `cellRendererCompParams`.
+The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
-```js
-cellRendererCompSelector: params => {
-    return {
-        comp: GenderCellRenderer,
-        params: {values: ['Male', 'Female']}
-    };
-}
-```
-
-However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
-
-```js
-cellRendererCompSelector: params => {
-
-    const type = params.data.type;
-
-    if (type === 'gender') {
-        return {
-            comp: GenderCellRenderer,
-            params: {values: ['Male', 'Female']}
-        };
-    }
-
-    if (type === 'mood') {
-        return {
-            comp: MoodCellRenderer
-        };
-    }
-
-    return undefined;
-}
-```
+[[only-javascript]]
+md-include:selector-common.md
+[[only-angular]]
+md-include:selector-common.md
+[[only-react]]
+md-include:selector-common.md
+[[only-vue]]
+md-include:selector-vue.md
 
 Here is a full example.
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-- `colDef.cellRendererCompSelector` is a function that selects the renderer based on the row data.
-- The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererCompSelector`
+- `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
+- The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
 <grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335 }'></grid-example>
 
@@ -125,7 +112,12 @@ Notice the following in the example below:
 
 - When scrolling up, rows render bottom to top
 
-- Cells within a row render left to right regardless of scroll direction
+[[only-javascript]]
+|- Cells within a row render left to right regardless of scroll direction
+[[only-angular]]
+|- Cells within a row render left to right regardless of scroll direction
+[[only-vue]]
+|- Cells within a row render left to right regardless of scroll direction
 
 - Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you take about 10 seconds to scroll from the top to the bottom, only a few hundred cells will actually be rendered. Any cells that are scrolled into view and then back out of view again before they have a chance to be rendered will be skipped.
 

@@ -1,4 +1,4 @@
-import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "ag-grid-community";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "ag-grid-community";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -41,14 +41,11 @@ export class AgGridColumn {
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
-    @Input() public filterComp: any;
     @Input() public filterFramework: any;
     @Input() public filterParams: any;
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
-    @Input() public floatingFilterComp: any;
-    @Input() public floatingFilterCompParams: any;
     @Input() public floatingFilterFramework: any;
     @Input() public filter: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
@@ -69,11 +66,14 @@ export class AgGridColumn {
     @Input() public suppressColumnsToolPanel: boolean | undefined;
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
     @Input() public suppressFiltersToolPanel: boolean | undefined;
-    @Input() public tooltipComponent: { new(): ITooltipComp; } | string | undefined;
+    /** Provide your own tooltip component for the column.
+     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.     */
+    @Input() public tooltipComponent: any;
+    /** @deprecated As of v27, use `tooltipComponent` for framework components too.
+     */
     @Input() public tooltipComponentFramework: any;
+    /** The params used to configure `tooltipComponent`.     */
     @Input() public tooltipComponentParams: any;
-    @Input() public tooltipComp: any;
-    @Input() public tooltipCompParams: any;
     /** A list containing a mix of columns and column groups.     */
     @Input() public children: (ColDef | ColGroupDef)[] | undefined;
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API.     */
@@ -82,16 +82,14 @@ export class AgGridColumn {
     @Input() public openByDefault: boolean | undefined;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false`     */
     @Input() public marryChildren: boolean | undefined;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.     */
-    @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined;
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used.     */
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
+     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.     */
+    @Input() public headerGroupComponent: any;
+    /** @deprecated As of v27, use `headerGroupComponent` for framework components too.
+     */
     @Input() public headerGroupComponentFramework: any;
-    /** The params used to configure the header group component.     */
+    /** The params used to configure the `headerGroupComponent`.     */
     @Input() public headerGroupComponentParams: any;
-    /** The custom header group component to be used for rendering the component header.     */
-    @Input() public headerGroupComp: any;
-    /** The params used to configure the header group component.     */
-    @Input() public headerGroupCompParams: any;
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      * If both field and colId are missing, a unique ID will be generated.
      * This ID is used to identify the column in the API for sorting, filtering etc.     */
@@ -150,20 +148,16 @@ export class AgGridColumn {
     @Input() public valueSetter: string | ValueSetterFunc | undefined;
     /** Function or expression. Parses the value for saving.     */
     @Input() public valueParser: string | ValueParserFunc | undefined;
-    /** A `cellEditor` to use for this column.     */
-    @Input() public cellEditor: string | { new(): ICellEditorComp; } | undefined;
-    /** Framework `cellEditor` to use for this column.     */
+    /** Provide your own cell editor component for this column's cells.
+     * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.     */
+    @Input() public cellEditor: any;
+    /** @deprecated As of v27, use `cellEditor` for framework components too.
+     */
     @Input() public cellEditorFramework: any;
-    /** Params to be passed to the cell editor component.     */
+    /** Params to be passed to the `cellEditor` component.     */
     @Input() public cellEditorParams: any;
     /** Callback to select which cell editor to be used for a given row within the same column.     */
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined;
-    /** A Editor Component to use for this column.     */
-    @Input() public cellEditorComp: any;
-    /** Params to be passed to the Editor Component     */
-    @Input() public cellEditorCompParams: any;
-    /** Callback to select which Cell Editor and Params to use for this column.     */
-    @Input() public cellEditorCompSelector: CellEditorCompSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead
@@ -171,14 +165,12 @@ export class AgGridColumn {
     @Input() public newValueHandler: ((params: NewValueParams) => boolean) | undefined;
     /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined;
-    @Input() public cellEditorCompPopup: boolean | undefined;
     /** Set the position for the popup cell editor. Possible values are
      *   - `over` Popup will be positioned over the cell
      *   - `under` Popup will be positioned below the cell leaving the cell value visible.
      * 
      * Default: `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined;
-    @Input() public cellEditorCompPopupPosition: string | undefined;
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`.     */
     @Input() public onCellValueChanged: ((event: NewValueParams) => void) | undefined;
     /** Callback called when a cell is clicked.     */
@@ -193,16 +185,15 @@ export class AgGridColumn {
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined;
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined;
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     */
-    @Input() public headerComponent: string | { new(): any; } | undefined;
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used.     */
+    /**     */
+/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
+     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
+    @Input() public headerComponent: any;
+    /** @deprecated As of v27, use `headerComponent` for framework components too.
+     */
     @Input() public headerComponentFramework: any;
-    /** The parameters to be passed to the header component.     */
+    /** The parameters to be passed to the `headerComponent`.     */
     @Input() public headerComponentParams: any;
-    /** The custom header component to be used for rendering the component header.     */
-    @Input() public headerComp: any;
-    /** The parameters to be passed to the header component.     */
-    @Input() public headerCompParams: any;
     /** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.     */
     @Input() public menuTabs: string[] | undefined;
@@ -255,20 +246,16 @@ export class AgGridColumn {
     @Input() public cellClass: string | string[] | CellClassFunc | undefined;
     /** Rules which can be applied to include certain CSS classes.     */
     @Input() public cellClassRules: CellClassRules | undefined;
-    /** A `cellRenderer` to use for this column.     */
-    @Input() public cellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined;
-    /** Framework `cellRenderer` to use for this column.     */
+    /** Provide your own cell Renderer component for this column's cells.
+     * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.     */
+    @Input() public cellRenderer: any;
+    /** @deprecated As of v27, use `cellRenderer` for framework components too.
+     */
     @Input() public cellRendererFramework: any;
-    /** Params to be passed to the cell renderer component.     */
+    /** Params to be passed to the `cellRenderer` component.     */
     @Input() public cellRendererParams: any;
     /** Callback to select which cell renderer to be used for a given row within the same column.     */
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined;
-    /** A Cell Component to use for this column.     */
-    @Input() public cellRendererComp: any;
-    /** Params to be passed to the Cell Component.     */
-    @Input() public cellRendererCompParams: any;
-    /** Callback to select which Cell Component and Params to use for this column.     */
-    @Input() public cellRendererCompSelector: CellRendererCompSelectorFunc | undefined;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */
@@ -397,7 +384,6 @@ export class AgGridColumn {
     static ngAcceptInputType_singleClickEdit: boolean | null | '';
     static ngAcceptInputType_floatingFilter: boolean | null | '';
     static ngAcceptInputType_cellEditorPopup: boolean | null | '';
-    static ngAcceptInputType_cellEditorCompPopup: boolean | null | '';
     static ngAcceptInputType_suppressFillHandle: boolean | null | '';
     // @END@
 

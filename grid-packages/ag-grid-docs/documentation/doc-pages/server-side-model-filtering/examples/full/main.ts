@@ -2,11 +2,11 @@ import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/cor
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', minWidth: 220, filterComp: 'agTextColumnFilter' },
+    { field: 'athlete', minWidth: 220, filter: 'agTextColumnFilter' },
     {
       field: 'country',
       minWidth: 200,
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         values: [
           'United States',
@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
         ],
       },
     },
-    { field: 'year', filterComp: 'agNumberColumnFilter' },
+    { field: 'year', filter: 'agNumberColumnFilter' },
     { field: 'sport', minWidth: 200 },
     { field: 'gold' },
     { field: 'silver' },

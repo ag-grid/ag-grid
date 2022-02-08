@@ -35,7 +35,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'age',
     maxWidth: 120,
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: {
       includeBlanksInEquals: false,
       includeBlanksInLessThan: false,
@@ -45,7 +45,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'date',
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: filterParams,
   },
   {

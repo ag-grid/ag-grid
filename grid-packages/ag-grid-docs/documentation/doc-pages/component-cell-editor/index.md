@@ -4,10 +4,6 @@ title: "Cell Editors"
 
 Create your own cell editor by providing a cell editor component.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Cell Editor
 
 md-include:simple-editor-javascript.md
@@ -41,19 +37,50 @@ See the section [registering custom components](/components/#registering-custom-
 
 ## Complementing Cell Editor Params
 
-As with cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorCompParams` as in the following example which will pass 'Ireland' as the 'country' parameter:
+As with cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorParams` as in the following example which will pass 'Ireland' as the 'country' parameter:
 
-[[only-javascript]]
-|
-|```js
-| colDef = {
-|    cellEditorComp: MyCellEditor,    
-|    cellEditorCompParams: {
-|        // make "country" value available to cell editor
-|        country: 'Ireland'
-|    }
-|}
-|```
+md-include:complementing-component-javascript.md
+md-include:complementing-component-angular.md
+md-include:complementing-component-react.md
+md-include:complementing-component-vue.md
+
+
+## Configure Popup
+
+[[only-react]]
+|Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure that a Custom Cell Editor is in a popup in one of the following ways:
+|1. Implement the `isPopup()` method on the Custom Cell Editor and return `true`.
+|1. Specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+```js
+ colDef = {
+    cellEditorPopup: true,
+    // ...other props
+}
+```
+
+## Configure Popup Position
+
+By default Popup Editors appear over the editing Cell. It is also possible to have the Cell Editor appear below the Cell, so the user can see the Cell contents while editing.
+
+[[only-react]]
+|Configure the Popup Editor to appear below the Cell by setting `cellEditorPopupPosition='under'` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure the Popup Editor to appear below the Cell in one of the following ways:
+|1. Implement the `getPopupPosition()` method on the Custom Cell Editor and return `under`.
+|1. Specify `cellEditorPopupPosition='undef'` on the [Column Definition](/column-definitions/).
+
+```js
+ colDef = {
+    cellEditorPopupPosition: 'under',
+    // ...other props
+}
+```
+
 
 ## Keyboard Navigation While Editing
 

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ValueGetterParams, ICellRendererFunc } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { headerName: 'Product', field: 'product' },
@@ -7,13 +7,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Price Local',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRendererComp: getCurrencyCellRenderer(),
+    cellRenderer: getCurrencyCellRenderer(),
   },
   {
     headerName: 'Report Price',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRendererComp: getCurrencyCellRenderer(),
+    cellRenderer: getCurrencyCellRenderer(),
     valueGetter: reportingCurrencyValueGetter,
     headerValueGetter: 'ctx.reportingCurrency',
   },
@@ -68,7 +68,7 @@ function reportingCurrencyValueGetter(params: ValueGetterParams) {
   return result
 }
 
-function getCurrencyCellRenderer() {
+function getCurrencyCellRenderer(): ICellRendererFunc {
   var gbpFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'GBP',
@@ -94,6 +94,7 @@ function getCurrencyCellRenderer() {
       case 'GBP':
         return gbpFormatter.format(params.value.amount)
     }
+    return params.value.amount;
   }
 
   return currencyCellRenderer

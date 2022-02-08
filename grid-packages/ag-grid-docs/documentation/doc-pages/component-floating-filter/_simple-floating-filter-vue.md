@@ -1,5 +1,5 @@
 [[only-vue]]
-|Below is a simple example of floating filter component:
+|Below is an example of floating filter component:
 |
 |```js
 |const NumberFloatingFilterComponent = {

@@ -13,6 +13,24 @@
             "pane": "left"
           },
           {
+            "title": "Rendering",
+            "icon": "react",
+            "url": "/reactui/",
+            "pane": "left",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Hooks",
+            "icon": "reactHooks",
+            "url": "/react-hooks/",
+            "pane": "left",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
             "title": "Video Tutorial",
             "url": "{video-tutorial}",
             "icon": "youtube",
@@ -28,15 +46,6 @@
               "javascript"
             ],
             "pane": "left"
-          },
-          {
-            "title": "100% React",
-            "icon": "react",
-            "url": "/reactui/",
-            "pane": "left",
-            "frameworks": [
-              "react"
-            ]
           },
           {
             "title": "Stackblitz Example",
@@ -1282,25 +1291,8 @@
                 "showInCollapsed": true
               },
               {
-                "title": "Styling Components",
-                "box-title": "Tooltip",
-                "url": "/component-styling/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
                 "title": "Higher Order Components",
                 "url": "/framework-hoc/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Hooks / Functional Components",
-                "url": "/react-hooks/",
                 "showInCollapsed": true,
                 "frameworks": [
                   "react"
@@ -1324,10 +1316,6 @@
                 ]
               }
             ]
-          },
-          {
-            "title": "Changes in v27",
-            "url": "/components-v27-changes/"
           }
         ]
       },
@@ -1883,14 +1871,6 @@
             "showInCollapsed": true,
             "frameworks": [
               "vue"
-            ]
-          },
-          {
-            "title": "Fine Tuning",
-            "url": "/fine-tuning/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
             ]
           },
           {

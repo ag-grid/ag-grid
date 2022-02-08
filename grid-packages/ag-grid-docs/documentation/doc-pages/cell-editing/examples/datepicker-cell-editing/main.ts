@@ -14,6 +14,7 @@ class DatePicker implements ICellEditorComp {
         // https://jqueryui.com/datepicker/
         $(this.eInput).datepicker({
             dateFormat: 'dd/mm/yy',
+            onSelect: () => { this.eInput.focus(); }
         })
     }
 
@@ -48,7 +49,7 @@ class DatePicker implements ICellEditorComp {
 
 const columnDefs: ColDef[] = [
     { field: 'athlete' },
-    { field: 'date', editable: true, cellEditorComp: DatePicker },
+    { field: 'date', editable: true, cellEditor: DatePicker, cellEditorPopup: true },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
     { field: 'year', maxWidth: 120 },

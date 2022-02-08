@@ -646,8 +646,8 @@ export default {
 +     autoGroupColumnDef: {
 +       headerName: 'Model',
 +       field: 'model',
-+       cellRendererComp: 'agGroupCellRenderer',
-+       cellRendererCompParams: {
++       cellRenderer: 'agGroupCellRenderer',
++       cellRendererParams: {
 +         checkbox: true
 +       }
 +     },

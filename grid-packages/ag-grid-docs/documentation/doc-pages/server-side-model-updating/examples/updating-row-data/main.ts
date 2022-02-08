@@ -23,6 +23,11 @@ const gridOptions: GridOptions = {
   cacheBlockSize: 75,
   animateRows: true,
   isRowSelectable: isRowSelectable,
+  getRowNodeId: getRowNodeId
+}
+
+function getRowNodeId(data: any) {
+  return data.id;
 }
 
 // only select group rows
@@ -80,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // add id to data
       allData.forEach(function (item) {
         item.id = idSequence++
-      })
+      });
 
       var dataSource: IServerSideDatasource = {
         getRows: function (params: IServerSideGetRowsParams) {

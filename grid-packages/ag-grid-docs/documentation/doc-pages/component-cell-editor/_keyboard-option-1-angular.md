@@ -14,7 +14,7 @@
 |    selector: 'my-editor',
 |    template: `<input (keydown)="onKeyDown($event)" ...rest of input/>`
 |})
-|export class MyCellEditor {
+|export class MyCellEditor implements ICellEditorAngularComp {
 |    /* Component Editor Lifecycle method */
 |    agInit(params) {
 |        this.params = params;

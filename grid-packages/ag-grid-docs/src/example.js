@@ -226,8 +226,8 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRendererComp: 'agGroupCellRenderer',
-    cellRendererCompParams: {
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
         checkbox: true
     }
 };

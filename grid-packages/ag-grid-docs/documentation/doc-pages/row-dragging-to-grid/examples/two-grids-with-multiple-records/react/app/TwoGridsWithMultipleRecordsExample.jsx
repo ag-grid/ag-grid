@@ -54,7 +54,7 @@ const rightColumns = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRendererComp: SportRenderer
+        cellRenderer: SportRenderer
     }
 ]
 
@@ -181,14 +181,14 @@ export default class extends Component {
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
                 <div style={{ display: 'inline-flex' }} onChange={this.onRadioChange} >
-                    <input type="radio" name="radio" value="0" checked={this.state.radioChecked === 0} />
+                    <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />
                     <label for="move">Remove Source Rows</label>
-                    <input type="radio" name="radio" value="1" checked={this.state.radioChecked === 1} />
+                    <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />
                     <label for="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" name="radio" value="2" checked={this.state.radioChecked === 2} />
+                    <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />
                     <label for="none">None</label>
                 </div>
-                <input type="checkbox" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />
+                <input type="checkbox" id="toggleCheck" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />
                 <label for="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
                     <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={this.reset}>

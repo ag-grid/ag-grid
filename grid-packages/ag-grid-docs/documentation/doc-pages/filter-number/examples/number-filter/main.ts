@@ -27,13 +27,13 @@ const columnDefs: ColDef[] = [
   {
     field: 'sale',
     headerName: 'Sale ($)',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     valueFormatter: numberValueFormatter,
   },
   {
     field: 'sale',
     headerName: 'Sale',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: saleFilterParams,
     valueFormatter: saleValueFormatter,
   },

@@ -173,7 +173,7 @@ const TwoGridsExample = () => {
             </div>
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
-                    defaultColDef={{ ...defaultColDef }}
+                    defaultColDef={defaultColDef}
                     getRowNodeId={getRowNodeId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}

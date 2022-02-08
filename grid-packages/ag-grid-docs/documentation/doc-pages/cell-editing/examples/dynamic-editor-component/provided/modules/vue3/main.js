@@ -1,9 +1,9 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
-import {RichSelectModule} from '@ag-grid-enterprise/rich-select';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MoodEditor from './moodEditorVue.js';
@@ -38,15 +38,15 @@ const VueExample = {
                 {
                     field: "value",
                     editable: true,
-                    cellEditorCompSelector: function (params) {
+                    cellEditorSelector: function (params) {
                         if (params.data.type === 'age') {
                             return {
-                                comp: 'NumericCellEditor',
+                                component: 'NumericCellEditor',
                             };
                         }
                         if (params.data.type === 'gender') {
                             return {
-                                comp: 'agRichSelectCellEditor',
+                                component: 'agRichSelectCellEditor',
                                 params: {
                                     values: ['Male', 'Female'],
                                 },
@@ -54,7 +54,7 @@ const VueExample = {
                         }
                         if (params.data.type === 'mood') {
                             return {
-                                comp: 'MoodEditor',
+                                component: 'MoodEditor',
                             };
                         }
                         return undefined;
@@ -96,28 +96,6 @@ const VueExample = {
 
         },
     }
-}
-
-window.cellEditorCompSelector = function cellEditorCompSelector(params) {
-    if (params.data.type === 'age') {
-        return {
-            comp: NumericCellEditor,
-        };
-    }
-    if (params.data.type === 'gender') {
-        return {
-            comp: 'agRichSelectCellEditor',
-            params: {
-                values: ['Male', 'Female'],
-            },
-        };
-    }
-    if (params.data.type === 'mood') {
-        return {
-            comp: MoodEditor,
-        };
-    }
-    return undefined;
 }
 
 createApp(VueExample)

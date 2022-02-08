@@ -3,7 +3,7 @@ import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'name', cellRendererComp: countryCellRenderer },
+    { field: 'name', cellRenderer: countryCellRenderer },
     { field: 'continent' },
     { field: 'language' },
   ],
@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
     return isFullWidth(rowNode.data)
   },
   // see AG Grid docs cellRenderer for details on how to build cellRenderers
-  fullWidthCellComp: FullWidthCellRenderer,
+  fullWidthCellRenderer: FullWidthCellRenderer,
   animateRows: true,
 }
 

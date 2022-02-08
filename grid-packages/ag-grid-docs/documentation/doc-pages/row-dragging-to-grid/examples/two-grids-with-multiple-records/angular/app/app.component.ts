@@ -1,11 +1,11 @@
-import {Component, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams} from '@ag-grid-community/core';
-import {ICellRendererAngularComp} from '@ag-grid-community/angular';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 @Component({
     selector: 'simple-component',
@@ -21,7 +21,7 @@ export class SportRenderer implements ICellRendererAngularComp {
     }
 
     applyTransaction() {
-        this.params.api.applyTransaction({remove: [this.params.node.data]});
+        this.params.api.applyTransaction({ remove: [this.params.node.data] });
     }
 
     refresh() {
@@ -35,13 +35,13 @@ export class SportRenderer implements ICellRendererAngularComp {
         <div class="top-container">
             <div class="example-toolbar panel panel-default">
                 <div class="panel-body">
-                    <input type="radio" name="radio" checked #eMoveRadio>
+                    <input type="radio" id="move" name="radio" checked #eMoveRadio>
                     <label for="move">Remove Source Rows</label>
-                    <input type="radio" name="radio" #eDeselectRadio>
+                    <input type="radio" id="deselect" name="radio" #eDeselectRadio>
                     <label for="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" name="radio">
+                    <input type="radio" id="none" name="radio">
                     <label for="none">None</label>
-                    <input type="checkbox" checked #eSelectCheckbox (change)="checkboxSelectChange()">
+                    <input type="checkbox" id="toggleCheck" checked #eSelectCheckbox (change)="checkboxSelectChange()">
                     <label for="toggleCheck">Checkbox Select</label>
                     <span class="input-group-button">
                         <button type="button" class="btn btn-default reset" style="margin-left: 5px;" (click)="reset()">
@@ -132,8 +132,8 @@ export class AppComponent {
             suppressMenu: true,
             headerCheckboxSelection: true
         },
-        {field: "athlete"},
-        {field: "sport"}
+        { field: "athlete" },
+        { field: "sport" }
     ];
 
     rightColumns: ColDef[] = [
@@ -148,12 +148,12 @@ export class AppComponent {
                 return params.rowNode!.data.athlete;
             },
         },
-        {field: "athlete"},
-        {field: "sport"},
+        { field: "athlete" },
+        { field: "sport" },
         {
             suppressMenu: true,
             maxWidth: 50,
-            cellRendererComp: SportRenderer
+            cellRenderer: SportRenderer
         }
     ]
 

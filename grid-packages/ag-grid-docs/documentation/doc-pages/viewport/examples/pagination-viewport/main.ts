@@ -23,7 +23,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: '#',
     maxWidth: 80,
-    cellRendererComp: RowIndexRenderer
+    cellRenderer: RowIndexRenderer
   },
   { field: 'code', maxWidth: 90 },
   { field: 'name', minWidth: 220 },
@@ -31,24 +31,24 @@ const columnDefs: ColDef[] = [
     field: 'bid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'mid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'ask',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'volume',
     cellClass: 'cell-number',
-    cellRendererComp: 'agAnimateSlideCellRenderer',
+    cellRenderer: 'agAnimateSlideCellRenderer',
   },
 ]
 

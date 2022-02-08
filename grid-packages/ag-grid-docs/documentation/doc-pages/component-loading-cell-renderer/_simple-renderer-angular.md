@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of loading cell renderer component:
+|Below is an example of loading cell renderer component that is passed a custom loadingMessage:
 |
 |```js
 |import {Component} from '@angular/core';
@@ -16,9 +16,9 @@
 |    `
 |})
 |export class CustomLoadingCellRenderer implements ILoadingCellRendererAngularComp {
-|    private params: any;
+|    public params: ILoadingCellRendererParams & { loadingMessage: string };
 |
-|    agInit(params: ILoadingCellRendererParams): void {
+|    agInit(params: ILoadingCellRendererParams & { loadingMessage: string }): void {
 |        this.params = params;
 |    }
 |}

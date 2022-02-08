@@ -59,6 +59,16 @@ From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impa
 
 To have an editor appear in a popup, have the `isPopup()` method return `true`. If you want editing to be done within a cell, either return `false` or don't provide this method at all.
 
+### Configure Popup
+
+[[only-react]]
+|Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+
+[[only-javascript-or-angular-or-vue]]
+|Configure that an Editor is in a popup in one of the following ways:
+|1. For [Custom Cell Editors](/component-cell-editor/), implement the `isPopup()` method on the Custom Cell Editor OR specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+|1. For [Provided Cell Editors](/provided-cell-editors/), you do not need to to anything, as `isPopup` is already implemented on these.
+
 ## Tab Navigation
 
 While editing, if you hit <kbd>Tab</kbd>, the editing will stop for the current cell and start on the next cell. If you hold down <kbd>Shift</kbd>+<kbd>Tab</kbd>, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
@@ -142,22 +152,18 @@ Finally, the example also demonstrates querying which cell is editing:
 
 ## Many Editors One Column
 
-[[note]]
-| How selectors work changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
+It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorSelector` to a function that returns alternative values for `cellEditor` and `cellEditorParams`.
 
-It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorCompSelector` to a function that returns alternative values for `cellEditorComp` and `cellEditorCompParams`.
+The `params` passed to `cellEditorSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
 
-The `params` passed to `cellEditorCompSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
-
-The result is an object with `comp` and `params` to use instead of `cellEditorComp` and `cellEditorCompParams`.
+The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 
 This following shows the Selector always returning back an AG Rich Select Cell Editor:
 
 ```js
-cellEditorCompSelector: params => {
+cellEditorSelector: params => {
     return {
-        comp: 'agRichSelect',
+        component: 'agRichSelect',
         params: { values: ['Male', 'Female'] }
     };
 }
@@ -166,23 +172,23 @@ cellEditorCompSelector: params => {
 However a selector only makes sense when a selection is made. The following demonstrates selecting between Cell Editors:
 
 ```js
-cellEditorCompSelector: params => {
+cellEditorSelector: params => {
 
     const type = params.data.type;
 
     if (params.data.type === 'age') {
-        return { comp: NumericCellEditor };
+        return { component: NumericCellEditor };
     }
 
     if (params.data.type === 'gender') {
         return {
-            comp: 'agRichSelect',
+            component: 'agRichSelect',
             params: { values: ['Male', 'Female'] }
         };
     }
 
     if (params.data.type === 'mood') {
-        return { comp: MoodEditor };
+        return { component: MoodEditor };
     }
 
     return undefined;
@@ -192,7 +198,7 @@ cellEditorCompSelector: params => {
 Here is a full example:
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-- `colDef.cellEditorCompSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
+- `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 - Edit a cell by double clicking to observe the different editors used. 
 
 <grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
@@ -241,7 +247,7 @@ The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pr
 
 <grid-example title='Enter Key Navigation' name='enter-key-navigation' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 
-## Example: Datepicker Cell Editing
+## Datepicker Cell Editing Example
 
 The example below illustrates:
 

@@ -39,4 +39,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     frameworkComponent(name: string): any {
         return null;
     }
+
+    isFrameworkComponent(comp: any): boolean {
+        return false;
+    }
 }

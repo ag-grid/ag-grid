@@ -486,7 +486,7 @@ title: "Get Started with AG Grid"
 |   new agGrid.Grid(eGridDiv, gridOptions);
 |
 |   // fetch the row data to use and one ready provide it to the Grid via the Grid API
-|   fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|   fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |       .then(response => response.json())
 |       .then(data => {
 |           gridOptions.api.setRowData(data);
@@ -601,8 +601,8 @@ title: "Get Started with AG Grid"
 | const autoGroupColumnDef = {
 |     headerName: "Model",
 |     field: "model",
-|     cellRendererComp:'agGroupCellRenderer',
-|     cellRendererCompParams: {
+|     cellRenderer:'agGroupCellRenderer',
+|     cellRendererParams: {
 |         checkbox: true
 |     }
 | }
@@ -650,8 +650,8 @@ title: "Get Started with AG Grid"
 |        const autoGroupColumnDef = {
 |            headerName: "Model",
 |            field: "model",
-|            cellRendererComp:'agGroupCellRenderer',
-|            cellRendererCompParams: {
+|            cellRenderer:'agGroupCellRenderer',
+|            cellRendererParams: {
 |                checkbox: true
 |            }
 |        }
@@ -670,7 +670,7 @@ title: "Get Started with AG Grid"
 |        // create the grid passing in the div to use together with the columns & data we want to use
 |        new agGrid.Grid(eGridDiv, gridOptions);
 |        
-|        fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |            .then(response => response.json())
 |            .then(data => {
 |               gridOptions.api.setRowData(data);
@@ -801,8 +801,8 @@ title: "Get Started with AG Grid"
 | ```
 |
 | [[note]]
-| | The `withComponents` call is necessary for the grid to be able to use Angular
-| | components as cells / headers \(pre Ivy only\) - you can ignore it for now.
+| | The `withComponents` call is only necessary for Angular <= v8 or if Ivy has been disabled (`enableIvy:false`). If this is the case you must use `withComponents` to enable the grid to use Angular
+| | components as cells / headers  otherwise you can ignore it and just import `AgGridModule`.
 |
 | The next step is to add the AG Grid styles - replace the content of
 | `src/styles.scss` with the following code:
@@ -1157,8 +1157,8 @@ title: "Get Started with AG Grid"
 |     autoGroupColumnDef: ColDef = {
 |         headerName: 'Model',
 |         field: 'model',
-|         cellRendererComp: 'agGroupCellRenderer',
-|         cellRendererCompParams: {
+|         cellRenderer: 'agGroupCellRenderer',
+|         cellRendererParams: {
 |             checkbox: true
 |         }
 |     };
@@ -1269,12 +1269,11 @@ title: "Get Started with AG Grid"
 |
 | ## Getting Started
 |
-| <video-section id="6PA45adHun8" title="Getting Started Video Tutorial">
+| <video-section id="GTu79aWJT1E" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered) to a new React project, 
-| and configure some of the essential features of it. We will show you some of the
-|     fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the
-|     grid's visual appearance using Sass variables.
+|     and configure some essential features before showing you the fundamentals of the grid (passing properties, 
+|     using the API, etc...). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 | </video-section>
 |
 | <br/><br/>
@@ -1479,7 +1478,7 @@ title: "Get Started with AG Grid"
 | -  const [rowData, setRowData] = useState([]);
 |
 | + useEffect(() => {
-| +     fetch('https://www.ag-grid.com/example-assets/row-data.json')
+| +     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 | +     .then(result => result.json())
 | +     .then(rowData => setRowData(rowData))
 | + }, []);
@@ -1515,7 +1514,7 @@ title: "Get Started with AG Grid"
 |    ]);     
 |
 |    useEffect(() => {
-|        fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
 |            .then(result => result.json())
 |            .then(rowData => setRowData(rowData))
 |    }, []);
@@ -1604,7 +1603,7 @@ title: "Get Started with AG Grid"
 |
 |+ const autoGroupColumnDef = useMemo(()=> ({
 |+     field: "model", // show model in group column at leaf levels
-|+     cellRendererCompParams: {
+|+     cellRendererParams: {
 |+         checkbox: true // put in checkbox selection in group column
 |+     }
 |+ }), [])
@@ -2188,8 +2187,8 @@ title: "Get Started with AG Grid"
 |+               autoGroupColumnDef: {
 |+                   headerName: 'Model',
 |+                   field: 'model',
-|+                   cellRendererComp: 'agGroupCellRenderer',
-|+                   cellRendererCompParams: {
+|+                   cellRenderer: 'agGroupCellRenderer',
+|+                   cellRendererParams: {
 |+                       checkbox: true
 |+                   }
 |+               }

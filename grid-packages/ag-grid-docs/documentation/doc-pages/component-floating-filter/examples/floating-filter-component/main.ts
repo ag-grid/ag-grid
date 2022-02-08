@@ -7,18 +7,18 @@ const columnDefs: ColDef[] = [
   { field: 'name', filter: false },
   {
     field: 'gold',
-    floatingFilterComp: SliderFloatingFilter,
+    floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     },
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     suppressMenu: false,
   },
   {
     field: 'silver',
-    filterComp: 'agNumberColumnFilter',
-    floatingFilterComp: SliderFloatingFilter,
+    filter: 'agNumberColumnFilter',
+    floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
@@ -27,8 +27,8 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'bronze',
-    filterComp: 'agNumberColumnFilter',
-    floatingFilterComp: SliderFloatingFilter,
+    filter: 'agNumberColumnFilter',
+    floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 10,
       suppressFilterButton: true,

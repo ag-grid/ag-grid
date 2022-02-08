@@ -302,14 +302,15 @@ const GridExample = () => {
         {
             headerName: 'Doubling',
             field: 'number',
-            cellEditorComp: DoublingEditor,
+            cellEditor: DoublingEditor,
+            cellEditorPopup: true,
             editable: true,
             width: 300,
         },
         {
             field: 'mood',
-            cellRendererComp: MoodRenderer,
-            cellEditorComp: MoodEditor,
+            cellRenderer: MoodRenderer,
+            cellEditor: MoodEditor,
             cellEditorPopup: true,
             editable: true,
             width: 300,
@@ -317,7 +318,7 @@ const GridExample = () => {
         {
             headerName: 'Numeric',
             field: 'number',
-            cellEditorComp: NumericEditor,
+            cellEditor: NumericEditor,
             cellEditorPopup: true,
             editable: true,
             width: 280,

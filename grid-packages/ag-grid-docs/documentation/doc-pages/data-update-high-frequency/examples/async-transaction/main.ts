@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'previous',
@@ -50,7 +50,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'dealType',
@@ -72,7 +72,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 2',
@@ -82,7 +82,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Gain-DX',
@@ -92,7 +92,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'SX / PX',
@@ -102,7 +102,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: '99 Out',
@@ -112,7 +112,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'submitterID',
@@ -121,7 +121,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'submitterDealID',
@@ -130,7 +130,7 @@ const columnDefs: ColDef[] = [
     enableValue: true,
     cellClass: 'number',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
 ]
 

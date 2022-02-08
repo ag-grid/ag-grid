@@ -1,8 +1,8 @@
 [[only-angular]]
-|Below is a simple example of filter component class:
+|Below is an example of floating filter component:
 |
 |```js
-|import {AgFloatingFilterComponent} from "@ag-grid-community/angular";
+|import {IFloatingFilterAngularComp} from "@ag-grid-community/angular";
 |import {IFloatingFilterParams} from "@ag-grid-community/core";
 |
 |@Component({
@@ -10,7 +10,7 @@
 |    template: `&gt; <input [style.color]="params.color" style="width: 30px" type="number" min="0" [(ngModel)]="currentValue"
 |                           (input)="onInputBoxChanged($event)"/>`
 |})
-|export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
+|export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
 |    params: IFloatingFilterParams;
 |    currentValue: Number | null | string = null;
 |    style: any;
@@ -33,7 +33,7 @@
 |    }
 |
 |    onInputBoxChanged() {
-|        if (!!!this.currentValue) {
+|        if (!this.currentValue) {
 |            // clear the filter
 |            this.params.parentFilterInstance((instance) => {
 |                instance.onFloatingFilterChanged(null, null);

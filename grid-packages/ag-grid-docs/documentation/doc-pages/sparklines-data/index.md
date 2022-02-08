@@ -57,8 +57,8 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'rateOfChange',
-            cellRendererComp: 'agSparklineCellRenderer',
-            cellRendererCompParams: {
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
                 sparklineOptions: {
                     type: 'line',
                     // set xKey and yKey to the keys which can be used to retrieve X and Y values from the supplied data

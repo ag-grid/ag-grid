@@ -198,11 +198,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            debugger
-            if (componentFilenames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
-
             if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
                     const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState();');

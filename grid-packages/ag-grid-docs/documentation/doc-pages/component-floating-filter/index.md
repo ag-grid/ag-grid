@@ -9,10 +9,6 @@ Floating Filter components allow you to add your own floating filter types to AG
 
 This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Floating Filter 
  
 md-include:simple-floating-filter-javascript.md
@@ -82,7 +78,7 @@ In this example it is important to note that:
 1. `NumberFilter.getModel()` returns a `number` representing the current greater than filter.
 1. `NumberFilter.setModel(model)` takes an object that can be of any type. If the value passed is numeric then the filter gets applied with a condition of greater than.
 1. `NumberFloatingFilter.onParentModelChanged(parentModel)` receives the result of `NumberFilter.getModel()` every time the `NumberFilter` model changes
-1. `NumberFloatingFilter` calls `params.onFloatingFilterChanged(modelToAccept)` every time the user changes the slider value. This will cause an automatic call into `NumberFilter.setModel(modelToAccept)`
+1. `NumberFloatingFilter` calls `params.onFloatingFilterChanged(modelToAccept)` every time the user changes the floating filter value. This will cause an automatic call into `NumberFilter.setModel(modelToAccept)`
 1. Since `NumberFilter.onFloatingFilterChanged(change)` is **not** implemented, every time the user changes the input value the filter gets updated automatically. If this method was implemented it would get called every time the floating filter would change, and would be responsible for performing the filtering.
 
 <grid-example title='Custom Filter and Floating Filter' name='custom-filter-and-floating-filter' type='generated' options='{"includeNgFormsModule" : true}'></grid-example>

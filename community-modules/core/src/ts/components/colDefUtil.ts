@@ -25,49 +25,35 @@ export class ColDefUtil {
         'pinned',
         'initialPinned',
         'chartDataType',
-        'cellEditorPopupPosition',
-        'cellEditorCompPopupPosition'
+        'cellEditorPopupPosition'
     ];
 
     public static OBJECT_PROPERTIES = [
         'headerGroupComponent',
         'headerGroupComponentFramework',
         'headerGroupComponentParams',
-        'headerGroupComp',
-        'headerGroupCompParams',
         'cellStyle',
         'cellRenderer',
         'cellRendererParams',
         'cellRendererFramework',
-        'cellRendererComp',
-        'cellRendererCompParams',
         'cellEditor',
         'cellEditorFramework',
         'cellEditorParams',
-        'cellEditorComp',
-        'cellEditorCompParams',
         'pinnedRowCellRendererFramework',
         'pinnedRowCellRendererParams',
-        'filterComp',
         'filterFramework',
         'filterParams',
         'pivotValueColumn',
         'headerComponent',
         'headerComponentFramework',
         'headerComponentParams',
-        'headerComp',
-        'headerCompParams',
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
-        'floatingFilterComp',
-        'floatingFilterCompParams',
         'floatingFilterFramework',
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
-        'tooltipComp',
-        'tooltipCompParams',
         'refData',
         'columnsMenuParams'
     ];
@@ -135,7 +121,6 @@ export class ColDefUtil {
         'singleClickEdit',
         'floatingFilter',
         'cellEditorPopup',
-        'cellEditorCompPopup',
         'suppressFillHandle'
     ];
 
@@ -167,9 +152,7 @@ export class ColDefUtil {
         'tooltipComponent',
         'tooltipComponentFramework',
         'cellRendererSelector',
-        'cellEditorSelector',
-        'cellRendererCompSelector',
-        'cellEditorCompSelector',
+        'cellEditorSelector'
     ];
 
     public static ALL_PROPERTIES = [

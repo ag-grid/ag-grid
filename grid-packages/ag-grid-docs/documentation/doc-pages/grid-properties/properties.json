@@ -46,15 +46,6 @@
                 "url": "/column-menu/"
             }
         },
-        "enableBrowserTooltips": {
-            "more": {
-                "name": "Tooltip Component",
-                "url": "/component-tooltip/"
-            }
-        },
-        "tooltipShowDelay": {},
-        "tooltipHideDelay": {},
-        "tooltipMouseTrack": {},
         "popupParent": {
             "more": {
                 "name": "Popup Parent",
@@ -186,8 +177,7 @@
                 "url": "/components/"
             }
         },
-        "components": {},
-        "frameworkComponents": {}
+        "components": {}
     },
     "editing": {
         "meta": {
@@ -343,27 +333,17 @@
             }
         },
         "loadingCellRenderer": {
+            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource.",
             "more": {
                 "name": "Loading Cell Renderer",
                 "url": "/component-loading-cell-renderer/"
             }
         },
-        "loadingCellRendererFramework": {
-            "more": {
-                "name": "Loading Cell Renderer",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
-        "loadingCellRendererParams": {
-            "more": {
-                "name": "Cell Renderer Params",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
+        "loadingCellRendererParams": {},
         "loadingCellRendererSelector": {
             "more": {
                 "name": "Loading Cell Renderer Selector",
-                "url": "/component-loading-cell-renderer/"
+                "url": "/component-loading-cell-renderer/#dynamic-cell-loading-renderer"
             }
         }
     },
@@ -388,18 +368,7 @@
         },
         "masterDetail": {},
         "detailCellRenderer": {
-            "more": {
-                "name": "Custom Detail",
-                "url": "/master-detail-custom-detail/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
-            }
-        },
-        "detailCellRendererFramework": {
+            "description": "Provide a custom `detailCellRenderer` to use when a master row is expanded.",
             "more": {
                 "name": "Custom Detail",
                 "url": "/master-detail-custom-detail/"
@@ -493,34 +462,22 @@
         },
         "overlayLoadingTemplate": {},
         "loadingOverlayComponent": {
+            "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
                 "url": "/component-overlay/#loading-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ILoadingOverlayComp"
-                ],
-                "include": []
             }
         },
-        "loadingOverlayComponentFramework": {},
         "loadingOverlayComponentParams": {},
         "suppressLoadingOverlay": {},
         "overlayNoRowsTemplate": {},
         "noRowsOverlayComponent": {
+            "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
                 "url": "/component-overlay/#no-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "INoRowsOverlayComp"
-                ],
-                "include": []
             }
         },
-        "noRowsOverlayComponentFramework": {},
         "noRowsOverlayComponentParams": {},
         "suppressNoRowsOverlay": {}
     },
@@ -723,18 +680,12 @@
             }
         },
         "fullWidthCellRenderer": {
+            "description": "Provide your own cell renderer component to use for full width rows.",
             "more": {
-                "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
+                "name": "Full Width Cell Renderer",
+                "url": "/full-width-rows/"
             }
         },
-        "fullWidthCellRendererFramework": {},
         "fullWidthCellRendererParams": {}
     },
     "rowGrouping": {
@@ -830,18 +781,12 @@
             }
         },
         "groupRowRenderer": {
+            "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
-                "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
+                "name": "Group Row Cell Renderer",
+                "url": "/grouping-group-rows/#providing-cell-renderer/"
             }
         },
-        "groupRowRendererFramework": {},
         "groupRowRendererParams": {},
         "suppressDragLeaveHidesColumns": {
             "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
@@ -1172,5 +1117,18 @@
             "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/). Default: `false`"
         },
         "columnHoverHighlight": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Tooltips",
+            "page": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip/"
+            }
+        },
+        "enableBrowserTooltips": {},
+        "tooltipShowDelay": {},
+        "tooltipHideDelay": {},
+        "tooltipMouseTrack": {}
     }
 }

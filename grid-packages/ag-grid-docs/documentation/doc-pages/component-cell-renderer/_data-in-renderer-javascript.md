@@ -1,6 +1,6 @@
 [[only-javascript]]
 |```js
-|colDef.cellRendererComp = params => {
+|colDef.cellRenderer = params => {
 |    // check the data exists, to avoid error
 |    if (params.data) {
 |        // data exists, so we can access it

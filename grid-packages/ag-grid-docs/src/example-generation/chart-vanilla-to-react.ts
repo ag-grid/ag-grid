@@ -45,9 +45,6 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): () 
         const instanceBindings = [];
 
         properties.forEach(property => {
-            if (componentFilenames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
 
             if (property.value === 'true' || property.value === 'false') {
                 componentAttributes.push(`${property.name}={${property.value}}`);

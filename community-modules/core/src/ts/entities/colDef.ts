@@ -1,17 +1,16 @@
-import { RowNode } from "./rowNode";
-import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
-import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { Column } from "./column";
-import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
-import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { IRowDragItem } from "../rendering/row/rowDragComp";
+import { GridApi } from "../gridApi";
+import { ICellEditorParams } from "../interfaces/iCellEditor";
 import { IFilterDef } from '../interfaces/iFilter';
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
+import { IRowDragItem } from "../rendering/row/rowDragComp";
+import { ITooltipParams } from "../rendering/tooltipComponent";
+import { Column } from "./column";
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { IHeaderGroupComp } from "../headerRendering/cells/columnGroup/headerGroupComp";
+import { RowNode } from "./rowNode";
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *
@@ -40,12 +39,15 @@ export interface AbstractColDef {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
-    tooltipComponent?: { new(): ITooltipComp; } | string;
+    /** 
+    * Provide your own tooltip component for the column.
+    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
+    */
+    tooltipComponent?: any;
+    /** @deprecated As of v27, use `tooltipComponent` for framework components too. */
     tooltipComponentFramework?: any;
+    /** The params used to configure `tooltipComponent`. */
     tooltipComponentParams?: any;
-
-    tooltipComp?: any;
-    tooltipCompParams?: any;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
@@ -60,17 +62,16 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */
-    headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */
-    headerGroupComponentFramework?: any;
-    /** The params used to configure the header group component. */
-    headerGroupComponentParams?: any;
 
-    /** The custom header group component to be used for rendering the component header. */
-    headerGroupComp?: any;
-    /** The params used to configure the header group component. */
-    headerGroupCompParams?: any;
+    /** 
+    * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
+    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
+    */
+    headerGroupComponent?: any;
+    /** @deprecated As of v27, use `headerGroupComponent` for framework components too. */
+    headerGroupComponentFramework?: any;
+    /** The params used to configure the `headerGroupComponent`. */
+    headerGroupComponentParams?: any;
 }
 
 export interface IAggFunc {
@@ -195,21 +196,17 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     valueSetter?: string | ValueSetterFunc;
     /** Function or expression. Parses the value for saving. */
     valueParser?: string | ValueParserFunc;
-    /** A `cellEditor` to use for this column. */
-    cellEditor?: string | { new(): ICellEditorComp; };
-    /** Framework `cellEditor` to use for this column. */
+    /**
+    * Provide your own cell editor component for this column's cells.
+    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.
+    */
+    cellEditor?: any;
+    /** @deprecated As of v27, use `cellEditor` for framework components too. */
     cellEditorFramework?: any;
-    /** Params to be passed to the cell editor component. */
+    /** Params to be passed to the `cellEditor` component. */
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc;
-
-    /** A Editor Component to use for this column. */
-    cellEditorComp?: any;
-    /** Params to be passed to the Editor Component */
-    cellEditorCompParams?: any;
-    /** Callback to select which Cell Editor and Params to use for this column. */
-    cellEditorCompSelector?: CellEditorCompSelectorFunc;
 
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
@@ -220,7 +217,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * Set to `true`, to have the cell editor appear in a popup.
      */
     cellEditorPopup?: boolean;
-    cellEditorCompPopup?: boolean;
     /**
      * Set the position for the popup cell editor. Possible values are
      *  - `over` Popup will be positioned over the cell
@@ -228,7 +224,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *
      * Default: `over`. */
     cellEditorPopupPosition?: string;
-    cellEditorCompPopupPosition?: string;
 
     // *** Columns: Events *** //
 
@@ -252,17 +247,16 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Column Headers *** //
 
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */
-    headerComponent?: string | { new(): any; };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */
+    /**  */
+    /** 
+    * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
+    * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
+    */
+    headerComponent?: any;
+    /** @deprecated As of v27, use `headerComponent` for framework components too. */
     headerComponentFramework?: any;
-    /** The parameters to be passed to the header component. */
+    /** The parameters to be passed to the `headerComponent`. */
     headerComponentParams?: any;
-
-    /** The custom header component to be used for rendering the component header. */
-    headerComp?: any;
-    /** The parameters to be passed to the header component. */
-    headerCompParams?: any;
 
     /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
@@ -331,21 +325,18 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClass?: string | string[] | CellClassFunc;
     /** Rules which can be applied to include certain CSS classes. */
     cellClassRules?: CellClassRules;
-    /** A `cellRenderer` to use for this column. */
-    cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Framework `cellRenderer` to use for this column. */
+
+    /** 
+    * Provide your own cell Renderer component for this column's cells.
+    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.
+    */
+    cellRenderer?: any;
+    /** @deprecated As of v27, use `cellRenderer` for framework components too. */
     cellRendererFramework?: any;
-    /** Params to be passed to the cell renderer component. */
+    /** Params to be passed to the `cellRenderer` component. */
     cellRendererParams?: any;
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc;
-
-    /** A Cell Component to use for this column. */
-    cellRendererComp?: any;
-    /** Params to be passed to the Cell Component. */
-    cellRendererCompParams?: any;
-    /** Callback to select which Cell Component and Params to use for this column. */
-    cellRendererCompSelector?: CellRendererCompSelectorFunc;
 
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */
     autoHeight?: boolean;
@@ -694,8 +685,8 @@ export interface CellEditorSelectorFunc {
 }
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */
-    component?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Equivalent of setting `colDef.cellRendererFramework` */
+    component?: any;
+    /** @deprecated As of v27, use `component` for framework components too. */
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellRendererParams` */
     params?: any;
@@ -703,22 +694,9 @@ export interface CellRendererSelectorResult {
 
 export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditor` */
-    component?: { new(): ICellEditorComp; } | string;
-    /** Equivalent of setting `colDef.cellEditorFramework` */
+    component?: any;
+    /** @deprecated As of v27, use `component` for framework components too. */
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;
-}
-
-export interface CellRendererCompSelectorFunc {
-    (params: ICellRendererParams): CompSelectorResult | undefined;
-}
-
-export interface CellEditorCompSelectorFunc {
-    (params: ICellEditorParams): CompSelectorResult | undefined;
-}
-
-export interface CompSelectorResult {
-    comp?: any;
-    params?: any; //Should these both be optional??
 }

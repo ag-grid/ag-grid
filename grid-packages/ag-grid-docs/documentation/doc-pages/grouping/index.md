@@ -19,8 +19,8 @@ To group rows by a particular column, enable the `rowGroup` column property as s
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'sport' },
         { field: 'total' }
     ],

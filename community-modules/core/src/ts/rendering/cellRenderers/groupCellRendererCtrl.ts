@@ -4,7 +4,7 @@ import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
-import { CellRendererCompSelectorFunc, CellRendererSelectorFunc } from "../../entities/colDef";
+import { CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
@@ -58,19 +58,14 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `innerRenderer` but for a framework component. */
+    /** 
+     * @deprecated as of v27, use innerRenderer for Framework components
+     * Same as `innerRenderer` but for a framework component. */
     innerRendererFramework?: any;
     /** Additional params to customise to the `innerRenderer`. */
     innerRendererParams?: any;
     /** Callback to enable different innerRenderers to be used based of value of params. */
     innerRendererSelector?: CellRendererSelectorFunc;
-
-    /** Cell Renderer Component to use for inside the Group Cell */
-    innerRendererComp?: any;
-    /** Params for Inner Cell Component */
-    innerRendererCompParams?: any;
-    /** Callback to select Cell Component for inside the Group Cell, should there be a different one for different rows */
-    innerRendererCompSelector?: CellRendererCompSelectorFunc;
 
     scope: any;
 

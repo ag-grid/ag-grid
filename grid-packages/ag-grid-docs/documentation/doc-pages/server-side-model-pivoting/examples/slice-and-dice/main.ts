@@ -103,7 +103,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'age',
     enableRowGroup: true,
-    filterComp: CustomAgeFilter,
+    filter: CustomAgeFilter,
   },
   {
     field: 'country',
@@ -111,7 +111,7 @@ const columnDefs: ColDef[] = [
     enablePivot: true,
     rowGroup: true,
     hide: true,
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: { values: countries },
   },
   {
@@ -120,7 +120,7 @@ const columnDefs: ColDef[] = [
     enablePivot: true,
     rowGroup: true,
     hide: true,
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: ['2000', '2002', '2004', '2006', '2008', '2010', '2012'],
     },

@@ -6,7 +6,6 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
@@ -90,8 +89,6 @@ import {
     FullWidthCellKeyDownEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
-import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions } from "../interfaces/iChartOptions";
@@ -100,7 +97,6 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { CompSelectorResult } from "../entities/colDef";
 
 export interface GridOptions {
 
@@ -229,12 +225,10 @@ export interface GridOptions {
     skipHeaderOnAutoSize?: boolean;
 
     // *** Components *** //
-    /** A map of component names to plain JavaScript components. */
+    /** A map of component names to components. */
     components?: { [p: string]: any; };
-    /** A map of component names to framework (Angular, React, Vue etc.) components. */
+    /** @deprecated As of v27, use `components` for framework components too. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-    /** A map of component names to components (can be JavaScript OR Framework components). */
-    comps?: { [p: string]: any; };
 
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
     reactUi?: boolean;
@@ -309,22 +303,18 @@ export interface GridOptions {
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
 
-    // *** Loading Cell Renderers *** //
-    /** `cellRenderer` to use when data is loading via a DataSource. */
-    loadingCellRenderer?: { new(): ICellRenderer; } | string;
-    /** Framework `cellRenderer` to use when data is loading via a DataSource. */
+    // *** Loading Cell Renderers *** //    
+    /**
+    * Provide your own loading cell renderer to use when data is loading via a DataSource.
+    * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
+    */
+    loadingCellRenderer?: any;
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */
     loadingCellRendererFramework?: any;
-    /** Params to be passed to loading cell renderer component. */
+    /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
-
-    /** Cell Comp to use when data is loading via a DataSource. */
-    loadingRowCellComp?: any;
-    /** Params for Loading Cell Comp. */
-    loadingRowCellCompParams?: any;
-    /** Selector for the loading component. */
-    loadingRowCellCompSelector?: LoadingRowCellCompSelectorFunc;
 
     // *** Localisation *** //
     // just set once
@@ -338,17 +328,16 @@ export interface GridOptions {
     keepDetailRows?: boolean;
     /** Sets the number of details rows to keep. Default: `10` */
     keepDetailRowsCount?: number;
-    /** Provide a custom `detailCellRenderer` to use when a master row is expanded. */
-    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Framework `detailCellRenderer` to use when a master row is expanded. */
+
+    /**
+    * Provide a custom `detailCellRenderer` to use when a master row is expanded.
+    * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+    */
+    detailCellRenderer?: any;
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too. */
     detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
-
-    /** Provide a custom Detail Cell Component to use when a master row is expanded. */
-    detailRowCellComp?: any;
-    /** Params for Detail Cell Component */
-    detailRowCellCompParams?: any;
 
     /** Set fixed height in pixels for each detail row. */
     detailRowHeight?: number;
@@ -400,34 +389,31 @@ export interface GridOptions {
     // *** Overlays *** //
     /** Provide a template for 'loading' overlay. */
     overlayLoadingTemplate?: string;
-    /** Provide a custom loading overlay component. */
-    loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
-    /** Same as `loadingOverlayComponent` but for a framework component. */
+    /**
+    * Provide a custom loading overlay component.
+    * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+    */
+    loadingOverlayComponent?: any;
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */
     loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
-
-    /** Loading Overlay Component. */
-    loadingOverlayComp?: any;
-    /** Params for Loading Overlay Component */
-    loadingOverlayCompParams?: any;
 
     /** Disables the 'loading' overlay. Default: `false` */
     suppressLoadingOverlay?: boolean;
 
     /** Provide a template for 'no rows' overlay. */
     overlayNoRowsTemplate?: string;
-    /** Provide a custom no rows overlay component */
-    noRowsOverlayComponent?: { new(): INoRowsOverlayComp; } | string;
-    /** Same as `noRowsOverlayComponent` but for a framework component. */
+
+    /**
+    * Provide a custom no rows overlay component.
+    * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+    */
+    noRowsOverlayComponent?: any;
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
-
-    /** Provide a custom no rows overlay component */
-    noRowsOverlayComp?: any;
-    /** Customise the parameters provided to the no rows overlay component. */
-    noRowsOverlayCompParams?: any;
 
     /** Disables the 'no rows' overlay. Default: `false` */
     suppressNoRowsOverlay?: boolean;
@@ -522,17 +508,15 @@ export interface GridOptions {
     rowDragMultiRow?: boolean;
 
     // *** Row Full Width *** //
-    /** Sets the Cell Renderer to use for full width rows. */
-    fullWidthCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `fullWidthCellRenderer` but for a framework component. */
+    /**
+    * Provide your own cell renderer component to use for full width rows.
+    * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
+    */
+    fullWidthCellRenderer?: any;
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */
     fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
-
-    /** Sets the Cell Comp to use for full width rows. */
-    fullWidthCellComp?: any;
-    /** Customise the parameters provided to Full Width Cell Comp. */
-    fullWidthCellCompParams?: any;
 
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
     embedFullWidthRows?: boolean;
@@ -583,17 +567,15 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
     rowGroupPanelShow?: string;
-    /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */
-    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Same as `groupRowRenderer` but for a framework component. */
+    /**
+    * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+    * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+    */
+    groupRowRenderer?: any;
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too. */
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
-
-    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */
-    groupRowCellComp?: any;
-    /** Customise the parameters provided to the Group Row Comp component. */
-    groupRowCellCompParams?: any;
 
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
@@ -601,8 +583,8 @@ export interface GridOptions {
     treeData?: boolean;
 
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
+    groupRowInnerRenderer?: any;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRendererFramework?: any;
     /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
@@ -839,7 +821,7 @@ export interface GridOptions {
 
     // *** Localisation *** //
     /** A callback for localising text within the grid. */
-    localeTextFunc?: (key: string, defaultValue: string) => string;
+    localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
 
     // *** Miscellaneous *** //
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
@@ -955,7 +937,7 @@ export interface GridOptions {
 
     // *** Components *** //
     /**
-     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
      */
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
@@ -1426,13 +1408,9 @@ export interface LoadingCellRendererSelectorFunc {
 }
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
-    component?: { new(): ICellRenderer; } | string;
-    /** Equivalent of setting `loadingCellRendererFramework` */
+    component?: any;
+    /** @deprecated As of v27, use `component` for framework components too. */
     frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
-}
-
-export interface LoadingRowCellCompSelectorFunc {
-    (params: ILoadingCellRendererParams): CompSelectorResult | undefined;
 }

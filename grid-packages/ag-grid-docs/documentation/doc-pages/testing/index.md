@@ -391,7 +391,7 @@ title: "Testing AG Grid"
 |                 [columnDefs]="columnDefs"
 |                 [rowData]="rowData"
 |                 [stopEditingWhenCellsLoseFocus]="false"
-|                 [frameworkComponents]="frameworkComponents"
+|                 [components]="components"
 |                 (gridReady)="onGridReady($event)">
 |             </ag-grid-angular>
 |         </div>`
@@ -405,7 +405,7 @@ title: "Testing AG Grid"
 |         {field: "number", colId: "renderer", headerName: "Renderer Value"}
 |     ];
 |
-|     frameworkComponents = {
+|     components = {
 |         'editor': EditorComponent
 |     };
 |
@@ -588,7 +588,7 @@ title: "Testing AG Grid"
 |             columnDefs: [{
 |                 field: "age",
 |                 editable: true,
-|                 cellEditorFramework: EditorComponent
+|                 cellEditor: EditorComponent
 |             }],
 |             rowData: [{ age: 24 }]
 |         };
@@ -844,7 +844,7 @@ title: "Testing AG Grid"
 |                 {
 |                     field: 'price',
 |                     editable: true,
-|                     cellEditorFramework: 'Editor'
+|                     cellEditor: 'Editor'
 |                 }
 |             ];
 |

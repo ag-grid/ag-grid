@@ -9,10 +9,6 @@ There are two types of header components:
 - **Header Component**: For rendering the normal column headers. Configured for columns.
 - **Header Group Component**: For rendering column groups. Configured for column groups.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Header Component
 
 md-include:simple-header-javascript.md
@@ -25,8 +21,8 @@ md-include:simple-header-vue.md
 The example below shows a header component in action. The following can be observed in the demo:
 
 - Column moving and resizing is working without requiring any logic in the header component.
-- Some columns have suppressMenu=true, so the header component doesn't show the menu.
-- Some columns have sortable=false, so the header component doesn't add sorting logic.
+- Some columns have `suppressMenu=true`, so the header component doesn't show the menu.
+- Some columns have `sortable=false`, so the header component doesn't add sorting logic.
 - The header component uses additional parameters to allowing configuring the menu icon.
 
 <grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
@@ -166,7 +162,7 @@ myMenuButton.addEventListener('click', function() {
 
 The `refresh(params)` method gets called when the application updates the Column Definitions. For example the application could set a `headerName` attribute and then set the Column Definitions again. In this instance, the Header Component should update the displayed header name.
 
-It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and updated if needed. If the refresh was successful then `true` should be returned. If the refresh was no successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
+It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and updated if needed. If the refresh was successful then `true` should be returned. If the refresh was not successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
 
 [[only-react]]
 |[[note]]
@@ -198,11 +194,6 @@ On top of the parameters provided by the grid, you can also provide your own par
 |}
 |```
 [[only-react]]
-|```jsx
-|{/* the pound symbol will be placed into params */}
-|<AgGridColumn field="age" headerComponent: "myHeaderComponent" headerComponentParams={{currencySymbol: '£'}} />
-|```
-[[only-vue]]
 |```js
 |colDef = {
 |    ...
@@ -210,8 +201,19 @@ On top of the parameters provided by the grid, you can also provide your own par
 |    headerComponentParams : {
 |        currencySymbol: '£' // the pound symbol will be placed into params
 |    }
+|}|```
+[[only-vue]]
+|```js
+|colDef = {
+|    ...
+|    headerComponent: 'MyHeaderComponent';
+|    headerComponentParams : {
+|        currencySymbol: '£' // the pound symbol will be placed into params
+|    }
 |}
 |```
+
+## Header Group Components
 
 ### Grid vs Your Responsibilities
 

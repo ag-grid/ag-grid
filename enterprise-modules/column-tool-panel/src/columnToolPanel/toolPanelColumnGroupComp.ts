@@ -22,6 +22,7 @@ import {
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
+import { ToolPanelContextMenu } from "./toolPanelContextMenu";
 
 export class ToolPanelColumnGroupComp extends Component {
 
@@ -97,6 +98,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.addManagedListener(this.modelItem, ColumnModelItem.EVENT_EXPANDED_CHANGED, this.onExpandChanged.bind(this));
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
 
         this.setOpenClosedIcons();
         this.setupDragging();
@@ -152,6 +154,19 @@ export class ToolPanelColumnGroupComp extends Component {
                 }
                 break;
         }
+    }
+
+    private onContextMenu(e: MouseEvent): void {
+        const { columnGroup, gridOptionsWrapper } = this;
+
+        if (gridOptionsWrapper.isFunctionsReadOnly()) { return; }
+
+        const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
+        this.addDestroyFunc(() => {
+            if (contextMenu.isAlive()) {
+                this.destroyBean(contextMenu);
+            }
+        })
     }
 
     private addVisibilityListenersToAllChildren(): void {

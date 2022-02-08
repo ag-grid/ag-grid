@@ -41,27 +41,27 @@ const VueExample = {
                 {
                     field: "gender",
                     width: 100,
-                    cellEditorFramework: "mySimpleEditor"
+                    cellEditor: "mySimpleEditor"
                 },
                 {
                     field: "age",
                     width: 80,
-                    cellEditorFramework: "mySimpleEditor"
+                    cellEditor: "mySimpleEditor"
                 },
                 {
                     field: "mood",
                     width: 90,
-                    cellEditorFramework: "mySimpleEditor"
+                    cellEditor: "mySimpleEditor"
                 },
                 {
                     field: "country",
                     width: 110,
-                    cellEditorFramework: "mySimpleEditor"
+                    cellEditor: "mySimpleEditor"
                 },
                 {
                     field: "address",
                     width: 502,
-                    cellEditorFramework: "mySimpleEditor"
+                    cellEditor: "mySimpleEditor"
                 }
             ],
             defaultColDef: {

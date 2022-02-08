@@ -1,6 +1,5 @@
 [[only-angular]]
 |```js
-|this.gridOptions: {
 |    sideBar: {
 |        toolPanels: [
 |            {
@@ -8,14 +7,9 @@
 |                labelDefault: 'Custom Stats',
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
-|                component: 'customStatsToolPanel',
+|                toolPanel: CustomStatsComponent,
 |            }
 |        ]
-|    },
-|    components: {
-|        customStatsToolPanel: CustomStatsComponent
 |    }
-|
 |    // other grid properties
-|}
 |```

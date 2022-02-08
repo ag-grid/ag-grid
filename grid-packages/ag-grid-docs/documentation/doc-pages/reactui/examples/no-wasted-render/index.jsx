@@ -28,10 +28,10 @@ function GridExample() {
     const gridRef = useRef();
 
     const columnDefs = useMemo( ()=> [
-            { field: 'athlete', cellRendererFramework: RenderCounterCellRenderer },
-            { field: 'country', cellRendererFramework: RenderCounterCellRenderer },
-            { field: 'gold', cellRendererFramework: RenderCounterCellRenderer },
-            { field: 'silver', cellRendererFramework: RenderCounterCellRenderer }
+            { field: 'athlete', cellRenderer: RenderCounterCellRenderer },
+            { field: 'country', cellRenderer: RenderCounterCellRenderer },
+            { field: 'gold', cellRenderer: RenderCounterCellRenderer },
+            { field: 'silver', cellRenderer: RenderCounterCellRenderer }
         ], []);
 
     // never changes, so we can use useMemo

@@ -16,27 +16,31 @@ const gridOptions: GridOptions = {
     { field: 'name' },
     {
       field: 'gender',
-      cellRendererComp: GenderCellRenderer,
-      cellEditorComp: 'agRichSelectCellEditor',
-      cellEditorCompParams: {
+      cellRenderer: GenderCellRenderer,
+      cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
+      cellEditorParams: {
         values: ['Male', 'Female'],
-        cellRendererComp: GenderCellRenderer,
+        cellRenderer: GenderCellRenderer,
+        cellEditorPopup: true
       },
     },
     {
       field: 'country',
-      cellEditorComp: 'agRichSelectCellEditor',
-      cellEditorCompParams: {
+      cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
+      cellEditorParams: {
         cellHeight: 50,
         values: ['Ireland', 'USA'],
       },
     },
     {
       field: 'city',
-      cellEditorComp: 'agRichSelectCellEditor',
-      cellEditorCompParams: cellCellEditorParams,
+      cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
+      cellEditorParams: cellCellEditorParams,
     },
-    { field: 'address', cellEditorComp: 'agLargeTextCellEditor', minWidth: 550 },
+    { field: 'address', cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, minWidth: 550 },
   ],
   defaultColDef: {
     flex: 1,

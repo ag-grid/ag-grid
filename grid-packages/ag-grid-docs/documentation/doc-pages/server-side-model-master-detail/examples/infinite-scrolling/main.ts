@@ -3,7 +3,7 @@ import { Grid, GridOptions, IDetailCellRendererParams, IServerSideDatasource, IS
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'accountId', cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'accountId', cellRenderer: 'agGroupCellRenderer' },
     { field: 'name' },
     { field: 'country' },
     { field: 'calls' },
@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   // enable master detail
   masterDetail: true,
 
-  detailRowCellCompParams: {
+  detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

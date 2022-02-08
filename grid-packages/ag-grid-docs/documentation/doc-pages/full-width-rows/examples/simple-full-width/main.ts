@@ -23,7 +23,7 @@ class CountryCellRenderer implements ICellRendererComp {
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'name', cellRendererComp: CountryCellRenderer },
+        { field: 'name', cellRenderer: CountryCellRenderer },
         { field: 'continent' },
         { field: 'language' },
     ],
@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
         return isFullWidth(rowNode.data)
     },
     // see AG Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellComp: FullWidthCellRenderer,
+    fullWidthCellRenderer: FullWidthCellRenderer,
 }
 
 function isFullWidth(data: any) {

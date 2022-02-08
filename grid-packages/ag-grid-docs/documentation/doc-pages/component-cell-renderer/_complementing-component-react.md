@@ -11,16 +11,16 @@
 |        {
 |            headerName: "Colour 1",
 |            field: "value",
-|            cellRendererComp: ColourCellRenderer,
-|            cellRendererCompParams: {
+|            cellRenderer: ColourCellRenderer,
+|            cellRendererParams: {
 |               color: 'guinnessBlack'
 |            }
 |        },
 |        {
 |            headerName: "Colour 2",
 |            field: "value",
-|            cellRendererComp: ColourCellRenderer,
-|            cellRendererCompParams: {
+|            cellRenderer: ColourCellRenderer,
+|            cellRendererParams: {
 |               color: 'irishGreen'
 |            }
 |        }

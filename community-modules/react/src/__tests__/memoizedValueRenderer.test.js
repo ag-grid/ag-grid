@@ -42,7 +42,7 @@ class GridComponent extends Component {
             columnDefs: [
                 {
                     field: "value",
-                    cellRendererComp: "cellRenderer"
+                    cellRenderer: "cellRenderer"
                 }
             ],
             rowData: [
@@ -71,7 +71,7 @@ class GridComponent extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    comps={{
+                    frameworkComponents={{
                         cellRenderer: CellRenderer
                     }}
                     modules={[ClientSideRowModelModule]}/>

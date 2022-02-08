@@ -40,7 +40,12 @@ export class ModuleRegistry {
         }
 
         const warningKey = reason + moduleName;
-        const warningMessage = `AG Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/`;
+        let warningMessage: string;
+        if (ModuleRegistry.moduleBased) {
+            warningMessage = `AG Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/`;
+        } else {
+            warningMessage = `AG Grid: unable to use ${reason} as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/`;
+        }
 
         doOnce(() => {
             console.warn(warningMessage);

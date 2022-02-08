@@ -97,15 +97,7 @@ The same Cell Renderer can used to format the grid cells and filter values, or d
 each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid
 cells have row details that are not present for values inside a Filter List).
 
-Given the following Cell Renderer:
-
-<snippet>
-const countryCellRenderer = params => {
-    return '&lt;span style="font-weight: bold"&gt;' + params.value + '&lt;/span&gt;';
-}
-</snippet>
-
-The following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
+Assuming you have a customer Country Cell Renderer, the following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
 
 <snippet>
 const gridOptions = {
@@ -291,7 +283,7 @@ The following example demonstrates the difference in behaviour between `caseSens
 - The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
   - Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
-<grid-example title='Enabling SetFilter Case-Sensitivity' name='case-sensitive-set-filter-list' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Enabling SetFilter Case-Sensitivity' name='case-sensitive-set-filter-list' type='mixed' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 If case differences need to be normalised to remove redundant values from the data-source for filtering, a [Value Formatter](#value-formatter) should be used.
 

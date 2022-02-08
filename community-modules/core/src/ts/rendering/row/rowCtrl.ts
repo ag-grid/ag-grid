@@ -307,7 +307,11 @@ export class RowCtrl extends BeanStub {
 
         const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
         if (this.rowType==RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+            if (ModuleRegistry.isPackageBased()) {
+                console.warn(`AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.`);
+            } else {
+                console.warn(`AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module ${ModuleNames.MasterDetailModule}`);
+            }
             return;
         }
 
@@ -888,6 +892,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
+
+        if (this.rowType !== RowType.FullWidthDetail) { return; }
 
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
 

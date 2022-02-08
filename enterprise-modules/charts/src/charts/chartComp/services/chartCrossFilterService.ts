@@ -110,7 +110,6 @@ export class ChartCrossFilterService extends BeanStub {
 
         const colDef = gridColumn.getColDef();
 
-        return colDef.filter!=null ? colDef.filter :
-                colDef.filterFramework!=null ? colDef.filterFramework : colDef.filterComp;
+        return colDef.filter!=null ? colDef.filter : colDef.filterFramework;
     }
 }

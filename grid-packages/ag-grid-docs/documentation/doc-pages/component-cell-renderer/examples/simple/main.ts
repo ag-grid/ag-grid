@@ -5,10 +5,10 @@ import { TotalValueRenderer } from "./totalValueRenderer_typescript";
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'year' },
-  { field: 'gold', cellRendererComp: MedalCellRenderer },
-  { field: 'silver', cellRendererComp: MedalCellRenderer },
-  { field: 'bronze', cellRendererComp: MedalCellRenderer },
-  { field: 'total', minWidth: 175, cellRendererComp: TotalValueRenderer },
+  { field: 'gold', cellRenderer: MedalCellRenderer },
+  { field: 'silver', cellRenderer: MedalCellRenderer },
+  { field: 'bronze', cellRenderer: MedalCellRenderer },
+  { field: 'total', minWidth: 175, cellRenderer: TotalValueRenderer },
 ]
 
 const gridOptions: GridOptions = {

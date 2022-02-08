@@ -60,21 +60,11 @@ const extrasMap = {
     'xlsx-style': {
         scripts: ['https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js']
     },
-    angularjs1: {
-        scripts: ['https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js']
-    },
-    'ui-bootstrap': {
-        scripts: ['//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js'],
-        styles: ['//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css']
-    },
     materialdesign: {
         styles: [
             'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
-    },
-    'ngx-bootstrap': {
-        styles: ['https://unpkg.com/bootstrap/dist/css/bootstrap.min.css']
     }
 };
 

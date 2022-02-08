@@ -33,7 +33,7 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
-        { field: 'sport', enableRowGroup: true, hide: true , rowGroup: true, cellRendererFramework: MyRenderer },
+        { field: 'sport', enableRowGroup: true, hide: true , rowGroup: true, cellRenderer: MyRenderer },
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true  },
         { field: 'athlete', enableRowGroup: true, hide: true },
         { field: 'gold', aggFunc: 'sum' },
@@ -50,7 +50,7 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const autoGroupColumnDef = useMemo( ()=> ({
-        cellRendererCompParams: {
+        cellRendererParams: {
             suppressCount: true,
             checkbox: true
         },

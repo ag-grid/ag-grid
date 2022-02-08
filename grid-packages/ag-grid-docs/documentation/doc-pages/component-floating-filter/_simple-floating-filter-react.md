@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of filter component as a Hook:
+|Below is an example of floating filter component as a Hook:
 |
 |```jsx
 |export default forwardRef((props, ref) => {

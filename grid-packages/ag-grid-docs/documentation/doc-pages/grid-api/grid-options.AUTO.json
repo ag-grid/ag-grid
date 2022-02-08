@@ -180,16 +180,12 @@
     "type": { "returnType": "boolean" }
   },
   "components": {
-    "description": "/** A map of component names to plain JavaScript components. */",
+    "description": "/** A map of component names to components. */",
     "type": { "returnType": "{ [p: string]: any; }" }
   },
   "frameworkComponents": {
-    "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
+    "description": "/** @deprecated As of v27, use `components` for framework components too.\n */",
     "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
-  },
-  "comps": {
-    "description": "/** A map of component names to components (can be JavaScript OR Framework components). */",
-    "type": { "returnType": "{ [p: string]: any; }" }
   },
   "reactUi": {
     "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
@@ -288,32 +284,20 @@
     "type": { "returnType": "AgChartThemeOverrides" }
   },
   "loadingCellRenderer": {
-    "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
-    "type": { "returnType": "{ new(): ICellRenderer; } | string" }
+    "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "loadingCellRendererFramework": {
-    "description": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
+    "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererParams": {
-    "description": "/** Params to be passed to loading cell renderer component. */",
+    "description": "/** Params to be passed to the `loadingCellRenderer` component. */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererSelector": {
     "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
     "type": { "returnType": "LoadingCellRendererSelectorFunc" }
-  },
-  "loadingRowCellComp": {
-    "description": "/** Cell Comp to use when data is loading via a DataSource. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingRowCellCompParams": {
-    "description": "/** Params for Loading Cell Comp. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingRowCellCompSelector": {
-    "description": "/** Selector for the loading component. */",
-    "type": { "returnType": "LoadingRowCellCompSelectorFunc" }
   },
   "localeText": {
     "description": "/** A map of key->value pairs for localising text within the grid. */",
@@ -332,25 +316,15 @@
     "type": { "returnType": "number" }
   },
   "detailCellRenderer": {
-    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "detailCellRendererFramework": {
-    "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
+    "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererParams": {
     "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
-    "type": { "returnType": "any" }
-  },
-  "detailRowCellComp": {
-    "description": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
-    "type": { "returnType": "any" }
-  },
-  "detailRowCellCompParams": {
-    "description": "/** Params for Detail Cell Component */",
     "type": { "returnType": "any" }
   },
   "detailRowHeight": {
@@ -426,23 +400,15 @@
     "type": { "returnType": "string" }
   },
   "loadingOverlayComponent": {
-    "description": "/** Provide a custom loading overlay component. */",
-    "type": { "returnType": "{ new(): ILoadingOverlayComp; } | string" }
+    "description": "/** Provide a custom loading overlay component.\n * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "loadingOverlayComponentFramework": {
-    "description": "/** Same as `loadingOverlayComponent` but for a framework component. */",
+    "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentParams": {
     "description": "/** Customise the parameters provided to the loading overlay component. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingOverlayComp": {
-    "description": "/** Loading Overlay Component. */",
-    "type": { "returnType": "any" }
-  },
-  "loadingOverlayCompParams": {
-    "description": "/** Params for Loading Overlay Component */",
     "type": { "returnType": "any" }
   },
   "suppressLoadingOverlay": {
@@ -454,22 +420,14 @@
     "type": { "returnType": "string" }
   },
   "noRowsOverlayComponent": {
-    "description": "/** Provide a custom no rows overlay component */",
-    "type": { "returnType": "{ new(): INoRowsOverlayComp; } | string" }
+    "description": "/** Provide a custom no rows overlay component.\n * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentFramework": {
-    "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
+    "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
-    "description": "/** Customise the parameters provided to the no rows overlay component. */",
-    "type": { "returnType": "any" }
-  },
-  "noRowsOverlayComp": {
-    "description": "/** Provide a custom no rows overlay component */",
-    "type": { "returnType": "any" }
-  },
-  "noRowsOverlayCompParams": {
     "description": "/** Customise the parameters provided to the no rows overlay component. */",
     "type": { "returnType": "any" }
   },
@@ -606,25 +564,15 @@
     "type": { "returnType": "boolean" }
   },
   "fullWidthCellRenderer": {
-    "description": "/** Sets the Cell Renderer to use for full width rows. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "fullWidthCellRendererFramework": {
-    "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
+    "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererParams": {
     "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
-    "type": { "returnType": "any" }
-  },
-  "fullWidthCellComp": {
-    "description": "/** Sets the Cell Comp to use for full width rows. */",
-    "type": { "returnType": "any" }
-  },
-  "fullWidthCellCompParams": {
-    "description": "/** Customise the parameters provided to Full Width Cell Comp. */",
     "type": { "returnType": "any" }
   },
   "embedFullWidthRows": {
@@ -692,25 +640,15 @@
     "type": { "returnType": "string" }
   },
   "groupRowRenderer": {
-    "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
+    "type": { "returnType": "any" }
   },
   "groupRowRendererFramework": {
-    "description": "/** Same as `groupRowRenderer` but for a framework component. */",
+    "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too.\n */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererParams": {
     "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
-    "type": { "returnType": "any" }
-  },
-  "groupRowCellComp": {
-    "description": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
-    "type": { "returnType": "any" }
-  },
-  "groupRowCellCompParams": {
-    "description": "/** Customise the parameters provided to the Group Row Comp component. */",
     "type": { "returnType": "any" }
   },
   "suppressMakeColumnVisibleAfterUnGroup": {
@@ -723,12 +661,10 @@
   },
   "groupRowInnerRenderer": {
     "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
+    "type": { "returnType": "any" }
   },
   "groupRowInnerRendererFramework": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
+    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
     "type": { "returnType": "any" }
   },
   "groupMultiAutoColumn": {
@@ -1116,7 +1052,11 @@
   "localeTextFunc": {
     "description": "/** A callback for localising text within the grid. */",
     "type": {
-      "arguments": { "key": "string", "defaultValue": "string" },
+      "arguments": {
+        "key": "string",
+        "defaultValue": "string",
+        "variableValues?": "string[]"
+      },
       "returnType": "string"
     }
   },
@@ -1511,7 +1451,7 @@
     "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "onComponentStateChanged": {
-    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
     "type": {
       "arguments": { "event": "ComponentStateChangedEvent" },
       "returnType": "void"
@@ -1519,7 +1459,7 @@
     "meta": { "isEvent": true, "name": "onComponentStateChanged" }
   },
   "componentStateChanged": {
-    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+    "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
     "type": {
       "arguments": { "event": "ComponentStateChangedEvent" },
       "returnType": "void"

@@ -30,11 +30,11 @@ const columnDefs: ColDef[] = [
         field: 'gender',
         width: 100,
         editable: true,
-        cellRendererComp: GenderRenderer,
-        cellEditorComp: 'agRichSelectCellEditor',
+        cellRenderer: GenderRenderer,
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorPopup: true,
-        cellEditorCompParams: {
-            cellRendererComp: GenderRenderer,
+        cellEditorParams: {
+            cellRenderer: GenderRenderer,
             values: ['Male', 'Female'],
         },
     },
@@ -42,28 +42,28 @@ const columnDefs: ColDef[] = [
         field: 'age',
         width: 80,
         editable: true,
-        cellEditorComp: NumericEditor,
+        cellEditor: NumericEditor,
         cellEditorPopup: true
     },
     {
         field: 'mood',
         width: 100,
-        cellRendererComp: MoodRenderer,
-        cellEditorComp: MoodEditor,
+        cellRenderer: MoodRenderer,
+        cellEditor: MoodEditor,
         cellEditorPopup: true,
         editable: true,
     },
     {
         field: 'country',
         width: 110,
-        cellEditorComp: 'agRichSelectCellEditor',
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorPopup: true,
-        cellRendererComp: CountryCellRenderer,
+        cellRenderer: CountryCellRenderer,
         keyCreator: function (params: KeyCreatorParams) {
             return params.value.name
         },
-        cellEditorCompParams: {
-            cellRendererComp: CountryCellRenderer,
+        cellEditorParams: {
+            cellRenderer: CountryCellRenderer,
             values: [
                 { name: 'Ireland', code: 'IE' },
                 { name: 'UK', code: 'UK' },
@@ -75,8 +75,9 @@ const columnDefs: ColDef[] = [
     {
         field: 'address',
         editable: true,
-        cellEditorComp: 'agLargeTextCellEditor',
-        cellEditorCompParams: {
+        cellEditor: 'agLargeTextCellEditor',
+        cellEditorPopup: true,
+        cellEditorParams: {
             maxLength: '300', // override the editor defaults
             cols: '50',
             rows: '6',

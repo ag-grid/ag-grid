@@ -4,10 +4,6 @@ title: "Filter Component"
 
 Filter components allow you to add your own filter types to AG Grid. Use them when the provided filters do not meet your requirements.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Filter
 
 md-include:simple-filter-javascript.md
@@ -68,7 +64,7 @@ There are two ways you can get fix this problem:
 |         Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
 |     `
 | })
-| class PartialMatchFilterComponent implements AgFilterComponent {
+| class PartialMatchFilterComponent implements IFilterAngularComp {
 |     ... // standard filter methods hidden
 |
 |     // put a custom method on the filter
@@ -79,7 +75,7 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance('name'); // assume filter on name column
+|     const angularFilterInstance = api.getFilterInstance('name') as PartialMatchFilterComponent; // assume filter on name column
 |     angularFilterInstance.myMethod();
 | }
 | ```

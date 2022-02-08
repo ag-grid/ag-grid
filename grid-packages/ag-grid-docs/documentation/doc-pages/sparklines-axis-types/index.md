@@ -40,8 +40,8 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'rateOfChange',
-            cellRendererComp: 'agSparklineCellRenderer',
-            cellRendererCompParams: {
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
                 sparklineOptions: {
                     axis: {
                         // use Category Axis (Optional)
@@ -78,8 +78,8 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'history',
-            cellRendererComp: 'agSparklineCellRenderer',
-            cellRendererCompParams: {
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
                 sparklineOptions: {
                     axis: {
                         // use Number Axis
@@ -117,8 +117,8 @@ const gridOptions = {
     columnDefs: [
         {
             field: 'rateOfChange',
-            cellRendererComp: 'agSparklineCellRenderer',
-            cellRendererCompParams: {
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
                 sparklineOptions: {
                     axis: {
                         // use Time Axis

@@ -9,31 +9,24 @@
 |```ts
 |interface {
 |
-|    // Should return the final value to the grid, the result of the editing
+|    // Mandatory - Return the final value - called by the grid once after editing is complete
 |    getValue(): any;
 |
-|    // Gets called once after initialised.
-|    // If you return true, the editor will appear in a popup
-|    isPopup?(): boolean;
-|
-|    // Gets called once, only if isPopup() returns true. Return "over" if the
-|    // popup should cover the cell, or "under" if it should be positioned below
-|    // leaving the cell value visible. If this method is not present, the
-|    // default is "over"
-|    getPopupPosition?(): string;
-|
-|    // Gets called once before editing starts, to give editor a chance to
-|    // cancel the editing before it even starts.
+|    // Gets called once after initialised. If you return true, the editor will not be
+|    // used and the grid will continue editing. Use this to make a decision on editing
+|    // inside the init() function, eg maybe you want to only start editing if the user
+|    // hits a numeric key, but not a letter, if the editor is for numbers.
 |    isCancelBeforeStart?(): boolean;
 |
-|    // Gets called once when editing is finished (eg if Enter is pressed).
-|    // If you return true, then the result of the edit will be ignored.
+|    // Gets called once after editing is complete. If your return true, then the new
+|    // value will not be used. The editing will have no impact on the record. Use this
+|    // if you do not want a new value from your gui, i.e. you want to cancel the editing.
 |    isCancelAfterEnd?(): boolean;
 |
-|    // If doing full row edit, then gets called when tabbing into the cell.
+|    // If doing full line edit, then gets called when focus should be put into the editor
 |    focusIn?(): boolean;
 |
-|    // If doing full row edit, then gets called when tabbing out of the cell.
+|    // If doing full line edit, then gets called when focus is leaving the editor
 |    focusOut?(): boolean;
 |}
 |```

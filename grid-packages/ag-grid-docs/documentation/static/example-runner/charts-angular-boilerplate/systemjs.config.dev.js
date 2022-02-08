@@ -66,7 +66,7 @@
         map: assign(
             {
                 // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // angular bundles
                 "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.js",
@@ -83,7 +83,6 @@
                 "@angular/forms": "npm:@angular/forms@" + ANGULAR_VERSION + "/bundles/forms.umd.js",
                 "@angular/upgrade": "npm:@angular/upgrade@" + ANGULAR_VERSION + "/bundles/upgrade.umd.js",
                 "@angular/upgrade/static": "npm:@angular/upgrade@" + ANGULAR_VERSION + "/bundles/upgrade-static.umd.js",
-                "angular-in-memory-web-api": "npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js",
                 // material design
                 "@angular/material": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material.umd.js",
                 "@angular/cdk/platform": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-platform.umd.js",

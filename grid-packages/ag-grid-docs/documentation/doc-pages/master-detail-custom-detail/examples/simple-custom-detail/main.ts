@@ -3,10 +3,10 @@ import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  detailRowCellComp: DetailCellRenderer,
+  detailCellRenderer: DetailCellRenderer,
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },

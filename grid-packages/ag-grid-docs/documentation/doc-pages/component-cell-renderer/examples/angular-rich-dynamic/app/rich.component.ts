@@ -19,7 +19,8 @@ export class RichComponent {
     constructor() {
         this.gridOptions = {
             rowData: RichComponent.createRowData(),
-            columnDefs: RichComponent.createColumnDefs()
+            columnDefs: RichComponent.createColumnDefs(),
+            rowHeight: 50
         };
     }
 
@@ -29,13 +30,13 @@ export class RichComponent {
             {
                 headerName: "Ratio Component",
                 field: "ratios",
-                cellRendererComp: RatioParentComponent,
+                cellRenderer: RatioParentComponent,
                 width: 350
             },
             {
                 headerName: "Clickable Component",
                 field: "name",
-                cellRendererComp: ClickableParentComponent,
+                cellRenderer: ClickableParentComponent,
                 width: 330
             }
         ];

@@ -71,7 +71,6 @@ export class PartialMatchFilter implements IFilterAngularComp {
         window.setTimeout(() => this.input.element.nativeElement.focus());
     }
 
-    // noinspection JSMethodCanBeStatic
     componentMethod(message: string): void {
         alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }

@@ -2,7 +2,7 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filterComp: 'agTextColumnFilter', minWidth: 200 },
+    { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
     { field: 'age' },
     { field: 'country', minWidth: 180 },
     { field: 'year' },

@@ -41,9 +41,9 @@ const gridOptions: GridOptions = {
     rowDrag: true,
     headerName: 'Files',
     minWidth: 300,
-    cellRendererCompParams: {
+    cellRendererParams: {
       suppressCount: true,
-      innerCellComp: FileCellRenderer,
+      innerRenderer: FileCellRenderer,
     },
     cellClassRules: {
       'hover-over': function (params) {

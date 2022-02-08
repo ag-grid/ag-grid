@@ -1,17 +1,26 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 export default forwardRef((props, ref) => {
+
     const [date, setDate] = useState(null);
     const [picker, setPicker] = useState(null);
     const refFlatPickr = useRef();
     const refInput = useRef();
+
+    // we use a ref as well as state, as state is async,
+    // and after the grid calls setDate() (eg when setting filter model)
+    // it then can call getDate() immediately (eg to execute the filter)
+    // and we need to pass back the most recent value, not the old 'current state'.
+    const dateRef = useRef();
 
     //*********************************************************************************
     //          LINKING THE UI, THE STATE AND AG-GRID
     //*********************************************************************************
 
     const onDateChanged = (selectedDates) => {
-        setDate(selectedDates[0]);
+        const newDate = selectedDates[0];
+        setDate(newDate);
+        dateRef.current = newDate;
         props.onDateChanged();
     };
 
@@ -44,11 +53,12 @@ export default forwardRef((props, ref) => {
         getDate() {
             //ag-grid will call us here when in need to check what the current date value is hold by this
             //component.
-            return date;
+            return dateRef.current;
         },
 
         setDate(date) {
             //ag-grid will call us here when it needs this component to update the date that it holds.
+            dateRef.current = date;
             setDate(date);
         },
 

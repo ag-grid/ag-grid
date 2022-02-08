@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
+import React, { useEffect, useCallback, useRef, useState, useMemo, memo, useContext } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
@@ -78,6 +78,29 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
+
+    const autoHeightSetup = useRef<boolean>(false);
+    const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
+
+    // puts autoHeight onto full with detail rows. this needs trickery, as we need
+    // the HTMLElement for the provided Detail Cell Renderer, however the Detail Cell Renderer
+    // could be a stateless React Func Comp which won't work with useRef, so we need
+    // to poll (we limit to 10) looking for the Detail HTMLElement (which will be the only
+    // child) after the fullWidthCompDetails is set.
+    useEffect( ()=> {
+        if (autoHeightSetup.current) { return; }
+        if (!fullWidthCompDetails) { return; }
+        if (autoHeightSetupAttempt>10) { return; }
+
+        const eChild = eGui.current?.firstChild as HTMLElement;
+        if (eChild) {
+            rowCtrl.setupDetailRowAutoHeight(eChild);
+            autoHeightSetup.current = true;
+        } else {
+            setAutoHeightSetupAttempt( prev => prev + 1);
+        }
+
+    }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
     const cssClassManager = useMemo( ()=> new CssClassManager( ()=> eGui.current! ), []);
 

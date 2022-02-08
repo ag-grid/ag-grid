@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
   autoGroupColumnDef: {
     // to get 'athlete' showing in the leaf level in this column
-    cellRendererComp: 'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     headerName: 'Athlete',
     minWidth: 200,
     field: 'athlete',

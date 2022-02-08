@@ -36,7 +36,7 @@ const initialState = {
         {
             field: 'price',
             cellClass: 'align-right',
-            cellRendererFramework: PriceRenderer
+            cellRenderer: PriceRenderer
         }
     ]
 };

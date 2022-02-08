@@ -4,10 +4,6 @@ title: "Date Component"
 
 You can create your own date components, and AG Grid will use them every time it needs to ask the user for a date value. The date components are currently used in **date filters**.
 
-[[note]]
-| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
-| If you are new to AG Grid, ignore this message.
-
 ## Simple Date Component
 
 md-include:simple-date-javascript.md
@@ -30,7 +26,7 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |```js
 |const gridOptions = {
 |    // Here is where we specify the component to be used as the date picker widget
-|    comps: {
+|    components: {
 |        agDateInput: CustomDateComponent
 |    }
 |};
@@ -42,50 +38,34 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |    template: `
 |      <ag-grid-angular
 |          class="ag-theme-alpine"
-|          [comps]="comps"
+|          [components]="components"
 |          ...other properties...  
 |      ></ag-grid-angular>
 |    `
 |})
 |export class AppComponent {
-|    private comps = {
+|    public components = {
 |        agDateInput: CustomDateComponent
 |    };
 |```
 [[only-react]]
 |```jsx
 |<AgGridReact
-|    comps={{ agDateInput: CustomDateComponent }}
+|    components={{ agDateInput: CustomDateComponent }}
 |    ...other properties...
 |/>
 |```
 [[only-vue]]
 |```js
 |const MyApp = {
-|    template: `
-|      <ag-grid-vue
-|          :frameworkComponents="frameworkComponents"
-|          ...other properties...  
-|      >
-|      </ag-grid-vue>
-|    `,
 |    components: {
 |        'ag-grid-vue': AgGridVue
-|        myDateComponent: CustomDateComponent
-|    },
-|    data: function () {
-|        return {
-|            frameworkComponents: {
-|                // name is important here - it has to be agDateInput for the grid to recognise and use it in date fields 
-|                agDateInput: 'myDateComponent'
-|            },
-|            // other properties/values
-|        }
+|        agDateInput: CustomDateComponent
 |    },
 |```
 |
  
-Please see [Provided Components](../components/#grid-provided-components) for more information about overrided AG Grid provided components (as we're doing here
+Please see [Provided Components](../components/#grid-provided-components) for more information about overridden AG Grid provided components (as we're doing here
 by overriding `agDateInput`).
 
 md-include:component-interface-javascript.md
@@ -93,7 +73,7 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-<interface-documentation interfaceName='IDateParams' ></interface-documentation>
+<interface-documentation interfaceName='IDateParams' overridesrc='component-date/resources/dateParams.json' ></interface-documentation>
 
 
 

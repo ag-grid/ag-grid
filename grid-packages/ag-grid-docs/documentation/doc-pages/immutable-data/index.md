@@ -35,7 +35,7 @@ The grid works out what changes need to be applied to the grid using the followi
 The example below shows an immutable store in action. The example keeps a store of data locally. Each time the user does an update, the local store is replaced with a new store with the next data, and then `api.setRowData(store)` is called. This results in the grid updating the current data rather than replacing because we have set `immutableData=true`.
 
 If using bound properties with a framework, map the store to the `rowData` property instead of calling `api.setRowData(data)`.
-
+ 
 The example demonstrates the following:
 
 
@@ -54,8 +54,8 @@ The example demonstrates the following:
 - **Turn Grouping On / Off**: To turn grouping by symbol on and off.
 
 - **Group Selected A / B / C**: With grouping on, hit the buttons A, B and C to move selected items to that group. Notice how the rows animate to the new position.
-
-<grid-example title='Simple Immutable Store' name='simple-immutable-store' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+ 
+<grid-example title='Simple Immutable Store' name='simple-immutable-store' type='mixed' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Example: Immutable Store - Large Dataset
 
@@ -65,7 +65,7 @@ Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over 
 - Selecting the Update button updates a range of the data.
 - Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
 
-<grid-example title='Complex Immutable Store' name='complex-immutable-store' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Complex Immutable Store' name='complex-immutable-store' type='mixed' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Comparison to Transaction Updates
 

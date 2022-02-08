@@ -1,12 +1,12 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
 import { doc } from "prettier";
 
 declare var AG_GRID_LOCALE_ZZZ: {
   [key: string]: string;
 };
 
-class NodeIdRenderer {
-  eGui?: HTMLElement;
+class NodeIdRenderer implements ICellRendererComp {
+  eGui!: HTMLElement;
 
   init(params: ICellRendererParams) {
     this.eGui = document.createElement('div');
@@ -16,13 +16,17 @@ class NodeIdRenderer {
   getGui() {
     return this.eGui;
   }
+
+  refresh(params: ICellRendererParams): boolean {
+    return false;
+  }
 }
 
 const columnDefs: ColDef[] = [
   // this row just shows the row index, doesn't use any data from the row
   {
     headerName: '#',
-    cellRendererComp: NodeIdRenderer,
+    cellRenderer: NodeIdRenderer,
     checkboxSelection: true,
     headerCheckboxSelection: true,
   },
@@ -33,19 +37,19 @@ const columnDefs: ColDef[] = [
     enablePivot: true,
   },
   { field: 'country', enableRowGroup: true },
-  { field: 'year', filterComp: 'agNumberColumnFilter' },
+  { field: 'year', filter: 'agNumberColumnFilter' },
   { field: 'date' },
   {
     field: 'sport',
-    filterComp: 'agMultiColumnFilter',
+    filter: 'agMultiColumnFilter',
     filterParams: {
       filters: [
         {
-          filterComp: 'agTextColumnFilter',
+          filter: 'agTextColumnFilter',
           display: 'accordion',
         },
         {
-          filterComp: 'agSetColumnFilter',
+          filter: 'agSetColumnFilter',
           display: 'accordion',
         },
       ],

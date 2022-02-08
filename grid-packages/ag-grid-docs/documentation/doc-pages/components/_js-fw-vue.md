@@ -11,7 +11,7 @@
 |
 |```js
 |<template>
-|   <ag-grid-vue :comps="comps" 
+|   <ag-grid-vue :components="components" 
 |                ...other properties>
 |   </ag-grid-vue>
 |</template>
@@ -30,8 +30,8 @@
 |   }
 |   data() {
 |       return {
-|           // JavaScript components are registered here
-|           comps: [
+|           // JavaScript components are registered here, for when looking up component by name
+|           components: [
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
 |           ],          
@@ -39,17 +39,17 @@
 |                {
 |                   headerName: "JS Cell",
 |                   field: "value",
-|                   cellRendererComp: 'javascriptComponent',    // reference/use the javascript component by name
+|                   cellRenderer: 'javascriptComponent',    // reference/use the javascript component by name
 |               },
 |                {
 |                   headerName: "JS Cell",
 |                   field: "value",
-|                   cellRendererComp: JavascriptComponent,    // reference/use the javascript component directly
+|                   cellRenderer: JavascriptComponent,    // reference/use the javascript component directly
 |               },
 |               {
 |                   headerName: "Vue Cell",
 |                   field: "value",
-|                   cellRendererComp: 'vueComponent',  // reference/use the Vue component
+|                   cellRenderer: 'vueComponent',  // reference/use the Vue component
 |               }
 |           ]
 |       }

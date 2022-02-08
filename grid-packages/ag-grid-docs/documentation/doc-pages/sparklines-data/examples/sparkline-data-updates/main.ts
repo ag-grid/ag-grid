@@ -6,7 +6,7 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRendererComp: 'agSparklineCellRenderer',
+      cellRenderer: 'agSparklineCellRenderer',
     },
     {
       field: 'volume',

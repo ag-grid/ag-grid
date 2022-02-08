@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
       field: 'country',
       keyCreator: countryKeyCreator,
       valueFormatter: countryValueFormatter,
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
     },
   ],
   defaultColDef: {
@@ -39,7 +39,7 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

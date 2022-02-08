@@ -81,15 +81,15 @@ function GridExample() {
     const columnDefs = useMemo( ()=> [
         {
             headerName: 'Group A',
-            headerGroupComponentFramework: MyGroupHeader,
+            headerGroupComponent: MyGroupHeader,
             children: [
-                { field: 'athlete', headerComponentFramework: SortingHeader },
-                { field: 'age', headerComponentFramework: SortingHeader },
+                { field: 'athlete', headerComponent: SortingHeader },
+                { field: 'age', headerComponent: SortingHeader },
             ]
         },
         {
             headerName: 'Group B',
-            headerGroupComponentFramework: MyGroupHeader,
+            headerGroupComponent: MyGroupHeader,
             children: [
                 { field: 'country' },
                 { field: 'year' },

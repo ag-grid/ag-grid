@@ -19,7 +19,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Previous',
@@ -27,12 +27,12 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Deal Type',
     field: 'dealType',
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: ['Financial', 'Physical'],
     },
@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Bid',
     field: 'bidFlag',
     width: 100,
-    filterComp: 'agSetColumnFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
       values: ['Buy', 'Sell'],
     },
@@ -52,7 +52,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 2',
@@ -60,7 +60,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Gain-DX',
@@ -68,7 +68,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'SX / PX',
@@ -76,7 +76,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: '99 Out',
@@ -84,7 +84,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitter ID',
@@ -92,7 +92,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitted Deal ID',
@@ -100,7 +100,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRendererComp: 'agAnimateShowChangeCellRenderer',
+    cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
 ]
 

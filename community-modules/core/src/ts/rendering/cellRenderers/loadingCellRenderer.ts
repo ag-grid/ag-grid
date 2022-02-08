@@ -1,12 +1,18 @@
 import { Component } from "../../widgets/component";
-import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { createIconNoSpan } from "../../utils/icon";
+import { IComponent } from "../../interfaces/iComponent";
 
-export interface ILoadingCellRendererParams extends ICellRendererParams {}
-export interface ILoadingCellRenderer extends ICellRenderer {}
+export interface ILoadingCellRendererParams extends ICellRendererParams { }
+export interface ILoadingCellRenderer {
+    /** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),
+     * then the grid will refresh it for you. */
+    refresh?(params: ILoadingCellRendererParams): boolean;
+}
+export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> { }
 
-export class LoadingCellRenderer extends Component implements ILoadingCellRenderer {
+export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
 
     private static TEMPLATE =
         `<div class="ag-loading">
@@ -39,7 +45,13 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 
-    public refresh(params: any): boolean {
+    public refresh(params: ILoadingCellRendererParams): boolean {
         return false;
+    }
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
     }
 }

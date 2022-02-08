@@ -7,7 +7,7 @@ import {
     ValueFormatterParams,
     ValueSetterParams
 } from '@ag-grid-community/core'
-import {ColourCellRenderer} from './colourCellRenderer_typescript'
+import { ColourCellRenderer } from './colourCellRenderer_typescript'
 
 const carMappings = {
     tyt: 'Toyota',
@@ -34,7 +34,7 @@ const gridOptions: GridOptions = {
         {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
-            cellEditorCompParams: {
+            cellEditorParams: {
                 values: carBrands,
             },
             filterParams: {
@@ -51,17 +51,17 @@ const gridOptions: GridOptions = {
             minWidth: 150,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorPopup: true,
-            cellEditorCompParams: {
+            cellEditorParams: {
                 values: colours,
-                cellRendererComp: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             },
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
             filterParams: {
                 values: colours,
                 valueFormatter: function (params) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRendererComp: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             } as ISetFilterParams,
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -69,22 +69,22 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRendererComp: ColourCellRenderer,
+            cellRenderer: ColourCellRenderer,
         },
         {
             field: 'interiorColour',
             minWidth: 150,
             cellEditor: 'agTextCellEditor',
-            cellEditorCompParams: {
+            cellEditorParams: {
                 useFormatter: true,
             },
-            filterComp: 'agSetColumnFilter',
+            filter: 'agSetColumnFilter',
             filterParams: {
                 values: colours,
                 valueFormatter: function (params: ValueFormatterParams) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRendererComp: ColourCellRenderer,
+                cellRenderer: ColourCellRenderer,
             },
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -92,7 +92,7 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRendererComp: ColourCellRenderer,
+            cellRenderer: ColourCellRenderer,
         },
         {
             headerName: 'Retail Price',

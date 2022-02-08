@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { IToolPanel, IToolPanelParams, RowNode } from "@ag-grid-community/core";
+import { IToolPanelParams, RowNode } from "@ag-grid-community/core";
+import { IToolPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'custom-stats',
@@ -21,7 +22,7 @@ import { IToolPanel, IToolPanelParams, RowNode } from "@ag-grid-community/core";
         }
     `]
 })
-export class CustomStatsToolPanel implements IToolPanel {
+export class CustomStatsToolPanel implements IToolPanelAngularComp {
     private params!: IToolPanelParams;
 
     public numMedals!: number;

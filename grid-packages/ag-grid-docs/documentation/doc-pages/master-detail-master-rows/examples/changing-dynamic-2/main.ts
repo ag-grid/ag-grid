@@ -8,9 +8,9 @@ const gridOptions: GridOptions = {
   },
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
+    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
     { field: 'account' },
-    { field: 'calls', cellRendererComp: CallsCellRenderer },
+    { field: 'calls', cellRenderer: CallsCellRenderer },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
   ],
   defaultColDef: {
@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
   getRowNodeId: function (data) {
     return data.account
   },
-  detailRowCellCompParams: {
+  detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

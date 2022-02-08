@@ -11,7 +11,7 @@
 |declare var flatpickr : any;
 |
 |@Component({
-|    selector: 'app-loading-overlay',
+|    selector: 'app-custom-date',
 |    template: `
 |      <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
 |      <input type="text" #eInput data-input style="width: 100%;"/>

@@ -5,17 +5,13 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core'
 
-var countryFilterParams = {
-  valueFormatter: countryValueFormatter,
-}
-
 const gridOptions: GridOptions = {
   columnDefs: [
     {
       headerName: 'No Value Formatter',
       field: 'country',
       valueFormatter: countryValueFormatter,
-      filterComp: 'agSetColumnFilter',
+      filter: 'agSetColumnFilter',
       filterParams: {
         // no value formatter!
       },
@@ -24,8 +20,10 @@ const gridOptions: GridOptions = {
       headerName: 'With Value Formatter',
       field: 'country',
       valueFormatter: countryValueFormatter,
-      filterComp: 'agSetColumnFilter',
-      filterParams: countryFilterParams,
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        valueFormatter: countryValueFormatter,
+      },
     },
   ],
   defaultColDef: {
@@ -49,7 +47,7 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-   ((params.api.getToolPanelInstance(
+  ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

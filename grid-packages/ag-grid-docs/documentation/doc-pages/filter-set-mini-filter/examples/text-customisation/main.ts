@@ -3,13 +3,13 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 const gridOptions: GridOptions = {
   columnDefs: [
     // set filters
-    { field: 'athlete', filterComp: 'agSetColumnFilter' },
-    { field: 'country', filterComp: 'agSetColumnFilter' },
+    { field: 'athlete', filter: 'agSetColumnFilter' },
+    { field: 'country', filter: 'agSetColumnFilter' },
 
     // number filters
-    { field: 'gold', filterComp: 'agNumberColumnFilter' },
-    { field: 'silver', filterComp: 'agNumberColumnFilter' },
-    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,

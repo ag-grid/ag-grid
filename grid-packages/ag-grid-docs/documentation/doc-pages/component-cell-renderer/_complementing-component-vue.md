@@ -26,16 +26,16 @@
 |              {
 |                  headerName: "Colour 1",
 |                  field: "value",
-|                  cellRendererComp: 'ColourComponent',
-|                  cellRendererCompParams: {
+|                  cellRenderer: 'ColourComponent',
+|                  cellRendererParams: {
 |                       color: 'guinnessBlack'
 |                  }
 |              },
 |              {
 |                  headerName: "Colour 2",
 |                  field: "value",
-|                  cellRendererComp: 'ColourComponent',     
-|                  cellRendererCompParams: {
+|                  cellRenderer: 'ColourComponent',     
+|                  cellRendererParams: {
 |                       color: 'irishGreen'
 |                  }
 |              }

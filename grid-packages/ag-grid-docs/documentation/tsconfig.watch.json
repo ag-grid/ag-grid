@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "exclude": [
+        "./node_modules",
+        "./doc-pages/**/_gen/packages/**/*.ts",
+        "./doc-pages/**/provided/packages/**/*.ts",
+        // Typescript and Vanilla are currently using packages so we don't check them as build & package required to update ag-grid-community
+        "./doc-pages/**/_gen/modules/typescript/**/*.ts"
+    ]
+}

@@ -30,6 +30,28 @@ Note the following:
 
 <grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
+## Collapsible Columns
+
+[Grouped columns](../column-groups/) can be exported to Excel as grouped columns. However, there are a few points to keep in mind to configure this correctly: 
+
+1. By default only visible columns are exported. Collapsed columns are hidden and as such aren’t exported to Excel. In order to export collapsed columns, set `allColumns: true` in the [ExcelExportParams](../excel-export-api/#excelexportparams) provided to the grid. However, this will also export all hidden columns in the grid. If you want to export collapsed columns but not all hidden columns, you can set the list of columns to be exported via the [columnKeys](../excel-export-api/#reference-excelExportParams-columnKeys) property.
+
+1. Excel doesn't have a `columnGroupShow: 'closed'` equivalent, so this option will not work the same when collapsing columns in Excel.
+
+1. If two collapsible groups are side-by-side, Excel will merge these two groups into one.
+
+In the example below, export the grid to Excel, open the exported Excel document and note the following:
+
+- The columns **Gold**, **Silver**, **Bronze** will appear as a collapsible column group in the exported Excel document.
+
+- The exported Excel document will also contain the Total column, but this column will not be included in the "collapsible" group.
+
+[[note]]
+| When using pivoting to export [secondary columns](../pivoting/#primary-vs-secondary-columns), only currently visible columns are exported as grouped. Collapsed secondary columns aren’t exported at all, even when the [ExcelExportParams](../excel-export-api/#excelexportparams) option `allColumns:true` is set.
+
+<grid-example title='Excel Export - Collapsible Columns' name='excel-export-collapsible-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
+
+
 ## Next Up
 
 Continue to the next section: [Data Types](../excel-export-data-types/).

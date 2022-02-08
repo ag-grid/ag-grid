@@ -16,9 +16,11 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   rowData: getData(),
-  onCellValueChanged: (event: CellValueChangedEvent) => {
-    console.log('data after changes is: ', event.data)
-  },
+  onCellValueChanged: onCellValueChanged,
+}
+
+function onCellValueChanged(event: CellValueChangedEvent) {
+  console.log('data after changes is: ', event.data);
 }
 
 function numberParser(params: ValueParserParams) {

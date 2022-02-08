@@ -4,10 +4,10 @@ import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
-    cellRendererCompSelector: function (params) {
+    cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          comp: CustomPinnedRowRenderer,
+          component: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },
           },
@@ -20,10 +20,10 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'age',
-    cellRendererCompSelector: function (params) {
+    cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          comp: CustomPinnedRowRenderer,
+          component: CustomPinnedRowRenderer,
           params: {
             style: { 'font-style': 'italic' },
           },

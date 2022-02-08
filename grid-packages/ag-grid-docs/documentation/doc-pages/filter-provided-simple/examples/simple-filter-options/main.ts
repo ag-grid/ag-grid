@@ -38,7 +38,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'age',
-    filterComp: 'agNumberColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: {
       alwaysShowBothConditions: true,
       defaultJoinOperator: 'OR',
@@ -47,7 +47,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'date',
-    filterComp: 'agDateColumnFilter',
+    filter: 'agDateColumnFilter',
     filterParams: filterParams,
   },
 ]

@@ -12,7 +12,9 @@ import {
     FocusService,
     GridOptionsWrapper,
     HorizontalDirection,
+    KeyCode,
     LoggerFactory,
+    ManagedFocusFeature,
     PositionableFeature,
     VerticalDirection,
     _
@@ -74,10 +76,11 @@ export abstract class BaseDropZonePanel extends Component {
     @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
-        super(/* html */ `<div class="ag-unselectable" role="group"></div>`);
+        super(/* html */ `<div class="ag-unselectable" aria-role="presentation"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
         this.addElementClasses(this.eColumnDropList, 'list');
+        _.setAriaRole(this.eColumnDropList, 'listbox');
     }
 
     public isHorizontal(): boolean {
@@ -109,6 +112,13 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            {
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
+        ));
+
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
         this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
@@ -121,7 +131,33 @@ export abstract class BaseDropZonePanel extends Component {
         // if columnModel first, then below will work
         // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
         this.refreshGui();
-        _.setAriaLabel(this.getGui(), this.getAriaLabel());
+        _.setAriaLabel(this.eColumnDropList, this.getAriaLabel());
+    }
+
+    private handleKeyDown(e: KeyboardEvent) {
+        const isVertical = !this.horizontal;
+
+        let isNext = e.key === KeyCode.DOWN;
+        let isPrevious = e.key === KeyCode.UP;
+
+        if (!isVertical) {
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            isNext = (!isRtl && e.key === KeyCode.RIGHT) || (isRtl && e.key === KeyCode.LEFT);
+            isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
+        }
+
+        if (!isNext && !isPrevious) { return; }
+
+        const el = this.focusService.findNextFocusableElement(
+            this.getFocusableElement(),
+            false,
+            isPrevious
+        );
+
+        if (el) {
+            e.preventDefault();
+            el.focus();
+        }
     }
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
@@ -432,6 +468,15 @@ export abstract class BaseDropZonePanel extends Component {
             this.eColumnDropList.appendChild(columnComponent.getGui());
         });
 
+        this.addAriaLabelsToComponents();
+    }
+
+    private addAriaLabelsToComponents(): void {
+        this.childColumnComponents.forEach((comp, idx) => {
+            const eGui = comp.getGui();
+            _.setAriaPosInSet(eGui, idx + 1);
+            _.setAriaSetSize(eGui, this.childColumnComponents.length);
+        });
     }
 
     private createColumnComponent(column: Column, ghost: boolean): DropZoneColumnComp {
@@ -451,6 +496,7 @@ export abstract class BaseDropZonePanel extends Component {
     private addIconAndTitleToGui(): void {
         const eGroupIcon = this.params.icon;
         const eTitleBar = document.createElement('div');
+        eTitleBar.setAttribute('aria-hidden', 'true');
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
         this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingColumnsEmpty());

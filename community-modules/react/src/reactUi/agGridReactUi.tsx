@@ -6,7 +6,7 @@ import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
 import GridComp from './gridComp';
-import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
+import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
 export class AgGridReactUi extends Component<AgReactUiProps, { context: Context | undefined }> {
 
@@ -20,6 +20,9 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     private eGui = React.createRef<HTMLDivElement>();
 
     private portalManager: PortalManager;
+
+    private whenReadyFuncs: (()=>void)[] = [];
+    private ready = false;
 
     constructor(public props: any) {
         super(props);
@@ -51,7 +54,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this.portalManager)
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides()
+            frameworkOverrides: new ReactFrameworkOverrides(true)
         };
 
         this.gridOptions = this.props.gridOptions || {};
@@ -63,9 +66,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this.props);
 
-        // don't need the return value
-        const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(this.eGui.current!, this.gridOptions, context => {
+        const createUiCallback = (context: Context) => {
             this.setState({context: context});
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
@@ -74,10 +75,25 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
                 this.props.setGridApi(this.api, this.columnApi);    
-                this.destroyFuncs.push(() => this.api.destroy());    
+                this.destroyFuncs.push(() => this.api.destroy());
             });
+        };
 
-        }, gridParams);
+        // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
+        // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
+        // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
+        const acceptChangesCallback = (context: Context)=> {
+            const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
+            ctrlsService.whenReady( ()=> {
+                this.whenReadyFuncs.forEach( f => f() );
+                this.whenReadyFuncs.length = 0;
+                this.ready = true;
+            });
+        }
+
+        // don't need the return value
+        const gridCoreCreator = new GridCoreCreator();
+        gridCoreCreator.create(this.eGui.current!, this.gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     }
 
     public componentWillUnmount() {
@@ -167,8 +183,16 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     private processChanges(changes: {}) {
-        if (this.api) {
+        this.processWhenReady( ()=>
             ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+        );
+    }
+
+    private processWhenReady(func: ()=>void): void {
+        if (this.ready) {
+            func();
+        } else {
+            this.whenReadyFuncs.push(func);
         }
     }
 

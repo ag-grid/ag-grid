@@ -88,8 +88,7 @@
   },
   "ComponentType": {
     "propertyName": { "type": { "returnType": "string", "optional": false } },
-    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } },
-    "newPropName": { "type": { "returnType": "string", "optional": false } }
+    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } }
   },
   "FrameworkComponentWrapper": {
     "wrap": {
@@ -499,19 +498,17 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "type": {
-        "returnType": "{ new(): ITooltipComp; } | string",
-        "optional": true
-      }
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
+      "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
-    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
@@ -535,26 +532,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerGroupComponent": {
-      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
-      "type": {
-        "returnType": "string | { new(): IHeaderGroupComp; }",
-        "optional": true
-      }
+      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentFramework": {
-      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
+      "description": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
-      "description": "/** The params used to configure the header group component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "headerGroupComp": {
-      "description": "/** The custom header group component to be used for rendering the component header. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "headerGroupCompParams": {
-      "description": "/** The params used to configure the header group component. */",
+      "description": "/** The params used to configure the `headerGroupComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerName": {
@@ -601,19 +587,17 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "type": {
-        "returnType": "{ new(): ITooltipComp; } | string",
-        "optional": true
-      }
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
+      "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
-    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
@@ -800,35 +784,20 @@
       "type": { "returnType": "string | ValueParserFunc", "optional": true }
     },
     "cellEditor": {
-      "description": "/** A `cellEditor` to use for this column. */",
-      "type": {
-        "returnType": "string | { new(): ICellEditorComp; }",
-        "optional": true
-      }
+      "description": "/** Provide your own cell editor component for this column's cells.\n * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "cellEditorFramework": {
-      "description": "/** Framework `cellEditor` to use for this column. */",
+      "description": "/** @deprecated As of v27, use `cellEditor` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellEditorParams": {
-      "description": "/** Params to be passed to the cell editor component. */",
+      "description": "/** Params to be passed to the `cellEditor` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellEditorSelector": {
       "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "type": { "returnType": "CellEditorSelectorFunc", "optional": true }
-    },
-    "cellEditorComp": {
-      "description": "/** A Editor Component to use for this column. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "cellEditorCompParams": {
-      "description": "/** Params to be passed to the Editor Component */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "cellEditorCompSelector": {
-      "description": "/** Callback to select which Cell Editor and Params to use for this column. */",
-      "type": { "returnType": "CellEditorCompSelectorFunc", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -846,14 +815,8 @@
       "description": "/** Set to `true`, to have the cell editor appear in a popup. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellEditorCompPopup": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "cellEditorPopupPosition": {
       "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "cellEditorCompPopupPosition": {
       "type": { "returnType": "string", "optional": true }
     },
     "onCellValueChanged": {
@@ -905,23 +868,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
-      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
-      "type": { "returnType": "string | { new(): any; }", "optional": true }
+      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
-      "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
+      "description": "/** @deprecated As of v27, use `headerComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentParams": {
-      "description": "/** The parameters to be passed to the header component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "headerComp": {
-      "description": "/** The custom header component to be used for rendering the component header. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "headerCompParams": {
-      "description": "/** The parameters to be passed to the header component. */",
+      "description": "/** The parameters to be passed to the `headerComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "menuTabs": {
@@ -1029,35 +984,20 @@
       "type": { "returnType": "CellClassRules", "optional": true }
     },
     "cellRenderer": {
-      "description": "/** A `cellRenderer` to use for this column. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "description": "/** Provide your own cell Renderer component for this column's cells.\n * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "cellRendererFramework": {
-      "description": "/** Framework `cellRenderer` to use for this column. */",
+      "description": "/** @deprecated As of v27, use `cellRenderer` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererParams": {
-      "description": "/** Params to be passed to the cell renderer component. */",
+      "description": "/** Params to be passed to the `cellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererSelector": {
       "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
-    },
-    "cellRendererComp": {
-      "description": "/** A Cell Component to use for this column. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "cellRendererCompParams": {
-      "description": "/** Params to be passed to the Cell Component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "cellRendererCompSelector": {
-      "description": "/** Callback to select which Cell Component and Params to use for this column. */",
-      "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
     "autoHeight": {
       "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -1297,61 +1237,43 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
-      "type": {
-        "returnType": "{ new(): ITooltipComp; } | string",
-        "optional": true
-      }
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentFramework": {
+      "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
-    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "filter": {
       "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "type": { "returnType": "IFilterType", "optional": true }
+      "type": { "returnType": "any", "optional": true }
     },
     "filterFramework": {
-      "description": "/** Provided a custom framework filter to use for this column. */",
+      "description": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "filterParams": {
       "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "filterComp": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "filterCompParams": {
-      "description": "/** Params to be passed to the filter component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "IFloatingFilterType", "optional": true }
+      "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentFramework": {
-      "description": "/** Floating filter framework component to use for this column. */",
+      "description": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentParams": {
       "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterComp": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterCompParams": {
-      "description": "/** Params to be passed to Floating Filter Component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -2015,13 +1937,10 @@
   "CellRendererSelectorResult": {
     "component": {
       "description": "/** Equivalent of setting `colDef.cellRenderer` */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "frameworkComponent": {
-      "description": "/** Equivalent of setting `colDef.cellRendererFramework` */",
+      "description": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "params": {
@@ -2032,25 +1951,16 @@
   "CellEditorSelectorResult": {
     "component": {
       "description": "/** Equivalent of setting `colDef.cellEditor` */",
-      "type": {
-        "returnType": "{ new(): ICellEditorComp; } | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "frameworkComponent": {
-      "description": "/** Equivalent of setting `colDef.cellEditorFramework` */",
+      "description": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "params": {
       "description": "/** Equivalent of setting `colDef.cellEditorParams` */",
       "type": { "returnType": "any", "optional": true }
     }
-  },
-  "CellRendererCompSelectorFunc": {},
-  "CellEditorCompSelectorFunc": {},
-  "CompSelectorResult": {
-    "comp": { "type": { "returnType": "any", "optional": true } },
-    "params": { "type": { "returnType": "any", "optional": true } }
   },
   "GridOptions": {
     "statusBar": {
@@ -2243,19 +2153,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "components": {
-      "description": "/** A map of component names to plain JavaScript components. */",
+      "description": "/** A map of component names to components. */",
       "type": { "returnType": "{ [p: string]: any; }", "optional": true }
     },
     "frameworkComponents": {
-      "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
+      "description": "/** @deprecated As of v27, use `components` for framework components too.\n */",
       "type": {
         "returnType": "{ [p: string]: { new(): any; }; } | any",
         "optional": true
       }
-    },
-    "comps": {
-      "description": "/** A map of component names to components (can be JavaScript OR Framework components). */",
-      "type": { "returnType": "{ [p: string]: any; }", "optional": true }
     },
     "reactUi": {
       "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
@@ -2360,39 +2266,21 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "loadingCellRenderer": {
-      "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
-      "type": {
-        "returnType": "{ new(): ICellRenderer; } | string",
-        "optional": true
-      }
+      "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererFramework": {
-      "description": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
+      "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererParams": {
-      "description": "/** Params to be passed to loading cell renderer component. */",
+      "description": "/** Params to be passed to the `loadingCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererSelector": {
       "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
         "returnType": "LoadingCellRendererSelectorFunc",
-        "optional": true
-      }
-    },
-    "loadingRowCellComp": {
-      "description": "/** Cell Comp to use when data is loading via a DataSource. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "loadingRowCellCompParams": {
-      "description": "/** Params for Loading Cell Comp. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "loadingRowCellCompSelector": {
-      "description": "/** Selector for the loading component. */",
-      "type": {
-        "returnType": "LoadingRowCellCompSelectorFunc",
         "optional": true
       }
     },
@@ -2413,26 +2301,15 @@
       "type": { "returnType": "number", "optional": true }
     },
     "detailCellRenderer": {
-      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "detailCellRendererFramework": {
-      "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
+      "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "detailCellRendererParams": {
       "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "detailRowCellComp": {
-      "description": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "detailRowCellCompParams": {
-      "description": "/** Params for Detail Cell Component */",
       "type": { "returnType": "any", "optional": true }
     },
     "detailRowHeight": {
@@ -2508,26 +2385,15 @@
       "type": { "returnType": "string", "optional": true }
     },
     "loadingOverlayComponent": {
-      "description": "/** Provide a custom loading overlay component. */",
-      "type": {
-        "returnType": "{ new(): ILoadingOverlayComp; } | string",
-        "optional": true
-      }
+      "description": "/** Provide a custom loading overlay component.\n * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "loadingOverlayComponentFramework": {
-      "description": "/** Same as `loadingOverlayComponent` but for a framework component. */",
+      "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingOverlayComponentParams": {
       "description": "/** Customise the parameters provided to the loading overlay component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "loadingOverlayComp": {
-      "description": "/** Loading Overlay Component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "loadingOverlayCompParams": {
-      "description": "/** Params for Loading Overlay Component */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressLoadingOverlay": {
@@ -2539,25 +2405,14 @@
       "type": { "returnType": "string", "optional": true }
     },
     "noRowsOverlayComponent": {
-      "description": "/** Provide a custom no rows overlay component */",
-      "type": {
-        "returnType": "{ new(): INoRowsOverlayComp; } | string",
-        "optional": true
-      }
+      "description": "/** Provide a custom no rows overlay component.\n * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentFramework": {
-      "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
+      "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentParams": {
-      "description": "/** Customise the parameters provided to the no rows overlay component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "noRowsOverlayComp": {
-      "description": "/** Provide a custom no rows overlay component */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "noRowsOverlayCompParams": {
       "description": "/** Customise the parameters provided to the no rows overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
@@ -2697,26 +2552,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "fullWidthCellRenderer": {
-      "description": "/** Sets the Cell Renderer to use for full width rows. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererFramework": {
-      "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
+      "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererParams": {
       "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "fullWidthCellComp": {
-      "description": "/** Sets the Cell Comp to use for full width rows. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "fullWidthCellCompParams": {
-      "description": "/** Customise the parameters provided to Full Width Cell Comp. */",
       "type": { "returnType": "any", "optional": true }
     },
     "embedFullWidthRows": {
@@ -2784,26 +2628,15 @@
       "type": { "returnType": "string", "optional": true }
     },
     "groupRowRenderer": {
-      "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererFramework": {
-      "description": "/** Same as `groupRowRenderer` but for a framework component. */",
+      "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererParams": {
       "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowCellComp": {
-      "description": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "groupRowCellCompParams": {
-      "description": "/** Customise the parameters provided to the Group Row Comp component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMakeColumnVisibleAfterUnGroup": {
@@ -2816,13 +2649,10 @@
     },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "groupRowInnerRendererFramework": {
-      "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
+      "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupMultiAutoColumn": {
@@ -3243,7 +3073,11 @@
     "localeTextFunc": {
       "description": "/** A callback for localising text within the grid. */",
       "type": {
-        "arguments": { "key": "string", "defaultValue": "string" },
+        "arguments": {
+          "key": "string",
+          "defaultValue": "string",
+          "variableValues?": "string[]"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -3713,7 +3547,7 @@
       "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
     },
     "onComponentStateChanged": {
-      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
@@ -3722,7 +3556,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "componentStateChanged": {
-      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
@@ -5123,13 +4957,10 @@
   "LoadingCellRendererSelectorResult": {
     "component": {
       "description": "/** Equivalent of setting `loadingCellRenderer` */",
-      "type": {
-        "returnType": "{ new(): ICellRenderer; } | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "frameworkComponent": {
-      "description": "/** Equivalent of setting `loadingCellRendererFramework` */",
+      "description": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "params": {
@@ -5137,7 +4968,6 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
-  "LoadingRowCellCompSelectorFunc": {},
   "IHeaderColumn": {
     "getUniqueId": {
       "type": { "arguments": {}, "returnType": "string", "optional": false }
@@ -5337,24 +5167,13 @@
     },
     "toolPanel": {
       "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
-      "type": {
-        "returnType": "{ new(): IToolPanelComp } | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
     "toolPanelFramework": {
-      "description": "/** Same as `toolPanel` but for framework specific components. */",
+      "description": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "toolPanelParams": {
-      "description": "/** Customise the parameters provided to the `toolPanel` component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "toolPanelComp": {
-      "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "toolPanelCompParams": {
       "description": "/** Customise the parameters provided to the `toolPanel` component. */",
       "type": { "returnType": "any", "optional": true }
     }
@@ -7336,7 +7155,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IFloatingFilterParams<P>" },
         "returnType": "AgPromise<void> | void",
@@ -7699,7 +7518,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7711,7 +7530,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -7723,7 +7542,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -7854,7 +7673,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7866,7 +7685,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -7878,7 +7697,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -8920,7 +8739,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IHeaderParams" },
         "returnType": "AgPromise<void> | void",
@@ -9030,7 +8849,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IHeaderGroupParams" },
         "returnType": "AgPromise<void> | void",
@@ -11325,7 +11144,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -11825,7 +11644,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -12427,48 +12246,32 @@
   "IFilterDef": {
     "filter": {
       "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "type": { "returnType": "IFilterType", "optional": true }
+      "type": { "returnType": "any", "optional": true }
     },
     "filterFramework": {
-      "description": "/** Provided a custom framework filter to use for this column. */",
+      "description": "/** @deprecated Provided a custom framework filter to use for this column. As of v27, you can use filter instead for Framework Components.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "filterParams": {
       "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "filterComp": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "filterCompParams": {
-      "description": "/** Params to be passed to the filter component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "IFloatingFilterType", "optional": true }
+      "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentFramework": {
-      "description": "/** Floating filter framework component to use for this column. */",
+      "description": "/** @deprecated Floating filter framework component to use for this column. As of v27, you can use floatingFilterComponent instead for Framework Components.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentParams": {
       "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
       "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterComp": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterCompParams": {
-      "description": "/** Params to be passed to Floating Filter Component. */",
-      "type": { "returnType": "any", "optional": true }
     }
   },
   "IFilter": {
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12480,7 +12283,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12492,7 +12295,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -12513,7 +12316,7 @@
   },
   "IFilterComp": {
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12525,7 +12328,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12537,7 +12340,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -12573,7 +12376,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IFilterParams" },
         "returnType": "AgPromise<void> | void",
@@ -12753,6 +12556,13 @@
       "type": {
         "arguments": { "name": "string" },
         "returnType": "any",
+        "optional": false
+      }
+    },
+    "isFrameworkComponent": {
+      "type": {
+        "arguments": { "comp": "any" },
+        "returnType": "boolean",
         "optional": false
       }
     }
@@ -12974,7 +12784,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12986,7 +12796,7 @@
       }
     },
     "getModel": {
-      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
@@ -12998,7 +12808,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -13048,22 +12858,6 @@
     },
     "floatingFilterComponentParams": {
       "description": "/** Custom parameters to be passed to the floating filter component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "filterComp": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "filterCompParams": {
-      "description": "/** Params to be passed to the filter component. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterComp": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterCompParams": {
-      "description": "/** Params to be passed to Floating Filter Component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -13194,7 +12988,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "T" },
         "returnType": "AgPromise<void> | void",
@@ -14292,7 +14086,7 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -14304,7 +14098,7 @@
       }
     },
     "onNewRowsLoaded": {
-      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onAnyFilterChanged": {
@@ -14365,13 +14159,10 @@
     },
     "cellRenderer": {
       "description": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+      "type": { "returnType": "any", "optional": true }
     },
-    "cellRendererComp": {
-      "description": "/** Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
+    "cellRendererFramework": {
+      "description": "/** @deprecated as of v27, use cellRenderer for Framework components also\nSimilar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\nbe rendered differently in the filter.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMiniFilter": {
@@ -15338,17 +15129,9 @@
     }
   },
   "StatusPanelDef": {
-    "statusPanel": {
-      "type": {
-        "returnType": "{ new(): IStatusPanelComp } | string",
-        "optional": true
-      }
-    },
+    "statusPanel": { "type": { "returnType": "any", "optional": true } },
     "statusPanelFramework": {
-      "type": { "returnType": "any", "optional": true }
-    },
-    "statusPanelComp": { "type": { "returnType": "any", "optional": true } },
-    "statusPanelCompParams": {
+      "description": "/** @deprecated As of v27, you can use statusPanel instead for Framework Components.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "align": { "type": { "returnType": "string", "optional": true } },
@@ -15386,7 +15169,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IStatusPanelParams" },
         "returnType": "AgPromise<void> | void",
@@ -15428,7 +15211,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IToolPanelParams" },
         "returnType": "AgPromise<void> | void",
@@ -16407,7 +16190,7 @@
       }
     },
     "innerRendererFramework": {
-      "description": "/** Same as `innerRenderer` but for a framework component. */",
+      "description": "/** @deprecated as of v27, use innerRenderer for Framework components\nSame as `innerRenderer` but for a framework component.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "innerRendererParams": {
@@ -16417,18 +16200,6 @@
     "innerRendererSelector": {
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
-    },
-    "innerRendererComp": {
-      "description": "/** Cell Renderer Component to use for inside the Group Cell */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "innerRendererCompParams": {
-      "description": "/** Params for Inner Cell Component */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "innerRendererCompSelector": {
-      "description": "/** Callback to select Cell Component for inside the Group Cell, should there be a different one for different rows */",
-      "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {
@@ -16670,7 +16441,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ICellRendererParams" },
         "returnType": "AgPromise<void> | void",
@@ -16774,11 +16545,49 @@
   },
   "ILoadingCellRenderer": {
     "refresh": {
-      "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
+      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
       "type": {
-        "arguments": { "params": "ICellRendererParams" },
+        "arguments": { "params": "ILoadingCellRendererParams" },
         "returnType": "boolean",
+        "optional": true
+      }
+    }
+  },
+  "ILoadingCellRendererComp": {
+    "refresh": {
+      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "getGui": {
+      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
         "optional": false
+      }
+    },
+    "destroy": {
+      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "init": {
+      "description": "/** The init(params) method is called on the component once. */",
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "AgPromise<void> | void",
+        "optional": true
       }
     }
   },
@@ -16853,7 +16662,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "IDateParams" },
         "returnType": "AgPromise<void> | void",
@@ -16957,7 +16766,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ILoadingOverlayParams" },
         "returnType": "AgPromise<void> | void",
@@ -16990,7 +16799,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "INoRowsOverlayParams" },
         "returnType": "AgPromise<void> | void",
@@ -17246,7 +17055,7 @@
       }
     },
     "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "description": "/** The init(params) method is called on the component once. */",
       "type": {
         "arguments": { "params": "ITooltipParams" },
         "returnType": "AgPromise<void> | void",

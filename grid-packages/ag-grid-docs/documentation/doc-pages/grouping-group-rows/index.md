@@ -15,8 +15,8 @@ To display each row group using group rows set `groupDisplayType = 'groupRows'` 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'sport' },
         { field: 'total' }
     ],
@@ -67,21 +67,28 @@ const gridOptions = {
 
 ### Providing Cell Renderer
 
-To provide your own Cell Renderer, use the grid properties `groupRowRenderer`, `groupRowRendererFramework` and `groupRowRendererParams`.
+To provide your own Cell Renderer, use the grid properties `groupRowRenderer` and `groupRowRendererParams`.
 
 Using your own Cell Renderer hands over rendering of the group row to your custom Cell Renderer. However, that also means
 the customer Cell Renderer will also need to provide expand / collapse functionality.
 
-<snippet>
-const gridOptions = {
-    // configures Group Rows with a customer Cell Renderer
-    groupDisplayType: 'groupRows', 
-    groupRowRenderer: 'myCellRenderer',
-    groupRowRendererParams: {
-        someProp: 'someValue',
-    },
-}
-</snippet>
+[[only-javascript]]
+md-include:group-config-common.md
+[[only-angular]]
+md-include:group-config-common.md
+[[only-react]]
+md-include:group-config-common.md
+[[only-vue]]
+|<snippet>
+|const gridOptions = {
+|    // configures Group Rows with a customer Cell Renderer
+|    groupDisplayType: 'groupRows', 
+|    groupRowRenderer: 'myCellRenderer',
+|    groupRowRendererParams: {
+|        someProp: 'someValue',
+|    },
+|}
+|</snippet>
 
 ### Configuring Group Cell Renderer
 

@@ -14,9 +14,9 @@ const gridOptions = {
         // column definition configured to show group values with the cell renderer set to 'group'
         {
             showRowGroup: true,
-            cellRendererComp:'agGroupCellRenderer',
+            cellRenderer:'agGroupCellRenderer',
             // provide extra params to the cellRenderer
-            cellRendererCompParams: {
+            cellRendererParams: {
                 // turn off the row count
                 suppressCount: true,
                 // turn off double click for expand
@@ -24,9 +24,9 @@ const gridOptions = {
                 // enable checkbox selection
                 checkbox: true,
                 // provide an inner renderer
-                innerRendererComp: myInnerRenderer,
+                innerRenderer: myInnerRenderer,
                 // provide an inner renderer
-                innerRendererCompParams: {foo: 'bar'},
+                innerRendererParams: {foo: 'bar'},
                 // provide a footer value getter
                 footerValueGetter: myFooterValueGetter
             }
@@ -37,7 +37,7 @@ const gridOptions = {
 
 The set of parameters for the group cell renderer are defined on `GroupCellRendererParams` and include:
 
-<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRendererComp","innerRendererCompParams","innerRendererCompSelector","footerValueGetter"]' ></interface-documentation>
+<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer", "innerRendererParams","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
 
 ### Example Group cellRenderer
 
@@ -60,6 +60,6 @@ The example is built up as follows:
     - `suppressCount=true`: Suppresses the row count.
     - `suppressDoubleClickExpand=true`: Suppress double click for expanding.
     - `checkbox=true`: Adds a selection checkbox.
-    - `innerRendererComp=SimpleCellRenderer`: Puts custom rendering for displaying the value. The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow you to customise the display of the value. In this example we add a border when the value is a group, and we add the Ireland <img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; position: relative; top: -2px;" alt="Ireland" /> flag (because Niall Crosby is from Ireland) to the leaf levels.
+    - `innerRenderer=SimpleCellRenderer`: Puts custom rendering for displaying the value. The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow you to customise the display of the value. In this example we add a border when the value is a group, and we set the colour based on whether the cell is a leaf node or not.
 
 <grid-example title='Group Renderers' name='group-renderer' type='generated' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>

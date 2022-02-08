@@ -4,6 +4,7 @@
 |
 |```js
 |import {Component} from "@angular/core";
+|import { IStatusPanelAngularComp } from '@ag-grid-community/angular';
 |import {IStatusPanelParams} from "@ag-grid-community/core";
 |
 |@Component({
@@ -11,7 +12,7 @@
 |    template: `<input type="button" (click)="onClick()" value="Click Me For Selected Row Count"/>`,
 |    styles: [ 'input { padding: 5px; margin: 5px }']
 |})
-|export class ClickableStatusBarComponent {
+|export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
 |    private params: IStatusPanelParams;
 |
 |    agInit(params: IStatusPanelParams): void {

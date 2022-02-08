@@ -1,4 +1,4 @@
-import {ColGroupDef, Grid, GridOptions} from '@ag-grid-community/core'
+import { ColGroupDef, Grid, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColGroupDef[] = [
     {
@@ -29,13 +29,13 @@ const columnDefs: ColGroupDef[] = [
                 enableRowGroup: true,
                 pivotIndex: 0,
             },
-            {field: 'sport', width: 110, enableRowGroup: true},
+            { field: 'sport', width: 110, enableRowGroup: true },
             {
                 field: 'gold',
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filterComp: 'agNumberColumnFilter',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum',
             },
             {
@@ -43,7 +43,7 @@ const columnDefs: ColGroupDef[] = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filterComp: 'agNumberColumnFilter',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum',
             },
             {
@@ -51,7 +51,7 @@ const columnDefs: ColGroupDef[] = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filterComp: 'agNumberColumnFilter',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum',
             },
             {
@@ -59,7 +59,7 @@ const columnDefs: ColGroupDef[] = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filterComp: 'agNumberColumnFilter',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum',
             },
         ],
