@@ -33,7 +33,7 @@ The following example demonstrates these properties. Note the following:
 
 By default, the footer will display the word 'Total' followed by the group key. However, this can be changed using the
 `footerValueGetter` supplied to the [Group Cell Renderer](/group-cell-renderer/) params as shown below: 
-
+ 
 <snippet>
 const gridOptions = {
     autoGroupColumnDef: { 
@@ -64,7 +64,7 @@ also possible to customise the footer cell using the `innerCellRenderer` supplie
 In the example below the `innerRenderer` contains special handling to display Grand Total, Subtotal and
 non-footer cells differently.
 
-<grid-example title='Customising Footer Cells' name='customising-footer-cells' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Customising Footer Cells' name='customising-footer-cells' type='mixed' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 [[note]]
 | It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](/group-cell-renderer/) section.
