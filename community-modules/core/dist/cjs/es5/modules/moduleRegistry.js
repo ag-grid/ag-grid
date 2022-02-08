@@ -39,7 +39,13 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        var warningMessage;
+        if (ModuleRegistry.moduleBased) {
+            warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        }
+        else {
+            warningMessage = "AG Grid: unable to use " + reason + " as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/";
+        }
         function_1.doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);

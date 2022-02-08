@@ -783,7 +783,7 @@
   padding: 3px 0px;
 }
 .ag-theme-dark .ag-column-select-virtual-list-item {
-  margin: 0 6px;
+  padding: 0 6px;
 }
 .ag-theme-dark .ag-rtl {
   text-align: right;

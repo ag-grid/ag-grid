@@ -19,7 +19,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { Component } from "../../widgets/component";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { getAllValuesInObject } from "../../utils/object";
 import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
@@ -68,9 +67,7 @@ var RowComp = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 var eGui = cellRenderer.getGui();
                 _this.getGui().appendChild(eGui);
-                if (_this.rowCtrl.getRowType() === RowType.FullWidthDetail) {
-                    _this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                _this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 _this.setFullWidthRowComp(cellRenderer);
             }
             else {

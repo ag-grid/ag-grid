@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var dom_1 = require("../../utils/dom");
-var rowCtrl_1 = require("./rowCtrl");
 var cellComp_1 = require("../cell/cellComp");
 var object_1 = require("../../utils/object");
 var aria_1 = require("../../utils/aria");
@@ -70,9 +69,7 @@ var RowComp = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 var eGui = cellRenderer.getGui();
                 _this.getGui().appendChild(eGui);
-                if (_this.rowCtrl.getRowType() === rowCtrl_1.RowType.FullWidthDetail) {
-                    _this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                _this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 _this.setFullWidthRowComp(cellRenderer);
             }
             else {

@@ -48,6 +48,11 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     LoadingCellRenderer.prototype.refresh = function (params) {
         return false;
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    LoadingCellRenderer.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     __decorate([
         RefSelector('eLoadingIcon')

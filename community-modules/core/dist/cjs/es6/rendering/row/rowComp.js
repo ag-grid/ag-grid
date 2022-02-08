@@ -8,7 +8,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const component_1 = require("../../widgets/component");
 const dom_1 = require("../../utils/dom");
-const rowCtrl_1 = require("./rowCtrl");
 const cellComp_1 = require("../cell/cellComp");
 const object_1 = require("../../utils/object");
 const aria_1 = require("../../utils/aria");
@@ -54,9 +53,7 @@ class RowComp extends component_1.Component {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
-                if (this.rowCtrl.getRowType() === rowCtrl_1.RowType.FullWidthDetail) {
-                    this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 this.setFullWidthRowComp(cellRenderer);
             }
             else {

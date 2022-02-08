@@ -19,6 +19,7 @@ const agGridColumn_1 = require("../shared/agGridColumn");
 const changeDetectionService_1 = require("../shared/changeDetectionService");
 const newReactComponent_1 = require("../shared/newReactComponent");
 const portalManager_1 = require("../shared/portalManager");
+const reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
 class AgGridReactLegacy extends react_1.Component {
     constructor(props) {
         super(props);
@@ -48,7 +49,8 @@ class AgGridReactLegacy extends react_1.Component {
                 agGridReact: this,
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this, this.portalManager)
             },
-            modules
+            modules,
+            frameworkOverrides: new reactFrameworkOverrides_1.ReactFrameworkOverrides(false)
         };
         const gridOptions = this.props.gridOptions || {};
         const { children } = this.props;

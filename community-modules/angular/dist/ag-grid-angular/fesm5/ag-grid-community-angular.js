@@ -920,12 +920,13 @@ var AgGridAngular = /** @class */ (function () {
         this.customChartThemes = undefined;
         /** Chart theme overrides applied to all themes.     */
         this.chartThemeOverrides = undefined;
-        /** `cellRenderer` to use when data is loading via a DataSource.     */
+        /** Provide your own loading cell renderer to use when data is loading via a DataSource.
+         * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
         this.loadingCellRenderer = undefined;
         /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
          */
         this.loadingCellRendererFramework = undefined;
-        /** Params to be passed to loading cell renderer component.     */
+        /** Params to be passed to the `loadingCellRenderer` component.     */
         this.loadingCellRendererParams = undefined;
         /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
         this.loadingCellRendererSelector = undefined;
@@ -937,7 +938,8 @@ var AgGridAngular = /** @class */ (function () {
         this.keepDetailRows = undefined;
         /** Sets the number of details rows to keep. Default: `10`     */
         this.keepDetailRowsCount = undefined;
-        /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
+        /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
+         * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
         this.detailCellRenderer = undefined;
         /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
          */
@@ -985,7 +987,8 @@ var AgGridAngular = /** @class */ (function () {
         this.debug = undefined;
         /** Provide a template for 'loading' overlay.     */
         this.overlayLoadingTemplate = undefined;
-        /** Provide a custom loading overlay component.     */
+        /** Provide a custom loading overlay component.
+         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
         this.loadingOverlayComponent = undefined;
         /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
          */
@@ -996,7 +999,8 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressLoadingOverlay = undefined;
         /** Provide a template for 'no rows' overlay.     */
         this.overlayNoRowsTemplate = undefined;
-        /** Provide a custom no rows overlay component     */
+        /** Provide a custom no rows overlay component.
+         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
         this.noRowsOverlayComponent = undefined;
         /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
          */
@@ -1075,7 +1079,8 @@ var AgGridAngular = /** @class */ (function () {
         this.rowDragEntireRow = undefined;
         /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
         this.rowDragMultiRow = undefined;
-        /** Sets the Cell Renderer to use for full width rows.     */
+        /** Provide your own cell renderer component to use for full width rows.
+         * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
         this.fullWidthCellRenderer = undefined;
         /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
          */
@@ -1125,7 +1130,8 @@ var AgGridAngular = /** @class */ (function () {
         this.groupHideOpenParents = undefined;
         /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
         this.rowGroupPanelShow = undefined;
-        /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
+        /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+         * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
         this.groupRowRenderer = undefined;
         /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
          */
@@ -1418,7 +1424,7 @@ var AgGridAngular = /** @class */ (function () {
         this.virtualColumnsChanged = new EventEmitter();
         /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed.     */
         this.columnEverythingChanged = new EventEmitter();
-        /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+        /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
         this.componentStateChanged = new EventEmitter();
         /** Value has changed after editing.     */

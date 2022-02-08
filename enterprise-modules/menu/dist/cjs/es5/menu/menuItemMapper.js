@@ -260,7 +260,6 @@ var MenuItemMapper = /** @class */ (function (_super) {
                         'rangeXYChart',
                         'rangeAreaChart',
                         'rangeHistogramChart',
-                        'rangeCombinationChart'
                     ],
                     icon: core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };

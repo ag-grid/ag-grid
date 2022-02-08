@@ -65,8 +65,8 @@ class BaseDropZonePanel extends core_1.Component {
         let isPrevious = e.key === core_1.KeyCode.UP;
         if (!isVertical) {
             const isRtl = this.gridOptionsWrapper.isEnableRtl();
-            isNext = e.key === core_1.KeyCode.RIGHT || (isRtl && e.key === core_1.KeyCode.LEFT);
-            isPrevious = e.key === core_1.KeyCode.LEFT || (isRtl && e.key === core_1.KeyCode.RIGHT);
+            isNext = (!isRtl && e.key === core_1.KeyCode.RIGHT) || (isRtl && e.key === core_1.KeyCode.LEFT);
+            isPrevious = (!isRtl && e.key === core_1.KeyCode.LEFT) || (isRtl && e.key === core_1.KeyCode.RIGHT);
         }
         if (!isNext && !isPrevious) {
             return;

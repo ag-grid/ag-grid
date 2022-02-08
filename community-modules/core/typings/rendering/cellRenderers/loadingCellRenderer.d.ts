@@ -1,10 +1,16 @@
 import { Component } from "../../widgets/component";
-import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererParams } from "./iCellRenderer";
+import { IComponent } from "../../interfaces/iComponent";
 export interface ILoadingCellRendererParams extends ICellRendererParams {
 }
-export interface ILoadingCellRenderer extends ICellRenderer {
+export interface ILoadingCellRenderer {
+    /** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),
+     * then the grid will refresh it for you. */
+    refresh?(params: ILoadingCellRendererParams): boolean;
 }
-export declare class LoadingCellRenderer extends Component implements ILoadingCellRenderer {
+export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {
+}
+export declare class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE;
     private eLoadingIcon;
     private eLoadingText;
@@ -12,5 +18,6 @@ export declare class LoadingCellRenderer extends Component implements ILoadingCe
     init(params: ILoadingCellRendererParams): void;
     private setupFailed;
     private setupLoading;
-    refresh(params: any): boolean;
+    refresh(params: ILoadingCellRendererParams): boolean;
+    destroy(): void;
 }

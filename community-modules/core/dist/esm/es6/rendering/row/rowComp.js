@@ -6,7 +6,6 @@
  */
 import { Component } from "../../widgets/component";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { getAllValuesInObject } from "../../utils/object";
 import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
@@ -52,9 +51,7 @@ export class RowComp extends Component {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
-                if (this.rowCtrl.getRowType() === RowType.FullWidthDetail) {
-                    this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 this.setFullWidthRowComp(cellRenderer);
             }
             else {

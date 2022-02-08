@@ -27,6 +27,7 @@ export declare class DropZoneColumnComp extends Component {
     private createDragItem;
     private setupComponents;
     private setupRemove;
+    private getColumnAndAggFuncName;
     private setTextValue;
     private onShowAggFuncSelection;
     private createAggSelect;

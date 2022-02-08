@@ -281,7 +281,7 @@ var CartesianChart = /** @class */ (function (_super) {
             }
             else {
                 var domains_1 = [];
-                boundSeries.forEach(function (series) {
+                boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
                     domains_1.push(series.getDomain(direction));
                 });
                 var domain = (_a = new Array()).concat.apply(_a, __spread(domains_1));

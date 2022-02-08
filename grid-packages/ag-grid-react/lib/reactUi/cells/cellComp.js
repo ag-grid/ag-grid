@@ -38,12 +38,12 @@ var checkCellEditorDeprecations = function (popup, cellEditor, cellCtrl) {
     var col = cellCtrl.getColumn();
     // cellEditor is written to be a popup editor, however colDef.cellEditorPopup is not set
     if (!popup && cellEditor.isPopup && cellEditor.isPopup()) {
-        var msg_1 = "AG Grid: Found an issue in column " + col.getColId() + ". If using ReactUI, specify an editor is a popup using colDef.cellEditorPopup=true";
+        var msg_1 = "AG Grid: Found an issue in column " + col.getColId() + ". If using React, specify an editor is a popup using colDef.cellEditorPopup=true. AG Grid React cannot depend on the editor component specifying if it's in a popup (via the isPopup() method on the editor), as React needs to know this information BEFORE the component is created.";
         ag_grid_community_1._.doOnce(function () { return console.warn(msg_1); }, 'jsEditorComp-isPopup-' + cellCtrl.getColumn().getColId());
     }
     // cellEditor is a popup and is trying to position itself the deprecated way
     if (popup && cellEditor.getPopupPosition && cellEditor.getPopupPosition() != null) {
-        var msg_2 = "AG Grid: AG Grid: Found an issue in column " + col.getColId() + ". If using ReactUI, specify an editor popup position using colDef.cellEditorPopupPosition=[value]";
+        var msg_2 = "AG Grid: Found an issue in column " + col.getColId() + ". If using React, specify an editor popup position using colDef.cellEditorPopupPosition=true. AG Grid React cannot depend on the editor component specifying it's position (via the getPopupPosition() method on the editor), as React needs to know this information BEFORE the component is created.";
         ag_grid_community_1._.doOnce(function () { return console.warn(msg_2); }, 'jsEditorComp-getPopupPosition-' + cellCtrl.getColumn().getColId());
     }
 };

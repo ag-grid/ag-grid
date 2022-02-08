@@ -36,7 +36,11 @@ export interface IFilterDef {
     floatingFilterComponentParams?: any;
 }
 export interface IFilter {
-    /** Returns `true` if the filter is currently active, otherwise `false`. */
+    /**
+     * Returns `true` if the filter is currently active, otherwise `false`.
+     * If active then 1) the grid will show the filter icon in the column header
+     * and 2) the filter will be included in the filtering of the data.
+    */
     isFilterActive(): boolean;
     /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      filter fails, then the row will be excluded from the final set. The method is provided a
@@ -45,7 +49,7 @@ export interface IFilter {
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     /**
      * Returns a model representing the current state of the filter, or `null` if the filter is
-     * not active.
+     * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called.
      */
     getModel(): any;
     /**
@@ -57,7 +61,7 @@ export interface IFilter {
      state after rows are loaded, it can do it here. For example the set filters uses this
      to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
      Country filter). To get the list of available values from within this method from the
-    Client Side Row Model, use gridApi.forEachLeafNode(callback).
+    Client Side Row Model, use `gridApi.forEachLeafNode(callback)`.
     */
     onNewRowsLoaded?(): void;
     /** Called whenever any filter is changed. */

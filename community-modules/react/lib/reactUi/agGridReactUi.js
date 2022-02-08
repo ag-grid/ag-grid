@@ -18,7 +18,7 @@ const changeDetectionService_1 = require("../shared/changeDetectionService");
 const newReactComponent_1 = require("../shared/newReactComponent");
 const portalManager_1 = require("../shared/portalManager");
 const gridComp_1 = __importDefault(require("./gridComp"));
-const reactFrameworkOverrides_1 = require("./reactFrameworkOverrides");
+const reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
 class AgGridReactUi extends react_1.Component {
     constructor(props) {
         super(props);
@@ -46,7 +46,7 @@ class AgGridReactUi extends react_1.Component {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this.portalManager)
             },
             modules,
-            frameworkOverrides: new reactFrameworkOverrides_1.ReactFrameworkOverrides()
+            frameworkOverrides: new reactFrameworkOverrides_1.ReactFrameworkOverrides(true)
         };
         this.gridOptions = this.props.gridOptions || {};
         const { children } = this.props;

@@ -1112,7 +1112,13 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        var warningMessage;
+        if (ModuleRegistry.moduleBased) {
+            warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        }
+        else {
+            warningMessage = "AG Grid: unable to use " + reason + " as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/";
+        }
         doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);
@@ -3253,7 +3259,7 @@ var Events = /** @class */ (function () {
      * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
     /** Only used by React, Angular, Web Components and VueJS AG Grid components
-     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * (not used if doing plain JavaScript). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
     /*****************************  INTERNAL EVENTS: START ******************************************* */
@@ -17100,6 +17106,11 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     LoadingCellRenderer.prototype.refresh = function (params) {
         return false;
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    LoadingCellRenderer.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     __decorate$C([
         RefSelector('eLoadingIcon')
@@ -23572,7 +23583,12 @@ var RowCtrl = /** @class */ (function (_super) {
         var params = this.createFullWidthParams(gui.element, pinned);
         var masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
         if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
+            if (ModuleRegistry.isPackageBased()) {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.");
+            }
+            else {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module " + ModuleNames.MasterDetailModule);
+            }
             return;
         }
         var compDetails;
@@ -24092,6 +24108,9 @@ var RowCtrl = /** @class */ (function (_super) {
     };
     RowCtrl.prototype.setupDetailRowAutoHeight = function (eDetailGui) {
         var _this = this;
+        if (this.rowType !== RowType.FullWidthDetail) {
+            return;
+        }
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) {
             return;
         }
@@ -44970,9 +44989,7 @@ var RowComp = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 var eGui = cellRenderer.getGui();
                 _this.getGui().appendChild(eGui);
-                if (_this.rowCtrl.getRowType() === RowType.FullWidthDetail) {
-                    _this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                _this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 _this.setFullWidthRowComp(cellRenderer);
             }
             else {

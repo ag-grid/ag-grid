@@ -78,8 +78,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var isPrevious = e.key === KeyCode.UP;
         if (!isVertical) {
             var isRtl = this.gridOptionsWrapper.isEnableRtl();
-            isNext = e.key === KeyCode.RIGHT || (isRtl && e.key === KeyCode.LEFT);
-            isPrevious = e.key === KeyCode.LEFT || (isRtl && e.key === KeyCode.RIGHT);
+            isNext = (!isRtl && e.key === KeyCode.RIGHT) || (isRtl && e.key === KeyCode.LEFT);
+            isPrevious = (!isRtl && e.key === KeyCode.LEFT) || (isRtl && e.key === KeyCode.RIGHT);
         }
         if (!isNext && !isPrevious) {
             return;

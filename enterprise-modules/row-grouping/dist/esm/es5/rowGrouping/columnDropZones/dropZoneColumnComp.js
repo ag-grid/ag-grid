@@ -47,11 +47,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         }
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var label = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
         var extraDescription = '';
         if (this.valueColumn && !isFunctionsReadOnly) {
             extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
         }
-        _.setAriaLabel(eGui, this.displayName + " " + label + " " + extraDescription);
+        _.setAriaLabel(eGui, aggFuncName + " " + name + " " + label + " " + extraDescription);
         this.setupTooltip();
     };
     DropZoneColumnComp.prototype.setupTooltip = function () {
@@ -120,19 +121,21 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
-    DropZoneColumnComp.prototype.setTextValue = function () {
-        var displayValue;
+    DropZoneColumnComp.prototype.getColumnAndAggFuncName = function () {
+        var name = this.displayName;
+        var aggFuncName = '';
         if (this.valueColumn) {
             var aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             var aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
-            displayValue = aggFuncStringTranslated + "(" + this.displayName + ")";
+            aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
-        else {
-            displayValue = this.displayName;
-        }
+        return { name: name, aggFuncName: aggFuncName };
+    };
+    DropZoneColumnComp.prototype.setTextValue = function () {
+        var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
+        var displayValue = this.valueColumn ? aggFuncName + "(" + name + ")" : name;
         var displayValueSanitised = _.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
@@ -229,7 +232,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         el.classList.add("ag-column-drop-cell" + suffix, "ag-column-drop-" + direction + "-cell" + suffix);
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
     __decorate([
         Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);

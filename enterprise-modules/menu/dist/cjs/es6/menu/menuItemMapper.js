@@ -240,7 +240,6 @@ let MenuItemMapper = class MenuItemMapper extends core_1.BeanStub {
                         'rangeXYChart',
                         'rangeAreaChart',
                         'rangeHistogramChart',
-                        'rangeCombinationChart'
                     ],
                     icon: core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };

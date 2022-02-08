@@ -18,6 +18,6 @@ export interface IComponent<T> {
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
-    /** The init(params) method is called on the component once. See below for details on the parameters. */
+    /** The init(params) method is called on the component once. */
     init?(params: T): AgPromise<void> | void;
 }

@@ -214,7 +214,12 @@ var RowCtrl = /** @class */ (function (_super) {
         var params = this.createFullWidthParams(gui.element, pinned);
         var masterDetailModuleLoaded = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.MasterDetailModule);
         if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
+            if (moduleRegistry_1.ModuleRegistry.isPackageBased()) {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.");
+            }
+            else {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module " + moduleNames_1.ModuleNames.MasterDetailModule);
+            }
             return;
         }
         var compDetails;
@@ -734,6 +739,9 @@ var RowCtrl = /** @class */ (function (_super) {
     };
     RowCtrl.prototype.setupDetailRowAutoHeight = function (eDetailGui) {
         var _this = this;
+        if (this.rowType !== RowType.FullWidthDetail) {
+            return;
+        }
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) {
             return;
         }

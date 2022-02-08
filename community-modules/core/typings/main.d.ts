@@ -95,7 +95,7 @@ export { CellCtrl, ICellComp } from "./rendering/cell/cellCtrl";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
-export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
+export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";

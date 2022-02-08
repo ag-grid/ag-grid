@@ -800,7 +800,7 @@
   padding: 6px 0px;
 }
 .ag-theme-alpine .ag-column-select-virtual-list-item {
-  margin: 0 12px;
+  padding: 0 12px;
 }
 .ag-theme-alpine .ag-rtl {
   text-align: right;

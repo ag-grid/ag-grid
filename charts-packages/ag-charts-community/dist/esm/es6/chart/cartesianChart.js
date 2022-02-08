@@ -237,7 +237,7 @@ export class CartesianChart extends Chart {
             }
             else {
                 const domains = [];
-                boundSeries.forEach(series => {
+                boundSeries.filter(s => s.visible).forEach(series => {
                     domains.push(series.getDomain(direction));
                 });
                 const domain = new Array().concat(...domains);

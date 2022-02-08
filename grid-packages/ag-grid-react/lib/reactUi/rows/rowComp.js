@@ -90,6 +90,33 @@ var RowComp = function (params) {
     var _q = react_1.useState(rowCtrl.getInitialTransform()), transform = _q[0], setTransform = _q[1];
     var eGui = react_1.useRef(null);
     var fullWidthCompRef = react_1.useRef();
+    var autoHeightSetup = react_1.useRef(false);
+    var _r = react_1.useState(0), autoHeightSetupAttempt = _r[0], setAutoHeightSetupAttempt = _r[1];
+    // puts autoHeight onto full with detail rows. this needs trickery, as we need
+    // the HTMLElement for the provided Detail Cell Renderer, however the Detail Cell Renderer
+    // could be a stateless React Func Comp which won't work with useRef, so we need
+    // to poll (we limit to 10) looking for the Detail HTMLElement (which will be the only
+    // child) after the fullWidthCompDetails is set.
+    react_1.useEffect(function () {
+        var _a;
+        if (autoHeightSetup.current) {
+            return;
+        }
+        if (!fullWidthCompDetails) {
+            return;
+        }
+        if (autoHeightSetupAttempt > 10) {
+            return;
+        }
+        var eChild = (_a = eGui.current) === null || _a === void 0 ? void 0 : _a.firstChild;
+        if (eChild) {
+            rowCtrl.setupDetailRowAutoHeight(eChild);
+            autoHeightSetup.current = true;
+        }
+        else {
+            setAutoHeightSetupAttempt(function (prev) { return prev + 1; });
+        }
+    }, [fullWidthCompDetails, autoHeightSetupAttempt]);
     var cssClassManager = react_1.useMemo(function () { return new ag_grid_community_1.CssClassManager(function () { return eGui.current; }); }, []);
     react_1.useEffect(function () {
         var compProxy = {

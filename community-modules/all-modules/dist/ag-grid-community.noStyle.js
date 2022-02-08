@@ -3863,7 +3863,13 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        var warningMessage;
+        if (ModuleRegistry.moduleBased) {
+            warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        }
+        else {
+            warningMessage = "AG Grid: unable to use " + reason + " as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/";
+        }
         Object(_utils_function__WEBPACK_IMPORTED_MODULE_0__["doOnce"])(function () {
             console.warn(warningMessage);
         }, warningKey);
@@ -7744,7 +7750,7 @@ var Events = /** @class */ (function () {
      * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
     /** Only used by React, Angular, Web Components and VueJS AG Grid components
-     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * (not used if doing plain JavaScript). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
     /*****************************  INTERNAL EVENTS: START ******************************************* */
@@ -19798,6 +19804,11 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     LoadingCellRenderer.prototype.refresh = function (params) {
         return false;
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    LoadingCellRenderer.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     __decorate([
         Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eLoadingIcon')
@@ -24725,7 +24736,12 @@ var RowCtrl = /** @class */ (function (_super) {
         var params = this.createFullWidthParams(gui.element, pinned);
         var masterDetailModuleLoaded = _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_5__["ModuleRegistry"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_4__["ModuleNames"].MasterDetailModule);
         if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
+            if (_modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_5__["ModuleRegistry"].isPackageBased()) {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.");
+            }
+            else {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module " + _modules_moduleNames__WEBPACK_IMPORTED_MODULE_4__["ModuleNames"].MasterDetailModule);
+            }
             return;
         }
         var compDetails;
@@ -25245,6 +25261,9 @@ var RowCtrl = /** @class */ (function (_super) {
     };
     RowCtrl.prototype.setupDetailRowAutoHeight = function (eDetailGui) {
         var _this = this;
+        if (this.rowType !== RowType.FullWidthDetail) {
+            return;
+        }
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) {
             return;
         }
@@ -50127,10 +50146,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RowComp", function() { return RowComp; });
 /* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
-/* harmony import */ var _rowCtrl__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(113);
-/* harmony import */ var _cell_cellComp__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(239);
-/* harmony import */ var _utils_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
-/* harmony import */ var _utils_aria__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
+/* harmony import */ var _cell_cellComp__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
+/* harmony import */ var _utils_object__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _utils_aria__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(44);
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
  * @version v27.0.0
@@ -50155,7 +50173,6 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 
 
-
 var RowComp = /** @class */ (function (_super) {
     __extends(RowComp, _super);
     function RowComp(ctrl, beans, containerType) {
@@ -50172,17 +50189,17 @@ var RowComp = /** @class */ (function (_super) {
             showFullWidth: function (compDetails) { return _this.showFullWidth(compDetails); },
             getFullWidthCellRenderer: function () { return _this.getFullWidthCellRenderer(); },
             addOrRemoveCssClass: function (name, on) { return _this.addOrRemoveCssClass(name, on); },
-            setAriaExpanded: function (on) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_5__["setAriaExpanded"])(eGui, on); },
+            setAriaExpanded: function (on) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_4__["setAriaExpanded"])(eGui, on); },
             setUserStyles: function (styles) { return Object(_utils_dom__WEBPACK_IMPORTED_MODULE_1__["addStylesToElement"])(eGui, styles); },
-            setAriaSelected: function (value) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_5__["setAriaSelected"])(eGui, value); },
+            setAriaSelected: function (value) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_4__["setAriaSelected"])(eGui, value); },
             setAriaLabel: function (value) {
-                Object(_utils_aria__WEBPACK_IMPORTED_MODULE_5__["setAriaLabel"])(eGui, value == null ? '' : value);
+                Object(_utils_aria__WEBPACK_IMPORTED_MODULE_4__["setAriaLabel"])(eGui, value == null ? '' : value);
             },
             setTop: function (top) { return style.top = top; },
             setTransform: function (transform) { return style.transform = transform; },
             setRowIndex: function (rowIndex) { return eGui.setAttribute('row-index', rowIndex); },
-            setRole: function (role) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_5__["setAriaRole"])(eGui, role); },
-            setAriaRowIndex: function (rowIndex) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_5__["setAriaRowIndex"])(_this.getGui(), rowIndex); },
+            setRole: function (role) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_4__["setAriaRole"])(eGui, role); },
+            setAriaRowIndex: function (rowIndex) { return Object(_utils_aria__WEBPACK_IMPORTED_MODULE_4__["setAriaRowIndex"])(_this.getGui(), rowIndex); },
             setRowId: function (rowId) { return eGui.setAttribute('row-id', rowId); },
             setRowBusinessKey: function (businessKey) { return eGui.setAttribute('row-business-key', businessKey); },
             setTabIndex: function (tabIndex) { return eGui.setAttribute('tabindex', tabIndex.toString()); }
@@ -50201,9 +50218,7 @@ var RowComp = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 var eGui = cellRenderer.getGui();
                 _this.getGui().appendChild(eGui);
-                if (_this.rowCtrl.getRowType() === _rowCtrl__WEBPACK_IMPORTED_MODULE_2__["RowType"].FullWidthDetail) {
-                    _this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                _this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 _this.setFullWidthRowComp(cellRenderer);
             }
             else {
@@ -50230,7 +50245,7 @@ var RowComp = /** @class */ (function (_super) {
                 cellsToRemove[key] = null;
             }
         });
-        var cellCompsToRemove = Object(_utils_object__WEBPACK_IMPORTED_MODULE_4__["getAllValuesInObject"])(cellsToRemove)
+        var cellCompsToRemove = Object(_utils_object__WEBPACK_IMPORTED_MODULE_3__["getAllValuesInObject"])(cellsToRemove)
             .filter(function (cellComp) { return cellComp != null; });
         this.destroyCells(cellCompsToRemove);
         this.ensureDomOrder(cellCtrls);
@@ -50250,7 +50265,7 @@ var RowComp = /** @class */ (function (_super) {
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_1__["setDomChildOrder"])(this.getGui(), elementsInOrder);
     };
     RowComp.prototype.newCellComp = function (cellCtrl) {
-        var cellComp = new _cell_cellComp__WEBPACK_IMPORTED_MODULE_3__["CellComp"](this.rowCtrl.getScope(), this.beans, cellCtrl, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
+        var cellComp = new _cell_cellComp__WEBPACK_IMPORTED_MODULE_2__["CellComp"](this.rowCtrl.getScope(), this.beans, cellCtrl, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
         this.cellComps[cellCtrl.getInstanceId()] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     };
@@ -50259,7 +50274,7 @@ var RowComp = /** @class */ (function (_super) {
         this.destroyAllCells();
     };
     RowComp.prototype.destroyAllCells = function () {
-        var cellsToDestroy = Object(_utils_object__WEBPACK_IMPORTED_MODULE_4__["getAllValuesInObject"])(this.cellComps).filter(function (cp) { return cp != null; });
+        var cellsToDestroy = Object(_utils_object__WEBPACK_IMPORTED_MODULE_3__["getAllValuesInObject"])(this.cellComps).filter(function (cp) { return cp != null; });
         this.destroyCells(cellsToDestroy);
     };
     RowComp.prototype.setFullWidthRowComp = function (fullWidthRowComponent) {

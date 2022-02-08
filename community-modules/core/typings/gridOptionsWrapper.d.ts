@@ -212,7 +212,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileRows(): boolean;
     isAngularCompileFilters(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColGroupDef | ColDef)[] | null | undefined;
+    getColumnDefs(): (ColDef | ColGroupDef)[] | null | undefined;
     getColumnTypes(): {
         [key: string]: ColDef;
     } | undefined;

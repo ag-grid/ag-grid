@@ -3899,11 +3899,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         }
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var label = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+        var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
         var extraDescription = '';
         if (this.valueColumn && !isFunctionsReadOnly) {
             extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
         }
-        agGridCommunity._.setAriaLabel(eGui, this.displayName + " " + label + " " + extraDescription);
+        agGridCommunity._.setAriaLabel(eGui, aggFuncName + " " + name + " " + label + " " + extraDescription);
         this.setupTooltip();
     };
     DropZoneColumnComp.prototype.setupTooltip = function () {
@@ -3972,19 +3973,21 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
-    DropZoneColumnComp.prototype.setTextValue = function () {
-        var displayValue;
+    DropZoneColumnComp.prototype.getColumnAndAggFuncName = function () {
+        var name = this.displayName;
+        var aggFuncName = '';
         if (this.valueColumn) {
             var aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             var aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
-            displayValue = aggFuncStringTranslated + "(" + this.displayName + ")";
+            aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
-        else {
-            displayValue = this.displayName;
-        }
+        return { name: name, aggFuncName: aggFuncName };
+    };
+    DropZoneColumnComp.prototype.setTextValue = function () {
+        var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
+        var displayValue = this.valueColumn ? aggFuncName + "(" + name + ")" : name;
         var displayValueSanitised = agGridCommunity._.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
@@ -4081,7 +4084,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         el.classList.add("ag-column-drop-cell" + suffix, "ag-column-drop-" + direction + "-cell" + suffix);
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span role=\"option\" tabindex=\"0\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
     __decorate$f([
         agGridCommunity.Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);
@@ -4204,8 +4207,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var isPrevious = e.key === agGridCommunity.KeyCode.UP;
         if (!isVertical) {
             var isRtl = this.gridOptionsWrapper.isEnableRtl();
-            isNext = e.key === agGridCommunity.KeyCode.RIGHT || (isRtl && e.key === agGridCommunity.KeyCode.LEFT);
-            isPrevious = e.key === agGridCommunity.KeyCode.LEFT || (isRtl && e.key === agGridCommunity.KeyCode.RIGHT);
+            isNext = (!isRtl && e.key === agGridCommunity.KeyCode.RIGHT) || (isRtl && e.key === agGridCommunity.KeyCode.LEFT);
+            isPrevious = (!isRtl && e.key === agGridCommunity.KeyCode.LEFT) || (isRtl && e.key === agGridCommunity.KeyCode.RIGHT);
         }
         if (!isNext && !isPrevious) {
             return;
@@ -20869,7 +20872,7 @@ var BarSparkline = /** @class */ (function (_super) {
         yScale.range = [0, seriesRect.width];
     };
     BarSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
@@ -20878,7 +20881,7 @@ var BarSparkline = /** @class */ (function (_super) {
         else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - seriesRect.height / data.length];
+            xScale.range = [0, seriesRect.height - seriesRect.height / xData.length];
         }
     };
     BarSparkline.prototype.updateAxisLine = function () {
@@ -21016,7 +21019,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         yScale.range = [seriesRect.height, 0];
     };
     ColumnSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.width];
             xScale.paddingInner = paddingInner;
@@ -21025,7 +21028,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.width - seriesRect.width / data.length];
+            xScale.range = [0, seriesRect.width - seriesRect.width / xData.length];
         }
     };
     ColumnSparkline.prototype.updateAxisLine = function () {
@@ -35084,7 +35087,7 @@ var CartesianChart = /** @class */ (function (_super) {
             }
             else {
                 var domains_1 = [];
-                boundSeries.forEach(function (series) {
+                boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
                     domains_1.push(series.getDomain(direction));
                 });
                 var domain = (_a = new Array()).concat.apply(_a, __spread$9(domains_1));
@@ -52728,7 +52731,6 @@ var MenuItemMapper = /** @class */ (function (_super) {
                         'rangeXYChart',
                         'rangeAreaChart',
                         'rangeHistogramChart',
-                        'rangeCombinationChart'
                     ],
                     icon: agGridCommunity._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };

@@ -775,7 +775,7 @@
   padding: 8px 0px;
 }
 .ag-theme-material .ag-column-select-virtual-list-item {
-  margin: 0 12px;
+  padding: 0 12px;
 }
 .ag-theme-material .ag-rtl {
   text-align: right;

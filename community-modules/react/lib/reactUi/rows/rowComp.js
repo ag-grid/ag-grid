@@ -72,6 +72,33 @@ const RowComp = (params) => {
     const [transform, setTransform] = react_1.useState(rowCtrl.getInitialTransform());
     const eGui = react_1.useRef(null);
     const fullWidthCompRef = react_1.useRef();
+    const autoHeightSetup = react_1.useRef(false);
+    const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = react_1.useState(0);
+    // puts autoHeight onto full with detail rows. this needs trickery, as we need
+    // the HTMLElement for the provided Detail Cell Renderer, however the Detail Cell Renderer
+    // could be a stateless React Func Comp which won't work with useRef, so we need
+    // to poll (we limit to 10) looking for the Detail HTMLElement (which will be the only
+    // child) after the fullWidthCompDetails is set.
+    react_1.useEffect(() => {
+        var _a;
+        if (autoHeightSetup.current) {
+            return;
+        }
+        if (!fullWidthCompDetails) {
+            return;
+        }
+        if (autoHeightSetupAttempt > 10) {
+            return;
+        }
+        const eChild = (_a = eGui.current) === null || _a === void 0 ? void 0 : _a.firstChild;
+        if (eChild) {
+            rowCtrl.setupDetailRowAutoHeight(eChild);
+            autoHeightSetup.current = true;
+        }
+        else {
+            setAutoHeightSetupAttempt(prev => prev + 1);
+        }
+    }, [fullWidthCompDetails, autoHeightSetupAttempt]);
     const cssClassManager = react_1.useMemo(() => new core_1.CssClassManager(() => eGui.current), []);
     react_1.useEffect(() => {
         const compProxy = {

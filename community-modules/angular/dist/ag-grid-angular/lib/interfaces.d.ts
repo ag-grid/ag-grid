@@ -1,5 +1,6 @@
 import { IAfterGuiAttachedParams, ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IFloatingFilter, IFloatingFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanelParams, IToolPanelParams, ITooltipParams } from "@ag-grid-community/core";
 export interface AgFrameworkComponent<T> {
+    /** Mandatory - Params for rendering this component. */
     agInit(params: T): void;
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }

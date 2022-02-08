@@ -9061,7 +9061,7 @@ var BarSparkline = /** @class */ (function (_super) {
         yScale.range = [0, seriesRect.width];
     };
     BarSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
@@ -9070,7 +9070,7 @@ var BarSparkline = /** @class */ (function (_super) {
         else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - seriesRect.height / data.length];
+            xScale.range = [0, seriesRect.height - seriesRect.height / xData.length];
         }
     };
     BarSparkline.prototype.updateAxisLine = function () {
@@ -9208,7 +9208,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         yScale.range = [seriesRect.height, 0];
     };
     ColumnSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.width];
             xScale.paddingInner = paddingInner;
@@ -9217,7 +9217,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.width - seriesRect.width / data.length];
+            xScale.range = [0, seriesRect.width - seriesRect.width / xData.length];
         }
     };
     ColumnSparkline.prototype.updateAxisLine = function () {

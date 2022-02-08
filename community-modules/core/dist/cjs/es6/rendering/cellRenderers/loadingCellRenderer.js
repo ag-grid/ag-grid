@@ -36,6 +36,11 @@ class LoadingCellRenderer extends component_1.Component {
     refresh(params) {
         return false;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    destroy() {
+        super.destroy();
+    }
 }
 LoadingCellRenderer.TEMPLATE = `<div class="ag-loading">
             <span class="ag-loading-icon" ref="eLoadingIcon"></span>

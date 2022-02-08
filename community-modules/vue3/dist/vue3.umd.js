@@ -2118,8 +2118,9 @@ var HeaderRowContainerComp = /** @class */ (function (_super) {
 "use strict";
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "b", function() { return /* binding */ RowType; });
 __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ rowCtrl_RowCtrl; });
+
+// UNUSED EXPORTS: RowType
 
 // EXTERNAL MODULE: ../core/dist/esm/es5/constants/constants.js
 var constants = __webpack_require__("a3cf");
@@ -2423,7 +2424,12 @@ var rowCtrl_RowCtrl = /** @class */ (function (_super) {
         var params = this.createFullWidthParams(gui.element, pinned);
         var masterDetailModuleLoaded = moduleRegistry["a" /* ModuleRegistry */].isRegistered(moduleNames["a" /* ModuleNames */].MasterDetailModule);
         if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
-            console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
+            if (moduleRegistry["a" /* ModuleRegistry */].isPackageBased()) {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.");
+            }
+            else {
+                console.warn("AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with AG Grid Enterprise Module " + moduleNames["a" /* ModuleNames */].MasterDetailModule);
+            }
             return;
         }
         var compDetails;
@@ -2943,6 +2949,9 @@ var rowCtrl_RowCtrl = /** @class */ (function (_super) {
     };
     RowCtrl.prototype.setupDetailRowAutoHeight = function (eDetailGui) {
         var _this = this;
+        if (this.rowType !== RowType.FullWidthDetail) {
+            return;
+        }
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) {
             return;
         }
@@ -13244,7 +13253,7 @@ var Events = /** @class */ (function () {
      * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
     /** Only used by React, Angular, Web Components and VueJS AG Grid components
-     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * (not used if doing plain JavaScript). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
     /*****************************  INTERNAL EVENTS: START ******************************************* */
@@ -32726,6 +32735,11 @@ var loadingCellRenderer_LoadingCellRenderer = /** @class */ (function (_super) {
     LoadingCellRenderer.prototype.refresh = function (params) {
         return false;
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    LoadingCellRenderer.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     loadingCellRenderer_decorate([
         Object(componentAnnotations["a" /* RefSelector */])('eLoadingIcon')
@@ -35695,9 +35709,6 @@ var rowContainerCtrl = __webpack_require__("a9a3");
 // EXTERNAL MODULE: ../core/dist/esm/es5/utils/dom.js
 var dom = __webpack_require__("e926");
 
-// EXTERNAL MODULE: ../core/dist/esm/es5/rendering/row/rowCtrl.js + 1 modules
-var row_rowCtrl = __webpack_require__("175f");
-
 // EXTERNAL MODULE: ../core/dist/esm/es5/rendering/cell/cellComp.js
 var cell_cellComp = __webpack_require__("46d6");
 
@@ -35727,7 +35738,6 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-
 
 
 
@@ -35778,9 +35788,7 @@ var rowComp_RowComp = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 var eGui = cellRenderer.getGui();
                 _this.getGui().appendChild(eGui);
-                if (_this.rowCtrl.getRowType() === row_rowCtrl["b" /* RowType */].FullWidthDetail) {
-                    _this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                }
+                _this.rowCtrl.setupDetailRowAutoHeight(eGui);
                 _this.setFullWidthRowComp(cellRenderer);
             }
             else {
@@ -37552,7 +37560,13 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        var warningMessage;
+        if (ModuleRegistry.moduleBased) {
+            warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/";
+        }
+        else {
+            warningMessage = "AG Grid: unable to use " + reason + " as package 'ag-grid-enterprise' is not present. Please see: https://www.ag-grid.com/javascript-grid/packages/";
+        }
         Object(_utils_function__WEBPACK_IMPORTED_MODULE_0__["doOnce"])(function () {
             console.warn(warningMessage);
         }, warningKey);

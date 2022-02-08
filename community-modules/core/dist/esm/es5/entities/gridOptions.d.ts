@@ -209,11 +209,14 @@ export interface GridOptions {
     };
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
-    /** `cellRenderer` to use when data is loading via a DataSource. */
+    /**
+    * Provide your own loading cell renderer to use when data is loading via a DataSource.
+    * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
+    */
     loadingCellRenderer?: any;
     /** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */
     loadingCellRendererFramework?: any;
-    /** Params to be passed to loading cell renderer component. */
+    /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
@@ -227,7 +230,10 @@ export interface GridOptions {
     keepDetailRows?: boolean;
     /** Sets the number of details rows to keep. Default: `10` */
     keepDetailRowsCount?: number;
-    /** Provide a custom `detailCellRenderer` to use when a master row is expanded. */
+    /**
+    * Provide a custom `detailCellRenderer` to use when a master row is expanded.
+    * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+    */
     detailCellRenderer?: any;
     /** @deprecated As of v27, use `detailCellRenderer` for framework components too. */
     detailCellRendererFramework?: any;
@@ -278,7 +284,10 @@ export interface GridOptions {
     debug?: boolean;
     /** Provide a template for 'loading' overlay. */
     overlayLoadingTemplate?: string;
-    /** Provide a custom loading overlay component. */
+    /**
+    * Provide a custom loading overlay component.
+    * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+    */
     loadingOverlayComponent?: any;
     /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */
     loadingOverlayComponentFramework?: any;
@@ -288,7 +297,10 @@ export interface GridOptions {
     suppressLoadingOverlay?: boolean;
     /** Provide a template for 'no rows' overlay. */
     overlayNoRowsTemplate?: string;
-    /** Provide a custom no rows overlay component */
+    /**
+    * Provide a custom no rows overlay component.
+    * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+    */
     noRowsOverlayComponent?: any;
     /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */
     noRowsOverlayComponentFramework?: any;
@@ -379,7 +391,10 @@ export interface GridOptions {
     rowDragEntireRow?: boolean;
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */
     rowDragMultiRow?: boolean;
-    /** Sets the Cell Renderer to use for full width rows. */
+    /**
+    * Provide your own cell renderer component to use for full width rows.
+    * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
+    */
     fullWidthCellRenderer?: any;
     /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */
     fullWidthCellRendererFramework?: any;
@@ -432,7 +447,10 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
     rowGroupPanelShow?: string;
-    /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */
+    /**
+    * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+    * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+    */
     groupRowRenderer?: any;
     /** @deprecated As of v27, use `groupRowRenderer` for framework components too. */
     groupRowRendererFramework?: any;
@@ -734,7 +752,7 @@ export interface GridOptions {
     /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
     /**
-     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
      */
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;

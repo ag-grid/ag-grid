@@ -42,7 +42,7 @@ var changeDetectionService_1 = require("../shared/changeDetectionService");
 var newReactComponent_1 = require("../shared/newReactComponent");
 var portalManager_1 = require("../shared/portalManager");
 var gridComp_1 = __importDefault(require("./gridComp"));
-var reactFrameworkOverrides_1 = require("./reactFrameworkOverrides");
+var reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
 var AgGridReactUi = /** @class */ (function (_super) {
     __extends(AgGridReactUi, _super);
     function AgGridReactUi(props) {
@@ -73,7 +73,7 @@ var AgGridReactUi = /** @class */ (function (_super) {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this.portalManager)
             },
             modules: modules,
-            frameworkOverrides: new reactFrameworkOverrides_1.ReactFrameworkOverrides()
+            frameworkOverrides: new reactFrameworkOverrides_1.ReactFrameworkOverrides(true)
         };
         this.gridOptions = this.props.gridOptions || {};
         var children = this.props.children;
