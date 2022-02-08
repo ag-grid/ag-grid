@@ -1,4 +1,5 @@
 import {Grid, GridOptions} from '@ag-grid-community/core'
+import { MyInnerRenderer } from "./myInnerRenderer_typescript";
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -15,7 +16,10 @@ const gridOptions: GridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 300
+        minWidth: 300,
+        cellRendererParams: {
+            innerRenderer: MyInnerRenderer
+        }
     },
     groupIncludeFooter: true,
     groupIncludeTotalFooter: true,

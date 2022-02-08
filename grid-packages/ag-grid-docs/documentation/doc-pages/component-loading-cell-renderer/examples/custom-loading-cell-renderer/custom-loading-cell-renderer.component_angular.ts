@@ -1,10 +1,10 @@
-import {Component} from '@angular/core';
-import {ILoadingCellRendererAngularComp} from "@ag-grid-community/angular";
-import {ILoadingCellRendererParams} from "@ag-grid-community/core";
+import { Component } from '@angular/core';
+import { ILoadingCellRendererAngularComp } from "@ag-grid-community/angular";
+import { ILoadingCellRendererParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'app-loading-cell-renderer',
-    template: `
+  selector: 'app-loading-cell-renderer',
+  template: `
       <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
         <i class="fas fa-spinner fa-pulse"></i>
         <span> {{ this.params.loadingMessage }} </span>
@@ -12,9 +12,9 @@ import {ILoadingCellRendererParams} from "@ag-grid-community/core";
     `
 })
 export class CustomLoadingCellRenderer implements ILoadingCellRendererAngularComp {
-    private params: any;
+  public params!: ILoadingCellRendererParams & { loadingMessage: string };
 
-    agInit(params: ILoadingCellRendererParams): void {
-        this.params = params;
-    }
+  agInit(params: ILoadingCellRendererParams & { loadingMessage: string }): void {
+    this.params = params;
+  }
 }

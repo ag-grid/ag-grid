@@ -284,7 +284,7 @@
     "type": { "returnType": "AgChartThemeOverrides" }
   },
   "loadingCellRenderer": {
-    "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
+    "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererFramework": {
@@ -292,7 +292,7 @@
     "type": { "returnType": "any" }
   },
   "loadingCellRendererParams": {
-    "description": "/** Params to be passed to loading cell renderer component. */",
+    "description": "/** Params to be passed to the `loadingCellRenderer` component. */",
     "type": { "returnType": "any" }
   },
   "loadingCellRendererSelector": {
@@ -316,7 +316,7 @@
     "type": { "returnType": "number" }
   },
   "detailCellRenderer": {
-    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
+    "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererFramework": {
@@ -400,7 +400,7 @@
     "type": { "returnType": "string" }
   },
   "loadingOverlayComponent": {
-    "description": "/** Provide a custom loading overlay component. */",
+    "description": "/** Provide a custom loading overlay component.\n * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "loadingOverlayComponentFramework": {
@@ -420,7 +420,7 @@
     "type": { "returnType": "string" }
   },
   "noRowsOverlayComponent": {
-    "description": "/** Provide a custom no rows overlay component */",
+    "description": "/** Provide a custom no rows overlay component.\n * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentFramework": {
@@ -564,7 +564,7 @@
     "type": { "returnType": "boolean" }
   },
   "fullWidthCellRenderer": {
-    "description": "/** Sets the Cell Renderer to use for full width rows. */",
+    "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "fullWidthCellRendererFramework": {
@@ -640,7 +640,7 @@
     "type": { "returnType": "string" }
   },
   "groupRowRenderer": {
-    "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
+    "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "groupRowRendererFramework": {

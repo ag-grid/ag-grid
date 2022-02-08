@@ -455,12 +455,13 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** `cellRenderer` to use when data is loading via a DataSource.     */
+    /** Provide your own loading cell renderer to use when data is loading via a DataSource.
+     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
     @Input() public loadingCellRenderer: any = undefined;
     /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
      */
     @Input() public loadingCellRendererFramework: any = undefined;
-    /** Params to be passed to loading cell renderer component.     */
+    /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
@@ -472,7 +473,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public keepDetailRows: boolean | undefined = undefined;
     /** Sets the number of details rows to keep. Default: `10`     */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
-    /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
+    /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
+     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
     @Input() public detailCellRenderer: any = undefined;
     /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
      */
@@ -520,7 +522,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public debug: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
-    /** Provide a custom loading overlay component.     */
+    /** Provide a custom loading overlay component.
+     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
     @Input() public loadingOverlayComponent: any = undefined;
     /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
      */
@@ -531,7 +534,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
-    /** Provide a custom no rows overlay component     */
+    /** Provide a custom no rows overlay component.
+     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
      */
@@ -610,7 +614,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public rowDragEntireRow: boolean | undefined = undefined;
     /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
-    /** Sets the Cell Renderer to use for full width rows.     */
+    /** Provide your own cell renderer component to use for full width rows.
+     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
     @Input() public fullWidthCellRenderer: any = undefined;
     /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
      */
@@ -660,7 +665,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: string | undefined = undefined;
-    /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
+    /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
     @Input() public groupRowRenderer: any = undefined;
     /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
      */

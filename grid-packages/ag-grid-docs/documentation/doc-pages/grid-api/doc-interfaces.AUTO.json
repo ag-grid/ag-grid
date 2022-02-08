@@ -497,12 +497,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {
@@ -528,7 +532,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerGroupComponent": {
-      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
+      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentFramework": {
@@ -536,7 +540,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
-      "description": "/** The params used to configure the header group component. */",
+      "description": "/** The params used to configure the `headerGroupComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerName": {
@@ -582,12 +586,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {
@@ -776,7 +784,7 @@
       "type": { "returnType": "string | ValueParserFunc", "optional": true }
     },
     "cellEditor": {
-      "description": "/** A `cellEditor` to use for this column. */",
+      "description": "/** Provide your own cell editor component for this column's cells.\n * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellEditorFramework": {
@@ -784,7 +792,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "cellEditorParams": {
-      "description": "/** Params to be passed to the cell editor component. */",
+      "description": "/** Params to be passed to the `cellEditor` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellEditorSelector": {
@@ -860,7 +868,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
-      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
+      "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentFramework": {
@@ -868,7 +876,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentParams": {
-      "description": "/** The parameters to be passed to the header component. */",
+      "description": "/** The parameters to be passed to the `headerComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "menuTabs": {
@@ -976,7 +984,7 @@
       "type": { "returnType": "CellClassRules", "optional": true }
     },
     "cellRenderer": {
-      "description": "/** A `cellRenderer` to use for this column. */",
+      "description": "/** Provide your own cell Renderer component for this column's cells.\n * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererFramework": {
@@ -984,7 +992,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererParams": {
-      "description": "/** Params to be passed to the cell renderer component. */",
+      "description": "/** Params to be passed to the `cellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "cellRendererSelector": {
@@ -1228,12 +1236,16 @@
       "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "tooltipComponent": { "type": { "returnType": "any", "optional": true } },
+    "tooltipComponent": {
+      "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "tooltipComponentFramework": {
       "description": "/** @deprecated As of v27, use `tooltipComponent` for framework components too.\n */",
       "type": { "returnType": "any", "optional": true }
     },
     "tooltipComponentParams": {
+      "description": "/** The params used to configure `tooltipComponent`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "pivotKeys": {
@@ -2254,7 +2266,7 @@
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "loadingCellRenderer": {
-      "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
+      "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererFramework": {
@@ -2262,7 +2274,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererParams": {
-      "description": "/** Params to be passed to loading cell renderer component. */",
+      "description": "/** Params to be passed to the `loadingCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererSelector": {
@@ -2289,7 +2301,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "detailCellRenderer": {
-      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
+      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "detailCellRendererFramework": {
@@ -2373,7 +2385,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "loadingOverlayComponent": {
-      "description": "/** Provide a custom loading overlay component. */",
+      "description": "/** Provide a custom loading overlay component.\n * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingOverlayComponentFramework": {
@@ -2393,7 +2405,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "noRowsOverlayComponent": {
-      "description": "/** Provide a custom no rows overlay component */",
+      "description": "/** Provide a custom no rows overlay component.\n * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentFramework": {
@@ -2540,7 +2552,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "fullWidthCellRenderer": {
-      "description": "/** Sets the Cell Renderer to use for full width rows. */",
+      "description": "/** Provide your own cell renderer component to use for full width rows.\n * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererFramework": {
@@ -2616,7 +2628,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "groupRowRenderer": {
-      "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
+      "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details. */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererFramework": {
@@ -16520,11 +16532,49 @@
   },
   "ILoadingCellRenderer": {
     "refresh": {
-      "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
+      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
       "type": {
-        "arguments": { "params": "ICellRendererParams" },
+        "arguments": { "params": "ILoadingCellRendererParams" },
         "returnType": "boolean",
+        "optional": true
+      }
+    }
+  },
+  "ILoadingCellRendererComp": {
+    "refresh": {
+      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "getGui": {
+      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
         "optional": false
+      }
+    },
+    "destroy": {
+      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "init": {
+      "description": "/** The init(params) method is called on the component once. */",
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "AgPromise<void> | void",
+        "optional": true
       }
     }
   },

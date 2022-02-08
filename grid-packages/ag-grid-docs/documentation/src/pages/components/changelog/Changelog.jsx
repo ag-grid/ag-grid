@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, useRef } from "react"
 import styles from "./Changelog.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
@@ -163,7 +163,7 @@ const detailCellRendererParams = params => {
 const ALL_FIX_VERSIONS = "All Versions";
 
 const extractFixVersionParameter = location => location && location.search ? new URLSearchParams(location.search).get("fixVersion") : ALL_FIX_VERSIONS;
-const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("itemKey") : '';
+const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("searchQuery") : '';
 
 const IS_SSR = typeof window === "undefined"
 
@@ -174,6 +174,7 @@ const Changelog = ({ location }) => {
     const [allReleaseNotes, setAllReleaseNotes] = useState(null)
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const searchBarEl = useRef(null)
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
 
 
@@ -222,6 +223,7 @@ const Changelog = ({ location }) => {
 
     const gridReady = params => {
         setGridApi(params.api);
+        searchBarEl.current.value = URLFilterItemKey
         params.api.setQuickFilter(URLFilterItemKey)
     }
 
@@ -333,21 +335,27 @@ const Changelog = ({ location }) => {
                                 type="text"
                                 className={styles["search-bar"]}
                                 placeholder={"Search changelog..."}
-                                value={URLFilterItemKey}
+                                ref={searchBarEl}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
                         <div className={styles["all-checkboxes-container"]}>
                             {checkboxes.map(checkboxConfig => createLabeledCheckbox(checkboxConfig))}
+                            <div>
+                            <label className={styles["label-for-checkboxes"]}>
+                                Version:
                             <VersionDropdownMenu
                                 versions={versions}
                                 onChange={fixVersion => setFixVersion(fixVersion)}
                                 fixVersion={fixVersion}
                             />
+                    </label>
+                    </div>
                         </div>
                     </div>
 
                     <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+
                     <Grid
                         gridHeight={"66vh"}
                         columnDefs={COLUMN_DEFS}

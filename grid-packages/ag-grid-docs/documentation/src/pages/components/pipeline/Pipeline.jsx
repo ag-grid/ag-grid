@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
@@ -163,6 +163,7 @@ const extractFilterTerm = location => location && location.search ? new URLSearc
 const Pipeline = ({ location }) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
+    const searchBarEl = useRef(null)
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
 
 
@@ -176,6 +177,7 @@ const Pipeline = ({ location }) => {
 
     const gridReady = params => {
         setGridApi(params.api)
+        searchBarEl.current.value = URLFilterItemKey
         params.api.setQuickFilter(URLFilterItemKey)
     }
 
@@ -273,9 +275,9 @@ const Pipeline = ({ location }) => {
                         <div className={styles["search-bar-container"]}>
                             <input
                                 type="text"
-                                value={URLFilterItemKey}
                                 placeholder={"Search pipeline…"}
                                 className={styles["search-bar"]}
+                                ref={searchBarEl}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
