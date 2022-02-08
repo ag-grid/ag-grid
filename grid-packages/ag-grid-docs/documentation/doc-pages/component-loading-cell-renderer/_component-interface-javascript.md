@@ -10,8 +10,6 @@
 |
 |    // Returns the DOM element for this loading cell renderer
 |    getGui(): HTMLElement;
-|
-|    refresh?(params: ILoadingCellRendererParams): boolean;
 |}
 |```
 |

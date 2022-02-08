@@ -16543,25 +16543,8 @@
       }
     }
   },
-  "ILoadingCellRenderer": {
-    "refresh": {
-      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
-      "type": {
-        "arguments": { "params": "ILoadingCellRendererParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    }
-  },
+  "ILoadingCellRenderer": {},
   "ILoadingCellRendererComp": {
-    "refresh": {
-      "description": "/** Refresh the loading renderer. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh it for you. */",
-      "type": {
-        "arguments": { "params": "ILoadingCellRendererParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "type": {
