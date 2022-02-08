@@ -333,21 +333,17 @@
             }
         },
         "loadingCellRenderer": {
+            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource.",
             "more": {
                 "name": "Loading Cell Renderer",
                 "url": "/component-loading-cell-renderer/"
             }
         },
-        "loadingCellRendererParams": {
-            "more": {
-                "name": "Cell Renderer Params",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
+        "loadingCellRendererParams": {},
         "loadingCellRendererSelector": {
             "more": {
                 "name": "Loading Cell Renderer Selector",
-                "url": "/component-loading-cell-renderer/"
+                "url": "/component-loading-cell-renderer/#dynamic-cell-loading-renderer"
             }
         }
     },
@@ -372,15 +368,10 @@
         },
         "masterDetail": {},
         "detailCellRenderer": {
+            "description": "Provide a custom `detailCellRenderer` to use when a master row is expanded.",
             "more": {
                 "name": "Custom Detail",
                 "url": "/master-detail-custom-detail/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
             }
         },
         "detailCellRendererParams": {
@@ -471,30 +462,20 @@
         },
         "overlayLoadingTemplate": {},
         "loadingOverlayComponent": {
+            "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
                 "url": "/component-overlay/#loading-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ILoadingOverlayComp"
-                ],
-                "include": []
             }
         },
         "loadingOverlayComponentParams": {},
         "suppressLoadingOverlay": {},
         "overlayNoRowsTemplate": {},
         "noRowsOverlayComponent": {
+            "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
                 "url": "/component-overlay/#no-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "INoRowsOverlayComp"
-                ],
-                "include": []
             }
         },
         "noRowsOverlayComponentParams": {},
@@ -699,15 +680,10 @@
             }
         },
         "fullWidthCellRenderer": {
+            "description": "Provide your own cell renderer component to use for full width rows.",
             "more": {
-                "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
+                "name": "Full Width Cell Renderer",
+                "url": "/full-width-rows/"
             }
         },
         "fullWidthCellRendererParams": {}
@@ -805,15 +781,10 @@
             }
         },
         "groupRowRenderer": {
+            "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
-                "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
+                "name": "Group Row Cell Renderer",
+                "url": "/grouping-group-rows/#providing-cell-renderer/"
             }
         },
         "groupRowRendererParams": {},
