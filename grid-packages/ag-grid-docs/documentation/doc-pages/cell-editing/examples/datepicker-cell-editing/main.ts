@@ -14,6 +14,7 @@ class DatePicker implements ICellEditorComp {
         // https://jqueryui.com/datepicker/
         $(this.eInput).datepicker({
             dateFormat: 'dd/mm/yy',
+            onSelect: () => { this.eInput.focus(); }
         })
     }
 
