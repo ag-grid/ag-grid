@@ -1918,7 +1918,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/filter-text/ /react-data-grid/filter-text/
     Redirect 301 /react-grid/filtering/ /react-data-grid/filtering/
     Redirect 301 /react-grid/filtering-overview/ /react-data-grid/filtering-overview/
-    Redirect 301 /react-grid/fine-tuning/ /react-data-grid/fine-tuning/
+    Redirect 301 /react-grid/fine-tuning/ /react-data-grid/react-hooks/
     Redirect 301 /react-grid/flashing-cells/ /react-data-grid/flashing-cells/
     Redirect 301 /react-grid/floating-filters/ /react-data-grid/floating-filters/
     Redirect 301 /react-grid/framework-hoc/ /react-data-grid/framework-hoc/
