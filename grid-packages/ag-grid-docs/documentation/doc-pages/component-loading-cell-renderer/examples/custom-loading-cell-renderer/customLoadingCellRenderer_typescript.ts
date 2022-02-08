@@ -16,9 +16,5 @@ export class CustomLoadingCellRenderer implements ILoadingCellRendererComp {
     getGui() {
         return this.eGui;
     }
-
-    refresh(params: ILoadingCellRendererParams): boolean {
-        return false;
-    }
 }
 
