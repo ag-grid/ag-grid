@@ -138,7 +138,7 @@ export { CellCtrl, ICellComp } from "ag-grid-community";
 export { RowCtrl, IRowComp } from "ag-grid-community";
 export { RowRenderer } from "ag-grid-community";
 export { ValueFormatterService } from "ag-grid-community";
-export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "ag-grid-community";
+export { ILoadingCellRenderer, ILoadingCellRendererParams } from "ag-grid-community";
 export { PinnedRowModel } from "ag-grid-community";
 export { RowNodeTransaction } from "ag-grid-community";
 export { RowDataTransaction } from "ag-grid-community";
