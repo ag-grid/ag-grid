@@ -112,7 +112,12 @@ Notice the following in the example below:
 
 - When scrolling up, rows render bottom to top
 
-- Cells within a row render left to right regardless of scroll direction
+[[only-javascript]]
+|- Cells within a row render left to right regardless of scroll direction
+[[only-angular]]
+|- Cells within a row render left to right regardless of scroll direction
+[[only-vue]]
+|- Cells within a row render left to right regardless of scroll direction
 
 - Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you take about 10 seconds to scroll from the top to the bottom, only a few hundred cells will actually be rendered. Any cells that are scrolled into view and then back out of view again before they have a chance to be rendered will be skipped.
 
