@@ -39,7 +39,10 @@ export interface AbstractColDef {
     /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
-    /** Provide your own tooltip component for the column header or cell.  */
+    /** 
+    * Provide your own tooltip component for the column.
+    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
+    */
     tooltipComponent?: any;
     /** @deprecated As of v27, use `tooltipComponent` for framework components too. */
     tooltipComponentFramework?: any;
@@ -59,11 +62,15 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */
+
+    /** 
+    * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
+    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
+    */
     headerGroupComponent?: any;
     /** @deprecated As of v27, use `headerGroupComponent` for framework components too. */
     headerGroupComponentFramework?: any;
-    /** The params used to configure the header group component. */
+    /** The params used to configure the `headerGroupComponent`. */
     headerGroupComponentParams?: any;
 }
 
@@ -189,11 +196,14 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     valueSetter?: string | ValueSetterFunc;
     /** Function or expression. Parses the value for saving. */
     valueParser?: string | ValueParserFunc;
-    /** A `cellEditor` to use for this column. */
+    /**
+    * Provide your own cell editor component for this column's cells.
+    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.
+    */
     cellEditor?: any;
     /** @deprecated As of v27, use `cellEditor` for framework components too. */
     cellEditorFramework?: any;
-    /** Params to be passed to the cell editor component. */
+    /** Params to be passed to the `cellEditor` component. */
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc;
@@ -237,11 +247,15 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Column Headers *** //
 
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */
+    /**  */
+    /** 
+    * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
+    * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
+    */
     headerComponent?: any;
     /** @deprecated As of v27, use `headerComponent` for framework components too. */
     headerComponentFramework?: any;
-    /** The parameters to be passed to the header component. */
+    /** The parameters to be passed to the `headerComponent`. */
     headerComponentParams?: any;
 
     /**
@@ -311,11 +325,15 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClass?: string | string[] | CellClassFunc;
     /** Rules which can be applied to include certain CSS classes. */
     cellClassRules?: CellClassRules;
-    /** A `cellRenderer` to use for this column. */
+
+    /** 
+    * Provide your own cell Renderer component for this column's cells.
+    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.
+    */
     cellRenderer?: any;
     /** @deprecated As of v27, use `cellRenderer` for framework components too. */
     cellRendererFramework?: any;
-    /** Params to be passed to the cell renderer component. */
+    /** Params to be passed to the `cellRenderer` component. */
     cellRendererParams?: any;
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc;

@@ -39,7 +39,7 @@
     "type": { "returnType": "boolean" }
   },
   "tooltipComponent": {
-    "description": "/** Provide your own tooltip component for the column header or cell. */",
+    "description": "/** Provide your own tooltip component for the column.\n * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "tooltipComponentFramework": {
@@ -71,7 +71,7 @@
     "type": { "returnType": "boolean" }
   },
   "headerGroupComponent": {
-    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
+    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "headerGroupComponentFramework": {
@@ -79,7 +79,7 @@
     "type": { "returnType": "any" }
   },
   "headerGroupComponentParams": {
-    "description": "/** The params used to configure the header group component. */",
+    "description": "/** The params used to configure the `headerGroupComponent`. */",
     "type": { "returnType": "any" }
   },
   "colId": {
@@ -191,7 +191,7 @@
     "type": { "returnType": "string | ValueParserFunc" }
   },
   "cellEditor": {
-    "description": "/** A `cellEditor` to use for this column. */",
+    "description": "/** Provide your own cell editor component for this column's cells.\n * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail. */",
     "type": { "returnType": "any" }
   },
   "cellEditorFramework": {
@@ -199,7 +199,7 @@
     "type": { "returnType": "any" }
   },
   "cellEditorParams": {
-    "description": "/** Params to be passed to the cell editor component. */",
+    "description": "/** Params to be passed to the `cellEditor` component. */",
     "type": { "returnType": "any" }
   },
   "cellEditorSelector": {
@@ -266,7 +266,7 @@
     "type": { "returnType": "boolean" }
   },
   "headerComponent": {
-    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
+    "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
     "type": { "returnType": "any" }
   },
   "headerComponentFramework": {
@@ -274,7 +274,7 @@
     "type": { "returnType": "any" }
   },
   "headerComponentParams": {
-    "description": "/** The parameters to be passed to the header component. */",
+    "description": "/** The parameters to be passed to the `headerComponent`. */",
     "type": { "returnType": "any" }
   },
   "menuTabs": {
@@ -371,7 +371,7 @@
     "type": { "returnType": "CellClassRules" }
   },
   "cellRenderer": {
-    "description": "/** A `cellRenderer` to use for this column. */",
+    "description": "/** Provide your own cell Renderer component for this column's cells.\n * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details. */",
     "type": { "returnType": "any" }
   },
   "cellRendererFramework": {
@@ -379,7 +379,7 @@
     "type": { "returnType": "any" }
   },
   "cellRendererParams": {
-    "description": "/** Params to be passed to the cell renderer component. */",
+    "description": "/** Params to be passed to the `cellRenderer` component. */",
     "type": { "returnType": "any" }
   },
   "cellRendererSelector": {

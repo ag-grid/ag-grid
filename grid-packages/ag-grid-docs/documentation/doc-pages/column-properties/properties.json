@@ -87,6 +87,7 @@
             }
         },
         "tooltipComponent": {
+            "description": "Provide your own tooltip component for the column.",
             "more": {
                 "name": "Tooltip Component",
                 "url": "/component-tooltip"
@@ -105,6 +106,7 @@
         "headerTooltip": {},
         "headerClass": {},
         "headerComponent": {
+            "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {
                 "name": "Header Component",
                 "url": "/component-header/"
@@ -211,6 +213,7 @@
             }
         },
         "cellRenderer": {
+            "description": "Provide your own cell Renderer component for this column's cells.",
             "more": {
                 "name": "Cell Renderer",
                 "url": "/cell-rendering/"
@@ -316,6 +319,7 @@
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Parses the value for saving."
         },
         "cellEditor": {
+            "description": "Provide your own cell editor component for this column's cells.",
             "more": {
                 "name": "Cell Editors",
                 "url": "/component-cell-editor/"
@@ -411,6 +415,7 @@
         "suppressColumnsToolPanel": {},
         "suppressFiltersToolPanel": {},
         "tooltipComponent": {
+            "description": "Provide your own tooltip component for the column group.",
             "more": {
                 "name": "Tooltip Component",
                 "url": "/component-tooltip"
@@ -425,7 +430,13 @@
         "headerName": {},
         "headerClass": {},
         "headerTooltip": {},
-        "headerGroupComponent": {},
+        "headerGroupComponent": {
+            "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
+            "more": {
+                "name": "Header Group Component",
+                "url": "/component-header/#header-group-components/"
+            }
+        },
         "headerGroupComponentParams": {}
     }
 }
