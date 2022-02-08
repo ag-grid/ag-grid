@@ -134,7 +134,7 @@ The grid cannot do sorting or filtering for you, as it does not have all of the 
 
 The example below makes use of infinite scrolling and caching. Notice that the grid will load more data when you bring the scroll all the way to the bottom.
 
-<grid-example title='Simple Example' name='simple' type='generated' options='{ "modules": ["infinite"] }'></grid-example>
+<grid-example title='Simple Example' name='simple' type='mixed' options='{ "modules": ["infinite"] }'></grid-example>
 
 ### Selection
 
@@ -168,7 +168,7 @@ When a row is selected, the selection will remain inside the grid, even if the g
 [[note]]
 | The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
 
-<grid-example title='Server-Side Sorting And Filtering' name='server-side' type='generated' options=' { "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Server-Side Sorting And Filtering' name='server-side' type='mixed' options=' { "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 [[note]]
 | When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.
@@ -188,7 +188,7 @@ gridOptions.isRowSelectable: function(data) {
 }
 ```
 
-<grid-example title='Specify Selectable Rows' name='specify-selectable-rows' type='generated' options='{ "modules": ["infinite"] }'></grid-example>
+<grid-example title='Specify Selectable Rows' name='specify-selectable-rows' type='mixed' options='{ "modules": ["infinite"] }'></grid-example>
 
 Note that in the above example we have also included an optional checkbox to help highlight which rows are selectable.
 
@@ -255,7 +255,7 @@ Below demonstrates the different API methods via the buttons. The example output
 The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass`
 get called after the data is set as well as when the row is created (when the data may not yet be available).
 
-<grid-example title='Insert And Remove Example' name='insert-remove' type='generated' options='{ "modules": ["infinite"] }'></grid-example>
+<grid-example title='Insert And Remove Example' name='insert-remove' type='mixed' options='{ "modules": ["infinite"] }'></grid-example>
 
 ## Changing Columns
 
@@ -287,14 +287,14 @@ As with all row models, it is possible to enable pagination with infinite scroll
 This example is the recommended approach. The infinite block size is larger than the pages size, so the grid loads data for a few pages, allowing the user to hit 'next' a few times before a server sided call is needed.
 
 
-<grid-example title='Block Larger Than Page' name='block-larger-page' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Block Larger Than Page' name='block-larger-page' type='mixed' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ### Example 2: Equal Pagination Page Size and Large Infinite Block Size
 
 This example demonstrates having the page and block sizes equal. Here the server is hit every time a new page is navigated to.
 
 
-<grid-example title='Block Equal Than Page' name='block-equal-page' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Block Equal Than Page' name='block-equal-page' type='mixed' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Overlays
 
