@@ -36,7 +36,7 @@ If you're not happy with the provided overlay templates, you can provide your ow
 
 The example below demonstrates how the loading overlay is shown automatically while the data is loading. You can also use the buttons to show / hide the different overlays at your will.
 
-<grid-example title='Overlays' name='overlays' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
+<grid-example title='Overlays' name='overlays' type='mixed' options='{ "exampleHeight": 580 }'></grid-example>
 
 [[note]]
 | It is also possible to provide your own custom Overlay Components - please see [Overlay Component](/component-overlay/) for more information
