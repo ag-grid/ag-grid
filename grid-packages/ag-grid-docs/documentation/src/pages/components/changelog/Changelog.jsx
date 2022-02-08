@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from "react"
+import React, {useCallback, useEffect, useRef, useState} from "react"
 import styles from "./Changelog.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
@@ -100,7 +100,7 @@ const defaultColDef = {
             params.event.type === "keydown"
         ) {
             params.api
-                .getCellRendererInstances({ rowNodes: [params.node] })[0]
+                .getCellRendererInstances({rowNodes: [params.node]})[0]
                 .clickHandlerFunc()
             return true
         }
@@ -167,7 +167,7 @@ const extractFilterTerm = location => location && location.search ? new URLSearc
 
 const IS_SSR = typeof window === "undefined"
 
-const Changelog = ({ location }) => {
+const Changelog = ({location}) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
     const [versions, setVersions] = useState([])
@@ -181,7 +181,7 @@ const Changelog = ({ location }) => {
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set" };
+            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
             versionsFilterComponent.setModel(newModel)
             gridApi.onFilterChanged();
         }
@@ -265,7 +265,7 @@ const Changelog = ({ location }) => {
             } else {
                 return
             }
-            const newModel = { values: newValues, filterType: "set" };
+            const newModel = {values: newValues, filterType: "set"};
             filterInstance.setModel(newModel)
             gridApi.onFilterChanged()
         }
@@ -289,14 +289,14 @@ const Changelog = ({ location }) => {
     }
 
     const checkboxes = [
-        { id: 'featureRequest', label: 'Feature Requests', checked: true },
-        { id: 'defect', label: 'Defect', checked: true },
-        { id: 'deprecated', label: 'Deprecations', checked: false },
-        { id: 'breakingChange', label: 'Breaking Changes', checked: false }
+        {id: 'featureRequest', label: 'Feature Requests', checked: true},
+        {id: 'defect', label: 'Defect', checked: true},
+        {id: 'deprecated', label: 'Deprecations', checked: false},
+        {id: 'breakingChange', label: 'Breaking Changes', checked: false}
     ];
 
     const createLabeledCheckbox = (checkboxConfig) => {
-        const { id, label, checked } = checkboxConfig;
+        const {id, label, checked} = checkboxConfig;
         const key = `${id}-checkbox`
         return (
             <div className={styles["single-checkbox-label-container"]} key={key}>
@@ -318,8 +318,8 @@ const Changelog = ({ location }) => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem", paddingBottom: "5rem" }}>
-                    <div style={{ fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px" }}>AG Grid Changelog</div>
+                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem", paddingBottom: "5rem"}}>
+                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px"}}>AG Grid Changelog</div>
 
                     <div className={styles["note"]}>
                         The AG Grid Changelog lists the feature requests implemented and
@@ -342,19 +342,20 @@ const Changelog = ({ location }) => {
                         <div className={styles["all-checkboxes-container"]}>
                             {checkboxes.map(checkboxConfig => createLabeledCheckbox(checkboxConfig))}
                             <div>
-                            <label className={styles["label-for-checkboxes"]}>
-                                Version:
-                            <VersionDropdownMenu
-                                versions={versions}
-                                onChange={fixVersion => setFixVersion(fixVersion)}
-                                fixVersion={fixVersion}
-                            />
-                    </label>
-                    </div>
+                                {/*eslint-disable-next-line*/}
+                                <label className={styles["label-for-checkboxes"]}>
+                                    Version:
+                                    <VersionDropdownMenu
+                                        versions={versions}
+                                        onChange={fixVersion => setFixVersion(fixVersion)}
+                                        fixVersion={fixVersion}
+                                    />
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes}/>
 
                     <Grid
                         gridHeight={"66vh"}
