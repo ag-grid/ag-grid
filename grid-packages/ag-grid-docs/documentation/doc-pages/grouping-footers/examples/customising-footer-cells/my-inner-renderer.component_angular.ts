@@ -16,7 +16,7 @@ export class MyInnerRenderer implements ICellRendererAngularComp {
 
     // gets called once before the renderer is used
     agInit(params: ICellRendererParams): void {
-        this.cellValue = '' + params.value;
+        this.cellValue = params.value;
         this.color = params.node.footer ? 'navy' : '';
         this.fontWeight = (params.node.footer && params.node.level === -1) ? 'bold' : '';
         if (params.node.footer) {
