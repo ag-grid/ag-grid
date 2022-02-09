@@ -431,13 +431,13 @@ export class AreaSeries extends CartesianSeries {
         const cumulativePositiveValues: CumulativeValue[] = makeCumulativeValues();
         const cumulativeNegativeValues: CumulativeValue[] = makeCumulativeValues();
 
-        function createCoordinates(
+        const createCoordinates = (
             cumulativeValues: CumulativeValue[],
             xDatum: any,
             yDatum: number,
             idx: number,
             side: keyof CumulativeValue
-        ): [Coordinate, Coordinate] {
+        ): [Coordinate, Coordinate] => {
 
             const x = xScale.convert(xDatum) + xOffset;
 
@@ -455,48 +455,54 @@ export class AreaSeries extends CartesianSeries {
             ];
         }
 
-        const segments: Segment[] = [];
+        const processWindowItem = (windowX: [any, any], windowY: [number, number],  windowIdx: number, datumIdx: number) => {
+            const cumulativeValues =
+                windowY[windowIdx] < 0 ? cumulativeNegativeValues : cumulativePositiveValues;
+            const side = windowIdx === 0 ? 'right' : 'left';
+
+            return createCoordinates(
+                cumulativeValues,
+                windowX[windowIdx],
+                windowY[windowIdx],
+                datumIdx + windowIdx,
+                side
+            );
+        };
+
         yData.forEach((seriesYs, seriesIdx) => {
             const yKey = yKeys[seriesIdx];
+
+            const fillSelectionForSeries = fillSelectionData[seriesIdx] || (fillSelectionData[seriesIdx] = { itemId: yKey, points: [] });
+            const fillPoints = fillSelectionForSeries.points;
+            const fillPhantomPoints: Coordinate[] = [];
 
             seriesYs.forEach((yDatum, datumIdx) => {
                 const xDatum = xData[datumIdx];
                 const nextXDatum = xData[datumIdx + 1];
                 const nextYDatum = seriesYs[datumIdx + 1];
 
-                const windowX = [xDatum, nextXDatum];
-                const windowY = [yDatum, nextYDatum];
+                const windowX: [any, any] = [xDatum, nextXDatum];
+                const windowY: [number, number] = [yDatum, nextYDatum];
 
                 if (windowX.some((v) => v == undefined)) {
                     return;
                 }
                 if (windowY.some((v) => v == undefined)) {
-                    return;
+                    windowY[0] = 0;
+                    windowY[1] = 0;
                 }
 
-                const processWindowItem = (windowIdx: number) => {
-                    const cumulativeValues =
-                        windowY[windowIdx] < 0 ? cumulativeNegativeValues : cumulativePositiveValues;
-                    const side = windowIdx === 0 ? 'right' : 'left';
+                const currCoordinates = processWindowItem(windowX, windowY, 0, datumIdx);
 
-                    return createCoordinates(
-                        cumulativeValues,
-                        windowX[windowIdx],
-                        windowY[windowIdx],
-                        datumIdx + windowIdx,
-                        side
-                    );
-                };
+                fillPoints.push(currCoordinates[0]);
+                fillPhantomPoints.push(currCoordinates[1]);
 
-                segments.push({
-                    yKey,
-                    points: [...processWindowItem(0).reverse(), ...processWindowItem(1)],
-                });
+                const nextCoordinates = processWindowItem(windowX, windowY, 1, datumIdx);
+                fillPoints.push(nextCoordinates[0]);
+                fillPhantomPoints.push(nextCoordinates[1]);
             });
-        });
 
-        segments.forEach(({ yKey, points }) => {
-            fillSelectionData.push({ itemId: yKey, points });
+            fillPoints.push(...fillPhantomPoints.slice().reverse());
         });
     }
 
@@ -526,7 +532,7 @@ export class AreaSeries extends CartesianSeries {
 
             shape.fill = fills[seriesIdx % fills.length];
             shape.fillOpacity = fillOpacity;
-            shape.stroke = strokes[seriesIdx % strokes.length];
+            // shape.stroke = strokes[seriesIdx % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
             shape.lineDash = this.lineDash;
@@ -536,7 +542,6 @@ export class AreaSeries extends CartesianSeries {
             shape.opacity = this.getOpacity(datum);
 
             path.clear();
-
 
             points.forEach(({ x, y }, i) => {
                 if (i > 0) {
