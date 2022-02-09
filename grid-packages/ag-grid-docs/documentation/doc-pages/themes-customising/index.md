@@ -361,7 +361,7 @@ widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
 widget-vertical-spacing: ag-derived(grid-size),
 
 // Vertical padding for grid and header cells
-cell-horizontal-padding: ag-derived(grid-size, $times: 1.5),
+cell-vertical-padding: ag-derived(grid-size, $times: 1.5),
 
 // Horizontal padding for grid and header cell
 cell-horizontal-padding: ag-derived(grid-size, $times: 3),
