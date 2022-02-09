@@ -174,7 +174,8 @@ const processIndexForFramework = async framework => {
         for (const item of items) {
             const breadcrumb = breadcrumbPrefix + item.title;
 
-            if (item.url) {
+            // the charts api themes section is too big atm - for now filter it out
+            if (item.url && !item.url.includes("charts-api-themes")) {
                 records.push(...await createRecords(item.url, framework, breadcrumb, rank));
 
                 rank -= 10;
