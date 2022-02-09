@@ -4,7 +4,7 @@ import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { setDomChildOrder } from "../../utils/dom";
-import { escapeString } from "../../utils/string";
+import {escapeString, stringOrNull} from "../../utils/string";
 import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./rowController";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
@@ -35,8 +35,7 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.controller = controller;
 
-        const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setElement(this.createElement());
 
         this.afterRowAttached();
 
@@ -224,6 +223,42 @@ export class RowComp extends Component {
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
+    }
+
+    private createElement() {
+      var con = this.controller;
+      var templateParts = [];
+      var rowHeight = this.rowNode.rowHeight;
+      var rowClasses = con.getInitialRowClasses(this.pinned).join(' ');
+      var rowIdSanitised = stringOrNull(this.rowNode.id!);
+      var userRowStyles = con.preProcessStylesFromGridOptions();
+      var businessKey = stringOrNull(con.getRowBusinessKey()!);
+      var rowTopStyle = con.getInitialRowTopStyle();
+      var rowIdx = this.rowNode.getRowIndexString();
+      var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
+      var el = document.createElement('div');
+      el.setAttribute('role', 'row');
+      el.setAttribute('row-index', rowIdx);
+      el.setAttribute('aria-rowindex', (headerRowCount + this.rowNode.rowIndex! + 1) as unknown as string);
+      if (rowIdSanitised) {
+        el.setAttribute('row-id', rowIdSanitised);
+      }
+      if (businessKey) {
+        el.setAttribute('row-business-key', businessKey);
+      }
+      el.setAttribute('comp-id', this.getCompId() as unknown as string);
+      el.className = rowClasses;
+      if (con.isFullWidth()) {
+        el.setAttribute('tabindex', "-1");
+      }
+      if (this.beans.gridOptionsWrapper.isRowSelection()) {
+        el.setAttribute('aria-selected', this.rowNode.isSelected() ? 'true' : 'false');
+      }
+      if (this.rowNode.group) {
+        el.setAttribute('aria-expanded', this.rowNode.expanded ? 'true' : 'false');
+      }
+      el.setAttribute('style', "height: " + rowHeight + "px; " + rowTopStyle + " " + userRowStyles);
+      return el;
     }
 
     private createTemplate(): string {

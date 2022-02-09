@@ -172,6 +172,10 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
+export function stringOrNull(value: number | string | null) {
+  return value == null ? null : value.toString().toString();
+}
+
 export function escapeString(toEscape?: string | null): string | null {
     // we call toString() twice, in case value is an object, where user provides
     // a toString() method, and first call to toString() returns back something other
