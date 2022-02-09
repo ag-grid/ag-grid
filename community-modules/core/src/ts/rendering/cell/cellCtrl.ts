@@ -222,7 +222,6 @@ export class CellCtrl extends BeanStub {
         this.addDomData();
 
         this.onCellFocused();
-
         this.applyStaticCssClasses();
         this.setWrapText();
 
