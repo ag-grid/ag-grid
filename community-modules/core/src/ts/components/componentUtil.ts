@@ -129,6 +129,11 @@ export class ComponentUtil {
             delete changesToApply.columnDefs;
         }
 
+        if (changesToApply.defaultColDef) {
+            api.setDefaultColDef(changesToApply.defaultColDef.currentValue, "gridOptionsChanged");
+            delete changesToApply.defaultColDef;
+        }
+
         if (changesToApply.paginationPageSize) {
             api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
             delete changesToApply.paginationPageSize;

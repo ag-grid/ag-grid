@@ -230,7 +230,8 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
-        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', this.onAutoGroupColumnDefChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', ()=> this.onAutoGroupColumnDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', ()=> this.onDefaultColDefChanged());
     }
 
     public onAutoGroupColumnDefChanged() {
@@ -240,18 +241,30 @@ export class ColumnModel extends BeanStub {
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
+    public onDefaultColDefChanged(): void {
+        // col def's should get revisited, even if specific column hasn't changed,
+        // as the defaultColDef impacts all columns, so each column should assume it's Col Def has changed.
+        this.colDefVersion++;
+        // likewise for autoGroupCol, the default col def impacts this
+        this.forceRecreateAutoGroups = true;
+        this.createColumnsFromColumnDefs(true);
+    }
+
     public getColDefVersion(): number {
         return this.colDefVersion;
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
         const colsPreviouslyExisted = !!this.columnDefs;
-
         this.colDefVersion++;
-
-        const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
-
         this.columnDefs = columnDefs;
+        this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
+    }
+
+    private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
+
+        // only need to raise before/after events if updating columns, never if setting columns for first time
+        const raiseEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndRaiseEvents(source) : undefined;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
@@ -264,7 +277,7 @@ export class ColumnModel extends BeanStub {
 
         const oldPrimaryColumns = this.primaryColumns;
         const oldPrimaryTree = this.primaryColumnTree;
-        const balancedTreeResult = this.columnFactory.createColumnTree(columnDefs, true, oldPrimaryTree);
+        const balancedTreeResult = this.columnFactory.createColumnTree(this.columnDefs, true, oldPrimaryTree);
 
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
@@ -299,7 +312,8 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
-        raiseEventsFunc();
+        raiseEventsFunc && raiseEventsFunc();
+
         this.dispatchNewColumnsLoaded();
     }
 
@@ -2093,13 +2107,6 @@ export class ColumnModel extends BeanStub {
     }
 
     private compareColumnStatesAndRaiseEvents(source: ColumnEventType): () => void {
-
-        // if no columns to begin with, then it means we are setting columns for the first time, so
-        // there should be no events fired to show differences in columns.
-        const colsPreviouslyExisted = !!this.columnDefs;
-        if (!colsPreviouslyExisted) {
-            return () => { };
-        }
 
         const startState = {
             rowGroupColumns: this.rowGroupColumns.slice(),

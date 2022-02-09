@@ -13,6 +13,7 @@
         "getColumnDefs": {},
         "setColumnDefs": {},
         "setAutoGroupColumnDef": {},
+        "setDefaultColDef": {},
         "sizeColumnsToFit": {
             "more": {
                 "name": "Column Sizing",

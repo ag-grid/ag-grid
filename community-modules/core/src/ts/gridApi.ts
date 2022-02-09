@@ -534,6 +534,11 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
     }
 
+    /** Call to set new Default Column Definition. */
+    public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
+        this.gridOptionsWrapper.setProperty('defaultColDef', colDef, true);
+    }
+
     public expireValueCache(): void {
         this.valueCache.expire();
     }

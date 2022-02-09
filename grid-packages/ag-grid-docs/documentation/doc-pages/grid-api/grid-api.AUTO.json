@@ -193,6 +193,12 @@
       "arguments": { "colDef": "ColDef", "source": "ColumnEventType = \"api\"" }
     }
   },
+  "setDefaultColDef": {
+    "description": "/** Call to set new Default Column Definition. */",
+    "type": {
+      "arguments": { "colDef": "ColDef", "source": "ColumnEventType = \"api\"" }
+    }
+  },
   "expireValueCache": { "type": { "arguments": {}, "returnType": "void" } },
   "getVerticalPixelRange": {
     "description": "/** Returns an object with two properties:\n *   - `top`: The top pixel position of the current scroll in the grid\n *   - `bottom`: The bottom pixel position of the current scroll in the grid */",
