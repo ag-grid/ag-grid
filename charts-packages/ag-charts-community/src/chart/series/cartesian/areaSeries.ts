@@ -31,7 +31,7 @@ interface FillSelectionDatum {
 }
 
 interface StrokeSelectionDatum extends FillSelectionDatum {
-    readonly yValues: number[];
+    readonly yValues: (number | undefined)[];
 }
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
@@ -455,7 +455,7 @@ export class AreaSeries extends CartesianSeries {
             ];
         }
 
-        const processWindowItem = (windowX: [any, any], windowY: [number, number],  windowIdx: number, datumIdx: number) => {
+        const processWindowItem = (windowX: [any, any], windowY: [number, number], windowIdx: number, datumIdx: number) => {
             const cumulativeValues =
                 windowY[windowIdx] < 0 ? cumulativeNegativeValues : cumulativePositiveValues;
             const side = windowIdx === 0 ? 'right' : 'left';
@@ -476,6 +476,10 @@ export class AreaSeries extends CartesianSeries {
             const fillPoints = fillSelectionForSeries.points;
             const fillPhantomPoints: Coordinate[] = [];
 
+            const strokeDatum = strokeSelectionData[seriesIdx] || (strokeSelectionData[seriesIdx] = { itemId: yKey, points: [], yValues: [] });
+            const strokePoints = strokeDatum.points;
+            const yValues = strokeDatum.yValues;
+
             seriesYs.forEach((yDatum, datumIdx) => {
                 const xDatum = xData[datumIdx];
                 const nextXDatum = xData[datumIdx + 1];
@@ -492,14 +496,26 @@ export class AreaSeries extends CartesianSeries {
                     windowY[1] = 0;
                 }
 
+                // fill data
                 const currCoordinates = processWindowItem(windowX, windowY, 0, datumIdx);
-
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
                 const nextCoordinates = processWindowItem(windowX, windowY, 1, datumIdx);
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
+
+                // stroke data
+                strokePoints.push({ x: NaN, y: NaN }); // moveTo
+                yValues.push(undefined);
+
+                strokePoints.push(currCoordinates[0]); // right
+                yValues.push(yDatum);
+
+                if (nextYDatum !== undefined) {
+                    strokePoints.push(nextCoordinates[0]); // left
+                    yValues.push(yDatum);
+                }
             });
 
             fillPoints.push(...fillPhantomPoints.slice().reverse());
@@ -575,7 +591,7 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { data, strokes, strokeOpacity, seriesItemEnabled } = this;
+        const { strokes, strokeOpacity, seriesItemEnabled } = this;
 
         let moveTo = true;
 
@@ -594,9 +610,7 @@ export class AreaSeries extends CartesianSeries {
 
             const { points, yValues } = datum;
 
-            // The stroke doesn't go all the way around the fill, only on top,
-            // that's why we iterate until `data.length` (rather than `points.length`) and stop.
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < points.length; i++) {
                 const { x, y } = points[i];
 
                 if (yValues[i] === undefined) {
