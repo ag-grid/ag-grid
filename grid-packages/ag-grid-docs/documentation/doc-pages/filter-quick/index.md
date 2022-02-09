@@ -69,12 +69,12 @@ The example below shows the quick filter working on different data types. Each c
 - D - Complex object, quick filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
 - E - Complex object, no `getQuickFilterText` is provided, so the quick filter text ends up with `[object Object]` for this column.
 
-The example also demonstrates having the quick filter cache turned on or off. The grid works very fast even when the cache is turned off, so you probably don't need it. However, for those with very large data sets (e.g. over 10,000 rows), turning the cache on will improve quick filter speed. The cache is demonstrated as follows:
+The example also demonstrates having the quick filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve quick filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 
+- **Cache Quick Filter (example default):** The cache is used. Value getters are executed the first time the quick filter is run. Hitting 'Print Quick Filter Texts' will return back the quick filter text for each row which will initially be `undefined` and then return the quick filter text after the quick filter is executed for the first time. You will notice the quick filter text is correct for each column except E (which would be fixed by adding an appropriate `getQuickFilterText` method as we do for D).
 - **Normal Quick Filter:** The cache is not used. Value getters are executed on every node each time the filter is executed. Hitting 'Print Quick Filter Texts' will always return `undefined` for every row because the cache is not used.
-- **Cache Quick Filter:** The cache is used. Value getters are executed the first time the quick filter is run. Hitting 'Print Quick Filter Texts' will return back the quick filter text for each row which will initially be `undefined` and then return the quick filter text after the quick filter is executed for the first time. You will notice the quick filter text is correct for each column except E (which would be fixed by adding an appropriate `getQuickFilterText` method as we do for D).
 
-<grid-example title='Quick Filter' name='quick-filter' type='typescript' options='{ "exampleHeight": 580 }'></grid-example>
+<grid-example title='Quick Filter' name='quick-filter' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
 
 ## Server Side Data
 

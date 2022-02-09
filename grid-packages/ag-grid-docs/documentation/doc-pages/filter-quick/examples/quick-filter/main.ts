@@ -34,7 +34,8 @@ const gridOptions: GridOptions = {
     flex: 1,
     editable: true,
   },
-  rowData: getData()
+  rowData: getData(),
+  cacheQuickFilter: true,
 }
 
 
@@ -53,16 +54,6 @@ function onPrintQuickFilterTexts() {
       rowNode.quickFilterAggregateText
     )
   })
-}
-
-function onQuickFilterTypeChanged() {
-  var rbCache = document.querySelector('#cbCache') as HTMLInputElement
-  var cacheActive = rbCache.checked
-  console.log('using cache = ' + cacheActive)
-  gridOptions.cacheQuickFilter = cacheActive
-
-  // set row data again, so to clear out any cache that might of existed
-  gridOptions.api!.setRowData(getData())
 }
 
 // setup the grid after the page has finished loading
