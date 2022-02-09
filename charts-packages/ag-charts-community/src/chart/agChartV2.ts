@@ -90,7 +90,7 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
 
 // Backwards-compatibility layer.
 export abstract class AgChart {
-    static createComponent(options: any, type: string) {
+    static createComponent(options: any, type: string): any {
         if (type.indexOf('.series') >= 0) {
             const optionsWithType = {
                 ...options,
