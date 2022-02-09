@@ -27,12 +27,6 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
     });
  
     const onChangeListener = useCallback( event => setValue(event.target.value), []);
-    const onKeyDownListener = useCallback( event => {
-        if (event.key === 'Enter') {
-            props.stopEditing();
-        }
-    }, []);
-
     useEffect( ()=> refInput.current.focus(), []);
 
     return (
@@ -40,7 +34,6 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
                ref={refInput}
                value={value}
                onChange={onChangeListener}
-               onKeyDown={onKeyDownListener}
         />
     );
  }));

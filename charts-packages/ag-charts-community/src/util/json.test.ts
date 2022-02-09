@@ -327,7 +327,7 @@ describe('json module', () => {
 
             expect(() => {
                 jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set: foo .* Property doesn't exist in target type: TestApply/);
+            }).toThrowError(/unable to set \[foo\] .* Property doesn't exist in target type: TestApply/);
         });
 
         it('should error on incompatible properties', () => {
@@ -336,7 +336,7 @@ describe('json module', () => {
 
             expect(() => {
                 jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set: recurse in \[TestApply\].* can't apply: allowableTypes=class-instance, newValueType=primitive/);
+            }).toThrowError(/unable to set \[recurse\] in \[TestApply\].* can't apply: allowableTypes=class-instance, newValueType=primitive/);
         });
 
         it('should allow application of property type overrides', () => {

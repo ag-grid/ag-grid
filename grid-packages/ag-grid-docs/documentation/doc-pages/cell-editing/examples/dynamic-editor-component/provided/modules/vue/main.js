@@ -36,6 +36,9 @@ const VueExample = {
         return {
             columnDefs: [
                 {
+                    field: "type"
+                },
+                {
                     field: "value",
                     editable: true,
                     cellEditorSelector: function (params) {
@@ -60,9 +63,6 @@ const VueExample = {
                         return undefined;
                     },
                     cellEditorPopup: true
-                },
-                {
-                    field: "type"
                 }
             ],
             gridApi: null,
