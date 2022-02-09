@@ -275,7 +275,7 @@ export function jsonApply<
                 targetAny[property] = newValue;
             }
         } catch (error) {
-            throw new Error(`AG Charts - unable to set: ${propertyPath} in [${targetClass?.name}]; nested error is: ${error.message}`);
+            throw new Error(`AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${error.message}`);
         }
     }
 
