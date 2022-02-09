@@ -198,7 +198,7 @@ describe('AgChartV2', () => {
                 example.assertions(chart);
             });
 
-            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+            it.skip(`for ${exampleName} it should render to canvas as expected`, async () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
