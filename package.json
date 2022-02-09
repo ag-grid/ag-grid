@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
+  "private": true,
   "scripts": {
     "initSubModules": "sh ./scripts/initialiseSubModules.sh",
     "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",

@@ -11,6 +11,11 @@
         return result;
     }
 
+    var sjsPaths = {};
+    if (typeof systemJsPaths !== "undefined") {
+        sjsPaths = systemJsPaths;
+    }
+
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
@@ -37,7 +42,7 @@
                 {
                     // paths serve as alias
                     "npm:": "https://unpkg.com/",
-                }, systemJsPaths)
+                }, sjsPaths)
         ,
         // map tells the System loader where to look for things
         map: assign(

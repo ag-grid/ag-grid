@@ -1,7 +1,7 @@
 {
   "name": "@ag-grid-community/vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "26.2.0",
+  "version": "27.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "./lib/AgGridVue.js",
@@ -28,7 +28,7 @@
     "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "@ag-grid-community/core": "^26.2.0",
+    "@ag-grid-community/core": "~27.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
@@ -45,5 +45,4 @@
   "publishConfig": {
     "access": "public"
   }
-
 }
