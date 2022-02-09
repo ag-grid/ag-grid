@@ -41,7 +41,15 @@ import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
-import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, ChartType, optionsType } from './mapping/prepare';
+import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
+
+type ChartType = CartesianChart | PolarChart | HierarchyChart;
+
+export type AgChartType<T> =
+    T extends AgCartesianChartOptions ? CartesianChart :
+    T extends AgPolarChartOptions ? PolarChart :
+    T extends AgHierarchyChartOptions ? HierarchyChart :
+    never;
 
 type ChartOptionType<T extends ChartType> =
     T extends GroupedCategoryChart ? AgCartesianChartOptions :
@@ -78,6 +86,30 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
     }
 
     throw new Error('AG Chart - unknown type of chart for options with type: ' + options.type);
+}
+
+// Backwards-compatibility layer.
+export abstract class AgChart {
+    static createComponent(options: any, type: string) {
+        if (type.indexOf('.series') >= 0) {
+            const optionsWithType = {
+                ...options,
+                type: options.type || type.split('.')[0],
+            };
+            console.warn('AG Charts - createComponent should no longer be used, use AgChart.update() instead.')
+            return createSeries([optionsWithType])[0];
+        }
+
+        throw new Error('AG Charts - createComponent should no longer be used, use AgChart.update() instead.');
+    }
+
+    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
+        return AgChartV2.create(options as any);
+    }
+
+    static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
+        return AgChartV2.update(chart, options as any);
+    }
 }
 
 export abstract class AgChartV2 {
@@ -158,6 +190,7 @@ function applyChartOptions<
     if (performProcessData) {
         chart.processData();
     }
+    chart.performLayout();
 
     chart.options = jsonMerge(chart.options || {}, options);
 

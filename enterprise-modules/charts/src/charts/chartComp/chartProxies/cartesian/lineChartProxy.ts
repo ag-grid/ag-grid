@@ -73,7 +73,6 @@ export class LineChartProxy extends CartesianChartProxy {
                     xName: params.category.name,
                     yKey: yKey,
                     yName: f.displayName,
-                    fill,
                     stroke: fill, // this is deliberate, so that the line colours match the fills of other series
                     marker: {
                         ...seriesOverrides!.marker,
