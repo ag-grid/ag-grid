@@ -30,7 +30,7 @@ import { TooltipFeature } from "../widgets/tooltipFeature";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../utils/aria";
 import { get, getValueUsingField } from "../utils/object";
-import { escapeString } from "../utils/string";
+import {escapeString, stringOrNull} from "../utils/string";
 import { exists, missing } from "../utils/generic";
 import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass, isFocusableFormField } from "../utils/dom";
 import { last, areEqual, pushAll, includes } from "../utils/array";
@@ -181,7 +181,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.setupColSpan();
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
-        this.setTemplate(this.getCreateTemplate());
+        this.setElement(this.getCreateElement());
 
         this.afterAttached();
 
@@ -191,6 +191,57 @@ export class CellComp extends Component implements TooltipParentComp {
             this.startEditingIfEnabled();
         }
     }
+    private getCreateElement() {
+        var isUnselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection();
+        var templateParts = [];
+        var col = this.column;
+        var width = this.getCellWidth();
+        var left = this.modifyLeftForPrintLayout(this.getCellLeft());
+        var valueToRender = this.getInitialValueToRender();
+        var hasTemplate = get(this.column, 'colDef.template', null);
+        var value = hasTemplate ? valueToRender : stringOrNull(valueToRender);
+        this.tooltip = this.getToolTip();
+        var tooltip = stringOrNull(this.tooltip);
+        var colId = stringOrNull(col.getId());
+        var stylesFromColDef = this.preProcessStylesFromColDef();
+        var cssClasses = this.getInitialCssClasses();
+        var stylesForRowSpanning = this.getStylesForRowSpanning();
+        var colIdx = stringOrNull(this.beans.columnController.getAriaColumnIndex(this.column).toString());
+
+        const el = document.createElement('div');
+        el.setAttribute('tabindex', '-1');
+        if (isUnselectable) {
+        el.setAttribute('unselectable', 'on');
+        }
+        el.setAttribute('role', 'gridcell');
+        el.setAttribute('aria-colindex', colIdx!);
+        el.setAttribute('comp-id', this.getCompId() as unknown as string);
+        el.setAttribute('col-id', colId!);
+        el.className = cssClasses.join(' ');
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && exists(tooltip)) {
+        el.setAttribute('title', tooltip);
+        }
+        if (this.rangeSelectionEnabled) {
+        el.setAttribute('aria-selected', (this.rangeCount ? 'true' : 'false'))
+        }
+
+        el.setAttribute('style', "width: " + Number(width) + "px; left: " + Number(left) + "px; " + stringOrNull(stylesFromColDef) + " " + stringOrNull(stylesForRowSpanning))
+        if (this.usingWrapper) {
+        var wrapper = this.getCellWrapperElement(value, hasTemplate);
+        if (wrapper) {
+          el.appendChild(wrapper);
+        }
+        } else if (value != null) {
+        if (hasTemplate) {
+          el.innerHTML = value;
+        } else {
+          const childNode = document.createTextNode(value)
+          el.appendChild(childNode);
+        }
+        }
+
+        return el;
+    };
 
     private getCreateTemplate(): string {
         const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
@@ -241,6 +292,34 @@ export class CellComp extends Component implements TooltipParentComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private getCellWrapperElement(value: any, hasTemplate: any) {
+      if (value === void 0) {
+        value = '';
+      }
+
+      var isUnselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection()
+      var el = document.createElement('div');
+      el.setAttribute('ref', 'eCellWrapper')
+      el.classList.add('ag-cell-wrapper');
+      el.setAttribute('role', 'presentation');
+      var child = document.createElement('span');
+      child.setAttribute('ref', 'eCellValue');
+      child.setAttribute('role', 'presentation');
+      child.className = CSS_CELL_VALUE;
+      if (isUnselectable) {
+        child.setAttribute('unselectable', 'on');
+      }
+      if (hasTemplate) {
+        child.innerHTML = value;
+      } else {
+        const textNode = document.createTextNode(value != null ? value : '');
+        child.appendChild(textNode);
+      }
+
+      el.appendChild(child);
+      return el;
     }
 
     private getCellWrapperString(value: string | null = ''): string {
@@ -737,7 +816,11 @@ export class CellComp extends Component implements TooltipParentComp {
                 const valueToUse = this.getValueToUse();
 
                 if (valueToUse != null) {
-                    this.eCellValue.innerHTML = escapeString(valueToUse) || '';
+                    var textNode = document.createTextNode(valueToUse || '');
+                    while(this.eCellValue.firstChild) {
+                      this.eCellValue.firstChild.remove();
+                    }
+                    this.eCellValue.appendChild(textNode);
                 }
             }
         }
