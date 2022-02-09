@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "npx @angular/cli",
     "build": "npx @angular/cli build --prod && npm run hash",
-    "test": "npx @angular/cli test --watch false --browsers ChromeHeadless",
+    "skip-test": "npx @angular/cli test --watch false --browsers ChromeHeadless",
     "lint": "npx @angular/cli lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
