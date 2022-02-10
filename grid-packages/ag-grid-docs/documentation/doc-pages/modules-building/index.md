@@ -58,9 +58,6 @@ In this section we demonstrate how you to cherry pick modules to provide the fea
 | ### Example
 | <grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "showCode": true }'></grid-example>
 |
-| [[note]]
-| | Full working examples of this can be found on [GitHub](https://github.com/seanlandsman/ag-grid-module-bundling).
-
 [[only-javascript]]
 | ## Building Your Own UMD Bundle
 |
@@ -186,5 +183,3 @@ In this section we demonstrate how you to cherry pick modules to provide the fea
 | </html>
 | ```
 |
-| [[note]]
-| | Full working examples of this can be found on [GitHub](https://github.com/seanlandsman/ag-grid-module-bundling).
