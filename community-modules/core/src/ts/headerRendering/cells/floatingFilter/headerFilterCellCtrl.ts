@@ -290,7 +290,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             const compPromise = this.comp.getFloatingFilterComp();
             if (!compPromise) { return; }
             const parentModel = this.currentParentModel();
-            compPromise.then(comp => comp && comp.onParentModelChanged(parentModel, filterChangedEvent));
+            compPromise.then(comp => {
+                comp && comp.onParentModelChanged(parentModel, filterChangedEvent)
+            });
         };
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);

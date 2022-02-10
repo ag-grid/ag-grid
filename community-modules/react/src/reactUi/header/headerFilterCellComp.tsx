@@ -1,6 +1,6 @@
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
+import { AgPromise, HeaderFilterCellCtrl, ResolveAndRejectCallback, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
 
@@ -18,7 +18,12 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
     const eButtonWrapper = useRef<HTMLDivElement>(null);
     const eButtonShowMainFilter = useRef<HTMLButtonElement>(null);
-    const userCompRef = useRef<IFloatingFilter>();
+
+    const userCompResolve = useRef<(value: IFloatingFilter)=>void>();
+    const userCompRef = useRef<AgPromise<IFloatingFilter>>(new AgPromise<IFloatingFilter>( resolve => userCompResolve.current = resolve));
+    const setUserCompRef = useCallback( (comp: IFloatingFilter) => {
+        userCompResolve.current!(comp);
+    }, []);
 
     const { ctrl } = props;
 
@@ -30,7 +35,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
-            getFloatingFilterComp: ()=> userCompRef.current ? AgPromise.resolve(userCompRef.current) : null,
+            getFloatingFilterComp: ()=> userCompRef.current,
             setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
         };
 
@@ -40,7 +45,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     // js comps
     useEffect(() => {
-        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef);
+        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, setUserCompRef);
     }, [userCompDetails]);
 
     const style = useMemo( ()=> ({
@@ -65,7 +70,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         <div ref={eGui} className={className} style={style} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
+                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ setUserCompRef }/> }
             </div>
             <div ref={eButtonWrapper} className={buttonWrapperClassName} role="presentation">
                 <button ref={eButtonShowMainFilter} type="button" aria-label="Open Filter Menu" className="ag-floating-filter-button-button" tabIndex={-1}></button>
