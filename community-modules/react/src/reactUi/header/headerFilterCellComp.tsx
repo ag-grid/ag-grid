@@ -20,10 +20,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const eButtonShowMainFilter = useRef<HTMLButtonElement>(null);
 
     const userCompResolve = useRef<(value: IFloatingFilter)=>void>();
-    const userCompRef = useRef<AgPromise<IFloatingFilter>>(new AgPromise<IFloatingFilter>( resolve => userCompResolve.current = resolve));
-    const setUserCompRef = useCallback( (comp: IFloatingFilter) => {
-        userCompResolve.current!(comp);
-    }, []);
+    const userCompPromise = useMemo( ()=> new AgPromise<IFloatingFilter>( resolve => userCompResolve.current = resolve), []);
 
     const { ctrl } = props;
 
@@ -35,7 +32,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
-            getFloatingFilterComp: ()=> userCompRef.current,
+            getFloatingFilterComp: ()=> userCompPromise,
             setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
         };
 
@@ -45,7 +42,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     // js comps
     useEffect(() => {
-        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, setUserCompRef);
+        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompResolve.current!);
     }, [userCompDetails]);
 
     const style = useMemo( ()=> ({
@@ -70,7 +67,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         <div ref={eGui} className={className} style={style} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ setUserCompRef }/> }
+                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompResolve.current! }/> }
             </div>
             <div ref={eButtonWrapper} className={buttonWrapperClassName} role="presentation">
                 <button ref={eButtonShowMainFilter} type="button" aria-label="Open Filter Menu" className="ag-floating-filter-button-button" tabIndex={-1}></button>
