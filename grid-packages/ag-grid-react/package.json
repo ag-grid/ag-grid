@@ -72,6 +72,9 @@
     "webpack": "^5.64.4",
     "typescript": "~3.7.7"
   },
+  "dependencies": {
+    "prop-types": "^15.8.1"
+  },
   "peerDependencies": {
     "ag-grid-community": "~27.0.0",
     "react": "^16.3.0 || ^17.0.0",
