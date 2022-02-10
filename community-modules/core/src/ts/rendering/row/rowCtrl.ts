@@ -742,7 +742,8 @@ export class RowCtrl extends BeanStub {
         const node = this.rowNode;
         const isFocused = this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui.element;
+        const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
+        if (!element) { return; } // can happen with react ui, comp not yet ready
 
         element.classList.toggle('ag-full-width-focus', isFocused);
         if (isFocused) {
