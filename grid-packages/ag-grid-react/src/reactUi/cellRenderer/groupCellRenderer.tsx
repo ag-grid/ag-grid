@@ -1,10 +1,10 @@
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "ag-grid-community";
-import React, { useContext, useEffect, useMemo, useRef, useState, memo } from 'react';
+import React, { useContext, useImperativeHandle, forwardRef, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
 import { CssClasses } from "../utils";
 
-const GroupCellRenderer = (props: GroupCellRendererParams) => {
+const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     const context = useContext(BeansContext).context!;
 
@@ -21,6 +21,13 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
     const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(new CssClasses());
     const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(new CssClasses());
     const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses());
+
+    useImperativeHandle(ref, () => {
+        return {
+            // force new instance when grid tries to refresh
+            refresh() { return false; }
+        };
+    });
 
     useEffect(() => {
         return showJsComp(innerCompDetails, context, eValueRef.current!);
@@ -71,6 +78,7 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
             <span className="ag-group-child-count">{childCount}</span>
         </span>
         );
-};
+});
 
-export default memo(GroupCellRenderer);
+// we do not memo() here, as it would stop the forwardRef working
+export default GroupCellRenderer;

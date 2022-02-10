@@ -66,6 +66,7 @@ const jsxEditValue = (
 
 const jsxShowValue = (
     showDetails: RenderDetails,
+    key: number,
     parentId: string,
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
@@ -87,8 +88,8 @@ const jsxShowValue = (
     const bodyJsxFunc = () => (
         <>
             { noCellRenderer && <>{ valueForNoCellRenderer }</> }
-            { reactCellRenderer && !reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } ref={ cellRendererRef }/> }
-            { reactCellRenderer && reactCellRendererStateless && <CellRendererClass { ...compDetails!.params }/> }
+            { reactCellRenderer && !reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } key={key} ref={ cellRendererRef }/> }
+            { reactCellRenderer && reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } key={key}/> }
         </>
     );
 
@@ -128,6 +129,7 @@ const CellComp = (props: {
 
     const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
     const [editDetails, setEditDetails ] = useState<EditDetails>();
+    const [renderKey, setRenderKey] = useState<number>(1);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
@@ -214,9 +216,17 @@ const CellComp = (props: {
         if (oldCompDetails.componentClass!=newCompDetails.componentClass) { return; }
 
         // if no refresh method, do nothing
-        if (cellRendererRef.current==null || cellRendererRef.current.refresh==null) { return; }
+        if (cellRendererRef.current==null || cellRendererRef.current.refresh==null) {  return; }
 
-        cellRendererRef.current.refresh(newCompDetails.params);
+        const result = cellRendererRef.current.refresh(newCompDetails.params);
+        if (result!=true) {
+            // increasing the render key forces the refresh. this is undocumented (for React users,
+            // we don't document the refresh method, instead we tell them to act on new params).
+            // however the GroupCellRenderer has this logic in it and would need a small refactor
+            // to get it working without using refresh() returning false. so this hack staying in,
+            // in React if refresh() is implemented and returns false (or undefined), we force a refresh
+            setRenderKey( prev => prev + 1 );
+        }
 
     }, [renderDetails]);
 
@@ -365,7 +375,7 @@ const CellComp = (props: {
     const cellInstanceId = useMemo( ()=> cellCtrl.getInstanceId(), []);
 
     const showContents = ()=> <>
-            { renderDetails != null && jsxShowValue(renderDetails, cellInstanceId, cellRendererRef, 
+            { renderDetails != null && jsxShowValue(renderDetails, renderKey, cellInstanceId, cellRendererRef, 
                                                 showTools, reactCellRendererStateless,
                                                 setCellValueRef) }
             { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp) }
