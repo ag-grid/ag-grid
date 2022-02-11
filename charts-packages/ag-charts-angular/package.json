@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "scripts": {
     "ng": "npx @angular/cli",
     "build": "npx @angular/cli build --prod && npm run hash",

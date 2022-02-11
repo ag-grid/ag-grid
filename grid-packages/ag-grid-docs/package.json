@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "27.0.0",
+  "version": "27.0.1",
   "description": "Documentation for AG Grid",
   "scripts": {
     "build": "npm run hash",
