@@ -20,7 +20,7 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
     // without this emitting events results in a warning
     // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
     const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map((eventName: string) => kebabNameToAttrEventName(kebabProperty(eventName)));
-    eventNameAsProps.forEach((eventName:string) => delete props[eventName])
+    eventNameAsProps.forEach((eventName:string) => props[eventName] = undefined)
 
     const watch: Properties = {};
 
