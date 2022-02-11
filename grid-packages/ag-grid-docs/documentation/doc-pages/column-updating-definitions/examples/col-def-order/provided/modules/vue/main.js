@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
@@ -9,8 +9,8 @@ const VueExample = {
       <div style="height: 100%">
       <div class="test-container">
         <div class="test-header">
-          <button v-on:click="setColsA()">Normal</button>
-          <button v-on:click="setColsB()">Uppercase</button>
+          <button v-on:click="setColsA()">Column Set A</button>
+          <button v-on:click="setColsB()">Column Set B</button>
           <button v-on:click="clearColDefs()">Clear</button>
         </div>
         <ag-grid-vue
@@ -72,16 +72,16 @@ const VueExample = {
         },
         getColumnDefsA() {
             return [
-                {field: 'athlete'},
-                {field: 'age'},
-                {field: 'country'},
-                {field: 'sport'},
-                {field: 'year'},
-                {field: 'date'},
-                {field: 'gold'},
-                {field: 'silver'},
-                {field: 'bronze'},
-                {field: 'total'}
+                { field: 'athlete' },
+                { field: 'age' },
+                { field: 'country' },
+                { field: 'sport' },
+                { field: 'year' },
+                { field: 'date' },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
+                { field: 'total' }
             ];
         },
         getColumnDefsB() {
