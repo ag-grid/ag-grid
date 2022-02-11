@@ -131,7 +131,7 @@ gulp.task('tsc-no-clean', tscMainTask);
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 
 // webpack related tasks
-gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings', 'copy-and-concat-typings-main'));
+gulp.task('package', series('copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings', 'copy-and-concat-typings-main'));
 
 // default/release task
 gulp.task('default', series('package'));
