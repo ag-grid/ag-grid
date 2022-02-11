@@ -16931,9 +16931,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
     __decorate$B([
-        Autowired('userComponentFactory')
-    ], GroupCellRenderer.prototype, "userComponentFactory", void 0);
-    __decorate$B([
         RefSelector('eExpanded')
     ], GroupCellRenderer.prototype, "eExpanded", void 0);
     __decorate$B([
@@ -19101,6 +19098,11 @@ var GridOptionsWrapper = /** @class */ (function () {
             return this.getDefaultRowHeight();
         }
         if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
+            var oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-theme-row-height').trim();
+            var newRowHeight = this.gridOptions.rowHeight + "px";
+            if (oldRowHeight != newRowHeight) {
+                this.eGridDiv.style.setProperty('--ag-theme-row-height', newRowHeight);
+            }
             return this.gridOptions.rowHeight;
         }
         console.warn('AG Grid row height must be a number if not using standard row model');
@@ -24285,10 +24287,11 @@ var RowCtrl = /** @class */ (function (_super) {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
-        if (exists(this.rowNode.rowHeight)) {
-            var heightPx_1 = this.rowNode.rowHeight + "px";
-            this.allRowGuis.forEach(function (gui) { return gui.element.style.height = heightPx_1; });
+        if (this.rowNode.rowHeight == null) {
+            return;
         }
+        var heightPx = this.rowNode.rowHeight + "px";
+        this.allRowGuis.forEach(function (gui) { return gui.element.style.height = heightPx; });
     };
     RowCtrl.prototype.addEventListener = function (eventType, listener) {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
@@ -44409,14 +44412,12 @@ var CellComp = /** @class */ (function (_super) {
             // if not editing, and using wrapper, then value goes in eCellValue
             return this.eCellValue;
         }
-        else if (this.eCellWrapper) {
+        if (this.eCellWrapper) {
             // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
             return this.eCellWrapper;
         }
-        else {
-            // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
-            return this.getGui();
-        }
+        // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
+        return this.getGui();
     };
     CellComp.prototype.setRenderDetails = function (compDetails, valueToDisplay, forceNewCellRendererInstance) {
         // this can happen if the users asks for the cell to refresh, but we are not showing the vale as we are editing

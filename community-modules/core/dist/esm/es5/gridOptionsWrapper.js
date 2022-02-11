@@ -1305,6 +1305,11 @@ var GridOptionsWrapper = /** @class */ (function () {
             return this.getDefaultRowHeight();
         }
         if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
+            var oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-theme-row-height').trim();
+            var newRowHeight = this.gridOptions.rowHeight + "px";
+            if (oldRowHeight != newRowHeight) {
+                this.eGridDiv.style.setProperty('--ag-theme-row-height', newRowHeight);
+            }
             return this.gridOptions.rowHeight;
         }
         console.warn('AG Grid row height must be a number if not using standard row model');

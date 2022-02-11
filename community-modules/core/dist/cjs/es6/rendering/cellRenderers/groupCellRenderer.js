@@ -12,7 +12,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const context_1 = require("../../context/context");
 const aria_1 = require("../../utils/aria");
 const dom_1 = require("../../utils/dom");
 const component_1 = require("../../widgets/component");
@@ -80,9 +79,6 @@ GroupCellRenderer.TEMPLATE = `<span class="ag-cell-wrapper">
             <span class="ag-group-value" ref="eValue"></span>
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
-__decorate([
-    context_1.Autowired('userComponentFactory')
-], GroupCellRenderer.prototype, "userComponentFactory", void 0);
 __decorate([
     componentAnnotations_1.RefSelector('eExpanded')
 ], GroupCellRenderer.prototype, "eExpanded", void 0);

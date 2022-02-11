@@ -71,14 +71,12 @@ class CellComp extends component_1.Component {
             // if not editing, and using wrapper, then value goes in eCellValue
             return this.eCellValue;
         }
-        else if (this.eCellWrapper) {
+        if (this.eCellWrapper) {
             // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
             return this.eCellWrapper;
         }
-        else {
-            // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
-            return this.getGui();
-        }
+        // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
+        return this.getGui();
     }
     setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance) {
         // this can happen if the users asks for the cell to refresh, but we are not showing the vale as we are editing

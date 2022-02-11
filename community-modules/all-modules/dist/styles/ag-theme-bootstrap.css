@@ -400,6 +400,7 @@
   display: flex;
   -webkit-box-align: center;
           align-items: center;
+  align-self: center;
   -webkit-box-flex: 0;
           flex: none;
 }
@@ -3235,11 +3236,14 @@
 
 .ag-theme-bootstrap .ag-cell, .ag-theme-bootstrap .ag-full-width-row .ag-cell-wrapper.ag-row-group {
   border: 1px solid transparent;
-  padding: 6px 11px;
+  line-height: min(var(--ag-theme-row-height, 23px), 23px);
+  padding-left: 11px;
+  padding-right: 11px;
   -webkit-font-smoothing: subpixel-antialiased;
 }
 .ag-theme-bootstrap .ag-row > .ag-cell-wrapper {
-  padding: 6px 11px;
+  padding-left: 11px;
+  padding-right: 11px;
 }
 .ag-theme-bootstrap .ag-row-dragging {
   cursor: move;
@@ -4042,7 +4046,8 @@
 
 .ag-theme-bootstrap .ag-header-cell,
 .ag-theme-bootstrap .ag-header-group-cell {
-  padding: 6px 12px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 .ag-theme-bootstrap .ag-header-cell.ag-header-cell-moving,
 .ag-theme-bootstrap .ag-header-group-cell.ag-header-cell-moving {

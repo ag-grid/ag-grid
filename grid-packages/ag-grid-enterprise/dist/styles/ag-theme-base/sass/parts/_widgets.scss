@@ -216,6 +216,7 @@
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         display: flex;
         align-items: center;
+        align-self: center;
         flex: none;
     }
 

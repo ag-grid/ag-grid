@@ -23,7 +23,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired } from "../../context/context";
 import { setAriaRole } from "../../utils/aria";
 import { setDisplayed } from "../../utils/dom";
 import { Component } from "../../widgets/component";
@@ -87,9 +86,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return false;
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
-    __decorate([
-        Autowired('userComponentFactory')
-    ], GroupCellRenderer.prototype, "userComponentFactory", void 0);
     __decorate([
         RefSelector('eExpanded')
     ], GroupCellRenderer.prototype, "eExpanded", void 0);

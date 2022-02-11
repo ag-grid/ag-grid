@@ -1024,10 +1024,11 @@ var RowCtrl = /** @class */ (function (_super) {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
-        if (generic_1.exists(this.rowNode.rowHeight)) {
-            var heightPx_1 = this.rowNode.rowHeight + "px";
-            this.allRowGuis.forEach(function (gui) { return gui.element.style.height = heightPx_1; });
+        if (this.rowNode.rowHeight == null) {
+            return;
         }
+        var heightPx = this.rowNode.rowHeight + "px";
+        this.allRowGuis.forEach(function (gui) { return gui.element.style.height = heightPx; });
     };
     RowCtrl.prototype.addEventListener = function (eventType, listener) {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {

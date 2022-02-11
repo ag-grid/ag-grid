@@ -25,7 +25,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = require("../../context/context");
 var aria_1 = require("../../utils/aria");
 var dom_1 = require("../../utils/dom");
 var component_1 = require("../../widgets/component");
@@ -89,9 +88,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return false;
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
-    __decorate([
-        context_1.Autowired('userComponentFactory')
-    ], GroupCellRenderer.prototype, "userComponentFactory", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eExpanded')
     ], GroupCellRenderer.prototype, "eExpanded", void 0);

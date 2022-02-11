@@ -6,7 +6,6 @@ import { GroupCellRendererParams } from "./groupCellRendererCtrl";
 import { ICellRendererComp } from "./iCellRenderer";
 export declare class GroupCellRenderer extends Component implements ICellRendererComp {
     private static TEMPLATE;
-    private userComponentFactory;
     private eExpanded;
     private eContracted;
     private eCheckbox;

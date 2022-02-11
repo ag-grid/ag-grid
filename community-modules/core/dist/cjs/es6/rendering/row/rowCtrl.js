@@ -968,10 +968,11 @@ class RowCtrl extends beanStub_1.BeanStub {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
-        if (generic_1.exists(this.rowNode.rowHeight)) {
-            const heightPx = `${this.rowNode.rowHeight}px`;
-            this.allRowGuis.forEach(gui => gui.element.style.height = heightPx);
+        if (this.rowNode.rowHeight == null) {
+            return;
         }
+        const heightPx = `${this.rowNode.rowHeight}px`;
+        this.allRowGuis.forEach(gui => gui.element.style.height = heightPx);
     }
     addEventListener(eventType, listener) {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
