@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     width: 150,
   },
-  debug: true,
+  // debug: true,
   columnDefs: createNormalColDefs(),
   rowData: null,
 }

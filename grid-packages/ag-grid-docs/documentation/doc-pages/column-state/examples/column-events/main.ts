@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
     enablePivot: true,
     enableValue: true,
   },
-  debug: true,
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
   onSortChanged: onSortChanged,

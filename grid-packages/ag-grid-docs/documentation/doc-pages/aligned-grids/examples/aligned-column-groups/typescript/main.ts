@@ -47,7 +47,7 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 
@@ -63,7 +63,7 @@ const gridOptionsBottom: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 

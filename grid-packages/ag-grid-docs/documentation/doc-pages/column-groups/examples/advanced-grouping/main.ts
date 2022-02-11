@@ -127,7 +127,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 ]
 
 const gridOptions: GridOptions = {
-  debug: true,
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
   defaultColGroupDef: { headerClass: headerClassFunc },

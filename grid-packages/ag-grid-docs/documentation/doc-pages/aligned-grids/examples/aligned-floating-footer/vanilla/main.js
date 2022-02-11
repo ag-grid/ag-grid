@@ -1,9 +1,9 @@
 const columnDefs = [
-    {field: 'athlete', width: 200},
-    {field: 'age', width: 100},
-    {field: 'country', width: 150},
-    {field: 'year', width: 120},
-    {field: 'sport', width: 200},
+    { field: 'athlete', width: 200 },
+    { field: 'age', width: 100 },
+    { field: 'country', width: 150 },
+    { field: 'year', width: 120 },
+    { field: 'sport', width: 200 },
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order ot match up the columns
@@ -13,9 +13,9 @@ const columnDefs = [
         valueGetter: 'data.gold + data.silver + data.bronze',
         width: 200
     },
-    {field: 'gold', width: 100},
-    {field: 'silver', width: 100},
-    {field: 'bronze', width: 100}
+    { field: 'gold', width: 100 },
+    { field: 'silver', width: 100 },
+    { field: 'bronze', width: 100 }
 ];
 
 const dataForBottomGrid = [
@@ -44,7 +44,7 @@ const gridOptionsTop = {
     },
     columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     alignedGrids: []
@@ -63,7 +63,7 @@ const gridOptionsBottom = {
     columnDefs: columnDefs,
     // we are hard coding the data here, it's just for demo purposes
     rowData: dataForBottomGrid,
-    debug: true,
+    // debug: true,
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,

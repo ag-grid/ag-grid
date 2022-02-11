@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     width: 160,
   },
-  debug: true,
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
 }

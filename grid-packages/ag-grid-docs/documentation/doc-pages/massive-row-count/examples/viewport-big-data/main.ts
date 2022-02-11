@@ -22,7 +22,7 @@ const columnDefs: ColDef[] = [
 ]
 
 const gridOptions: GridOptions = {
-  debug: true,
+  // debug: true,
   rowHeight: 100,
   columnDefs: columnDefs,
   rowModelType: 'viewport',
@@ -60,6 +60,6 @@ function createViewportDatasource(): IViewportDatasource {
 
       initParams.setRowData(rowData)
     },
-    destroy: ()=> {}
+    destroy: () => { }
   }
 }

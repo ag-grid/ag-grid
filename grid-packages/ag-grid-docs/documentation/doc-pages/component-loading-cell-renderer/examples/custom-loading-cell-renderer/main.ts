@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
   maxBlocksInCache: 10,
 
   animateRows: true,
-  debug: true,
+  // debug: true,
 }
 
 // setup the grid after the page has finished loading

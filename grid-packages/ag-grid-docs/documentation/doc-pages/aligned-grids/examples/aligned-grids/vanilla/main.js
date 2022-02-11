@@ -1,10 +1,10 @@
 const columnDefs = [
-    {field: "athlete"},
-    {field: "age"},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
+    { field: "athlete" },
+    { field: "age" },
+    { field: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order to match up the columns
@@ -15,9 +15,9 @@ const columnDefs = [
                 columnGroupShow: 'closed', field: "total",
                 valueGetter: "data.gold + data.silver + data.bronze"
             },
-            {columnGroupShow: 'open', field: "gold"},
-            {columnGroupShow: 'open', field: "silver"},
-            {columnGroupShow: 'open', field: "bronze"}
+            { columnGroupShow: 'open', field: "gold" },
+            { columnGroupShow: 'open', field: "silver" },
+            { columnGroupShow: 'open', field: "bronze" }
         ]
     }
 ];
@@ -34,7 +34,7 @@ const gridOptionsTop = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 
@@ -50,7 +50,7 @@ const gridOptionsBottom = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 

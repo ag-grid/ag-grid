@@ -1,4 +1,4 @@
-import {ColDef, Grid, GridOptions, ValueFormatterParams} from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
@@ -9,16 +9,16 @@ const columnDefs: ColDef[] = [
             return `${parseInt(params.node!.id!) + 1}`;
         },
     },
-    {headerName: 'Athlete', field: 'athlete', width: 150},
-    {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Total', field: 'total', width: 100},
+    { headerName: 'Athlete', field: 'athlete', width: 150 },
+    { headerName: 'Age', field: 'age', width: 90 },
+    { headerName: 'Country', field: 'country', width: 120 },
+    { headerName: 'Year', field: 'year', width: 90 },
+    { headerName: 'Date', field: 'date', width: 110 },
+    { headerName: 'Sport', field: 'sport', width: 110 },
+    { headerName: 'Gold', field: 'gold', width: 100 },
+    { headerName: 'Silver', field: 'silver', width: 100 },
+    { headerName: 'Bronze', field: 'bronze', width: 100 },
+    { headerName: 'Total', field: 'total', width: 100 },
 ]
 
 const gridOptions: GridOptions = {
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
         resizable: true,
         filter: true,
     },
-    debug: true,
+    // debug: true,
     rowSelection: 'multiple',
     paginationPageSize: 500,
     columnDefs: columnDefs,

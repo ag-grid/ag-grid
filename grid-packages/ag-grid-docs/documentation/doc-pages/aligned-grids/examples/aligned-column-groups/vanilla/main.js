@@ -4,14 +4,14 @@ const columnDefs = [
         headerClass: 'blue',
         groupId: 'Group1',
         children: [
-            {field: 'athlete', pinned: true, width: 100},
-            {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-            {field: 'country', width: 100},
-            {field: 'year', columnGroupShow: 'open', width: 100},
-            {field: 'date', width: 100},
-            {field: 'sport', columnGroupShow: 'open', width: 100},
-            {field: 'date', width: 100},
-            {field: 'sport', columnGroupShow: 'open', width: 100}
+            { field: 'athlete', pinned: true, width: 100 },
+            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+            { field: 'country', width: 100 },
+            { field: 'year', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 }
         ]
     },
     {
@@ -19,14 +19,14 @@ const columnDefs = [
         headerClass: 'green',
         groupId: 'Group2',
         children: [
-            {field: 'athlete', pinned: true, width: 100},
-            {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-            {field: 'country', width: 100},
-            {field: 'year', columnGroupShow: 'open', width: 100},
-            {field: 'date', width: 100},
-            {field: 'sport', columnGroupShow: 'open', width: 100},
-            {field: 'date', width: 100},
-            {field: 'sport', columnGroupShow: 'open', width: 100}
+            { field: 'athlete', pinned: true, width: 100 },
+            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+            { field: 'country', width: 100 },
+            { field: 'year', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 }
         ]
     }
 ];
@@ -43,7 +43,7 @@ const gridOptionsTop = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 
@@ -59,7 +59,7 @@ const gridOptionsBottom = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     alignedGrids: []
 };
 

@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
   },
   suppressRowClickSelection: true,
   groupSelectsChildren: true,
-  debug: true,
+  // debug: true,
   rowSelection: 'multiple',
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',

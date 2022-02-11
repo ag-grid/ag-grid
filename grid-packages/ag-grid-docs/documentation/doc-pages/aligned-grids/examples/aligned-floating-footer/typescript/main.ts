@@ -48,7 +48,7 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs,
     rowData: null,
-    debug: true,
+    // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     alignedGrids: []
@@ -67,7 +67,7 @@ const gridOptionsBottom: GridOptions = {
     columnDefs: columnDefs,
     // we are hard coding the data here, it's just for demo purposes
     rowData: dataForBottomGrid,
-    debug: true,
+    // debug: true,
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,

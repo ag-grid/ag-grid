@@ -55,7 +55,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     filter: true,
   },
-  debug: true,
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
 }

@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
   },
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  debug: true,
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
 }
