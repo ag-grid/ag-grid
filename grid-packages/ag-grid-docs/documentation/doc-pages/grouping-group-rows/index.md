@@ -112,15 +112,35 @@ Below shows an example of aggregation with Group Rows. It also provides an `inne
 displaying inside the row groups, however it keeps the Default Group Cell Renderer for its expand / collapse 
 functionality. Note the following:
 
-- Each group spans the width of the grid.
-- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
-- Each medal column is editable, you can change the number of medals for any of the athletes.
-- The column Year has a filter on it.
-- The cell renderer has logic listening for changes to filtering and data cell changes*. This means the aggregation data in the full with row is updated if:
-    1. If you edit any cell
-    1. If you filter the data (ie take rows out).
-
-_* This is true for Vanilla Javascript and React. Angular uses data binding and thus the aggregation data updates automatically without needing to listen to events._
+[[only-javascript]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
+|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full with row is updated if:
+|    1. If you edit any cell
+|    1. If you filter the data (ie take rows out).
+[[only-angular]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
+|- Aggregation data in the full with row is updated if:
+|    1. If you edit any cell
+|    1. If you filter the data (ie take rows out).
+[[only-react]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
+|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full with row is updated if:
+|    1. If you edit any cell
+|    1. If you filter the data (ie take rows out).
+[[only-vue]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
 
 <grid-example title='Full Width Groups Rendering' name='full-width-groups-rendering' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"], "extras": ["fontawesome"] }'></grid-example>
 
