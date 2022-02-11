@@ -15,7 +15,9 @@ const gridOptions: GridOptions = {
     { field: 'bronze' },
     { field: 'total' },
   ],
+  rowData: getData(),
   animateRows: true,
+  groupDefaultExpanded: 1,
   getRowHeight: getRowHeight,
 }
 
@@ -63,8 +65,4 @@ function setRussiaHeight(height: number) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
-
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
 })
