@@ -35,7 +35,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.16.3",
     "prop-types": "^15.6.2",
-    "@ag-grid-community/client-side-row-model": "~27.0.1",
+    "@ag-grid-community/client-side-row-model": "~27.0.0",
     "@ag-grid-community/core": "~27.0.1",
     "@babel/plugin-proposal-throw-expressions": "7.14.5",
     "@babel/preset-typescript": "7.15.0",
