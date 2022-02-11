@@ -38,7 +38,7 @@ The example below demonstrates the Group Rows display type. Note the following:
 
 - Styling has been added to the group rows to highlight the different group levels.
 
-<grid-example title='Enabling Group Rows' name='enabling-group-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Enabling Group Rows' name='enabling-group-rows' type='mixed' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Group Row Configuration
 
@@ -48,7 +48,7 @@ Cell Renderer with your own [Custom Cell Renderer](/component-cell-renderer/), o
 
 If using Group Rows and no `groupRowRenderer` properties are provided, then the default 
 [Group Cell Renderer](/group-cell-renderer/) is used with its default values.
-
+ 
 <snippet>
 const gridOptions = {
     // groups by row - the grid defaults to using the default group cell renderer for the row with default settings.
