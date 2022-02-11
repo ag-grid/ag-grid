@@ -28,7 +28,7 @@
     "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
-    "ag-grid-community": "~27.0.1",
+    "ag-grid-community": "~27.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {

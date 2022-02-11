@@ -29,7 +29,7 @@
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~27.0.1",
+    "@ag-grid-community/core": "~27.0.0",
     "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -43,7 +43,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "~27.0.1",
+    "@ag-grid-community/core": "~27.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },
