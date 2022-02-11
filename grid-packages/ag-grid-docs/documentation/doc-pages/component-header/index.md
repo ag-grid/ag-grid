@@ -91,27 +91,74 @@ How you interact with the user for sorting (eg do you listen for mouse clicks?) 
 
 After the user requests a sort, you should call ONE of the following:
 
-1. `params.progressSort(multiSort):` This is the simplest. Call it to progress the sort on the column to the next stage. Using this uses the grid logic for working out what the next sort stage is (eg 'descending' normally follows 'ascending').
-1. `params.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
+[[only-javascript-or-angular-or-vue]]
+| 1. `params.progressSort(multiSort):` This is the simplest. Call it to progress the sort on the column to the next stage. Using this uses the grid logic for working out what the next sort stage is (eg 'descending' normally follows 'ascending').
+| 1. `params.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
 
-```js
-// option 1) tell the grid when you want to progress the sorting
-myHeaderElement.addEventListener('click', function(event) {
-    // in this example, we do multi sort if Shift key is pressed
-    params.progressSort(event.shiftKey);
-});
+[[only-react]]
+| 1. `props.progressSort(multiSort):` This is the simplest. Call it to progress the sort on the column to the next stage. Using this uses the grid logic for working out what the next sort stage is (eg 'descending' normally follows 'ascending').
+| 1. `props.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
 
-// or option 2) tell the grid when you want to set the sort explicitly
-// button that always sorts ASCENDING
-mySortAscButton.addEventListener('click', function(event) {
-    params.setSort('asc', event.shiftKey);
-});
 
-// button that always sorts DESCENDING
-mySortDescButton.addEventListener('click', function(event) {
-    params.setSort('desc', event.shiftKey);
-});
-```
+[[only-javascript]]
+| ```js
+| // option 1) tell the grid when you want to progress the sorting
+| myHeaderElement.addEventListener('click', function(event) {
+|     // in this example, we do multi sort if Shift key is pressed
+|     params.progressSort(event.shiftKey);
+| });
+| 
+| // or option 2) tell the grid when you want to set the sort explicitly
+| // button that always sorts ASCENDING
+| mySortAscButton.addEventListener('click', function(event) {
+|     params.setSort('asc', event.shiftKey);
+| });
+| 
+| // button that always sorts DESCENDING
+| mySortDescButton.addEventListener('click', function(event) {
+|     params.setSort('desc', event.shiftKey);
+| });
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| // option 1) tell the grid when you want to progress the sorting
+| onSortClicked(event) {
+|      // in this example, we do multi sort if Shift key is pressed
+|     this.params.progressSort(event.shiftKey);
+| };
+| 
+| // or option 2) tell the grid when you want to set the sort explicitly
+| // button that always sorts ASCENDING
+| onSortAscClicked(event) {
+|     this.params.setSort('asc', event.shiftKey);
+| };
+| 
+| // button that always sorts DESCENDING
+| onSortDescClicked(event) {
+|     this.params.setSort('desc', event.shiftKey);
+| };
+| ```
+
+[[only-react]]
+| ```js
+| // option 1) tell the grid when you want to progress the sorting
+| onSortClicked(event) {
+|      // in this example, we do multi sort if Shift key is pressed
+|     this.props.progressSort(event.shiftKey);
+| };
+| 
+| // or option 2) tell the grid when you want to set the sort explicitly
+| // button that always sorts ASCENDING
+| onSortAscClicked(event) {
+|     this.props.setSort('asc', event.shiftKey);
+| };
+| 
+| // button that always sorts DESCENDING
+| onSortDescClicked(event) {
+|     this.props.setSort('desc', event.shiftKey);
+| };
+| ```
 
 To know when a column's sort state has change (eg when to update your icons), you should listen for `sortChanged` event on the column.
 
@@ -152,11 +199,30 @@ column.addEventListener('filterChanged', function() {
 
 How you get the user to ask for the column menu is up to you. When you want to display the menu, call the `params.showColumnMenu()` callback. The callback takes the HTML element for the button so that it can place the menu over the button (so the menu appears to drop down from the button).
 
-```js
-myMenuButton.addEventListener('click', function() {
-    params.showColumnMenu(myMenuButton);
-});
-```
+[[only-javascript]]
+| ```js
+| myMenuButton.addEventListener('click', function() {
+|     params.showColumnMenu(myMenuButton);
+| });
+| ```
+[[only-vue]]
+| ```js
+| onMenuClicked() {
+|     this.params.showColumnMenu(this.$refs.menuButton);
+| });
+| ```
+[[only-angular]]
+| ```js
+| onMenuClicked() {
+|     this.params.showColumnMenu(this.menuButton.nativeElement);
+| });
+| ```
+[[only-react]]
+| ```js
+| onMenuClicked() {
+|     this.props.showColumnMenu(refButton.current);
+| });
+| ```
 
 ### Refresh
 
