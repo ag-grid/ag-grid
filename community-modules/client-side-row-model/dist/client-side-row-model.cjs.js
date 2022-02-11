@@ -1,5 +1,5 @@
 /**
- * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v27.0.0
+ * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v27.0.1
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */

@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v5.0.0
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v5.0.1
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */

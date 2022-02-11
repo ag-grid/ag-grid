@@ -245,7 +245,7 @@ let LicenseManager = LicenseManager_1 = class LicenseManager extends BeanStub {
         this.watermarkMessage = "License Expired";
     }
 };
-LicenseManager.RELEASE_INFORMATION = 'MTY0Mzc5MjkwODUyMQ==';
+LicenseManager.RELEASE_INFORMATION = 'MTY0NDU2NjA5MTkzNw==';
 __decorate([
     Autowired('md5')
 ], LicenseManager.prototype, "md5", void 0);

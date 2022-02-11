@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.0.0
+// @ag-grid-community/react v27.0.1
 import React from 'react';
 import { RowContainerType, RowCtrl } from '@ag-grid-community/core';
 declare const _default: React.MemoExoticComponent<(params: {

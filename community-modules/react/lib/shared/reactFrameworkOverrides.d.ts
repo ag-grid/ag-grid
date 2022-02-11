@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.0.0
+// @ag-grid-community/react v27.0.1
 import { VanillaFrameworkOverrides } from "@ag-grid-community/core";
 export declare class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private readonly reactUi;

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.0.0
+// @ag-grid-community/react v27.0.1
 import { ColumnApi, GridApi, GridOptions, ICellEditor, ICellRenderer, IDate, IFilter, IHeader, IHeaderGroup, IStatusPanel, IToolPanel, Module } from '@ag-grid-community/core';
 import { ChangeDetectionStrategyType } from './changeDetectionService';
 export interface SharedProps extends GridOptions {
