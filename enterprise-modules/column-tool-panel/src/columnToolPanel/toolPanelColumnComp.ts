@@ -233,7 +233,6 @@ export class ToolPanelColumnComp extends Component {
 
         let canBeToggled = true;
         let canBeDragged = true;
-
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
@@ -241,9 +240,14 @@ export class ToolPanelColumnComp extends Component {
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
+            canBeDragged = canBeToggled;
         } else {
-            canBeToggled = !this.column.getColDef().lockVisible;
-            canBeDragged = !this.column.getColDef().lockPosition;
+            const { enableRowGroup, enableValue, lockPosition, suppressMovable, lockVisible } = 
+                this.column.getColDef();
+            const forceDraggable = !!enableRowGroup || !!enableValue;
+            const disableDraggable = !!lockPosition || !!suppressMovable;
+            canBeToggled = !lockVisible;
+            canBeDragged = forceDraggable || !disableDraggable;
         }
 
         this.cbSelect.setReadOnly(!canBeToggled);
