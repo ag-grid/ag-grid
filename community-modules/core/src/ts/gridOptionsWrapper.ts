@@ -1780,6 +1780,13 @@ export class GridOptionsWrapper {
         }
 
         if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
+            const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-theme-row-height').trim();
+            const newRowHeight = `${this.gridOptions.rowHeight}px`;
+
+            if (oldRowHeight != newRowHeight) {
+                this.eGridDiv.style.setProperty('--ag-theme-row-height', newRowHeight);
+            }
+
             return this.gridOptions.rowHeight;
         }
 

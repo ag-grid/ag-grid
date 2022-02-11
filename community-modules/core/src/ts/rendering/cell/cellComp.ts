@@ -128,13 +128,14 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.eCellValue) {
             // if not editing, and using wrapper, then value goes in eCellValue
             return this.eCellValue;
-        } else if (this.eCellWrapper) {
+        }
+        if (this.eCellWrapper) {
             // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
             return this.eCellWrapper;
-        } else {
-            // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
-            return this.getGui();
         }
+
+        // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
+        return this.getGui();
     }
 
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void {

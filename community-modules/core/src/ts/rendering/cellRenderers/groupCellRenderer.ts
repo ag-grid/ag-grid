@@ -1,5 +1,4 @@
-import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { Autowired } from "../../context/context";
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { setAriaRole } from "../../utils/aria";
 import { setDisplayed } from "../../utils/dom";
 import { Component } from "../../widgets/component";
@@ -17,8 +16,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-value" ref="eValue"></span>
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
