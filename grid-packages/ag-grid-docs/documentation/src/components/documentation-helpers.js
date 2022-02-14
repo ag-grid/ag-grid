@@ -109,7 +109,7 @@ export function getLinkedType(type, framework) {
     return formattedTypes.join(' | ');
 };
 
-export function sortAndFilterProperties(properties, framework) {
+export function sortAndFilterProperties(properties, framework, applyOptionalOrdering = false) {
     // Match $scope and $scope?
     const scopeRegex = /\$scope(\??)/
     properties.sort(([p1,], [p2,]) => {
@@ -118,6 +118,19 @@ export function sortAndFilterProperties(properties, framework) {
             return 1;
         if (p2.match(scopeRegex))
             return -1;
+
+        if (applyOptionalOrdering) {
+            // Push mandantory props to the top
+            const isP1Optional = p1.includes('?');
+            const isP2Optional = p2.includes('?');
+            if (isP1Optional && !isP2Optional)
+                return 1;
+            if (!isP1Optional && isP2Optional)
+                return -1;
+            if (!isP1Optional && !isP2Optional) {
+                return p1 < p2 ? -1 : 1;
+            }
+        }
         return 0;
     });
     return properties
@@ -125,18 +138,25 @@ export function sortAndFilterProperties(properties, framework) {
         .filter(([p,]) => !p.match(scopeRegex) || (framework === 'angular' || framework === 'javascript'));
 }
 
-export function appendInterface(name, interfaceType, framework, allLines) {
-
-    const lines = [`interface ${name} {`];
+export function appendInterface(name, interfaceType, framework, allLines, printConfig = {}) {
+    const toExclude = printConfig.exclude || [];
+    const lines = [`interface ${printConfig.hideName ? '' : name} {`];
     const properties = Object.entries(interfaceType.type);
 
-    sortAndFilterProperties(properties, framework).forEach(([property, type]) => {
-        const docs = interfaceType.docs && interfaceType.docs[property];
-        if (!docs || (docs && !docs.includes('@deprecated'))) {
-            addDocLines(docs, lines);
-            lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
-        }
-    });
+    sortAndFilterProperties(properties, framework, printConfig.applyOptionalOrdering)
+        .filter(([prop,]) => {
+            return !toExclude.includes(prop)
+        })
+        .forEach(([property, type]) => {
+            const docs = interfaceType.docs && interfaceType.docs[property];
+            if (!docs || (docs && !docs.includes('@deprecated'))) {
+                addDocLines(docs, lines);
+                lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
+                if (printConfig.lineBetweenProps) {
+                    lines.push('')
+                }
+            }
+        });
     lines.push('}');
     allLines.push(...lines);
 }
@@ -261,7 +281,7 @@ export function appendTypeAlias(name, interfaceType, allLines) {
     allLines.push(`type ${name} = ${multiLine}`);
 }
 
-export function writeAllInterfaces(interfacesToWrite, framework) {
+export function writeAllInterfaces(interfacesToWrite, framework, printConfig) {
     let allLines = [];
     const alreadyWritten = {};
     interfacesToWrite.forEach(({ name, interfaceType }) => {
@@ -277,7 +297,7 @@ export function writeAllInterfaces(interfacesToWrite, framework) {
                 appendCallSignature(name, interfaceType, framework, allLines);
             }
             else {
-                appendInterface(name, interfaceType, framework, allLines);
+                appendInterface(name, interfaceType, framework, allLines, printConfig);
             }
             alreadyWritten[name] = true;
         }

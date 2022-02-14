@@ -19,7 +19,8 @@ const INTERFACE_GLOBS = [
     ...buildGlob('../core/src/ts'),
     ...buildGlob('../../enterprise-modules/set-filter/src'),
     ...buildGlob('../../enterprise-modules/filter-tool-panel/src'),
-    ...buildGlob('../../enterprise-modules/multi-filter/src')
+    ...buildGlob('../../enterprise-modules/multi-filter/src'),
+    ...buildGlob('../angular/projects/ag-grid-angular/src/lib'),
 ];
 
 function findAllInNodesTree(node) {

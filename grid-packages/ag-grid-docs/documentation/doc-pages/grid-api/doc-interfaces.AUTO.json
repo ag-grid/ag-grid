@@ -17657,5 +17657,540 @@
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "EXPAND_STATE": {},
-  "ToolPanelFilterItem": {}
+  "ToolPanelFilterItem": {},
+  "AgFrameworkComponent": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "T" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "IHeaderGroupAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IHeaderGroupParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IHeaderAngularComp": {
+    "refresh": {
+      "description": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
+      "type": {
+        "arguments": { "params": "IHeaderParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IHeaderParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IFloatingFilterAngularComp": {
+    "meta": { "typeParams": ["P"] },
+    "onParentModelChanged": {
+      "type": {
+        "arguments": {
+          "parentModel": "any",
+          "filterChangedEvent?": "FilterChangedEvent | null"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFloatingFilterParams<P>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IDateAngularComp": {
+    "getDate": {
+      "description": "/** Returns the current date represented by this editor */",
+      "type": {
+        "arguments": {},
+        "returnType": "Date | null",
+        "optional": false
+      }
+    },
+    "setDate": {
+      "description": "/** Sets the date represented by this component */",
+      "type": {
+        "arguments": { "date": "Date | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setDisabled": {
+      "description": "/** Sets the disabled state of this component */",
+      "type": {
+        "arguments": { "disabled": "boolean" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "setInputPlaceholder": {
+      "type": {
+        "arguments": { "placeholder": "string" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "setInputAriaLabel": {
+      "type": {
+        "arguments": { "placeholder": "string" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IDateParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IFilterAngularComp": {
+    "isFilterActive": {
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFilterParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "ICellRendererAngularComp": {
+    "refresh": {
+      "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "ICellEditorAngularComp": {
+    "getValue": {
+      "description": "/** Return the final value - called by the grid once after editing is complete */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "isPopup": {
+      "description": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "getPopupPosition": {
+      "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": true
+      }
+    },
+    "isCancelBeforeStart": {
+      "description": "/** Gets called once after initialised. If you return true, the editor will not be\n * used and the grid will continue editing. Use this to make a decision on editing\n * inside the init() function, eg maybe you want to only start editing if the user\n * hits a numeric key, but not a letter, if the editor is for numbers. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "isCancelAfterEnd": {
+      "description": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "focusIn": {
+      "description": "/** If doing full line edit, then gets called when focus should be put into the editor */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "focusOut": {
+      "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellEditorParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "AgRendererComponent": {
+    "refresh": {
+      "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "AgEditorComponent": {
+    "getValue": {
+      "description": "/** Return the final value - called by the grid once after editing is complete */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "isPopup": {
+      "description": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "getPopupPosition": {
+      "description": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": true
+      }
+    },
+    "isCancelBeforeStart": {
+      "description": "/** Gets called once after initialised. If you return true, the editor will not be\n * used and the grid will continue editing. Use this to make a decision on editing\n * inside the init() function, eg maybe you want to only start editing if the user\n * hits a numeric key, but not a letter, if the editor is for numbers. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "isCancelAfterEnd": {
+      "description": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": true }
+    },
+    "focusIn": {
+      "description": "/** If doing full line edit, then gets called when focus should be put into the editor */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "focusOut": {
+      "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellEditorParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "AgFilterComponent": {
+    "isFilterActive": {
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFilterParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "AgFloatingFilterComponent": {
+    "meta": { "typeParams": ["P"] },
+    "onParentModelChanged": {
+      "type": {
+        "arguments": {
+          "parentModel": "any",
+          "filterChangedEvent?": "FilterChangedEvent | null"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFloatingFilterParams<P>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "ILoadingCellRendererAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "ILoadingOverlayAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ILoadingOverlayParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "INoRowsOverlayAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "INoRowsOverlayParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IStatusPanelAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IStatusPanelParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IToolPanelAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IToolPanelParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "ITooltipAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ITooltipParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  }
 }

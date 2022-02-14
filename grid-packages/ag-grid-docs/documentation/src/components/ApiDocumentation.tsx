@@ -35,6 +35,17 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     const li = interfaceLookup[interfacename];
 
+    if (config.asCode) {
+        const interfacesToWrite = getInterfacesToWrite(interfacename, interfacename, config);
+        if (interfacesToWrite.length < 1) {
+            return <h2 style={{ color: 'red' }}>Could not find interface {interfacename} for interface-documentation component!</h2>
+        }
+        const lines = [];
+        lines.push(...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, { lineBetweenProps: true, hideName: config.hideName, exclude: excludeArr, applyOptionalOrdering: true }));
+        const escapedLines = escapeGenericCode(lines);
+        return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
+    }
+
     let props = {};
     let overrides = {};
     let interfaceOverrides = {};
