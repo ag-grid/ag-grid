@@ -42,6 +42,16 @@ function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     };
 }
 
+function hoverAction(x: number, y: number): (chart: Chart) => Promise<void> {
+    return async (chart) => {
+        // Reveal tooltip.
+        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1}));
+        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y}));
+
+        return new Promise((resolve) => { setTimeout(resolve, 50) });
+    };
+}
+
 type TestCase = {
     options: AgChartOptions;
     assertions: (chart: Chart) => void;
@@ -148,6 +158,10 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['histogram'] }),
     },
+    GROUPED_CATEGORY_AXIS_EXAMPLE: {
+        options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['bar'] }),
+    },
     // START ADVANCED EXAMPLES =====================================================================
     ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
         options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
@@ -175,13 +189,7 @@ const EXAMPLES: Record<string, TestCase> = {
     ADV_CUSTOM_TOOLTIPS_EXAMPLE: {
         options: examples.ADV_CUSTOM_TOOLTIPS_EXAMPLE,
         assertions: cartesianChartAssertions(),
-        extraScreenshotActions: async (chart) => {
-            // Reveal tooltip.
-            chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: 200, offsetY: 300}));
-            chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: 201, offsetY: 301}));
-
-            return new Promise((resolve) => { setTimeout(resolve, 50) });
-        },
+        extraScreenshotActions: hoverAction(200, 300),
     },
     ADV_PER_MARKER_CUSTOMISATION_EXAMPLE: {
         options: examples.ADV_PER_MARKER_CUSTOMISATION,

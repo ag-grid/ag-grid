@@ -1407,6 +1407,54 @@ export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgChartOptions = {
     },
 };
 
+export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
+{
+    const usdFormatter = ({ value }: { value: number }) => {
+        const absolute = Math.abs(value);
+        let standardised = '';
+
+        if (absolute < 1e3) {
+            standardised = String(absolute);
+        }
+        if (absolute >= 1e3 && absolute < 1e6) {
+            standardised = '$' + +(absolute / 1e3).toFixed(1) + 'K';
+        }
+        if (absolute >= 1e6 && absolute < 1e9) {
+            standardised = '$' + +(absolute / 1e6).toFixed(1) + 'M';
+        }
+        if (absolute >= 1e9 && absolute < 1e12) {
+            standardised = '$' + +(absolute / 1e9).toFixed(1) + 'B';
+        }
+        if (absolute >= 1e12) {
+            standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
+        }
+        return value < 0 ? '-' + standardised : standardised;
+    }
+
+    Object.assign(GROUPED_CATEGORY_AXIS_EXAMPLE, {
+        data: data.DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
+        axes: [
+            { type: 'groupedCategory', position: 'bottom' },
+            { type: 'number', position: 'left', label: { formatter: usdFormatter } },
+        ],
+        series: [
+            {
+                xKey: 'grouping',
+                xName: 'Group',
+                yKeys: ['totalWinnings'],
+                yNames: ['Total Winnings'],
+                showInLegend: false,
+                flipXY: false,
+                grouped: true,
+                type: 'bar',
+            },
+        ],
+        title: {
+            text: 'Total Winnings by Country & Game',
+        },
+    });
+}
+
 // START ADVANCED EXAMPLES =========================================================================
 
 export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};

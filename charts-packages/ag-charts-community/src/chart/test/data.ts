@@ -5,6 +5,7 @@ export * from './data-earthquakes';
 export * from './data-market-index';
 export * from './data-mlb';
 export * from './data-museums';
+export * from './data-game-winnings';
 
 // Source: https://www.ons.gov.uk/releases/uklabourmarketfebruary2020
 export const DATA_UK_LABOUR_MARKET_FEB_2020 = [
