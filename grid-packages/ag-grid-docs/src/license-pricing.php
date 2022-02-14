@@ -245,10 +245,6 @@ gtm_data_layer('community-enterprise');
                                 Developers within the Multiple Application Development License count are
                                 unnamed, so long as the total licensed count isn’t exceeded.
                             </li>
-                            <li>
-                                Multiple Application Development Licenses are bound to named pool of
-                                developers can be applied to an unlimited number of applications.
-                            </li>
                         </ul>
 
 <!--
