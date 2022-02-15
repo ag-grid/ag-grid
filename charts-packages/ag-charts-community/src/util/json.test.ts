@@ -327,7 +327,7 @@ describe('json module', () => {
 
             console.warn = jest.fn();
             jsonApply(target, badJson as any);
-            expect(console.warn).toBeCalledWith("AG Charts - unable to set [foo] in [TestApply]; nested error is: Property doesn't exist in target type: TestApply");
+            expect(console.warn).toBeCalledWith("AG Charts - unable to set [foo] in TestApply - property is unknown");
         });
 
         it('should error on incompatible properties', () => {
@@ -336,7 +336,7 @@ describe('json module', () => {
 
             console.warn = jest.fn();
             jsonApply(target, badJson as any);
-            expect(console.warn).toBeCalledWith("AG Charts - unable to set [recurse] in [TestApply]; nested error is: Property types don't match, can't apply: allowableTypes=class-instance, newValueType=primitive");
+            expect(console.warn).toBeCalledWith("AG Charts - unable to set [recurse] in TestApply - can't apply type of [primitive], allowed types are: [class-instance]");
         });
 
         it('should allow application of property type overrides', () => {

@@ -249,14 +249,16 @@ export function jsonApply<
             const newValueType = classify(newValue);
 
             if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
-                throw new Error(`Property doesn't exist in target type: ${targetClass?.name}`);
+                console.warn(`AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - property is unknown`);
+                continue;
             }
 
             const allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
-                throw new Error(`Property types don't match, can't apply: allowableTypes=${allowableTypes}, newValueType=${newValueType}`);
+                console.warn(`AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - can't apply type of [${newValueType}], allowed types are: [${allowableTypes}]`);
+                continue;
             }
 
             if (newValueType === 'array') {
