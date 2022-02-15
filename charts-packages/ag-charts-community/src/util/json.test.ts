@@ -325,18 +325,18 @@ describe('json module', () => {
             const badJson = { foo: 'bar' };
             const target = new TestApply();
 
-            expect(() => {
-                jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set \[foo\] .* Property doesn't exist in target type: TestApply/);
+            console.warn = jest.fn();
+            jsonApply(target, badJson as any);
+            expect(console.warn).toBeCalledWith("AG Charts - unable to set [foo] in [TestApply]; nested error is: Property doesn't exist in target type: TestApply");
         });
 
         it('should error on incompatible properties', () => {
             const badJson = { recurse: 'foo' };
             const target = new TestApply({ recurse: new TestApply() });
 
-            expect(() => {
-                jsonApply(target, badJson as any);
-            }).toThrowError(/unable to set \[recurse\] in \[TestApply\].* can't apply: allowableTypes=class-instance, newValueType=primitive/);
+            console.warn = jest.fn();
+            jsonApply(target, badJson as any);
+            expect(console.warn).toBeCalledWith("AG Charts - unable to set [recurse] in [TestApply]; nested error is: Property types don't match, can't apply: allowableTypes=class-instance, newValueType=primitive");
         });
 
         it('should allow application of property type overrides', () => {
