@@ -6,8 +6,6 @@ import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
-import { Autowired, Bean } from "../context/context";
-import { CtrlsService } from '../ctrlsService';
 
 export class ComponentUtil {
 
@@ -39,7 +37,7 @@ export class ComponentUtil {
         return ComponentUtil.EVENT_CALLBACKS;
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
+    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -85,7 +83,7 @@ export class ComponentUtil {
             return;
         }
 
-        const changesToApply = {...changes};
+        const changesToApply = { ...changes };
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
@@ -109,7 +107,7 @@ export class ComponentUtil {
             .filter(keyExists)
             .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
 
-            if (changesToApply.enableCellTextSelection) {
+        if (changesToApply.enableCellTextSelection) {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changesToApply.enableCellTextSelection.currentValue));
             delete changesToApply.enableCellTextSelection;
         }
