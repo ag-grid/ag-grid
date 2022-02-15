@@ -581,8 +581,6 @@ var gridOptions = {
             }
         },
         cartesian: {
-            common: {
-            },
             axes: {
                 number: {
                     label: {
