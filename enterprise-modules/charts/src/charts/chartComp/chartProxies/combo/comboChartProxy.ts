@@ -9,7 +9,6 @@ export class ComboChartProxy extends CartesianChartProxy {
 
     private prevFields: string;
     private prevSeriesChartTypes: SeriesChartType[];
-    private prevAxes: AgCartesianAxisOptions[];
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -31,18 +30,31 @@ export class ComboChartProxy extends CartesianChartProxy {
     public update(params: UpdateChartParams): void {
         const { category, data } = params;
 
-        let options: AgCartesianChartOptions;
+        let options: AgCartesianChartOptions = {
+            data: this.transformData(data, category.id)
+        };
 
-        options = {
-            type: 'cartesian',
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-            data: this.transformData(data, category.id),
-            series: this.getSeriesOptions(params),
-            axes: this.getAxes(params),
+        if (this.seriesChanged(params)) {
+            options.series = this.getSeriesOptions(params)
+            options.axes = this.getAxes(params)
         }
 
         AgChart.update(this.chart as CartesianChart, options);
+    }
+
+    private seriesChanged(params: UpdateChartParams): boolean {
+        const { seriesChartTypes } = params;
+        const seriesChartTypesChanged = !_.areEqual(this.prevSeriesChartTypes, seriesChartTypes,
+            (s1, s2) => s1.colId === s2.colId && s1.chartType === s2.chartType && s1.secondaryAxis === s2.secondaryAxis);
+
+        // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
+        this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
+
+        const fields = params.fields.map(f => f.colId).join();
+        const fieldsChanged = this.prevFields !== fields;
+        this.prevFields = fields;
+
+        return seriesChartTypesChanged || fieldsChanged;
     }
 
     private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
