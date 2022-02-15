@@ -116,7 +116,7 @@ describe('update', () => {
 
         const theme = new ChartTheme();
 
-        expect(chart.container).toBe(undefined);
+        expect(chart.container).toBeInstanceOf(HTMLElement);
         expect(chart.width).toBe(500);
         expect(chart.height).toBe(500);
         expect(chart.data.length).toBe(4);
@@ -163,12 +163,9 @@ describe('update', () => {
         expect(chart.title!.fontStyle).toBe(theme.getConfig('cartesian.title.fontStyle'));
         expect(chart.title!.fontWeight).toBe(theme.getConfig('cartesian.title.fontWeight'));
 
-        expect(chart.subtitle!.enabled).toBe(theme.getConfig('cartesian.subtitle.enabled'));
-        expect(chart.subtitle!.text).toBe(theme.getConfig('cartesian.subtitle.text'));
-        expect(chart.subtitle!.fontSize).toBe(theme.getConfig('cartesian.subtitle.fontSize'));
-        expect(chart.subtitle!.fontFamily).toBe(theme.getConfig('cartesian.subtitle.fontFamily'));
-        expect(chart.subtitle!.fontStyle).toBe(theme.getConfig('cartesian.subtitle.fontStyle'));
-        expect(chart.subtitle!.fontWeight).toBe(theme.getConfig('cartesian.subtitle.fontWeight'));
+        expect(chart.subtitle!.enabled).toBe(false);
+        expect(chart.subtitle!.text).toBe('My Subtitle');
+        expect(chart.subtitle!.fontSize).toBe(20);
     });
 
     test.skip('series', () => {

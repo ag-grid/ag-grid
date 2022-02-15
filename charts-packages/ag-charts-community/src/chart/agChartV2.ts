@@ -113,8 +113,8 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static create<T extends ChartType>(options: ChartOptionType<T>): T {
-        const mergedOptions = prepareOptions(options);
+    static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
+        const mergedOptions = prepareOptions(userOptions);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
             isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
@@ -125,15 +125,15 @@ export abstract class AgChartV2 {
             throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`);
         }
 
-        return AgChartV2.updateDelta<T>(chart as T, mergedOptions);
+        return AgChartV2.updateDelta<T>(chart as T, mergedOptions, userOptions);
     }
 
-    static update<T extends ChartType>(chart: Chart, options: ChartOptionType<T>): T {
-        const mergedOptions = prepareOptions(options);
+    static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): T {
+        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
             chart.destroy();
-            return AgChartV2.create(options);
+            return AgChartV2.create(jsonMerge(chart.userOptions || {}, userOptions) as ChartOptionType<T>);
         }
 
         const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions, { stringify: ['data']});
@@ -141,21 +141,22 @@ export abstract class AgChartV2 {
             return chart as T;
         }
 
-        return AgChartV2.updateDelta<T>(chart as T, deltaOptions);
+        return AgChartV2.updateDelta<T>(chart as T, deltaOptions, userOptions);
     }
 
-    static updateDelta<T extends ChartType>(chart: T, update: Partial<ChartOptionType<T>>): T {
+    private static updateDelta<T extends ChartType>(chart: T, update: Partial<ChartOptionType<T>>, userOptions: ChartOptionType<T>): T {
         if (update.type == null) {
             update = {...update, type: chart.options.type || optionsType(update)};
         }
-        return applyChartOptions(chart, update as ChartOptionType<typeof chart>)
+        // console.log('delta update', update);
+        return applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions)
     }
 }
 
 function applyChartOptions<
     T extends CartesianChart | PolarChart | HierarchyChart,
     O extends ChartOptionType<T>,
->(chart: T, options: O): T {
+>(chart: T, options: O, userOptions: O): T {
     if (isAgCartesianChartOptions(options)) {
         applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
     } else if (isAgPolarChartOptions(options)) {
@@ -176,6 +177,7 @@ function applyChartOptions<
     }
     if (options.data) {
         chart.data = options.data;
+        performProcessData = true;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
@@ -193,6 +195,7 @@ function applyChartOptions<
     chart.performLayout();
 
     chart.options = jsonMerge(chart.options || {}, options);
+    chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
 
     return chart;
 }

@@ -292,6 +292,7 @@ export abstract class Chart extends Observable {
     readonly id = createId(this);
 
     options: AgChartOptions;
+    userOptions: AgChartOptions;
     readonly scene: Scene;
     readonly background: Rect = new Rect();
     readonly legend = new Legend();

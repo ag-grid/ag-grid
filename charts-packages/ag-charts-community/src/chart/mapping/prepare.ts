@@ -103,7 +103,9 @@ interface PreparationContext {
     palette: AgChartThemePalette;
 }
 
-export function prepareOptions<T extends AgChartOptions>(options: T): T {
+export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T {
+    let options: T = fallbackOptions == null ? newOptions : jsonMerge(fallbackOptions, newOptions);
+
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
