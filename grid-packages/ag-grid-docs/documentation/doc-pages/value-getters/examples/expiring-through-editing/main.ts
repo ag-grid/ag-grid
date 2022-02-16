@@ -67,7 +67,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   groupDefaultExpanded: 1,
   valueCache: true,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.id
   },
   onCellValueChanged: function () {

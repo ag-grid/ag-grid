@@ -2,11 +2,10 @@
 
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import {AgGridReact} from 'ag-grid-react';
+import 'ag-grid-enterprise';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data) {
@@ -40,7 +39,7 @@ function getInitialData() {
 
 function createItem(data) {
     const item = {
-        group: 'A',
+        group: ['A','B','C'][Math.floor(Math.random()*3)],
         symbol: createUniqueRandomSymbol(data),
         price: Math.floor(Math.random() * 100),
     };
@@ -77,7 +76,6 @@ const GridExample = () => {
     const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
     const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
     const [rowData, setRowData] = useState(getInitialData());
-    const modules = useMemo(() => [ClientSideRowModelModule, RowGroupingModule], []);
     const [columnDefs, setColumnDefs] = useState([
         {headerName: 'Symbol', field: 'symbol'},
         {headerName: 'Price', field: 'price'},
@@ -102,7 +100,7 @@ const GridExample = () => {
             statusPanels: [{statusPanel: 'agAggregationComponent', align: 'right'}],
         }
     }, []);
-    const getRowNodeId = useCallback(function (data) {
+    const getRowKey = useCallback(function (data) {
         return data.symbol;
     }, []);
 
@@ -212,16 +210,14 @@ const GridExample = () => {
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}
-                            modules={modules}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            immutableData={true}
                             animateRows={true}
                             rowSelection={'multiple'}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}
-                            getRowNodeId={getRowNodeId}
+                            getRowKey={getRowKey}
                             onGridReady={onGridReady}
                         >
                         </AgGridReact>

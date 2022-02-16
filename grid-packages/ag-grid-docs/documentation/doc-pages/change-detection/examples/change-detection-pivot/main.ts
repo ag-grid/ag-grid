@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
   animateRows: true,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.student
   },
   onGridReady: function (params: GridReadyEvent) {

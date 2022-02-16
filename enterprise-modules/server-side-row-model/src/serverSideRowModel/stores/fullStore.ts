@@ -227,10 +227,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (dataItem: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const userIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-            if (!userIdFunc) { return undefined; }
+            const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
+            if (!getRowKeyFunc) { return undefined; }
 
-            const id = userIdFunc(dataItem);
+            const id = getRowKeyFunc(dataItem);
             const foundNode = nodesToRecycle[id];
             if (!foundNode) { return undefined; }
 
@@ -604,12 +604,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
 
         let rowNode: RowNode;
-        if (_.exists(rowNodeIdFunc)) {
+        if (getRowKeyFunc!=null) {
             // find rowNode using id
-            const id: string = rowNodeIdFunc(data);
+            const id: string = getRowKeyFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);

@@ -112,8 +112,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             const message = `AG Grid: defaultGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Partial Store, then sorting is done on the server side, nothing to do with the client.`;
             _.doOnce(() => console.warn(message), 'SSRM.DefaultGroupOrderComparator');
         }
-        if (this.gridOptionsWrapper.isRowSelection() && this.gridOptionsWrapper.getRowNodeIdFunc()==null) {
-            const message = `AG Grid: getRowNodeId callback must be provided for Server Side Row Model selection to work correctly.`;
+        if (this.gridOptionsWrapper.isRowSelection() && this.gridOptionsWrapper.getRowKeyFunc()==null) {
+            const message = `AG Grid: getRowKey callback must be provided for Server Side Row Model selection to work correctly.`;
             _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');  
         }
     }

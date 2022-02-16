@@ -122,7 +122,6 @@ const App = () => {
             animateRows={animateRows} 
 
             // inline also works well, properties only set once
-            immutableData={true}
             rowModelType='clientSide'
             rowHeight="50"
             />
@@ -199,8 +198,6 @@ const App = () => {
 
 ## Immutable Data
 
-When using the grid against an Immutable Store, it's best to set `immutableData=true` and provide the callback `getRowNodeId()` to allow the grid to identify rows.
+When using the grid against an Immutable Store, it's best to provide the callback `getRowKey()` to allow the grid to identify rows. The grid is then able to identify Rows between new lists of Row Data. For example if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows that exist in both the old and new lists of Row Data.
 
-With both of these configured, the grid is able to identify Rows between new lists of Row Data. For example if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows that exist in both the old and new lists of Row Data.
-
-See [Immutable Data](/immutable-data/) for more information.
+See [Updating Row Data](/data-update-row-data/) for more information.

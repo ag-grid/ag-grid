@@ -58,12 +58,12 @@ Maintaining open groups is achieved when all of the following are configured:
 
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
-- Row Id's are provided (`getRowNodeId()` implemented, see [Row IDs](/row-object/#application-assigned-ids)). If not providing row Id's, groups and children will be lost
+- Row Keys are provided (`getRowKey()` implemented, see [Row Keys](/row-keys/)). If not providing Row Keys, groups and children will be lost
 
 When all the above is true, when a refresh is done, open groups will remain open and children will be kept.
 
 The example below shows refreshing using the Full Store and keeping group state. The example is similar to the
-previous example with the addition `getRowNodeId()` is implemented. Note the following:
+previous example with the addition `getRowKey()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
   For example expand 'United States' and hit 'Refresh Top Level' - note that the
@@ -77,9 +77,9 @@ previous example with the addition `getRowNodeId()` is implemented. Note the fol
   all child rows to 'United States'. When 'United States' is expanded again, the
   child rows are loaded again from scratch.
 
-Because the grid is getting provided ID's with via `getRowNodeId()` it allows the grid to update rows rather than
+Because the grid is getting provided ID's with via `getRowKey()` it allows the grid to update rows rather than
 replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data
-changes. If `getRowNodeId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing
+changes. If `getRowKey()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing
 is possible.
 
 

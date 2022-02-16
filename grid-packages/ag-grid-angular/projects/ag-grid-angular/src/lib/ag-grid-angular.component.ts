@@ -41,6 +41,7 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
+    GetRowKeyFunc,
     NavigateToNextHeaderParams,
     HeaderPosition,
     TabToNextHeaderParams,
@@ -703,7 +704,9 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public rowModelType: string | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
-    /** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`     */
+    /** @deprecated Immutable Data is on by default when grid callback getRowKey() is implemented
+Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`
+     */
     @Input() public immutableData: boolean | undefined = undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
@@ -907,8 +910,12 @@ hence this property is deprecated as will be removed in the next major release.
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
-    /** Allows you to set the ID for a particular row node based on the data.     */
+    /** @deprecated Use getRowKey instead - however be aware, getRowKey() will also set grid option immutableData=true 
+Allows you to set the ID for a particular row node based on the data.
+     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
+    /** Allows you to set the ID for a particular row based on the data.     */
+    @Input() public getRowKey: GetRowKeyFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */

@@ -72,7 +72,6 @@ const columnDefs: ColDef[] = [
     rowGroupIndex: 2,
     hide: true,
   },
-  { field: 'trade', width: 100 },
 
   // all the other columns (visible and not grouped)
   {
@@ -284,17 +283,18 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     width: 250,
+    field: 'trade',
     cellRendererParams: {
       checkbox: true,
     },
   },
   rowSelection: 'multiple',
   groupSelectsChildren: true,
-  immutableData: true,
   rowData: globalRowData,
   animateRows: true,
   suppressAggFuncInHeader: true,
-  getRowNodeId: function (data) {
+  suppressRowClickSelection: true,
+  getRowKey: function (data) {
     return data.trade
   },
   onGridReady: function (params) {

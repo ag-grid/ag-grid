@@ -36,11 +36,11 @@ This is for comparison in the example only. Normal applications generally have t
 
 ## Providing Node IDs
 
-For selection to work with Server-Side Row Model, you must provide Row ID's. This is done using the using the `getRowNodeId()` callback.
+For selection to work with Server-Side Row Model, you must provide Row ID's. This is done using the using the `getRowKey()` callback.
 
 Without Row ID's provided, the grid would have no way of identifying Rows across loads. For example if a Sort is applied after a selection is made, which resulted in the rows getting reloaded, the grid needs to identify which rows to keep selection on in the new Row order.
 
-When implementing `getRowNodeId()` you must ensure the rows have unique IDs across the entire data set. This means all the groups and all leaf-level nodes must have unique IDs, even if the leaves are not part of the same group.
+When implementing `getRowKey()` you must ensure the rows have unique IDs across the entire data set. This means all the groups and all leaf-level nodes must have unique IDs, even if the leaves are not part of the same group.
 
 ## Selecting Group Nodes
 

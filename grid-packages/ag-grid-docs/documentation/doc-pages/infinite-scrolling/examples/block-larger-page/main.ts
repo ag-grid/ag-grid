@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
     pagination: true,
     paginationAutoPageSize: true,
     // debug: true,
-    getRowNodeId: function (item) {
+    getRowKey: function (item) {
         return item.id
     },
 }

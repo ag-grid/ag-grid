@@ -26,7 +26,7 @@ import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams } from '@ag-grid-com
                     <ag-grid-angular
                         style="height: 100%;"
                         [defaultColDef]="defaultColDef"
-                        [getRowNodeId]="getRowNodeId"
+                        [getRowKey]="getRowKey"
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
@@ -61,7 +61,7 @@ import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams } from '@ag-grid-com
                     <ag-grid-angular
                         style="height: 100%;"
                         [defaultColDef]="defaultColDef"
-                        [getRowNodeId]="getRowNodeId"
+                        [getRowKey]="getRowKey"
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
@@ -117,7 +117,7 @@ export class AppComponent {
         this.rightRowData = createRowBlock(2);
     }
 
-    getRowNodeId(data: any) {
+    getRowKey(data: any) {
         return data.id;
     }
 

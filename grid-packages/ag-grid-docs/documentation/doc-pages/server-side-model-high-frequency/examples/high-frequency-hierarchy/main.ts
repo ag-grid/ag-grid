@@ -120,7 +120,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     field: 'tradeId',
   },
-  getRowNodeId: getRowNodeId,
+  getRowKey: getRowKey,
   isApplyServerSideTransaction: isApplyServerSideTransaction,
   onAsyncTransactionsFlushed: onAsyncTransactionsFlushed,
   onGridReady: function (params) {
@@ -147,7 +147,7 @@ const gridOptions: GridOptions = {
   },
 }
 
-function getRowNodeId(data: any) {
+function getRowKey(data: any) {
   if (data.tradeId) {
     return data.tradeId
   } else if (data.bookId) {

@@ -31,10 +31,10 @@ const gridOptions: GridOptions = {
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowNodeId: getRowNodeId
+  getRowKey: getRowKey
 }
 
-function getRowNodeId(data: any) {
+function getRowKey(data: any) {
   return Math.random().toString();
 }
 

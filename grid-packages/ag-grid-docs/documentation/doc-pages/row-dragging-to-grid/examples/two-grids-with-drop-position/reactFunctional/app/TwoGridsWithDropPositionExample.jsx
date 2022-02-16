@@ -60,7 +60,7 @@ const TwoGridsWithDropPositionExample = () => {
         setRightRowData(createRowBlock(2));
     }, [createDataItem]);
 
-    const getRowNodeId = data => data.id
+    const getRowKey = data => data.id
 
     const addRecordToGrid = (side, data) => {
         // if data missing or data has no it, do nothing
@@ -174,7 +174,7 @@ const TwoGridsWithDropPositionExample = () => {
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
-                    getRowNodeId={getRowNodeId}
+                    getRowKey={getRowKey}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}

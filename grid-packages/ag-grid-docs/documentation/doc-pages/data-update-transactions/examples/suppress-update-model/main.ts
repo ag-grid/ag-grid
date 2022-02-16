@@ -109,7 +109,7 @@ const columnDefs: ColDef[] = [
     },
 ]
 
-function getRowNodeId(data: any) {
+function getRowKey(data: any) {
     return data.id
 }
 
@@ -207,7 +207,7 @@ const gridOptions: GridOptions = {
         resizable: true,
     },
     suppressModelUpdateAfterUpdateTransaction: true,
-    getRowNodeId: getRowNodeId,
+    getRowKey: getRowKey,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     animateRows: true,

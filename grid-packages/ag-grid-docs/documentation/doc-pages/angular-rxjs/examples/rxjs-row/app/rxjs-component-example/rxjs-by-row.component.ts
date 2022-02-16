@@ -24,7 +24,7 @@ export class RxJsComponentByRow {
         this.gridOptions = {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
-            getRowNodeId: function (data) {
+            getRowKey: function (data) {
                 // the code is unique, so perfect for the id
                 return data.code;
             },

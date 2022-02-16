@@ -76,7 +76,7 @@ const leftGridOptions = {
     rowSelection: 'multiple',
     rowDragMultiRow: true,
     suppressRowClickSelection: true,
-    getRowNodeId: function (data) {
+    getRowKey: function (data) {
         return data.athlete;
     },
     rowDragManaged: true,
@@ -96,7 +96,7 @@ const rightGridOptions = {
         filter: true,
         resizable: true
     },
-    getRowNodeId: function (data) {
+    getRowKey: function (data) {
         return data.athlete;
     },
     rowDragManaged: true,

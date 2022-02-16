@@ -1619,6 +1619,7 @@
       "getServerSideGroupKey?": "GetServerSideGroupKey",
       "getBusinessKeyForNode?": "(node: RowNode) => string",
       "getRowNodeId?": "GetRowNodeIdFunc",
+      "getRowKey?": "GetRowKeyFunc",
       "processRowPostCreate?": "(params: ProcessRowParams) => void",
       "isRowSelectable?": "IsRowSelectable",
       "isRowMaster?": "IsRowMaster",
@@ -1878,7 +1879,7 @@
       "pinnedBottomRowData?": "/** Data to be displayed as pinned bottom rows in the grid. */",
       "rowModelType?": "/** Sets the row model type. Default: `clientSide` */",
       "rowData?": "/** Set the data to be displayed as rows in the grid. */",
-      "immutableData?": "/** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */",
+      "immutableData?": "/** @deprecated Immutable Data is on by default when grid callback getRowKey() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
       "asyncTransactionWaitMillis?": "/** How many milliseconds to wait before executing a batch of async transactions. */",
       "suppressModelUpdateAfterUpdateTransaction?": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
       "deltaRowDataMode?": "/** @deprecated */",
@@ -1972,7 +1973,8 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** Allows you to set the ID for a particular row node based on the data. */",
+      "getRowNodeId?": "/** @deprecated Use getRowKey instead - however be aware, getRowKey() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowKey?": "/** Allows you to set the ID for a particular row based on the data. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
@@ -2256,6 +2258,10 @@
     }
   },
   "GetRowNodeIdFunc": {
+    "meta": { "isCallSignature": true },
+    "type": { "arguments": { "data": "any" }, "returnType": "string" }
+  },
+  "GetRowKeyFunc": {
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "data": "any" }, "returnType": "string" }
   },
@@ -7306,9 +7312,7 @@
   },
   "IImmutableService": {
     "meta": {},
-    "type": {
-      "createTransactionForRowData(data: any[])": "([RowDataTransaction, { [id: string]: number; } | null]) | undefined"
-    }
+    "type": { "setRowData(data: any[])": "void" }
   },
   "IInfiniteRowModel": {
     "meta": {},

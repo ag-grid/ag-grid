@@ -25,7 +25,7 @@ import { Component, ViewChild } from '@angular/core';
                     <ag-grid-angular
                         style="height: 100%;"
                         [defaultColDef]="defaultColDef"
-                        [getRowNodeId]="getRowNodeId"
+                        [getRowKey]="getRowKey"
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
@@ -60,7 +60,7 @@ import { Component, ViewChild } from '@angular/core';
                     <ag-grid-angular
                         style="height: 100%;"
                         [defaultColDef]="defaultColDef"
-                        [getRowNodeId]="getRowNodeId"
+                        [getRowKey]="getRowKey"
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
@@ -117,7 +117,7 @@ export class AppComponent {
         this.leftRowData = createLeftRowData();
     }
 
-    getRowNodeId(data: any) {
+    getRowKey(data: any) {
         return data.id;
     }
 

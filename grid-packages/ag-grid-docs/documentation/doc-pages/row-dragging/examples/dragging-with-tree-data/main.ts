@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   getDataPath: function (data) {
     return data.filePath
   },
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.id
   },
   autoGroupColumnDef: {

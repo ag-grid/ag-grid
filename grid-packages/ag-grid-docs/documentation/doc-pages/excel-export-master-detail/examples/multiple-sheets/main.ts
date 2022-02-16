@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.name
   },
   groupDefaultExpanded: 1,

@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.account
   },
   masterDetail: true,
@@ -35,8 +35,7 @@ const gridOptions: GridOptions = {
     detailGridOptions: {
       rowSelection: 'multiple',
       enableCellChangeFlash: true,
-      immutableData: true,
-      getRowNodeId: function (data) {
+      getRowKey: function (data) {
         return data.callId
       },
       columnDefs: [

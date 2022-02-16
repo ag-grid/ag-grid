@@ -65,8 +65,7 @@ const gridOptions: GridOptions = {
     maxConcurrentDatasourceRequests: 2,
     infiniteInitialRowCount: 1,
     maxBlocksInCache: 2,
-    // debug: true,
-    getRowNodeId: function (item) {
+    getRowKey: function (item) {
         return item.id
     },
 }

@@ -23,10 +23,10 @@ const gridOptions: GridOptions = {
   cacheBlockSize: 75,
   animateRows: true,
   isRowSelectable: isRowSelectable,
-  getRowNodeId: getRowNodeId
+  getRowKey: getRowKey
 }
 
-function getRowNodeId(data: any) {
+function getRowKey(data: any) {
   return data.id;
 }
 
@@ -58,7 +58,7 @@ function updateSelectedRows() {
       // directly update data in rowNode rather than requesting new data from server
       rowNode.setData(updated)
 
-      // NOTE: setting row data will NOT change the row node ID - so if using getRowNodeId() and the data changes
+      // NOTE: setting row data will NOT change the row node ID - so if using getRowKey() and the data changes
       // such that the ID will be different, the rowNode will not have it's ID updated!
 
       updatedRows.push(updated)

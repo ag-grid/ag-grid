@@ -112,7 +112,7 @@ export default class extends Component {
         this.loadGrids();
     }
 
-    getRowNodeId = data => data.athlete
+    getRowKey = data => data.athlete
 
 
     addGridDropZone = () => {
@@ -165,10 +165,9 @@ export default class extends Component {
                 <AgGridReact
                     style={{height: '100%;'}}
                     defaultColDef={defaultColDef}
-                    getRowNodeId={this.getRowNodeId}
+                    getRowKey={this.getRowKey}
                     rowDragManaged={true}
                     animateRows={true}
-                    immutableData={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}

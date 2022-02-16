@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   enableCharts: true,
   suppressAggFuncInHeader: true,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.trade
   },
   onFirstDataRendered: function (params) {

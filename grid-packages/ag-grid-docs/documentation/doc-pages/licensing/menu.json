@@ -209,6 +209,12 @@
         "icon": "icon-rows",
         "items": [
           {
+            "title": "Row Keys",
+            "box-title": "Keys",
+            "url": "/row-keys/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Row Sorting",
             "box-title": "Sorting",
             "url": "/row-sorting/",
@@ -437,6 +443,11 @@
             "showInCollapsed": true,
             "items": [
               {
+                "title": "Row Data",
+                "url": "/data-update-row-data/",
+                "showInCollapsed": true
+              },
+              {
                 "title": "Single Row / Cell",
                 "url": "/data-update-single-row-cell/",
                 "showInCollapsed": true
@@ -452,11 +463,6 @@
                 "showInCollapsed": true
               }
             ]
-          },
-          {
-            "title": "Immutable Data",
-            "url": "/immutable-data/",
-            "showInCollapsed": true
           },
           {
             "title": "Context",

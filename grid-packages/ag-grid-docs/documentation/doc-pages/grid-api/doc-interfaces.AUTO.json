@@ -2688,7 +2688,7 @@
       "type": { "returnType": "any[] | null", "optional": true }
     },
     "immutableData": {
-      "description": "/** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */",
+      "description": "/** @deprecated Immutable Data is on by default when grid callback getRowKey() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "asyncTransactionWaitMillis": {
@@ -3191,8 +3191,12 @@
       }
     },
     "getRowNodeId": {
-      "description": "/** Allows you to set the ID for a particular row node based on the data. */",
+      "description": "/** @deprecated Use getRowKey instead - however be aware, getRowKey() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
+    },
+    "getRowKey": {
+      "description": "/** Allows you to set the ID for a particular row based on the data. */",
+      "type": { "returnType": "GetRowKeyFunc", "optional": true }
     },
     "processRowPostCreate": {
       "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -4733,6 +4737,7 @@
   },
   "GetMainMenuItems": {},
   "GetRowNodeIdFunc": {},
+  "GetRowKeyFunc": {},
   "ProcessRowParams": {
     "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
     "ePinnedLeftRow": {
@@ -12568,10 +12573,10 @@
     }
   },
   "IImmutableService": {
-    "createTransactionForRowData": {
+    "setRowData": {
       "type": {
         "arguments": { "data": "any[]" },
-        "returnType": "([RowDataTransaction, { [id: string]: number } | null]) | undefined",
+        "returnType": "void",
         "optional": false
       }
     }

@@ -45,7 +45,7 @@ const VueExample = {
                     <ag-grid-vue
                         style="height: 100%;"
                         :defaultColDef="defaultColDef"
-                        :getRowNodeId="getRowNodeId"
+                        :getRowKey="getRowKey"
                         :rowClassRules="rowClassRules"
                         :rowDragManaged="true"
                         :suppressMoveWhenRowDragging="true"
@@ -80,7 +80,7 @@ const VueExample = {
                     <ag-grid-vue
                         style="height: 100%;"
                         :defaultColDef="defaultColDef"
-                        :getRowNodeId="getRowNodeId"
+                        :getRowKey="getRowKey"
                         :rowClassRules="rowClassRules"
                         :rowDragManaged="true"
                         :suppressMoveWhenRowDragging="true"
@@ -128,7 +128,7 @@ const VueExample = {
         this.rightRowData = createRowBlock(2);
     },
     methods: {
-        getRowNodeId(data) {
+        getRowKey(data) {
             return data.id;
         },
 

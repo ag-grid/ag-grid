@@ -39,7 +39,7 @@ const VueExample = {
                             :defaultColDef="defaultColDef"
                             rowSelection="multiple"
                             :rowDragMultiRow="true"
-                            :getRowNodeId="getRowNodeId"
+                            :getRowKey="getRowKey"
                             :rowDragManaged="true"
                             :suppressMoveWhenRowDragging="true"
                             :animateRows="true"
@@ -56,7 +56,7 @@ const VueExample = {
                         <ag-grid-vue
                             style="height: 100%;"
                             :defaultColDef="defaultColDef"
-                            :getRowNodeId="getRowNodeId"
+                            :getRowKey="getRowKey"
                             :rowDragManaged="true"
                             :animateRows="true"
                             :rowData="rightRowData"
@@ -142,7 +142,7 @@ const VueExample = {
             });
     },
     methods: {
-        getRowNodeId(data) {
+        getRowKey(data) {
             return data.athlete;
         },
 

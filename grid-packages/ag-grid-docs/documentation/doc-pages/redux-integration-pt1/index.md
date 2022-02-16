@@ -253,10 +253,8 @@ render() {
                 groupDefaultExpanded={-1}
                 {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
-                {/* enable immutable data */}
-                immutableData={true}
-                {/* return id required for immutable data */}
-                getRowNodeId={data => data.id}>
+                {/* return key required for immutable data */}
+                getRowKey={data => data.id}>
             </AgGridReact>
         </div>
     )
@@ -331,16 +329,10 @@ For more details see our documentation on [Context Menu](/context-menu/).
 ## Immutable Data
 
 One consequence of using Redux is that when part of the state is updated in the store, the
-entire state is replaced with a new version. The grid has a "Immutable Data" mode that is
-designed to work specifically with immutable stores such as Redux to ensure only the rows
+entire state is replaced with a new version. The grid uses Row Keys to work specifically with immutable stores such as Redux to ensure only the rows
 that have been updated will be re-rendered inside the grid.
 
-The File View enables this feature using: `immutableData={true}`, along with a required row
-id using: `getRowNodeId={data => data.id}`.
-
-
-This feature can lead to noticeable performance improvements in applications which contain
-a lot of row data. For more details see our documentation on [Immutable Data](/immutable-data/).
+The File View enables this feature using `getRowKey={data => data.id}`.
 
 ## Demo - Redux File View
 

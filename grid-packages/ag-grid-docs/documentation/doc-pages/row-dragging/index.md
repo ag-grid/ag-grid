@@ -141,8 +141,6 @@ From the example the following can be noted:
   in the example doesn't cover these scenarios and wants to prevent row
   dragging when sorting or filtering is active.
 
-- To update the data the example uses an [Immutable Data Store](/immutable-data/) and sets `immutableData=true`. The application is free to use any update mechanism it wants; see [Updating Data](/data-update/) for different options.
-
 <grid-example title='Row Drag Simple Unmanaged' name='simple-unmanaged' type='generated'></grid-example>
 
 The simple example doesn't add anything that managed dragging gives (the first

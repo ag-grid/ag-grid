@@ -86,7 +86,7 @@ function filter(list: any[], callback: any) {
 
 function createItem() {
     const item = {
-        group: 'A',
+        group: ['A','B','C'][Math.floor(Math.random()*3)],
         symbol: createUniqueRandomSymbol(),
         price: Math.floor(Math.random() * 100),
     };
@@ -163,7 +163,6 @@ const gridOptions: GridOptions = {
         sortable: true,
         resizable: true,
     },
-    immutableData: true,
     animateRows: true,
     rowSelection: 'multiple',
     autoGroupColumnDef: {
@@ -176,7 +175,7 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     rowData: immutableStore,
-    getRowNodeId: function (data) {
+    getRowKey: function (data) {
         return data.symbol
     },
     onGridReady: function (params) {

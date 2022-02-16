@@ -56,11 +56,11 @@ The signature of the grid API `applyServerSideTransaction(params)` is as follows
 
 In order for the grid to find rows to update and remove, it needs a way to identify these rows.
 
-If the grid callback `getRowNodeId` is provided, the grid will match on row ID.
+If the grid callback `getRowKey` is provided, the grid will match on row ID.
 
-If the grid callback `getRowNodeId` is not provided, the grid will match on object reference.
+If the grid callback `getRowKey` is not provided, the grid will match on object reference.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowNodeId"]' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowKey"]' ></api-documentation>
 
 ## Targeting Stores
 

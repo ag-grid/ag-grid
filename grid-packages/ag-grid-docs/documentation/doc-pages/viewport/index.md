@@ -87,7 +87,7 @@ As with sorting, filtering also must be done on the server. To implement, listen
 
 ## Selection
 
-Selection works with viewport. It is recommended that you implement `getRowNodeId()` to give a unique key to each row. That way, should the same row appear again but in a different location, it will keep its selection value. See the example below for setting up `getRowNodeId()`.
+Selection works with viewport. It is recommended that you implement `getRowKey()` to give a unique key to each row. That way, should the same row appear again but in a different location, it will keep its selection value. See the example below for setting up `getRowKey()`.
 
 [[note]]
 | Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.

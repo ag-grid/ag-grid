@@ -113,7 +113,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
     private isImmutableDataActive() {
         return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData || this.props.gridOptions.getRowKey));
     }
 
     shouldComponentUpdate(nextProps: any) {

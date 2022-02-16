@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
     width: 250,
     resizable: true,
   },
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.id
   },
   rowModelType: 'serverSide',

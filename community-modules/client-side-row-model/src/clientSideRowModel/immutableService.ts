@@ -8,7 +8,8 @@ import {
     PostConstruct,
     RowDataTransaction,
     RowNode,
-    BeanStub
+    BeanStub,
+    RowRenderer
 } from "@ag-grid-community/core";
 
 import { ClientSideRowModel } from "./clientSideRowModel";
@@ -17,6 +18,7 @@ import { ClientSideRowModel } from "./clientSideRowModel";
 export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -27,16 +29,33 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         }
     }
 
+    public isActive(): boolean {
+        return this.gridOptionsWrapper.isImmutableData();
+    }
+
+    public setRowData(rowData: any[]): void {
+        const transactionAndMap = this.createTransactionForRowData(rowData);
+        if (!transactionAndMap) { return; }
+
+        const [transaction, orderIdMap] = transactionAndMap;
+        const nodeTransaction = this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+        // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
+        // to the data change event on the row node and refreshed itself.
+        if (nodeTransaction) {
+            this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
+        }
+    }
+
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number } | null]) | undefined {
+    private createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
         if (_.missing(this.clientSideRowModel)) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
 
-        const getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        if (!getRowNodeIdFunc || _.missing(getRowNodeIdFunc)) {
-            console.error('AG Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
+        const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
+        if (getRowKeyFunc==null) {
+            console.error('AG Grid: ImmutableService requires getRowKey() callback to be implemented, your row data needs IDs!');
             return;
         }
 
@@ -50,7 +69,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
         const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
-        const orderMap: { [id: string]: number } | null = suppressSortOrder ? null : {};
+        const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
         if (_.exists(data)) {
             // split all the new data in the following:
@@ -58,7 +77,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             // if update, push to 'update'
             // if not changed, do not include in the transaction
             data.forEach((dataItem: any, index: number) => {
-                const id: string = getRowNodeIdFunc(dataItem);
+                const id: string = getRowKeyFunc(dataItem);
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 if (orderMap) {

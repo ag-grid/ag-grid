@@ -38,7 +38,7 @@
         animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
-        getRowNodeId: function(data) { return data.trade; },
+        getRowKey: function(data) { return data.trade; },
         onFirstDataRendered: function(params) {
             var createRangeChartParams = {
                 cellRange: {

@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     gridOptions.api!.setServerSideDatasource(dataSource)
   },
 
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.product
   },
   rowModelType: 'serverSide',

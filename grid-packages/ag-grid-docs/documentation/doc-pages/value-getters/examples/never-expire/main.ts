@@ -76,7 +76,7 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   enableRangeSelection: true,
   groupDefaultExpanded: 1,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.id
   },
   onCellValueChanged: function () {

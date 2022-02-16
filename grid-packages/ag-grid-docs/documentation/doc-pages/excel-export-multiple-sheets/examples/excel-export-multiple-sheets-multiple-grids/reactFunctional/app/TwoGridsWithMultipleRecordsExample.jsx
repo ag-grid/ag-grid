@@ -118,7 +118,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         });
     }
 
-    const getRowNodeId = data => data.athlete
+    const getRowKey = data => data.athlete
 
     const onDragStop = useCallback(params => {
         var nodes = params.nodes;
@@ -165,10 +165,9 @@ const TwoGridsWithMultipleRecordsExample = () => {
                 <AgGridReact
                     style={{ height: '100%;' }}
                     defaultColDef={defaultColDef}
-                    getRowNodeId={getRowNodeId}
+                    getRowKey={getRowKey}
                     rowDragManaged={true}
                     animateRows={true}
-                    immutableData={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}

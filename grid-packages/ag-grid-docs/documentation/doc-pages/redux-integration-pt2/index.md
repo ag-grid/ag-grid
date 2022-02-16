@@ -207,10 +207,8 @@ render() {
                 getContextMenuItems={this.getContextMenuItems}
                 {/* provide row drag end callback */}
                 onRowDragEnd={this.onRowDragEnd}
-                {/* enable immutable data */}
-                immutableData={true}
                 {/* return id required for tree data and immutable data */}
-                getRowNodeId={data => data.id}
+                getRowKey={data => data.id}
                 {/* specify our FileCellRenderer component */}
                 components={this.components}>
             </AgGridReact>
@@ -306,14 +304,9 @@ For more details see our documentation on [Row Dragging](/row-dragging/).
 ## Immutable Data
 
 One consequence of using Redux is that when part of the state is updated in the store, the entire
-state is replaced with a new version. The grid has an "Immutable Data" mode that is designed to work specifically with immutable stores such as Redux to ensure only the rows that have been updated will be re-rendered inside the grid.
+state is replaced with a new version. The grid uses Row Keys to ensure only the rows that have been updated will be re-rendered inside the grid.
 
-The file browser enables this feature using: `immutableData={true}`, along with a required
-row id using: `getRowNodeId={data => data.id}`.
-
-
-This feature can lead to noticeable performance improvements in applications which contain a
-lot of row data. For more details see our documentation on [Immutable Data](/immutable-data/).
+The file browser enables this feature using: `getRowKey={data => data.id}`.
 
 ## Custom File Cell Renderer
 

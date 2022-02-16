@@ -45,9 +45,8 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   enableRangeSelection: true,
-  immutableData: true,
   // implement this so that we can do selection
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.code
   },
 

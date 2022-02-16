@@ -67,7 +67,7 @@ class GridExample extends Component {
             maxBlocksInCache: 2,
             infiniteInitialRowCount: 500,
             maxConcurrentDatasourceRequests: 2,
-            getRowNodeId: function (item) {
+            getRowKey: function (item) {
                 return item.id.toString();
             },
             getRowStyle: function (params) {
@@ -199,7 +199,7 @@ class GridExample extends Component {
                                 maxBlocksInCache={this.state.maxBlocksInCache}
                                 infiniteInitialRowCount={this.state.infiniteInitialRowCount}
                                 maxConcurrentDatasourceRequests={this.state.maxConcurrentDatasourceRequests}
-                                getRowNodeId={this.state.getRowNodeId}
+                                getRowKey={this.state.getRowKey}
                                 getRowStyle={this.state.getRowStyle}
                                 onGridReady={this.onGridReady}
                             />

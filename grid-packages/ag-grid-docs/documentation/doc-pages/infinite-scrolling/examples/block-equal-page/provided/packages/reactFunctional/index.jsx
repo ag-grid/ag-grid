@@ -144,7 +144,7 @@ const GridExample = () => {
             floatingFilter: true,
         }
     }, []);
-    const getRowNodeId = useCallback(function (item) {
+    const getRowKey = useCallback(function (item) {
         return item.id;
     }, []);
 
@@ -199,7 +199,7 @@ const GridExample = () => {
                     infiniteInitialRowCount={1}
                     maxBlocksInCache={2}
                     pagination={true}
-                    getRowNodeId={getRowNodeId}
+                    getRowKey={getRowKey}
                     onGridReady={onGridReady}
                 >
                 </AgGridReact>

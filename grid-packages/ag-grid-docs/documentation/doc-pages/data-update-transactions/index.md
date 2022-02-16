@@ -2,12 +2,8 @@
 title: "Client-Side Data - Transaction Updates"
 ---
 
-Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner.
+Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner. Use Transaction Updates for fast changes to large datasets.
 
-Transaction Updates are excellent for applying large data changes with the following advantages:
-
-- Efficient operation.
-- Updates sort, filter, group, aggregation and pivot after changes applied.
 
 ## Transaction Update API
 
@@ -46,23 +42,21 @@ When passing in data to be updated or removed, the grid will be asking:
 
 _"What row do you mean exactly by this data item you are passing?"_
 
-There are two approaches you can take: 1) Providing Row Node IDs, or 2) Using Object References.
+There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object References.
 
-- ### Providing Row Node IDs (Faster)
+- ### Providing Row Keys (Faster)
 
-  If you are using the grid callback `getRowNode` (explained in [Row Node IDs](/row-object/#row-node-ids)) then the grid
-  will match data provided in the transaction with data in the grid using the ID.
+  If you are providing [Row Keys](/row-keys/) using the grid callback `getRowKey()` then the grid will match data provided in the transaction with data in the grid using the key.
 
-  For updating rows, the grid will find the row with the same ID and then swap the data out for the
+  For updating rows, the grid will find the row with the same key and then swap the data out for the
   newly provided data.
 
-  For removing rows, the grid will find the row with the same ID and remove it. For this reason, the
-  provided records within the `remove` array only need to have an ID present.
-
+  For removing rows, the grid will find the row with the same key and remove it. For this reason, the
+  provided records within the `remove` array only need to have an key present.
 
   <snippet>
   const gridOptions = {
-      getRowNodeId: (data) => data.employeeId
+      getRowKey: (data) => data.employeeId
   }
   </snippet>
 
@@ -88,7 +82,7 @@ There are two approaches you can take: 1) Providing Row Node IDs, or 2) Using Ob
 
 - ### Using Object References (Slower)
 
-  If you do not provide IDs for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid will find those rows using the `===` operator on the data that you previously provided.
+  If you do not provide [Row Keys](/row-keys/) for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid will find those rows using the `===` operator on the data that you previously provided.
 
   When using object references, note the following:
 
@@ -96,7 +90,7 @@ There are two approaches you can take: 1) Providing Row Node IDs, or 2) Using Ob
 
   1. Using object references for identification will be slow for large data sets, as the grid has no way of indexing rows based on object reference.
 
-Although using object references is slower, this will only be an issue if working with large datasets (over 10,000).
+Although using object references is slower, this will only be an issue if working with large datasets (thousands of rows).
 
 
 ## Example: Updating with Transaction and Groups

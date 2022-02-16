@@ -141,16 +141,16 @@ The example below makes use of infinite scrolling and caching. Notice that the g
 Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not provide IDs for the row nodes, the index of the row node will be used. Using the index of the row breaks down when (server-side) filtering or sorting, as these change the index of the rows. For this reason, if you do not provide your own IDs, then selection is cleared if sort or filter is changed.
 
 
-To provide your own IDs, implement the method `getRowNodeId(data)`, which takes the data and should return the ID for the data.
+To provide your own IDs, implement the method `getRowKey(data)`, which takes the data and should return the ID for the data.
 
 ```js
-gridOptions.getRowNodeId: function(item) {
+gridOptions.getRowKey: function(item) {
     // the ID can be any string, as long as it's unique within your dataset
     return item.id.toString();
 }
 ```
 
-Once you have `getRowNodeId()` implemented, selection will persist across sorts and filters.
+Once you have `getRowKey()` implemented, selection will persist across sorts and filters.
 
 ### Example: Sorting, Filtering and Selection
 

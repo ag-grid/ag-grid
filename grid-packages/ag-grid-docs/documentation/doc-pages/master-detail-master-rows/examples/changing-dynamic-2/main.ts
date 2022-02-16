@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   animateRows: true,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     return data.account
   },
   detailCellRendererParams: {

@@ -356,7 +356,7 @@ const GridExample = () => {
             },
         }
     }, []);
-    const getRowNodeId = useCallback(function (data) {
+    const getRowKey = useCallback(function (data) {
         return data.trade;
     }, []);
 
@@ -388,10 +388,9 @@ const GridExample = () => {
                         autoGroupColumnDef={autoGroupColumnDef}
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
-                        immutableData={true}
                         animateRows={true}
                         suppressAggFuncInHeader={true}
-                        getRowNodeId={getRowNodeId}
+                        getRowKey={getRowKey}
                     >
                     </AgGridReact>
                 </div>

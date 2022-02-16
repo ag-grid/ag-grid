@@ -35,8 +35,7 @@ class FileView extends Component {
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}
-          immutableData={true}
-          getRowNodeId={data => data.id}
+          getRowKey={data => data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
           modules={this.modules}
           groupDefaultExpanded={-1}

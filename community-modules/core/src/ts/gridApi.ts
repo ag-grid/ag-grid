@@ -434,25 +434,20 @@ export class GridApi {
 
     /** Set the row data. */
     public setRowData(rowData: any[]) {
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
-            if (this.gridOptionsWrapper.isImmutableData()) {
-                const transactionAndMap = this.immutableService.createTransactionForRowData(rowData);
+        // immutable service is part of the CSRM module, if missing, no CSRM
+        const missingImmutableService = this.immutableService == null;
 
-                if (!transactionAndMap) { return; }
+        if (missingImmutableService) {
+            console.warn('AG Grid: you can only set rowData when using the Client Side Row Model');
+            return;
+        }
 
-                const [transaction, orderIdMap] = transactionAndMap;
-                const nodeTransaction = this.clientSideRowModel.updateRowData(transaction, orderIdMap);
-                // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
-                // to the data change event on the row node and refreshed itself.
-                if (nodeTransaction) {
-                    this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
-                }
-            } else {
-                this.selectionService.reset();
-                this.clientSideRowModel.setRowData(rowData);
-            }
+        // if no keys provided provided for rows, then we can tread the operation as Immutable
+        if (this.immutableService.isActive()) {
+            this.immutableService.setRowData(rowData);
         } else {
-            console.warn('AG Grid: cannot call setRowData unless using normal row model');
+            this.selectionService.reset();
+            this.clientSideRowModel.setRowData(rowData);
         }
     }
 

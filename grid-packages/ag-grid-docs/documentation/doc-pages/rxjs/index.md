@@ -15,11 +15,11 @@ The second subscription only provides changed rows - it does not provide the ful
 
 To efficiently process this data we need the following:
 
-- A unique key per row - we do this by making use of the `getRowNodeId` callback:
+- A unique key per row - we do this by making use of the `getRowKey` callback:
 
 <snippet>
 const gridOptions = {
-    getRowNodeId: data => {
+    getRowKey: data => {
         // the code is unique, so perfect for the ID
         return data.code;
     }
@@ -45,16 +45,14 @@ This time however the second subscription has the full row data, with altered ro
 
 To efficiently process this data we need two things:
 
-- A unique key per row - we do this by making use of the `getRowNodeId` callback.
-- A manner of letting AG Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](/immutable-data/) method.
+- A unique key per row - we do this by making use of the `getRowKey` callback.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    getRowNodeId: data => {
+    getRowKey: data => {
         // the code is unique, so perfect for the ID
         return data.code;
-    },
-    immutableData: true,
+    }
 }
 </snippet>
 
@@ -77,7 +75,6 @@ Alternatively, we can take advantage of the `async` pipe to manage the Subscript
 
 ```html
 <ag-grid-angular>
-    [immutableData]="true"
     [rowData]="updates$ | async"
 </ag-grid-angular>
 ```

@@ -5,7 +5,6 @@ import {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
-    GetRowNodeIdFunc,
     GetServerSideStoreParamsParams,
     GridOptions,
     IsApplyServerSideTransaction,
@@ -23,7 +22,8 @@ import {
     TabToNextHeaderParams,
     RowGroupingDisplayType,
     TreeDataDisplayType,
-    RowHeightParams
+    RowHeightParams,
+    GetRowKeyFunc
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -808,7 +808,9 @@ export class GridOptionsWrapper {
     }
 
     public isImmutableData() {
-        return isTrue(this.gridOptions.immutableData);
+        // we used to have a property immutableData for this. however this was deprecated
+        // in favour of having Immutable Data on by default when getRowKey is provided
+        return this.gridOptions.getRowKey!=null || isTrue(this.gridOptions.immutableData);
     }
 
     public isEnsureDomOrder() {
@@ -1246,8 +1248,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
-        return this.gridOptions.getRowNodeId;
+    public getRowKeyFunc(): GetRowKeyFunc | undefined {
+        return this.gridOptions.getRowKey ? this.gridOptions.getRowKey : this.gridOptions.getRowNodeId;
     }
 
     public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {
@@ -1714,6 +1716,13 @@ export class GridOptionsWrapper {
         if (options.suppressCellSelection) {
             console.warn('AG Grid: since v27.0, `suppressCellSelection` has been replaced by `suppressCellFocus`.');
             options.suppressCellFocus = options.suppressCellSelection;
+        }
+
+        if (options.getRowNodeId) {
+            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecate and has been replaced by `getRowKey`. The difference is if getRowKey() is implemented, immutable data is on by default.');
+        }
+        if (options.immutableData) {
+            console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To turn on, implement `getRowKey` has been replaced by `getRowKey`. The difference is if getRowKey() is implemented, immutable data is on by default.');
         }
     }
 

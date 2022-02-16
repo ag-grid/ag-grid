@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
-  getRowNodeId: function (data) {
+  getRowKey: function (data) {
     // use 'account' as the row ID
     return data.account
   },
