@@ -7312,7 +7312,7 @@
   },
   "IImmutableService": {
     "meta": {},
-    "type": { "setRowData(data: any[])": "void" }
+    "type": { "setRowData(data: any[])": "void", "isActive()": "boolean" }
   },
   "IInfiniteRowModel": {
     "meta": {},
