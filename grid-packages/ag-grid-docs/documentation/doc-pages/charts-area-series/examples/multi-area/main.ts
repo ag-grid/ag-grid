@@ -14,8 +14,8 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'year',
-      yKeys: ['ie'],
-      yNames: ['IE'],
+      yKey: 'ie',
+      yName: 'IE',
       fills: ['#f44336'],
       strokes: ['#ab2f26'],
       fillOpacity: 0.7,
@@ -26,8 +26,8 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'year',
-      yKeys: ['chrome'],
-      yNames: ['Chrome'],
+      yKey: 'chrome',
+      yName: 'Chrome',
       fills: ['#8bc34a'],
       strokes: ['#618834'],
       fillOpacity: 0.7,

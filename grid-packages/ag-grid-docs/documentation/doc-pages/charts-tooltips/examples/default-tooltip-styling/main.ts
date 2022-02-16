@@ -21,8 +21,8 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'month',
-      yKeys: ['sweaters'],
-      yNames: ['Sweaters Made'],
+      yKey: 'sweaters',
+      yName: 'Sweaters Made',
     },
   ],
   tooltip: {

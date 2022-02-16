@@ -21,7 +21,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'label',
-      yKeys: ['value'],
+      yKey: 'value',
     },
   ],
   axes: [

@@ -28,7 +28,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'country',
-      yKeys: ['gdp'],
+      yKey: 'gdp',
       showInLegend: false,
       formatter: function (params) {
         return {

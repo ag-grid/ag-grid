@@ -16,7 +16,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'quarter',
-      yKeys: ['naturalGas'],
+      yKey: 'naturalGas',
       yNames: ['Natural gas'],
       fills: ['#FA7921'],
       strokes: ['#af5517'],
@@ -25,7 +25,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'quarter',
-      yKeys: ['coal'],
+      yKey: 'coal',
       yNames: ['Coal'],
       fills: ['#5BC0EB'],
       strokes: ['#4086a4'],
@@ -34,7 +34,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'quarter',
-      yKeys: ['primaryOil'],
+      yKey: 'primaryOil',
       yNames: ['Primary oil'],
       fills: ['#9BC53D'],
       strokes: ['#6c8a2b'],
@@ -43,7 +43,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'quarter',
-      yKeys: ['petroleum'],
+      yKey: 'petroleum',
       yNames: ['Petroleum'],
       fills: ['#E55934'],
       strokes: ['#a03e24'],
@@ -52,7 +52,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'quarter',
-      yKeys: ['manufacturedFuels'],
+      yKey: 'manufacturedFuels',
       yNames: ['Manufactured fuels'],
       fills: ['#FDE74C'],
       strokes: ['#b1a235'],

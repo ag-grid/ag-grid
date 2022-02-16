@@ -14,7 +14,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'quarter',
-      yKeys: ['iphone'],
+      yKey: 'iphone',
     },
   ],
 }

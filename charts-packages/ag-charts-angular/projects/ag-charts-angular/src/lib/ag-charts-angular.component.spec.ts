@@ -57,7 +57,7 @@ describe('AgChartsAngularComponent', () => {
                 {
                     type: 'bar',
                     xKey: 'type',
-                    yKeys: ['earnings'],
+                    yKey: 'earnings',
                 },
             ],
             axes: [

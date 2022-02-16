@@ -16,7 +16,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'date',
-      yKeys: ['Tate Modern'],
+      yKey: 'Tate Modern',
       fills: ['#c16068'],
       fillOpacity: 0.8,
       strokes: ['#874349'],
@@ -24,7 +24,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'date',
-      yKeys: ['Tate Britain'],
+      yKey: 'Tate Britain',
       fills: ['#a2bf8a'],
       fillOpacity: 0.8,
       strokes: ['#718661'],
@@ -32,7 +32,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'date',
-      yKeys: ['Tate Liverpool'],
+      yKey: 'Tate Liverpool',
       fills: ['#ebcc87'],
       fillOpacity: 0.8,
       strokes: ['#a48f5f'],
@@ -40,7 +40,7 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'date',
-      yKeys: ['Tate St Ives'],
+      yKey: 'Tate St Ives',
       fills: ['#80a0c3'],
       fillOpacity: 0.8,
       strokes: ['#5a7088'],

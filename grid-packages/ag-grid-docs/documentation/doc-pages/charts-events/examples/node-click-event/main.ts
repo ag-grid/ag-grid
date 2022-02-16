@@ -18,7 +18,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'month',
-      yKeys: ['units'],
+      yKey: 'units',
       listeners: {
         nodeClick: function (event: any) {
           var datum = event.datum

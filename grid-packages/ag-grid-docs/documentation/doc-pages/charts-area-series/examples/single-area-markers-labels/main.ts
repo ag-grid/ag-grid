@@ -14,8 +14,8 @@ const options: AgChartOptions = {
     {
       type: 'area',
       xKey: 'year',
-      yKeys: ['ie'],
-      yNames: ['IE'],
+      yKey: 'ie',
+      yName: 'IE',
       marker: {
         enabled: true,
       },

@@ -32,7 +32,7 @@ If we have a list of values by country presented via bar series and want the bar
 ```js
 type: 'column',
 xKey: 'country',
-yKeys: ['gdp'],
+yKey: 'gdp',
 formatter: params => ({
     fill: params.datum[params.xKey] === 'UK' ? 'red' : params.fill
     // we can also use `params.datum.country`, but the formatter

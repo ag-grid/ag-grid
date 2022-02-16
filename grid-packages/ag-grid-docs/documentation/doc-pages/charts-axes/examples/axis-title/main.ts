@@ -12,7 +12,7 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
     {
       type: 'column',
       xKey: 'os',
-      yKeys: ['share'],
+      yKey: 'share',
     },
   ],
   axes: [

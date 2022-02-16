@@ -610,8 +610,8 @@ describe('ChartTheme', () => {
             }, {
                 type: 'area',
                 xKey: 'label',
-                yKeys: ['v4'],
-                yNames: ['Price'],
+                yKey: 'v4',
+                yName: 'Price',
             }]
         };
 

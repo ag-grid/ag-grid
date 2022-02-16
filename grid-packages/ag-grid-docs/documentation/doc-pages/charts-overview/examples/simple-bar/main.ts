@@ -16,7 +16,7 @@ const options: AgChartOptions = {
     {
       type: 'bar',
       xKey: 'type',
-      yKeys: ['earnings'],
+      yKey: 'earnings',
     },
   ],
   axes: [

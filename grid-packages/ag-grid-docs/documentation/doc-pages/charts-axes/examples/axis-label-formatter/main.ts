@@ -12,7 +12,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'os',
-      yKeys: ['share'],
+      yKey: 'share',
     },
   ],
   axes: [

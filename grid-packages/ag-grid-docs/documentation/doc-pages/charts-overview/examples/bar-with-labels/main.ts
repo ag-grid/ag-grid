@@ -16,7 +16,7 @@ const options: AgChartOptions = {
     {
       type: 'bar',
       xKey: 'job',
-      yKeys: ['change'],
+      yKey: 'change',
       fills: ['rgba(0, 117, 163, 0.9)'],
       strokes: ['rgba(0, 117, 163, 0.9)'],
       highlightStyle: {

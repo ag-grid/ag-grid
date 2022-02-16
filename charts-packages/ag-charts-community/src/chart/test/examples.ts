@@ -18,7 +18,7 @@ export const BAR_CHART_EXAMPLE: AgChartOptions = {
         {
             type: 'bar',
             xKey: 'type',
-            yKeys: ['earnings'],
+            yKey: 'earnings',
         },
     ],
     axes: [
@@ -178,7 +178,7 @@ export const BAR_CHART_WITH_LABELS_EXAMPLE: AgChartOptions = {
         {
             type: 'bar',
             xKey: 'job',
-            yKeys: ['change'],
+            yKey: 'change',
             fills: ['rgba(0, 117, 163, 0.9)'],
             strokes: ['rgba(0, 117, 163, 0.9)'],
             highlightStyle: {
@@ -226,7 +226,7 @@ export const SIMPLE_COLUMN_CHART_EXAMPLE: AgChartOptions = {
         {
             type: 'column',
             xKey: 'year',
-            yKeys: ['visitors'],
+            yKey: 'visitors',
             fills: ['#0084e7'],
             strokes: ['#00407f'],
             shadow: {
@@ -951,7 +951,7 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'date',
-            yKeys: ['Tate Modern'],
+            yKey: 'Tate Modern',
             fills: ['#c16068'],
             fillOpacity: 0.8,
             strokes: ['#874349'],
@@ -959,7 +959,7 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'date',
-            yKeys: ['Tate Britain'],
+            yKey: 'Tate Britain',
             fills: ['#a2bf8a'],
             fillOpacity: 0.8,
             strokes: ['#718661'],
@@ -967,7 +967,7 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'date',
-            yKeys: ['Tate Liverpool'],
+            yKey: 'Tate Liverpool',
             fills: ['#ebcc87'],
             fillOpacity: 0.8,
             strokes: ['#a48f5f'],
@@ -975,7 +975,7 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'date',
-            yKeys: ['Tate St Ives'],
+            yKey: 'Tate St Ives',
             fills: ['#80a0c3'],
             fillOpacity: 0.8,
             strokes: ['#5a7088'],
@@ -1128,7 +1128,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'quarter',
-            yKeys: ['naturalGas'],
+            yKey: 'naturalGas',
             yNames: ['Natural gas'],
             fills: ['#FA7921'],
             strokes: ['#af5517'],
@@ -1137,7 +1137,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'quarter',
-            yKeys: ['coal'],
+            yKey: 'coal',
             yNames: ['Coal'],
             fills: ['#5BC0EB'],
             strokes: ['#4086a4'],
@@ -1146,7 +1146,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'quarter',
-            yKeys: ['primaryOil'],
+            yKey: 'primaryOil',
             yNames: ['Primary oil'],
             fills: ['#9BC53D'],
             strokes: ['#6c8a2b'],
@@ -1155,7 +1155,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'quarter',
-            yKeys: ['petroleum'],
+            yKey: 'petroleum',
             yNames: ['Petroleum'],
             fills: ['#E55934'],
             strokes: ['#a03e24'],
@@ -1164,7 +1164,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'quarter',
-            yKeys: ['manufacturedFuels'],
+            yKey: 'manufacturedFuels',
             yNames: ['Manufactured fuels'],
             fills: ['#FDE74C'],
             strokes: ['#b1a235'],
