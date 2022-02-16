@@ -306,7 +306,7 @@ describe('update', () => {
             }]
         });
 
-        chart = AgChartV2.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',
@@ -337,7 +337,7 @@ describe('update', () => {
             stroke: 'rgb(219, 219, 219)',
             lineDash: [4, 2]
         }]);
-        chart = AgChartV2.update(chart, {
+        AgChartV2.update(chart, {
             data: revenueProfitData,
             series: [{
                 xKey: 'blah',

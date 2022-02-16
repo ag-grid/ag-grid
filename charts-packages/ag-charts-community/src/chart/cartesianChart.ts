@@ -293,7 +293,7 @@ export class CartesianChart extends Chart {
             const { direction, boundSeries } = axis;
 
             if (boundSeries.length === 0) {
-                throw new Error('AG Charts - boundSeries not initialised.');
+                console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
             }
 
             if (axis.linkedTo) {
