@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test, jest, beforeEach, afterEach } from "@jest/globals";
 import "jest-canvas-mock";
 import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
@@ -50,6 +50,14 @@ const data2 = [{
 }];
 
 describe('update', () => {
+    beforeEach(() => {
+        console.warn = jest.fn();
+    });
+
+    afterEach(() => {
+        expect(console.warn).not.toBeCalled();
+    });
+
     test('cartesian chart top-level properties', () => {
         const chart = AgChartV2.create({
             // chart type is optional because it defaults to `cartesian`
@@ -66,7 +74,7 @@ describe('update', () => {
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
-                yKeys: ['profit'],
+                yKey: 'profit',
                 fills: ['lime']
             }],
             legend: {

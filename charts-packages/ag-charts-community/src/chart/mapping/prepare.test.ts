@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { AgChartOptions } from '../agChartOptions';
 import * as examples from '../test/examples';
 import { prepareOptions } from './prepare';
@@ -108,6 +108,14 @@ const EXAMPLES: Record<string, TestCase> = {
 
 describe('prepare', () => {
     describe('#prepareOptions', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+    
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should prepare options as expected`, async () => {
                 const options: AgChartOptions = example.options;

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
@@ -199,6 +199,14 @@ const EXAMPLES: Record<string, TestCase> = {
 
 describe('AgChartV2', () => {
     describe('#create', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+    
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+    
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
