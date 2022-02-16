@@ -209,12 +209,6 @@
         "icon": "icon-rows",
         "items": [
           {
-            "title": "Row Keys",
-            "box-title": "Keys",
-            "url": "/row-keys/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Row Sorting",
             "box-title": "Sorting",
             "url": "/row-sorting/",
@@ -433,6 +427,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Row Keys",
+            "box-title": "Keys",
+            "url": "/row-keys/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Accessing Data",
             "url": "/accessing-data/",
             "showInCollapsed": true
@@ -463,6 +463,11 @@
                 "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Data Stages",
+            "url": "/client-side-row-stages/",
+            "showInCollapsed": true
           },
           {
             "title": "Context",
