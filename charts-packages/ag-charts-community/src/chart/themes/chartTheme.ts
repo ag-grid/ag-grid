@@ -566,11 +566,13 @@ export class ChartTheme {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides.hierarchy, mergeOptions);
                     });
                 }
+                const seriesOverridesMap: {[key: string]: any} = {};
                 ChartTheme.seriesTypes.forEach(seriesType => {
                     const chartConfig = overrides[seriesType];
                     if (chartConfig) {
                         if (chartConfig.series) {
-                            chartConfig.series = { [seriesType]: chartConfig.series };
+                            seriesOverridesMap[seriesType] = chartConfig.series;
+                            chartConfig.series = seriesOverridesMap;
                         }
                         defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
                     }
