@@ -21,7 +21,6 @@ export class ComboChartProxy extends CartesianChartProxy {
 
     protected createChart(): CartesianChart {
         return AgChart.create({
-            type: 'cartesian',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
         }) as CartesianChart;

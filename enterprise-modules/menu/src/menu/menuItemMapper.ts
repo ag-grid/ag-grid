@@ -264,6 +264,7 @@ export class MenuItemMapper extends BeanStub {
                         'rangeXYChart',
                         'rangeAreaChart',
                         'rangeHistogramChart',
+                        'rangeCombinationChart'
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
