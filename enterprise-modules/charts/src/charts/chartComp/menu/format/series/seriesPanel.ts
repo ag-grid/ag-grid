@@ -6,21 +6,22 @@ import {
     AgSlider,
     AgToggleButton,
     Autowired,
+    ChartType,
     Component,
     ListOption,
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ShadowPanel } from "./shadowPanel";
-import { FontPanel } from "../fontPanel";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { initFontPanelParams } from "./fontPanelParams";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
-import { MarkersPanel } from "./markersPanel";
-import { ChartController } from "../../../chartController";
-import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
-import { CalloutPanel } from "./calloutPanel";
+import {ShadowPanel} from "./shadowPanel";
+import {FontPanel} from "../fontPanel";
+import {ChartTranslationService} from "../../../services/chartTranslationService";
+import {initFontPanelParams} from "./fontPanelParams";
+import {ChartOptionsService} from "../../../services/chartOptionsService";
+import {getMaxValue} from "../formatPanel";
+import {MarkersPanel} from "./markersPanel";
+import {ChartController} from "../../../chartController";
+import {ChartSeriesType, getSeriesType} from "../../../utils/seriesTypeMapper";
+import {CalloutPanel} from "./calloutPanel";
 
 export class SeriesPanel extends Component {
 
@@ -83,9 +84,21 @@ export class SeriesPanel extends Component {
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
-        this.initSeriesSelect();
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
         this.refreshWidgets();
+    }
+
+    private refreshWidgets(): void {
+        this.destroyActivePanels();
+
+        const chartTypes: ChartSeriesType[] = this.chartController.getSeriesChartTypes().map(s =>  getSeriesType(s.chartType));
+        if (this.seriesType && !chartTypes.includes(this.seriesType)) {
+            this.seriesType = chartTypes[0];
+        }
+
+        this.initSeriesSelect();
+        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
     }
 
     private initSeriesSelect() {
@@ -106,11 +119,8 @@ export class SeriesPanel extends Component {
             });
 
         this.seriesGroup.addItem(seriesSelect);
-    }
 
-    private refreshWidgets(): void {
-        this.destroyActivePanels();
-        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
+        this.activePanels.push(seriesSelect);
     }
 
     private initTooltips(): void {

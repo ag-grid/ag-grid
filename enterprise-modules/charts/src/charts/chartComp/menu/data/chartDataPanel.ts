@@ -80,14 +80,13 @@ export class ChartDataPanel extends Component {
                 });
             }
 
-            // TODO: improve - changing categories or series will expand group
             // recreate series chart type group if it exists as series may be added or removed via series group panel
             _.removeFromParent(this.getGui().querySelector('#seriesChartTypeGroup'));
             this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp);
             this.createSeriesChartTypeGroup(valueCols);
 
         } else {
-            // otherwise we re-create everything
+            // otherwise, we re-create everything
             this.clearComponents();
 
             this.createCategoriesGroup(dimensionCols);

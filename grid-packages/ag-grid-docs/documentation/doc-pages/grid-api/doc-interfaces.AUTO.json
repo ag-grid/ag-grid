@@ -10375,8 +10375,10 @@
     },
     "normalizedTo": { "type": { "returnType": "number", "optional": true } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
+    "yKey": { "type": { "returnType": "string", "optional": true } },
     "yKeys": { "type": { "returnType": "string[]", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
+    "yName": { "type": { "returnType": "string", "optional": true } },
     "yNames": { "type": { "returnType": "string[]", "optional": true } },
     "fills": { "type": { "returnType": "string[]", "optional": true } },
     "strokes": { "type": { "returnType": "string[]", "optional": true } },
@@ -10464,6 +10466,7 @@
       "type": { "returnType": "string[] | string[][]", "optional": true }
     },
     "xName": { "type": { "returnType": "string", "optional": true } },
+    "yName": { "type": { "returnType": "string", "optional": true } },
     "yNames": {
       "type": {
         "returnType": "string[] | { [key in string]: string }",

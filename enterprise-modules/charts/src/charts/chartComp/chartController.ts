@@ -29,6 +29,7 @@ export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
     public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
+    public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
 
     @Autowired('rangeService') private readonly rangeService: IRangeService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -259,6 +260,7 @@ export class ChartController extends BeanStub {
                 this.model.chartType = 'customCombo';
             }
 
+            const prevSeriesChartType = seriesChartType.chartType;
             if (chartType != null) {
                 seriesChartType.chartType = chartType;
             }
@@ -278,6 +280,14 @@ export class ChartController extends BeanStub {
                     type: ChartController.EVENT_CHART_TYPE_CHANGED
                 }));
             }
+
+            if (prevSeriesChartType !== chartType) {
+                // update the format panel by raising an EVENT_CHART_SERIES_CHART_TYPE_CHANGED event
+                this.dispatchEvent(Object.freeze({
+                    type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED
+                }));
+            }
+
         }
     }
 

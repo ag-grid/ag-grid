@@ -151,7 +151,9 @@ export class ComboChartProxy extends CartesianChartProxy {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
+                const seriesOverrides = this.chartOptions[getSeriesType(seriesChartType.chartType)].series;
                 return {
+                    ...seriesOverrides,
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
