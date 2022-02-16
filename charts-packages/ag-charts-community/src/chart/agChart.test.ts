@@ -168,7 +168,7 @@ describe('update', () => {
         expect(chart.subtitle!.fontSize).toBe(20);
     });
 
-    test.skip('series', () => {
+    test('series', () => {
         const chart = AgChartV2.create({
             data: revenueProfitData,
             series: [{
@@ -186,9 +186,7 @@ describe('update', () => {
                 fills: ['lime']
             }]
         });
-
-        const firstSeries = chart.series[0];
-        const secondSeries = chart.series[1];
+        const createdSeries = chart.series;
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
@@ -211,16 +209,18 @@ describe('update', () => {
                 yKeys: ['foobar']
             }]
         });
+        const updatedSeries = chart.series;
 
-        expect(chart.series[0]).toBe(firstSeries);
-        expect(chart.series[1]).toBe(secondSeries);
-        expect((chart.series[0] as any).marker.shape).toBe('square');
-        expect((chart.series[0] as any).marker.size).toBe(10);
-        expect((chart.series[1] as any).fills).toEqual(['lime', 'cyan']);
-        expect((chart.series[1] as any).yKeys).toEqual([['profit', 'foobar']]);
-        expect(chart.series[2] instanceof AreaSeries).toBe(true);
-        expect((chart.series[2] as any).xKey).toBe('month');
-        expect((chart.series[2] as any).yKeys).toEqual(['foobar']);
+        expect(updatedSeries.length).toEqual(3);
+        expect(updatedSeries[0]).not.toBe(createdSeries[0]);
+        expect(updatedSeries[1]).not.toBe(createdSeries[1]);
+        expect((updatedSeries[0] as any).marker.shape).toEqual('square');
+        expect((updatedSeries[0] as any).marker.size).toEqual(10);
+        expect((updatedSeries[1] as any).fills).toEqual(['lime', 'cyan']);
+        expect((updatedSeries[1] as any).yKeys).toEqual([['profit', 'foobar']]);
+        expect(updatedSeries[2]).toBeInstanceOf(AreaSeries);
+        expect((updatedSeries[2] as any).xKey).toEqual('month');
+        expect((updatedSeries[2] as any).yKeys).toEqual(['foobar']);
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
@@ -239,10 +239,11 @@ describe('update', () => {
                 fills: ['lime', 'cyan']
             }]
         });
+        const updatedSeries2 = chart.series;
 
-        expect(chart.series.length).toBe(2);
-        expect(chart.series[0]).toBe(firstSeries);
-        expect(chart.series[1]).toBe(secondSeries);
+        expect(updatedSeries2.length).toBe(2);
+        expect(updatedSeries2[0]).not.toBe(updatedSeries[0]);
+        expect(updatedSeries2[1]).not.toBe(updatedSeries[1]);
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
@@ -261,17 +262,18 @@ describe('update', () => {
                 }
             }]
         });
+        const updatedSeries3 = chart.series;
 
-        expect(chart.series.length).toBe(2);
-        expect(chart.series[0]).not.toBe(firstSeries);
-        expect(chart.series[1]).not.toBe(secondSeries);
-        expect(chart.series[0] instanceof BarSeries).toBe(true);
-        expect(chart.series[1] instanceof LineSeries).toBe(true);
-        expect((chart.series[0] as any).yKeys).toEqual([['profit', 'foobar']]);
-        expect((chart.series[1] as any).yKey).toBe('revenue');
-        expect((chart.series[1] as any).marker.size).toBe(10);
+        expect(updatedSeries3.length).toBe(2);
+        expect(updatedSeries3[0]).not.toBe(updatedSeries2[0]);
+        expect(updatedSeries3[1]).not.toBe(updatedSeries2[1]);
+        expect(updatedSeries3[0]).toBeInstanceOf(BarSeries);
+        expect(updatedSeries3[1]).toBeInstanceOf(LineSeries);
+        expect((updatedSeries3[0] as any).yKeys).toEqual([['profit', 'foobar']]);
+        expect((updatedSeries3[1] as any).yKey).toEqual('revenue');
+        expect((updatedSeries3[1] as any).marker.size).toEqual(10);
 
-        const lineSeries = chart.series[1];
+        const lineSeries = updatedSeries3[1];
 
         AgChartV2.update(chart, {
             data: revenueProfitData,
@@ -290,11 +292,12 @@ describe('update', () => {
                 }
             }]
         });
+        const updatedSeries4 = chart.series;
 
-        expect(chart.series.length).toBe(2);
-        expect(chart.series[0] instanceof AreaSeries).toBe(true);
-        expect(chart.series[1] instanceof LineSeries).toBe(true);
-        expect(chart.series[1]).toBe(lineSeries);
+        expect(updatedSeries4.length).toEqual(2);
+        expect(updatedSeries4[0]).toBeInstanceOf(AreaSeries);
+        expect(updatedSeries4[1]).toBeInstanceOf(LineSeries);
+        expect(updatedSeries4[1]).not.toBe(lineSeries);
     });
 
     test('axes', () => {
