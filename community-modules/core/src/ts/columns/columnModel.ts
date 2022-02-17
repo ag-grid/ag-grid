@@ -38,7 +38,7 @@ import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
-import { ApplyColumnStateParams, ColumnApi } from './columnApi';
+import { ColumnApi } from './columnApi';
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -59,9 +59,7 @@ export interface ColumnResizeSet {
     width: number;
 }
 
-export interface ColumnState {
-    /** ID of the column */
-    colId?: string;
+export interface ColumnStateParams {
     /** True if the column is hidden */
     hide?: boolean | null;
     /** Width of the column in pixels */
@@ -84,6 +82,20 @@ export interface ColumnState {
     rowGroup?: boolean | null;
     /** The order of the row group, if grouping by many columns */
     rowGroupIndex?: number | null;
+}
+
+export interface ColumnState extends ColumnStateParams {
+    /** ID of the column */
+    colId: string;
+}
+
+export interface ApplyColumnStateParams {
+    /** The state from `getColumnState` */
+    state?: ColumnState[];
+    /** Whether column order should be applied */
+    applyOrder?: boolean;
+    /** State to apply to columns where state is missing for those columns */
+    defaultState?: ColumnStateParams;
 }
 
 @Bean('columnModel')
@@ -230,8 +242,8 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
-        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', ()=> this.onAutoGroupColumnDefChanged());
-        this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', ()=> this.onDefaultColDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedListener(this.gridOptionsWrapper, 'defaultColDef', () => this.onDefaultColDefChanged());
     }
 
     public onAutoGroupColumnDefChanged() {
@@ -296,7 +308,7 @@ export class ColumnModel extends BeanStub {
         // at this point, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
-        const gridColsNotProcessed = this.gridColsArePrimary===undefined;
+        const gridColsNotProcessed = this.gridColsArePrimary === undefined;
         const processGridCols = this.gridColsArePrimary || gridColsNotProcessed;
 
         if (processGridCols) {
@@ -2324,7 +2336,7 @@ export class ColumnModel extends BeanStub {
     private syncColumnWithStateItem(
         column: Column | null,
         stateItem: ColumnState | null,
-        defaultState: ColumnState | undefined,
+        defaultState: ColumnStateParams | undefined,
         rowGroupIndexes: { [key: string]: number; } | null,
         pivotIndexes: { [key: string]: number; } | null,
         autoCol: boolean,
@@ -2333,29 +2345,27 @@ export class ColumnModel extends BeanStub {
 
         if (!column) { return; }
 
-        const getValue = (key1: string, key2?: string): { value1: any, value2: any; } => {
-            const stateAny = stateItem as any;
-            const defaultAny = defaultState as any;
-            const obj: { value1: any, value2: any } = { value1: undefined, value2: undefined };
+        const getValue = <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(key1: U, key2?: S): { value1: ColumnStateParams[U] | undefined, value2: ColumnStateParams[S] | undefined; } => {
+            const obj: { value1: ColumnStateParams[U] | undefined, value2: ColumnStateParams[S] | undefined; } = { value1: undefined, value2: undefined };
             let calculated: boolean = false;
 
-            if (stateAny) {
-                if (stateAny[key1] !== undefined) {
-                    obj.value1 = stateAny[key1];
+            if (stateItem) {
+                if (stateItem[key1] !== undefined) {
+                    obj.value1 = stateItem[key1];
                     calculated = true;
                 }
-                if (exists(key2) && stateAny[key2] !== undefined) {
-                    obj.value2 = stateAny[key2];
+                if (exists(key2) && stateItem[key2] !== undefined) {
+                    obj.value2 = stateItem[key2];
                     calculated = true;
                 }
             }
 
-            if (!calculated && defaultAny) {
-                if (defaultAny[key1] !== undefined) {
-                    obj.value1 = defaultAny[key1];
+            if (!calculated && defaultState) {
+                if (defaultState[key1] !== undefined) {
+                    obj.value1 = defaultState[key1];
                 }
-                if (exists(key2) && defaultAny[key2] !== undefined) {
-                    obj.value2 = defaultAny[key2];
+                if (exists(key2) && defaultState[key2] !== undefined) {
+                    obj.value2 = defaultState[key2];
                 }
             }
 

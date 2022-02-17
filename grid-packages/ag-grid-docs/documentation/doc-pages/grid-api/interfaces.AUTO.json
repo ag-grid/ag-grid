@@ -1,25 +1,11 @@
 {
-  "ApplyColumnStateParams": {
-    "meta": {},
-    "type": {
-      "state?": "ColumnState[]",
-      "applyOrder?": "boolean",
-      "defaultState?": "ColumnState"
-    },
-    "docs": {
-      "state?": "/** The state from `getColumnState` */",
-      "applyOrder?": "/** Whether column order should be applied */",
-      "defaultState?": "/** State to apply to columns where state is missing for those columns */"
-    }
-  },
   "ColumnResizeSet": {
     "meta": {},
     "type": { "columns": "Column[]", "ratios": "number[]", "width": "number" }
   },
-  "ColumnState": {
+  "ColumnStateParams": {
     "meta": {},
     "type": {
-      "colId?": "string",
       "hide?": "boolean | null",
       "width?": "number",
       "flex?": "number | null",
@@ -33,7 +19,6 @@
       "rowGroupIndex?": "number | null"
     },
     "docs": {
-      "colId?": "/** ID of the column */",
       "hide?": "/** True if the column is hidden */",
       "width?": "/** Width of the column in pixels */",
       "flex?": "/** Column's flex if flex is set */",
@@ -45,6 +30,50 @@
       "pinned?": "/** Set if column is pinned */",
       "rowGroup?": "/** True if row group active */",
       "rowGroupIndex?": "/** The order of the row group, if grouping by many columns */"
+    }
+  },
+  "ColumnState": {
+    "meta": {},
+    "type": {
+      "colId": "string",
+      "hide?": "boolean | null",
+      "width?": "number",
+      "flex?": "number | null",
+      "sort?": "'asc' | 'desc' | null",
+      "sortIndex?": "number | null",
+      "aggFunc?": "string | IAggFunc | null",
+      "pivot?": "boolean | null",
+      "pivotIndex?": "number | null",
+      "pinned?": "boolean | string | 'left' | 'right' | null",
+      "rowGroup?": "boolean | null",
+      "rowGroupIndex?": "number | null"
+    },
+    "docs": {
+      "colId": "/** ID of the column */",
+      "hide?": "/** True if the column is hidden */",
+      "width?": "/** Width of the column in pixels */",
+      "flex?": "/** Column's flex if flex is set */",
+      "sort?": "/** Sort applied to the column */",
+      "sortIndex?": "/** The order of the sort, if sorting by many columns */",
+      "aggFunc?": "/** The aggregation function applied */",
+      "pivot?": "/** True if pivot active */",
+      "pivotIndex?": "/** The order of the pivot, if pivoting by many columns */",
+      "pinned?": "/** Set if column is pinned */",
+      "rowGroup?": "/** True if row group active */",
+      "rowGroupIndex?": "/** The order of the row group, if grouping by many columns */"
+    }
+  },
+  "ApplyColumnStateParams": {
+    "meta": {},
+    "type": {
+      "state?": "ColumnState[]",
+      "applyOrder?": "boolean",
+      "defaultState?": "ColumnStateParams"
+    },
+    "docs": {
+      "state?": "/** The state from `getColumnState` */",
+      "applyOrder?": "/** Whether column order should be applied */",
+      "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
   "ComponentMetadata": {

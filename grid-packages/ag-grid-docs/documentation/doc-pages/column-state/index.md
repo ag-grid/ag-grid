@@ -15,17 +15,9 @@ part of a Column Definition, it typically does not change).
 | the state.
 
 
-The full list of stateful attributes of Columns are as follows:
+The full list of stateful attributes of Columns are represented by the `ColumnStateParams` interface:
 
-- Width
-- Flex
-- Pinned
-- Sort
-- Hide
-- AggFunc
-- Row Group
-- Pivot
-- Column Order
+<interface-documentation interfaceName='ColumnStateParams' ></interface-documentation>
 
 This section details how such state items can be manipulated without having to update Column Definitions.
 

@@ -1,6 +1,6 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
-import { ColumnModel, ColumnState } from "./columnModel";
+import { ColumnModel, ColumnState, ApplyColumnStateParams } from "./columnModel";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
@@ -286,11 +286,4 @@ export class ColumnApi {
 
 }
 
-export interface ApplyColumnStateParams {
-    /** The state from `getColumnState` */
-    state?: ColumnState[];
-    /** Whether column order should be applied */
-    applyOrder?: boolean;
-    /** State to apply to columns where state is missing for those columns */
-    defaultState?: ColumnState;
-}
+

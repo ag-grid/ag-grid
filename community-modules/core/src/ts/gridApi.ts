@@ -1,6 +1,6 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { ColumnModel, ColumnState } from "./columns/columnModel";
+import { ColumnModel } from "./columns/columnModel";
 import { ColumnApi } from "./columns/columnApi";
 import { SelectionService } from "./selectionService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
