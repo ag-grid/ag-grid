@@ -35,7 +35,7 @@ const seriesOptions: any = [
         type: 'column',
         xKey: 'quarter',
         yKeys: ['wearables', 'services'],
-        yNames: ['iPad', 'Wearables', 'Services'],
+        yNames: ['Wearables', 'Services'],
         hideInLegend: ['services'],
     },
 ];
@@ -65,7 +65,7 @@ describe('transform series options', () => {
                     type: 'column',
                     xKey: 'quarter',
                     yKeys: ['wearables', 'services'],
-                    yNames: ['iPad', 'Wearables', 'Services'],
+                    yNames: ['Wearables', 'Services'],
                     hideInLegend: ['services'],
                 },
             ],
@@ -112,7 +112,7 @@ describe('transform series options', () => {
                 type: 'column',
                 xKey: 'quarter',
                 yKeys: ['wearables', 'services'],
-                yNames: ['iPad', 'Wearables', 'Services'],
+                yNames: ['Wearables', 'Services'],
                 fills: ['blue', 'orange', 'yellow'],
                 hideInLegend: ['services'],
             },
@@ -124,8 +124,8 @@ describe('transform series options', () => {
             type: 'column',
             xKey: 'quarter',
             yKeys: ['iphone', 'mac', 'wearables', 'services'],
+            yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
             fills: ['pink', 'red', 'blue', 'orange', 'yellow'],
-            yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
             hideInLegend: ['mac', 'services'],
         };
 
@@ -141,7 +141,7 @@ describe('transform series options', () => {
                 xKey: 'quarter',
                 yKeys: ['iphone', 'mac', 'wearables', 'services'],
                 fills: ['pink', 'red'],
-                yNames: ['Iphone', 'Mac', 'iPad', 'Wearables', 'Services'],
+                yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
                 hideInLegend: ['mac', 'services'],
             },
             {
