@@ -168,7 +168,7 @@ export class ChartDataModel extends BeanStub {
 
             const providedSeriesChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
             if (!providedSeriesChartType) {
-                if (!this.suppressComboChartWarnings) {
+                if (valueCol.selected && !this.suppressComboChartWarnings) {
                     console.warn(`AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
                 }
                 return {

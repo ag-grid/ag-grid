@@ -8,6 +8,7 @@ import { getSeriesType } from "../../utils/seriesTypeMapper";
 export class ComboChartProxy extends CartesianChartProxy {
 
     private prevFields: string;
+    private prevCategoryId: string;
     private prevSeriesChartTypes: SeriesChartType[];
 
     public constructor(params: ChartProxyParams) {
@@ -49,11 +50,17 @@ export class ComboChartProxy extends CartesianChartProxy {
         // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
         this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
 
+        // check if any fields have changed
         const fields = params.fields.map(f => f.colId).join();
         const fieldsChanged = this.prevFields !== fields;
         this.prevFields = fields;
 
-        return seriesChartTypesChanged || fieldsChanged;
+        // check if the category has changed
+        const categoryId = params.category.id;
+        const categoryChanged = this.prevCategoryId !== categoryId;
+        this.prevCategoryId = categoryId;
+
+        return seriesChartTypesChanged || fieldsChanged || categoryChanged;
     }
 
     private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {

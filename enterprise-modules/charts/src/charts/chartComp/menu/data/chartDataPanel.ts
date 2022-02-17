@@ -237,6 +237,8 @@ export class ChartDataPanel extends Component {
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
 
         columns.forEach(col => {
+            if (!col.selected) { return; }
+
             const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
             if (!seriesChartType) { return; }
 
