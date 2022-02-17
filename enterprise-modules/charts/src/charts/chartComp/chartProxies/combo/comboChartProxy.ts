@@ -171,7 +171,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         delete seriesOverrides.yKeys;
         delete seriesOverrides.yNamees;
 
-        return seriesChartType;
+        return seriesOverrides;
     }
 
 }
