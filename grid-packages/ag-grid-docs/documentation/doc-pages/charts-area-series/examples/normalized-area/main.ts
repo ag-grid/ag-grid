@@ -1,25 +1,43 @@
-import { AgChartOptions } from '@ag-grid-community/core'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions } from "@ag-grid-community/core"
+import * as agCharts from "ag-charts-community"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   title: {
-    text: 'Browser Wars',
+    text: "Browser Wars",
   },
   subtitle: {
-    text: '2009-2019',
+    text: "2009-2019",
   },
   data: getData(),
   series: [
-    {
-      type: 'area',
-      xKey: 'year',
-      yKeys: ['ie', 'firefox', 'safari', 'chrome'],
-      yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
+    { 
+      type: "area",
+      xKey: "year",
       normalizedTo: 100,
-      marker: {
-        enabled: true,
-      },
+      yKey: "ie",
+      yName: "IE",
+    },
+    {
+      type: "area",
+      xKey: "year",
+      normalizedTo: 100,
+      yKey: "firefox",
+      yName: "Firefox",
+    },
+    {
+      type: "area",
+      xKey: "year",
+      normalizedTo: 100,
+      yKey: "safari",
+      yName: "Safari",
+    },
+    {
+      type: "area",
+      xKey: "year",
+      normalizedTo: 100,
+      yKey: "chrome",
+      yName: "Chrome",
     },
   ],
 }

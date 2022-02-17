@@ -21,7 +21,7 @@ A minimal `'column'` series config would therefore look like this:
 series: [{
     type: 'column',
     xKey: 'quarter',
-    yKeys: ['iphone']
+    yKey: 'iphone'
 }]
 ```
 
@@ -31,21 +31,23 @@ In the snippet above we are using the `'iphone'` as the only `yKey`, to show rev
 
 ### Stacked Columns
 
-If the goal is to show the quarterly revenue for each product category, multiple `yKeys` can be used. To go from a [regular column chart](#regular-columns) above to a stacked one below, all we do is add some more `yKeys` like so:
+If the goal is to show the total quarterly revenue for each product category, multiple stacked series can be used
+by adding more `column`-type series.
 
 ```js
-yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
+series: [
+    { type: 'column', xKey: 'quarter', yKey: 'iphone' },
+    { type: 'column', xKey: 'quarter', yKey: 'mac' },
+    { type: 'column', xKey: 'quarter', yKey: 'ipad' },
+    { type: 'column', xKey: 'quarter', yKey: 'wearables' },
+    { type: 'column', xKey: 'quarter', yKey: 'services' },
+}]
 ```
 
-And that simple change transforms our chart into this:
+This example demonstrates stacked columns using the example above. Additionally:
+- We set `yName` on each series to configure the display names to provide tooltip headers and legend entries.
 
 <chart-example title='Stacked Column Series' name='stacked-column' type='generated'></chart-example>
-
-Note that in the example code we also added `yNames` along with `yKeys` which configure the display names to make sure we have nice looking tooltip headers and legend entries.
-
-```js
-yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
-```
 
 ### Grouped Columns
 

@@ -14,8 +14,32 @@ const options: AgChartOptions = {
     {
       type: 'bar',
       xKey: 'quarter',
-      yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
-      yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
+      yKey: 'iphone',
+      yName: 'iPhone',
+    },
+    {
+      type: 'bar',
+      xKey: 'quarter',
+      yKey: 'mac',
+      yName: 'Mac',
+    },
+    {
+      type: 'bar',
+      xKey: 'quarter',
+      yKey: 'ipad',
+      yName: 'iPad',
+    },
+    {
+      type: 'bar',
+      xKey: 'quarter',
+      yKey: 'wearables',
+      yName: 'Wearables',
+    },
+    {
+      type: 'bar',
+      xKey: 'quarter',
+      yKey: 'services',
+      yName: 'Services',
     },
   ],
   axes: [

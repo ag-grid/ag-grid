@@ -1,11 +1,11 @@
-import { AgChartOptions, AgChartTheme } from '@ag-grid-community/core'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgChartTheme } from "@ag-grid-community/core"
+import * as agCharts from "ag-charts-community"
 
 var myTheme: AgChartTheme = {
-  baseTheme: 'ag-default-dark',
+  baseTheme: "ag-default-dark",
   palette: {
-    fills: ['#5C2983', '#0076C5', '#21B372', '#FDDE02', '#F76700', '#D30018'],
-    strokes: ['black'],
+    fills: ["#5C2983", "#0076C5", "#21B372", "#FDDE02", "#F76700", "#D30018"],
+    strokes: ["black"],
   },
   overrides: {
     cartesian: {
@@ -16,7 +16,7 @@ var myTheme: AgChartTheme = {
         column: {
           label: {
             enabled: true,
-            color: 'black',
+            color: "black",
           },
         },
       },
@@ -27,7 +27,7 @@ var myTheme: AgChartTheme = {
 const options: AgChartOptions = {
   theme: myTheme,
 
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   padding: {
     left: 70,
@@ -35,28 +35,21 @@ const options: AgChartOptions = {
   },
   title: {
     enabled: true,
-    text: 'Custom Chart Theme Example',
+    text: "Custom Chart Theme Example",
   },
   data: [
-    { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
-    { label: 'iOS', v1: 7.01, v2: 8.04, v3: 1.338, v4: 6.78, v5: 5.45 },
-    { label: 'BlackBerry', v1: 7.54, v2: 1.98, v3: 9.88, v4: 1.38, v5: 4.44 },
-    { label: 'Symbian', v1: 9.27, v2: 4.21, v3: 2.53, v4: 6.31, v5: 4.44 },
-    { label: 'Windows', v1: 2.8, v2: 1.908, v3: 7.48, v4: 5.29, v5: 8.8 },
+    { label: "Android", v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
+    { label: "iOS", v1: 7.01, v2: 8.04, v3: 1.338, v4: 6.78, v5: 5.45 },
+    { label: "BlackBerry", v1: 7.54, v2: 1.98, v3: 9.88, v4: 1.38, v5: 4.44 },
+    { label: "Symbian", v1: 9.27, v2: 4.21, v3: 2.53, v4: 6.31, v5: 4.44 },
+    { label: "Windows", v1: 2.8, v2: 1.908, v3: 7.48, v4: 5.29, v5: 8.8 },
   ],
   series: [
-    {
-      type: 'column',
-      xKey: 'label',
-      yKeys: ['v1', 'v2', 'v3', 'v4', 'v5'],
-      yNames: [
-        'Reliability',
-        'Ease of use',
-        'Performance',
-        'Price',
-        'Market share',
-      ],
-    },
+    { type: "column", xKey: "label", yKey: "v1", yName: "Reliability" },
+    { type: "column", xKey: "label", yKey: "v2", yName: "Ease of use" },
+    { type: "column", xKey: "label", yKey: "v3", yName: "Performance" },
+    { type: "column", xKey: "label", yKey: "v4", yName: "Price" },
+    { type: "column", xKey: "label", yKey: "v5", yName: "Market share" },
   ],
 }
 

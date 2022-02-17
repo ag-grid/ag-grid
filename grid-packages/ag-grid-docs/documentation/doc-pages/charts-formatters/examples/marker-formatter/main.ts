@@ -1,6 +1,10 @@
 import { AgChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
+function formatter({ yKey, size }: { yKey: string, size: number }) {
+  return { size: yKey === 'electric' ? 12 : size };
+}
+
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   title: {
@@ -30,17 +34,16 @@ const options: AgChartOptions = {
   ],
   series: [
     {
-      type: 'area',
-      xKey: 'quarter',
-      yKeys: ['petrol', 'electric'],
-      yNames: ['Petrol', 'Electric'],
-      marker: {
-        formatter: function (params) {
-          return {
-            size: params.yKey === 'electric' ? 12 : params.size,
-          }
-        },
-      },
+        type: 'area',
+        xKey: 'quarter',
+        yKey: 'petrol',
+        marker: { formatter },
+    },
+    {
+        type: 'area',
+        xKey: 'quarter',
+        yKey: 'electric',
+        marker: { formatter },
     },
   ],
 }

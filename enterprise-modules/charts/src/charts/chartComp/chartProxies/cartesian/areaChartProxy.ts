@@ -113,8 +113,8 @@ export class AreaChartProxy extends CartesianChartProxy {
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
-                    yKeys: [yKey],
-                    yNames: [f.displayName],
+                    yKey,
+                    yName: f.displayName,
                     fills: [fill],
                     strokes: [stroke],
                     marker: {

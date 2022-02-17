@@ -115,11 +115,12 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |         bottom: 40,
 |         left: 40
 |     },
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-|     }],
+|     series: [
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1'},
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2'},
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3'},
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4'},
+|     ],
 |     legend: {
 |         spacing: 40
 |     }
@@ -171,12 +172,12 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |             subtitle: {
 |                 text: 'per quarter',
 |             },
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                 label: {},
-|             }],
+|             series: [
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1'},
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2'},
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3'},
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4'},
+|             ],
 |         };
 |     }
 | }
@@ -227,11 +228,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |                     left: 40,
 |                 },
 |                 series: [
-|                     {
-|                         type: 'column',
-|                         xKey: 'beverage',
-|                         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                     },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q1'},
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q2'},
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q3'},
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q4'},
 |                 ],
 |                 legend: { spacing: 40 },
 |             },
@@ -296,12 +296,13 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |                 },
 |                 subtitle: {
 |                     text: 'per quarter',
-|                 }, series: [{
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                     label: {},
-|                 }],
+|                 },
+|                 series: [
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q1', label: {} },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', label: {} },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', label: {} },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q4', label: {} },
+|                 ],
 |             };
 |         }
 |     };
@@ -890,11 +891,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | agCharts.AgChart.create({
 |     data: data,
 |     container: document.querySelector('#myChart'),
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|     }],
+|     series: [
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1' },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2' },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3' },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4' },
+|     ],
 | });
 | ```
 
@@ -906,11 +908,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | constructor() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         }],
+|         series: [
+|             { type: 'column', xKey: 'beverage', yKey: 'Q1' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q2' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q3' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q4' },
+|         ],
 |     };
 | }
 | ```
@@ -923,11 +926,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |     this.state = {
 |         options: {
 |             data: this.data,
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             }],
+|             series: [
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1' },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2' },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3' },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4' },
+|             ],
 |         }
 |     }
 | }
@@ -938,11 +942,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | beforeMount() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         }],
+|         series: [
+|             { type: 'column', xKey: 'beverage', yKey: 'Q1' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q2' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q3' },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q4' },
+|         ],
 |     };
 | }
 | ```
@@ -962,12 +967,38 @@ We can enhance our chart by providing a label for each block segment. We can set
 | agCharts.AgChart.create({
 |     data: data,
 |     container: document.querySelector('#myChart'),
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +       label: {},
-|     }],
+|     series: [
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q2',
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q3',
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
+| +           label: {},
+|         },
+|     ],
 | });
 | ```
 
@@ -976,12 +1007,32 @@ We can enhance our chart by providing a label for each block segment. We can set
 | constructor() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +           label: {},
-|         }],
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+| +               label: {},
+|             },
+|         ],
 |     };
 | }
 | ```
@@ -994,12 +1045,32 @@ We can enhance our chart by providing a label for each block segment. We can set
 |     this.state = {
 |         options: {
 |             data: this.data,
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +               label: {},
-|             }],
+|             series: [
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q2',
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q3',
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
+| +                   label: {},
+|                 },
+|             ],
 |         }
 |     }
 | }
@@ -1010,12 +1081,32 @@ We can enhance our chart by providing a label for each block segment. We can set
 | beforeMount() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +           label: {},
-|         }],
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+| +               label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+| +               label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+| +               label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+| +               label: {},
+|             }
+|         ],
 |     };
 | }
 | ```
@@ -1035,12 +1126,32 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +   subtitle: {
 | +       text: 'per quarter',
 | +   },
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         label: {},
-|     }],
+|     series: [
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
+|             label: {},
+|         }
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q2',
+|             label: {},
+|         }
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q3',
+|             label: {},
+|         }
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
+|             label: {},
+|         }
+|     ],
 | });
 | ```
 
@@ -1055,12 +1166,32 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +       subtitle: {
 | +           text: 'per quarter',
 | +       },
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             label: {},
-|         }],
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+|                 label: {},
+|             }
+|         ],
 |     };
 | }
 | ```
@@ -1079,12 +1210,32 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +           subtitle: {
 | +               text: 'per quarter',
 | +           },
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                 label: {},
-|             }],
+|             series: [
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
+|                     label: {},
+|                 }
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q2',
+|                     label: {},
+|                 }
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q3',
+|                     label: {},
+|                 }
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
+|                     label: {},
+|                 }
+|             ],
 |         }
 |     }
 | }
@@ -1101,12 +1252,32 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +       subtitle: {
 | +           text: 'per quarter',
 | +       },
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             label: {},
-|         }],
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+|                 label: {},
+|             }
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+|                 label: {},
+|             }
+|         ],
 |     };
 | }
 | ```

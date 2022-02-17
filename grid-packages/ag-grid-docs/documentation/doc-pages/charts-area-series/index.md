@@ -17,7 +17,7 @@ A minimal `'area'` series config would therefore look like this:
 series: [{
     type: 'area',
     xKey: 'year',
-    yKeys: ['ie']
+    yKey: 'ie',
 }]
 ```
 
@@ -74,12 +74,12 @@ series: [
     {
         type: 'area',
         xKey: 'year',
-        yKeys: ['ie']
+        yKey: 'ie'
     },
     {
         type: 'area',
         xKey: 'year',
-        yKeys: ['chrome']
+        yKey: 'chrome'
     }
 ]
 ```
@@ -98,14 +98,19 @@ Note that in the example below we also:
 
 ## Stacked Area Series
 
-If we want the areas to be stacked on top of each other, instead of creating a new `'area'` series per stack level, we simply have to use multiple `yKeys`. For example, to have a stacked area chart that shows changes in market share for the most popular internet browsers we could use a config like this:
+If we want the areas to be stacked on top of each other, there are two ways to achieve this:
+- Multiple `'area'` series with `stacked: true` set.
+- One `'area'` series with multiple `yKeys`.
+
+For example, to have a stacked area chart that shows changes in market share for the most popular internet browsers we could use a config like this:
 
 ```js
-series: [{
-    type: 'area',
-    xKey: 'year',
-    yKeys: ['ie', 'firefox', 'safari', 'chrome']
-}]
+series: [
+    { type: 'area', xKey: 'year', stacked: true, yKey: 'ie' },
+    { type: 'area', xKey: 'year', stacked: true, yKey: 'firefox' },
+    { type: 'area', xKey: 'year', stacked: true, yKey: 'safari' },
+    { type: 'area', xKey: 'year', stacked: true, yKey: 'chrome' }
+]
 ```
 
 This produces the following chart:

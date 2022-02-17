@@ -14,8 +14,36 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'quarter',
-      yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
-      yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
+      yKey: 'iphone',
+      yName: 'iPhone',
+      normalizedTo: 100,
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'mac',
+      yName: 'Mac',
+      normalizedTo: 100,
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'ipad',
+      yName: 'iPad',
+      normalizedTo: 100,
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'wearables',
+      yName: 'Wearables',
+      normalizedTo: 100,
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'services',
+      yName: 'Services',
       normalizedTo: 100,
     },
   ],
@@ -24,9 +52,7 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       label: {
-        formatter: function (params) {
-          return Math.round(params.value) + '%'
-        },
+        formatter: (params) => Math.round(params.value) + '%',
       },
     },
     {

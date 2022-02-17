@@ -14,8 +14,32 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'quarter',
-      yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
-      yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
+      yKey: 'iphone',
+      yName: 'iPhone',
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'mac',
+      yName: 'Mac',
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'ipad',
+      yName: 'iPad',
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'wearables',
+      yName: 'Wearables',
+    },
+    {
+      type: 'column',
+      xKey: 'quarter',
+      yKey: 'services',
+      yName: 'Services',
     },
   ],
 }

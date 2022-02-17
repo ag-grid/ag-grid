@@ -33,12 +33,12 @@ const createOptionsJson = (chartType, options) => {
 
     switch (chartType) {
         case 'bar':
-            json.series = [{
+            json.series = ['revenue', 'profit'].map(yKey => ({
                 type: 'column',
                 xKey: 'month',
-                yKeys: ['revenue', 'profit'],
+                yKey,
                 ...options.series,
-            }];
+            }));
             break;
         case 'line':
             json.series = [{
@@ -54,12 +54,12 @@ const createOptionsJson = (chartType, options) => {
             }];
             break;
         case 'area':
-            json.series = [{
+            json.series = ['revenue', 'profit'].map(yKey => ({
                 type: 'area',
                 xKey: 'month',
-                yKeys: ['revenue', 'profit'],
+                yKey,
                 ...options.series,
-            }];
+            }));
             break;
         case 'scatter':
             json.series = [{

@@ -10,17 +10,27 @@ When it comes to formatters, all series can be divided into two categories:
 
 ## Marker formatter example
 
-If we take a stacked area series where we want the markers of the second subseries to be larger than default size, we could use the following formatter function:
+If we take a stacked area series where we want the markers of the second sub-series to be larger than default size, we could use the following formatter function:
 
 ```js
-type: 'area',
-xKey: 'quarter',
-yKeys: ['petrol', 'electric'],
-marker: {
-    formatter: params => ({
-        size: params.yKey === 'electric' ? 12 : params.size
-    })
+function formatter({ yKey, size }) {
+    return { size: yKey === 'electric' ? 12 : size };
 }
+
+series: [
+    {
+        type: 'area',
+        xKey: 'quarter',
+        yKey: 'petrol',
+        marker: { formatter },
+    },
+    {
+        type: 'area',
+        xKey: 'quarter',
+        yKey: 'electric',
+        marker: { formatter },
+    },
+]
 ```
 
 <chart-example title='Marker Formatter' name='marker-formatter' type='generated'></chart-example>

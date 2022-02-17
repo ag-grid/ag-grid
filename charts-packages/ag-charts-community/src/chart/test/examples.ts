@@ -43,6 +43,12 @@ export const BAR_CHART_EXAMPLE: AgChartOptions = {
 export const GROUPED_BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_EMPLOYMENT_LABOUR_MARKET_AVERAGE_WEEKLY_EARNINGS,
+    theme: {
+        palette: {
+            fills: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
+            strokes: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
+        },
+    },
     title: {
         text: 'Annual Growth in Pay (2018-2019)',
         fontSize: 18,
@@ -54,11 +60,16 @@ export const GROUPED_BAR_CHART_EXAMPLE: AgChartOptions = {
         {
             type: 'bar',
             xKey: 'type',
-            yKeys: ['total', 'regular'],
-            yNames: ['Annual growth in total pay', 'Annual growth in regular pay'],
             grouped: true,
-            fills: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
-            strokes: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
+            yKey: 'total',
+            yName: 'Annual growth in total pay',
+        },
+        {
+            type: 'bar',
+            xKey: 'type',
+            grouped: true,
+            yKey: 'regular',
+            yName: 'Annual growth in regular pay',
         },
     ],
     axes: [
@@ -89,6 +100,20 @@ export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = {
     data: data.DATA_ENGLISH_HOUSING_SURVEY_2016.sort((a, b) => {
         return getTotal(b) - getTotal(a);
     }),
+    theme: {
+        overrides: {
+            area: {
+                series: {
+                    highlightStyle: {
+                        series: {
+                            strokeWidth: 3,
+                            dimOpacity: 0.3,
+                        },
+                    },
+                },
+            },
+        },
+    },
     title: {
         text: 'UK Housing Stock (2016)',
         fontSize: 18,
@@ -100,14 +125,26 @@ export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = {
         {
             type: 'bar',
             xKey: 'type',
-            yKeys: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-            yNames: ['Owner occupied', 'Private rented', 'Local authority', 'Housing association'],
-            highlightStyle: {
-                series: {
-                    strokeWidth: 3,
-                    dimOpacity: 0.3,
-                },
-            },
+            yKey: 'ownerOccupied',
+            yName: 'Owner occupied',
+        },
+        {
+            type: 'bar',
+            xKey: 'type',
+            yKey: 'privateRented',
+            yName: 'Private rented',
+        },
+        {
+            type: 'bar',
+            xKey: 'type',
+            yKey: 'localAuthority',
+            yName: 'Local authority',
+        },
+        {
+            type: 'bar',
+            xKey: 'type',
+            yKey: 'housingAssociation',
+            yName: 'Housing association',
         },
     ],
     axes: [
@@ -128,6 +165,12 @@ export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = {
 export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_INTERNET_USERS,
+    theme: {
+        palette: {
+            fills: ['#00c851', '#ffbb33', '#ff4444'],
+            strokes: ['#006428', '#996500', '#a10000'],
+        },
+    },
     title: {
         text: 'Internet Users by Geographical Location (2019)',
         fontSize: 18,
@@ -139,11 +182,23 @@ export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = {
         {
             type: 'bar',
             xKey: 'area',
-            yKeys: ['usedInLast3Months', 'usedOver3MonthsAgo', 'neverUsed'],
-            yNames: ['Used in last 3 months', 'Used over 3 months ago', 'Never used'],
-            fills: ['#00c851', '#ffbb33', '#ff4444'],
-            strokes: ['#006428', '#996500', '#a10000'],
             normalizedTo: 1,
+            yKey: 'usedInLast3Months',
+            yName: 'Used in last 3 months',
+        },
+        {
+            type: 'bar',
+            xKey: 'area',
+            normalizedTo: 1,
+            yKey: 'usedOver3MonthsAgo',
+            yName: 'Used over 3 months ago',
+        },
+        {
+            type: 'bar',
+            xKey: 'area',
+            normalizedTo: 1,
+            yKey: 'neverUsed',
+            yName: 'Never used',
         },
     ],
     axes: [
@@ -274,12 +329,13 @@ export const GROUPED_COLUMN_EXAMPLE: AgChartOptions = {
         text: 'Source: Office for National Statistics',
     },
     series: [
-        {
-            type: 'column',
-            xKey: 'year',
-            yKeys: ['16-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+'],
-            grouped: true,
-        },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '16-24' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '25-34' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '35-44' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '45-54' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '55-64' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '65-74' },
+        { type: 'column', xKey: 'year', grouped: true, yKey: '75+' },
     ],
     axes: [
         {
@@ -299,6 +355,12 @@ export const GROUPED_COLUMN_EXAMPLE: AgChartOptions = {
 export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_OPEN_DATA_USERS,
+    theme: {
+        palette: {
+            fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921'],
+            strokes: ['#4086a4', '#b1a235', '#6c8a2b', '#a03e24', '#af5517'],
+        },
+    },
     title: {
         text: 'Average Station Entries: Victoria Line (2010)',
         fontSize: 18,
@@ -307,13 +369,30 @@ export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = {
         text: 'Source: Transport for London',
     },
     series: [
+        { type: 'column', xKey: 'station', yKey: 'early', yName: 'Early' },
         {
             type: 'column',
             xKey: 'station',
-            yKeys: ['early', 'morningPeak', 'interPeak', 'afternoonPeak', 'evening'],
-            yNames: ['Early', 'Morning peak', 'Between peak', 'Afternoon peak', 'Evening'],
-            fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921'],
-            strokes: ['#4086a4', '#b1a235', '#6c8a2b', '#a03e24', '#af5517'],
+            yKey: 'morningPeak',
+            yName: 'Morning peak',
+        },
+        {
+            type: 'column',
+            xKey: 'station',
+            yKey: 'interPeak',
+            yName: 'Between peak',
+        },
+        {
+            type: 'column',
+            xKey: 'station',
+            yKey: 'afternoonPeak',
+            yName: 'Afternoon peak',
+        },
+        {
+            type: 'column',
+            xKey: 'station',
+            yKey: 'evening',
+            yName: 'Evening',
         },
     ],
     axes: [
@@ -343,6 +422,12 @@ export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = {
 export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_SCHOOL_PUPIL_CHARACTERISTICS,
+    theme: {
+        palette: {
+            fills: ['#f1c40f', '#e67e22', '#2ecc71', '#3498db', '#9b59b6', '#34495e'],
+            strokes: ['#f39c12', '#d35400', '#27ae60', '#2980b9', '#8e44ad', '#2c3e50'],
+        },
+    },
     title: {
         text: 'Ethnic Diversity of School Pupils (2019)',
         fontSize: 18,
@@ -354,11 +439,44 @@ export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = {
         {
             type: 'column',
             xKey: 'type',
-            yKeys: ['white', 'mixed', 'asian', 'black', 'chinese', 'other'],
-            yNames: ['White', 'Mixed', 'Asian', 'Black', 'Chinese', 'Other'],
             normalizedTo: 100,
-            fills: ['#f1c40f', '#e67e22', '#2ecc71', '#3498db', '#9b59b6', '#34495e'],
-            strokes: ['#f39c12', '#d35400', '#27ae60', '#2980b9', '#8e44ad', '#2c3e50'],
+            yKey: 'white',
+            yName: 'White',
+        },
+        {
+            type: 'column',
+            xKey: 'type',
+            normalizedTo: 100,
+            yKey: 'mixed',
+            yName: 'Mixed',
+        },
+        {
+            type: 'column',
+            xKey: 'type',
+            normalizedTo: 100,
+            yKey: 'asian',
+            yName: 'Asian',
+        },
+        {
+            type: 'column',
+            xKey: 'type',
+            normalizedTo: 100,
+            yKey: 'black',
+            yName: 'Black',
+        },
+        {
+            type: 'column',
+            xKey: 'type',
+            normalizedTo: 100,
+            yKey: 'chinese',
+            yName: 'Chinese',
+        },
+        {
+            type: 'column',
+            xKey: 'type',
+            normalizedTo: 100,
+            yKey: 'other',
+            yName: 'Other',
         },
     ],
     axes: [
@@ -379,6 +497,12 @@ export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = {
 export const COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_PRISON_POPULATION,
+    theme: {
+        palette: {
+            fills: ['#19A0AA', '#F15F36'],
+            strokes: ['#19A0AA', '#F15F36'],
+        },
+    },
     title: {
         text: 'Changes in Prison Population (2019)',
         fontSize: 18,
@@ -390,11 +514,16 @@ export const COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
         {
             type: 'column',
             xKey: 'month',
-            yKeys: ['menDelta', 'womenDelta'],
-            yNames: ['Male', 'Female'],
             grouped: true,
-            fills: ['#19A0AA', '#F15F36'],
-            strokes: ['#19A0AA', '#F15F36'],
+            yKey: 'menDelta',
+            yName: 'Male',
+        },
+        {
+            type: 'column',
+            xKey: 'month',
+            grouped: true,
+            yKey: 'womenDelta',
+            yName: 'Female',
         },
     ],
     axes: [
@@ -1006,6 +1135,13 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
 export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_MUSEUMS_AND_GALLERIES_MONTHLY_VISITS_BY_MUSEUM_2,
+    theme: {
+        palette: {
+            fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
+            strokes: ['#4086a4', '#b1a235', '#6c8a2b', '#a03e24', '#af5517', '#af225a'],
+        },
+        overrides: { area: { series: { marker: { enabled: true } } } },
+    },
     title: {
         text: 'Total Visitors to Science Museums (2019)',
         fontSize: 18,
@@ -1014,22 +1150,21 @@ export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         text: 'Source: Department for Digital, Culture, Media & Sport',
     },
     series: [
+        { type: 'area', xKey: 'date', stacked: true, yKey: 'Science Museum' },
+        { type: 'area', xKey: 'date', stacked: true, yKey: 'National Media Museum' },
+        { type: 'area', xKey: 'date', stacked: true, yKey: 'National Railway Museum' },
+        { type: 'area', xKey: 'date', stacked: true, yKey: 'Locomotion' },
         {
             type: 'area',
             xKey: 'date',
-            yKeys: [
-                'Science Museum',
-                'National Media Museum',
-                'National Railway Museum',
-                'Locomotion',
-                'Museum of Science and Industry, Manchester',
-                'National Coal Mining Museum for England',
-            ],
-            fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
-            strokes: ['#4086a4', '#b1a235', '#6c8a2b', '#a03e24', '#af5517', '#af225a'],
-            marker: {
-                enabled: true,
-            },
+            stacked: true,
+            yKey: 'Museum of Science and Industry, Manchester',
+        },
+        {
+            type: 'area',
+            xKey: 'date',
+            stacked: true,
+            yKey: 'National Coal Mining Museum for England',
         },
     ],
     axes: [
@@ -1062,6 +1197,20 @@ export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
 export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_ENERGY_TRENDS,
+    theme: {
+        overrides: {
+            area: {
+                series: {
+                    highlightStyle: {
+                        series: {
+                            strokeWidth: 4,
+                            dimOpacity: 0.3,
+                        },
+                    },
+                },
+            },
+        },
+    },
     title: {
         text: 'UK Energy Sources (2018)',
         fontSize: 18,
@@ -1073,23 +1222,58 @@ export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
         {
             type: 'area',
             xKey: 'month',
-            yKeys: ['coal', 'petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported'],
-            yNames: [
-                'Coal',
-                'Petroleum',
-                'Natural gas',
-                'Bioenergy & waste',
-                'Nuclear',
-                'Wind, solar & hydro',
-                'Imported',
-            ],
+            yKey: 'coal',
+            yName: 'Coal',
             normalizedTo: 100,
-            highlightStyle: {
-                series: {
-                    strokeWidth: 4,
-                    dimOpacity: 0.3,
-                },
-            },
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'petroleum',
+            yName: 'Petroleum',
+            normalizedTo: 100,
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'naturalGas',
+            yName: 'Natural gas',
+            normalizedTo: 100,
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'bioenergyWaste',
+            yName: 'Bioenergy & waste',
+            normalizedTo: 100,
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'nuclear',
+            yName: 'Nuclear',
+            normalizedTo: 100,
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'windSolarHydro',
+            yName: 'Wind, solar & hydro',
+            normalizedTo: 100,
+            stacked: true,
+        },
+        {
+            type: 'area',
+            xKey: 'month',
+            yKey: 'imported',
+            yName: 'Imported',
+            normalizedTo: 100,
+            stacked: true,
         },
     ],
     axes: [
@@ -1429,7 +1613,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
             standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
         }
         return value < 0 ? '-' + standardised : standardised;
-    }
+    };
 
     Object.assign(GROUPED_CATEGORY_AXIS_EXAMPLE, {
         data: data.DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
@@ -1621,11 +1805,20 @@ export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgChartOptions = {
         {
             type: 'column',
             xKey: 'year',
-            yKeys: ['male', 'female'],
-            yNames: ['Male cattle', 'Female cattle'],
             grouped: true,
             fills: ['#c16068', '#a2bf8a'],
             strokeWidth: 0,
+            yKey: 'male',
+            yName: 'Male cattle',
+        },
+        {
+            type: 'column',
+            xKey: 'year',
+            grouped: true,
+            fills: ['#c16068', '#a2bf8a'],
+            strokeWidth: 0,
+            yKey: 'female',
+            yName: 'Female cattle',
         },
         {
             type: 'line',
@@ -1977,6 +2170,34 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
 export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
     autoSize: true,
     data: data.DATA_WASTE_ELECTRICAL_EQUIPMENT,
+    theme: {
+        overrides: {
+            column: {
+                series: {
+                    tooltip: {
+                        renderer: function (params) {
+                            var formatThousands = function (value: number) {
+                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            };
+
+                            var tooltipHtml = [
+                                '<div class="my-tooltip">',
+                                '<span class="my-tooltip__title" style="color: ' + params.color + '">' + params.yName,
+                                '(' +
+                                    params.datum[params.xKey] +
+                                    '):</span> ' +
+                                    formatThousands(params.datum[params.yKey]) +
+                                    ' tonnes',
+                                '</div>',
+                            ];
+
+                            return tooltipHtml.join('\n');
+                        },
+                    },
+                },
+            },
+        },
+    },
     title: {
         text: 'WEEE Collected in UK (2019)',
         fontSize: 18,
@@ -1991,46 +2212,50 @@ export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
         {
             type: 'column',
             xKey: 'quarter',
-            yKeys: [
-                'largeHousehold',
-                'smallHousehold',
-                'itTelecomms',
-                'consumer',
-                'tools',
-                'displays',
-                'cooling',
-                'gasLampsLed',
-            ],
-            yNames: [
-                'Large household appliances',
-                'Small household appliances',
-                'IT and telecomms equipment',
-                'Consumer equipment',
-                'Electrical and electronic tools',
-                'Display equipment',
-                'Cooling appliances containing refrigerants',
-                'Gas discharge lamps and LED light sources',
-            ],
-            tooltip: {
-                renderer: (params: any) => {
-                    const formatThousands = (value: number) => {
-                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                    };
-
-                    var tooltipHtml = [
-                        '<div class="my-tooltip">',
-                        '<span class="my-tooltip__title" style="color: ' + params.color + '">' + params.yName,
-                        '(' +
-                            params.datum[params.xKey] +
-                            '):</span> ' +
-                            formatThousands(params.datum[params.yKey]) +
-                            ' tonnes',
-                        '</div>',
-                    ];
-
-                    return tooltipHtml.join('\n');
-                },
-            },
+            yKey: 'largeHousehold',
+            yName: 'Large household appliances',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'smallHousehold',
+            yName: 'Small household appliances',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'itTelecomms',
+            yName: 'IT and telecomms equipment',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'consumer',
+            yName: 'Consumer equipment',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'tools',
+            yName: 'Electrical and electronic tools',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'displays',
+            yName: 'Display equipment',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'cooling',
+            yName: 'Cooling appliances containing refrigerants',
+        },
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'gasLampsLed',
+            yName: 'Gas discharge lamps and LED light sources',
         },
     ],
     axes: [

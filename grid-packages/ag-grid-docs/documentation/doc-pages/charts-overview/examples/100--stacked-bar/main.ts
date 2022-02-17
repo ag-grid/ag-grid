@@ -5,6 +5,12 @@ const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
+  theme: {
+    palette: {
+      fills: ['#00c851', '#ffbb33', '#ff4444'],
+      strokes: ['#006428', '#996500', '#a10000'],
+    },
+  },
   title: {
     text: 'Internet Users by Geographical Location (2019)',
     fontSize: 18,
@@ -16,12 +22,24 @@ const options: AgChartOptions = {
     {
       type: 'bar',
       xKey: 'area',
-      yKeys: ['usedInLast3Months', 'usedOver3MonthsAgo', 'neverUsed'],
-      yNames: ['Used in last 3 months', 'Used over 3 months ago', 'Never used'],
-      fills: ['#00c851', '#ffbb33', '#ff4444'],
-      strokes: ['#006428', '#996500', '#a10000'],
       normalizedTo: 1,
+      yKey: 'usedInLast3Months',
+      yName: 'Used in last 3 months'
     },
+    {
+      type: 'bar',
+      xKey: 'area',
+      normalizedTo: 1,
+      yKey: 'usedOver3MonthsAgo',
+      yName: 'Used over 3 months ago'
+    },
+    {
+      type: 'bar',
+      xKey: 'area',
+      normalizedTo: 1,
+      yKey: 'neverUsed',
+      yName: 'Never used'
+    }
   ],
   axes: [
     {

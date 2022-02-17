@@ -23,7 +23,7 @@ const options: AgChartOptions = {
     {
       type: 'column',
       xKey: 'month',
-      yKeys: ['low'],
+      yKey: 'low',
     },
   ],
   axes: [

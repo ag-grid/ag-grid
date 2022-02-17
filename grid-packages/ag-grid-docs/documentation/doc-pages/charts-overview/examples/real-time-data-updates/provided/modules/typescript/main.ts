@@ -1,5 +1,5 @@
-import * as agCharts from 'ag-charts-community';
-import { AgCartesianChartOptions } from 'ag-grid-community';
+import * as agCharts from "ag-charts-community"
+import { AgCartesianChartOptions } from "ag-grid-community"
 
 var systemLoad = 0
 var userLoad = 0
@@ -43,43 +43,43 @@ function getData() {
 }
 
 const options: AgCartesianChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
+  theme: {
+    palette: {
+      fills: ["#ec4d3d", "#4facf2"],
+      strokes: ["#ec4d3d", "#4facf2"],
+    },
+    overrides: { area: { series: { fillOpacity: 0.5 } } },
+  },
   title: {
-    text: 'Simulated CPU Usage',
+    text: "Simulated CPU Usage",
     fontSize: 18,
   },
   series: [
-    {
-      type: 'area',
-      xKey: 'time',
-      yKeys: ['system', 'user'],
-      yNames: ['System', 'User'],
-      fills: ['#ec4d3d', '#4facf2'],
-      fillOpacity: 0.5,
-      strokes: ['#ec4d3d', '#4facf2'],
-    },
+    { type: "area", xKey: "time", yKey: "system", stacked: true, yName: "System" },
+    { type: "area", xKey: "time", yKey: "user", stacked: true, yName: "User" },
   ],
   axes: [
     {
-      type: 'time',
-      position: 'bottom',
+      type: "time",
+      position: "bottom",
       nice: false,
     },
     {
-      type: 'number',
-      position: 'left',
+      type: "number",
+      position: "left",
       title: {
         enabled: true,
-        text: 'Load (%)',
+        text: "Load (%)",
       },
       min: 0,
       max: 100,
     },
   ],
   legend: {
-    position: 'bottom',
+    position: "bottom",
   },
 }
 

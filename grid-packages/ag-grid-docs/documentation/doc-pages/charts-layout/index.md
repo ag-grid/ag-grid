@@ -16,28 +16,28 @@ For example, given the data:
 
 ```js
 var data = [
-    {
-        beverage: 'Coffee',
-        Q1: 450,
-        Q2: 560,
-        Q3: 600,
-        Q4: 700
-    },
-    {
-        beverage: 'Tea',
-        Q1: 270,
-        Q2: 380,
-        Q3: 450,
-        Q4: 520
-    },
-    {
-        beverage: 'Milk',
-        Q1: 180,
-        Q2: 170,
-        Q3: 190,
-        Q4: 200
-    }
-];
+  {
+    beverage: "Coffee",
+    Q1: 450,
+    Q2: 560,
+    Q3: 600,
+    Q4: 700,
+  },
+  {
+    beverage: "Tea",
+    Q1: 270,
+    Q2: 380,
+    Q3: 450,
+    Q4: 520,
+  },
+  {
+    beverage: "Milk",
+    Q1: 180,
+    Q2: 170,
+    Q3: 190,
+    Q4: 200,
+  },
+]
 ```
 
 We can create the chart pictured above using the following chart factory config:
@@ -58,11 +58,28 @@ AgChart.create({
         bottom: 40,
         left: 40
     },
-    series: [{
-        type: 'column',
-        xKey: 'beverage',
-        yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-    }],
+    series: [
+        {
+        type: "column",
+        xKey: "beverage",
+        yKey: "Q1",
+        },
+        {
+        type: "column",
+        xKey: "beverage",
+        yKey: "Q2",
+        },
+        {
+        type: "column",
+        xKey: "beverage",
+        yKey: "Q3",
+        },
+        {
+        type: "column",
+        xKey: "beverage",
+        yKey: "Q4",
+        },
+    ],
     legend: {
         position: 'right',
         spacing: 40

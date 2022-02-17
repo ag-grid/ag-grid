@@ -600,6 +600,8 @@ Object {
       "fills": Array [
         "#c16068",
         "#a2bf8a",
+        "#c16068",
+        "#a2bf8a",
       ],
       "flipXY": false,
       "grouped": true,
@@ -1583,6 +1585,17 @@ Object {
       "top": 10,
     },
     "text": "Source: Environmental Agency",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "tooltip": Object {
+            "renderer": [Function],
+          },
+        },
+      },
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4114,6 +4127,18 @@ Object {
     },
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
   },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "#19A0AA",
+        "#F15F36",
+      ],
+      "strokes": Array [
+        "#19A0AA",
+        "#F15F36",
+      ],
+    },
+  },
   "title": Object {
     "color": "rgb(70, 70, 70)",
     "enabled": true,
@@ -4389,6 +4414,18 @@ Object {
       "top": 10,
     },
     "text": "Source: Office for National Statistics",
+  },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "rgba(0, 117, 163, 0.9)",
+        "rgba(226, 188, 34, 0.9)",
+      ],
+      "strokes": Array [
+        "rgba(0, 117, 163, 0.9)",
+        "rgba(226, 188, 34, 0.9)",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -6740,6 +6777,20 @@ Object {
     },
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
+  "theme": Object {
+    "overrides": Object {
+      "area": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.3,
+              "strokeWidth": 4,
+            },
+          },
+        },
+      },
+    },
+  },
   "title": Object {
     "color": "rgb(70, 70, 70)",
     "enabled": true,
@@ -7017,6 +7068,20 @@ Object {
       "top": 10,
     },
     "text": "Source: Office for National Statistics",
+  },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "#00c851",
+        "#ffbb33",
+        "#ff4444",
+      ],
+      "strokes": Array [
+        "#006428",
+        "#996500",
+        "#a10000",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7307,6 +7372,26 @@ Object {
       "top": 10,
     },
     "text": "Source: Department for Education",
+  },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "#f1c40f",
+        "#e67e22",
+        "#2ecc71",
+        "#3498db",
+        "#9b59b6",
+        "#34495e",
+      ],
+      "strokes": Array [
+        "#f39c12",
+        "#d35400",
+        "#27ae60",
+        "#2980b9",
+        "#8e44ad",
+        "#2c3e50",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9512,6 +9597,35 @@ Object {
     },
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
+  "theme": Object {
+    "overrides": Object {
+      "area": Object {
+        "series": Object {
+          "marker": Object {
+            "enabled": true,
+          },
+        },
+      },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#5BC0EB",
+        "#FDE74C",
+        "#9BC53D",
+        "#E55934",
+        "#FA7921",
+        "#fa3081",
+      ],
+      "strokes": Array [
+        "#4086a4",
+        "#b1a235",
+        "#6c8a2b",
+        "#a03e24",
+        "#af5517",
+        "#af225a",
+      ],
+    },
+  },
   "title": Object {
     "color": "rgb(70, 70, 70)",
     "enabled": true,
@@ -9720,8 +9834,7 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 0.3,
-          "strokeWidth": 3,
+          "dimOpacity": 1,
         },
       },
       "label": Object {
@@ -9793,6 +9906,20 @@ Object {
       "top": 10,
     },
     "text": "Source: Ministry of Housing, Communities & Local Government",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "area": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.3,
+              "strokeWidth": 3,
+            },
+          },
+        },
+      },
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -10078,6 +10205,24 @@ Object {
       "top": 10,
     },
     "text": "Source: Transport for London",
+  },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "#5BC0EB",
+        "#FDE74C",
+        "#9BC53D",
+        "#E55934",
+        "#FA7921",
+      ],
+      "strokes": Array [
+        "#4086a4",
+        "#b1a235",
+        "#6c8a2b",
+        "#a03e24",
+        "#af5517",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
