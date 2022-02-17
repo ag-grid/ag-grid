@@ -1,22 +1,17 @@
 ---
-title: "Value Setters"
+title: "Saving Values"
 ---
 
-After editing a cell, the grid normally inserts the new value into your data using the column definition `field` attribute. If it's not possible to use a field attribute, you can provide a Value Setter instead.
+After editing a cell, the grid normally inserts the new value into your data using the column definition `field` attribute. There are other ways to save values the result from edits which are discussed here.
+
+## Value Setter
 
 A Value Setter is the inverse of a [Value Getter](/value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
-
-<api-documentation source='column-properties/properties.json' section="editing" names='["valueSetter"]' ></api-documentation>
-
-
-A value setter should return `true` if the value was updated successfully and `false` if the value was not updated (including if the value was not changed). When you return `true`, the grid knows it must refresh the cell.
-
-The following is an example of how you would configure a column using the field attribute and then follows how the same can be done using value getters and value setters.
 
 <snippet>
 |const gridOptions = {
 |    columnDefs: [
-|        // Option 1: using field
+|        // Option 1: using field for getting and setting the value
 |        { field: 'name' },
 |
 |        // Options 2: using valueGetter and valueSetter - value getter used to get data
@@ -33,7 +28,9 @@ The following is an example of how you would configure a column using the field 
 |}
 </snippet>
 
-## Example: Value Setter
+A value setter should return `true` if the value was updated successfully and `false` if the value was not updated (including if the value was not changed). When you return `true`, the grid knows it must refresh the cell.
+
+<api-documentation source='column-properties/properties.json' section="editing" names='["valueSetter"]' ></api-documentation>
 
 The example below demonstrates value setters working alongside value getters
 (value setters are typically only used alongside value getters). Note

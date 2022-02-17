@@ -869,35 +869,38 @@
             "showInCollapsed": true
           },
           {
+            "title": "Start / Stop Editing",
+            "url": "/cell-editing-start-stop/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Parsing Values",
+            "url": "/value-parsers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Saving Values",
+            "url": "/value-setters/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Cell Editors",
             "url": "/cell-editors/",
             "showInCollapsed": true
           },
           {
-            "title": "Saving Content",
-            "url": "/saving-content/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Value Parsers",
-                "url": "/value-parsers/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Value Setters",
-                "url": "/value-setters/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Provided Editors",
+            "title": "Provided Cell Editors",
             "url": "/provided-cell-editors/",
             "showInCollapsed": true
           },
           {
             "title": "Undo / Redo Edits",
             "url": "/undo-redo-edits/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Full Row",
+            "url": "/cell-editing-full-row/",
             "showInCollapsed": true
           }
         ]

@@ -972,7 +972,7 @@ Allows you to set the ID for a particular row node based on the data.
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
      * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.     */
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
-    /** Value has changed after editing.     */
+    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent> = new EventEmitter<CellValueChangedEvent>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent> = new EventEmitter<RowValueChangedEvent>();
@@ -980,9 +980,9 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent> = new EventEmitter<CellEditingStartedEvent>();
     /** Editing a cell has stopped.     */
     @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent> = new EventEmitter<CellEditingStoppedEvent>();
-    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only.     */
+    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell.     */
     @Output() public rowEditingStarted: EventEmitter<RowEditingStartedEvent> = new EventEmitter<RowEditingStartedEvent>();
-    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only.     */
+    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell.     */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent> = new EventEmitter<RowEditingStoppedEvent>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent> = new EventEmitter<FilterOpenedEvent>();
