@@ -169,7 +169,7 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         // TODO: remove once `yKeys` and `yNames` have been removed from the options
         delete seriesOverrides.yKeys;
-        delete seriesOverrides.yNamees;
+        delete seriesOverrides.yNames;
 
         return seriesOverrides;
     }
