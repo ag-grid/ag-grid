@@ -151,17 +151,27 @@ export class ComboChartProxy extends CartesianChartProxy {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
-                const seriesOverrides = this.chartOptions[getSeriesType(seriesChartType.chartType)].series;
                 return {
-                    ...seriesOverrides,
+                    ...this.extractSeriesOverrides(seriesChartType),
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
                     yName: field.displayName,
-                    grouped: ['groupedColumn' || 'groupedBar' || 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea' ].includes(chartType),
+                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
+                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
                 }
             }
         });
     }
+
+    private extractSeriesOverrides(seriesChartType: SeriesChartType) {
+        const seriesOverrides = this.chartOptions[getSeriesType(seriesChartType.chartType)].series;
+
+        // TODO: remove once `yKeys` and `yNames` have been removed from the options
+        delete seriesOverrides.yKeys;
+        delete seriesOverrides.yNamees;
+
+        return seriesChartType;
+    }
+
 }
