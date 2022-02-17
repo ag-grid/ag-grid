@@ -35,7 +35,7 @@ export class CssClassManager {
 
     public addCssClass(className: string): void {
         const updateNeeded = this.cssClassStates[className] !== true;
-        if (updateNeeded) {
+        if (updateNeeded && className.length) {
             this.getGui().classList.add(className);
             this.cssClassStates[className] = true;
         }
@@ -43,7 +43,7 @@ export class CssClassManager {
 
     public removeCssClass(className: string): void {
         const updateNeeded = this.cssClassStates[className] !== false;
-        if (updateNeeded) {
+        if (updateNeeded && className.length) {
             this.getGui().classList.remove(className);
             this.cssClassStates[className] = false;
         }
@@ -55,7 +55,7 @@ export class CssClassManager {
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
-        if (updateNeeded) {
+        if (updateNeeded && className.length) {
             this.getGui().classList.toggle(className, addOrRemove);
             this.cssClassStates[className] = addOrRemove;
         }
