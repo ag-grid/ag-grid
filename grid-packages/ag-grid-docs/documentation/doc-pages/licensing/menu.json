@@ -864,8 +864,13 @@
         "icon": "icon-edit-cells",
         "items": [
           {
-            "title": "Cell Editing",
+            "title": "Overview",
             "url": "/cell-editing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Cell Editors",
+            "url": "/cell-editors/",
             "showInCollapsed": true
           },
           {

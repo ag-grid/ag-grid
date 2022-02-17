@@ -410,6 +410,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
     @Input() public suppressClickEdit: boolean | undefined = undefined;
+    /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid.     */
+    @Input() public editReadOnly: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
      * Default: `false`     */
@@ -1217,6 +1219,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
     static ngAcceptInputType_reactUi: boolean | null | '';
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
+    static ngAcceptInputType_editReadOnly: boolean | null | '';
     // @END@
 }
 

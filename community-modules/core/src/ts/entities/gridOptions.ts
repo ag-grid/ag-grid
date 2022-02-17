@@ -245,6 +245,9 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
+    /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */
+    editReadOnly?: boolean;    
+
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.

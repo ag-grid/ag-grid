@@ -9,7 +9,8 @@ import {
     CellEvent,
     CellFocusedEvent,
     Events,
-    FlashCellsEvent
+    FlashCellsEvent,
+    CellValueChangedEvent
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
@@ -426,15 +427,42 @@ export class CellCtrl extends BeanStub {
     }
 
     private saveNewValue(oldValue: any, newValue: any): void {
-        if (newValue !== oldValue) {
-            // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-            // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-            // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-            // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-            this.suppressRefreshCell = true;
-            this.rowNode.setDataValue(this.column, newValue);
-            this.suppressRefreshCell = false;
+        if (newValue===oldValue) { return; }
+
+        if (this.beans.gridOptionsWrapper.isEditReadOnly()) {
+            this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
+            return;
         }
+        
+        // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+        // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+        // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+        // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+        this.suppressRefreshCell = true;
+        this.rowNode.setDataValue(this.column, newValue);
+        this.suppressRefreshCell = false;
+    }
+
+    private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
+        const rowNode = this.rowNode;
+        const event: CellValueChangedEvent = {
+            type: Events.EVENT_CELL_VALUE_CHANGED,
+            event: null,
+            rowIndex: rowNode.rowIndex!,
+            rowPinned: rowNode.rowPinned,
+            column: this.column,
+            api: this.beans.gridApi,
+            columnApi: this.beans.columnApi,
+            colDef: this.column.getColDef(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            data: rowNode.data,
+            node: rowNode,
+            oldValue,
+            newValue,
+            value: newValue,
+            source: undefined
+        };
+        this.beans.eventService.dispatchEvent(event);
     }
 
     public stopEditing(cancel = false): void {

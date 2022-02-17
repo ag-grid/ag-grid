@@ -807,6 +807,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnApi;
     }
 
+    public isEditReadOnly(): boolean {
+        return isTrue(this.gridOptions.editReadOnly);;
+    }
+
     public isImmutableData() {
         // we used to have a property immutableData for this. however this was deprecated
         // in favour of having Immutable Data on by default when getRowKey is provided
