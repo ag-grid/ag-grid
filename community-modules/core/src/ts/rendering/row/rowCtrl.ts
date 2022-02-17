@@ -1218,9 +1218,16 @@ export class RowCtrl extends BeanStub {
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
         if (this.rowNode.rowHeight == null) { return; }
-        const heightPx = `${this.rowNode.rowHeight}px`;
+        const fromFunction = this.beans.gridOptionsWrapper.isGetRowHeightFunction();
+        const rowHeight = this.rowNode.rowHeight;
+        const defaultRowHeight = this.beans.gridOptionsWrapper.getDefaultRowHeight();
 
-        this.allRowGuis.forEach(gui => gui.element.style.height = heightPx);
+        this.allRowGuis.forEach(gui => {
+            gui.element.style.height = `${rowHeight}px`;
+            if (fromFunction) {
+                gui.element.style.setProperty('--ag-row-height', `${Math.min(defaultRowHeight, rowHeight) - 2}px`);
+            }
+        });
     }
 
     public addEventListener(eventType: string, listener: Function): void {

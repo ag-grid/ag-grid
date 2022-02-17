@@ -1781,6 +1781,15 @@ export class GridOptionsWrapper {
             (this.gridOptions as any)[callbackMethodName](event);
         }
     }
+    
+    private setRowHeightVariable(height: number): void {
+        const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-row-height').trim();
+        const newRowHeight = `${height}px`;
+
+        if (oldRowHeight != newRowHeight) {
+            this.eGridDiv.style.setProperty('--ag-row-height', newRowHeight);
+        }
+    }
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
@@ -1788,19 +1797,19 @@ export class GridOptionsWrapper {
             return this.getDefaultRowHeight();
         }
 
-        if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
-            const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-theme-row-height').trim();
-            const newRowHeight = `${this.gridOptions.rowHeight}px`;
+        const rowHeight = this.gridOptions.rowHeight;
 
-            if (oldRowHeight != newRowHeight) {
-                this.eGridDiv.style.setProperty('--ag-theme-row-height', newRowHeight);
-            }
-
-            return this.gridOptions.rowHeight;
+        if (rowHeight && this.isNumeric(rowHeight)) {
+            this.setRowHeightVariable(rowHeight);
+            return rowHeight;
         }
 
         console.warn('AG Grid row height must be a number if not using standard row model');
         return this.getDefaultRowHeight();
+    }
+
+    public isGetRowHeightFunction(): boolean {
+        return typeof this.gridOptions.getRowHeight === 'function';
     }
 
     public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
@@ -1812,17 +1821,19 @@ export class GridOptionsWrapper {
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
 
-        if (typeof this.gridOptions.getRowHeight === 'function') {
+        if (this.isGetRowHeightFunction()) {
             if (allowEstimate) {
                 return { height: defaultRowHeight, estimated: true };
             }
+
             const params: RowHeightParams = {
                 node: rowNode,
                 data: rowNode.data,
                 api: this.gridOptions.api!,
                 context: this.gridOptions.context
             };
-            const height = this.gridOptions.getRowHeight(params);
+
+            const height = this.gridOptions.getRowHeight!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {

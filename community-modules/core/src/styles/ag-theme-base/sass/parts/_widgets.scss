@@ -214,7 +214,7 @@
     }
 
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
-        height: min(var(--ag-theme-row-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
+        height: min(var(--ag-row-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
         display: flex;
         align-items: center;
         flex: none;
