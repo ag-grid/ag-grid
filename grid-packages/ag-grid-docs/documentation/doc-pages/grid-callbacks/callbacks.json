@@ -8,6 +8,7 @@
         },
         "getBusinessKeyForNode": {},
         "getRowNodeId": {},
+        "getRowKey": {},
         "processRowPostCreate": {},
         "isRowSelectable": {
             "more": {
