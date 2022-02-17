@@ -645,7 +645,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
-    overflow: hidden;
+    // adding overflow: hidden breaks the checkbox focus outline
+    // overflow: hidden;
     // adding width: 100% here breaks text-overflow: ellipsis
     // width: 100%;
     &.ag-row-group {
