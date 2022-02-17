@@ -10380,10 +10380,16 @@
     "normalizedTo": { "type": { "returnType": "number", "optional": true } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
-    "yKeys": { "type": { "returnType": "string[]", "optional": true } },
+    "yKeys": {
+      "description": "/** @deprecated use yKey and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
     "xName": { "type": { "returnType": "string", "optional": true } },
+    "yNames": {
+      "description": "/** @deprecated use yName and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
     "yName": { "type": { "returnType": "string", "optional": true } },
-    "yNames": { "type": { "returnType": "string[]", "optional": true } },
     "fills": { "type": { "returnType": "string[]", "optional": true } },
     "strokes": { "type": { "returnType": "string[]", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
@@ -10463,15 +10469,18 @@
   "AgBarSeriesOptions": {
     "type": { "type": { "returnType": "'bar' | 'column'", "optional": true } },
     "grouped": { "type": { "returnType": "boolean", "optional": true } },
+    "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "normalizedTo": { "type": { "returnType": "number", "optional": true } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
     "yKeys": {
+      "description": "/** @deprecated use yKey and multiple series instead\n */",
       "type": { "returnType": "string[] | string[][]", "optional": true }
     },
     "xName": { "type": { "returnType": "string", "optional": true } },
     "yName": { "type": { "returnType": "string", "optional": true } },
     "yNames": {
+      "description": "/** @deprecated use yName and multiple series instead\n */",
       "type": {
         "returnType": "string[] | { [key in string]: string }",
         "optional": true

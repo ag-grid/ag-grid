@@ -105,6 +105,7 @@ interface PreparationContext {
 
 export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T {
     let options: T = fallbackOptions == null ? newOptions : jsonMerge(fallbackOptions, newOptions);
+    sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
@@ -151,6 +152,16 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     prepareEnabledOptions<T>(options, mergedOptions);
 
     return mergedOptions;
+}
+
+function sanityCheckOptions<T extends AgChartOptions>(options: T) {
+    if (options.series?.some((s: any) => s.yKeys != null && s.yKey != null )) {
+        console.warn('AG Charts - series options yKeys and yKey are mutually exclusive, please only use yKey for future compatibility.');
+    }
+
+    if (options.series?.some((s: any) => s.yNames != null && s.yName != null )) {
+        console.warn('AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility');
+    }
 }
 
 function prepareMainOptions<T>(defaultOptions: T, defaultOverrides: T, options: T): { context: PreparationContext, mergedOptions: T; axesThemes: any; seriesThemes: any; } {

@@ -521,8 +521,10 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     normalizedTo?: number;
     xKey?: string;
     yKey?: string;
+    /** @deprecated use yKey and multiple series instead */
     yKeys?: string[];
     xName?: string;
+    /** @deprecated use yName and multiple series instead */
     yNames?: string[];
     yName?: string;
     fills?: string[];
@@ -566,12 +568,15 @@ export interface AgBarSeriesTooltip extends AgSeriesTooltip {
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
     grouped?: boolean;
+    stacked?: boolean;
     normalizedTo?: number;
     xKey?: string;
     yKey?: string;
+    /** @deprecated use yKey and multiple series instead */
     yKeys?: string[] | string[][];
     xName?: string;
     yName?: string;
+    /** @deprecated use yName and multiple series instead */
     yNames?: string[] | { [key in string]: string };
     flipXY?: boolean;
     fills?: string[];
