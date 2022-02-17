@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { jsonDiff, jsonMerge, DELETE, jsonWalk, jsonApply } from './json';
 
-const FIXED_DATE = new Date(2022, 0, 27, 0, 0, 0, 0);
+const FIXED_DATE = new Date("2022-01-27T00:00:00.000+00:00");
 
 class TestApply {
     num?: number = undefined;
