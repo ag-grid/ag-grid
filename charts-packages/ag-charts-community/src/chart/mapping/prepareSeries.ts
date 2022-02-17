@@ -1,4 +1,4 @@
-import { AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from "../agChartOptions";
+import { AgCartesianSeriesOptions, AgPolarSeriesOptions, AgHierarchySeriesOptions } from '../agChartOptions';
 
 type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
 type SeriesOptionType = NonNullable<SeriesOptions['type']>;
@@ -8,38 +8,30 @@ type SeriesOptionType = NonNullable<SeriesOptions['type']>;
  * Returns an array of arrays containing the ordered and grouped series options objects.
  */
 export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
-    const indexMap: Record<SeriesOptionType, SeriesOptions[]> = {
-        column: [],
-        bar: [],
-        line: [],
-        scatter: [],
-        area: [],
-        histogram: [],
-        ohlc: [],
-        pie: [],
-        treemap: [],
-    };
+    const indexMap: Record<string, SeriesOptions[]> = {};
 
     const result = [];
 
     for (const s of seriesOptions) {
-        const isColumnOrBar = s.type === 'column' || s.type === 'bar';
-        const isStackedArea = s.type === 'area' && s.stacked === true;
-
-        if (!isColumnOrBar && !isStackedArea) {
+        if (s.type !== 'column' && s.type !== 'bar' && (s.type !== 'area' || s.stacked !== true)) {
             // No need to use index for these cases.
             result.push([s]);
             continue;
         }
-
+        
         const seriesType = s.type || 'line';
-        if (seriesType === 'pie' || seriesType === 'treemap') {
-            throw new Error(`AG Grid - Unexpected series type of: ${seriesType}`);
-        } else if (indexMap[seriesType].length === 0) {
+        const groupingKey = (s as any).stacked ? 'stacked' :
+            (s as any).grouped ? 'grouped' :
+            s.yKeys ? 'stacked' :
+            'grouped';
+        const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
+        if (indexMap[indexKey] == null) {
             // Add indexed array to result on first addition.
-            result.push(indexMap[seriesType]);
+            indexMap[indexKey] = [];
+            result.push(indexMap[indexKey]);
         }
-        indexMap[seriesType].push(s);
+
+        indexMap[indexKey].push(s);
     }
 
     return result;
@@ -56,7 +48,6 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
 
     for (const s of series) {
         for (const property in s) {
-
             const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
             const stringValueProperty = stringValueProperties.indexOf(property) > -1;
 
@@ -87,7 +78,16 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
 export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
     const result: SeriesOptions[] = [];
 
-    for (const series of groupSeriesByType(seriesOptions)) {
+    const preprocessed = seriesOptions.map((series) => {
+        // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
+        if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
+            return { ...series, grouped: series.grouped != null ? series.grouped : true };
+        }
+
+        return series;
+    });
+
+    for (const series of groupSeriesByType(preprocessed)) {
         switch (series[0].type) {
             case 'column':
             case 'bar':
@@ -99,7 +99,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
             case 'line':
             default:
                 if (series.length > 1) {
-                    throw new Error('AG-Grid - unexpected grouping of series type: ' + series[0].type);
+                    console.warn('AG Charts - unexpected grouping of series type: ' + series[0].type);
                 }
                 result.push(series[0]);
                 break;

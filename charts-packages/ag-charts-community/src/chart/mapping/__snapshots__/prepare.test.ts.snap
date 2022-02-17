@@ -1495,7 +1495,7 @@ Object {
         "#888888",
       ],
       "flipXY": false,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1550,12 +1550,26 @@ Object {
       "yKeys": Array [
         Array [
           "largeHousehold",
+        ],
+        Array [
           "smallHousehold",
+        ],
+        Array [
           "itTelecomms",
+        ],
+        Array [
           "consumer",
+        ],
+        Array [
           "tools",
+        ],
+        Array [
           "displays",
+        ],
+        Array [
           "cooling",
+        ],
+        Array [
           "gasLampsLed",
         ],
       ],
@@ -2995,7 +3009,7 @@ Object {
         "#f3622d",
       ],
       "flipXY": true,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -3265,7 +3279,7 @@ Object {
         "rgba(0, 117, 163, 0.9)",
       ],
       "flipXY": true,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "#0ab9ff",
@@ -6993,7 +7007,7 @@ Object {
         "#ff4444",
       ],
       "flipXY": true,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7043,7 +7057,11 @@ Object {
       "yKeys": Array [
         Array [
           "usedInLast3Months",
+        ],
+        Array [
           "usedOver3MonthsAgo",
+        ],
+        Array [
           "neverUsed",
         ],
       ],
@@ -7288,7 +7306,7 @@ Object {
         "#34495e",
       ],
       "flipXY": false,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7341,10 +7359,20 @@ Object {
       "yKeys": Array [
         Array [
           "white",
+        ],
+        Array [
           "mixed",
+        ],
+        Array [
           "asian",
+        ],
+        Array [
           "black",
+        ],
+        Array [
           "chinese",
+        ],
+        Array [
           "other",
         ],
       ],
@@ -8051,7 +8079,7 @@ Object {
         "#0084e7",
       ],
       "flipXY": false,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9828,7 +9856,7 @@ Object {
         "#41a9c9",
       ],
       "flipXY": true,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9879,8 +9907,14 @@ Object {
       "yKeys": Array [
         Array [
           "ownerOccupied",
+        ],
+        Array [
           "privateRented",
+        ],
+        Array [
           "localAuthority",
+        ],
+        Array [
           "housingAssociation",
         ],
       ],
@@ -10124,7 +10158,7 @@ Object {
         "#FA7921",
       ],
       "flipXY": false,
-      "grouped": false,
+      "grouped": true,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -10176,9 +10210,17 @@ Object {
       "yKeys": Array [
         Array [
           "early",
+        ],
+        Array [
           "morningPeak",
+        ],
+        Array [
           "interPeak",
+        ],
+        Array [
           "afternoonPeak",
+        ],
+        Array [
           "evening",
         ],
       ],

@@ -211,10 +211,12 @@ describe('update', () => {
                 xKey: 'month',
                 yKey: 'profit',
                 fills: ['lime', 'cyan'],
+                stacked: true,
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
+                stacked: true,
             }, {
                 type: 'area',
                 xKey: 'month',
@@ -268,11 +270,13 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
+                stacked: true,
                 fills: ['lime', 'cyan']
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
+                stacked: true,
                 fills: ['lime', 'cyan']
             }, {
                 // series type is optional because `line` is default for `cartesian` charts

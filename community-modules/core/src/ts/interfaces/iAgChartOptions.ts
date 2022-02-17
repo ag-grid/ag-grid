@@ -520,14 +520,16 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     marker?: AgCartesianSeriesMarker;
     normalizedTo?: number;
     xKey?: string;
-    yKey?: string;
     /** @deprecated use yKey and multiple series instead */
     yKeys?: string[];
+    yKey?: string;
     xName?: string;
     /** @deprecated use yName and multiple series instead */
     yNames?: string[];
     yName?: string;
+    /** @deprecated use fill and multiple series instead */
     fills?: string[];
+    fill?: string;
     strokes?: string[];
     strokeWidth?: number;
     fillOpacity?: number;
@@ -579,7 +581,9 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     /** @deprecated use yName and multiple series instead */
     yNames?: string[] | { [key in string]: string };
     flipXY?: boolean;
+    /** @deprecated use fill and multiple series instead */
     fills?: string[];
+    fill?: string;
     strokes?: string[];
     strokeWidth?: number;
     fillOpacity?: number;

@@ -160,7 +160,7 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
     }
 
     if (options.series?.some((s: any) => s.yNames != null && s.yName != null )) {
-        console.warn('AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility');
+        console.warn('AG Charts - series options yNames and yName are mutually exclusive, please only use yName for future compatibility.');
     }
 }
 

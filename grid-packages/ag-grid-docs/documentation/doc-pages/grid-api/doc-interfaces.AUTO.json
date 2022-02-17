@@ -10428,18 +10428,22 @@
     },
     "normalizedTo": { "type": { "returnType": "number", "optional": true } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
     "yKeys": {
       "description": "/** @deprecated use yKey and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
+    "yKey": { "type": { "returnType": "string", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
     "yNames": {
       "description": "/** @deprecated use yName and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yName": { "type": { "returnType": "string", "optional": true } },
-    "fills": { "type": { "returnType": "string[]", "optional": true } },
+    "fills": {
+      "description": "/** @deprecated use fill and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "fill": { "type": { "returnType": "string", "optional": true } },
     "strokes": { "type": { "returnType": "string[]", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "fillOpacity": { "type": { "returnType": "number", "optional": true } },
@@ -10536,7 +10540,11 @@
       }
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
-    "fills": { "type": { "returnType": "string[]", "optional": true } },
+    "fills": {
+      "description": "/** @deprecated use fill and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "fill": { "type": { "returnType": "string", "optional": true } },
     "strokes": { "type": { "returnType": "string[]", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "fillOpacity": { "type": { "returnType": "number", "optional": true } },

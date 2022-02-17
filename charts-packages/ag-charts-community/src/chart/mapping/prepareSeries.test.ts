@@ -1,8 +1,9 @@
 import { describe, expect, test } from "@jest/globals";
 import "jest-canvas-mock";
 import { groupSeriesByType, reduceSeries, processSeriesOptions } from "./prepareSeries";
+import { AgBarSeriesOptions, AgLineSeriesOptions } from "../agChartOptions";
 
-const seriesOptions: any = [
+const seriesOptions: ((AgBarSeriesOptions | AgLineSeriesOptions) & {hideInLegend?: string[]})[] = [
     {
         type: 'column',
         xKey: 'quarter',
@@ -37,6 +38,7 @@ const seriesOptions: any = [
         yKeys: ['wearables', 'services'],
         yNames: ['Wearables', 'Services'],
         hideInLegend: ['services'],
+        grouped: true,
     },
 ];
 
@@ -67,6 +69,7 @@ describe('transform series options', () => {
                     yKeys: ['wearables', 'services'],
                     yNames: ['Wearables', 'Services'],
                     hideInLegend: ['services'],
+                    grouped: true,
                 },
             ],
             [
@@ -143,6 +146,57 @@ describe('transform series options', () => {
                 fills: ['pink', 'red'],
                 yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
                 hideInLegend: ['mac', 'services'],
+                grouped: true,
+            },
+            {
+                type: 'line',
+                xKey: 'quarter',
+                yKey: 'mac',
+                yName: 'Mac',
+            },
+            { type: 'line', xKey: 'quarter', yKey: 'iphone', yName: 'iPhone' },
+        ];
+
+        expect(result).toEqual(processedSeriesOptions);
+    });
+
+    test('processSeriesOptions with grouped columns', () => {
+        const result = processSeriesOptions(seriesOptions.map((s) => s.type === 'column' ? {...s, grouped: true} : s));
+
+        const processedSeriesOptions = [
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKeys: ['iphone', 'mac', 'wearables', 'services'],
+                fills: ['pink', 'red'],
+                yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
+                hideInLegend: ['mac', 'services'],
+                grouped: true,
+            },
+            {
+                type: 'line',
+                xKey: 'quarter',
+                yKey: 'mac',
+                yName: 'Mac',
+            },
+            { type: 'line', xKey: 'quarter', yKey: 'iphone', yName: 'iPhone' },
+        ];
+
+        expect(result).toEqual(processedSeriesOptions);
+    });
+
+    test('processSeriesOptions with stacked columns', () => {
+        const result = processSeriesOptions(seriesOptions.map((s) => s.type === 'column' ? {...s, stacked: true, grouped: undefined } : s));
+
+        const processedSeriesOptions = [
+            {
+                type: 'column',
+                xKey: 'quarter',
+                yKeys: ['iphone', 'mac', 'wearables', 'services'],
+                fills: ['pink', 'red'],
+                yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
+                hideInLegend: ['mac', 'services'],
+                stacked: true,
             },
             {
                 type: 'line',

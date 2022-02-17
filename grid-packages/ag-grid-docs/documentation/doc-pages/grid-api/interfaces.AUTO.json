@@ -6131,12 +6131,13 @@
       "marker?": "AgCartesianSeriesMarker",
       "normalizedTo?": "number",
       "xKey?": "string",
-      "yKey?": "string",
       "yKeys?": "string[]",
+      "yKey?": "string",
       "xName?": "string",
       "yNames?": "string[]",
       "yName?": "string",
       "fills?": "string[]",
+      "fill?": "string",
       "strokes?": "string[]",
       "strokeWidth?": "number",
       "fillOpacity?": "number",
@@ -6156,7 +6157,8 @@
     },
     "docs": {
       "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
-      "yNames?": "/** @deprecated use yName and multiple series instead\n */"
+      "yNames?": "/** @deprecated use yName and multiple series instead\n */",
+      "fills?": "/** @deprecated use fill and multiple series instead\n */"
     }
   },
   "AgBarSeriesLabelOptions": {
@@ -6210,6 +6212,7 @@
       "yNames?": "string[] | { [key in string]: string; }",
       "flipXY?": "boolean",
       "fills?": "string[]",
+      "fill?": "string",
       "strokes?": "string[]",
       "strokeWidth?": "number",
       "fillOpacity?": "number",
@@ -6229,7 +6232,8 @@
     },
     "docs": {
       "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
-      "yNames?": "/** @deprecated use yName and multiple series instead\n */"
+      "yNames?": "/** @deprecated use yName and multiple series instead\n */",
+      "fills?": "/** @deprecated use fill and multiple series instead\n */"
     }
   },
   "AgHistogramSeriesLabelOptions": {
