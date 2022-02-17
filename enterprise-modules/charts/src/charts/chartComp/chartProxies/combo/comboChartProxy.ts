@@ -1,6 +1,12 @@
-import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition } from "ag-charts-community";
+import {
+    AgCartesianAxisOptions,
+    AgCartesianChartOptions,
+    AgChart,
+    CartesianChart,
+    ChartAxisPosition
+} from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
@@ -35,8 +41,8 @@ export class ComboChartProxy extends CartesianChartProxy {
         };
 
         if (this.seriesChanged(params)) {
-            options.series = this.getSeriesOptions(params)
-            options.axes = this.getAxes(params)
+            options.series = this.getSeriesOptions(params);
+            options.axes = this.getAxes(params);
         }
 
         AgChart.update(this.chart as CartesianChart, options);

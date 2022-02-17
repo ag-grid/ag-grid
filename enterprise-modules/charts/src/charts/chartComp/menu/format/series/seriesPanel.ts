@@ -6,22 +6,21 @@ import {
     AgSlider,
     AgToggleButton,
     Autowired,
-    ChartType,
     Component,
     ListOption,
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ShadowPanel} from "./shadowPanel";
-import {FontPanel} from "../fontPanel";
-import {ChartTranslationService} from "../../../services/chartTranslationService";
-import {initFontPanelParams} from "./fontPanelParams";
-import {ChartOptionsService} from "../../../services/chartOptionsService";
-import {getMaxValue} from "../formatPanel";
-import {MarkersPanel} from "./markersPanel";
-import {ChartController} from "../../../chartController";
-import {ChartSeriesType, getSeriesType} from "../../../utils/seriesTypeMapper";
-import {CalloutPanel} from "./calloutPanel";
+import { ShadowPanel } from "./shadowPanel";
+import { FontPanel } from "../fontPanel";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { initFontPanelParams } from "./fontPanelParams";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { getMaxValue } from "../formatPanel";
+import { MarkersPanel } from "./markersPanel";
+import { ChartController } from "../../../chartController";
+import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
+import { CalloutPanel } from "./calloutPanel";
 
 export class SeriesPanel extends Component {
 

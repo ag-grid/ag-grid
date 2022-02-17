@@ -4,12 +4,12 @@ import {
     AgPanel,
     AgPromise,
     Autowired,
+    ChartCreated,
     ChartMenuOptions,
     Component,
     Events,
     GetChartToolbarItemsParams,
-    PostConstruct,
-    ChartCreated
+    PostConstruct
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";

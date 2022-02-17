@@ -291,7 +291,6 @@ export class ChartController extends BeanStub {
         }
     }
 
-
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
     }

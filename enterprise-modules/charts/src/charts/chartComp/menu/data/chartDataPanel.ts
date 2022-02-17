@@ -6,8 +6,10 @@ import {
     AgRadioButton,
     AgSelect,
     AgToggleButton,
+    AutoScrollService,
     Autowired,
     ChartType,
+    Column,
     Component,
     DragAndDropService,
     DraggingEvent,
@@ -15,9 +17,7 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
-    SeriesChartType,
-    AutoScrollService,
-    Column
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";

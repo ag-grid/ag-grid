@@ -1,7 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { BandScale, LinearScale, Rect } from "ag-charts-community";
+import { Rect } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
-import { CreateColumnRectsParams, createColumnRects } from "../miniChartHelpers";
+import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
 
 export class MiniStackedColumn extends MiniChartWithAxes {
     static chartType: ChartType = 'stackedColumn';

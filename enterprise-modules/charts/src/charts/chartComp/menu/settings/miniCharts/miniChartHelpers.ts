@@ -1,4 +1,4 @@
-import { ClipRect, BandScale, Group, LinearScale, Rect, Path } from "ag-charts-community";
+import { BandScale, ClipRect, Group, LinearScale, Path, Rect } from "ag-charts-community";
 
 export interface CreateColumnRectsParams {
     stacked: boolean;

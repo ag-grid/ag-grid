@@ -6,7 +6,6 @@ import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export function getMaxValue(currentValue: number, defaultMaxValue: number) {
     return Math.max(currentValue, defaultMaxValue);
