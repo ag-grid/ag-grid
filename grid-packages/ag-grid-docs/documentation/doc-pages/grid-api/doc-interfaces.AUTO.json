@@ -3622,7 +3622,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing. */",
+      "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent" },
         "returnType": "void",
@@ -3631,7 +3631,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing. */",
+      "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent" },
         "returnType": "void",
@@ -3694,7 +3694,7 @@
       "meta": { "isEvent": true, "name": "onCellEditingStopped" }
     },
     "onRowEditingStarted": {
-      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
+      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. */",
       "type": {
         "arguments": { "event": "RowEditingStartedEvent" },
         "returnType": "void",
@@ -3703,7 +3703,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStarted" }
     },
     "rowEditingStarted": {
-      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
+      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. */",
       "type": {
         "arguments": { "event": "RowEditingStartedEvent" },
         "returnType": "void",
@@ -3712,7 +3712,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStarted" }
     },
     "onRowEditingStopped": {
-      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
+      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. */",
       "type": {
         "arguments": { "event": "RowEditingStoppedEvent" },
         "returnType": "void",
@@ -3721,7 +3721,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
     "rowEditingStopped": {
-      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
+      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. */",
       "type": {
         "arguments": { "event": "RowEditingStoppedEvent" },
         "returnType": "void",
