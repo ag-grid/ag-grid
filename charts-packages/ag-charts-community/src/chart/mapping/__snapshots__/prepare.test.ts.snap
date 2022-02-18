@@ -10158,7 +10158,7 @@ Object {
         "#FA7921",
       ],
       "flipXY": false,
-      "grouped": true,
+      "grouped": false,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -10210,17 +10210,9 @@ Object {
       "yKeys": Array [
         Array [
           "early",
-        ],
-        Array [
           "morningPeak",
-        ],
-        Array [
           "interPeak",
-        ],
-        Array [
           "afternoonPeak",
-        ],
-        Array [
           "evening",
         ],
       ],
