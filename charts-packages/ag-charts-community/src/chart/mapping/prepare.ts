@@ -225,7 +225,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
         case 'line':
             paletteOptions.stroke = takeColours(context, fills, 1)[0];
             paletteOptions.marker = {
-                stroke: takeColours(context, fills, 1)[0],
+                stroke: takeColours(context, strokes, 1)[0],
                 fill: takeColours(context, fills, 1)[0],
             };
             break;

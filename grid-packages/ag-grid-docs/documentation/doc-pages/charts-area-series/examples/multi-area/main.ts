@@ -3,6 +3,9 @@ import * as agCharts from 'ag-charts-community'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
+  theme: {
+    palette: { fills: ['#f44336', '#8bc34a'], strokes: ['#ab2f26','#618834']},
+  },
   title: {
     text: 'Microsoft Internet Explorer vs Google Chrome',
   },
@@ -16,8 +19,6 @@ const options: AgChartOptions = {
       xKey: 'year',
       yKey: 'ie',
       yName: 'IE',
-      fills: ['#f44336'],
-      strokes: ['#ab2f26'],
       fillOpacity: 0.7,
       marker: {
         enabled: true,
@@ -28,8 +29,6 @@ const options: AgChartOptions = {
       xKey: 'year',
       yKey: 'chrome',
       yName: 'Chrome',
-      fills: ['#8bc34a'],
-      strokes: ['#618834'],
       fillOpacity: 0.7,
       marker: {
         enabled: true,

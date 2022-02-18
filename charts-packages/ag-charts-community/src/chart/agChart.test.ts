@@ -75,7 +75,7 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime']
+                fill: 'lime',
             }],
             legend: {
                 item: {
@@ -114,7 +114,7 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime']
+                fill: 'lime',
             }],
             legend: {
                 spacing: 50,
@@ -155,7 +155,7 @@ describe('update', () => {
                 type: 'column',
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime']
+                fill: 'lime',
             }],
             legend: {
                 item: {
@@ -191,7 +191,7 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime']
+                fill: 'lime',
             }]
         });
         const createdSeries = chart.series;
@@ -210,12 +210,13 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime', 'cyan'],
+                fill: 'lime',
                 stacked: true,
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
+                fill: 'cyan',
                 stacked: true,
             }, {
                 type: 'area',
@@ -250,12 +251,12 @@ describe('update', () => {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'profit',
-                fills: ['lime', 'cyan']
+                fill: 'lime',
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
-                fills: ['lime', 'cyan']
+                fill: 'cyan',
             }]
         });
         const updatedSeries2 = chart.series;
@@ -271,13 +272,13 @@ describe('update', () => {
                 xKey: 'month',
                 yKey: 'profit',
                 stacked: true,
-                fills: ['lime', 'cyan']
+                fill: 'lime',
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
                 stacked: true,
-                fills: ['lime', 'cyan']
+                fill: 'cyan',
             }, {
                 // series type is optional because `line` is default for `cartesian` charts
                 xKey: 'month',
@@ -308,12 +309,13 @@ describe('update', () => {
                 xKey: 'month',
                 yKey: 'profit',
                 stacked: true,
-                fills: ['lime', 'cyan']
+                fill: 'lime',
             }, {
                 type: 'area', // have to specify type explicitly here
                 xKey: 'month',
                 yKey: 'foobar',
                 stacked: true,
+                fill: 'cyan',
             }, {
                 // series type if optional because `line` is default for `cartesian` charts
                 xKey: 'month',

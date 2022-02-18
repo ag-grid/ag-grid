@@ -17,8 +17,8 @@ const options: AgChartOptions = {
       type: 'column',
       xKey: 'year',
       yKey: 'visitors',
-      fills: ['#0084e7'],
-      strokes: ['#00407f'],
+      fill: '#0084e7',
+      stroke: '#00407f',
       shadow: {
         enabled: true,
         xOffset: 3,

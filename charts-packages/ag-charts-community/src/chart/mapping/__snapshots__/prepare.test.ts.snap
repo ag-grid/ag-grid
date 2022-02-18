@@ -209,7 +209,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#f3622d",
+        "stroke": "#3d7ab0",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -259,7 +259,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#fba71b",
+        "stroke": "#b03d65",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -309,7 +309,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#57b757",
+        "stroke": "#80b03d",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -344,6 +344,30 @@ Object {
       "top": 10,
     },
     "text": "Source: Northern Ireland Statistics and Research Agency",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "line": Object {
+        "series": Object {
+          "marker": Object {
+            "enabled": false,
+          },
+          "strokeWidth": 5,
+        },
+      },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#3d7ab0",
+        "#b03d65",
+        "#80b03d",
+      ],
+      "strokes": Array [
+        "#3d7ab0",
+        "#b03d65",
+        "#80b03d",
+      ],
+    },
   },
   "title": Object {
     "color": "#162c53",
@@ -600,8 +624,6 @@ Object {
       "fills": Array [
         "#c16068",
         "#a2bf8a",
-        "#c16068",
-        "#a2bf8a",
       ],
       "flipXY": false,
       "grouped": true,
@@ -639,8 +661,8 @@ Object {
       "strokeOpacity": 1,
       "strokeWidth": 0,
       "strokes": Array [
-        "#aa4520",
-        "#b07513",
+        "#c16068",
+        "#a2bf8a",
       ],
       "tooltip": Object {
         "enabled": true,
@@ -693,7 +715,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#57b757",
+        "stroke": "#80a0c3",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -728,6 +750,35 @@ Object {
       "top": 10,
     },
     "text": "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "strokeWidth": 0,
+        },
+      },
+      "line": Object {
+        "series": Object {
+          "marker": Object {
+            "enabled": false,
+          },
+          "strokeWidth": 5,
+        },
+      },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#c16068",
+        "#a2bf8a",
+        "#80a0c3",
+      ],
+      "strokes": Array [
+        "#c16068",
+        "#a2bf8a",
+        "#80a0c3",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -1288,6 +1339,30 @@ Object {
     },
     "text": "Source: HM Revenue & Customs",
   },
+  "theme": Object {
+    "palette": Object {
+      "fills": Array [
+        "#f3622d",
+        "#fba71b",
+        "#57b757",
+        "#41a9c9",
+        "#4258c9",
+        "#9a42c8",
+        "#c84164",
+        "#888888",
+      ],
+      "strokes": Array [
+        "#aa4520",
+        "#b07513",
+        "#3d803d",
+        "#2d768d",
+        "#2e3e8d",
+        "#6c2e8c",
+        "#8c2d46",
+        "#5f5f5f",
+      ],
+    },
+  },
   "title": Object {
     "color": "rgb(70, 70, 70)",
     "enabled": true,
@@ -1495,7 +1570,7 @@ Object {
         "#888888",
       ],
       "flipXY": false,
-      "grouped": true,
+      "grouped": false,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1550,26 +1625,12 @@ Object {
       "yKeys": Array [
         Array [
           "largeHousehold",
-        ],
-        Array [
           "smallHousehold",
-        ],
-        Array [
           "itTelecomms",
-        ],
-        Array [
           "consumer",
-        ],
-        Array [
           "tools",
-        ],
-        Array [
           "displays",
-        ],
-        Array [
           "cooling",
-        ],
-        Array [
           "gasLampsLed",
         ],
       ],
@@ -1834,7 +1895,7 @@ Object {
         "maxSize": 100,
         "shape": "circle",
         "size": 5,
-        "stroke": "#f3622d",
+        "stroke": "#aa4520",
         "strokeWidth": 0,
       },
       "showInLegend": true,
@@ -2094,7 +2155,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#f3622d",
+        "stroke": "#5BC0EB",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -2144,7 +2205,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#fba71b",
+        "stroke": "#FDE74C",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -2194,7 +2255,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#57b757",
+        "stroke": "#9BC53D",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -2244,7 +2305,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#41a9c9",
+        "stroke": "#E55934",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -2279,6 +2340,36 @@ Object {
       "top": 10,
     },
     "text": "Source: US Geological Survey",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "line": Object {
+        "series": Object {
+          "marker": Object {
+            "enabled": false,
+          },
+          "strokeWidth": 3,
+        },
+      },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#5BC0EB",
+        "#FDE74C",
+        "#9BC53D",
+        "#E55934",
+        "#FA7921",
+        "#fa3081",
+      ],
+      "strokes": Array [
+        "#5BC0EB",
+        "#FDE74C",
+        "#9BC53D",
+        "#E55934",
+        "#FA7921",
+        "#fa3081",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -2808,6 +2899,31 @@ Object {
       "top": 10,
     },
     "text": "Source: Department for Business, Energy & Industrial Strategy",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "area": Object {
+        "series": Object {
+          "fillOpacity": 0.6,
+        },
+      },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#FA7921",
+        "#5BC0EB",
+        "#9BC53D",
+        "#E55934",
+        "#FDE74C",
+      ],
+      "strokes": Array [
+        "#af5517",
+        "#4086a4",
+        "#6c8a2b",
+        "#a03e24",
+        "#b1a235",
+      ],
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -3563,7 +3679,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 0,
-        "stroke": "#f3622d",
+        "stroke": "#aa4520",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -3829,7 +3945,7 @@ Object {
         "maxSize": 100,
         "shape": "circle",
         "size": 5,
-        "stroke": "#f3622d",
+        "stroke": "#aa4520",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -6059,9 +6175,50 @@ Object {
                 "strokeWidth": 4,
               },
             },
+            "marker": Object {
+              "enabled": true,
+            },
           },
         },
       },
+    },
+    "palette": Object {
+      "fills": Array [
+        "#0b1791",
+        "#be2a2c",
+        "#f6d24a",
+        "#ce1126",
+        "#002d62",
+        "#1b4e9e",
+        "#f6d24a",
+        "#0073cf",
+        "#e88532",
+        "#000000",
+        "#006847",
+        "#c22b38",
+        "#042279",
+        "#4997d0",
+        "#2868c1",
+        "#459945",
+      ],
+      "strokes": Array [
+        "#0b1791",
+        "#f6d24a",
+        "#f6d24a",
+        "#ce1126",
+        "#ce1126",
+        "#fade4b",
+        "#be2a2c",
+        "#0073cf",
+        "#469c65",
+        "#fed100",
+        "#ce1126",
+        "#1e5190",
+        "#bf2b30",
+        "#4997d0",
+        "#2868c1",
+        "#459945",
+      ],
     },
   },
   "title": Object {
@@ -6290,7 +6447,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 6,
-        "stroke": "#f3622d",
+        "stroke": "#aa4520",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -7007,7 +7164,7 @@ Object {
         "#ff4444",
       ],
       "flipXY": true,
-      "grouped": true,
+      "grouped": false,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7057,11 +7214,7 @@ Object {
       "yKeys": Array [
         Array [
           "usedInLast3Months",
-        ],
-        Array [
           "usedOver3MonthsAgo",
-        ],
-        Array [
           "neverUsed",
         ],
       ],
@@ -7306,7 +7459,7 @@ Object {
         "#34495e",
       ],
       "flipXY": false,
-      "grouped": true,
+      "grouped": false,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7359,20 +7512,10 @@ Object {
       "yKeys": Array [
         Array [
           "white",
-        ],
-        Array [
           "mixed",
-        ],
-        Array [
           "asian",
-        ],
-        Array [
           "black",
-        ],
-        Array [
           "chinese",
-        ],
-        Array [
           "other",
         ],
       ],
@@ -9301,7 +9444,7 @@ Object {
         "maxSize": 30,
         "shape": "circle",
         "size": 12,
-        "stroke": "#f3622d",
+        "stroke": "#aa4520",
         "strokeWidth": 1,
       },
       "showInLegend": true,
@@ -9856,7 +9999,7 @@ Object {
         "#41a9c9",
       ],
       "flipXY": true,
-      "grouped": true,
+      "grouped": false,
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9907,14 +10050,8 @@ Object {
       "yKeys": Array [
         Array [
           "ownerOccupied",
-        ],
-        Array [
           "privateRented",
-        ],
-        Array [
           "localAuthority",
-        ],
-        Array [
           "housingAssociation",
         ],
       ],

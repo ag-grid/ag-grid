@@ -17,6 +17,7 @@ const options: AgChartOptions = {
       yKey: 'iphone',
       yName: 'iPhone',
       normalizedTo: 100,
+      stacked: true,
     },
     {
       type: 'column',
@@ -24,6 +25,7 @@ const options: AgChartOptions = {
       yKey: 'mac',
       yName: 'Mac',
       normalizedTo: 100,
+      stacked: true,
     },
     {
       type: 'column',
@@ -31,6 +33,7 @@ const options: AgChartOptions = {
       yKey: 'ipad',
       yName: 'iPad',
       normalizedTo: 100,
+      stacked: true,
     },
     {
       type: 'column',
@@ -38,6 +41,7 @@ const options: AgChartOptions = {
       yKey: 'wearables',
       yName: 'Wearables',
       normalizedTo: 100,
+      stacked: true,
     },
     {
       type: 'column',
@@ -45,6 +49,7 @@ const options: AgChartOptions = {
       yKey: 'services',
       yName: 'Services',
       normalizedTo: 100,
+      stacked: true,
     },
   ],
   axes: [

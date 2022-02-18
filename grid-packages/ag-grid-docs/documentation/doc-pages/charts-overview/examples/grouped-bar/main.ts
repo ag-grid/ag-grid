@@ -22,14 +22,12 @@ const options: AgChartOptions = {
     {
       type: "bar",
       xKey: "type",
-      grouped: true,
       yKey: "total",
       yName: "Annual growth in total pay",
     },
     {
       type: "bar",
       xKey: "type",
-      grouped: true,
       yKey: "regular",
       yName: "Annual growth in regular pay",
     },

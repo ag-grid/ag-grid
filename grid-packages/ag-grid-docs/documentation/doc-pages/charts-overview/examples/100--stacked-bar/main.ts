@@ -22,23 +22,26 @@ const options: AgChartOptions = {
     {
       type: 'bar',
       xKey: 'area',
-      normalizedTo: 1,
       yKey: 'usedInLast3Months',
-      yName: 'Used in last 3 months'
+      yName: 'Used in last 3 months',
+      normalizedTo: 1,
+      stacked: true,
     },
     {
       type: 'bar',
       xKey: 'area',
-      normalizedTo: 1,
       yKey: 'usedOver3MonthsAgo',
-      yName: 'Used over 3 months ago'
+      yName: 'Used over 3 months ago',
+      normalizedTo: 1,
+      stacked: true,
     },
     {
       type: 'bar',
       xKey: 'area',
-      normalizedTo: 1,
       yKey: 'neverUsed',
-      yName: 'Never used'
+      yName: 'Never used',
+      normalizedTo: 1,
+      stacked: true,
     }
   ],
   axes: [

@@ -89,9 +89,9 @@ series: [
 
 Note that in the example below we also:
 
-- Use `yNames` to control the text that the legend displays
+- Use `yName` to control the text that the legend displays
 - Enable `marker`s
-- Define custom `fills` and `strokes`
+- Define custom `fill` and `stroke`
 - Make the fill translucent using the `fillOpacity` config
 
 <chart-example title='Multiple Area Series' name='multi-area' type='generated'></chart-example>

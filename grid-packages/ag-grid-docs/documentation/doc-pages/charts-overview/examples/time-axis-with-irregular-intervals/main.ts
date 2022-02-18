@@ -2,13 +2,15 @@ import { AgChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 declare var data: any;
 
-var strokes = ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081']
-
-var strokeIndex = 0
-var strokeWidth = 3
-
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
+  theme: {
+    palette: {
+      fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
+      strokes: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
+    },
+    overrides: { line: { series: { strokeWidth: 3, marker: { enabled: false } }}},
+  },
   autoSize: true,
   title: {
     text: 'Earthquake Magnitudes by Source (January 2020)',
@@ -28,12 +30,6 @@ const options: AgChartOptions = {
       title: 'Southern California Seismic Network',
       xKey: 'time',
       yKey: 'magnitude',
-      stroke: strokes[strokeIndex++],
-      strokeWidth: strokeWidth,
-      marker: {
-        enabled: false,
-        fill: strokes[strokeIndex - 1],
-      },
     },
     {
       data: data.hv,
@@ -41,12 +37,6 @@ const options: AgChartOptions = {
       title: 'Hawaiian Volcano Observatory Network',
       xKey: 'time',
       yKey: 'magnitude',
-      stroke: strokes[strokeIndex++],
-      strokeWidth: strokeWidth,
-      marker: {
-        enabled: false,
-        fill: strokes[strokeIndex - 1],
-      },
     },
     {
       data: data.nc,
@@ -54,12 +44,6 @@ const options: AgChartOptions = {
       title: 'USGS Northern California Network',
       xKey: 'time',
       yKey: 'magnitude',
-      stroke: strokes[strokeIndex++],
-      strokeWidth: strokeWidth,
-      marker: {
-        enabled: false,
-        fill: strokes[strokeIndex - 1],
-      },
     },
     {
       data: data.ok,
@@ -67,12 +51,6 @@ const options: AgChartOptions = {
       title: 'Oklahoma Seismic Network',
       xKey: 'time',
       yKey: 'magnitude',
-      stroke: strokes[strokeIndex++],
-      strokeWidth: strokeWidth,
-      marker: {
-        enabled: false,
-        fill: strokes[strokeIndex - 1],
-      },
     },
   ],
   axes: [

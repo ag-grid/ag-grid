@@ -43,6 +43,7 @@ const options: AgChartOptions = {
       tooltip: { renderer: renderer },
       yKey: "sweaters",
       yName: "Sweaters made",
+      stacked: true,
     },
     {
       type: "column",
@@ -50,6 +51,7 @@ const options: AgChartOptions = {
       tooltip: { renderer: renderer },
       yKey: "hats",
       yName: "Hats made",
+      stacked: true,
     },
   ],
 }

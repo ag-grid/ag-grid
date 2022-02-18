@@ -23,14 +23,12 @@ const options: AgChartOptions = {
     {
       type: "column",
       xKey: "month",
-      grouped: true,
       yKey: "menDelta",
       yName: "Male",
     },
     {
       type: "column",
       xKey: "month",
-      grouped: true,
       yKey: "womenDelta",
       yName: "Female",
     },

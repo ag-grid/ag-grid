@@ -59,26 +59,10 @@ AgChart.create({
         left: 40
     },
     series: [
-        {
-        type: "column",
-        xKey: "beverage",
-        yKey: "Q1",
-        },
-        {
-        type: "column",
-        xKey: "beverage",
-        yKey: "Q2",
-        },
-        {
-        type: "column",
-        xKey: "beverage",
-        yKey: "Q3",
-        },
-        {
-        type: "column",
-        xKey: "beverage",
-        yKey: "Q4",
-        },
+        { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+        { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+        { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+        { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
     ],
     legend: {
         position: 'right',

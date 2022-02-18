@@ -10444,7 +10444,11 @@
       "type": { "returnType": "string[]", "optional": true }
     },
     "fill": { "type": { "returnType": "string", "optional": true } },
-    "strokes": { "type": { "returnType": "string[]", "optional": true } },
+    "strokes": {
+      "description": "/** @deprecated use stroke and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "fillOpacity": { "type": { "returnType": "number", "optional": true } },
     "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
@@ -10545,7 +10549,11 @@
       "type": { "returnType": "string[]", "optional": true }
     },
     "fill": { "type": { "returnType": "string", "optional": true } },
-    "strokes": { "type": { "returnType": "string[]", "optional": true } },
+    "strokes": {
+      "description": "/** @deprecated use stroke and multiple series instead\n */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "fillOpacity": { "type": { "returnType": "number", "optional": true } },
     "strokeOpacity": { "type": { "returnType": "number", "optional": true } },

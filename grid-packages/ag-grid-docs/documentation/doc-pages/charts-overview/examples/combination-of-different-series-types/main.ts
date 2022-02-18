@@ -5,6 +5,16 @@ const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
+  theme: {
+    palette: {
+      fills: ["#c16068", "#a2bf8a", "#80a0c3"],
+      strokes: ["#c16068", "#a2bf8a", "#80a0c3"],
+    },
+    overrides: {
+      column: { series: { strokeWidth: 0 } },
+      line: { series: { strokeWidth: 5, marker: { enabled: false } } },
+    },
+  },
   title: {
     text: "Cattle Holdings and Beef Exports (UK)",
     fontSize: 18,
@@ -17,18 +27,12 @@ const options: AgChartOptions = {
     {
       type: "column",
       xKey: "year",
-      grouped: true,
-      fills: ["#c16068", "#a2bf8a"],
-      strokeWidth: 0,
       yKey: "male",
       yName: "Male cattle",
     },
     {
       type: "column",
       xKey: "year",
-      grouped: true,
-      fills: ["#c16068", "#a2bf8a"],
-      strokeWidth: 0,
       yKey: "female",
       yName: "Female cattle",
     },
@@ -37,12 +41,6 @@ const options: AgChartOptions = {
       xKey: "year",
       yKey: "exportedTonnes",
       yName: "Beef exports",
-      stroke: "#80a0c3",
-      strokeWidth: 5,
-      marker: {
-        enabled: false,
-        fill: "#80a0c3",
-      },
     },
   ],
   axes: [

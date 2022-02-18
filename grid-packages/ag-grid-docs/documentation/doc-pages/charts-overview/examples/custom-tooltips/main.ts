@@ -1,5 +1,28 @@
+import { AgCartesianSeriesTooltipRendererParams } from "@ag-grid-community/core"
 import { AgChartOptions } from "@ag-grid-community/core"
 import * as agCharts from "ag-charts-community"
+
+function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
+  var formatThousands = function (value: number) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
+  var tooltipHtml = [
+    '<div class="my-tooltip">',
+    '<span class="my-tooltip__title" style="color: ' +
+      params.color +
+      '">' +
+      params.yName,
+    "(" +
+      params.datum[params.xKey] +
+      "):</span> " +
+      formatThousands(params.datum[params.yKey]) +
+      " tonnes",
+    "</div>",
+  ]
+
+  return tooltipHtml.join("\n")
+}
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -10,27 +33,7 @@ const options: AgChartOptions = {
       column: {
         series: {
           tooltip: {
-            renderer: function (params) {
-              var formatThousands = function (value: number) {
-                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
-
-              var tooltipHtml = [
-                '<div class="my-tooltip">',
-                '<span class="my-tooltip__title" style="color: ' +
-                  params.color +
-                  '">' +
-                  params.yName,
-                "(" +
-                  params.datum[params.xKey] +
-                  "):</span> " +
-                  formatThousands(params.datum[params.yKey]) +
-                  " tonnes",
-                "</div>",
-              ]
-
-              return tooltipHtml.join("\n")
-            },
+            renderer: tooltipRenderer,
           },
         },
       },
@@ -52,48 +55,56 @@ const options: AgChartOptions = {
       xKey: "quarter",
       yKey: "largeHousehold",
       yName: "Large household appliances",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "smallHousehold",
       yName: "Small household appliances",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "itTelecomms",
       yName: "IT and telecomms equipment",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "consumer",
       yName: "Consumer equipment",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "tools",
       yName: "Electrical and electronic tools",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "displays",
       yName: "Display equipment",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "cooling",
       yName: "Cooling appliances containing refrigerants",
+      stacked: true,
     },
     {
       type: "column",
       xKey: "quarter",
       yKey: "gasLampsLed",
       yName: "Gas discharge lamps and LED light sources",
+      stacked: true,
     },
   ],
   axes: [

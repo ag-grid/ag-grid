@@ -6139,6 +6139,7 @@
       "fills?": "string[]",
       "fill?": "string",
       "strokes?": "string[]",
+      "stroke?": "string",
       "strokeWidth?": "number",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
@@ -6158,7 +6159,8 @@
     "docs": {
       "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
       "yNames?": "/** @deprecated use yName and multiple series instead\n */",
-      "fills?": "/** @deprecated use fill and multiple series instead\n */"
+      "fills?": "/** @deprecated use fill and multiple series instead\n */",
+      "strokes?": "/** @deprecated use stroke and multiple series instead\n */"
     }
   },
   "AgBarSeriesLabelOptions": {
@@ -6214,6 +6216,7 @@
       "fills?": "string[]",
       "fill?": "string",
       "strokes?": "string[]",
+      "stroke?": "string",
       "strokeWidth?": "number",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
@@ -6233,7 +6236,8 @@
     "docs": {
       "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
       "yNames?": "/** @deprecated use yName and multiple series instead\n */",
-      "fills?": "/** @deprecated use fill and multiple series instead\n */"
+      "fills?": "/** @deprecated use fill and multiple series instead\n */",
+      "strokes?": "/** @deprecated use stroke and multiple series instead\n */"
     }
   },
   "AgHistogramSeriesLabelOptions": {

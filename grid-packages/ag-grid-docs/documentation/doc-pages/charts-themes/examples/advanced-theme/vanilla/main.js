@@ -88,16 +88,34 @@ var chartOptions1 = {
   },
   data: data,
   series: [
-    { type: "column", xKey: "label", yKey: "v1", yName: "Reliability" },
-    { type: "column", xKey: "label", yKey: "v2", yName: "Ease of use" },
-    { type: "column", xKey: "label", yKey: "v3", yName: "Performance" },
     {
-      type: "line",
-      xKey: "label",
-      yKey: "v4",
-      yName: "Price",
-    },
-  ],
+        type: "column",
+        xKey: "label",
+        yKey: "v1",
+        stacked: true,
+        yName: "Reliability",
+      },
+      {
+        type: "column",
+        xKey: "label",
+        yKey: "v2",
+        stacked: true,
+        yName: "Ease of use",
+      },
+      {
+        type: "column",
+        xKey: "label",
+        yKey: "v3",
+        stacked: true,
+        yName: "Performance",
+      },
+      {
+        type: "line",
+        xKey: "label",
+        yKey: "v4",
+        yName: "Price",
+      },
+    ],
 }
 
 var chartOptions2 = {

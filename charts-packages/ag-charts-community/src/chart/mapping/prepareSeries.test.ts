@@ -116,7 +116,7 @@ describe('transform series options', () => {
                 xKey: 'quarter',
                 yKeys: ['wearables', 'services'],
                 yNames: ['Wearables', 'Services'],
-                fills: ['blue', 'orange', 'yellow'],
+                fills: ['blue', 'orange'],
                 hideInLegend: ['services'],
             },
         ];
@@ -128,7 +128,7 @@ describe('transform series options', () => {
             xKey: 'quarter',
             yKeys: ['iphone', 'mac', 'wearables', 'services'],
             yNames: ['Iphone', 'Mac', 'Wearables', 'Services'],
-            fills: ['pink', 'red', 'blue', 'orange', 'yellow'],
+            fills: ['pink', 'red', 'blue', 'orange'],
             hideInLegend: ['mac', 'services'],
         };
 

@@ -13,13 +13,13 @@ const options: AgChartOptions = {
     text: "Source: Office for National Statistics",
   },
   series: [
-    { type: "column", xKey: "year", grouped: true, yKey: "16-24" },
-    { type: "column", xKey: "year", grouped: true, yKey: "25-34" },
-    { type: "column", xKey: "year", grouped: true, yKey: "35-44" },
-    { type: "column", xKey: "year", grouped: true, yKey: "45-54" },
-    { type: "column", xKey: "year", grouped: true, yKey: "55-64" },
-    { type: "column", xKey: "year", grouped: true, yKey: "65-74" },
-    { type: "column", xKey: "year", grouped: true, yKey: "75+" },
+    { type: "column", xKey: "year", yKey: "16-24" },
+    { type: "column", xKey: "year", yKey: "25-34" },
+    { type: "column", xKey: "year", yKey: "35-44" },
+    { type: "column", xKey: "year", yKey: "45-54" },
+    { type: "column", xKey: "year", yKey: "55-64" },
+    { type: "column", xKey: "year", yKey: "65-74" },
+    { type: "column", xKey: "year", yKey: "75+" },
   ],
   axes: [
     {

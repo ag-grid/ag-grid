@@ -43,24 +43,28 @@ const options: AgChartOptions = {
       xKey: "type",
       yKey: "ownerOccupied",
       yName: "Owner occupied",
+      stacked: true,
     },
     {
       type: "bar",
       xKey: "type",
       yKey: "privateRented",
       yName: "Private rented",
+      stacked: true,
     },
     {
       type: "bar",
       xKey: "type",
       yKey: "localAuthority",
       yName: "Local authority",
+      stacked: true,
     },
     {
       type: "bar",
       xKey: "type",
       yKey: "housingAssociation",
       yName: "Housing association",
+      stacked: true,
     },
   ],
   axes: [

@@ -530,7 +530,9 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     /** @deprecated use fill and multiple series instead */
     fills?: string[];
     fill?: string;
+    /** @deprecated use stroke and multiple series instead */
     strokes?: string[];
+    stroke?: string;
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
@@ -584,7 +586,9 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     /** @deprecated use fill and multiple series instead */
     fills?: string[];
     fill?: string;
+    /** @deprecated use stroke and multiple series instead */
     strokes?: string[];
+    stroke?: string;
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;

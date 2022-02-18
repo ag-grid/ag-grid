@@ -18,6 +18,7 @@ const options: AgChartOptions = {
       xKey: 'quarter',
       yKey: 'iphone',
       yName: 'iPhone',
+      stacked: true,
       label: { formatter },
     },
     {
@@ -25,6 +26,7 @@ const options: AgChartOptions = {
       xKey: 'quarter',
       yKey: 'mac',
       yName: 'Mac',
+      stacked: true,
       label: { formatter },
     },
     {
@@ -32,6 +34,7 @@ const options: AgChartOptions = {
       xKey: 'quarter',
       yKey: 'ipad',
       yName: 'iPad',
+      stacked: true,
       label: { formatter },
     },
     {
@@ -39,6 +42,7 @@ const options: AgChartOptions = {
       xKey: 'quarter',
       yKey: 'wearables',
       yName: 'Wearables',
+      stacked: true,
       label: { formatter },
     },
     {
@@ -46,6 +50,7 @@ const options: AgChartOptions = {
       xKey: 'quarter',
       yKey: 'services',
       yName: 'Services',
+      stacked: true,
       label: { formatter },
     },
   ],
