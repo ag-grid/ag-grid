@@ -344,7 +344,7 @@ that all series that use that those keys will be coordinated by this axis, as il
 Note, that we are:
 - using two number axis configurations in the `axes` array
 - position one number axis to the `left` and the other to the `right` of the chart
-- set the left number axis `keys` to match the `yKeys` of the `column` series
+- set the left number axis `keys` to match the `yKey`s of the `column` series
 - set the right number axis `keys` to match the `yKey` of the `line` series
 
 <chart-example title='Multiple y-axes' name='multiple-axes' type='generated'></chart-example>

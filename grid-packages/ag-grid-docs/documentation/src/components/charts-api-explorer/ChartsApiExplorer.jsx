@@ -37,6 +37,7 @@ const createOptionsJson = (chartType, options) => {
                 type: 'column',
                 xKey: 'month',
                 yKey,
+                stacked: true,
                 ...options.series,
             }));
             break;
@@ -58,6 +59,7 @@ const createOptionsJson = (chartType, options) => {
                 type: 'area',
                 xKey: 'month',
                 yKey,
+                stacked: true,
                 ...options.series,
             }));
             break;

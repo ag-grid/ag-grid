@@ -6,12 +6,7 @@ Area series are line series with the area under the line filled, placing more em
 
 ## Single Area Series
 
-To create a simple area chart we need to use series type `'area'`. We also have to provide the `xKey` and at least one `yKey`.
-
-[[note]]
-| Since `'area'` series can be stacked on top of each other, they can have multiple `yKeys`, with one key for each stack level.
-
-A minimal `'area'` series config would therefore look like this:
+To create a simple area chart we need to use series type `'area'`. We also have to provide the `xKey` and at least one `yKey`. A minimal `'area'` series config would therefore look like this:
 
 ```js
 series: [{
@@ -98,11 +93,7 @@ Note that in the example below we also:
 
 ## Stacked Area Series
 
-If we want the areas to be stacked on top of each other, there are two ways to achieve this:
-- Multiple `'area'` series with `stacked: true` set.
-- One `'area'` series with multiple `yKeys`.
-
-For example, to have a stacked area chart that shows changes in market share for the most popular internet browsers we could use a config like this:
+The `stacked: true` property controls series stacking behaviour. For example, to have a stacked area chart that shows changes in market share for the most popular internet browsers we could use a config like this:
 
 ```js
 series: [

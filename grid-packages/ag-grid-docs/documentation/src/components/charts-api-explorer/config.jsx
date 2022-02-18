@@ -652,7 +652,7 @@ const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true 
     }
 });
 
-const getCartesianKeyConfig = (hasMultipleYValues = false, mandatoryY = true) => {
+const getCartesianKeyConfig = (mandatoryY = true) => {
     const config = {
         xKey: {
             type: 'string',
@@ -665,29 +665,16 @@ const getCartesianKeyConfig = (hasMultipleYValues = false, mandatoryY = true) =>
         },
     };
 
-    if (hasMultipleYValues) {
-        config.yKeys = {
-            type: 'string[]',
-            isRequired: mandatoryY,
-            description: 'The keys to use to retrieve y-values from the data.',
-        };
+    config.yKey = {
+        type: 'string',
+        isRequired: mandatoryY,
+        description: 'The key to use to retrieve y-values from the data.',
+    };
 
-        config.yNames = {
-            type: 'string[]',
-            description: 'Human-readable descriptions of the y-values.',
-        };
-    } else {
-        config.yKey = {
-            type: 'string',
-            isRequired: mandatoryY,
-            description: 'The key to use to retrieve y-values from the data.',
-        };
-
-        config.yName = {
-            type: 'string',
-            description: 'A human-readable description of the y-values.',
-        };
-    }
+    config.yName = {
+        type: 'string',
+        description: 'A human-readable description of the y-values.',
+    };
 
     return config;
 };
@@ -714,23 +701,15 @@ const strokes = [
     '#5f5f5f'
 ];
 
-const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFill = true) => {
+const getColourConfig = (name = 'markers', includeFill = true) => {
     const config = {};
 
     if (includeFill) {
-        if (hasMultipleSeries) {
-            config.fills = {
-                type: 'string[]',
-                default: fills,
-                description: `The colours to cycle through for the fills of the ${name}.`,
-            };
-        } else {
-            config.fill = {
-                default: fills[0],
-                description: `The colour of the fill for the ${name}.`,
-                editor: ColourEditor,
-            };
-        }
+        config.fill = {
+            default: fills[0],
+            description: `The colour of the fill for the ${name}.`,
+            editor: ColourEditor,
+        };
 
         config.fillOpacity = {
             default: 1,
@@ -742,19 +721,11 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
         };
     }
 
-    if (hasMultipleSeries) {
-        config.strokes = {
-            type: 'string[]',
-            default: strokes,
-            description: `The colours to cycle through for the strokes of the ${name}.`,
-        };
-    } else {
-        config.stroke = {
-            default: strokes[0],
-            description: `The colour of the stroke for the ${name}.`,
-            editor: ColourEditor,
-        };
-    }
+    config.stroke = {
+        default: strokes[0],
+        description: `The colour of the stroke for the ${name}.`,
+        editor: ColourEditor,
+    };
 
     config.strokeOpacity = {
         default: 1,
@@ -873,7 +844,7 @@ export const bar = Object.freeze({
         displayName: 'Bar/Column Series Configuration',
         description: 'Configuration for bar/column series.',
     },
-    ...getCartesianKeyConfig(true),
+    ...getCartesianKeyConfig(),
     ...series,
     grouped: {
         default: false,
@@ -890,7 +861,7 @@ export const bar = Object.freeze({
         min: 1,
         max: 100,
     },
-    ...getColourConfig('bars', true),
+    ...getColourConfig('bars'),
     ...getHighlightConfig('bars'),
     ...shadowConfig,
     ...getLineDashConfig('Defines how the bar/column strokes are rendered.'),
@@ -965,7 +936,7 @@ export const line = Object.freeze({
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
-    ...getColourConfig('lines', false, false),
+    ...getColourConfig('lines', false),
     ...getMarkerConfig(),
     ...getHighlightConfig(),
     ...getLineDashConfig('Defines how the line stroke is rendered.'),
@@ -995,7 +966,7 @@ export const area = Object.freeze({
         displayName: 'Area Series Configuration',
         description: 'Configuration for area series.',
     },
-    ...getCartesianKeyConfig(true),
+    ...getCartesianKeyConfig(),
     ...series,
     normalizedTo: {
         type: 'number',
@@ -1006,7 +977,7 @@ export const area = Object.freeze({
         min: 1,
         max: 100,
     },
-    ...getColourConfig('areas', true),
+    ...getColourConfig('areas'),
     ...getMarkerConfig({ enabledByDefault: false }),
     ...getHighlightConfig(),
     ...getLineDashConfig('Defines how the area strokes are rendered.'),
@@ -1189,7 +1160,7 @@ export const pie = Object.freeze({
     title: {
         ...getCaptionOptions('title', 'Configuration for the series title.'),
     },
-    ...getColourConfig('segments', true),
+    ...getColourConfig('segments'),
     ...getHighlightConfig('segments'),
     label: {
         meta: {
@@ -1272,7 +1243,7 @@ export const pie = Object.freeze({
 
 export const histogram = Object.freeze({
     ...series,
-    ...getCartesianKeyConfig(false, false),
+    ...getCartesianKeyConfig(false),
     meta: {
         displayName: "Histogram Series Configuration",
         description: "Configuration for histogram series."
@@ -1334,7 +1305,7 @@ export const histogram = Object.freeze({
         },
     },
     ...getHighlightConfig('bars'),
-    ...getColourConfig('histogram bars', false, true),
+    ...getColourConfig('histogram bars', true),
     listeners: {
         meta: {
             description: "A map of event names to event listeners."

@@ -41,6 +41,7 @@ export const series = ["revenue", "profit"].map((yKey) => ({
   type: "column",
   xKey: "month",
   yKey,
+  stacked: true,
 }));
 
 export const getTemplates = (framework, boilerplate, options) => {

@@ -952,8 +952,6 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | }
 | ```
 
-Unlike `'line'` series charts, `'column'` series can have multiple `yKeys` which allow for stacking, in our case one block per quarter.
-
 Chart tooltips are enabled by default so you can hover over a block to see its value.
 
 ![Column chart](beverage-expenses-no-captions.png)

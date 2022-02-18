@@ -12,9 +12,6 @@ Bar series are a good choice to show values for a discrete set of objects, such 
 
 To create a column chart, we need to use series type `'column'`. We also have to provide the `xKey` and at least one `yKey`.
 
-[[note]]
-| Since `'column'` and `'bar'` series can be stacked or grouped, they can have multiple `yKeys`, with one key for each stack/group component.
-
 A minimal `'column'` series config would therefore look like this:
 
 ```js

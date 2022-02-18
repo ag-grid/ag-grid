@@ -42,7 +42,7 @@ export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from '@ag-grid-
 
 /* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */
 export { ColumnFactory } from "ag-grid-community";
-export { ColumnModel, ColumnState } from "ag-grid-community";
+export { ColumnModel, ColumnState, ColumnStateParams, ApplyColumnStateParams } from "ag-grid-community";
 export { ColumnKeyCreator } from "ag-grid-community";
 export { ColumnUtils } from "ag-grid-community";
 export { DisplayedGroupCreator } from "ag-grid-community";
