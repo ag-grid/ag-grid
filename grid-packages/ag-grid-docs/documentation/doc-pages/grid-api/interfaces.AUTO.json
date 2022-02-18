@@ -5469,6 +5469,11 @@
       "right?": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
       "bottom?": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
       "left?": "Omit<AgNumberAxisOptions, 'left' | 'type'>"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */"
     }
   },
   "AgLogAxisThemeOptions": {
@@ -5482,6 +5487,12 @@
       "right?": "Omit<AgLogAxisOptions, 'right' | 'type'>",
       "bottom?": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
       "left?": "Omit<AgLogAxisOptions, 'left' | 'type'>"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "base?": "/** The base of the logarithm used. */"
     }
   },
   "AgCategoryAxisThemeOptions": {
@@ -5512,6 +5523,9 @@
       "right?": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
       "bottom?": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
       "left?": "Omit<AgTimeAxisOptions, 'left' | 'type'>"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */"
     }
   },
   "AgCartesianAxesTheme": {
@@ -5550,6 +5564,12 @@
       "right?": "number",
       "bottom?": "number",
       "left?": "number"
+    },
+    "docs": {
+      "top?": "/** The number of pixels of padding at the top of the chart area. */",
+      "right?": "/** The number of pixels of padding at the right of the chart area. */",
+      "bottom?": "/** The number of pixels of padding at the bottom of the chart area. */",
+      "left?": "/** The number of pixels of padding at the left of the chart area. */"
     }
   },
   "AgChartLabelOptions": {
@@ -5561,6 +5581,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgDropShadowOptions": {
@@ -5571,6 +5599,13 @@
       "xOffset?": "number",
       "yOffset?": "number",
       "blur?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the shadow is visible. */",
+      "color?": "/** The colour of the shadow. */",
+      "xOffset?": "/** The horizontal offset in pixels for the shadow. */",
+      "yOffset?": "/** The vertical offset in pixels for the shadow. */",
+      "blur?": "/** The radius of the shadow's blur, given in pixels. */"
     }
   },
   "AgChartCaptionOptions": {
@@ -5584,6 +5619,15 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the title should be shown. */",
+      "text?": "/** The text to show in the title. */",
+      "fontStyle?": "/** The font style to use for the title. */",
+      "fontWeight?": "/** The font weight to use for the title. */",
+      "fontSize?": "/** The font size in pixels to use for the title. */",
+      "fontFamily?": "/** The font family to use for the title. */",
+      "color?": "/** The colour to use for the title. */"
     }
   },
   "AgNavigatorMaskOptions": {
@@ -5593,6 +5637,12 @@
       "stroke?": "string",
       "strokeWidth?": "number",
       "fillOpacity?": "number"
+    },
+    "docs": {
+      "fill?": "/** The fill colour used by the mask. */",
+      "stroke?": "/** The stroke colour used by the mask. */",
+      "strokeWidth?": "/** The stroke width used by the mask. */",
+      "fillOpacity?": "/** The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking. */"
     }
   },
   "AgNavigatorHandleOptions": {
@@ -5605,6 +5655,15 @@
       "height?": "number",
       "gripLineGap?": "number",
       "gripLineLength?": "number"
+    },
+    "docs": {
+      "fill?": "/** The fill colour used by the handle. */",
+      "stroke?": "/** The stroke colour used by the handle. */",
+      "strokeWidth?": "/** The stroke width used by the handle. */",
+      "width?": "/** The width of the handle. */",
+      "height?": "/** The height of the handle. */",
+      "gripLineGap?": "/** The distance between the handle's grip lines. */",
+      "gripLineLength?": "/** The length of the handle's grip lines. */"
     }
   },
   "AgNavigatorOptions": {
@@ -5618,6 +5677,16 @@
       "mask?": "AgNavigatorMaskOptions",
       "minHandle?": "AgNavigatorHandleOptions",
       "maxHandle?": "AgNavigatorHandleOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the navigator. */",
+      "height?": "/** The height of the navigator. */",
+      "margin?": "/** The distance between the navigator and the bottom axis. */",
+      "min?": "/** The start of the visible range in the <code>[0, 1]</code> interval. */",
+      "max?": "/** The end of the visible range in the <code>[0, 1]</code> interval. */",
+      "mask?": "/** Configuration for the navigator's visible range mask. */",
+      "minHandle?": "/** Configuration for the navigator's left handle. */",
+      "maxHandle?": "/** Configuration for the navigator's right handle. */"
     }
   },
   "AgChartLegendPosition": {
@@ -5631,6 +5700,12 @@
       "shape?": "string | (new () => any)",
       "padding?": "number",
       "strokeWidth?": "number"
+    },
+    "docs": {
+      "size?": "/** The size in pixels of the markers in the legend. */",
+      "shape?": "/** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none. */",
+      "padding?": "/** The padding in pixels between a legend marker and the corresponding label. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for markers in the legend. */"
     }
   },
   "AgChartLegendLabelOptions": {
@@ -5640,7 +5715,16 @@
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "number",
-      "fontFamily?": "string"
+      "fontFamily?": "string",
+      "formatter?": "(id: string, itemId: any, value: string) => string"
+    },
+    "docs": {
+      "color?": "/** The colour of the text. */",
+      "fontStyle?": "/** The font style to use for the legend. */",
+      "fontWeight?": "/** The font weight to use for the legend. */",
+      "fontSize?": "/** The font size in pixels to use for the legend. */",
+      "fontFamily?": "/** The font family to use for the legend. */",
+      "formatter?": "/** Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index. */"
     }
   },
   "AgChartLegendItemOptions": {
@@ -5650,6 +5734,12 @@
       "label?": "AgChartLegendLabelOptions",
       "paddingX?": "number",
       "paddingY?": "number"
+    },
+    "docs": {
+      "marker?": "/** Configuration for the legend markers. */",
+      "label?": "/** Configuration for the legend labels. */",
+      "paddingX?": "/** The horizontal spacing in pixels to use between legend items. */",
+      "paddingY?": "/** The vertical spacing in pixels to use between legend items. */"
     }
   },
   "AgChartLegendOptions": {
@@ -5659,6 +5749,12 @@
       "position?": "AgChartLegendPosition",
       "spacing?": "number",
       "item?": "AgChartLegendItemOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */"
     }
   },
   "AgChartTooltipOptions": {
@@ -5668,10 +5764,16 @@
       "class?": "string",
       "tracking?": "boolean",
       "delay?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
+      "class?": "/** A class name to be added to the tooltip element of the chart. */",
+      "tracking?": "/** If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
   "AgBaseChartOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration common to all charts. */" },
     "type": {
       "container?": "HTMLElement | null",
       "data?": "any[]",
@@ -5687,6 +5789,21 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "{ [key: string]: Function; }",
       "theme?": "string | AgChartTheme"
+    },
+    "docs": {
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "padding?": "/** Configuration for the padding shown around the chart. */",
+      "background?": "/** Configuration for the background shown behind the chart. */",
+      "title?": "/** Configuration for the title shown at the top of the chart. */",
+      "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
+      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
+      "legend?": "/** Configuration for the chart legend. */",
+      "listeners?": "/** A map of event names to event listeners. */"
     }
   },
   "AgBaseAxisOptions": { "meta": {}, "type": { "keys?": "string[]" } },
@@ -5696,7 +5813,11 @@
   },
   "AgAxisLineOptions": {
     "meta": {},
-    "type": { "width?": "number", "color?": "string" }
+    "type": { "width?": "number", "color?": "string" },
+    "docs": {
+      "width?": "/** The width in pixels of the axis line. */",
+      "color?": "/** The colour of the axis line. */"
+    }
   },
   "AgAxisTickOptions": {
     "meta": {},
@@ -5705,6 +5826,12 @@
       "size?": "number",
       "color?": "string",
       "count?": "any"
+    },
+    "docs": {
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */",
+      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */"
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -5728,18 +5855,33 @@
       "rotation?": "number",
       "format?": "string",
       "formatter?": "(params: AgAxisLabelFormatterParams) => string"
+    },
+    "docs": {
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels */",
+      "padding?": "/** Padding in pixels between the axis label and the tick. */",
+      "color?": "/** The colour to use for the labels */",
+      "rotation?": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
+      "format?": "/** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\\\"../axes/#time-label-format-string\\\">click here</a> */",
+      "formatter?": "/** Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code> */"
     }
   },
   "AgAxisGridStyle": {
     "meta": {},
-    "type": { "stroke?": "string", "lineDash?": "number[]" }
+    "type": { "stroke?": "string", "lineDash?": "number[]" },
+    "docs": {
+      "stroke?": "/** The colour of the grid line. */",
+      "lineDash?": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */"
+    }
   },
   "AgCartesianAxisType": {
     "meta": { "isTypeAlias": true },
     "type": "'category' | 'groupedCategory' | 'number' | 'log' | 'time'"
   },
   "AgBaseCartesianAxisOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for axes in cartesian charts. */" },
     "type": {
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -5748,6 +5890,14 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgNumberAxisOptions": {
@@ -5764,6 +5914,17 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgLogAxisOptions": {
@@ -5781,6 +5942,18 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "min?": "/** User override for the automatically determined min value (based on series data). */",
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "base?": "/** The base of the logarithm used. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgCategoryAxisOptions": {
@@ -5796,6 +5969,14 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgGroupedCategoryAxisOptions": {
@@ -5809,6 +5990,14 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgTimeAxisOptions": {
@@ -5823,6 +6012,15 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]"
+    },
+    "docs": {
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
     }
   },
   "AgCartesianAxisOptions": {
@@ -5838,6 +6036,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgTooltipRendererResult": {
@@ -5906,6 +6112,17 @@
       "strokeWidth?": "number",
       "fillOpacity?": "number",
       "strokeOpacity?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show markers. */",
+      "shape?": "/** The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass. */",
+      "size?": "/** The size in pixels of the markers. */",
+      "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "fillOpacity?": "/** */",
+      "strokeOpacity?": "/** */"
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -5943,7 +6160,7 @@
   },
   "AgCartesianSeriesMarkerFormatter": {
     "meta": { "isTypeAlias": true },
-    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined)"
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat | undefined"
   },
   "AgCartesianSeriesMarker": {
     "meta": {},
@@ -5958,9 +6175,27 @@
       "strokeWidth?": "number",
       "fillOpacity?": "number",
       "strokeOpacity?": "number"
+    },
+    "docs": {
+      "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "enabled?": "/** Whether or not to show markers. */",
+      "shape?": "/** The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass. */",
+      "size?": "/** The size in pixels of the markers. */",
+      "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "fillOpacity?": "/** */",
+      "strokeOpacity?": "/** */"
     }
   },
-  "AgSeriesTooltip": { "meta": {}, "type": { "enabled?": "boolean" } },
+  "AgSeriesTooltip": {
+    "meta": {},
+    "type": { "enabled?": "boolean" },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+    }
+  },
   "AgLineSeriesLabelOptions": {
     "meta": {},
     "type": {
@@ -5971,6 +6206,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgLineSeriesTooltip": {
@@ -5979,6 +6222,9 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgLineSeriesOptions": {
@@ -6004,6 +6250,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgOHLCTooltipRendererParams": {
@@ -6029,6 +6283,9 @@
     "type": {
       "renderer?": "(params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgOHLCSeriesOptions": {
@@ -6048,6 +6305,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgScatterSeriesTooltip": {
@@ -6055,6 +6320,9 @@
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -6066,6 +6334,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgScatterSeriesOptions": {
@@ -6101,7 +6377,13 @@
       "stroke?": "/** @deprecated Use {@link marker.stroke} instead.\n */",
       "strokeWidth?": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
       "fillOpacity?": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
-      "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */"
+      "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgAreaSeriesTooltip": {
@@ -6110,6 +6392,9 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgAreaSeriesLabelOptions": {
@@ -6122,10 +6407,19 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgAreaSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for area series. */" },
     "type": {
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
@@ -6157,10 +6451,31 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
-      "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
-      "yNames?": "/** @deprecated use yName and multiple series instead\n */",
-      "fills?": "/** @deprecated use fill and multiple series instead\n */",
-      "strokes?": "/** @deprecated use stroke and multiple series instead\n */"
+      "marker?": "/** Configuration for the markers used in the series. */",
+      "normalizedTo?": "/** The number to normalise the area stacks to. For example, if <code>normalizedTo</code> is set to <code>100</code>, the stacks will all be scaled proportionally so that their total height is always 100. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. */",
+      "yKeys?": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
+      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yNames?": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
+      "fills?": "/** The colours to cycle through for the fills of the areas.\n * @deprecated use fill and multiple series instead\n */",
+      "fill?": "/** The colour to use for the fill of the area. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the areas.\n * @deprecated use stroke and multiple series instead\n */",
+      "stroke?": "/** The colours to use for the stroke of the areas. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the areas. */",
+      "fillOpacity?": "/** The opacity of the fill for the area. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the areas. */",
+      "lineDash?": "/** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "shadow?": "/** Configuration for the shadow used behind the chart series. */",
+      "label?": "/** Configuration for the labels shown on top of data points. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgBarSeriesLabelOptions": {
@@ -6174,6 +6489,16 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "placement?": "/** Where to render series labels relative to the segments. */",
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgBarSeriesFormatterParams": {
@@ -6197,10 +6522,14 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgBarSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for bar/column series. */" },
     "type": {
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
@@ -6234,10 +6563,33 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
-      "yKeys?": "/** @deprecated use yKey and multiple series instead\n */",
-      "yNames?": "/** @deprecated use yName and multiple series instead\n */",
-      "fills?": "/** @deprecated use fill and multiple series instead\n */",
-      "strokes?": "/** @deprecated use stroke and multiple series instead\n */"
+      "grouped?": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
+      "normalizedTo?": "/** The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>. For example, if <code>normalizedTo</code> is set to <code>100</code>, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. */",
+      "yKey?": "/** The keys to use to retrieve y-values from the data. */",
+      "yKeys?": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
+      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yName?": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yNames?": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
+      "fills?": "/** The colours to cycle through for the fills of the bars.\n * @deprecated use fill and multiple series instead\n */",
+      "fill?": "/** The colour to use for the fill of the area. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the bars.\n * @deprecated use stroke and multiple series instead\n */",
+      "stroke?": "/** The colours to use for the stroke of the bars. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the bars. */",
+      "fillOpacity?": "/** The opacity of the fill for the bars. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the bars. */",
+      "lineDash?": "/** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "shadow?": "/** Configuration for the shadow used behind the chart series. */",
+      "label?": "/** Configuration for the labels shown on bars. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
+      "formatter?": "/** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgHistogramSeriesLabelOptions": {
@@ -6250,6 +6602,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgHistogramSeriesTooltip": {
@@ -6257,6 +6617,9 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgHistogramSeriesOptions": {
@@ -6287,6 +6650,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgPieSeriesLabelOptions": {
@@ -6300,6 +6671,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgPieSeriesFormatterParams": {
@@ -6323,6 +6702,9 @@
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgPieTitleOptions": {
@@ -6337,6 +6719,15 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the title should be shown. */",
+      "text?": "/** The text to show in the title. */",
+      "fontStyle?": "/** The font style to use for the title. */",
+      "fontWeight?": "/** The font weight to use for the title. */",
+      "fontSize?": "/** The font size in pixels to use for the title. */",
+      "fontFamily?": "/** The font family to use for the title. */",
+      "color?": "/** The colour to use for the title. */"
     }
   },
   "AgPieSeriesOptions": {
@@ -6371,6 +6762,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgPieSeriesTooltipRendererParams": {
@@ -6399,6 +6798,14 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
     }
   },
   "AgTreemapNodeDatum": {
@@ -6429,6 +6836,9 @@
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgTreemapSeriesOptions": {
@@ -6453,6 +6863,14 @@
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "visible?": "/** Whether or not to display the series. */",
+      "showInLegend?": "/** Whether or not to include the series in the legend. */",
+      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "listeners?": "/** A map of event names to event listeners. */",
+      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
   "AgCartesianSeriesOptions": {
@@ -6487,6 +6905,21 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "{ [key: string]: Function; }",
       "theme?": "string | AgChartTheme"
+    },
+    "docs": {
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "padding?": "/** Configuration for the padding shown around the chart. */",
+      "background?": "/** Configuration for the background shown behind the chart. */",
+      "title?": "/** Configuration for the title shown at the top of the chart. */",
+      "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
+      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
+      "legend?": "/** Configuration for the chart legend. */",
+      "listeners?": "/** A map of event names to event listeners. */"
     }
   },
   "AgPolarChartOptions": {
@@ -6508,6 +6941,21 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "{ [key: string]: Function; }",
       "theme?": "string | AgChartTheme"
+    },
+    "docs": {
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "padding?": "/** Configuration for the padding shown around the chart. */",
+      "background?": "/** Configuration for the background shown behind the chart. */",
+      "title?": "/** Configuration for the title shown at the top of the chart. */",
+      "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
+      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
+      "legend?": "/** Configuration for the chart legend. */",
+      "listeners?": "/** A map of event names to event listeners. */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -6529,6 +6977,21 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "{ [key: string]: Function; }",
       "theme?": "string | AgChartTheme"
+    },
+    "docs": {
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "padding?": "/** Configuration for the padding shown around the chart. */",
+      "background?": "/** Configuration for the background shown behind the chart. */",
+      "title?": "/** Configuration for the title shown at the top of the chart. */",
+      "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
+      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
+      "legend?": "/** Configuration for the chart legend. */",
+      "listeners?": "/** A map of event names to event listeners. */"
     }
   },
   "AgChartOptions": {

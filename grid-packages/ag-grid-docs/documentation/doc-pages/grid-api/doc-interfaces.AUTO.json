@@ -9581,9 +9581,18 @@
     "meta": { "typeParams": ["T"] }
   },
   "AgNumberAxisThemeOptions": {
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "top": {
       "type": {
         "returnType": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
@@ -9610,10 +9619,22 @@
     }
   },
   "AgLogAxisThemeOptions": {
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
-    "base": { "type": { "returnType": "number", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "base": {
+      "description": "/** The base of the logarithm used. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "top": {
       "type": {
         "returnType": "Omit<AgLogAxisOptions, 'top' | 'type'>",
@@ -9694,7 +9715,10 @@
     }
   },
   "AgTimeAxisThemeOptions": {
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "top": {
       "type": {
         "returnType": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
@@ -9767,144 +9791,343 @@
     }
   },
   "AgChartPaddingOptions": {
-    "top": { "type": { "returnType": "number", "optional": true } },
-    "right": { "type": { "returnType": "number", "optional": true } },
-    "bottom": { "type": { "returnType": "number", "optional": true } },
-    "left": { "type": { "returnType": "number", "optional": true } }
+    "top": {
+      "description": "/** The number of pixels of padding at the top of the chart area. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "right": {
+      "description": "/** The number of pixels of padding at the right of the chart area. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "bottom": {
+      "description": "/** The number of pixels of padding at the bottom of the chart area. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "left": {
+      "description": "/** The number of pixels of padding at the left of the chart area. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgChartLabelOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgDropShadowOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "xOffset": { "type": { "returnType": "number", "optional": true } },
-    "yOffset": { "type": { "returnType": "number", "optional": true } },
-    "blur": { "type": { "returnType": "number", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the shadow is visible. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the shadow. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xOffset": {
+      "description": "/** The horizontal offset in pixels for the shadow. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical offset in pixels for the shadow. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "blur": {
+      "description": "/** The radius of the shadow's blur, given in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgChartCaptionOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not the title should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
-    "text": { "type": { "returnType": "string", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "text": {
+      "description": "/** The text to show in the title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the title. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the title. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the title. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the title. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgNavigatorMaskOptions": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } }
+    "fill": {
+      "description": "/** The fill colour used by the mask. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The stroke colour used by the mask. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The stroke width used by the mask. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgNavigatorHandleOptions": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "gripLineGap": { "type": { "returnType": "number", "optional": true } },
-    "gripLineLength": { "type": { "returnType": "number", "optional": true } }
+    "fill": {
+      "description": "/** The fill colour used by the handle. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The stroke colour used by the handle. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The stroke width used by the handle. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the handle. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the handle. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "gripLineGap": {
+      "description": "/** The distance between the handle's grip lines. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "gripLineLength": {
+      "description": "/** The length of the handle's grip lines. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgNavigatorOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "margin": { "type": { "returnType": "number", "optional": true } },
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not to show the navigator. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the navigator. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "margin": {
+      "description": "/** The distance between the navigator and the bottom axis. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "min": {
+      "description": "/** The start of the visible range in the <code>[0, 1]</code> interval. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** The end of the visible range in the <code>[0, 1]</code> interval. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "mask": {
+      "description": "/** Configuration for the navigator's visible range mask. */",
       "type": { "returnType": "AgNavigatorMaskOptions", "optional": true }
     },
     "minHandle": {
+      "description": "/** Configuration for the navigator's left handle. */",
       "type": { "returnType": "AgNavigatorHandleOptions", "optional": true }
     },
     "maxHandle": {
+      "description": "/** Configuration for the navigator's right handle. */",
       "type": { "returnType": "AgNavigatorHandleOptions", "optional": true }
     }
   },
   "AgChartLegendPosition": {},
   "AgChartLegendMarkerOptions": {
-    "size": { "type": { "returnType": "number", "optional": true } },
+    "size": {
+      "description": "/** The size in pixels of the markers in the legend. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "shape": {
+      "description": "/** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none. */",
       "type": { "returnType": "string | (new () => any)", "optional": true }
     },
-    "padding": { "type": { "returnType": "number", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "padding": {
+      "description": "/** The padding in pixels between a legend marker and the corresponding label. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for markers in the legend. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgChartLegendLabelOptions": {
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } }
+    "color": {
+      "description": "/** The colour of the text. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the legend. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the legend. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the legend. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the legend. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "formatter": {
+      "description": "/** Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index. */",
+      "type": {
+        "arguments": { "id": "string", "itemId": "any", "value": "string" },
+        "returnType": "string",
+        "optional": true
+      }
+    }
   },
   "AgChartLegendItemOptions": {
     "marker": {
+      "description": "/** Configuration for the legend markers. */",
       "type": { "returnType": "AgChartLegendMarkerOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the legend labels. */",
       "type": { "returnType": "AgChartLegendLabelOptions", "optional": true }
     },
-    "paddingX": { "type": { "returnType": "number", "optional": true } },
-    "paddingY": { "type": { "returnType": "number", "optional": true } }
+    "paddingX": {
+      "description": "/** The horizontal spacing in pixels to use between legend items. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingY": {
+      "description": "/** The vertical spacing in pixels to use between legend items. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgChartLegendOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not to show the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
     },
-    "spacing": { "type": { "returnType": "number", "optional": true } },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
     }
   },
   "AgChartTooltipOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "class": { "type": { "returnType": "string", "optional": true } },
-    "tracking": { "type": { "returnType": "boolean", "optional": true } },
-    "delay": { "type": { "returnType": "number", "optional": true } }
+    "enabled": {
+      "description": "/** Set to false to disable tooltips for all series in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "class": {
+      "description": "/** A class name to be added to the tooltip element of the chart. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "tracking": {
+      "description": "/** If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "delay": {
+      "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgBaseChartOptions": {
     "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "type": { "returnType": "HTMLElement | null", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "autoSize": { "type": { "returnType": "boolean", "optional": true } },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
       "type": {
-        "returnType": "{\n        visible?: boolean;\n        fill?: string;\n    }",
+        "returnType": "{\n        /** Whether or not the background should be visible. */\n        visible?: boolean;\n        /** Colour of the chart background. */\n        fill?: string;\n    }",
         "optional": true
       }
     },
     "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
+      "description": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
     "legend": {
+      "description": "/** Configuration for the chart legend. */",
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
@@ -9916,14 +10139,32 @@
   },
   "AgCartesianAxisPosition": {},
   "AgAxisLineOptions": {
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "width": {
+      "description": "/** The width in pixels of the axis line. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis line. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgAxisTickOptions": {
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "count": { "type": { "returnType": "any", "optional": true } }
+    "width": {
+      "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "size": {
+      "description": "/** The length in pixels of the axis ticks. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis ticks. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "count": {
+      "description": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "AgAxisLabelFormatterParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
@@ -9938,15 +10179,40 @@
     }
   },
   "AgAxisLabelOptions": {
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "padding": { "type": { "returnType": "number", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "rotation": { "type": { "returnType": "number", "optional": true } },
-    "format": { "type": { "returnType": "string", "optional": true } },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "padding": {
+      "description": "/** Padding in pixels between the axis label and the tick. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "rotation": {
+      "description": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "format": {
+      "description": "/** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\\\"../axes/#time-label-format-string\\\">click here</a> */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "formatter": {
+      "description": "/** Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code> */",
       "type": {
         "arguments": { "params": "AgAxisLabelFormatterParams" },
         "returnType": "string",
@@ -9955,66 +10221,123 @@
     }
   },
   "AgAxisGridStyle": {
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } }
+    "stroke": {
+      "description": "/** The colour of the grid line. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    }
   },
   "AgCartesianAxisType": {},
   "AgBaseCartesianAxisOptions": {
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
   },
   "AgNumberAxisOptions": {
     "type": { "type": { "returnType": "'number'", "optional": false } },
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
   },
   "AgLogAxisOptions": {
     "type": { "type": { "returnType": "'log'", "optional": false } },
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
-    "base": { "type": { "returnType": "number", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "min": {
+      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "base": {
+      "description": "/** The base of the logarithm used. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
@@ -10024,17 +10347,27 @@
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
@@ -10044,55 +10377,92 @@
       "type": { "returnType": "'groupedCategory'", "optional": false }
     },
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
   },
   "AgTimeAxisOptions": {
     "type": { "type": { "returnType": "'time'", "optional": false } },
-    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "nice": {
+      "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
     "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
-    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
     },
     "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
     "keys": { "type": { "returnType": "string[]", "optional": true } }
   },
   "AgCartesianAxisOptions": {},
   "AgBaseSeriesOptions": {
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10144,17 +10514,42 @@
     "color": { "type": { "returnType": "string", "optional": true } }
   },
   "AgSeriesMarker": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass. */",
       "type": { "returnType": "string | (new () => any)", "optional": true }
     },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "maxSize": { "type": { "returnType": "number", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } }
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgSeriesMarkerFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -10183,25 +10578,54 @@
   "AgCartesianSeriesMarkerFormatter": {},
   "AgCartesianSeriesMarker": {
     "formatter": {
+      "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
         "returnType": "AgCartesianSeriesMarkerFormatter",
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass. */",
       "type": { "returnType": "string | (new () => any)", "optional": true }
     },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "maxSize": { "type": { "returnType": "number", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } }
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgSeriesTooltip": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgLineSeriesLabelOptions": {
     "formatter": {
@@ -10211,12 +10635,30 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgLineSeriesTooltip": {
     "renderer": {
@@ -10227,7 +10669,10 @@
       }
     },
     "format": { "type": { "returnType": "string", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgLineSeriesOptions": {
     "type": { "type": { "returnType": "'line'", "optional": true } },
@@ -10250,19 +10695,33 @@
     "tooltip": {
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10290,7 +10749,10 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgOHLCSeriesOptions": {
     "type": { "type": { "returnType": "'ohlc'", "optional": true } },
@@ -10303,19 +10765,33 @@
     "tooltip": {
       "type": { "returnType": "AgOHLCSeriesTooltip", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10328,15 +10804,36 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgScatterSeriesLabelOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgScatterSeriesOptions": {
     "type": { "type": { "returnType": "'scatter'", "optional": true } },
@@ -10378,19 +10875,33 @@
     "tooltip": {
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10404,85 +10915,159 @@
       }
     },
     "format": { "type": { "returnType": "string", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgAreaSeriesLabelOptions": {
     "formatter": {
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: any; }" },
         "returnType": "string",
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgAreaSeriesOptions": {
     "type": { "type": { "returnType": "'area'", "optional": true } },
     "marker": {
+      "description": "/** Configuration for the markers used in the series. */",
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
     },
-    "normalizedTo": { "type": { "returnType": "number", "optional": true } },
-    "xKey": { "type": { "returnType": "string", "optional": true } },
+    "normalizedTo": {
+      "description": "/** The number to normalise the area stacks to. For example, if <code>normalizedTo</code> is set to <code>100</code>, the stacks will all be scaled proportionally so that their total height is always 100. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "yKeys": {
-      "description": "/** @deprecated use yKey and multiple series instead\n */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "yNames": {
-      "description": "/** @deprecated use yName and multiple series instead\n */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "yName": { "type": { "returnType": "string", "optional": true } },
     "fills": {
-      "description": "/** @deprecated use fill and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the fills of the areas.\n * @deprecated use fill and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "fill": { "type": { "returnType": "string", "optional": true } },
+    "fill": {
+      "description": "/** The colour to use for the fill of the area. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "strokes": {
-      "description": "/** @deprecated use stroke and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the strokes of the areas.\n * @deprecated use stroke and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
+    "stroke": {
+      "description": "/** The colours to use for the stroke of the areas. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the areas. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the area. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the areas. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "shadow": {
+      "description": "/** Configuration for the shadow used behind the chart series. */",
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels shown on top of data points. */",
       "type": { "returnType": "AgAreaSeriesLabelOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgAreaSeriesTooltip", "optional": true }
     },
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
   },
   "AgBarSeriesLabelOptions": {
     "formatter": {
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: number; }" },
         "returnType": "string",
@@ -10490,14 +11075,33 @@
       }
     },
     "placement": {
+      "description": "/** Where to render series labels relative to the segments. */",
       "type": { "returnType": "'inside' | 'outside'", "optional": true }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgBarSeriesFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -10515,29 +11119,51 @@
   },
   "AgBarSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgBarSeriesOptions": {
     "type": { "type": { "returnType": "'bar' | 'column'", "optional": true } },
-    "grouped": { "type": { "returnType": "boolean", "optional": true } },
+    "grouped": {
+      "description": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "stacked": { "type": { "returnType": "boolean", "optional": true } },
-    "normalizedTo": { "type": { "returnType": "number", "optional": true } },
-    "xKey": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
+    "normalizedTo": {
+      "description": "/** The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>. For example, if <code>normalizedTo</code> is set to <code>100</code>, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The keys to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "yKeys": {
-      "description": "/** @deprecated use yKey and multiple series instead\n */",
+      "description": "/** The keys to use to retrieve y-values from the data.\n * @deprecated use yKey and multiple series instead\n */",
       "type": { "returnType": "string[] | string[][]", "optional": true }
     },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yName": {
+      "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "yNames": {
-      "description": "/** @deprecated use yName and multiple series instead\n */",
+      "description": "/** Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.\n * @deprecated use yName and multiple series instead\n */",
       "type": {
         "returnType": "string[] | { [key in string]: string }",
         "optional": true
@@ -10545,49 +11171,88 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": {
-      "description": "/** @deprecated use fill and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the fills of the bars.\n * @deprecated use fill and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "fill": { "type": { "returnType": "string", "optional": true } },
+    "fill": {
+      "description": "/** The colour to use for the fill of the area. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "strokes": {
-      "description": "/** @deprecated use stroke and multiple series instead\n */",
+      "description": "/** The colours to cycle through for the strokes of the bars.\n * @deprecated use stroke and multiple series instead\n */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
+    "stroke": {
+      "description": "/** The colours to use for the stroke of the bars. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "shadow": {
+      "description": "/** Configuration for the shadow used behind the chart series. */",
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels shown on bars. */",
       "type": { "returnType": "AgBarSeriesLabelOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgBarSeriesTooltip", "optional": true }
     },
     "formatter": {
+      "description": "/** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
       "type": {
         "arguments": { "params": "AgBarSeriesFormatterParams" },
         "returnType": "AgBarSeriesFormat",
         "optional": true
       }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10600,12 +11265,30 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgHistogramSeriesTooltip": {
     "renderer": {
@@ -10615,7 +11298,10 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgHistogramSeriesOptions": {
     "type": { "type": { "returnType": "'histogram'", "optional": true } },
@@ -10650,19 +11336,33 @@
     "tooltip": {
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10670,12 +11370,30 @@
   "AgPieSeriesLabelOptions": {
     "offset": { "type": { "returnType": "number", "optional": true } },
     "minAngle": { "type": { "returnType": "number", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgPieSeriesFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -10699,20 +11417,44 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgPieTitleOptions": {
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "enabled": {
+      "description": "/** Whether or not the title should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
-    "text": { "type": { "returnType": "string", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "text": {
+      "description": "/** The text to show in the title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the title. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the title. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the title. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the title. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgPieSeriesOptions": {
     "type": { "type": { "returnType": "'pie'", "optional": true } },
@@ -10761,19 +11503,33 @@
         "optional": true
       }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10793,12 +11549,30 @@
   },
   "AgTreemapSeriesLabelOptions": {
     "padding": { "type": { "returnType": "number", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } },
-    "fontFamily": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "AgTreemapNodeDatum": {
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -10831,7 +11605,10 @@
         "optional": true
       }
     },
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "AgTreemapSeriesOptions": {
     "type": { "type": { "returnType": "'treemap'", "optional": true } },
@@ -10858,19 +11635,33 @@
     },
     "nodePadding": { "type": { "returnType": "number", "optional": true } },
     "gradient": { "type": { "returnType": "boolean", "optional": true } },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "visible": { "type": { "returnType": "boolean", "optional": true } },
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": {
         "returnType": "{ [key in string]: Function }",
         "optional": true
       }
     },
     "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": {
-        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n         *\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        /** Highlight style used for an individual marker when tapped or hovered over. */\n        item?: {\n            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            fill?: string;\n            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            stroke?: string;\n            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */\n        series?: {\n            enabled?: boolean;\n            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */\n            dimOpacity?: number;\n            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */\n            strokeWidth?: number;\n        };\n    }",
         "optional": true
       }
     }
@@ -10889,37 +11680,58 @@
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "type": { "returnType": "HTMLElement | null", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "autoSize": { "type": { "returnType": "boolean", "optional": true } },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
       "type": {
-        "returnType": "{\n        visible?: boolean;\n        fill?: string;\n    }",
+        "returnType": "{\n        /** Whether or not the background should be visible. */\n        visible?: boolean;\n        /** Colour of the chart background. */\n        fill?: string;\n    }",
         "optional": true
       }
     },
     "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
+      "description": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
     "legend": {
+      "description": "/** Configuration for the chart legend. */",
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
@@ -10931,37 +11743,58 @@
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
     "meta": { "typeParams": ["TSeriesOptions"] },
     "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "type": { "returnType": "HTMLElement | null", "optional": true }
     },
-    "data": { "type": { "returnType": "any[]", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "autoSize": { "type": { "returnType": "boolean", "optional": true } },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
       "type": {
-        "returnType": "{\n        visible?: boolean;\n        fill?: string;\n    }",
+        "returnType": "{\n        /** Whether or not the background should be visible. */\n        visible?: boolean;\n        /** Colour of the chart background. */\n        fill?: string;\n    }",
         "optional": true
       }
     },
     "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
+      "description": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
     "legend": {
+      "description": "/** Configuration for the chart legend. */",
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
@@ -10976,36 +11809,54 @@
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
     "meta": { "typeParams": ["TSeriesOptions"] },
     "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "type": { "returnType": "HTMLElement | null", "optional": true }
     },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "autoSize": { "type": { "returnType": "boolean", "optional": true } },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
       "type": {
-        "returnType": "{\n        visible?: boolean;\n        fill?: string;\n    }",
+        "returnType": "{\n        /** Whether or not the background should be visible. */\n        visible?: boolean;\n        /** Colour of the chart background. */\n        fill?: string;\n    }",
         "optional": true
       }
     },
     "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
+      "description": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
     "legend": {
+      "description": "/** Configuration for the chart legend. */",
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
+      "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
