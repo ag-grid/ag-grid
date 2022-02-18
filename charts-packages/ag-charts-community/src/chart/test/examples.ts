@@ -1,12 +1,12 @@
 import { AgChartOptions } from '../agChartOptions';
-import * as data from './data';
+import { DOCS_EXAMPLES, DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY } from './data';
 import month from '../../util/time/month';
 import { year } from '../../util/time/year';
 import { Marker } from '../marker/marker';
 
 export const BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_UK_LABOUR_MARKET_FEB_2020,
+    data: DOCS_EXAMPLES['simple-bar'],
     title: {
         text: 'Gross Weekly Earnings by Occupation (Q4 2019)',
         fontSize: 18,
@@ -42,7 +42,7 @@ export const BAR_CHART_EXAMPLE: AgChartOptions = {
 
 export const GROUPED_BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_EMPLOYMENT_LABOUR_MARKET_AVERAGE_WEEKLY_EARNINGS,
+    data: DOCS_EXAMPLES['grouped-bar'],
     theme: {
         palette: {
             fills: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
@@ -97,7 +97,7 @@ function getTotal(datum: any) {
 
 export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_ENGLISH_HOUSING_SURVEY_2016.sort((a, b) => {
+    data: DOCS_EXAMPLES['stacked-bar'].sort((a, b) => {
         return getTotal(b) - getTotal(a);
     }),
     theme: {
@@ -164,7 +164,7 @@ export const STACKED_BAR_CHART_EXAMPLE: AgChartOptions = {
 
 export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_INTERNET_USERS,
+    data: DOCS_EXAMPLES['100--stacked-bar'],
     theme: {
         palette: {
             fills: ['#00c851', '#ffbb33', '#ff4444'],
@@ -221,7 +221,7 @@ export const ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: AgChartOptions = {
 
 export const BAR_CHART_WITH_LABELS_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_JOBS_AND_VACANCIES_FEB_2020,
+    data: DOCS_EXAMPLES['bar-with-labels'],
     title: {
         text: 'Change in Number of Jobs in UK (June to September 2019)',
         fontSize: 18,
@@ -269,7 +269,7 @@ export const BAR_CHART_WITH_LABELS_EXAMPLE: AgChartOptions = {
 
 export const SIMPLE_COLUMN_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_MUSEUMS_AND_GALLERIES_MONTHLY_VISITS,
+    data: DOCS_EXAMPLES['simple-column'],
     title: {
         text: 'Total Visitors to Museums and Galleries',
         fontSize: 18,
@@ -320,7 +320,7 @@ export const SIMPLE_COLUMN_CHART_EXAMPLE: AgChartOptions = {
 
 export const GROUPED_COLUMN_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_INTERNET_USERS_BY_AGE_GROUP,
+    data: DOCS_EXAMPLES['grouped-column'],
     title: {
         text: 'Regular Internet Users',
         fontSize: 18,
@@ -354,7 +354,7 @@ export const GROUPED_COLUMN_EXAMPLE: AgChartOptions = {
 
 export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_OPEN_DATA_USERS,
+    data: DOCS_EXAMPLES['stacked-column'],
     theme: {
         palette: {
             fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921'],
@@ -421,7 +421,7 @@ export const STACKED_COLUMN_GRAPH_EXAMPLE: AgChartOptions = {
 
 export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_SCHOOL_PUPIL_CHARACTERISTICS,
+    data: DOCS_EXAMPLES['100--stacked-column'],
     theme: {
         palette: {
             fills: ['#f1c40f', '#e67e22', '#2ecc71', '#3498db', '#9b59b6', '#34495e'],
@@ -496,7 +496,7 @@ export const ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE: AgChartOptions = {
 
 export const COLUMN_CHART_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_PRISON_POPULATION,
+    data: DOCS_EXAMPLES['column-with-negative-values'],
     theme: {
         palette: {
             fills: ['#19A0AA', '#F15F36'],
@@ -549,7 +549,7 @@ export const SIMPLE_PIE_CHART_EXAMPLE: AgChartOptions = {
     },
     series: [
         {
-            data: data.DATA_RELIGION_POPULATION,
+            data: DOCS_EXAMPLES['simple-pie'],
             type: 'pie',
             labelKey: 'religion',
             angleKey: 'population',
@@ -570,7 +570,7 @@ export const SIMPLE_PIE_CHART_EXAMPLE: AgChartOptions = {
 
 export const SIMPLE_DOUGHNUT_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_FIRE_STATISTICS,
+    data: DOCS_EXAMPLES['simple-doughnut'],
     title: {
         text: 'Dwelling Fires (UK)',
         fontSize: 18,
@@ -599,7 +599,7 @@ export const SIMPLE_DOUGHNUT_CHART_EXAMPLE: AgChartOptions = {
 
 export const SIMPLE_LINE_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_FUEL_PRICES,
+    data: DOCS_EXAMPLES['simple-line'],
     title: {
         text: 'Road fuel prices (2019)',
         fontSize: 18,
@@ -654,7 +654,7 @@ export const SIMPLE_LINE_CHART_EXAMPLE: AgChartOptions = {
 
 export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_BANANA_PRICES,
+    data: DOCS_EXAMPLES['line-with-gaps'],
     theme: {
         overrides: {
             cartesian: {
@@ -902,7 +902,7 @@ export const LINE_GRAPH_WITH_GAPS_EXAMPLE: AgChartOptions = {
 
 export const SIMPLE_SCATTER_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_MLB_PLAYER_PHYSICAL_STATS,
+    data: DOCS_EXAMPLES['simple-scatter'],
     title: {
         text: 'Height vs Weight for Major League Baseball Players',
         fontSize: 18,
@@ -948,7 +948,7 @@ export const SIMPLE_SCATTER_CHART_EXAMPLE: AgChartOptions = {
 
 export const BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_WORLD_CITIES,
+    data: DOCS_EXAMPLES['bubble-with-negative-values'],
     title: {
         text: 'Most Populous Cities (2019)',
         fontSize: 18,
@@ -1006,7 +1006,7 @@ export const BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
 
 export const BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_RANDOM_BUBBLE_DATA,
+    data: DOCS_EXAMPLES['bubble-with-categories'],
     title: {
         text: 'Punch Card of Github',
         fontSize: 18,
@@ -1068,7 +1068,7 @@ export const BUBBLE_GRAPH_WITH_CATEGORIES_EXAMPLE: AgChartOptions = {
 
 export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_MUSEUMS_AND_GALLERIES_MONTHLY_VISITS_BY_MUSEUM,
+    data: DOCS_EXAMPLES['simple-area'],
     title: {
         text: 'Total Visitors to Tate Galleries',
         fontSize: 18,
@@ -1134,7 +1134,7 @@ export const SIMPLE_AREA_GRAPH_EXAMPLE: AgChartOptions = {
 
 export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_MUSEUMS_AND_GALLERIES_MONTHLY_VISITS_BY_MUSEUM_2,
+    data: DOCS_EXAMPLES['stacked-area'],
     theme: {
         palette: {
             fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
@@ -1196,7 +1196,7 @@ export const STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
 
 export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_ENERGY_TRENDS,
+    data: DOCS_EXAMPLES['100--stacked-area'],
     theme: {
         overrides: {
             area: {
@@ -1300,7 +1300,7 @@ export const ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE: AgChartOptions = {
 
 export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_ENERGY_TRENDS_BY_QUARTER,
+    data: DOCS_EXAMPLES['area-with-negative-values'],
     title: {
         text: 'Changes in UK Energy Stock (2018)',
         fontSize: 18,
@@ -1376,7 +1376,7 @@ export const AREA_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE: AgChartOptions = {
 
 export const MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE: AgChartOptions = {
     type: 'hierarchy',
-    data: data.DATA_MARKET_INDEX_TREE,
+    data: DOCS_EXAMPLES['market-index-treemap'],
     series: [
         {
             type: 'treemap',
@@ -1431,7 +1431,7 @@ function treemapTooltipRenderer(params: any) {
 
 export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_ENGINE_SIZES,
+    data: DOCS_EXAMPLES['simple-histogram'],
     title: {
         text: 'Engine size distribution (USA 1987)',
         fontSize: 18,
@@ -1472,7 +1472,7 @@ export const SIMPLE_HISTOGRAM_CHART_EXAMPLE: AgChartOptions = {
 
 export const HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_CURB_WEIGHTS,
+    data: DOCS_EXAMPLES['histogram-with-specified-bins'],
     title: {
         text: 'Vehicle weight distribution (USA 1987)',
         fontSize: 18,
@@ -1537,7 +1537,7 @@ export const HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE: AgChartOptions = {
 
 export const XY_HISTOGRAM_WITH_MEAN_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_ENGINE_SIZE_MPG,
+    data: DOCS_EXAMPLES['xy-histogram-with-mean-aggregation'],
     title: {
         text: 'Vehicle fuel efficiency by engine size (USA 1987)',
         fontSize: 18,
@@ -1616,7 +1616,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
     };
 
     Object.assign(GROUPED_CATEGORY_AXIS_EXAMPLE, {
-        data: data.DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
+        data: DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY,
         axes: [
             { type: 'groupedCategory', position: 'bottom' },
             { type: 'number', position: 'left', label: { formatter: usdFormatter } },
@@ -1664,7 +1664,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
         },
         series: [
             {
-                data: data.DATA_EARTHQUAKES_GROUPED.ci,
+                data: DOCS_EXAMPLES['time-axis-with-irregular-intervals'].ci,
                 type: 'line',
                 title: 'Southern California Seismic Network',
                 xKey: 'time',
@@ -1677,7 +1677,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES_GROUPED.hv,
+                data: DOCS_EXAMPLES['time-axis-with-irregular-intervals'].hv,
                 type: 'line',
                 title: 'Hawaiian Volcano Observatory Network',
                 xKey: 'time',
@@ -1690,7 +1690,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES_GROUPED.nc,
+                data: DOCS_EXAMPLES['time-axis-with-irregular-intervals'].nc,
                 type: 'line',
                 title: 'USGS Northern California Network',
                 xKey: 'time',
@@ -1703,7 +1703,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
                 },
             },
             {
-                data: data.DATA_EARTHQUAKES_GROUPED.ok,
+                data: DOCS_EXAMPLES['time-axis-with-irregular-intervals'].ok,
                 type: 'line',
                 title: 'Oklahoma Seismic Network',
                 xKey: 'time',
@@ -1747,7 +1747,7 @@ export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = {};
 }
 
 export const LOG_AXIS_EXAMPLE: AgChartOptions = {
-    data: data.DATA_WORLD_POPULATION,
+    data: DOCS_EXAMPLES['log-axis'],
     title: {
         text: 'World Population Over Time',
     },
@@ -1793,7 +1793,7 @@ export const LOG_AXIS_EXAMPLE: AgChartOptions = {
 
 export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_LIVESTOCK_INDUSTRY,
+    data: DOCS_EXAMPLES['combination-of-different-series-types'],
     title: {
         text: 'Cattle Holdings and Beef Exports (UK)',
         fontSize: 18,
@@ -1880,7 +1880,7 @@ export const ADV_COMBINATION_SERIES_CHART_EXAMPLE: AgChartOptions = {
 
 export const ADV_CHART_CUSTOMISATION: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_MARRIAGES_AND_DIVORCES,
+    data: DOCS_EXAMPLES['chart-customisation'],
     background: {
         fill: '#ecf2f9',
     },
@@ -2043,7 +2043,7 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
 
     Object.assign(ADV_CUSTOM_MARKER_SHAPES_EXAMPLE, {
         autoSize: true,
-        data: data.DATA_ALCOHOL_BULLETIN,
+        data: DOCS_EXAMPLES['custom-marker-shapes'],
         title: {
             text: 'Taxed Alcohol Consumption (UK)',
             fontSize: 18,
@@ -2169,7 +2169,7 @@ export const ADV_CUSTOM_MARKER_SHAPES_EXAMPLE: AgChartOptions = {};
 
 export const ADV_CUSTOM_TOOLTIPS_EXAMPLE: AgChartOptions = {
     autoSize: true,
-    data: data.DATA_WASTE_ELECTRICAL_EQUIPMENT,
+    data: DOCS_EXAMPLES['custom-tooltips'],
     theme: {
         overrides: {
             column: {
@@ -2305,7 +2305,7 @@ export const ADV_PER_MARKER_CUSTOMISATION: AgChartOptions = {};
 {
     Object.assign(ADV_PER_MARKER_CUSTOMISATION, {
         autoSize: true,
-        data: data.DATA_EARTHQUAKES.filter((d) => d.magnitude > 4),
+        data: DOCS_EXAMPLES['per-marker-customisation'].filter((d) => d.magnitude > 4),
         title: {
             text: 'Worldwide Earthquakes (first week of February 2020)',
             fontSize: 18,
