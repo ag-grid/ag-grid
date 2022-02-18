@@ -72,60 +72,30 @@ const VueExample = {
         },
         getColumnDefsA() {
             return [
-                { field: 'athlete' },
-                { field: 'age' },
-                { field: 'country' },
-                { field: 'sport' },
-                { field: 'year' },
-                { field: 'date' },
-                { field: 'gold' },
-                { field: 'silver' },
-                { field: 'bronze' },
-                { field: 'total' }
+                { field: 'athlete', headerName: 'A Athlete' },
+                { field: 'age', headerName: 'A Age' },
+                { field: 'country', headerName: 'A Country' },
+                { field: 'sport', headerName: 'A Sport' },
+                { field: 'year', headerName: 'A Year' },
+                { field: 'date', headerName: 'A Date' },
+                { field: 'gold', headerName: 'A Gold' },
+                { field: 'silver', headerName: 'A Silver' },
+                { field: 'bronze', headerName: 'A Bronze' },
+                { field: 'total', headerName: 'A Total' },
             ];
         },
         getColumnDefsB() {
             return [
-                {
-                    field: 'athlete',
-                    headerName: 'ATHLETE'
-                },
-                {
-                    field: 'age',
-                    headerName: 'AGE'
-                },
-                {
-                    field: 'country',
-                    headerName: 'COUNTRY'
-                },
-                {
-                    field: 'sport',
-                    headerName: 'SPORT'
-                },
-                {
-                    field: 'year',
-                    headerName: 'YEAR'
-                },
-                {
-                    field: 'date',
-                    headerName: 'DATE'
-                },
-                {
-                    field: 'gold',
-                    headerName: 'GOLD'
-                },
-                {
-                    field: 'silver',
-                    headerName: 'SILVER'
-                },
-                {
-                    field: 'bronze',
-                    headerName: 'BRONZE'
-                },
-                {
-                    field: 'total',
-                    headerName: 'TOTAL'
-                }
+                { field: 'gold', headerName: 'B Gold' },
+                { field: 'silver', headerName: 'B Silver' },
+                { field: 'bronze', headerName: 'B Bronze' },
+                { field: 'total', headerName: 'B Total' },
+                { field: 'athlete', headerName: 'B Athlete' },
+                { field: 'age', headerName: 'B Age' },
+                { field: 'country', headerName: 'B Country' },
+                { field: 'sport', headerName: 'B Sport' },
+                { field: 'year', headerName: 'B Year' },
+                { field: 'date', headerName: 'B Date' },
             ];
         }
     }
