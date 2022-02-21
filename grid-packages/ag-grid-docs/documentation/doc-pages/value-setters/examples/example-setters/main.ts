@@ -57,7 +57,7 @@ const columnDefs: ColDef[] = [
                 params.data.c = {}
             }
             params.data.c.x = params.newValue
-            return true // we are lazy, always returning true
+            return true
         },
     },
     {
@@ -74,7 +74,7 @@ const columnDefs: ColDef[] = [
                 params.data.c = {}
             }
             params.data.c.y = params.newValue
-            return true // we are lazy, always returning true
+            return true
         },
     },
 ]

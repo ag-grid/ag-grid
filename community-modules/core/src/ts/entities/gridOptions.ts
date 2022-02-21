@@ -86,7 +86,8 @@ import {
     VirtualRowRemovedEvent,
     GridSizeChangedEvent,
     FullWidthCellKeyPressEvent,
-    FullWidthCellKeyDownEvent
+    FullWidthCellKeyDownEvent,
+    CellEditRequestEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
@@ -246,7 +247,7 @@ export interface GridOptions {
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
     /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */
-    editReadOnly?: boolean;    
+    readOnlyEdit?: boolean;    
 
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
@@ -954,6 +955,8 @@ export interface GridOptions {
     // *** Editing *** //
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
     onCellValueChanged?(event: CellValueChangedEvent): void;
+    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
+    onCellEditRequest?(event: CellEditRequestEvent): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent): void;
     /** Editing a cell has started. */

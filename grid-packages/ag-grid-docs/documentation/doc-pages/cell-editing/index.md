@@ -29,9 +29,10 @@ By default the grid provides for simple String editing and stores the result as 
 
 Cell editing results in the following events.
 
-<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged","cellEditingStarted","cellEditingStopped","rowEditingStarted","rowEditingStopped"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged","cellEditingStarted","cellEditingStopped","rowEditingStarted","rowEditingStopped","cellEditRequest"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 
 <br/>
 
-Note that `rowEditingStarted` and `rowEditingStopped` only fire when doing [Full Row Editing](/cell-editing-full-row/).
+`rowEditingStarted` and `rowEditingStopped` only fire when doing [Full Row Editing](/cell-editing-full-row/).
 
+`cellEditRequest` only fire when doing [Read Only Edits](/value-setters/).

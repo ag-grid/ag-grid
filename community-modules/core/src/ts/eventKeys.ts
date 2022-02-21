@@ -96,6 +96,7 @@ export class Events {
     public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
     public static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
     public static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
+    public static EVENT_CELL_EDIT_REQUEST = 'cellEditRequest';
     public static EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
     public static EVENT_CELL_FOCUSED = 'cellFocused';
     public static EVENT_ROW_SELECTED = 'rowSelected';

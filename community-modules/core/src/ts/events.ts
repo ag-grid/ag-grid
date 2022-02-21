@@ -456,6 +456,12 @@ export interface CellValueChangedEvent extends CellEvent {
     source: string | undefined;
 }
 
+export interface CellEditRequestEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+    source: string | undefined;
+}
+
 export interface AsyncTransactionsFlushed extends AgGridEvent {
     /**
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.

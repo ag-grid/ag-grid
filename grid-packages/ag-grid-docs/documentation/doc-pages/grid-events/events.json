@@ -89,6 +89,7 @@
             }
         },
         "cellValueChanged": {},
+        "cellEditRequest": {},
         "rowValueChanged": {
             "more": {
                 "name": "Full Row Editing",

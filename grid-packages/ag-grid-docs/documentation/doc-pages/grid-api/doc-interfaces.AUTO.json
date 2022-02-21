@@ -2232,7 +2232,7 @@
       "description": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "editReadOnly": {
+    "readOnlyEdit": {
       "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -3638,6 +3638,24 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
+    },
+    "onCellEditRequest": {
+      "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "type": {
+        "arguments": { "event": "CellEditRequestEvent" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCellEditRequest" }
+    },
+    "cellEditRequest": {
+      "description": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "type": {
+        "arguments": { "event": "CellEditRequestEvent" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "onRowValueChanged": {
       "description": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
@@ -6932,6 +6950,46 @@
     }
   },
   "CellValueChangedEvent": {
+    "oldValue": { "type": { "returnType": "any", "optional": false } },
+    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "source": {
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
+    "column": { "type": { "returnType": "Column", "optional": false } },
+    "colDef": { "type": { "returnType": "ColDef", "optional": false } },
+    "value": {
+      "description": "/** The value for the cell */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "node": { "type": { "returnType": "RowNode", "optional": false } },
+    "data": {
+      "description": "/** The user provided data for the row */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The visible row index for the row */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "event": {
+      "description": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": { "returnType": "Event | null", "optional": true }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "CellEditRequestEvent": {
     "oldValue": { "type": { "returnType": "any", "optional": false } },
     "newValue": { "type": { "returnType": "any", "optional": false } },
     "source": {

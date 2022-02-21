@@ -10,7 +10,8 @@ import {
     CellFocusedEvent,
     Events,
     FlashCellsEvent,
-    CellValueChangedEvent
+    CellValueChangedEvent,
+    CellEditRequestEvent
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
@@ -429,7 +430,7 @@ export class CellCtrl extends BeanStub {
     private saveNewValue(oldValue: any, newValue: any): void {
         if (newValue===oldValue) { return; }
 
-        if (this.beans.gridOptionsWrapper.isEditReadOnly()) {
+        if (this.beans.gridOptionsWrapper.isReadOnlyEdit()) {
             this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
             return;
         }
@@ -445,8 +446,8 @@ export class CellCtrl extends BeanStub {
 
     private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
         const rowNode = this.rowNode;
-        const event: CellValueChangedEvent = {
-            type: Events.EVENT_CELL_VALUE_CHANGED,
+        const event: CellEditRequestEvent = {
+            type: Events.EVENT_CELL_EDIT_REQUEST,
             event: null,
             rowIndex: rowNode.rowIndex!,
             rowPinned: rowNode.rowPinned,

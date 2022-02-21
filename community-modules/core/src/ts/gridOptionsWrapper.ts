@@ -807,8 +807,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnApi;
     }
 
-    public isEditReadOnly(): boolean {
-        return isTrue(this.gridOptions.editReadOnly);;
+    public isReadOnlyEdit(): boolean {
+        return isTrue(this.gridOptions.readOnlyEdit);;
     }
 
     public isImmutableData() {

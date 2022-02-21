@@ -1424,7 +1424,7 @@
       "editType?": "string",
       "singleClickEdit?": "boolean",
       "suppressClickEdit?": "boolean",
-      "editReadOnly?": "boolean",
+      "readOnlyEdit?": "boolean",
       "stopEditingWhenCellsLoseFocus?": "boolean",
       "enterMovesDown?": "boolean",
       "enterMovesDownAfterEdit?": "boolean",
@@ -1677,6 +1677,7 @@
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "void",
       "onComponentStateChanged?(event: ComponentStateChangedEvent)": "void",
       "onCellValueChanged?(event: CellValueChangedEvent)": "void",
+      "onCellEditRequest?(event: CellEditRequestEvent)": "void",
       "onRowValueChanged?(event: RowValueChangedEvent)": "void",
       "onCellEditingStarted?(event: CellEditingStartedEvent)": "void",
       "onCellEditingStopped?(event: CellEditingStoppedEvent)": "void",
@@ -1786,7 +1787,7 @@
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "singleClickEdit?": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
       "suppressClickEdit?": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
-      "editReadOnly?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "readOnlyEdit?": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
       "stopEditingWhenCellsLoseFocus?": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
       "enterMovesDown?": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
       "enterMovesDownAfterEdit?": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
@@ -2033,6 +2034,7 @@
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "onCellValueChanged?(event: CellValueChangedEvent)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellEditRequest?(event: CellEditRequestEvent)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
       "onRowValueChanged?(event: RowValueChangedEvent)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent)": "/** Editing a cell has stopped. */",
@@ -3944,6 +3946,35 @@
     }
   },
   "CellValueChangedEvent": {
+    "meta": {},
+    "type": {
+      "oldValue": "any",
+      "newValue": "any",
+      "source": "string | undefined",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
+      "node": "RowNode",
+      "data": "any",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "value": "/** The value for the cell */",
+      "data": "/** The user provided data for the row */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "CellEditRequestEvent": {
     "meta": {},
     "type": {
       "oldValue": "any",
