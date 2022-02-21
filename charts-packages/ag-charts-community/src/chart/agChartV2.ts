@@ -42,6 +42,7 @@ import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
+import { SeriesOptionsTypes } from './mapping/defaults';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -90,17 +91,19 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
 
 // Backwards-compatibility layer.
 export abstract class AgChart {
+    /** @deprecated use AgChart.create() or AgChart.update() instead. */
     static createComponent(options: any, type: string): any {
+        // console.warn('AG Charts - createComponent should no longer be used, use AgChart.update() instead.')
+
         if (type.indexOf('.series') >= 0) {
             const optionsWithType = {
                 ...options,
                 type: options.type || type.split('.')[0],
             };
-            console.warn('AG Charts - createComponent should no longer be used, use AgChart.update() instead.')
             return createSeries([optionsWithType])[0];
         }
 
-        throw new Error('AG Charts - createComponent should no longer be used, use AgChart.update() instead.');
+        return null;
     }
 
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
@@ -202,9 +205,9 @@ function applyChartOptions<
     chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
 }
 
-function createSeries(options: AgChartOptions['series']): Series[] {
+function createSeries(options: SeriesOptionsTypes[]): Series[] {
     const series: Series[] = [];
-    const skip: (keyof NonNullable<AgChartOptions['series']>[number])[] = ['listeners'];
+    const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
 
     let index = 0;
     for (const seriesOptions of options || []) {
