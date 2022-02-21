@@ -846,12 +846,6 @@
             }
         },
         "rowData": {},
-        "immutableData": {
-            "more": {
-                "name": "Immutable Data",
-                "url": "/immutable-data/"
-            }
-        },
         "asyncTransactionWaitMillis": {
             "more": {
                 "name": "Async transactions",
