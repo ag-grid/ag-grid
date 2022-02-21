@@ -36,7 +36,7 @@ If you want to profile (using React Developer Tools) the example above, do the f
 
 As the grid is written in React, we welcome trashing it using React profiling tools for how well it plays alongside your application with regards component refresh and wasted render cycles.
 
-<image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
+<image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" maxWidth="90%" constrained="true" centered="true"></image-caption>
 
 ## Using Cell Editors
 
