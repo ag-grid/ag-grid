@@ -955,7 +955,7 @@ export interface GridOptions {
     // *** Editing *** //
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
     onCellValueChanged?(event: CellValueChangedEvent): void;
-    /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
+    /** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true. */
     onCellEditRequest?(event: CellEditRequestEvent): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent): void;
