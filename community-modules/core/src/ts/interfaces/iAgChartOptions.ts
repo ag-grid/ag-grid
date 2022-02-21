@@ -578,28 +578,43 @@ export interface AgSeriesTooltip {
 }
 
 export interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
+    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
     formatter?: (params: { value: any }) => string;
 }
 
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
     format?: string;
 }
 
+/** Configuration for line series. */
 export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     type?: 'line';
     marker?: AgCartesianSeriesMarker;
+    /** The key to use to retrieve x-values from the data. */
     xKey?: string;
+    /** The key to use to retrieve y-values from the data. */
     yKey?: string;
+    /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
+    /** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */
     title?: string;
+    /** The colour of the stroke for the lines. */
     stroke?: string;
+    /** The width in pixels of the stroke for the lines. */
     strokeWidth?: number;
+    /** The opacity of the stroke for the lines. */
     strokeOpacity?: number;
+    /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
     lineDash?: number[];
+    /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
+    /** Configuration for the labels shown on top of data points. */
     label?: AgLineSeriesLabelOptions;
+    /** Series-specific tooltip configuration. */
     tooltip?: AgLineSeriesTooltip;
 }
 
@@ -636,44 +651,49 @@ export interface AgOHLCSeriesOptions extends AgBaseSeriesOptions {
 }
 
 export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
 export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
 
+/** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
+    /** Configuration for the treemap series.  */
     type?: 'scatter';
+    /** Configuration for the markers used in the series.  */
     marker?: AgCartesianSeriesMarker;
+    /** Configuration for the labels shown on top of data points.  */
     label?: AgScatterSeriesLabelOptions;
+    /** The key to use to retrieve x-values from the data.  */
     xKey?: string;
+    /** The key to use to retrieve y-values from the data.  */
     yKey?: string;
+    /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */
     xName?: string;
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */
     yName?: string;
+    /** The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts.  */
     sizeKey?: string;
+    /** A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */
     sizeName?: string;
+    /** The key to use to retrieve values from the data to use as labels for the markers.  */
     labelKey?: string;
+    /** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */
     labelName?: string;
+    /** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.  */
     title?: string;
-    /**
-     * @deprecated Use {@link marker.fill} instead.
-     */
+    /** @deprecated Use {@link marker.fill} instead. */
     fill?: string;
-    /**
-     * @deprecated Use {@link marker.stroke} instead.
-     */
+    /** @deprecated Use {@link marker.stroke} instead. */
     stroke?: string;
-    /**
-     * @deprecated Use {@link marker.strokeWidth} instead.
-     */
+    /** @deprecated Use {@link marker.strokeWidth} instead. */
     strokeWidth?: number;
-    /**
-     * @deprecated Use {@link marker.fillOpacity} instead.
-     */
+    /** @deprecated Use {@link marker.fillOpacity} instead. */
     fillOpacity?: number;
-    /**
-     * @deprecated Use {@link marker.strokeOpacity} instead.
-     */
+    /** @deprecated Use {@link marker.strokeOpacity} instead. */
     strokeOpacity?: number;
+    /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
 }
 
@@ -842,37 +862,60 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
 }
 
 export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
+    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
     formatter?: (params: { value: number }) => string;
 }
 
 export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+/** Configuration for histogram series. */
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     type?: 'histogram';
+    /** The colour of the fill for the histogram bars. */
     fill?: string;
+    /** The colour of the stroke for the histogram bars. */
     stroke?: string;
+    /** The opacity of the fill for the histogram bars. */
     fillOpacity?: number;
+    /** The opacity of the stroke for the histogram bars. */
     strokeOpacity?: number;
+    /** The width in pixels of the stroke for the histogram bars. */
     strokeWidth?: number;
+    /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
     lineDash?: number[];
+    /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
+    /** The key to use to retrieve x-values from the data. */
     xKey?: string;
+    /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
+    /** The key to use to retrieve y-values from the data. */
     yKey?: string;
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
+    /** For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */
     areaPlot?: boolean;
+    /** Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting. */
     bins?: [number, number][];
+    /** The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting. */
     binCount?: number;
+    /** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */
     aggregation?: 'count' | 'sum' | 'mean';
+    /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
+    /** Configuration for the labels shown on bars. */
     label?: AgHistogramSeriesLabelOptions;
+    /** Series-specific tooltip configuration. */
     tooltip?: AgHistogramSeriesTooltip;
 }
 
 export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
+    /** Distance in pixels between the callout line and the label text. */
     offset?: number;
+    /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
 }
 
@@ -893,6 +936,7 @@ export interface AgPieSeriesFormat {
 }
 
 export interface AgPieSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
     renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
@@ -900,32 +944,57 @@ export interface AgPieTitleOptions extends AgChartCaptionOptions {
     showInLegend?: boolean;
 }
 
+/** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
+    /** Configuration for the series title. */
     title?: AgPieTitleOptions;
+    /** Configuration for the labels used for the segments. */
     label?: AgPieSeriesLabelOptions;
+    /** Configuration for the callouts used with the labels for the segments. */
     callout?: {
+        /** The colours to cycle through for the strokes of the callouts. */
         colors?: string[];
+        /** The length in pixels of the callout lines. */
         length?: number;
+        /** The width in pixels of the stroke for callout lines. */
         strokeWidth?: number;
     };
+    /** The key to use to retrieve angle values from the data. */
     angleKey?: string;
+    /** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     angleName?: string;
+    /** The key to use to retrieve radius values from the data. */
     radiusKey?: string;
+    /** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     radiusName?: string;
+    /** The key to use to retrieve label values from the data. */
     labelKey?: string;
+    /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     labelName?: string;
+    /** The colours to cycle through for the fills of the segments. */
     fills?: string[];
+    /** The colours to cycle through for the strokes of the segments. */
     strokes?: string[];
+    /** The opacity of the fill for the segments. */
     fillOpacity?: number;
+    /** The opacity of the stroke for the segments. */
     strokeOpacity?: number;
+    /** The width in pixels of the stroke for the segments. */
     strokeWidth?: number;
+    /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
     lineDash?: number[];
+    /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
+    /** The rotation of the pie series in degrees. */
     rotation?: number;
+    /** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */
     outerRadiusOffset?: number;
+    /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */
     innerRadiusOffset?: number;
+    /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
+    /** Series-specific tooltip configuration. */
     tooltip?: AgPieSeriesTooltip;
     formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
 }
@@ -936,6 +1005,7 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
 }
 
 export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
+    /** The amount of the tile's vertical space to reserve for the label. */
     padding?: number;
 }
 
@@ -959,27 +1029,45 @@ export interface AgTreemapSeriesTooltipRendererParams {
 }
 
 export interface AgTreemapSeriesTooltip extends AgSeriesTooltip {
+    /** Function used to create the content for tooltips. */
     renderer?: (params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+/** Configuration for the treemap series. */
 export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     type?: 'treemap';
+    /** The label configuration for the top-level tiles. */
     title?: AgTreemapSeriesLabelOptions;
+    /** The label configuration for the children of the top-level parent tiles. */
     subtitle?: AgTreemapSeriesLabelOptions;
+    /** Configuration for the tile labels. */
     labels?: {
+        /** The label configuration for the large leaf tiles. */
         large?: AgChartLabelOptions;
+        /** The label configuration for the medium-sized leaf tiles. */
         medium?: AgChartLabelOptions;
+        /** The label configuration for the small leaf tiles. */
         small?: AgChartLabelOptions;
+        /** The configuration for the labels showing the value of the 'colorKey'. */
         color?: AgChartLabelOptions;
     };
+    /** The name of the node key containing the label. */
     labelKey?: string;
+    /** The name of the node key containing the size value. */
     sizeKey?: string;
+    /** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */
     colorKey?: string;
+    /** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */
     colorDomain?: number[];
+    /** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */
     colorRange?: string[];
+    /** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */
     colorParents?: boolean;
+    /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip;
+    /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
     nodePadding?: number;
+    /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
 }
 

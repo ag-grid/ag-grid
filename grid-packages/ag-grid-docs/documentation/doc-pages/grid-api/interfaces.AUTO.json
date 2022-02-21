@@ -6239,6 +6239,7 @@
       "color?": "string"
     },
     "docs": {
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -6255,11 +6256,12 @@
       "enabled?": "boolean"
     },
     "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgLineSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for line series. */" },
     "type": {
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
@@ -6283,6 +6285,18 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
+      "xKey?": "/** The key to use to retrieve x-values from the data. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
+      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "title?": "/** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */",
+      "stroke?": "/** The colour of the stroke for the lines. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the lines. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the lines. */",
+      "lineDash?": "/** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "label?": "/** Configuration for the labels shown on top of data points. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -6353,6 +6367,7 @@
       "enabled?": "boolean"
     },
     "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
@@ -6376,7 +6391,7 @@
     }
   },
   "AgScatterSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for scatter/bubble series. */" },
     "type": {
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
@@ -6404,11 +6419,24 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
+      "type?": "/** Configuration for the treemap series. */",
+      "marker?": "/** Configuration for the markers used in the series. */",
+      "label?": "/** Configuration for the labels shown on top of data points. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
+      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "sizeKey?": "/** The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts. */",
+      "sizeName?": "/** A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "labelKey?": "/** The key to use to retrieve values from the data to use as labels for the markers. */",
+      "labelName?": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "title?": "/** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */",
       "fill?": "/** @deprecated Use {@link marker.fill} instead.\n */",
       "stroke?": "/** @deprecated Use {@link marker.stroke} instead.\n */",
       "strokeWidth?": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
       "fillOpacity?": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
       "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -6635,6 +6663,7 @@
       "color?": "string"
     },
     "docs": {
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -6650,11 +6679,12 @@
       "enabled?": "boolean"
     },
     "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgHistogramSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for histogram series. */" },
     "type": {
       "type?": "'histogram'",
       "fill?": "string",
@@ -6683,6 +6713,24 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
+      "fill?": "/** The colour of the fill for the histogram bars. */",
+      "stroke?": "/** The colour of the stroke for the histogram bars. */",
+      "fillOpacity?": "/** The opacity of the fill for the histogram bars. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the histogram bars. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the histogram bars. */",
+      "lineDash?": "/** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. */",
+      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
+      "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "areaPlot?": "/** For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */",
+      "bins?": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting. */",
+      "binCount?": "/** The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting. */",
+      "aggregation?": "/** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */",
+      "shadow?": "/** Configuration for the shadow used behind the chart series. */",
+      "label?": "/** Configuration for the labels shown on bars. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -6704,6 +6752,8 @@
       "color?": "string"
     },
     "docs": {
+      "offset?": "/** Distance in pixels between the callout line and the label text. */",
+      "minAngle?": "/** Minimum angle in degrees required for a segment to show a label. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -6735,6 +6785,7 @@
       "enabled?": "boolean"
     },
     "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
@@ -6762,7 +6813,7 @@
     }
   },
   "AgPieSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for pie/doughnut series. */" },
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
@@ -6795,6 +6846,27 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
+      "title?": "/** Configuration for the series title. */",
+      "label?": "/** Configuration for the labels used for the segments. */",
+      "callout?": "/** Configuration for the callouts used with the labels for the segments. */",
+      "angleKey?": "/** The key to use to retrieve angle values from the data. */",
+      "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
+      "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "labelKey?": "/** The key to use to retrieve label values from the data. */",
+      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "fills?": "/** The colours to cycle through for the fills of the segments. */",
+      "strokes?": "/** The colours to cycle through for the strokes of the segments. */",
+      "fillOpacity?": "/** The opacity of the fill for the segments. */",
+      "strokeOpacity?": "/** The opacity of the stroke for the segments. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for the segments. */",
+      "lineDash?": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "lineDashOffset?": "/** The initial offset of the dashed line in pixels. */",
+      "rotation?": "/** The rotation of the pie series in degrees. */",
+      "outerRadiusOffset?": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
+      "innerRadiusOffset?": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
+      "shadow?": "/** Configuration for the shadow used behind the chart series. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",
@@ -6831,6 +6903,7 @@
       "color?": "string"
     },
     "docs": {
+      "padding?": "/** The amount of the tile's vertical space to reserve for the label. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -6869,11 +6942,12 @@
       "enabled?": "boolean"
     },
     "docs": {
+      "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
   "AgTreemapSeriesOptions": {
-    "meta": {},
+    "meta": { "doc": "/** Configuration for the treemap series. */" },
     "type": {
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
@@ -6896,6 +6970,18 @@
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     },
     "docs": {
+      "title?": "/** The label configuration for the top-level tiles. */",
+      "subtitle?": "/** The label configuration for the children of the top-level parent tiles. */",
+      "labels?": "/** Configuration for the tile labels. */",
+      "labelKey?": "/** The name of the node key containing the label. */",
+      "sizeKey?": "/** The name of the node key containing the size value. */",
+      "colorKey?": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
+      "colorDomain?": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
+      "colorRange?": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
+      "colorParents?": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
+      "tooltip?": "/** Series-specific tooltip configuration. */",
+      "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
+      "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "visible?": "/** Whether or not to display the series. */",
       "showInLegend?": "/** Whether or not to include the series in the legend. */",

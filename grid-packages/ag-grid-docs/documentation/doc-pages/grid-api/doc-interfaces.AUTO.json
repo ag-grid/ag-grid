@@ -10687,6 +10687,7 @@
   },
   "AgLineSeriesLabelOptions": {
     "formatter": {
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: any; }" },
         "returnType": "string",
@@ -10720,6 +10721,7 @@
   },
   "AgLineSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
@@ -10737,20 +10739,52 @@
     "marker": {
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
     },
-    "xKey": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour of the stroke for the lines. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the lines. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the lines. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "label": {
+      "description": "/** Configuration for the labels shown on top of data points. */",
       "type": { "returnType": "AgLineSeriesLabelOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
     "data": {
@@ -10856,6 +10890,7 @@
   },
   "AgScatterSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgScatterSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
@@ -10894,22 +10929,54 @@
     }
   },
   "AgScatterSeriesOptions": {
-    "type": { "type": { "returnType": "'scatter'", "optional": true } },
+    "type": {
+      "description": "/** Configuration for the treemap series. */",
+      "type": { "returnType": "'scatter'", "optional": true }
+    },
     "marker": {
+      "description": "/** Configuration for the markers used in the series. */",
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels shown on top of data points. */",
       "type": { "returnType": "AgScatterSeriesLabelOptions", "optional": true }
     },
-    "xKey": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "sizeName": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeName": {
+      "description": "/** A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** The key to use to retrieve values from the data to use as labels for the markers. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fill": {
       "description": "/** @deprecated Use {@link marker.fill} instead.\n */",
       "type": { "returnType": "string", "optional": true }
@@ -10931,6 +10998,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
     "data": {
@@ -11317,6 +11385,7 @@
   },
   "AgHistogramSeriesLabelOptions": {
     "formatter": {
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: number; }" },
         "returnType": "string",
@@ -11350,6 +11419,7 @@
   },
   "AgHistogramSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
@@ -11363,35 +11433,79 @@
   },
   "AgHistogramSeriesOptions": {
     "type": { "type": { "returnType": "'histogram'", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
-    "xKey": { "type": { "returnType": "string", "optional": true } },
-    "xName": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": true } },
-    "yName": { "type": { "returnType": "string", "optional": true } },
-    "areaPlot": { "type": { "returnType": "boolean", "optional": true } },
+    "fill": {
+      "description": "/** The colour of the fill for the histogram bars. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour of the stroke for the histogram bars. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the histogram bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the histogram bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the histogram bars. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "areaPlot": {
+      "description": "/** For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "bins": {
+      "description": "/** Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting. */",
       "type": { "returnType": "[number, number][]", "optional": true }
     },
-    "binCount": { "type": { "returnType": "number", "optional": true } },
+    "binCount": {
+      "description": "/** The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "aggregation": {
+      "description": "/** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */",
       "type": { "returnType": "'count' | 'sum' | 'mean'", "optional": true }
     },
     "shadow": {
+      "description": "/** Configuration for the shadow used behind the chart series. */",
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels shown on bars. */",
       "type": {
         "returnType": "AgHistogramSeriesLabelOptions",
         "optional": true
       }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
     "data": {
@@ -11426,8 +11540,14 @@
     }
   },
   "AgPieSeriesLabelOptions": {
-    "offset": { "type": { "returnType": "number", "optional": true } },
-    "minAngle": { "type": { "returnType": "number", "optional": true } },
+    "offset": {
+      "description": "/** Distance in pixels between the callout line and the label text. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "minAngle": {
+      "description": "/** Minimum angle in degrees required for a segment to show a label. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -11469,6 +11589,7 @@
   },
   "AgPieSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgPieSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
@@ -11517,41 +11638,90 @@
   "AgPieSeriesOptions": {
     "type": { "type": { "returnType": "'pie'", "optional": true } },
     "title": {
+      "description": "/** Configuration for the series title. */",
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
     "label": {
+      "description": "/** Configuration for the labels used for the segments. */",
       "type": { "returnType": "AgPieSeriesLabelOptions", "optional": true }
     },
     "callout": {
+      "description": "/** Configuration for the callouts used with the labels for the segments. */",
       "type": {
-        "returnType": "{\n        colors?: string[];\n        length?: number;\n        strokeWidth?: number;\n    }",
+        "returnType": "{\n        /** The colours to cycle through for the strokes of the callouts. */\n        colors?: string[];\n        /** The length in pixels of the callout lines. */\n        length?: number;\n        /** The width in pixels of the stroke for callout lines. */\n        strokeWidth?: number;\n    }",
         "optional": true
       }
     },
-    "angleKey": { "type": { "returnType": "string", "optional": true } },
-    "angleName": { "type": { "returnType": "string", "optional": true } },
-    "radiusKey": { "type": { "returnType": "string", "optional": true } },
-    "radiusName": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
-    "fills": { "type": { "returnType": "string[]", "optional": true } },
-    "strokes": { "type": { "returnType": "string[]", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
-    "rotation": { "type": { "returnType": "number", "optional": true } },
+    "angleKey": {
+      "description": "/** The key to use to retrieve angle values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleName": {
+      "description": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** The key to use to retrieve radius values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusName": {
+      "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** The key to use to retrieve label values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fills": {
+      "description": "/** The colours to cycle through for the fills of the segments. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "strokes": {
+      "description": "/** The colours to cycle through for the strokes of the segments. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** The opacity of the fill for the segments. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** The opacity of the stroke for the segments. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the stroke for the segments. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "lineDashOffset": {
+      "description": "/** The initial offset of the dashed line in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rotation": {
+      "description": "/** The rotation of the pie series in degrees. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "outerRadiusOffset": {
+      "description": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
       "type": { "returnType": "number", "optional": true }
     },
     "innerRadiusOffset": {
+      "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
       "type": { "returnType": "number", "optional": true }
     },
     "shadow": {
+      "description": "/** Configuration for the shadow used behind the chart series. */",
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
     },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
     "formatter": {
@@ -11606,7 +11776,10 @@
     "color": { "type": { "returnType": "string", "optional": true } }
   },
   "AgTreemapSeriesLabelOptions": {
-    "padding": { "type": { "returnType": "number", "optional": true } },
+    "padding": {
+      "description": "/** The amount of the tile's vertical space to reserve for the label. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -11657,6 +11830,7 @@
   },
   "AgTreemapSeriesTooltip": {
     "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
       "type": {
         "arguments": { "params": "AgTreemapSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
@@ -11671,28 +11845,56 @@
   "AgTreemapSeriesOptions": {
     "type": { "type": { "returnType": "'treemap'", "optional": true } },
     "title": {
+      "description": "/** The label configuration for the top-level tiles. */",
       "type": { "returnType": "AgTreemapSeriesLabelOptions", "optional": true }
     },
     "subtitle": {
+      "description": "/** The label configuration for the children of the top-level parent tiles. */",
       "type": { "returnType": "AgTreemapSeriesLabelOptions", "optional": true }
     },
     "labels": {
+      "description": "/** Configuration for the tile labels. */",
       "type": {
-        "returnType": "{\n        large?: AgChartLabelOptions;\n        medium?: AgChartLabelOptions;\n        small?: AgChartLabelOptions;\n        color?: AgChartLabelOptions;\n    }",
+        "returnType": "{\n        /** The label configuration for the large leaf tiles. */\n        large?: AgChartLabelOptions;\n        /** The label configuration for the medium-sized leaf tiles. */\n        medium?: AgChartLabelOptions;\n        /** The label configuration for the small leaf tiles. */\n        small?: AgChartLabelOptions;\n        /** The configuration for the labels showing the value of the 'colorKey'. */\n        color?: AgChartLabelOptions;\n    }",
         "optional": true
       }
     },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "colorKey": { "type": { "returnType": "string", "optional": true } },
-    "colorDomain": { "type": { "returnType": "number[]", "optional": true } },
-    "colorRange": { "type": { "returnType": "string[]", "optional": true } },
-    "colorParents": { "type": { "returnType": "boolean", "optional": true } },
+    "labelKey": {
+      "description": "/** The name of the node key containing the label. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** The name of the node key containing the size value. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorDomain": {
+      "description": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "colorRange": {
+      "description": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "colorParents": {
+      "description": "/** Whether or not to assign colors to non-leaf nodes based on 'colorKey'. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
       "type": { "returnType": "AgTreemapSeriesTooltip", "optional": true }
     },
-    "nodePadding": { "type": { "returnType": "number", "optional": true } },
-    "gradient": { "type": { "returnType": "boolean", "optional": true } },
+    "nodePadding": {
+      "description": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "gradient": {
+      "description": "/** Whether or not to use gradients for treemap tiles. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
       "type": { "returnType": "any[]", "optional": true }
