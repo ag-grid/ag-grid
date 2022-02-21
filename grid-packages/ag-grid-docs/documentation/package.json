@@ -5,7 +5,7 @@
   "version": "27.0.1",
   "license": "BSD",
   "scripts": {
-    "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
+    "generate-examples": "cd .. && npm run generate-examples && cd documentation",
     "generate-chart-gallery": "node generate-chart-gallery.js",
     "generate-chart-gallery-force": "node generate-chart-gallery.js --force-thumbnails",
     "generate-cypress-config": "node generate-cypress-config.js",
