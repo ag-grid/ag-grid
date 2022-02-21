@@ -29,3 +29,4 @@ screenshots
 package-lock.json
 
 .last.build.json
+.cumulative.builds.json

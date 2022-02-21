@@ -6,8 +6,6 @@ const fsExtra = require("fs-extra");
 const execa = require("execa");
 const chokidar = require("chokidar");
 
-const WINDOWS = /^win/.test(os.platform());
-
 const flattenArray = array => [].concat.apply([], array);
 
 const buildDependencies = async (dependencies, command = 'build-css', arguments = '') => {
@@ -101,14 +99,16 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
 };
 
 const exclude = [
-    'ag-grid-dev',
-    'ag-grid-documentation'
+    'ag-grid-dev'
 ];
 
 const excludePackage = (packageName, includeExamples) => {
-    if (packageName === 'ag-grid-docs' && includeExamples) {
+    if(includeExamples && (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation')) {
         return false;
+    } else if(!includeExamples && (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation')) {
+        return true;
     }
+
     return !exclude.includes(packageName) &&
         (!packageName.includes("-example") || (packageName.includes("-example") && includeExamples)) &&
         !packageName.includes("seans");
@@ -203,7 +203,10 @@ const watchCss = () => {
 const getBuildChainInfo = async (includeExamples) => {
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths: gridPaths, orderedPackageNames: orderedGridPackageNames} = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
+        const {
+            paths: gridPaths,
+            orderedPackageNames: orderedGridPackageNames
+        } = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
         const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false);
 
         const buildChains = {};
@@ -228,7 +231,7 @@ const getFlattenedBuildChainInfo = async (includeExamples) => {
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
-    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs"))
+    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs" && packageName !== "ag-grid-documentation"))
         .forEach(packageName => {
             flattenedBuildChainInfo[packageName] = flattenArray(
                 Object.values(buildChainInfo.buildChains[packageName])
@@ -264,7 +267,6 @@ function moduleChanged(moduleRoot) {
 
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
     const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
-
     const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [resolvedPath], {
         stdio: 'pipe',
         encoding: 'utf-8'
@@ -277,30 +279,36 @@ function moduleChanged(moduleRoot) {
     return changed;
 }
 
-const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages', 'examples-grid'];
-    const exclusions = ['ag-grid-dev', 'polymer', 'ag-grid-polymer'];
+const readModulesState = (buildChain) => {
+    const agPackages = Object.keys(buildChain);
+
+    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages', 'examples-grid', 'grid-packages/ag-grid-docs'];
+    const exclusions = ['ag-grid-dev', 'prettier-no-op'];
 
     const modulesState = {};
 
     moduleRootNames.forEach(moduleRootName => {
-        const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
+        const moduleRootDirectory = `../../${moduleRootName}/`;
         fs.readdirSync(moduleRootDirectory, {
             withFileTypes: true
         })
             .filter(d => d.isDirectory())
-            .filter(d => !exclusions.includes(d.name))
-            .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
+            .filter(d => !exclusions.includes(d.name) && !d.name.startsWith(".") && !d.name.startsWith("_") && !d.name.includes("node_modules"))
+            .map(d => `../../${moduleRootName}/${d.name}`)
             .map(d => {
-                const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
+                if(fs.existsSync(`${d}/package.json`)) {
+                    const packageName = require(`${d}/package.json`).name;
+                    if(agPackages.includes(packageName)) {
+                        modulesState[packageName] = {moduleChanged: moduleChanged(d)};
+                    }
+                }
             });
     });
 
     return modulesState;
 };
 
-let getLastBuild = function () {
+const getLastBuild = function () {
     const lastBuild = fsExtra.readJsonSync('./.last.build.json', {throws: false});
     if (lastBuild) {
         return JSON.parse(lastBuild);
@@ -308,9 +316,10 @@ let getLastBuild = function () {
     return null;
 };
 
-const rebuildPackagesBasedOnChangeState = async (runTests = true, includeExamples = false) => {
+const rebuildPackagesBasedOnChangeState = async (runUnitTests = true, includeExamples = false, runPackage = false, runE2ETests = false, cumulativeBuild = false) => {
     const buildChain = await getAgBuildChain(includeExamples);
-    const modulesState = readModulesState();
+    debugger
+    const modulesState = readModulesState(buildChain);
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
@@ -319,11 +328,24 @@ const rebuildPackagesBasedOnChangeState = async (runTests = true, includeExample
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
-    const lastBuild = getLastBuild();
-    if (lastBuild) {
-        fs.unlinkSync('./.last.build.json');
+    if (cumulativeBuild) {
+        console.log("Performing a cumulative build");
+        let cumulativeBuilds = fsExtra.readJsonSync('./.cumulative.builds.json', {throws: false});
+        if (cumulativeBuilds) {
+            fs.unlinkSync('./.cumulative.builds.json');
 
-        lastBuild.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+            cumulativeBuilds = JSON.parse(cumulativeBuilds);
+            cumulativeBuilds.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+        } else {
+            console.log("No cumulative build file found");
+        }
+    } else {
+        const lastBuild = getLastBuild();
+        if (lastBuild) {
+            fs.unlinkSync('./.last.build.json');
+
+            lastBuild.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+        }
     }
 
     if (lernaPackagesToRebuild.size > 0) {
@@ -333,16 +355,23 @@ const rebuildPackagesBasedOnChangeState = async (runTests = true, includeExample
         let buildFailed = false;
         const packagesToRun = Array.from(lernaPackagesToRebuild);
         try {
+            console.log("Running 'build' on changed modules");
             let result = await buildPackages(packagesToRun);
             buildFailed = result.exitCode !== 0 || result.failed === 1;
 
-            result = await buildPackages(packagesToRun, 'package', '--parallel');
-            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+            if (runPackage) {
+                console.log("Running 'package' on changed modules");
+                result = await buildPackages(packagesToRun, 'package', '--parallel');
+                buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+            }
 
-            if (runTests) {
+            if (runUnitTests) {
+                console.log("Running 'test' on changed modules");
                 result = await buildPackages(packagesToRun, 'test');
                 buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
-
+            }
+            if (runE2ETests) {
+                console.log("Running 'test:e2e' on changed modules");
                 result = await buildPackages(packagesToRun, 'test:e2e');
                 buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
             }
@@ -351,8 +380,21 @@ const rebuildPackagesBasedOnChangeState = async (runTests = true, includeExample
         }
 
         if (buildFailed) {
-            fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`);
+            if (cumulativeBuild) {
+                fsExtra.writeJsonSync('./.cumulative.builds.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`);
+            } else {
+                fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`);
+            }
             process.exit(buildFailed ? 0 : 1);
+        } else if (!cumulativeBuild) {
+            let cumulativeBuilds = fsExtra.readJsonSync('./.cumulative.builds.json', {throws: false});
+            if (cumulativeBuilds) {
+                cumulativeBuilds = JSON.parse(cumulativeBuilds);
+            } else {
+                cumulativeBuilds = [];
+            }
+            cumulativeBuilds = Array.from(new Set(packagesToRun.concat(cumulativeBuilds)));
+            fsExtra.writeJsonSync('./.cumulative.builds.json', `[${cumulativeBuilds.map(packageName => `"${packageName}"`)}]`);
         }
     } else {
         console.log("No changed packages to process!");
@@ -379,9 +421,10 @@ const printState = async () => {
 };
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
-exports.rebuildPackagesBasedOnChangeStateIncludingExamples = rebuildPackagesBasedOnChangeState.bind(null, true, true);
+exports.rebuildAndUnitTestBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, false, false, false);
+exports.rebuildAndTestsEverythingBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, true, true, true);
 exports.printState = printState;
-exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
+// exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
 exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;
 exports.buildCss = buildCss;

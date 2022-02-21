@@ -6,7 +6,7 @@
     "start": "./node_modules/.bin/ng serve",
     "build": "npm run update-properties && ./node_modules/.bin/ng build --prod && npm run verify-properties && npm run hash",
     "build-cjs": "npm run build",
-    "test": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
+    "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
     "update-properties": "node updateGridAndColumnProperties.js",
     "verify-properties": "node agGridPropertiesCheck.js",
