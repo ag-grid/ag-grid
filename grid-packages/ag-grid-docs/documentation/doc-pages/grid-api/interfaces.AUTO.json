@@ -2034,7 +2034,7 @@
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "onCellValueChanged?(event: CellValueChangedEvent)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
-      "onCellEditRequest?(event: CellEditRequestEvent)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
+      "onCellEditRequest?(event: CellEditRequestEvent)": "/** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true. */",
       "onRowValueChanged?(event: RowValueChangedEvent)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent)": "/** Editing a cell has stopped. */",

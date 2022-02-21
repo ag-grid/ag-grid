@@ -3,7 +3,7 @@ title: "React Hooks"
 frameworks: ["react"]
 ---
 
-AG Grid fits perfectly into the React rendering ecosystem. This page explains best practices for using React Hooks with AG Grid.
+This page explains best practices for using React Hooks with AG Grid.
 
 This page assumes you are using React Hooks and not React Classes.
 
@@ -23,7 +23,7 @@ const App = () => {
 };
 ```
 
-For application that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState` over `useMemo` as loading data usually aligns with changing state in your application.
+For applications that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState` over `useMemo` as loading data usually aligns with changing state in your application.
 
 All examples in the documentation use `useState` for Row Data. However all code snippets in the documentation leave these hooks out for easier reading.
 
