@@ -41,34 +41,12 @@ Also note how we call the `event.series.update()` method to redraw the series af
 <chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
 
 ### Interfaces
-#### Bar/Column series
 
-<api-documentation source='charts-api/api.json' section='bar.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+All series event options have the same interface contract, with some caveats for Histogram series:
 
-#### Line series
-
-<api-documentation source='charts-api/api.json' section='line.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
-
-#### Area series
-
-<api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
-
-#### Scatter series
-
-<api-documentation source='charts-api/api.json' section='scatter.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
-
-#### Pie series
-
-<api-documentation source='charts-api/api.json' section='pie.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
-
-#### Treemap series
-
-<api-documentation source='charts-api/api.json' section='treemap.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
-
+<interface-documentation interfaceName='AgBaseSeriesListeners' config='{ "showSnippets": false }'></interface-documentation>
 
 #### Histogram series
-
-<api-documentation source='charts-api/api.json' section='histogram.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 Note that the `datum` in this case is not an element from the `chart.data` or `series.data` array provided by the user. It's a histogram bin, which represents an aggregated value of one or more `datum`s, where the datums themselves can be accessed via the `datum.data` property.
 

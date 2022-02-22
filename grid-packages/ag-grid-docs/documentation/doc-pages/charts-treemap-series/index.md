@@ -98,7 +98,7 @@ series: [{
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='treemap' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgTreemapSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

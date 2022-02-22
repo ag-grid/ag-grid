@@ -282,7 +282,7 @@ export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick: (
         type: 'seriesNodeClick', 
-        series: 'LineSeries' | 'AreaSeries' | 'BarSeries' | 'HistogramSeries' | 'PieSeries' | 'ScatterSeries' | 'TreemapSeries',
+        series: any,
         datum: any,
         xKey: string,
         yKey: string,
@@ -485,6 +485,20 @@ export interface AgSeriesHighlightStyle {
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
     series?: AgSeriesHighlightSeriesStyle;
 };
+
+export interface AgBaseSeriesListeners {
+    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
+    nodeClick: (
+        params: {
+            type: 'nodeClick', 
+            series: any,
+            datum: any,
+            xKey: string,
+            yKey: string,
+        },
+    ) => any;
+}
+
 export interface AgBaseSeriesOptions {
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
     data?: any[];
@@ -495,7 +509,7 @@ export interface AgBaseSeriesOptions {
     /** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */
     cursor?: string;
     /** A map of event names to event listeners. */
-    listeners?: { [key in string]: Function };
+    listeners?: AgBaseSeriesListeners | {[key: string]: Function};
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
     highlightStyle?: AgSeriesHighlightStyle;
 }

@@ -10148,7 +10148,7 @@
       "type": {
         "arguments": {
           "type": "'seriesNodeClick'",
-          "series": "'LineSeries' | 'AreaSeries' | 'BarSeries' | 'HistogramSeries' | 'PieSeries' | 'ScatterSeries' | 'TreemapSeries'",
+          "series": "any",
           "datum": "any",
           "xKey": "string",
           "yKey": "string"
@@ -10559,6 +10559,18 @@
       "type": { "returnType": "AgSeriesHighlightSeriesStyle", "optional": true }
     }
   },
+  "AgBaseSeriesListeners": {
+    "nodeClick": {
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */",
+      "type": {
+        "arguments": {
+          "params": "{ type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string; }"
+        },
+        "returnType": "any",
+        "optional": false
+      }
+    }
+  },
   "AgBaseSeriesOptions": {
     "data": {
       "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
@@ -10579,7 +10591,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -10869,7 +10881,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -10936,7 +10948,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11077,7 +11089,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11233,7 +11245,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11422,7 +11434,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11575,7 +11587,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11806,7 +11818,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },
@@ -11982,7 +11994,7 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
         "optional": true
       }
     },

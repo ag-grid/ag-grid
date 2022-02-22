@@ -76,7 +76,7 @@ The final result is shown in the example below.
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line.marker'></api-documentation>
+<interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

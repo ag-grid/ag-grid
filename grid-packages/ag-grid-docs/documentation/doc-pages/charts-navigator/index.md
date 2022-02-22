@@ -68,7 +68,7 @@ The example below uses various navigator configs (in a deliberately exaggerated 
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='chart.navigator'></api-documentation>
+<interface-documentation interfaceName='AgNavigatorOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

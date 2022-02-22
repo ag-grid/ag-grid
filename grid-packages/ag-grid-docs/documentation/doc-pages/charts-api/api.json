@@ -461,6 +461,17 @@
       ]
     }
   },
+  "AgBaseSeriesOptions": {
+    "visible": {
+      "default": true
+    },
+    "cursor": {
+      "default": "default"
+    },
+    "showInLegend": {
+      "default": true
+    }
+  },
   "AgAreaSeriesOptions": {
     "xKey": {
       "isRequired": true

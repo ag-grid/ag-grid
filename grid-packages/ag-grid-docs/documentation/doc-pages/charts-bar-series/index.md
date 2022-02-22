@@ -125,7 +125,7 @@ With these simple changes we go from [stacked columns](#stacked-columns) to stac
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='bar' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

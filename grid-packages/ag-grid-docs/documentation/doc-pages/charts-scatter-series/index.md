@@ -78,7 +78,7 @@ label placement.
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='scatter' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgScatterSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

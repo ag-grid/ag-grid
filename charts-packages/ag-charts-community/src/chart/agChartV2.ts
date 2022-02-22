@@ -244,7 +244,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
     series.forEach((next, index) => {
         const listeners = options?.[index]?.listeners;
         if (listeners == null) { return; }
-        registerListeners(next, listeners);
+        registerListeners(next, listeners as {[key: string]: Function});
     });
 
     return series;

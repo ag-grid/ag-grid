@@ -5814,7 +5814,7 @@
   "AgBaseChartListeners": {
     "meta": {},
     "type": {
-      "seriesNodeClick": "(type: 'seriesNodeClick', series: 'LineSeries' | 'AreaSeries' | 'BarSeries' | 'HistogramSeries' | 'PieSeries' | 'ScatterSeries' | 'TreemapSeries', datum: any, xKey: string, yKey: string) => any",
+      "seriesNodeClick": "(type: 'seriesNodeClick', series: any, datum: any, xKey: string, yKey: string) => any",
       "[key: string]": "Function"
     },
     "docs": {
@@ -6117,6 +6117,15 @@
       "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
     }
   },
+  "AgBaseSeriesListeners": {
+    "meta": {},
+    "type": {
+      "nodeClick": "(params: { type: 'nodeClick'; series: any; datum: any; xKey: string; yKey: string; }) => any"
+    },
+    "docs": {
+      "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */"
+    }
+  },
   "AgBaseSeriesOptions": {
     "meta": {},
     "type": {
@@ -6124,7 +6133,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6340,7 +6349,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6407,7 +6416,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6474,7 +6483,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6565,7 +6574,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6677,7 +6686,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6768,7 +6777,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -6914,7 +6923,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
@@ -7053,7 +7062,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "cursor?": "string",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
       "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {

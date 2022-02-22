@@ -191,27 +191,28 @@ Notice that the tooltip renderer in the example below:
 
 ### Bar/Column Tooltips
 
-<api-documentation source='charts-api/api.json' section='bar.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgBarSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
 
 ### Area Tooltips
 
-<api-documentation source='charts-api/api.json' section='area.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgAreaSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
+
 
 ### Line Tooltips
 
-<api-documentation source='charts-api/api.json' section='line.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgLineSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
 
 ### Scatter/Bubble Tooltips
 
-<api-documentation source='charts-api/api.json' section='scatter.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgScatterSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
 
 ### Pie/Doughnut Tooltips
 
-<api-documentation source='charts-api/api.json' section='pie.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgPieSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
 
 ### Histogram Tooltips
 
-<api-documentation source='charts-api/api.json' section='histogram.tooltip'></api-documentation>
+<interface-documentation interfaceName='AgHistogramSeriesTooltip' config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

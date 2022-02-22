@@ -124,7 +124,7 @@ The example below uses one pie series to plot the market share of each operating
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='pie' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgPieSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

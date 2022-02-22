@@ -351,7 +351,7 @@ Note, that we are:
 
 ## Axis API Reference
 
-<api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgBaseCartesianAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

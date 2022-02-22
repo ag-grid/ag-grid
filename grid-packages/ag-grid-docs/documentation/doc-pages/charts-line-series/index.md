@@ -184,7 +184,7 @@ This example uses the `'time'` axis which is configured to show a tick every 5 s
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line' options='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgLineSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

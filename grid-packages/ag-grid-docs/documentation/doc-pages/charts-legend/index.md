@@ -128,7 +128,7 @@ legend: {
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='chart.legend' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 

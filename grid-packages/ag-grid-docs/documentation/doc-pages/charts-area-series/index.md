@@ -123,7 +123,7 @@ normalizedTo: 100
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='area' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='AgAreaSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
 ## Next Up
 
