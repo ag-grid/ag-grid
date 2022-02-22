@@ -524,6 +524,33 @@ export class AreaSeries extends CartesianSeries {
                     });
                 }
 
+                // label data
+                let labelText: string;
+
+                if (label.formatter) {
+                    labelText = label.formatter({ value: yDatum });
+                } else {
+                    labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
+                }
+
+                if (label) {
+                    labelSelectionData.push({
+                        index: datumIdx,
+                        itemId: yKey,
+                        point,
+                        label: labelText ? {
+                            text: labelText,
+                            fontStyle: label.fontStyle,
+                            fontWeight: label.fontWeight,
+                            fontSize: label.fontSize,
+                            fontFamily: label.fontFamily,
+                            textAlign: 'center',
+                            textBaseline: 'bottom',
+                            fill: label.color
+                        } : undefined
+                    });
+                }
+
                 // fill data
                 const windowX: [any, any] = [xDatum, nextXDatum];
                 const windowY: [number, number] = [yDatum, nextYDatum];
