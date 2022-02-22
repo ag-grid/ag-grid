@@ -58,5 +58,5 @@ the `chartDataType='time'` property on the 'timestamp' column definition:
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Events](/integrated-charts-events/).
+Continue to the next section to learn about: [Save / Restore Charts](/integrated-charts-api-save-restore-charts/).
 

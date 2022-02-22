@@ -16,9 +16,9 @@ The dummy financial application above shows some of the grid's integrated charti
 
 To learn how to create charts in your applications see the following sections for details:
 
-- [Chart API](/integrated-charts-api/): Used to create charts programmatically inside applications.
-- [Provide a Chart Container](/integrated-charts-container/): Used to target chart containers inside the application instead of the popup window provided by the grid.
+- [Chart API]: Used to create charts programmatically inside applications.
+- [Provide a Chart Container]: Used to target chart containers inside the application instead of the popup window provided by the grid.
 
 ## Next Up
 
-Continue to the next section to learn about the: [Range Chart](/integrated-charts-range-chart/).
+Continue to the next section to learn about the: [Range Chart API](/integrated-charts-api-range-chart/).

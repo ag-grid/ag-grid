@@ -106,7 +106,7 @@ These overrides can be used with any cartesian chart.
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Containers](/integrated-charts-container/).
+Continue to the next section to learn about: [Chart Events](/integrated-charts-events/).
 
 
 

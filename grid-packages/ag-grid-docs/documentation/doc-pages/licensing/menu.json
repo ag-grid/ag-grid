@@ -1429,6 +1429,12 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Chart Toolbar",
+                "url": "/integrated-charts-toolbar/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
                 "title": "Chart Container",
                 "url": "/integrated-charts-container/",
                 "enterprise": true
@@ -1459,6 +1465,11 @@
                 "enterprise": true
               },
               {
+                "title": "Time Series Chart",
+                "url": "/integrated-charts-time-series/",
+                "enterprise": true
+              },
+              {
                 "title": "Save / Restore Charts",
                 "url": "/integrated-charts-api-save-restore-charts/",
                 "enterprise": true
@@ -1471,21 +1482,10 @@
             ]
           },
           {
-            "title": "Chart Toolbar",
-            "url": "/integrated-charts-toolbar/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
             "title": "Customisation",
             "url": "/integrated-charts-customisation/",
             "enterprise": true,
             "showInCollapsed": true
-          },
-          {
-            "title": "Time Series",
-            "url": "/integrated-charts-time-series/",
-            "enterprise": true
           },
           {
             "title": "Chart Events",

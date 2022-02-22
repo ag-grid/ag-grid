@@ -36,6 +36,6 @@ with the `destroyChart()` method that is required when the application wants to 
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Customisation](/integrated-charts-customisation/).
+Continue to the next section to learn about: [Cross Filter API](/integrated-charts-api-cross-filter-chart/).
 
 

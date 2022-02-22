@@ -96,5 +96,5 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 ## Next Up
 
-Continue to the next section to learn about the: [Chart API](/integrated-charts-api/).
+Continue to the next section to learn about the: [Chart Container](/integrated-charts-container/).
 
