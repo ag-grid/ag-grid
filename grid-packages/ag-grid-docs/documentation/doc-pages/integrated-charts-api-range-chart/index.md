@@ -46,6 +46,12 @@ location other than the grid's popup window. Note the following:
 
 <grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
 
+
+## Combination Charts
+
+<grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 900 }'></grid-example>
+
+
 ## Range Chart API
 
 Range Charts can be created programmatically using:
