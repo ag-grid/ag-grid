@@ -97,7 +97,10 @@ export class SeriesPanel extends Component {
         }
 
         this.initSeriesSelect();
-        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
+
+        if (this.seriesType) {
+            this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
+        }
     }
 
     private initSeriesSelect() {

@@ -1,0 +1,30 @@
+#wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#top {
+    flex: 1;
+    display: flex;
+    background: #181d1f;
+    height: 25%;
+}
+
+#lineChart {
+    width: 60%;
+}
+
+#doughnutChart {
+    width: 40%;
+}
+
+#areaChart {
+    flex: 1;
+    height: 25%;
+}
+
+#myGrid {
+    flex: 2;
+}

@@ -1411,16 +1411,64 @@
             "showInCollapsed": true
           },
           {
-            "title": "Range Chart",
-            "url": "/integrated-charts-range-chart/",
+            "title": "User Created",
+            "url": "/integrated-charts-user-created/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Chart",
+                "url": "/integrated-charts-range-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Pivot Chart",
+                "url": "/integrated-charts-pivot-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Chart Container",
+                "url": "/integrated-charts-container/",
+                "enterprise": true
+              }
+            ]
           },
           {
-            "title": "Pivot Chart",
-            "url": "/integrated-charts-pivot-chart/",
+            "title": "Application Created",
+            "url": "/integrated-charts-application-created/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Chart API",
+                "url": "/integrated-charts-api-range-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Pivot Chart API",
+                "url": "/integrated-charts-api-pivot-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cross Filter API",
+                "url": "/integrated-charts-api-cross-filter-chart/",
+                "enterprise": true
+              },
+              {
+                "title": "Save / Restore Charts",
+                "url": "/integrated-charts-api-save-restore-charts/",
+                "enterprise": true
+              },
+              {
+                "title": "Downloading Chart Image",
+                "url": "/integrated-charts-api-downloading-image/",
+                "enterprise": true
+              }
+            ]
           },
           {
             "title": "Chart Toolbar",
@@ -1429,26 +1477,10 @@
             "showInCollapsed": true
           },
           {
-            "title": "Chart API",
-            "url": "/integrated-charts-api/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
             "title": "Customisation",
             "url": "/integrated-charts-customisation/",
             "enterprise": true,
             "showInCollapsed": true
-          },
-          {
-            "title": "Chart Container",
-            "url": "/integrated-charts-container/",
-            "enterprise": true
-          },
-          {
-            "title": "Cross Filtering",
-            "url": "/integrated-charts-cross-filtering/",
-            "enterprise": true
           },
           {
             "title": "Time Series",

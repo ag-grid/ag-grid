@@ -1,0 +1,30 @@
+#wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#top {
+    flex: 1;
+    display: flex;
+    background: #181d1f;
+    height: 25%;
+}
+
+#columnChart {
+    width: 60%;
+}
+
+#pieChart {
+    width: 40%;
+}
+
+#barChart {
+    flex: 1;
+    height: 25%;
+}
+
+#myGrid {
+    flex: 2;
+}
