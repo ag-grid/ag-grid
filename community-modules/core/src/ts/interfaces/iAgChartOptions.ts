@@ -271,12 +271,32 @@ export interface AgChartTooltipOptions {
     delay?: number;
 }
 
+export interface AgChartBackground {
+    /** Whether or not the background should be visible. */
+    visible?: boolean;
+    /** Colour of the chart background. */
+    fill?: string;
+}
+
+export interface AgBaseChartListeners {
+    /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
+    seriesNodeClick: (
+        type: 'seriesNodeClick', 
+        series: 'LineSeries' | 'AreaSeries' | 'BarSeries' | 'HistogramSeries' | 'PieSeries' | 'ScatterSeries' | 'TreemapSeries',
+        datum: any,
+        xKey: string,
+        yKey: string,
+    ) => any;
+    /** Generic listeners. */
+    [key: string]: Function,
+} 
+
 /** Configuration common to all charts.  */
 export interface AgBaseChartOptions {
-    /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */
-    container?: HTMLElement | null;
     /** The data to render the chart from. If this is not specified, it must be set on individual series instead. */
     data?: any[];
+    /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */
+    container?: HTMLElement | null;
     /** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */
     width?: number;
     /** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */
@@ -286,24 +306,17 @@ export interface AgBaseChartOptions {
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
     /** Configuration for the background shown behind the chart. */
-    background?: {
-        /** Whether or not the background should be visible. */
-        visible?: boolean;
-        /** Colour of the chart background. */
-        fill?: string;
-    };
+    background?: AgChartBackground;
     /** Configuration for the title shown at the top of the chart. */
     title?: AgChartCaptionOptions;
     /** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */
     subtitle?: AgChartCaptionOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
-    /** Configuration for the chart navigator. This config is only supported by cartesian charts. */
-    navigator?: AgNavigatorOptions;
     /** Configuration for the chart legend. */
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
-    listeners?: { [key: string]: Function };
+    listeners?: AgBaseChartListeners;
     theme?: string | AgChartTheme; // | ChartTheme
 }
 
@@ -431,6 +444,47 @@ export type AgCartesianAxisOptions =
     | AgGroupedCategoryAxisOptions
     | AgTimeAxisOptions;
 
+export interface AgSeriesHighlightMarkerStyle {
+    /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
+    fill?: string;
+    /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
+    stroke?: string;
+    /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */
+    strokeWidth?: number;
+};
+
+export interface AgSeriesHighlightSeriesStyle {
+    enabled?: boolean;
+    /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */
+    dimOpacity?: number;
+    /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
+    strokeWidth?: number;
+};
+
+export interface AgSeriesHighlightStyle {
+    /**
+     * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
+     *
+     * @deprecated Use item.fill instead.
+     */
+    fill?: string;
+    /**
+     * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
+     *
+     * @deprecated Use item.stroke instead.
+     */
+    stroke?: string;
+    /**
+     * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.
+     *
+     * @deprecated Use item.strokeWidth instead.
+     */
+    strokeWidth?: number;
+    /** Highlight style used for an individual marker when tapped or hovered over. */
+    item?: AgSeriesHighlightMarkerStyle;
+    /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
+    series?: AgSeriesHighlightSeriesStyle;
+};
 export interface AgBaseSeriesOptions {
     /** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */
     data?: any[];
@@ -443,43 +497,7 @@ export interface AgBaseSeriesOptions {
     /** A map of event names to event listeners. */
     listeners?: { [key in string]: Function };
     /** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */
-    highlightStyle?: {
-        /**
-         * The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-         *
-         * @deprecated Use item.fill instead.
-         */
-        fill?: string;
-        /**
-         * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
-         *
-         * @deprecated Use item.stroke instead.
-         */
-        stroke?: string;
-        /**
-         * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.
-         *
-         * @deprecated Use item.strokeWidth instead.
-         */
-        strokeWidth?: number;
-        /** Highlight style used for an individual marker when tapped or hovered over. */
-        item?: {
-            /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-            fill?: string;
-            /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-            stroke?: string;
-            /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-            strokeWidth?: number;
-        };
-        /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
-        series?: {
-            enabled?: boolean;
-            /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */
-            dimOpacity?: number;
-            /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
-            strokeWidth?: number;
-        };
-    };
+    highlightStyle?: AgSeriesHighlightStyle;
 }
 
 export interface AgTooltipRendererResult {
@@ -944,6 +962,15 @@ export interface AgPieTitleOptions extends AgChartCaptionOptions {
     showInLegend?: boolean;
 }
 
+export interface AgPieSeriesCalloutOptions {
+    /** The colours to cycle through for the strokes of the callouts. */
+    colors?: string[];
+    /** The length in pixels of the callout lines. */
+    length?: number;
+    /** The width in pixels of the stroke for callout lines. */
+    strokeWidth?: number;
+}
+
 /** Configuration for pie/doughnut series. */
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
@@ -952,14 +979,7 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     /** Configuration for the labels used for the segments. */
     label?: AgPieSeriesLabelOptions;
     /** Configuration for the callouts used with the labels for the segments. */
-    callout?: {
-        /** The colours to cycle through for the strokes of the callouts. */
-        colors?: string[];
-        /** The length in pixels of the callout lines. */
-        length?: number;
-        /** The width in pixels of the stroke for callout lines. */
-        strokeWidth?: number;
-    };
+    callout?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
     angleKey?: string;
     /** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -1033,6 +1053,17 @@ export interface AgTreemapSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+export interface AgTreemapSeriesLabelsOptions {
+    /** The label configuration for the large leaf tiles. */
+    large?: AgChartLabelOptions;
+    /** The label configuration for the medium-sized leaf tiles. */
+    medium?: AgChartLabelOptions;
+    /** The label configuration for the small leaf tiles. */
+    small?: AgChartLabelOptions;
+    /** The configuration for the labels showing the value of the 'colorKey'. */
+    color?: AgChartLabelOptions;
+}
+
 /** Configuration for the treemap series. */
 export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     type?: 'treemap';
@@ -1041,16 +1072,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     /** The label configuration for the children of the top-level parent tiles. */
     subtitle?: AgTreemapSeriesLabelOptions;
     /** Configuration for the tile labels. */
-    labels?: {
-        /** The label configuration for the large leaf tiles. */
-        large?: AgChartLabelOptions;
-        /** The label configuration for the medium-sized leaf tiles. */
-        medium?: AgChartLabelOptions;
-        /** The label configuration for the small leaf tiles. */
-        small?: AgChartLabelOptions;
-        /** The configuration for the labels showing the value of the 'colorKey'. */
-        color?: AgChartLabelOptions;
-    };
+    labels?: AgTreemapSeriesLabelsOptions;
     /** The name of the node key containing the label. */
     labelKey?: string;
     /** The name of the node key containing the size value. */
@@ -1088,7 +1110,11 @@ export interface AgCartesianChartOptions<
     TSeriesOptions = AgCartesianSeriesOptions[]
 > extends AgBaseChartOptions {
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
+    /** Configuration for the chart navigator. */
+    navigator?: AgNavigatorOptions;
+    /** Axis configurations. */
     axes?: TAxisOptions;
+    /** Series configurations. */
     series?: TSeriesOptions;
 }
 

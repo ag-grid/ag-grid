@@ -1,7 +1,7 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgChartOptions = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   title: {
     text: "Try dragging the Navigator's handles to zoom in",

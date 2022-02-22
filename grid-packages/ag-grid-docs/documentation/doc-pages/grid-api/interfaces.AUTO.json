@@ -5803,27 +5803,45 @@
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
+  "AgChartBackground": {
+    "meta": {},
+    "type": { "visible?": "boolean", "fill?": "string" },
+    "docs": {
+      "visible?": "/** Whether or not the background should be visible. */",
+      "fill?": "/** Colour of the chart background. */"
+    }
+  },
+  "AgBaseChartListeners": {
+    "meta": {},
+    "type": {
+      "seriesNodeClick": "(type: 'seriesNodeClick', series: 'LineSeries' | 'AreaSeries' | 'BarSeries' | 'HistogramSeries' | 'PieSeries' | 'ScatterSeries' | 'TreemapSeries', datum: any, xKey: string, yKey: string) => any",
+      "[key: string]": "Function"
+    },
+    "docs": {
+      "seriesNodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "[key: string]": "/** Generic listeners. */"
+    }
+  },
   "AgBaseChartOptions": {
     "meta": { "doc": "/** Configuration common to all charts. */" },
     "type": {
-      "container?": "HTMLElement | null",
       "data?": "any[]",
+      "container?": "HTMLElement | null",
       "width?": "number",
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{ visible?: boolean; fill?: string; }",
+      "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{ [key: string]: Function; }",
+      "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -5832,7 +5850,6 @@
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */"
     }
@@ -6058,6 +6075,48 @@
     "meta": { "isTypeAlias": true },
     "type": "AgNumberAxisOptions | AgLogAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
+  "AgSeriesHighlightMarkerStyle": {
+    "meta": {},
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
+      "stroke?": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
+      "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */"
+    }
+  },
+  "AgSeriesHighlightSeriesStyle": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "dimOpacity?": "number",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "dimOpacity?": "/** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */",
+      "strokeWidth?": "/** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */"
+    }
+  },
+  "AgSeriesHighlightStyle": {
+    "meta": {},
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number",
+      "item?": "AgSeriesHighlightMarkerStyle",
+      "series?": "AgSeriesHighlightSeriesStyle"
+    },
+    "docs": {
+      "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.fill instead.\n */",
+      "stroke?": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.stroke instead.\n */",
+      "strokeWidth?": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.strokeWidth instead.\n */",
+      "item?": "/** Highlight style used for an individual marker when tapped or hovered over. */",
+      "series?": "/** Highlight style used for whole series when one of its markers is tapped or hovered over. */"
+    }
+  },
   "AgBaseSeriesOptions": {
     "meta": {},
     "type": {
@@ -6066,7 +6125,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
@@ -6282,7 +6341,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
@@ -6349,7 +6408,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
@@ -6416,7 +6475,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "type?": "/** Configuration for the treemap series. */",
@@ -6507,7 +6566,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "marker?": "/** Configuration for the markers used in the series. */",
@@ -6619,7 +6678,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "grouped?": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
@@ -6710,7 +6769,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "fill?": "/** The colour of the fill for the histogram bars. */",
@@ -6812,13 +6871,26 @@
       "color?": "/** The colour to use for the title. */"
     }
   },
+  "AgPieSeriesCalloutOptions": {
+    "meta": {},
+    "type": {
+      "colors?": "string[]",
+      "length?": "number",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "colors?": "/** The colours to cycle through for the strokes of the callouts. */",
+      "length?": "/** The length in pixels of the callout lines. */",
+      "strokeWidth?": "/** The width in pixels of the stroke for callout lines. */"
+    }
+  },
   "AgPieSeriesOptions": {
     "meta": { "doc": "/** Configuration for pie/doughnut series. */" },
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
-      "callout?": "{ colors?: string[]; length?: number; strokeWidth?: number; }",
+      "callout?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
@@ -6843,7 +6915,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
@@ -6946,13 +7018,28 @@
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
   },
+  "AgTreemapSeriesLabelsOptions": {
+    "meta": {},
+    "type": {
+      "large?": "AgChartLabelOptions",
+      "medium?": "AgChartLabelOptions",
+      "small?": "AgChartLabelOptions",
+      "color?": "AgChartLabelOptions"
+    },
+    "docs": {
+      "large?": "/** The label configuration for the large leaf tiles. */",
+      "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
+      "small?": "/** The label configuration for the small leaf tiles. */",
+      "color?": "/** The configuration for the labels showing the value of the 'colorKey'. */"
+    }
+  },
   "AgTreemapSeriesOptions": {
     "meta": { "doc": "/** Configuration for the treemap series. */" },
     "type": {
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
       "subtitle?": "AgTreemapSeriesLabelOptions",
-      "labels?": "{ large?: AgChartLabelOptions; medium?: AgChartLabelOptions; small?: AgChartLabelOptions; color?: AgChartLabelOptions; }",
+      "labels?": "AgTreemapSeriesLabelsOptions",
       "labelKey?": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
@@ -6967,7 +7054,7 @@
       "showInLegend?": "boolean",
       "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "AgSeriesHighlightStyle"
     },
     "docs": {
       "title?": "/** The label configuration for the top-level tiles. */",
@@ -7006,26 +7093,29 @@
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
       "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
+      "navigator?": "AgNavigatorOptions",
       "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
-      "container?": "HTMLElement | null",
       "data?": "any[]",
+      "container?": "HTMLElement | null",
       "width?": "number",
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{ visible?: boolean; fill?: string; }",
+      "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{ [key: string]: Function; }",
+      "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "navigator?": "/** Configuration for the chart navigator. */",
+      "axes?": "/** Axis configurations. */",
+      "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -7034,7 +7124,6 @@
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */"
     }
@@ -7044,24 +7133,23 @@
     "type": {
       "type?": "'polar' | 'pie'",
       "series?": "TSeriesOptions",
-      "container?": "HTMLElement | null",
       "data?": "any[]",
+      "container?": "HTMLElement | null",
       "width?": "number",
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{ visible?: boolean; fill?: string; }",
+      "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{ [key: string]: Function; }",
+      "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -7070,7 +7158,6 @@
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */"
     }
@@ -7086,18 +7173,17 @@
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{ visible?: boolean; fill?: string; }",
+      "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{ [key: string]: Function; }",
+      "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "height?": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -7106,7 +7192,6 @@
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "navigator?": "/** Configuration for the chart navigator. This config is only supported by cartesian charts. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */"
     }
