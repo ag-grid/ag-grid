@@ -197,7 +197,7 @@ $ag-theme-base-default-params: (
     // These 4 variables set the padding around and spacing between widgets in "widget containers" which are parts of the UI that contain many related widgets, like the set filter menu, charts settings tabs etc.
     widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
     widget-container-vertical-padding: ag-derived(grid-size, $times: 1.5),
-    widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
+    widget-horizontal-spacing: ag-derived(grid-size, $times: 2),
     widget-vertical-spacing: ag-derived(grid-size),
 
     // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height

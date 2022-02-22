@@ -45,7 +45,6 @@ $ag-theme-material-default-params: (
     toggle-button-height: ag-derived(icon-size),
     widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
     widget-container-vertical-padding: ag-derived(grid-size, $times: 2),
-    widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
     widget-vertical-spacing: ag-derived(grid-size, $times: 1.75),
 
     // Fonts
