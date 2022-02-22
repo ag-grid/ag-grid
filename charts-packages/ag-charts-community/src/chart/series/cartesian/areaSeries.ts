@@ -77,8 +77,8 @@ interface LabelSelectionDatum {
 export { AreaTooltipRendererParams };
 
 type Coordinate = { x: number; y: number };
-type Segment = { yKey: string; points: Coordinate[] };
 type CumulativeValue = { left: number; right: number };
+type CumulativeMarkerValue = { positive: number; negative: number };
 
 class AreaSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: any }) => string;
@@ -407,6 +407,7 @@ export class AreaSeries extends CartesianSeries {
             markerSelectionData,
             strokeSelectionData,
             fillSelectionData,
+            xKey
         } = this;
 
         if (!data || !xAxis || !yAxis || !xData.length || !yData.length) {
@@ -427,11 +428,13 @@ export class AreaSeries extends CartesianSeries {
         fillSelectionData.length = 0;
 
         const makeCumulativeValues = () => new Array(xData.length).fill(null).map(() => ({ left: 0, right: 0 }));
+        const makeCumulativeMarkerValues = () => new Array(xData.length).fill(null).map(() => ({ positive: 0, negative: 0 }));
 
         const cumulativePositiveValues: CumulativeValue[] = makeCumulativeValues();
         const cumulativeNegativeValues: CumulativeValue[] = makeCumulativeValues();
+        const cumulativeMarkerValues: CumulativeMarkerValue[] = makeCumulativeMarkerValues();
 
-        const createCoordinates = (
+        const createWindowCoordinates = (
             cumulativeValues: CumulativeValue[],
             xDatum: any,
             yDatum: number,
@@ -455,12 +458,12 @@ export class AreaSeries extends CartesianSeries {
             ];
         }
 
-        const processWindowItem = (windowX: [any, any], windowY: [number, number], windowIdx: number, datumIdx: number) => {
+        const processWindowItem = (windowX: [any, any], windowY: [number, number], windowIdx: number, datumIdx: number): [Coordinate, Coordinate] => {
             const cumulativeValues =
                 windowY[windowIdx] < 0 ? cumulativeNegativeValues : cumulativePositiveValues;
             const side = windowIdx === 0 ? 'right' : 'left';
 
-            return createCoordinates(
+            return createWindowCoordinates(
                 cumulativeValues,
                 windowX[windowIdx],
                 windowY[windowIdx],
@@ -468,6 +471,24 @@ export class AreaSeries extends CartesianSeries {
                 side
             );
         };
+
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, datumIdx: number) : Coordinate => {
+            let currY;
+            if (yDatum !== undefined) {
+                if (yDatum < 0) {
+                    cumulativeMarkerValues[datumIdx].negative += yDatum;
+                    currY = cumulativeMarkerValues[datumIdx].negative;
+                } else {
+                    cumulativeMarkerValues[datumIdx].positive += yDatum;
+                    currY = cumulativeMarkerValues[datumIdx].positive;
+                }
+            }
+
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(currY, continuousY ? clamper : undefined);
+
+            return { x, y };
+        }
 
         yData.forEach((seriesYs, seriesIdx) => {
             const yKey = yKeys[seriesIdx];
@@ -485,6 +506,25 @@ export class AreaSeries extends CartesianSeries {
                 const nextXDatum = xData[datumIdx + 1];
                 const nextYDatum = seriesYs[datumIdx + 1];
 
+                // marker data
+                const point = createMarkerCoordinate(xDatum, yDatum, datumIdx);
+                const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
+
+                if (marker) {
+                    markerSelectionData.push({
+                        index: datumIdx,
+                        series: this,
+                        itemId: yKey,
+                        datum: seriesDatum,
+                        yValue: yDatum,
+                        yKey,
+                        point,
+                        fill: fills[seriesIdx % fills.length],
+                        stroke: strokes[seriesIdx % strokes.length]
+                    });
+                }
+
+                // fill data
                 const windowX: [any, any] = [xDatum, nextXDatum];
                 const windowY: [number, number] = [yDatum, nextYDatum];
 
@@ -496,7 +536,6 @@ export class AreaSeries extends CartesianSeries {
                     windowY[1] = 0;
                 }
 
-                // fill data
                 const currCoordinates = processWindowItem(windowX, windowY, 0, datumIdx);
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
@@ -696,7 +735,7 @@ export class AreaSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x);
+            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
             node.opacity = this.getOpacity(datum);
         });
     }
@@ -785,8 +824,8 @@ export class AreaSeries extends CartesianSeries {
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const yKeyIndex = yKeys.indexOf(yKey);
-        const yGroup = yData[nodeDatum.index];
-        const processedYValue = yGroup[yKeyIndex];
+        const seriesYs = yData[yKeyIndex];
+        const processedYValue = seriesYs[nodeDatum.index];
         const yName = yNames[yKeyIndex];
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
