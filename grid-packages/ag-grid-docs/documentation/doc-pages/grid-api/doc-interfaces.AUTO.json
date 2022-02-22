@@ -16985,31 +16985,10 @@
         "optional": false
       }
     },
-    "setAriaSelected": {
-      "type": {
-        "arguments": { "selected": "boolean | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setAriaExpanded": {
-      "type": {
-        "arguments": { "expanded": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getFocusableElement": {
       "type": {
         "arguments": {},
         "returnType": "HTMLElement",
-        "optional": false
-      }
-    },
-    "setAriaColIndex": {
-      "type": {
-        "arguments": { "index": "number" },
-        "returnType": "void",
         "optional": false
       }
     },
@@ -18111,20 +18090,6 @@
         "optional": false
       }
     },
-    "setAriaExpanded": {
-      "type": {
-        "arguments": { "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setAriaSelected": {
-      "type": {
-        "arguments": { "selected": "boolean | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setTop": {
       "type": {
         "arguments": { "top": "string" },
@@ -18146,13 +18111,6 @@
         "optional": false
       }
     },
-    "setAriaRowIndex": {
-      "type": {
-        "arguments": { "rowIndex": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setRowId": {
       "type": {
         "arguments": { "rowId": "string" },
@@ -18170,13 +18128,6 @@
     "setTabIndex": {
       "type": {
         "arguments": { "tabIndex": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setAriaLabel": {
-      "type": {
-        "arguments": { "label": "string | undefined" },
         "returnType": "void",
         "optional": false
       }

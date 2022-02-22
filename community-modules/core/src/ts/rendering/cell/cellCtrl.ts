@@ -35,6 +35,7 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
+import { setAriaColIndex, setAriaExpanded, setAriaSelected } from "../../utils/aria";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -51,11 +52,8 @@ const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: any): void;
-    setAriaSelected(selected: boolean | undefined): void;
-    setAriaExpanded(expanded: boolean): void;
     getFocusableElement(): HTMLElement;
 
-    setAriaColIndex(index: number): void;
     setTabIndex(tabIndex: number): void;
     setRole(role: string): void;
     setColId(colId: string): void;
@@ -248,7 +246,7 @@ export class CellCtrl extends BeanStub {
         this.tooltipFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(this.eGui);
 
-        if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
+        if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
 
         if (startEditing && this.isCellEditable()) {
             this.startEditing();
@@ -348,7 +346,8 @@ export class CellCtrl extends BeanStub {
         if (!colMatches) { return; }
 
         const listener = () => {
-            this.cellComp.setAriaExpanded(!!this.rowNode.expanded);
+            // for react, we don't use JSX, as setting attributes via jsx is slower
+            setAriaExpanded(this.eGui, !!this.rowNode.expanded);
         };
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, listener);
@@ -914,7 +913,7 @@ export class CellCtrl extends BeanStub {
 
     private setAriaColIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
-        this.cellComp.setAriaColIndex(colIdx);
+        setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     public isSuppressNavigable(): boolean {

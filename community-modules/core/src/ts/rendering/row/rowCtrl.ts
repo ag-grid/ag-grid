@@ -23,6 +23,7 @@ import { AngularRowUtils } from "./angularRowUtils";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../../utils/aria";
 
 export enum RowType {
     Normal = 'Normal',
@@ -40,16 +41,12 @@ export interface IRowComp {
     setCellCtrls(cellCtrls: CellCtrl[]): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
-    setAriaExpanded(on: boolean): void;
-    setAriaSelected(selected: boolean | undefined): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
-    setAriaRowIndex(rowIndex: number): void;
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setAriaLabel(label: string | undefined): void;
     setUserStyles(styles: any): void;
     setRole(role: string): void;
 }
@@ -229,7 +226,7 @@ export class RowCtrl extends BeanStub {
             initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
 
             if (this.rowNode.group) {
-                comp.setAriaExpanded(this.rowNode.expanded == true);
+                setAriaExpanded(gui.element, this.rowNode.expanded == true);
             }
 
             if (rowIdSanitised != null) {
@@ -678,7 +675,7 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-group', expandable);
             gui.rowComp.addOrRemoveCssClass('ag-row-group-expanded', expandable && expanded);
             gui.rowComp.addOrRemoveCssClass('ag-row-group-contracted', expandable && !expanded);
-            gui.rowComp.setAriaExpanded(expandable && expanded);
+            setAriaExpanded(gui.element, expandable && expanded);
         });
     }
 
@@ -1139,9 +1136,11 @@ export class RowCtrl extends BeanStub {
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected()!;
         this.allRowGuis.forEach(gui => {
-            gui.rowComp.setAriaSelected(selected ? true : undefined);
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
-            gui.rowComp.setAriaLabel(this.createAriaLabel());
+            setAriaSelected(gui.element, selected ? true : undefined);
+
+            const ariaLabel = this.createAriaLabel();
+            setAriaLabel(gui.element, ariaLabel == null ? '' : ariaLabel);
         });
     }
 
@@ -1438,12 +1437,13 @@ export class RowCtrl extends BeanStub {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
+        const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 
         this.allRowGuis.forEach(c => {
             c.rowComp.setRowIndex(rowIndexStr);
-            c.rowComp.setAriaRowIndex(headerRowCount + this.rowNode.rowIndex! + 1);
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
+            setAriaRowIndex(c.element, ariaRowIndex);
         });
     }
 

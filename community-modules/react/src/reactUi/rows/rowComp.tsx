@@ -62,10 +62,6 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const [role, setRole] = useState<string>();
     const [rowBusinessKey, setRowBusinessKey] = useState<string>();
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaRowIndex, setAriaRowIndex] = useState<number>();
-    const [ariaExpanded, setAriaExpanded] = useState<boolean>();
-    const [ariaLabel, setAriaLabel] = useState<string>();
-    const [ariaSelected, setAriaSelected] = useState<boolean>();
     const [userStyles, setUserStyles] = useState<any>();
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
@@ -117,14 +113,10 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
             setDomOrder: domOrder => setDomOrder(domOrder),
             setRowIndex: value => setRowIndex(value),
-            setAriaRowIndex: value => setAriaRowIndex(value),
-            setAriaExpanded: value => setAriaExpanded(value),
-            setAriaLabel: value => setAriaLabel(value),
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
             setTabIndex: value => setTabIndex(value),
             setUserStyles: styles => setUserStyles(styles),
-            setAriaSelected: value => setAriaSelected(value),
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
@@ -183,8 +175,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     return (
         <div ref={ eGui } role={ role } style={ rowStyles } row-index={ rowIndex }
-             aria-rowindex={ ariaRowIndex } aria-expanded={ ariaExpanded } aria-label={ ariaLabel }
-             aria-selected={ ariaSelected } row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
+             row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
             {
                 showCells && showCellsJsx()
             }

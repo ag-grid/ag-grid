@@ -97,10 +97,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
-            setAriaSelected: selected => setAriaSelected(eGui, selected),
-            setAriaExpanded: selected => setAriaExpanded(eGui, selected),
             getFocusableElement: () => this.getFocusableElement(),
-            setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
             setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
             setRole: role => setAriaRole(eGui, role),
             setColId: colId => setAttribute('col-id', colId),

@@ -135,9 +135,6 @@ const CellComp = (props: {
     const [userStyles, setUserStyles] = useState<any>();
 
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
-    const [ariaExpanded, setAriaExpanded] = useState<boolean | undefined>();
-    const [ariaColIndex, setAriaColIndex] = useState<number>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
@@ -309,10 +306,7 @@ const CellComp = (props: {
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setUserStyles: styles => setUserStyles(styles),
-            setAriaSelected: value => setAriaSelected(value),
-            setAriaExpanded: value => setAriaExpanded(value),
             getFocusableElement: () => eGui.current!,
-            setAriaColIndex: index => setAriaColIndex(index),
             setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => setRole(role),
             setColId: colId => setColId(colId),
@@ -383,8 +377,7 @@ const CellComp = (props: {
 
     return (
         <div ref={ eGui } className={ className } style={ userStyles } tabIndex={ tabIndex }
-             aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
-             aria-expanded={ ariaExpanded } col-id={ colId } title={ title } 
+             role={ role } col-id={ colId } title={ title } 
              aria-describedby={ ariaDescribedBy }>
 
             { showCellWrapper ?

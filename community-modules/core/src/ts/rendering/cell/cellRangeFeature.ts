@@ -7,6 +7,7 @@ import { includes, last } from "../../utils/array";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
 import { Column } from "../../entities/column";
 import { missing } from "../../utils/generic";
+import { setAriaSelected } from "../../utils/aria";
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -23,6 +24,7 @@ export class CellRangeFeature {
     private beans: Beans;
     private cellComp: ICellComp;
     private cellCtrl: CellCtrl;
+    private eGui: HTMLElement
 
     private rangeCount: number;
     private hasChartRange: boolean;
@@ -34,8 +36,9 @@ export class CellRangeFeature {
         this.cellCtrl = ctrl;
     }
 
-    public setComp(cellComp: ICellComp): void {
+    public setComp(cellComp: ICellComp, eGui: HTMLElement): void {
         this.cellComp = cellComp;
+        this.eGui = eGui;
         this.onRangeSelectionChanged();
     }
 
@@ -53,7 +56,7 @@ export class CellRangeFeature {
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
 
-        this.cellComp.setAriaSelected(this.rangeCount > 0 ? true : undefined);
+        setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();

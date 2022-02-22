@@ -38,17 +38,11 @@ export class RowComp extends Component {
             showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setAriaExpanded: on => setAriaExpanded(eGui, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
-            setAriaSelected: value => setAriaSelected(eGui, value),
-            setAriaLabel: value => {
-                setAriaLabel(eGui, value == null ? '' : value);
-            },
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
             setRole: role => setAriaRole(eGui, role),
-            setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
             setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())

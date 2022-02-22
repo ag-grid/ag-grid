@@ -9775,10 +9775,7 @@
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setUserStyles(styles: any)": "void",
-      "setAriaSelected(selected: boolean | undefined)": "void",
-      "setAriaExpanded(expanded: boolean)": "void",
       "getFocusableElement()": "HTMLElement",
-      "setAriaColIndex(index: number)": "void",
       "setTabIndex(tabIndex: number)": "void",
       "setRole(role: string)": "void",
       "setColId(colId: string)": "void",
@@ -10320,16 +10317,12 @@
       "setCellCtrls(cellCtrls: CellCtrl[])": "void",
       "showFullWidth(compDetails: UserCompDetails)": "void",
       "getFullWidthCellRenderer()": "ICellRenderer | null | undefined",
-      "setAriaExpanded(on: boolean)": "void",
-      "setAriaSelected(selected: boolean | undefined)": "void",
       "setTop(top: string)": "void",
       "setTransform(transform: string)": "void",
       "setRowIndex(rowIndex: string)": "void",
-      "setAriaRowIndex(rowIndex: number)": "void",
       "setRowId(rowId: string)": "void",
       "setRowBusinessKey(businessKey: string)": "void",
       "setTabIndex(tabIndex: number)": "void",
-      "setAriaLabel(label: string | undefined)": "void",
       "setUserStyles(styles: any)": "void",
       "setRole(role: string)": "void"
     }
