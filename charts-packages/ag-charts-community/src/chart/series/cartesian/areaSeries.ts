@@ -283,6 +283,10 @@ export class AreaSeries extends CartesianSeries {
             }
             const value = datum[yKey];
 
+            if (!seriesItemEnabled.get(yKey)) {
+                return 0;
+            }
+
             if (isContinuousY) {
                 return isContinuous(value) ? value : undefined;
             } else {
@@ -472,7 +476,7 @@ export class AreaSeries extends CartesianSeries {
             );
         };
 
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, datumIdx: number) : Coordinate => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, datumIdx: number): Coordinate => {
             let currY;
             if (yDatum !== undefined) {
                 if (yDatum < 0) {
@@ -538,7 +542,7 @@ export class AreaSeries extends CartesianSeries {
                         index: datumIdx,
                         itemId: yKey,
                         point,
-                        label: labelText ? {
+                        label: this.seriesItemEnabled.get(yKey) && labelText ? {
                             text: labelText,
                             fontStyle: label.fontStyle,
                             fontWeight: label.fontWeight,
@@ -604,17 +608,11 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateFillNodes() {
-        const { fills, fillOpacity, strokes, strokeOpacity, strokeWidth, shadow, seriesItemEnabled, yKeys } = this;
+        const { fills, fillOpacity, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
 
-        this.fillSelection.each((shape, datum) => {
-            const path = shape.path;
-            const { itemId, points } = datum;
-
-            const seriesIdx = yKeys.indexOf(itemId);
-
-            shape.fill = fills[seriesIdx % fills.length];
+        this.fillSelection.each((shape, datum, index) => {
+            shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
-            // shape.stroke = strokes[seriesIdx % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
             shape.lineDash = this.lineDash;
@@ -623,6 +621,9 @@ export class AreaSeries extends CartesianSeries {
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
             shape.opacity = this.getOpacity(datum);
 
+            const { points } = datum;
+
+            const path = shape.path;
             path.clear();
 
             points.forEach(({ x, y }, i) => {
@@ -662,8 +663,6 @@ export class AreaSeries extends CartesianSeries {
         let moveTo = true;
 
         this.strokeSelection.each((shape, datum, index) => {
-            const path = shape.path;
-
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
             shape.opacity = this.getOpacity(datum);
             shape.stroke = strokes[index % strokes.length];
@@ -672,9 +671,10 @@ export class AreaSeries extends CartesianSeries {
             shape.lineDash = this.lineDash;
             shape.lineDashOffset = this.lineDashOffset;
 
-            path.clear();
-
             const { points, yValues } = datum;
+
+            const path = shape.path
+            path.clear();
 
             for (let i = 0; i < points.length; i++) {
                 const { x, y } = points[i];
