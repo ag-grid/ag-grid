@@ -326,26 +326,12 @@
       "type": "AgHierarchySeriesOptions[]"
     }
   },
-  "AgBaseCartesianAxisOptions": {
-    "type": {
-      "options": [
-        "category",
-        "number",
-        "log",
-        "time"
-      ]
-    },
-    "position": {
-      "options": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ]
-    },
-    "thickness": {
-      "default": 0
-    },
+  "AgNumberAxisOptions": {
+    "nice": {
+      "default": true
+    }
+  },
+  "AgLogAxisOptions": {
     "nice": {
       "default": true
     },
@@ -353,6 +339,14 @@
       "default": 10
     }
   },
+  "AgCategoryAxisOptions": {},
+  "AgGroupedCategoryAxisOptions": {},
+  "AgTimeAxisOptions": {
+    "nice": {
+      "default": true
+    }
+  },
+  "AgBaseCartesianAxisOptions": {},
   "AgAxisLineOptions": {
     "width": {
       "default": 1,

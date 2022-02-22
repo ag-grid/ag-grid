@@ -353,6 +353,22 @@ Note, that we are:
 
 <interface-documentation interfaceName='AgBaseCartesianAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }'></interface-documentation>
 
+### Category Axis
+
+<interface-documentation interfaceName='AgCategoryAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }' exclude='["position", "title", "line", "tick", "label", "gridStyle", "keys"]'></interface-documentation>
+
+### Number Axis
+
+<interface-documentation interfaceName='AgNumberAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }' exclude='["position", "title", "line", "tick", "label", "gridStyle", "keys"]'></interface-documentation>
+
+### Log Axis
+
+<interface-documentation interfaceName='AgLogAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }' exclude='["position", "title", "line", "tick", "label", "gridStyle", "keys"]'></interface-documentation>
+
+### Time Axis
+
+<interface-documentation interfaceName='AgTimeAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false }' exclude='["position", "title", "line", "tick", "label", "gridStyle", "keys"]'></interface-documentation>
+
 ## Next Up
 
 Continue to the next section to learn about [events](../events/).
