@@ -2,10 +2,11 @@
 title: "Row Keys"
 ---
 
-Row Keys (or Row ID's) are provided by the application to the grid to enable the grid to identify rows. This in turn provides the following benefits:
-1. Rows are not unnecessarily destroyed and recreated when a list of Row Data is refreshed.
-1. Row selection is maintained when a list of Row Data is refreshed.
-1. Rows are given an identifier which can be used by the application to identify and look up rows.
+Row Keys (or Row ID's) are provided by the application to the grid to enable the grid to identify rows.
+
+Once the grid can identify rows, it can then maintain state between changes of Row Data. Maintained State includes both the DOM (where a Row exists in the old and new list of Row Data, the row is kept inside the DOM) and Business State (e.g. Row Selection and Row Group Open / Closed).
+
+The Row Key also allows accessing the grid's rows via the Grid API. For example if you decide to use `employeeId` as your Row Key, then you can look up rows inside the grid by providing `employeeId` to the `getRowNode(key)` API.
 
 ## Setting Row Keys
 
@@ -30,7 +31,7 @@ The example below has `getRowKey()` implemented to return `item.id`. When the gr
 
 <grid-example title='Get Row Key' name='get-row-key' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
 
-See [Accessing Data](/accessing-data/) for more information on `getRowNode()` API.
+See [Accessing Data](/accessing-data/) for more information on `getRowNode(key)` API.
 
 ## Grid Assigned Keys
 
