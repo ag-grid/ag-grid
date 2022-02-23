@@ -4,7 +4,8 @@
   "description": "Documentation for AG Grid",
   "scripts": {
     "build": "npm run generate-examples && npm run hash",
-    "generate-examples": "if [ `../../scripts/hashChanged.sh  \"\\`pwd\\`/documentation/doc-pages\" .examplesHash` = \"1\" ]; then node dev-server.js generate-examples && npm run examples-hash; fi",
+    "generate-examples": "node dev-server.js generate-examples && npm run examples-hash",
+    "xgenerate-examples": "if [ `../../scripts/hashChanged.sh  \"\\`pwd\\`/documentation/doc-pages\" .examplesHash` = \"1\" ]; then node dev-server.js generate-examples && npm run examples-hash; fi",
     "start": "npx gulp serve --max_old_space_size=6144",
     "serve-core-only": "npx gulp --max_old_space_size=6144 serve-core-only",
     "serve-with-formatting": "npx gulp serve-with-formatting",
