@@ -2098,8 +2098,21 @@ export class ColumnModel extends BeanStub {
         });
 
         // add in all other columns
+        let autoGroupInsertIndex = 0;
         this.gridColumns.forEach(col => {
-            if (!processedColIds[col.getColId()]) {
+            const colId = col.getColId();
+            const alreadyProcessed = processedColIds[colId]!=null;
+            if (alreadyProcessed) { return; }
+
+            const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+            if (isAutoGroupCol) {
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
+                // on a column, but the user could of since removed the grouping via the UI.
+                // if we don't inc the insert index, autoGroups will be inserted in reverse order
+                insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+            } else {
+                // normal columns, if missing from state list, are added at the end
                 newOrder.push(col);
             }
         });
