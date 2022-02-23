@@ -18183,6 +18183,7 @@
     }
   },
   "RowCtrlMap": {},
+  "RowNodeMap": {},
   "RefreshViewParams": {
     "recycleRows": { "type": { "returnType": "boolean", "optional": true } },
     "animate": { "type": { "returnType": "boolean", "optional": true } },

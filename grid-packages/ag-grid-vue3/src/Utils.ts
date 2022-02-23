@@ -13,14 +13,14 @@ export interface Properties {
     [propertyName: string]: any;
 }
 
-export const getAgGridProperties = (): [Properties, Properties, { prop: string, event: string }] => {
+export const getAgGridProperties = (): [Properties, Properties] => {
     const props: Properties = {};
 
     // for example, 'grid-ready' would become 'onGrid-ready': undefined
     // without this emitting events results in a warning
     // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
     const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map((eventName: string) => kebabNameToAttrEventName(kebabProperty(eventName)));
-    eventNameAsProps.forEach((eventName:string) => props[eventName] = undefined)
+    eventNameAsProps.forEach((eventName: string) => props[eventName] = undefined)
 
     const watch: Properties = {};
 
@@ -37,11 +37,6 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
             };
         });
 
-    const model: { prop: string, event: string } = {
-        prop: 'rowDataModel',
-        event: 'data-model-changed',
-    };
-
-    return [props, watch, model];
+    return [props, watch];
 };
 

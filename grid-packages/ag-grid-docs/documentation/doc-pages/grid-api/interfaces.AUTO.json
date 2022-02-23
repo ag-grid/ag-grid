@@ -10357,6 +10357,7 @@
     }
   },
   "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
+  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "RowNode" } },
   "RefreshViewParams": {
     "meta": {},
     "type": {

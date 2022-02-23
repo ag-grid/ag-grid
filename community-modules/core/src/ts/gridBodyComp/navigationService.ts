@@ -506,6 +506,8 @@ export class NavigationService extends BeanStub {
         let nextPosition: CellPosition | null = previousPosition;
 
         while (true) {
+            if (previousPosition !== nextPosition) { previousPosition = nextPosition; }
+
             if (!backwards) {
                 nextPosition = this.getLastCellOfColSpan(nextPosition);
             }
