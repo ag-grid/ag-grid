@@ -39,6 +39,10 @@ export interface RowCtrlMap {
     [key: string]: RowCtrl;
 }
 
+interface RowNodeMap {
+    [id: string]: RowNode;
+}
+
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
@@ -137,10 +141,8 @@ export class RowRenderer extends BeanStub {
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
-            this.getAllRowCtrls().forEach(rowCtrl => {
-                if (rowCtrl.isFullWidth()) {
-                    rowCtrl.onFullWidthRowFocused(event);
-                }
+            this.getFullWidthRowCtrls().forEach(rowCtrl => {
+                rowCtrl.onFullWidthRowFocused(event);
             });
         });
 
@@ -577,6 +579,9 @@ export class RowRenderer extends BeanStub {
                     cellCtrl.refreshCell(refreshCellParams);
                 }
             });
+        this.getFullWidthRowCtrls(params.rowNodes).forEach( fullWidthRowCtrl => {
+            fullWidthRowCtrl.refreshFullWidth();
+        });
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
@@ -614,31 +619,48 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
+    private mapRowNodes(rowNodes?: RowNode[] | null): {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} | undefined {
+        if (!rowNodes) { return; }
+
+        const res: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap} = {
+            top: {},
+            bottom: {},
+            normal: {}
+        };
+
+        rowNodes.forEach(rowNode => {
+            const id = rowNode.id!;
+            if (rowNode.rowPinned === Constants.PINNED_TOP) {
+                res.top[id] = rowNode;
+            } else if (rowNode.rowPinned === Constants.PINNED_BOTTOM) {
+                res.bottom[id] = rowNode;
+            } else {
+                res.normal[id] = rowNode;
+            }
+        });
+
+        return res;
+    }
+
+    private isRowInMap(rowNode: RowNode, rowIdsMap: {top: RowNodeMap, bottom: RowNodeMap, normal: RowNodeMap}): boolean {
+        // skip this row if it is missing from the provided list
+        const id = rowNode.id!;
+        const floating = rowNode.rowPinned;
+        if (floating === Constants.PINNED_BOTTOM) {
+            return rowIdsMap.bottom[id]!=null;
+        } else if (floating === Constants.PINNED_TOP) {
+            return rowIdsMap.top[id]!=null;
+        } else {
+            return rowIdsMap.normal[id]!=null;
+        }
+    }
+
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        let rowIdsMap: any;
+        let rowIdsMap = this.mapRowNodes(rowNodes);
 
         const res: CellCtrl[] = [];
-
-        if (exists(rowNodes)) {
-            rowIdsMap = {
-                top: {},
-                bottom: {},
-                normal: {}
-            };
-
-            rowNodes.forEach(rowNode => {
-                const id = rowNode.id!;
-                if (rowNode.rowPinned === Constants.PINNED_TOP) {
-                    rowIdsMap.top[id] = true;
-                } else if (rowNode.rowPinned === Constants.PINNED_BOTTOM) {
-                    rowIdsMap.bottom[id] = true;
-                } else {
-                    rowIdsMap.normal[id] = true;
-                }
-            });
-        }
 
         let colIdsMap: any;
 
@@ -654,25 +676,9 @@ export class RowRenderer extends BeanStub {
 
         const processRow = (rowComp: RowCtrl) => {
             const rowNode: RowNode = rowComp.getRowNode();
-            const id = rowNode.id!;
-            const floating = rowNode.rowPinned;
 
             // skip this row if it is missing from the provided list
-            if (exists(rowIdsMap)) {
-                if (floating === Constants.PINNED_BOTTOM) {
-                    if (!rowIdsMap.bottom[id]) {
-                        return;
-                    }
-                } else if (floating === Constants.PINNED_TOP) {
-                    if (!rowIdsMap.top[id]) {
-                        return;
-                    }
-                } else {
-                    if (!rowIdsMap.normal[id]) {
-                        return;
-                    }
-                }
-            }
+            if (rowIdsMap!=null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
 
             rowComp.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
@@ -868,17 +874,28 @@ export class RowRenderer extends BeanStub {
         // embedded, as what appears in each section depends on whether we are pinned or not
         const rowsToRemove: string[] = [];
 
-        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowComp: RowCtrl) => {
-            if (rowComp.isFullWidth()) {
-                const rowIndex = rowComp.getRowNode().rowIndex;
-
-                rowsToRemove.push(rowIndex!.toString());
-            }
+        this.getFullWidthRowCtrls().forEach(fullWidthCtrl => {
+            const rowIndex = fullWidthCtrl.getRowNode().rowIndex;
+            rowsToRemove.push(rowIndex!.toString());
         });
 
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
         this.redrawAfterScroll();
+    }
+
+    public getFullWidthRowCtrls(rowNodes?: RowNode[]): RowCtrl[] {
+        const rowNodesMap = this.mapRowNodes(rowNodes);
+        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter( (rowCtrl: RowCtrl) => {
+            // include just full width
+            if (!rowCtrl.isFullWidth()) { return false; }
+
+            // if Row Nodes provided, we exclude where Row Node is missing
+            const rowNode = rowCtrl.getRowNode();
+            if (rowNodesMap!=null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
+
+            return true;
+        });
     }
 
     public refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void {
@@ -891,10 +908,8 @@ export class RowRenderer extends BeanStub {
             rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
         }
 
-        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowCtrl: RowCtrl) => {
-            if (!rowCtrl.isFullWidth()) { return; }
-
-            const rowNode = rowCtrl.getRowNode();
+        this.getFullWidthRowCtrls().forEach(fullWidthRowCtrl => {
+            const rowNode = fullWidthRowCtrl.getRowNode();
 
             if (selectivelyRefreshing && idsToRefresh) {
                 // we refresh if a) this node is present or b) this parents nodes is present. checking parent
@@ -906,9 +921,9 @@ export class RowRenderer extends BeanStub {
                 if (skipThisNode) { return; }
             }
 
-            const fullWidthRowsRefreshed = rowCtrl.refreshFullWidth();
+            const fullWidthRowsRefreshed = fullWidthRowCtrl.refreshFullWidth();
             if (!fullWidthRowsRefreshed) {
-                const rowIndex = rowCtrl.getRowNode().rowIndex;
+                const rowIndex = fullWidthRowCtrl.getRowNode().rowIndex;
 
                 rowsToRemove.push(rowIndex!.toString());
             }
