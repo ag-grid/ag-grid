@@ -19,13 +19,13 @@ const gridOptions = {
             field: 'age', 
             editable: true, 
             // uses a custom Cell Editor
-            cellEditor: CustomAgeCellEditor 
+            cellEditor: CustomAgeCellEditor,
             // provides params to the Cell Editor
             cellEditorParams: {
                 foo: 'bar'
             }
         }
-    ],
+    ]
 }
 </snippet>
 
