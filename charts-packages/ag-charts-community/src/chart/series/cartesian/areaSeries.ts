@@ -234,7 +234,7 @@ export class AreaSeries extends CartesianSeries {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
         if (!xAxis || !yAxis) {
@@ -258,6 +258,7 @@ export class AreaSeries extends CartesianSeries {
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
         const isContinuousY = yAxis.scale instanceof ContinuousScale;
+        const normalized = normalizedTo && isFinite(normalizedTo);
 
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
@@ -286,7 +287,7 @@ export class AreaSeries extends CartesianSeries {
             }
 
             if (isContinuousY) {
-                return isContinuous(value) ? value : undefined;
+                return isContinuous(value) ? value : normalized ? 0 : undefined;
             } else {
                 return isDiscrete(value) ? value : String(value);
             }
@@ -302,43 +303,47 @@ export class AreaSeries extends CartesianSeries {
         //   [10, -15, 20]
         // ]
 
-        const { yData, normalizedTo } = this;
+        const { yData } = this;
 
-        const yMinMax = yData.map(values => findMinMax(values)); // used for normalization
-        const yLargestMinMax = this.findLargestMinMax(yMinMax);
+        const processedYData: any[] = [];
 
-        // Calculate the sum of the absolute values of all items in each stack. Used for normalization of stacked areas.
-        const yAbsTotal = this.yData.map(values => values.reduce((acc, stack) => {
-            acc += Math.abs(stack);
-            return acc;
-        }, 0));
+        let yMin = 0;
+        let yMax = 0;
 
-        let yMin: number;
-        let yMax: number;
+        yData.forEach(stack => {
+            // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
+            const total = stack.reduce((acc, y) => {
+                acc.absSum += Math.abs(y);
+                acc.sum += y;
 
-        if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
-            yData.forEach((stack, i) => stack.forEach((y, j) => stack[j] = y / yAbsTotal[i] * normalizedTo));
-        } else {
-            yMin = yLargestMinMax.min;
-            yMax = yLargestMinMax.max;
-        }
+                if (acc.sum > yMax) {
+                    yMax = acc.sum;
+                } else if (acc.sum < yMin) {
+                    yMin = acc.sum;
+                }
+
+                return acc;
+            }, { sum: 0, absSum: 0 });
+
+            stack.forEach((y, i) => {
+                if (normalized) {
+                    // normalize y values using the absolute sum of y values in the stack
+                    stack[i] = y / total.absSum * normalizedTo;
+                }
+
+                // TODO: test performance to see impact of this
+                // process data to be in the format required for creating node data and rendering area paths
+                (processedYData[i] || (processedYData[i] = [])).push(stack[i]);
+            });
+        });
+
+        this.yData = processedYData;
 
         if (yMin === 0 && yMax === 0) {
             yMax = 1;
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
-
-        // TODO: test performance to see impact of this
-        const processedYData: any[] = [];
-
-        yData.forEach(entry => {
-            yKeys.forEach((yKey, j) => (processedYData[j] || (processedYData[j] = [])).push(entry[j]));
-        });
-
-        this.yData = processedYData;
 
         this.fireEvent({ type: 'dataProcessed' });
 
