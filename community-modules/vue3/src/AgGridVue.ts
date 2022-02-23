@@ -8,9 +8,10 @@ import {AgGridColumn} from './AgGridColumn';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
-const DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-changed'));
+const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
+const DATA_MODEL_EMIT_NAME = 'update:modelValue';
 
-const [props, watch, model] = getAgGridProperties();
+const [props, watch] = getAgGridProperties();
 
 export const AgGridVue = defineComponent({
     render() {
@@ -34,7 +35,11 @@ export const AgGridVue = defineComponent({
             type: Array as PropType<Module[]>,
             default: () => [],
         },
-        rowDataModel: undefined as any,
+        modelValue: {
+            type: Array,
+            default: '',
+            required: true
+        },
         ...props
     },
     data() {
@@ -46,7 +51,7 @@ export const AgGridVue = defineComponent({
         }
     },
     watch: {
-        rowDataModel: {
+        modelValue: {
             handler(currentValue: any, previousValue: any) {
                 this.processChanges('rowData', currentValue, previousValue);
             },
@@ -54,7 +59,6 @@ export const AgGridVue = defineComponent({
         },
         ...watch
     },
-    model,
     methods: {
         globalEventListener(eventType: string, event: any) {
             if (this.isDestroyed) {
@@ -89,8 +93,8 @@ export const AgGridVue = defineComponent({
         checkForBindingConflicts() {
             const thisAsAny = (this as any);
             if ((thisAsAny.rowData || this.gridOptions.rowData) &&
-                thisAsAny.rowDataModel) {
-                console.warn('AG Grid: Using both rowData and rowDataModel. rowData will be ignored.');
+                thisAsAny.modelValue) {
+                console.warn('AG Grid: Using both rowData and v-model. rowData will be ignored.');
             }
         },
         getRowData(): any[] {
@@ -113,8 +117,8 @@ export const AgGridVue = defineComponent({
         getRowDataBasedOnBindings() {
             const thisAsAny = (this as any);
 
-            const rowDataModel = thisAsAny.rowDataModel;
-            return rowDataModel ? rowDataModel :
+            const rowData = thisAsAny.modelValue
+            return rowData ? rowData :
                 thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
         },
         /*
@@ -159,7 +163,7 @@ export const AgGridVue = defineComponent({
         // we debounce the model update to prevent a flood of updates in the event there are many individual
         // cell/row updates
         this.emitRowModel = this.debounce(() => {
-            this.$emit(DATA_MODEL_ATTR_NAME, Object.freeze(this.getRowData()));
+            this.$emit(DATA_MODEL_EMIT_NAME, Object.freeze(this.getRowData()));
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
