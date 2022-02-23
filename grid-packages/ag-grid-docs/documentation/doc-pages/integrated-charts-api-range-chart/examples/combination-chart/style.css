@@ -4,11 +4,10 @@
     height: 100%;
 }
 
-#myGrid {
-    flex: 1;
-    height: auto !important;
+.my-grid {
+    flex: 2;
 }
 
 .my-chart {
-    flex: 1;
+    flex: 3;
 }

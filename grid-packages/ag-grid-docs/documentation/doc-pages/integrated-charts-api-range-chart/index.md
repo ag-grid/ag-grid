@@ -49,7 +49,23 @@ location other than the grid's popup window. Note the following:
 
 ## Combination Charts
 
-<grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 900 }'></grid-example>
+<snippet>
+api.createRangeChart({
+    chartType: 'customCombo',
+    cellRange: {
+      columns: ['month', 'rain', 'pressure', 'temp'],
+    }, 
+    seriesChartTypes: [
+      { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
+      { colId: 'pressure', chartType: 'line', secondaryAxis: true },
+      { colId: 'temp', chartType: 'line', secondaryAxis: true }
+    ], 
+    aggFunc: 'sum',
+  });
+</snippet>
+
+
+<grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
 
 
 ## Range Chart API
