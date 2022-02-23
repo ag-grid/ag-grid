@@ -78,8 +78,6 @@ export { AreaTooltipRendererParams };
 
 type Coordinate = { x: number; y: number };
 type CumulativeValue = { left: number; right: number };
-type CumulativeMarkerValue = { positive: number; negative: number };
-
 class AreaSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: any }) => string;
 }
@@ -333,7 +331,7 @@ export class AreaSeries extends CartesianSeries {
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
-        // TODO: change data processing
+        // TODO: test performance to see impact of this
         const processedYData: any[] = [];
 
         yData.forEach(entry => {
@@ -432,14 +430,13 @@ export class AreaSeries extends CartesianSeries {
         fillSelectionData.length = 0;
 
         const makeCumulativeValues = () => new Array(xData.length).fill(null).map(() => ({ left: 0, right: 0 }));
-        const makeCumulativeMarkerValues = () => new Array(xData.length).fill(null).map(() => ({ positive: 0, negative: 0 }));
+        const makeCumulativeMarkerValues = () => new Array(xData.length).fill(0);
 
-        const cumulativePositiveValues: CumulativeValue[] = makeCumulativeValues();
-        const cumulativeNegativeValues: CumulativeValue[] = makeCumulativeValues();
-        const cumulativeMarkerValues: CumulativeMarkerValue[] = makeCumulativeMarkerValues();
 
-        const createWindowCoordinates = (
-            cumulativeValues: CumulativeValue[],
+        const cumulativePathValues: CumulativeValue[] = makeCumulativeValues();
+        const cumulativeMarkerValues: number[] = makeCumulativeMarkerValues();
+
+        const createPathCoordinates = (
             xDatum: any,
             yDatum: number,
             idx: number,
@@ -448,13 +445,13 @@ export class AreaSeries extends CartesianSeries {
 
             const x = xScale.convert(xDatum) + xOffset;
 
-            const prevY = cumulativeValues[idx][side];
-            const currY = cumulativeValues[idx][side] + yDatum;
+            const prevY = cumulativePathValues[idx][side];
+            const currY = cumulativePathValues[idx][side] + yDatum;
 
             const prevYCoordinate = yScale.convert(prevY, continuousY ? clamper : undefined);
             const currYCoordinate = yScale.convert(currY, continuousY ? clamper : undefined);
 
-            cumulativeValues[idx][side] = currY;
+            cumulativePathValues[idx][side] = currY;
 
             return [
                 { x, y: currYCoordinate },
@@ -462,30 +459,10 @@ export class AreaSeries extends CartesianSeries {
             ];
         }
 
-        const processWindowItem = (windowX: [any, any], windowY: [number, number], windowIdx: number, datumIdx: number): [Coordinate, Coordinate] => {
-            const cumulativeValues =
-                windowY[windowIdx] < 0 ? cumulativeNegativeValues : cumulativePositiveValues;
-            const side = windowIdx === 0 ? 'right' : 'left';
-
-            return createWindowCoordinates(
-                cumulativeValues,
-                windowX[windowIdx],
-                windowY[windowIdx],
-                datumIdx + windowIdx,
-                side
-            );
-        };
-
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, datumIdx: number): Coordinate => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number): Coordinate => {
             let currY;
             if (yDatum !== undefined) {
-                if (yDatum < 0) {
-                    cumulativeMarkerValues[datumIdx].negative += yDatum;
-                    currY = cumulativeMarkerValues[datumIdx].negative;
-                } else {
-                    cumulativeMarkerValues[datumIdx].positive += yDatum;
-                    currY = cumulativeMarkerValues[datumIdx].positive;
-                }
+                currY = cumulativeMarkerValues[idx] += yDatum;
             }
 
             const x = xScale.convert(xDatum) + xOffset;
@@ -556,8 +533,9 @@ export class AreaSeries extends CartesianSeries {
                 }
 
                 // fill data
-                const windowX: [any, any] = [xDatum, nextXDatum];
-                const windowY: [number, number] = [yDatum, nextYDatum];
+                // Handle data in pairs of current and next x and y values
+                const windowX = [xDatum, nextXDatum];
+                const windowY = [yDatum, nextYDatum];
 
                 if (windowX.some((v) => v == undefined)) {
                     return;
@@ -567,11 +545,11 @@ export class AreaSeries extends CartesianSeries {
                     windowY[1] = 0;
                 }
 
-                const currCoordinates = processWindowItem(windowX, windowY, 0, datumIdx);
+                const currCoordinates = createPathCoordinates(windowX[0], windowY[0], datumIdx, 'right');
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
-                const nextCoordinates = processWindowItem(windowX, windowY, 1, datumIdx);
+                const nextCoordinates = createPathCoordinates(windowX[1], windowY[1], datumIdx, 'left');
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
 
@@ -579,11 +557,11 @@ export class AreaSeries extends CartesianSeries {
                 strokePoints.push({ x: NaN, y: NaN }); // moveTo
                 yValues.push(undefined);
 
-                strokePoints.push(currCoordinates[0]); // right
+                strokePoints.push(currCoordinates[0]);
                 yValues.push(yDatum);
 
                 if (nextYDatum !== undefined) {
-                    strokePoints.push(nextCoordinates[0]); // left
+                    strokePoints.push(nextCoordinates[0]);
                     yValues.push(yDatum);
                 }
             });
