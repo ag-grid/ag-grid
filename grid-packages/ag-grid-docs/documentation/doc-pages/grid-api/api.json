@@ -574,7 +574,7 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
-                    "CellRangeParams"
+                    "CellRangeParams", "CreateRangeChartParams"
                 ],
                 "include": []
             }
