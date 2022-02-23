@@ -45,7 +45,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
                 ? `https://unpkg.com/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`
                 : isDevelopment()
                     ? `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`
-                    : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
+                    : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-enterprise.cjs.min.js`;
         } else {
             scriptPath = isUsingPublishedPackages()
                 ? `https://unpkg.com/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js`
