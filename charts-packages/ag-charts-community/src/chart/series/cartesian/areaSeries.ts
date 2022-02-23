@@ -328,7 +328,7 @@ export class AreaSeries extends CartesianSeries {
             stack.forEach((y, i) => {
                 if (normalized) {
                     // normalize y values using the absolute sum of y values in the stack
-                    stack[i] = y / total.absSum * normalizedTo;
+                    stack[i] = y / total.absSum * normalizedTo!;
                 }
 
                 // TODO: test performance to see impact of this
