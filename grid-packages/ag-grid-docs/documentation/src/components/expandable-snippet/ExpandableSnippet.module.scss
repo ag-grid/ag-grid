@@ -1,0 +1,7 @@
+.expandable-snippet {
+    height: 1px; // needed for divs to fit table cell heights correctly
+
+    &__code-sample {
+        composes: my-2 from global;
+    }
+}

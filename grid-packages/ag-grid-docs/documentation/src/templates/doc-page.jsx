@@ -7,6 +7,7 @@ import SideMenu from 'components/SideMenu';
 import processFrameworkSpecificSections from 'utils/framework-specific-sections';
 import {ApiDocumentation, InterfaceDocumentation} from 'components/ApiDocumentation';
 import {Snippet} from 'components/snippet/Snippet';
+import {ExpandableSnippet} from 'components/expandable-snippet/ExpandableSnippet';
 import FeatureOverview from 'components/FeatureOverview';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
@@ -67,6 +68,7 @@ const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'snippet': props => Snippet({...props, framework}),
+            'expandable-snippet': props => ExpandableSnippet({ ...props, framework, breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined }),
             'feature-overview': props => FeatureOverview({...props, framework}),
             'icons-panel': IconsPanel,
             'image-caption': props => ImageCaption({...props, pageName}),
