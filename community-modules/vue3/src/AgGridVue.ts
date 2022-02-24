@@ -37,8 +37,8 @@ export const AgGridVue = defineComponent({
         },
         modelValue: {
             type: Array,
-            default: '',
-            required: true
+            default: undefined,
+            required: false
         },
         ...props
     },
