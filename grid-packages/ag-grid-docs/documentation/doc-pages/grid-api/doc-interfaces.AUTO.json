@@ -4753,7 +4753,7 @@
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "GetChartToolbarItems": {},
-  "MenuItemDef": {
+  "MenuItemLeafDef": {
     "name": {
       "description": "/** Name of the menu item */",
       "type": { "returnType": "string", "optional": false }
@@ -4778,12 +4778,43 @@
       "description": "/** The icon to display, either a DOM element or HTML string */",
       "type": { "returnType": "HTMLElement | string", "optional": true }
     },
+    "cssClasses": {
+      "description": "/** CSS classes to apply to the menu item */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Tooltip for the menu item */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
+  "MenuItemDef": {
     "subMenu": {
       "description": "/** If this item is a sub menu, contains a list of menu item definitions */",
-      "type": {
-        "returnType": "(MenuItemDef | string)[] | IComponent<any>",
-        "optional": true
-      }
+      "type": { "returnType": "(MenuItemDef | string)[]", "optional": true }
+    },
+    "name": {
+      "description": "/** Name of the menu item */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "disabled": {
+      "description": "/** It the item should be enabled / disabled */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shortcut": {
+      "description": "/** Shortcut (just display text, saying the shortcut here does nothing) */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "action": {
+      "description": "/** Function that gets executed when item is chosen */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "checked": {
+      "description": "/** Set to true to provide a check beside the option */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "icon": {
+      "description": "/** The icon to display, either a DOM element or HTML string */",
+      "type": { "returnType": "HTMLElement | string", "optional": true }
     },
     "cssClasses": {
       "description": "/** CSS classes to apply to the menu item */",
@@ -18511,6 +18542,12 @@
     "isAnotherSubMenuOpen": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
+    "subMenu": {
+      "type": {
+        "returnType": "(MenuItemDef | string)[] | IComponent<any>",
+        "optional": true
+      }
+    },
     "name": {
       "description": "/** Name of the menu item */",
       "type": { "returnType": "string", "optional": false }
@@ -18534,13 +18571,6 @@
     "icon": {
       "description": "/** The icon to display, either a DOM element or HTML string */",
       "type": { "returnType": "HTMLElement | string", "optional": true }
-    },
-    "subMenu": {
-      "description": "/** If this item is a sub menu, contains a list of menu item definitions */",
-      "type": {
-        "returnType": "(MenuItemDef | string)[] | IComponent<any>",
-        "optional": true
-      }
     },
     "cssClasses": {
       "description": "/** CSS classes to apply to the menu item */",

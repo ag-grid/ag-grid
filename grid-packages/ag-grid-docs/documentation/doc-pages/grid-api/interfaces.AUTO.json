@@ -2245,7 +2245,7 @@
       "returnType": "ChartMenuOptions[]"
     }
   },
-  "MenuItemDef": {
+  "MenuItemLeafDef": {
     "meta": {},
     "type": {
       "name": "string",
@@ -2254,7 +2254,6 @@
       "action?": "() => void",
       "checked?": "boolean",
       "icon?": "HTMLElement | string",
-      "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -2265,7 +2264,31 @@
       "action?": "/** Function that gets executed when item is chosen */",
       "checked?": "/** Set to true to provide a check beside the option */",
       "icon?": "/** The icon to display, either a DOM element or HTML string */",
+      "cssClasses?": "/** CSS classes to apply to the menu item */",
+      "tooltip?": "/** Tooltip for the menu item */"
+    }
+  },
+  "MenuItemDef": {
+    "meta": {},
+    "type": {
+      "subMenu?": "(MenuItemDef | string)[]",
+      "name": "string",
+      "disabled?": "boolean",
+      "shortcut?": "string",
+      "action?": "() => void",
+      "checked?": "boolean",
+      "icon?": "HTMLElement | string",
+      "cssClasses?": "string[]",
+      "tooltip?": "string"
+    },
+    "docs": {
       "subMenu?": "/** If this item is a sub menu, contains a list of menu item definitions */",
+      "name": "/** Name of the menu item */",
+      "disabled?": "/** It the item should be enabled / disabled */",
+      "shortcut?": "/** Shortcut (just display text, saying the shortcut here does nothing) */",
+      "action?": "/** Function that gets executed when item is chosen */",
+      "checked?": "/** Set to true to provide a check beside the option */",
+      "icon?": "/** The icon to display, either a DOM element or HTML string */",
       "cssClasses?": "/** CSS classes to apply to the menu item */",
       "tooltip?": "/** Tooltip for the menu item */"
     }
@@ -10661,13 +10684,13 @@
     "type": {
       "isCompact?": "boolean",
       "isAnotherSubMenuOpen": "() => boolean",
+      "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
       "name": "string",
       "disabled?": "boolean",
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
       "icon?": "HTMLElement | string",
-      "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -10678,7 +10701,6 @@
       "action?": "/** Function that gets executed when item is chosen */",
       "checked?": "/** Set to true to provide a check beside the option */",
       "icon?": "/** The icon to display, either a DOM element or HTML string */",
-      "subMenu?": "/** If this item is a sub menu, contains a list of menu item definitions */",
       "cssClasses?": "/** CSS classes to apply to the menu item */",
       "tooltip?": "/** Tooltip for the menu item */"
     }
