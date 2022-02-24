@@ -1,13 +1,15 @@
 .wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 }
 
-.my-grid {
-    flex: 2;
+.wrapper > .ag-theme-alpine-dark {
+    flex: 2 2 0;
 }
 
-.my-chart {
-    flex: 3;
+.wrapper #myChart {
+    flex: 3 3 0;
 }
