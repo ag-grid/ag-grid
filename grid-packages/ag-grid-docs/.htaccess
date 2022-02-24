@@ -344,7 +344,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/grouping/ /angular-data-grid/grouping/
     Redirect 301 /documentation/angular/immutable-data/ /angular-data-grid/immutable-data/
     Redirect 301 /documentation/angular/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
-    Redirect 301 /documentation/angular/integrated-charts-api/ /angular-data-grid/integrated-charts-api/
     Redirect 301 /documentation/angular/integrated-charts-container/ /angular-data-grid/integrated-charts-container/
     Redirect 301 /documentation/angular/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /documentation/angular/integrated-charts-customisation/ /angular-data-grid/integrated-charts-customisation/
@@ -600,7 +599,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/grouping/ /javascript-data-grid/grouping/
     Redirect 301 /documentation/javascript/immutable-data/ /javascript-data-grid/immutable-data/
     Redirect 301 /documentation/javascript/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
-    Redirect 301 /documentation/javascript/integrated-charts-api/ /javascript-data-grid/integrated-charts-api/
     Redirect 301 /documentation/javascript/integrated-charts-container/ /javascript-data-grid/integrated-charts-container/
     Redirect 301 /documentation/javascript/integrated-charts-cross-filtering/ /javascript-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /documentation/javascript/integrated-charts-customisation/ /javascript-data-grid/integrated-charts-customisation/
@@ -847,7 +845,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/grouping/ /react-data-grid/grouping/
     Redirect 301 /documentation/react/immutable-data/ /react-data-grid/immutable-data/
     Redirect 301 /documentation/react/infinite-scrolling/ /react-data-grid/infinite-scrolling/
-    Redirect 301 /documentation/react/integrated-charts-api/ /react-data-grid/integrated-charts-api/
     Redirect 301 /documentation/react/integrated-charts-container/ /react-data-grid/integrated-charts-container/
     Redirect 301 /documentation/react/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /documentation/react/integrated-charts-customisation/ /react-data-grid/integrated-charts-customisation/
@@ -1094,7 +1091,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/grouping/ /vue-data-grid/grouping/
     Redirect 301 /documentation/vue/immutable-data/ /vue-data-grid/immutable-data/
     Redirect 301 /documentation/vue/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
-    Redirect 301 /documentation/vue/integrated-charts-api/ /vue-data-grid/integrated-charts-api/
     Redirect 301 /documentation/vue/integrated-charts-container/ /vue-data-grid/integrated-charts-container/
     Redirect 301 /documentation/vue/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /documentation/vue/integrated-charts-customisation/ /vue-data-grid/integrated-charts-customisation/
@@ -1239,7 +1235,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-cell-styles/ /javascript-data-grid/cell-styles/
     Redirect 301 /javascript-grid-cell-template/ /angular-data-grid/getting-started/
     Redirect 301 /javascript-grid-change-detection/ /javascript-data-grid/change-detection/
-    Redirect 301 /javascript-grid-charts-chart-range-api/ /javascript-data-grid/integrated-charts-api/
     Redirect 301 /javascript-grid-charts-chart-toolbar/ /javascript-data-grid/integrated-charts-toolbar/
     Redirect 301 /javascript-grid-charts-container/ /javascript-data-grid/integrated-charts-container/
     Redirect 301 /javascript-grid-charts-customisation-area/ /javascript-data-grid/integrated-charts-customisation/
@@ -1250,7 +1245,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-charts-customisation-scatter/ /javascript-data-grid/integrated-charts-customisation/
     Redirect 301 /javascript-grid-charts-customisation/ /javascript-data-grid/integrated-charts-customisation/
     Redirect 301 /javascript-grid-charts-integrated-chart-events/ /javascript-data-grid/integrated-charts-events/
-    Redirect 301 /javascript-grid-charts-integrated-chart-range-api/ /javascript-data-grid/integrated-charts-api/
     Redirect 301 /javascript-grid-charts-integrated-chart-toolbar/ /javascript-data-grid/integrated-charts-toolbar/
     Redirect 301 /javascript-grid-charts-integrated-container/ /javascript-data-grid/integrated-charts-container/
     Redirect 301 /javascript-grid-charts-integrated-customisation-area/ /javascript-data-grid/integrated-charts-customisation/
@@ -1537,7 +1531,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/index.html /javascript-data-grid/index.html
     Redirect 301 /javascript-grid/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
-    Redirect 301 /javascript-grid/integrated-charts-api/ /javascript-data-grid/integrated-charts-api/
     Redirect 301 /javascript-grid/integrated-charts-container/ /javascript-data-grid/integrated-charts-container/
     Redirect 301 /javascript-grid/integrated-charts-cross-filtering/ /javascript-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /javascript-grid/integrated-charts-customisation/ /javascript-data-grid/integrated-charts-customisation/
@@ -1735,7 +1728,6 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/index.html /angular-data-grid/index.html
     Redirect 301 /angular-grid/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /angular-grid/integrated-charts/ /angular-data-grid/integrated-charts/
-    Redirect 301 /angular-grid/integrated-charts-api/ /angular-data-grid/integrated-charts-api/
     Redirect 301 /angular-grid/integrated-charts-container/ /angular-data-grid/integrated-charts-container/
     Redirect 301 /angular-grid/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /angular-grid/integrated-charts-customisation/ /angular-data-grid/integrated-charts-customisation/
@@ -1937,7 +1929,6 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/index.html /react-data-grid/index.html
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /react-grid/integrated-charts/ /react-data-grid/integrated-charts/
-    Redirect 301 /react-grid/integrated-charts-api/ /react-data-grid/integrated-charts-api/
     Redirect 301 /react-grid/integrated-charts-container/ /react-data-grid/integrated-charts-container/
     Redirect 301 /react-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /react-grid/integrated-charts-customisation/ /react-data-grid/integrated-charts-customisation/
@@ -2139,7 +2130,6 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/index.html /vue-data-grid/index.html
     Redirect 301 /vue-grid/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /vue-grid/integrated-charts/ /vue-data-grid/integrated-charts/
-    Redirect 301 /vue-grid/integrated-charts-api/ /vue-data-grid/integrated-charts-api/
     Redirect 301 /vue-grid/integrated-charts-container/ /vue-data-grid/integrated-charts-container/
     Redirect 301 /vue-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-cross-filtering/
     Redirect 301 /vue-grid/integrated-charts-customisation/ /vue-data-grid/integrated-charts-customisation/
