@@ -14,7 +14,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { extent, findMinMax } from "../../../util/array";
+import { extent } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
