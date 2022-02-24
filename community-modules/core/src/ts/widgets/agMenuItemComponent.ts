@@ -8,16 +8,18 @@ import { Component } from './component';
 import { PopupService } from './popupService';
 import { KeyCode } from '../constants/keyCode';
 import { PostConstruct } from '../context/context';
-import { MenuItemDef } from '../entities/gridOptions';
+import { MenuItemLeafDef, MenuItemDef } from '../entities/gridOptions';
 import { ITooltipParams } from '../rendering/tooltipComponent';
 import { createIconNoSpan } from '../utils/icon';
 import { isNodeOrElement, loadTemplate } from '../utils/dom';
 import { CustomTooltipFeature } from './customTooltipFeature';
 import { getAriaLevel, setAriaDisabled, setAriaExpanded } from '../utils/aria';
+import { IComponent } from '../interfaces/iComponent';
 
-interface MenuItemComponentParams extends MenuItemDef {
+interface MenuItemComponentParams extends MenuItemLeafDef {
     isCompact?: boolean;
     isAnotherSubMenuOpen: () => boolean;
+    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
 }
 
 export interface MenuItemSelectedEvent extends AgEvent {
@@ -140,8 +142,8 @@ export class AgMenuItemComponent extends Component {
 
             ePopup.appendChild(subMenuGui);
 
-            if (subMenu.afterGuiAttached) {
-                setTimeout(() => subMenu.afterGuiAttached!(), 0);
+            if ((subMenu as any).afterGuiAttached) {
+                setTimeout(() => (subMenu as any).afterGuiAttached!(), 0);
             }
         }
 
