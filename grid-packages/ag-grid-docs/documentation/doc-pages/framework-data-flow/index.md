@@ -30,7 +30,7 @@ Note that this is only worth considering if you have a significant amount of row
 The trade off here is that you'll need a mechanism to update your component if the grid data 
 changes - we'll cover that next.
 
-## Unidirectional Data Flow / Vuex
+## Unidirectional Data Flow / Vuex 
 
 A key tenet of Vue is the idea of unidirectional data flow - the idea that data changes flow 
 downwards.  The problem when using the grid is that the grid maintains it's own state and 
@@ -71,12 +71,29 @@ grid's data changes? We'll cover this in the next section.
 In the grid configuration above we made use of `v-model` - what this will allow us to get 
 the row data when grid data changes:
 
+### Vue 2
 ```jsx
 <ag-grid-vue
     style="width: 600px; height: 150px;"
     class="ag-theme-alpine"
     v-model="rowData"
     @data-model-changed="dataModelChanged"
+    //..other bindings/attributes
+
+methods: {
+    dataModelChanged(rowData) {
+        this.$store.dispatch('applyTransaction', rowData);
+    }
+}
+```
+
+### Vue 3
+```jsx
+<ag-grid-vue
+    style="width: 600px; height: 150px;"
+    class="ag-theme-alpine"
+    v-model="rowData"
+    v-on:update:modelValue="modelChanges"
     //..other bindings/attributes
 
 methods: {
