@@ -66,6 +66,9 @@ const AG_GRID_LOCALE_EN = {
     // Header of the Default Group Column
     group: 'Group',
 
+    // Row Drag
+    rowDragRows:'rows',
+
     // Other
     loadingOoo: 'Loading...',
     noRowsToShow: 'No Rows To Show',
