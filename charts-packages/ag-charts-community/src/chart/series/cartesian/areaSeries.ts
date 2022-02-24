@@ -330,9 +330,9 @@ export class AreaSeries extends CartesianSeries {
             let normalizedTotal = 0;
 
             for (let i = 0; i < stack.length; i++) {
-                if (normalized) {
+                if (normalized && normalizedTo) {
                     // normalize y values using the absolute sum of y values in the stack
-                    const normalizedY = stack[i] / total.absSum * normalizedTo!;
+                    const normalizedY = stack[i] / total.absSum * normalizedTo;
                     stack[i] = normalizedY;
 
                     // sum normalized values to get updated yMin and yMax of normalized area
@@ -351,7 +351,7 @@ export class AreaSeries extends CartesianSeries {
             }
         }
 
-        if (normalized) {
+        if (normalized && normalizedTo) {
             // set the yMin and yMax based on cumulative sum of normalized values
             yMin = yMin < (-normalizedTo * 0.5) ? -normalizedTo : yMin;
             yMax = yMax > (normalizedTo * 0.5) ? normalizedTo : yMax;
