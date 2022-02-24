@@ -379,6 +379,7 @@ export {
     GetDataPath,
     IsRowMaster,
     IsRowSelectable,
+    MenuItemLeafDef,
     MenuItemDef,
     GetMainMenuItemsParams,
     GetMainMenuItems,
