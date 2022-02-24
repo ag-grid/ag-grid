@@ -1,8 +1,10 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import Code from "../Code";
 import { escapeGenericCode } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
 import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups } from "./model";
+
+const defaultExpanded = false;
 
 export interface ExpandableSnippetParams {
     interfacename: string;
@@ -24,7 +26,9 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
 
     return (
         <div className={styles["expandable-snippet"]}>
-            <BuildSnippet breadcrumbs={breadcrumbs} model={model} />
+            <pre>
+                <BuildSnippet breadcrumbs={breadcrumbs} model={model} />
+            </pre>
         </div>
     );
 };
@@ -33,170 +37,238 @@ interface BuildSnippetParams {
     framework?: string;
     breadcrumbs?: string[];
     model: JsonModel;
-    nestingLevel?: number;
 }
 
 const BuildSnippet: React.FC<BuildSnippetParams> = ({
     model,
     breadcrumbs = [],
-    nestingLevel = 0,
 }) => {
-    const lines = [];
-    const { prefixLines, suffixLines, indentationLevel } = buildObjectBreadcrumb(breadcrumbs);
-    if (nestingLevel === 0) {
-        lines.push(...prefixLines);
-    }
+    const { prefixLines, suffixLines } = buildObjectBreadcrumb(breadcrumbs);
 
-    lines.push(
-        ...buildSubSnippet(model, { indentLevel: indentationLevel + nestingLevel, path: "root" })
+    return (
+        <Fragment>
+            {prefixLines.length > 0 && <code>{prefixLines.join('\n')}</code>}
+            <div className={styles['indent-level']}>
+                <ModelSnippet model={model}></ModelSnippet>
+            </div>
+            {suffixLines.length > 0 && <code>{suffixLines.join('\n')}</code>}
+        </Fragment>
     );
-
-    if (nestingLevel === 0) {
-        lines.push(...suffixLines);
-    }
-
-    const escapedLines = escapeGenericCode(lines);
-    return <Code code={escapedLines} keepMarkup={true} />;
 };
 
-interface RenderContext {
-    indentLevel: number;
-    path: string;
+interface ModelSnippetParams {
+    model: JsonModel | JsonUnionType;
+    skip?: string[];
 }
 
-function buildSubSnippet(
-    model: JsonModel | JsonUnionType,
-    ctx: RenderContext,
-    skip = [] as string[]
-): string[] {
-    const lines = [];
-
+const ModelSnippet: React.FC<ModelSnippetParams> = ({
+    model,
+    skip = [],
+}) => {
     if (model.type === "model") {
-        Object.entries(model.properties).forEach(([propName, propInfo]) => {
-            if (skip.includes(propName)) {
-                return;
-            }
-
-            const { desc } = propInfo;
-            buildPropertySnippet(propName, desc, propInfo, lines, ctx);
-        });
-    } else if (model.type === "union") {
-        const baseIndent = buildObjectIndent(ctx.indentLevel);
-        model.options.forEach((desc, index) => {
-            switch (desc.type) {
-                case "nested-object":
-                    const discriminatorProp = "type";
-                    const discriminator = desc.model.properties[discriminatorProp];
-                    if (discriminator && discriminator.desc.type === "primitive") {
-                        const { tsType } = discriminator.desc;
-                        lines.push(`${baseIndent}{ ${discriminatorProp}: ${tsType}; /* ${desc.tsType} */`);
-                        lines.push(...buildSubSnippet(
-                            desc.model,
-                            { indentLevel: ctx.indentLevel + 1, path: `${ctx.path}[${index}]` },
-                            [discriminatorProp]
-                        ));
-                    } else {
-                        lines.push(`${baseIndent}{ /* ${desc.tsType} */`);
-                        lines.push(...buildSubSnippet(
-                            desc.model,
-                            { indentLevel: ctx.indentLevel + 1, path: `${ctx.path}[${index}]` },
-                            [discriminatorProp]
-                        ));
+        return <Fragment>{
+            Object.entries(model.properties)
+                .map(([propName, propInfo]) => {
+                    if (skip.includes(propName)) {
+                        return;
                     }
-                    lines.push(`${baseIndent}}`);
-                    break;
-                default:
-                    console.warn(`AG Docs - unhandled union sub-type: ` + desc.type);
+
+                    const { desc } = propInfo;
+                    return (
+                        <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo}/>
+                    );
+                })
+                .filter(v => !!v)
+        }</Fragment>;
+    } else if (model.type === "union") {
+        const children = model.options.map((desc, index) => {
+            if (desc.type !== 'nested-object') {
+                console.warn(`AG Docs - unhandled union sub-type: ` + desc.type);
+                return null;
             }
 
-            if (index < model.options.length - 1) {
-                lines[lines.length - 1] += " |";
+            const [isExpanded, setExpanded] = useState(defaultExpanded);
+            const discriminatorProp = "type";
+            const discriminator = desc.model.properties[discriminatorProp];
+            if (discriminator && discriminator.desc.type === "primitive") {
+                const { tsType } = discriminator.desc;
+
+                return (
+                    <Fragment>
+                        <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                            <span className={styles["json-object-open"]}>{'{ '}</span>
+                            <span className={styles["json-property-name"]}>{discriminatorProp}</span>
+                            <span className={styles["json-property-delimited"]}>:</span>
+                            <span className={styles["json-property-literal"]}>{tsType}</span>
+                            <span className={styles["json-property-close"]}>; </span>
+                        </span>
+                        {
+                            isExpanded ?
+                                <Fragment>
+                                    <span>/* {desc.tsType} */</span>
+                                    <ModelSnippet model={desc.model} skip={[discriminatorProp]}></ModelSnippet>
+                                </Fragment> :
+                                <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}> ... </span>
+                        }
+                        <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                            <span className={styles["json-object-close"]}>{'}'}</span>
+                            {index < model.options.length - 1 && <span className={styles["json-property-union"]}>|<br/></span>}
+                        </span>
+                    </Fragment>
+                );
             }
+            return (
+                <Fragment>
+                    <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                        <span className={styles["json-object-open"]}>{'{'}</span>
+                    </span>
+                    {
+                        isExpanded ?
+                            <Fragment>
+                                <span>/* ${desc.tsType} */</span>
+                                <ModelSnippet model={desc.model}></ModelSnippet>
+                            </Fragment> :
+                            <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}> ... </span>
+                    }
+                    <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                        <span className={styles["json-object-close"]}>{'}'}</span>
+                        {index < model.options.length - 1 && <span className={styles["json-property-union"]}>|</span>}
+                    </span>
+                </Fragment>
+            );
         });
+
+        return (
+            <Fragment>
+                {children}
+            </Fragment>
+        );
     }
 
-    return lines;
+    return null;
 }
 
-function buildPropertySnippet(
-    propName: string,
+interface PropertySnippetParams {
+    propName: string;
     desc: JsonProperty,
     meta: Omit<JsonModel['properties'][number], 'desc'>,
-    lines: string[],
-    ctx: RenderContext
-) {
+}
+
+const PropertySnippet: React.FC<PropertySnippetParams> = ({
+    propName,
+    desc,
+    meta,
+}) => {
+    const [isExpanded, setExpanded] = useState(defaultExpanded);
+
     const { deprecated, required, documentation } = meta;
     // TODO: Skip deprecated properties?
-    const baseIndent = buildObjectIndent(ctx.indentLevel);
-    if (documentation) {
-        lines.push(`${baseIndent}${documentation}`);
-    }
-    let line = `${baseIndent}${deprecated ? '<del>' : ''}${propName}${required ? "" : "?"}${deprecated ? '</del>' : ''}`;
 
+    let propertyRendering;
+    let collapsePropertyRendering;
     switch (desc.type) {
         case "primitive":
             if (desc.aliasType) {
-                lines.push(`${line}: /*${desc.aliasType}*/ ${desc.tsType};`);
+                propertyRendering = (
+                    <Fragment>
+                        <span className={styles['json-property-alias']}>/* {desc.aliasType} */</span>
+                        <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>
+                    </Fragment>
+                );
             } else {
-                lines.push(`${line}: ${desc.tsType};`);
+                propertyRendering = <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>;
             }
             break;
         case "array":
-            line += `: ${"[".repeat(desc.depth)}`;
-            const closeArray = "]".repeat(desc.depth);
-
+            let arrayElementRendering;
             switch (desc.elements.type) {
                 case "primitive":
-                    lines.push(`${line}${desc.elements.tsType}${closeArray};`);
+                    arrayElementRendering = <span className={styles["json-property-ts-type"]}>{desc.elements.tsType}</span>;
                     break;
                 case "nested-object":
-                    lines.push(`${line} /*${desc.elements.tsType}*/ {`);
-                    lines.push(
-                        ...buildSubSnippet(desc.elements.model, {
-                            indentLevel: ctx.indentLevel + 1,
-                            path: `${ctx.path}.${propName}`,
-                        })
+                    arrayElementRendering = (
+                        <Fragment>
+                            <span className={styles["json-property-ts-type"]}>/* {desc.elements.tsType} */</span>
+                            <span className={styles["json-object-open"]}>{'{'}</span>
+                            <ModelSnippet model={desc.elements.model}></ModelSnippet>
+                            <span className={styles["json-object-close"]}>}</span>
+                        </Fragment>
                     );
-                    lines.push(`${baseIndent}${closeArray};`);
                     break;
                 case "union":
-                    lines.push(`${line}`);
-                    lines.push(
-                        ...buildSubSnippet(desc.elements, {
-                            indentLevel: ctx.indentLevel + 1,
-                            path: `${ctx.path}.${propName}`,
-                        })
+                    arrayElementRendering = (
+                        <Fragment>
+                            <div className={styles["json-object-union"]}>
+                                <ModelSnippet model={desc.elements}></ModelSnippet>
+                            </div>
+                        </Fragment>
                     );
-                    lines.push(`${baseIndent}${closeArray};`);
                     break;
                 default:
                     console.warn(`AG Docs - unhandled ub-type: ${desc["type"]}`);
             }
+
+            propertyRendering = (
+                <Fragment>
+                    <span className={styles["json-array-open"]}>{"[".repeat(desc.depth)}</span>
+                    {arrayElementRendering}
+                    <span className={styles["json-array-close"]}>{"]".repeat(desc.depth)}</span>
+                </Fragment>
+            );
+            collapsePropertyRendering = desc.elements.type !== 'primitive' && (
+                <Fragment>
+                    <span className={styles["json-array-open"]}>{"[".repeat(desc.depth)}</span>
+                    <span className={styles["json-array-collapsed"]}> ... </span>
+                    <span className={styles["json-array-close"]}>{"]".repeat(desc.depth)}</span>
+                </Fragment>
+            );
+
             break;
         case "nested-object":
-            lines.push(`${line}: /*${desc.tsType}*/ {`);
-            lines.push(
-                ...buildSubSnippet(desc.model, {
-                    indentLevel: ctx.indentLevel + 1,
-                    path: `${ctx.path}.${propName}`,
-                })
+            propertyRendering = (
+                <Fragment>
+                    <span className={styles["json-property-ts-type"]}>/* {desc.tsType} */</span>
+                    <span className={styles["json-object-open"]}>{' {'}</span>
+                    <ModelSnippet model={desc.model}></ModelSnippet>
+                    <span className={styles["json-object-close"]}>}</span>
+                </Fragment>
             );
-            lines.push(`${baseIndent}};`);
+            collapsePropertyRendering = (
+                <Fragment>
+                    <span className={styles["json-object-open"]}>{'{'}</span>
+                    <span className={styles["json-object-collapsed"]}> ... </span>
+                    <span className={styles["json-object-close"]}>}</span>
+                </Fragment>
+            );
             break;
         case "union":
-            lines.push(`${line}:`);
-            lines.push(
-                ...buildSubSnippet(desc, {
-                    indentLevel: ctx.indentLevel + 1,
-                    path: `${ctx.path}.${propName}`,
-                })
-            );
-            lines[lines.length - 1] += ";";
+            propertyRendering = <ModelSnippet model={desc}></ModelSnippet>;
+            collapsePropertyRendering = <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>;
             break;
         default:
             console.warn(`AG Docs - unhandled ub-type: ${desc["type"]}`);
     }
-}
+
+    return (
+        <div className={`${styles['json-property']} ${deprecated ? styles['deprecated'] : ''} ${styles['json-property-type-' + desc.type]}`}>
+            <div className={styles["json-property-documentation"]}>{documentation}</div>
+            <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                <span className={styles["json-property-name"]}>{propName}</span>
+                {required &&
+                    <span className={styles["json-property-is-optional"]}>?</span>}
+                <span className={styles["json-property-delimited"]}>: </span>
+            </span>
+            {
+                !isExpanded && collapsePropertyRendering ? 
+                    <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>{collapsePropertyRendering}</span> : 
+                    propertyRendering
+            }
+            <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                <span className={styles["json-property-close"]}>;</span>
+            </span>
+        </div>
+    );
+};
 
 export function buildObjectIndent(level: number): string {
     return "  ".repeat(level);
