@@ -69,7 +69,7 @@ const jsxShowValue = (
     key: number,
     parentId: string,
     cellRendererRef: MutableRefObject<any>,
-    showTools: boolean,
+    showCellWrapper: boolean,
     reactCellRendererStateless: boolean,
     setECellValue: (ref:any) => void
 ) => {
@@ -95,7 +95,7 @@ const jsxShowValue = (
 
     return (
         <>
-            { showTools ?
+            { showCellWrapper ?
                     <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={ setECellValue }>
                         { bodyJsxFunc() }
                     </span>
@@ -167,10 +167,10 @@ const CellComp = (props: {
         setCellValueVersion( v => v+1 );
     }, []);
     
-    const showTools = renderDetails!=null && (includeSelection || includeDndSource || includeRowDrag);
+    const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
     const showCellWrapper = forceWrapper || showTools;
 
-    const setCellEditorRef = useCallback( (popup: boolean, cellEditor: ICellEditor | undefined) => {
+    const setCellEditorRef = useCallback((popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
         if (cellEditor) {
             checkCellEditorDeprecations(popup, cellEditor, cellCtrl);
@@ -192,7 +192,7 @@ const CellComp = (props: {
         []
     );
 
-    useJsCellRenderer(renderDetails, showTools, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
+    useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
     // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
     // way for React is just allow the new props to propagate down to the React Cell Renderer)
@@ -264,7 +264,7 @@ const CellComp = (props: {
 
         setAriaDescribedBy(!!eCellWrapper.current ? `cell-${cellCtrl.getInstanceId()}` : undefined);
 
-        if (!eCellWrapper.current || !showTools) { return; }
+        if (!eCellWrapper.current || !showCellWrapper) { return; }
 
         const destroyFuncs: (()=>void)[] = [];
 
@@ -298,7 +298,7 @@ const CellComp = (props: {
             })
         };
 
-    }, [showTools, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
+    }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
     useEffect(() => {
         if (!cellCtrl) { return; }
@@ -358,7 +358,7 @@ const CellComp = (props: {
         return !!res;
     }, [renderDetails]);
 
-    const className = useMemo( ()=> {
+    const className = useMemo(() => {
         let res = cssClasses.toString();
         if (!showCellWrapper) {
             res += ' ag-cell-value';
@@ -366,12 +366,18 @@ const CellComp = (props: {
         return res;
     }, [cssClasses, showTools]);
 
-    const cellInstanceId = useMemo( ()=> cellCtrl.getInstanceId(), []);
+    const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);
 
     const showContents = ()=> <>
-            { renderDetails != null && jsxShowValue(renderDetails, renderKey, cellInstanceId, cellRendererRef, 
-                                                showTools, reactCellRendererStateless,
-                                                setCellValueRef) }
+            { renderDetails != null && jsxShowValue(
+                renderDetails,
+                renderKey,
+                cellInstanceId,
+                cellRendererRef,
+                showCellWrapper,
+                reactCellRendererStateless,
+                setCellValueRef) 
+            }
             { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp) }
                             </>;
 
