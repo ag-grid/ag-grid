@@ -5,7 +5,7 @@
 export class PropertyKeys {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate',
-        'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
+        'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDelimiter', 'rowGroupPanelShow',
         'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
         'serverSideStoreType', 'groupDisplayType', 'treeDataDisplayType'
     ];

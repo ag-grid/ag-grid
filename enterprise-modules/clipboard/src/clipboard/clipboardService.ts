@@ -136,7 +136,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processClipboardData(data: string): void {
         if (data == null) { return; }
 
-        let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+        let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDelimiter());
 
         const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
 
@@ -691,7 +691,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             skipColumnHeaders: !includeHeaders,
             skipColumnGroupHeaders: !includeGroupHeaders,
             suppressQuotes: true,
-            columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
+            columnSeparator: this.gridOptionsWrapper.getClipboardDelimiter(),
             onlySelected: !rowPositions,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
             processRowGroupCallback: (params) => params.node.key!,

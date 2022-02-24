@@ -2071,7 +2071,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clipboardDeliminator": {
-      "description": "/** Specify the deliminator to use when copying to clipboard. */",
+      "description": "/** @deprecated Use `clipboardDelimiter`\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "clipboardDelimiter": {
+      "description": "/** Specify the delimiter to use when copying to clipboard. */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
