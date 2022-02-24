@@ -2263,6 +2263,14 @@ AddType text/javascript ts jsx
     Redirect 301 /vuejs-misc/ /vue-data-grid/framework-misc/
     Redirect 301 /vuex-data-flow/ /vue-data-grid/framework-data-flow/
     Redirect 301 /why-the-world-needed-another-angularjs-grid/ https://medium.com/ag-grid/why-the-world-needed-another-angularjs-1-x-grid-17e522a53bc8
+    Redirect 301 /javascript-data-grid/integrated-charts-api/ /javascript-data-grid/integrated-charts-application-created/
+    Redirect 301 /angular-data-grid/integrated-charts-api/ /angular-data-grid/integrated-charts-application-created/
+    Redirect 301 /react-data-grid/integrated-charts-api/ /react-data-grid/integrated-charts-application-created/
+    Redirect 301 /vue-data-grid/integrated-charts-api/ /vue-data-grid/integrated-charts-application-created/
+    Redirect 301 /javascript-data-grid/integrated-charts-cross-filtering/ /javascript-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /angular-data-grid/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /react-data-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
 </IfModule>
 
 # CORS settings
