@@ -92,6 +92,7 @@ export class RowDragComp extends Component {
         };
 
         const rowDragText = this.column && this.column.getColDef().rowDragText;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
@@ -102,7 +103,7 @@ export class RowDragComp extends Component {
                     return rowDragText(dragItem, dragItemCount);
                 }
 
-                return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} rows`;
+                return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
             },
             getDragItem: () => dragItem,
             dragStartPixels,

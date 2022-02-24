@@ -146,8 +146,10 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyGroupHeadersToClipboard?: boolean;
-    /** Specify the deliminator to use when copying to clipboard. */
+    /** @deprecated Use `clipboardDelimiter` */
     clipboardDeliminator?: string;
+    /** Specify the delimiter to use when copying to clipboard. */
+    clipboardDelimiter?: string;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
     suppressCopyRowsToClipboard?: boolean;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */

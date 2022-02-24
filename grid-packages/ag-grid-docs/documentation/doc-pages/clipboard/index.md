@@ -137,9 +137,9 @@ The example below demonstrates `processDataFromClipboard`. Note the following:
 
 <grid-example title='Example Process All' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
-## Changing the Deliminator
+## Changing the Delimiter
 
-By default, the grid will use `\t` (tab) as the field deliminator. This is to keep the copy / paste compatible with Excel. If you want another deliminator then use the property `clipboardDeliminator`.
+By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then use the property `clipboardDelimiter`.
 
 ## Using enableCellTextSelection
 
@@ -154,7 +154,7 @@ If instead of using the Clipboard service to copy/paste the contents from a cell
 
 The example below demonstrates:
 
-- Uses CSV by setting `clipboardDeliminator=','`. To test, copy to clipboard, then paste into a text editor.
+- Uses CSV by setting `clipboardDelimiter=','`. To test, copy to clipboard, then paste into a text editor.
 - Does not allow paste into the 'silver' column by setting `colDef.suppressPaste=true`.
 
 <grid-example title='Complex Example' name='complex' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>

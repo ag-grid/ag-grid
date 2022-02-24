@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
   },
 
   enableRangeSelection: true,
-  clipboardDeliminator: ',',
+  clipboardDelimiter: ',',
 }
 
 // setup the grid after the page has finished loading

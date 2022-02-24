@@ -1371,8 +1371,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
-    public getClipboardDeliminator() {
-        return exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+    public getClipboardDelimiter() {
+        return exists(this.gridOptions.clipboardDelimiter) ? this.gridOptions.clipboardDelimiter : '\t';
     }
 
     public setProperty(key: string, value: any, force = false): void {
@@ -1727,6 +1727,10 @@ export class GridOptionsWrapper {
         }
         if (options.immutableData) {
             console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To turn on, implement `getRowKey` has been replaced by `getRowKey`. The difference is if getRowKey() is implemented, immutable data is on by default.');
+        }
+        if (options.clipboardDeliminator) {
+            console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
+            options.clipboardDelimiter = options.clipboardDeliminator;
         }
     }
 

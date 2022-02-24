@@ -451,7 +451,7 @@ var gridOptions = {
     // groupMultiAutoColumn: true,
     // groupHideOpenParents: true,
     // suppressMenuFilterPanel: true,
-    // clipboardDeliminator: ',',
+    // clipboardDelimiter: ',',
     // suppressLastEmptyLineOnPaste: true,
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,

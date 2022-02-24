@@ -323,8 +323,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
-    /** Specify the deliminator to use when copying to clipboard.     */
-    @Input() public clipboardDeliminator: string | undefined = undefined;
+    /** Specify the delimiter to use when copying to clipboard.     */
+    @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false`     */
