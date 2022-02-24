@@ -310,32 +310,52 @@ export class AreaSeries extends CartesianSeries {
         let yMin = 0;
         let yMax = 0;
 
-        yData.forEach(stack => {
+        for (let stack of yData) {
+
             // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
-            const total = stack.reduce((acc, y) => {
-                acc.absSum += Math.abs(y);
-                acc.sum += y;
+            const total = { sum: 0, absSum: 0 };
+            for (let i = 0; i < stack.length; i++) {
+                const y = stack[i];
 
-                if (acc.sum > yMax) {
-                    yMax = acc.sum;
-                } else if (acc.sum < yMin) {
-                    yMin = acc.sum;
+                total.absSum += Math.abs(y);
+                total.sum += y;
+
+                if (total.sum > yMax) {
+                    yMax = total.sum;
+                } else if (total.sum < yMin) {
+                    yMin = total.sum;
                 }
+            }
 
-                return acc;
-            }, { sum: 0, absSum: 0 });
+            let normalizedTotal = 0;
 
-            stack.forEach((y, i) => {
+            for (let i = 0; i < stack.length; i++) {
                 if (normalized) {
                     // normalize y values using the absolute sum of y values in the stack
-                    stack[i] = y / total.absSum * normalizedTo!;
+                    const normalizedY = stack[i] / total.absSum * normalizedTo!;
+                    stack[i] = normalizedY;
+
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal += normalizedY;
+
+                    if (normalizedTotal > yMax) {
+                        yMax = normalizedTotal;
+                    } else if (normalizedTotal < yMin) {
+                        yMin = normalizedTotal;
+                    }
                 }
 
                 // TODO: test performance to see impact of this
                 // process data to be in the format required for creating node data and rendering area paths
                 (processedYData[i] || (processedYData[i] = [])).push(stack[i]);
-            });
-        });
+            }
+        }
+
+        if (normalized) {
+            // set the yMin and yMax based on cumulative sum of normalized values
+            yMin = yMin < (-normalizedTo * 0.5) ? -normalizedTo : yMin;
+            yMax = yMax > (normalizedTo * 0.5) ? normalizedTo : yMax;
+        }
 
         this.yData = processedYData;
 
