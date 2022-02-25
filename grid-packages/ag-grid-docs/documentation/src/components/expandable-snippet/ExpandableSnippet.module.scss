@@ -1,9 +1,5 @@
 .expandable-snippet {
 
-    &__code-sample {
-        composes: my-2 from global;
-    }
-
     .json-property {
 
         &-type-nested-object {
@@ -33,6 +29,10 @@
 
     .unexpandable {
         cursor: default;
+    }
+
+    .expander {
+        color: #358ccb;
     }
 
     .property-name {
