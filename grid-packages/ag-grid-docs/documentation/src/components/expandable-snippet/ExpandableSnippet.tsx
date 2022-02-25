@@ -1,7 +1,10 @@
 import React, { Fragment, useState } from "react";
-import Code from "../Code";
+import classnames from 'classnames';
+
 import { escapeGenericCode } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
+import codeStyles from '../Code.module.scss';
+
 import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups } from "./model";
 
 const defaultExpanded = false;
@@ -26,8 +29,10 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
 
     return (
         <div className={styles["expandable-snippet"]}>
-            <pre>
-                <BuildSnippet breadcrumbs={breadcrumbs} model={model} />
+            <pre className={classnames(codeStyles['code'], 'language-ts')}>
+                <code className={'language-ts'}>
+                    <BuildSnippet breadcrumbs={breadcrumbs} model={model} />
+                </code>
             </pre>
         </div>
     );
@@ -47,11 +52,11 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
 
     return (
         <Fragment>
-            {prefixLines.length > 0 && <code>{prefixLines.join('\n')}</code>}
+            {prefixLines.length > 0 && prefixLines.join('\n')}
             <div className={styles['indent-level']}>
                 <ModelSnippet model={model}></ModelSnippet>
             </div>
-            {suffixLines.length > 0 && <code>{suffixLines.join('\n')}</code>}
+            {suffixLines.length > 0 && suffixLines.join('\n')}
         </Fragment>
     );
 };
@@ -94,33 +99,33 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
                 const { tsType } = discriminator.desc;
 
                 return (
-                    <Fragment>
+                    <Fragment key={tsType}>
                         <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                            <span className={styles["json-object-open"]}>{'{ '}</span>
-                            <span className={styles["json-property-name"]}>{discriminatorProp}</span>
-                            <span className={styles["json-property-delimited"]}>:</span>
-                            <span className={styles["json-property-literal"]}>{tsType}</span>
-                            <span className={styles["json-property-close"]}>; </span>
+                            <span className={classnames('token', 'punctuation')}>{'{ '}</span>
+                            <span className={classnames('token', 'string')}>{discriminatorProp}</span>
+                            <span className={classnames('token', 'operator')}>:</span>
+                            <span className={classnames('token', 'type')}>{tsType}</span>
+                            <span className={classnames('token', 'punctuation')}>; </span>
                         </span>
                         {
                             isExpanded ?
                                 <Fragment>
-                                    <span>/* {desc.tsType} */</span>
+                                    <span className={classnames('token', 'comment')}>/* {desc.tsType} */</span>
                                     <ModelSnippet model={desc.model} skip={[discriminatorProp]}></ModelSnippet>
                                 </Fragment> :
                                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}> ... </span>
                         }
                         <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                            <span className={styles["json-object-close"]}>{'}'}</span>
-                            {index < model.options.length - 1 && <span className={styles["json-property-union"]}>|<br/></span>}
+                            <span className={classnames('token', 'punctuation')}>{'}'}</span>
+                            {index < model.options.length - 1 && <span className={classnames('token', 'operator')}> | <br/></span>}
                         </span>
                     </Fragment>
                 );
             }
             return (
-                <Fragment>
+                <Fragment key={index}>
                     <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                        <span className={styles["json-object-open"]}>{'{'}</span>
+                        <span className={classnames('token', 'punctuation')}>{'{'}</span>
                     </span>
                     {
                         isExpanded ?
@@ -131,8 +136,8 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
                             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}> ... </span>
                     }
                     <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                        <span className={styles["json-object-close"]}>{'}'}</span>
-                        {index < model.options.length - 1 && <span className={styles["json-property-union"]}>|</span>}
+                        <span className={classnames('token', 'punctuation')}>{'}'}</span>
+                        {index < model.options.length - 1 && <span className={classnames('token', 'operator')}> | <br/></span>}
                     </span>
                 </Fragment>
             );
@@ -171,27 +176,27 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             if (desc.aliasType) {
                 propertyRendering = (
                     <Fragment>
-                        <span className={styles['json-property-alias']}>/* {desc.aliasType} */</span>
-                        <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>
+                        <span className={classnames('token', 'comment')}>/* {desc.aliasType} */</span>
+                        <span className={classnames('token', 'builtin')}>{desc.tsType}</span>
                     </Fragment>
                 );
             } else {
-                propertyRendering = <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>;
+                propertyRendering = <span className={classnames('token', 'builtin')}>{desc.tsType}</span>;
             }
             break;
         case "array":
             let arrayElementRendering;
             switch (desc.elements.type) {
                 case "primitive":
-                    arrayElementRendering = <span className={styles["json-property-ts-type"]}>{desc.elements.tsType}</span>;
+                    arrayElementRendering = <span className={classnames('token', 'builtin')}>{desc.elements.tsType}</span>;
                     break;
                 case "nested-object":
                     arrayElementRendering = (
                         <Fragment>
-                            <span className={styles["json-property-ts-type"]}>/* {desc.elements.tsType} */</span>
-                            <span className={styles["json-object-open"]}>{'{'}</span>
+                            <span className={classnames('token', 'type')}>/* {desc.elements.tsType} */</span>
+                            <span className={classnames('token', 'punctuation')}>{'{'}</span>
                             <ModelSnippet model={desc.elements.model}></ModelSnippet>
-                            <span className={styles["json-object-close"]}>}</span>
+                            <span className={classnames('token', 'punctuation')}>}</span>
                         </Fragment>
                     );
                     break;
@@ -210,16 +215,16 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
 
             propertyRendering = (
                 <Fragment>
-                    <span className={styles["json-array-open"]}>{"[".repeat(desc.depth)}</span>
+                    <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>
                     {arrayElementRendering}
-                    <span className={styles["json-array-close"]}>{"]".repeat(desc.depth)}</span>
+                    <span className={classnames('token', 'punctuation')}>{"]".repeat(desc.depth)}</span>
                 </Fragment>
             );
             collapsePropertyRendering = desc.elements.type !== 'primitive' && (
                 <Fragment>
-                    <span className={styles["json-array-open"]}>{"[".repeat(desc.depth)}</span>
-                    <span className={styles["json-array-collapsed"]}> ... </span>
-                    <span className={styles["json-array-close"]}>{"]".repeat(desc.depth)}</span>
+                    <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>
+                    <span className={classnames('token', 'operator')}> ... </span>
+                    <span className={classnames('token', 'punctuation')}>{"]".repeat(desc.depth)}</span>
                 </Fragment>
             );
 
@@ -227,36 +232,36 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
         case "nested-object":
             propertyRendering = (
                 <Fragment>
-                    <span className={styles["json-property-ts-type"]}>/* {desc.tsType} */</span>
-                    <span className={styles["json-object-open"]}>{' {'}</span>
+                    <span className={classnames('token', 'comment')}>/* {desc.tsType} */</span>
+                    <span className={classnames('token', 'punctuation')}>{' {'}</span>
                     <ModelSnippet model={desc.model}></ModelSnippet>
-                    <span className={styles["json-object-close"]}>}</span>
+                    <span className={classnames('token', 'punctuation')}>}</span>
                 </Fragment>
             );
             collapsePropertyRendering = (
                 <Fragment>
-                    <span className={styles["json-object-open"]}>{'{'}</span>
-                    <span className={styles["json-object-collapsed"]}> ... </span>
-                    <span className={styles["json-object-close"]}>}</span>
+                    <span className={classnames('token', 'punctuation')}>{'{'}</span>
+                    <span className={classnames('token', 'operator')}> ... </span>
+                    <span className={classnames('token', 'punctuation')}>}</span>
                 </Fragment>
             );
             break;
         case "union":
             propertyRendering = <ModelSnippet model={desc}></ModelSnippet>;
-            collapsePropertyRendering = <span className={styles["json-property-ts-type"]}>{desc.tsType}</span>;
+            collapsePropertyRendering = <span className={classnames('token', 'type')}>{desc.tsType}</span>;
             break;
         default:
-            console.warn(`AG Docs - unhandled ub-type: ${desc["type"]}`);
+            console.warn(`AG Docs - unhandled sub-type: ${desc["type"]}`);
     }
 
     return (
         <div className={`${styles['json-property']} ${deprecated ? styles['deprecated'] : ''} ${styles['json-property-type-' + desc.type]}`}>
-            <div className={styles["json-property-documentation"]}>{documentation}</div>
+            <div className={classnames('token', 'comment')}>{documentation}</div>
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                <span className={styles["json-property-name"]}>{propName}</span>
+                <span className={classnames('token', 'name')}>{propName}</span>
                 {required &&
-                    <span className={styles["json-property-is-optional"]}>?</span>}
-                <span className={styles["json-property-delimited"]}>: </span>
+                    <span className={classnames('token', 'operator')}>?</span>}
+                <span className={classnames('token', 'operator')}>: </span>
             </span>
             {
                 !isExpanded && collapsePropertyRendering ? 
@@ -264,7 +269,9 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                     propertyRendering
             }
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                <span className={styles["json-property-close"]}>;</span>
+                <span className={classnames('token', 'punctuation')}>; </span>
+                {meta.default != null &&
+                    <span className={classnames('token', 'comment')}>// Default: {JSON.stringify(meta.default)}</span>}
             </span>
         </div>
     );
