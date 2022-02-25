@@ -46,6 +46,13 @@ export interface ICellEditor {
      * If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
+
+    /**
+     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * This method is called each time the edit component is activated.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(): void;
 }
 
 export interface ICellEditorParams {
@@ -93,5 +100,4 @@ export interface ICellEditorParams {
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp extends ICellEditor, IPopupComponent<ICellEditorParams> {
-}
+export interface ICellEditorComp extends ICellEditor, IPopupComponent<ICellEditorParams> { }

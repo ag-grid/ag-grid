@@ -3,26 +3,7 @@
 |
 |The interface for a custom date component is as follows:
 |
-|```ts
-|interface {
-|    // Returns the current date represented by this editor
-|    getDate(): Date | null;
-|
-|    // Sets the date represented by this component
-|    setDate(date: Date | null): void;
-|
-|    // Optional methods
-|
-|    // Sets the disabled state of this component
-|    setDisabled?(disabled: boolean): void;
-|
-|    // Sets the input text placeholder
-|    setInputPlaceholder?(placeholder: string): void;
-|
-|    // Sets the input text aria label
-|    setInputAriaLabel?(label: string): void;
-|}
-|```
+| <interface-documentation interfaceName='IDate' config='{"asCode":true, "hideName" : true }' ></interface-documentation>
 |
 |[[note]]
 ||Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the

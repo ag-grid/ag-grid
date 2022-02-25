@@ -2,6 +2,7 @@ import { IComponent } from '../../interfaces/iComponent';
 import { Column } from '../../entities/column';
 import { GridApi } from '../../gridApi';
 import { ProvidedFilterModel, IFilterParams, IFilter } from '../../interfaces/iFilter';
+import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { FilterChangedEvent } from '../../events';
 
 export interface IFloatingFilterParent {
@@ -11,7 +12,7 @@ export interface IFloatingFilterParent {
      * @param type operation type selected.
      * @param value model-typed value entered.
      */
-     onFloatingFilterChanged(type: string | null, value: any): void;
+    onFloatingFilterChanged(type: string | null, value: any): void;
 }
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
@@ -59,7 +60,21 @@ export interface IFloatingFilterParams<P = InbuiltParentType> {
 }
 
 export interface IFloatingFilter {
+
+    /**
+     * Gets called every time the parent filter changes.
+     * Your floating filter would typically refresh its UI to reflect the new filter state.
+     * The provided parentModel is what the parent filter returns from its getModel() method.
+     * The event is the FilterChangedEvent that the grid fires.
+     */
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
+
+    /**
+     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(): void;
 }
 
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter, IComponent<IFloatingFilterParams<P>> {

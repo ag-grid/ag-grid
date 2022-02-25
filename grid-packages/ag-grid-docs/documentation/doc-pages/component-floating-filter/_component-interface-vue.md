@@ -18,6 +18,12 @@
 |
 |    // Optional methods
 |
+|    // Gets called every time the popup is shown, after the GUI returned in
+|    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
+|    // called each time the filter is shown. This is useful for any logic that requires attachment
+|    // before executing, such as putting focus on a particular DOM element. 
+|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+|
 |    // Gets called when the column is destroyed. If your custom filter needs to do
 |    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
 |    // made 'not visible', as the GUI is kept to be shown again if the user selects

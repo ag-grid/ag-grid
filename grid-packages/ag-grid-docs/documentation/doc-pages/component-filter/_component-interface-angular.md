@@ -5,7 +5,7 @@
 |
 |```ts
 |interface IFilterAngularComp {
-|    // params for filter operations (see below for more details)
+|    // Mandatory - params for filter operations (see below for more details)
 |    agInit(params: IFilterParams): void;
 |
 |    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
@@ -28,6 +28,14 @@
 |
 |
 |    // Optional methods
+|
+|    // Gets called every time the popup is shown, after the GUI returned in
+|    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
+|    // called each time the filter is shown. This is useful for any logic that requires attachment
+|    // before executing, such as putting focus on a particular DOM element. The params has a
+|    // callback method 'hidePopup', which you can call at any later point to hide the popup - good
+|    // if you have an 'Apply' button and you want to hide the popup after it is pressed.
+|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 |
 |    // Gets called when new rows are inserted into the grid. If the filter needs to change its
 |    // state after rows are loaded, it can do it here. For example the set filters uses this

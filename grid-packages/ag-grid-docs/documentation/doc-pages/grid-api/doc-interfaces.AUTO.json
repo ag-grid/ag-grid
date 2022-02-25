@@ -7263,6 +7263,7 @@
   },
   "IFloatingFilter": {
     "onParentModelChanged": {
+      "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
         "arguments": {
           "parentModel": "any",
@@ -7271,11 +7272,16 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "IFloatingFilterComp": {
     "meta": { "typeParams": ["P"] },
     "onParentModelChanged": {
+      "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
         "arguments": {
           "parentModel": "any",
@@ -7284,6 +7290,10 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
@@ -7296,14 +7306,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -7707,6 +7709,14 @@
         "returnType": "string",
         "optional": true
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "IScalarFilterParams": {
@@ -7860,6 +7870,14 @@
       "type": {
         "arguments": { "model": "any" },
         "returnType": "string",
+        "optional": true
+      }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
         "optional": true
       }
     },
@@ -8881,14 +8899,6 @@
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
       "type": {
@@ -8990,14 +9000,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -9556,12 +9558,17 @@
   "ContainerType": {},
   "IAfterGuiAttachedParams": {
     "container": {
+      "description": "/** Where this component is attached to. */",
       "type": { "returnType": "ContainerType", "optional": true }
     },
     "hidePopup": {
+      "description": "/** Call this to hide the popup. \n * i.e useful if your component has an action button and you want to hide the popup after it is pressed. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "suppressFocus": { "type": { "returnType": "boolean", "optional": true } }
+    "suppressFocus": {
+      "description": "/** Set to `true` to not have the component focus its default item. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "FontStyle": {},
   "FontWeight": {},
@@ -12302,6 +12309,10 @@
     "focusOut": {
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ICellEditorParams": {
@@ -12421,6 +12432,10 @@
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "type": {
@@ -12432,14 +12447,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -12932,14 +12939,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -13607,6 +13606,14 @@
         "returnType": "string",
         "optional": true
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "ProvidedFilterModel": {
@@ -13653,6 +13660,14 @@
         "optional": true
       }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "type": {
@@ -13664,14 +13679,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -14123,6 +14130,14 @@
         "returnType": "string",
         "optional": true
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "IMultiFilterDef": {
@@ -14279,14 +14294,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -15413,6 +15420,14 @@
         "returnType": "string",
         "optional": true
       }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "SetFilterValuesFuncParams": {
@@ -16461,14 +16476,6 @@
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
       "type": {
@@ -16502,14 +16509,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -17712,14 +17711,6 @@
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
       "type": {
@@ -17837,14 +17828,6 @@
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
       "type": {
@@ -17880,6 +17863,7 @@
       }
     },
     "setInputPlaceholder": {
+      "description": "/** [optional method] sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -17887,8 +17871,17 @@
       }
     },
     "setInputAriaLabel": {
+      "description": "/** [optional method] sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -17915,14 +17908,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -17957,6 +17942,7 @@
       }
     },
     "setInputPlaceholder": {
+      "description": "/** [optional method] sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -17964,8 +17950,17 @@
       }
     },
     "setInputAriaLabel": {
+      "description": "/** [optional method] sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -18020,14 +18015,6 @@
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
       "type": {
@@ -18052,14 +18039,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -18281,14 +18260,6 @@
     "destroy": {
       "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     },
     "init": {
       "description": "/** The init(params) method is called on the component once. */",
@@ -18919,13 +18890,6 @@
         "optional": false
       }
     },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
     "meta": { "typeParams": ["T"] }
   },
   "IHeaderGroupAngularComp": {
@@ -18935,13 +18899,6 @@
         "arguments": { "params": "IHeaderGroupParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -18961,18 +18918,12 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     }
   },
   "IFloatingFilterAngularComp": {
     "meta": { "typeParams": ["P"] },
     "onParentModelChanged": {
+      "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
         "arguments": {
           "parentModel": "any",
@@ -18982,19 +18933,16 @@
         "optional": false
       }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
         "arguments": { "params": "IFloatingFilterParams<P>" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19024,6 +18972,7 @@
       }
     },
     "setInputPlaceholder": {
+      "description": "/** [optional method] sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -19031,8 +18980,17 @@
       }
     },
     "setInputAriaLabel": {
+      "description": "/** [optional method] sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -19043,13 +19001,6 @@
         "arguments": { "params": "IDateParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19094,19 +19045,20 @@
         "optional": true
       }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
         "arguments": { "params": "IFilterParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19125,13 +19077,6 @@
         "arguments": { "params": "ICellRendererParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19168,19 +19113,16 @@
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
         "arguments": { "params": "ICellEditorParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19199,13 +19141,6 @@
         "arguments": { "params": "ICellRendererParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19242,19 +19177,16 @@
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
         "arguments": { "params": "ICellEditorParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19299,6 +19231,14 @@
         "optional": true
       }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
@@ -19306,18 +19246,12 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     }
   },
   "AgFloatingFilterComponent": {
     "meta": { "typeParams": ["P"] },
     "onParentModelChanged": {
+      "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
         "arguments": {
           "parentModel": "any",
@@ -19327,19 +19261,16 @@
         "optional": false
       }
     },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
         "arguments": { "params": "IFloatingFilterParams<P>" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19351,13 +19282,6 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     }
   },
   "ILoadingOverlayAngularComp": {
@@ -19367,13 +19291,6 @@
         "arguments": { "params": "ILoadingOverlayParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19385,13 +19302,6 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     }
   },
   "IStatusPanelAngularComp": {
@@ -19401,13 +19311,6 @@
         "arguments": { "params": "IStatusPanelParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   },
@@ -19419,13 +19322,6 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
-      }
     }
   },
   "ITooltipAngularComp": {
@@ -19435,13 +19331,6 @@
         "arguments": { "params": "ITooltipParams" },
         "returnType": "void",
         "optional": false
-      }
-    },
-    "afterGuiAttached": {
-      "type": {
-        "arguments": { "params?": "IAfterGuiAttachedParams" },
-        "returnType": "void",
-        "optional": true
       }
     }
   }
