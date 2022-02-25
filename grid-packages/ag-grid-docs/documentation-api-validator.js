@@ -75,76 +75,29 @@ validateGridOptions = async () => {
 
 }
 
-validateColDefs = async () => {
-    console.log('Validating ColDef Docs...')
-    const colDefOptions = './documentation/doc-pages/column-properties/column-options.AUTO.json'
-    const propKeys = extractPropertyKeys(colDefOptions);
-
-    const docSections = [
-        './documentation/doc-pages/column-properties/properties.json'
-    ];
+function validateDocFile(name, autoFile, docFile, manualExclusions = []) {
+    console.log(`Validating ${name} Docs...`);
+    const propKeys = extractPropertyKeys(autoFile);
 
     let docKeys = {};
-    docSections.forEach(docSrc => {
-        const src = fs.readFileSync(docSrc);
-        const srcProps = JSON.parse(src);
+    const src = fs.readFileSync(docFile);
+    const srcProps = JSON.parse(src);
+    Object.entries(srcProps).forEach(([k, v]) => {
+        Object.keys(v).forEach(key => docKeys[key] = true)
+    });
 
-        Object.entries(srcProps).forEach(([k, v]) => {
-            Object.keys(v).forEach(key => docKeys[key] = true)
-        })
-    })
-
-    const manualExclusions = [
-        'pivotKeys', 'template', 'templateUrl', 'pivotValueColumn', 'pivotTotalColumnIds'
-    ];
     ([...manualExclusions]).forEach(key => {
         docKeys[key] = true
     })
 
     let missing = propKeys.filter(p => !docKeys[p]);
     if (missing.length > 0) {
-        console.warn("ColDef Documentation Validated Failed");
-        console.warn('Either mark the property as deprecated or add to the manual exclusion list in the documentation-api-validator.js file.')
-        console.warn(`Missing ${missing.length} ColDef properties from the documentation: ${missing.join()}`);
-        throw new Error("ColDef Documentation Validated Failed")
+        console.warn(`${name} Documentation Validated Failed`);
+        console.warn(`Either mark the property as deprecated or add to the manual exclusion list in the documentation-api-validator.js file.`)
+        console.warn(`Missing ${missing.length} ${name} properties from the documentation: ${missing.join()}`);
+        throw new Error(`${name} Documentation Validated Failed`)
     } else {
-        console.log("ColDef Documentation Validated Success");
-    }
-}
-
-validateGridApi = async () => {
-    console.log('Validating Grid Api Docs...')
-    const apiFile = './documentation/doc-pages/grid-api/grid-api.AUTO.json'
-    const propKeys = extractPropertyKeys(apiFile);
-
-    const docSections = [
-        './documentation/doc-pages/grid-api/api.json'
-    ];
-
-    let docKeys = {};
-    docSections.forEach(docSrc => {
-        const src = fs.readFileSync(docSrc);
-        const srcProps = JSON.parse(src);
-
-        Object.entries(srcProps).forEach(([k, v]) => {
-            Object.keys(v).forEach(key => docKeys[key] = true)
-        })
-    })
-
-    const manualExclusions = [
-    ];
-    ([...manualExclusions]).forEach(key => {
-        docKeys[key] = true
-    })
-
-    let missing = propKeys.filter(p => !docKeys[p]);
-    if (missing.length > 0) {
-        console.warn("GridApi Documentation Validated Failed");
-        console.warn('Either mark the property as deprecated or add to the manual exclusion list in the documentation-api-validator.js file.')
-        console.warn(`Missing ${missing.length} GridApi properties from the documentation: ${missing.join()}`);
-        throw new Error("GridApi Documentation Validated Failed")
-    } else {
-        console.log("GridApi Documentation Validated Success");
+        console.log(`${name} Documentation Validated Success`);
     }
 }
 
@@ -152,11 +105,17 @@ validateGridApi = async () => {
 const [cmd, script, execFunc] = process.argv;
 
 validateGridOptions();
-//validateGridApi();
-validateColDefs();
-/* 
-if (process.argv.length >= 3 && execFunc === 'watch') {
-    this.watchValidateExampleTypes();
-} else if (process.argv.length >= 3 && execFunc === 'validate') {
-    this.validateExampleTypes();
-} */
+validateDocFile('ColDef', './documentation/doc-pages/column-properties/column-options.AUTO.json', './documentation/doc-pages/column-properties/properties.json', [
+    'pivotKeys', 'template', 'templateUrl', 'pivotValueColumn', 'pivotTotalColumnIds'
+]);
+validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AUTO.json', './documentation/doc-pages/column-api/api.json');
+
+
+
+// So many missing will need to get clarification on this.
+// TODO 
+//   - Row Object,
+//   - Column Object
+//validateDocFile('GridApi', './documentation/doc-pages/grid-api/grid-api.AUTO.json', './documentation/doc-pages/grid-api/api.json');
+//validateDocFile('Column', './documentation/doc-pages/column-object/column.AUTO.json', './documentation/doc-pages/column-object/reference.json');
+
