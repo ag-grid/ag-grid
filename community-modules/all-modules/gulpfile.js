@@ -61,6 +61,15 @@ const webpackTask = (minify, styles, libraryTarget) => {
             module: {
                 rules: [
                     {
+                        test: /\.js$/,
+                        loader:  'string-replace-loader',
+                        options: {
+
+                            search: /\/\/# sourceMappingURL.*/g,
+                            replace: ''
+                        }
+                    },
+                    {
                         test: /\.css$/,
                         use: [
                             'style-loader',

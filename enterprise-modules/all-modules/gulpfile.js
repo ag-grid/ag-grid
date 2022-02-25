@@ -86,6 +86,7 @@ const webpackTask = (minify, styles, libraryTarget) => {
                     })
                 ] : [],
             },
+            devtool: false,
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
@@ -94,6 +95,15 @@ const webpackTask = (minify, styles, libraryTarget) => {
             },
             module: {
                 rules: [
+                    {
+                        test: /\.js$/,
+                        loader:  'string-replace-loader',
+                        options: {
+
+                            search: /\/\/# sourceMappingURL.*/g,
+                            replace: ''
+                        }
+                    },
                     {
                         test: /\.css$/,
                         use: [
@@ -128,7 +138,7 @@ const webpackTask = (minify, styles, libraryTarget) => {
 // End of webpack related tasks
 
 const copyGridCoreStyles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
         done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
@@ -144,7 +154,8 @@ gulp.task('build', parallel('buildCjs', 'buildEsm'));
 gulp.task('copy-grid-core-styles', copyGridCoreStyles);
 
 // webpack related tasks
-gulp.task('webpack', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, true, 'umd')));
+gulp.task('webpack', series(webpackTask.bind(null, false, true, 'umd')));
+// gulp.task('webpack', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, true, 'umd')));
 gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true, 'umd')));
 gulp.task('webpack-minify', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, true, true, 'umd')));
 gulp.task('webpack-minify-no-clean', series(webpackTask.bind(null, true, true, 'umd')));
@@ -163,7 +174,7 @@ gulp.task('webpack-amd-minify-noStyle', series('clean', 'build', 'copy-grid-core
 gulp.task('webpack-amd-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false, 'amd')));
 
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
-gulp.task('webpack-all-no-clean', series('copy-grid-core-styles',          parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
+gulp.task('webpack-all-no-clean', series('copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
 gulp.task('webpack-all', series('clean', 'build', 'copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
 
 // default/release task
