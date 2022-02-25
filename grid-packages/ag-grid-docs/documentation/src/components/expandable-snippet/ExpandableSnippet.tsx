@@ -69,11 +69,13 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
 interface ModelSnippetParams {
     model: JsonModel | JsonUnionType;
     skip?: string[];
+    closeWith?: string;
 }
 
 const ModelSnippet: React.FC<ModelSnippetParams> = ({
     model,
     skip = [],
+    closeWith = ';',
 }) => {
     if (model.type === "model") {
         return <Fragment>{
@@ -93,7 +95,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
     } else if (model.type === "union") {
         return (
             <Fragment>
-                {renderUnion(model)}
+                {renderUnion(model, closeWith)}
             </Fragment>
         );
     }
@@ -103,11 +105,13 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
 
 function renderUnion(
     model: JsonUnionType,
+    closeWith?: string,
 ) {
     const renderPrimitiveUnionOption = (opt: JsonPrimitiveProperty, idx: number, last: boolean) => 
         <Fragment key={idx}>
             {renderPrimitiveType(opt)}
             {!last && <span className={classnames('token', 'operator')}> | </span>}
+            {last && closeWith && <span className={classnames('token', 'punctuation')}>{closeWith}</span>}
         </Fragment>;
 
     if (model.options.every((opt => opt.type === 'primitive'))) {
@@ -129,7 +133,7 @@ function renderUnion(
                         case "array":
                             break;
                         case "nested-object":
-                            return renderUnionNestedObject(desc, idx, idx >= lastIdx);
+                            return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith);
                         }
                 })
                 .map(el => <div className={styles["json-union-item"]}>{el}</div>)
@@ -142,6 +146,7 @@ function renderUnionNestedObject(
     desc: JsonObjectProperty,
     index: number,
     last: boolean,
+    closeWith?: string,
 ) { 
     const [isExpanded, setExpanded] = useState(defaultExpanded);
     const discriminatorProp = "type";
@@ -171,6 +176,7 @@ function renderUnionNestedObject(
                     }
                     <span className={classnames('token', 'punctuation')}>{' }'}</span>
                     {!last && <span className={classnames('token', 'operator')}> | <br/></span>}
+                    {last && closeWith && <span className={classnames('token', 'punctuation')}>{closeWith}</span>}
                 </span>
             </Fragment>
         );
@@ -179,8 +185,10 @@ function renderUnionNestedObject(
     return (
         <Fragment key={index}>
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                {renderExpander(isExpanded)}
-                <span className={classnames('token', 'punctuation')}>{'{ '}</span>
+                <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
+                    {renderExpander(isExpanded)}
+                    {'{ '}
+                </span>
                 {
                     isExpanded ?
                         <Fragment>
@@ -195,8 +203,8 @@ function renderUnionNestedObject(
                         </Fragment>
                 }
                 <span className={classnames('token', 'punctuation')}>{'}'}</span>
-                {/* { !isExpanded && renderTsTypeComment(desc)} */}
                 {!last && <span className={classnames('token', 'operator')}> | <br/></span>}
+                {last && closeWith && <span className={classnames('token', 'punctuation')}>{closeWith}</span>}
             </span>
         </Fragment>
     );
@@ -219,6 +227,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
  
     let propertyRendering;
     let collapsePropertyRendering;
+    let needsClosingSemi = true;
     switch (desc.type) {
         case "primitive":
             propertyRendering = renderPrimitiveType(desc);
@@ -238,10 +247,12 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             collapsePropertyRendering = renderCollapsedNestedObject(desc);
             break;
         case "union":
+            const simpleUnion = isSimpleUnion(desc);
             propertyRendering = <ModelSnippet model={desc}></ModelSnippet>;
-            collapsePropertyRendering = !isSimpleUnion(desc) ?
+            collapsePropertyRendering = !simpleUnion ?
                 <span className={classnames('token', 'type')}>{desc.tsType}</span> :
                 null;
+            needsClosingSemi = simpleUnion;
             break;
         default:
             console.warn(`AG Docs - unhandled sub-type: ${desc["type"]}`);
@@ -265,7 +276,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                     collapsePropertyRendering : 
                     <span className={classnames(styles['unexpandable'])} onClick={(e) => e.stopPropagation()}>{propertyRendering}</span>
             }
-            <span className={classnames('token', 'punctuation')}>; </span>
+            {(!isExpanded || needsClosingSemi) && <span className={classnames('token', 'punctuation')}>; </span>}
             {renderPropertyDefault(meta)}
         </div>
     );
@@ -275,7 +286,7 @@ function renderTsTypeComment(desc: { tsType: string }) {
     return <span className={classnames('token', 'comment')}>/* {desc.tsType} */</span>;
 }
 
-function renderExpander(isExpanded) {
+function renderExpander(isExpanded: boolean) {
     return (
         <FontAwesomeIcon
             icon={isExpanded ? faMinus : faPlus}
@@ -378,7 +389,7 @@ function renderArrayType(desc: JsonArray) {
         case "union":
             arrayElementRendering = (
                 <Fragment>
-                    <ModelSnippet model={desc.elements}></ModelSnippet>
+                    <ModelSnippet model={desc.elements} closeWith={''}></ModelSnippet>
                 </Fragment>
             );
             break;
