@@ -33,7 +33,6 @@ export default class PolymerFrameworkComponentWrapper {
     }
 
     unwrap(comp) {
-        console.log("here!!!");
         if (comp && comp.getFrameworkComponentInstance) {
             return comp.getFrameworkComponentInstance();
         }
