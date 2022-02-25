@@ -31,8 +31,11 @@ function getExamples() {
     var pageGroups = [];
 
     files.forEach(page => {
+
+        // We need to handle stale folders that have been deleted from Git but still exist due to containing unversioned files.
+        const hasIndexMarkdown = fs.existsSync(basePath + page + '/index.md');
         const exampleDir = basePath + page + '/examples/';
-        if (fs.existsSync(exampleDir)) {
+        if (hasIndexMarkdown && fs.existsSync(exampleDir)) {
             const examples = fs.readdirSync(exampleDir);
             let pageExamples = [];
 
