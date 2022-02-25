@@ -108,6 +108,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "style-loader": "^1.0.0",
+    "string-replace-loader": "3.1.0",
     "terser-webpack-plugin": "^2.0.1",
     "ts-jest": "^25.4.0",
     "tslint": "^5.19.0",
