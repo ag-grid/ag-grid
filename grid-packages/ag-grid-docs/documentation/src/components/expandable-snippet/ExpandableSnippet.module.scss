@@ -4,17 +4,17 @@
 
         &-type-nested-object {
             > .json-property {
-                padding-left: 32px;
+                padding-left: 18px;
             }
         }
     }
 
     .json-object-union, .json-object {
-        padding-left: 32px;
+        padding-left: 18px;
     }
 
     .indent-level {
-        margin-left: 32px;
+        margin-left: 18px;
     }
 
     .deprecated {
