@@ -2085,7 +2085,9 @@
       "onSelectionChanged?(event: SelectionChangedEvent)": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
-      "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */"
+      "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "RowGroupingDisplayType": {

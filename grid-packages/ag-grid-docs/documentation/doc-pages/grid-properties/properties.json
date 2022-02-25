@@ -64,6 +64,9 @@
         "copyHeadersToClipboard": {
             "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
         },
+        "copyGroupHeadersToClipboard": {
+            "description": "Set to `true` to also include group headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
+        },
         "clipboardDelimiter": {},
         "suppressCopyRowsToClipboard": {},
         "suppressLastEmptyLineOnPaste": {},
@@ -226,7 +229,13 @@
                 "url": "/undo-redo-edits/"
             }
         },
-        "undoRedoCellEditingLimit": {}
+        "undoRedoCellEditingLimit": {},
+        "readOnlyEdit": {
+            "more": {
+                "name": "Read Only Edit",
+                "url": "/value-setters/#read-only-edit/"
+            }
+        }
     },
     "export": {
         "meta": {
@@ -405,6 +414,18 @@
     "miscellaneous": {
         "meta": {
             "displayName": "Miscellaneous"
+        },
+        "api": {
+            "more": {
+                "name": "Grid Api",
+                "url": "/grid-api/"
+            }
+        },
+        "columnApi": {
+            "more": {
+                "name": "Column Api",
+                "url": "/column-api/"
+            }
         },
         "alignedGrids": {
             "more": {
