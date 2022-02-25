@@ -13,11 +13,14 @@ type MetaRecord = {
     suggestions?: string[];
 };
 
+type InterfaceLookupMetaType = string | { parameters: Record<string, string>, returnType: string };
+
 export type InterfaceLookup = Record<
     string,
     {
         meta: {
             isTypeAlias?: boolean;
+            type?: InterfaceLookupMetaType;
         };
         docs: Record<string, string>;
         type: Record<string, string> | string;
@@ -77,6 +80,7 @@ export interface JsonModel {
         deprecated: boolean;
         required: boolean;
         documentation?: string;
+        default?: any;
         desc: JsonProperty;
     }>;
 }
@@ -109,16 +113,23 @@ export function buildModel(
             returnType: "unknown",
         };
         const documentation = description || docsProp;
-        const { isRequired } = metaProp;
+        const { isRequired, default: def } = metaProp;
 
         const required = optional === false || isRequired === true;
         const deprecated = docsProp?.indexOf("@deprecated") >= 0;
 
-        const declaredType: string = meta[prop]?.type || returnType;
+        let declaredType: InterfaceLookupMetaType = meta[prop]?.type || returnType;
+        if (typeof declaredType === 'object') {
+            const params = Object.entries(declaredType.parameters)
+                .map(([name, type]) => `${name}: ${type}`)
+                .join(', ');
+            declaredType = `(${params}) => ${declaredType.returnType}`;
+        }
         result.properties[prop] = {
             deprecated,
             required,
             documentation,
+            default: def,
             desc: resolveType(declaredType, interfaceLookup, codeLookup),
         };
     });
