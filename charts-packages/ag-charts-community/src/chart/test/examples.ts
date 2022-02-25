@@ -146,9 +146,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
     });
 }
 
-export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {};
-{
-    Object.assign(AREA_MISSING_DATA_EXAMPLE, {
+export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {
         data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
         axes: [
             { type: 'category', position: 'bottom' },
@@ -171,12 +169,9 @@ export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {};
         subtitle: {
             text: '2009-2019 (aka "good times")',
         },
-    });
 }
 
-export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {};
-{
-    Object.assign(STACKED_AREA_MISSING_DATA_EXAMPLE, {
+export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions =  {
         data: DATA_BROWSER_MARKET_SHARE,
         axes: [
             { type: 'category', position: 'bottom' },
@@ -199,7 +194,6 @@ export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {};
         subtitle: {
             text: '2009-2019',
         },
-    });
 }
 
 // START ADVANCED EXAMPLES =========================================================================

@@ -352,9 +352,12 @@ export class AreaSeries extends CartesianSeries {
         }
 
         if (normalized && normalizedTo) {
+            // Multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
+            const domainWhitespaceAdjustment = 0.5;
+
             // set the yMin and yMax based on cumulative sum of normalized values
-            yMin = yMin < (-normalizedTo * 0.5) ? -normalizedTo : yMin;
-            yMax = yMax > (normalizedTo * 0.5) ? normalizedTo : yMax;
+            yMin = yMin < (-normalizedTo * domainWhitespaceAdjustment) ? -normalizedTo : yMin;
+            yMax = yMax > (normalizedTo * domainWhitespaceAdjustment) ? normalizedTo : yMax;
         }
 
         this.yData = processedYData;
@@ -454,12 +457,8 @@ export class AreaSeries extends CartesianSeries {
         strokeSelectionData.length = 0;
         fillSelectionData.length = 0;
 
-        const makeCumulativeValues = () => new Array(xData.length).fill(null).map(() => ({ left: 0, right: 0 }));
-        const makeCumulativeMarkerValues = () => new Array(xData.length).fill(0);
-
-
-        const cumulativePathValues: CumulativeValue[] = makeCumulativeValues();
-        const cumulativeMarkerValues: number[] = makeCumulativeMarkerValues();
+        const cumulativePathValues: CumulativeValue[] = new Array(xData.length).fill(null).map(() => ({ left: 0, right: 0 }));
+        const cumulativeMarkerValues: number[] = new Array(xData.length).fill(0);
 
         const createPathCoordinates = (
             xDatum: any,
