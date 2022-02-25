@@ -25,11 +25,33 @@
         text-decoration: line-through;
     }
 
-    .expandable > * {
-        cursor: pointer;
+    .expandable {
+        & > * {
+            cursor: pointer;
+        }
     }
 
     .unexpandable {
         cursor: default;
+    }
+
+    .property-name {
+        position: relative;
+
+        .expander {
+            position: absolute;
+            left: -18px;
+            top: 1px;
+        }
+    }
+
+    .union-type-property {
+        position: relative;
+
+        .expander {
+            position: absolute;
+            left: -34px;
+            top: 1px;
+        }
     }
 }

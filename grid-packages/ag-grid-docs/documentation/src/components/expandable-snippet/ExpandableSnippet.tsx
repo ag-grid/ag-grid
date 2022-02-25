@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from "react";
 import classnames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 import { escapeGenericCode } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
@@ -151,7 +153,7 @@ function renderUnionNestedObject(
             <Fragment key={tsType}>
                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-                    {renderPropertyDeclaration(discriminatorProp, discriminator)}
+                    {renderPropertyDeclaration(discriminatorProp, discriminator, isExpanded, true, 'union-type-property')}
                     {renderPrimitiveType(discriminator.desc)}
                     <span className={classnames('token', 'punctuation')}>; </span>
                     {
@@ -177,6 +179,7 @@ function renderUnionNestedObject(
     return (
         <Fragment key={index}>
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                {renderExpander(isExpanded)}
                 <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                 {
                     isExpanded ?
@@ -244,7 +247,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             console.warn(`AG Docs - unhandled sub-type: ${desc["type"]}`);
     }
 
-    let expandable = collapsePropertyRendering != null;
+    let expandable = !!collapsePropertyRendering;
     return (
         <div
             className={classnames(
@@ -256,7 +259,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             onClick={() => expandable ? setExpanded(!isExpanded) : null}
         >
             <div className={classnames('token', 'comment')}>{documentation}</div>
-            {renderPropertyDeclaration(propName, meta)}
+            {renderPropertyDeclaration(propName, meta, isExpanded, expandable)}
             {
                 !isExpanded && collapsePropertyRendering ? 
                     collapsePropertyRendering : 
@@ -272,15 +275,32 @@ function renderTsTypeComment(desc: { tsType: string }) {
     return <span className={classnames('token', 'comment')}>/* {desc.tsType} */</span>;
 }
 
+function renderExpander(isExpanded) {
+    return (
+        <FontAwesomeIcon
+            icon={isExpanded ? faMinus : faPlus}
+            className={classnames(
+                styles['expander'],
+            )}
+        />
+    );
+}
+
 function renderPropertyDeclaration(
     propName: string,
     propDesc: { required: boolean },
+    isExpanded: boolean,
+    expandable: boolean,
+    style = 'property-name',
 ) {
     const { required } = propDesc;
     return (
         <Fragment>
-            <span className={classnames('token', 'name')}>{propName}</span>
-            {required && <span className={classnames('token', 'operator')}>?</span>}
+            <span className={classnames('token', 'name', styles[style])}>
+                {expandable && renderExpander(isExpanded)}
+                {propName}
+            </span>
+            {!required && <span className={classnames('token', 'operator')}>?</span>}
             <span className={classnames('token', 'operator')}>: </span>
         </Fragment>
     );
