@@ -68,7 +68,7 @@ export type JsonArray = {
 export type JsonUnionType = {
     type: "union";
     tsType: string;
-    options: JsonObjectProperty[];
+    options: Exclude<JsonProperty, JsonUnionType>[];
 };
 
 export type JsonProperty = JsonPrimitiveProperty | JsonObjectProperty | JsonArray | JsonUnionType;
@@ -148,7 +148,7 @@ export function buildModel(
 }
 
 const primitiveTypes = ["number", "string", "Date", "boolean", "any"];
-type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "alias" | "unknown";
+type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "union-mixed" | "alias" | "unknown";
 
 function resolveType(
     declaredType: string,
@@ -177,14 +177,13 @@ function resolveType(
         case "alias":
             return resolveType(resolvedType, interfaceLookup, codeLookup, config);
         case "union-nested-object":
+        case "union-mixed":
             return {
                 type: "union",
                 tsType: resolvedType,
-                options: resolvedType.split("|").map(unionType => ({
-                    type: "nested-object",
-                    model: buildModel(unionType.trim(), interfaceLookup, codeLookup, config),
-                    tsType: unionType.trim(),
-                })),
+                options: resolvedType.split("|")
+                    .map(unionType => resolveType(unionType.trim(), interfaceLookup, codeLookup))
+                    .filter((unionDesc): unionDesc is JsonUnionType['options'][number] => unionDesc.type !== 'union'),
             };
         case "nested-object":
             return {
@@ -211,18 +210,24 @@ function typeClass(
     }
 
     if (pType.indexOf("|") >= 0) {
-        const firstUnionItemClass = typeClass(
-            pType.split("|")[0].trim(),
-            interfaceLookup,
-            codeLookup
-        );
-        switch (firstUnionItemClass.resolvedClass) {
-            case "alias":
-                return { resolvedClass: "unknown", resolvedType: type };
-            case "primitive":
-                return { resolvedClass: "primitive", resolvedType: type };
-            case "nested-object":
-                return { resolvedClass: "union-nested-object", resolvedType: type };
+        const unionItemResolvedClasses = pType.split("|")
+            .map(t => typeClass(
+                t.trim(),
+                interfaceLookup,
+                codeLookup
+            ))
+            .reduce((a, n) => a.add(n.resolvedClass), new Set<string>());
+        if (unionItemResolvedClasses.size === 1) {
+            switch (unionItemResolvedClasses.values().next().value) {
+                case "alias":
+                    return { resolvedClass: "unknown", resolvedType: type };
+                case "primitive":
+                    return { resolvedClass: "primitive", resolvedType: type };
+                case "nested-object":
+                    return { resolvedClass: "union-nested-object", resolvedType: type };
+            }
+        } else {
+            return { resolvedClass: "union-mixed", resolvedType: type };
         }
     }
 

@@ -13,7 +13,7 @@
         }
     }
 
-    .json-object-union {
+    .json-object-union, .json-object {
         padding-left: 32px;
     }
 
@@ -25,7 +25,11 @@
         text-decoration: line-through;
     }
 
-    .expandable {
+    .expandable > * {
         cursor: pointer;
+    }
+
+    .unexpandable {
+        cursor: default;
     }
 }
