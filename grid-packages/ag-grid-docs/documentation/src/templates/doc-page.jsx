@@ -68,7 +68,12 @@ const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'snippet': props => Snippet({...props, framework}),
-            'expandable-snippet': props => ExpandableSnippet({ ...props, framework, breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined }),
+            'expandable-snippet': props => ExpandableSnippet({
+                ...props,
+                framework,
+                breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
+                config: props.config != null ? JSON.parse(props.config) : undefined,
+            }),
             'feature-overview': props => FeatureOverview({...props, framework}),
             'icons-panel': IconsPanel,
             'image-caption': props => ImageCaption({...props, pageName}),

@@ -47,19 +47,19 @@ type Overrides = {
     [key: string]: Record<string, MetaRecord>;
 };
 
-type JsonPrimitiveProperty = {
+export type JsonPrimitiveProperty = {
     type: "primitive";
     tsType: string;
     aliasType?: string;
 };
 
-type JsonObjectProperty = {
+export type JsonObjectProperty = {
     type: "nested-object";
     tsType: string;
     model: JsonModel;
 };
 
-type JsonArray = {
+export type JsonArray = {
     type: "array";
     depth: number;
     elements: Exclude<JsonProperty, JsonArray>;
@@ -73,23 +73,31 @@ export type JsonUnionType = {
 
 export type JsonProperty = JsonPrimitiveProperty | JsonObjectProperty | JsonArray | JsonUnionType;
 
+export type JsonModelProperty = {
+    deprecated: boolean;
+    required: boolean;
+    documentation?: string;
+    default?: any;
+    desc: JsonProperty;
+};
+
 export interface JsonModel {
     type: "model";
     tsType: string;
-    properties: Record<string, {
-        deprecated: boolean;
-        required: boolean;
-        documentation?: string;
-        default?: any;
-        desc: JsonProperty;
-    }>;
+    properties: Record<string, JsonModelProperty>;
 }
+
+type Config = {
+    includeDeprecated: boolean,
+};
 
 export function buildModel(
     type: string,
     interfaceLookup: InterfaceLookup,
-    codeLookup: CodeLookup
+    codeLookup: CodeLookup,
+    config?: Partial<Config>,
 ): JsonModel {
+    const includeDeprecated = config?.includeDeprecated ?? false;
     const iLookup = interfaceLookup[type];
     const cLookup = codeLookup[type];
 
@@ -118,6 +126,8 @@ export function buildModel(
         const required = optional === false || isRequired === true;
         const deprecated = docsProp?.indexOf("@deprecated") >= 0;
 
+        if (deprecated && !includeDeprecated) { return; }
+
         let declaredType: InterfaceLookupMetaType = meta[prop]?.type || returnType;
         if (typeof declaredType === 'object') {
             const params = Object.entries(declaredType.parameters)
@@ -130,7 +140,7 @@ export function buildModel(
             required,
             documentation,
             default: def,
-            desc: resolveType(declaredType, interfaceLookup, codeLookup),
+            desc: resolveType(declaredType, interfaceLookup, codeLookup, config),
         };
     });
 
@@ -143,7 +153,8 @@ type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "al
 function resolveType(
     declaredType: string,
     interfaceLookup: InterfaceLookup,
-    codeLookup: CodeLookup
+    codeLookup: CodeLookup,
+    config?: Partial<Config>,
 ): JsonProperty {
     const pType = plainType(declaredType);
     const wrapping = typeWrapping(declaredType);
@@ -151,7 +162,7 @@ function resolveType(
         return {
             type: "array",
             depth: declaredType.match(/\[/).length,
-            elements: resolveType(pType, interfaceLookup, codeLookup) as Exclude<
+            elements: resolveType(pType, interfaceLookup, codeLookup, config) as Exclude<
                 JsonProperty,
                 JsonArray
             >,
@@ -164,21 +175,21 @@ function resolveType(
         case "unknown":
             return { type: "primitive", tsType: resolvedType };
         case "alias":
-            return resolveType(resolvedType, interfaceLookup, codeLookup);
+            return resolveType(resolvedType, interfaceLookup, codeLookup, config);
         case "union-nested-object":
             return {
                 type: "union",
                 tsType: resolvedType,
                 options: resolvedType.split("|").map(unionType => ({
                     type: "nested-object",
-                    model: buildModel(unionType.trim(), interfaceLookup, codeLookup),
+                    model: buildModel(unionType.trim(), interfaceLookup, codeLookup, config),
                     tsType: unionType.trim(),
                 })),
             };
         case "nested-object":
             return {
                 type: "nested-object",
-                model: buildModel(resolvedType, interfaceLookup, codeLookup),
+                model: buildModel(resolvedType, interfaceLookup, codeLookup, config),
                 tsType: resolvedType.trim(),
             };
     }
