@@ -1,5 +1,5 @@
 import { AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -144,6 +144,56 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
             text: 'Total Winnings by Country & Game',
         },
     });
+}
+
+export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {
+        data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
+        axes: [
+            { type: 'category', position: 'bottom' },
+            { type: 'number', position: 'left' },
+        ],
+        series: [
+            {
+                type: 'area',
+                xKey: 'year',
+                yKeys: ['ie'],
+                yNames: ['IE'],
+                marker: {
+                    size: 5,
+                }
+            },
+        ],
+        title: {
+            text: 'Internet Explorer Market Share',
+        },
+        subtitle: {
+            text: '2009-2019 (aka "good times")',
+        },
+}
+
+export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions =  {
+        data: DATA_BROWSER_MARKET_SHARE,
+        axes: [
+            { type: 'category', position: 'bottom' },
+            { type: 'number', position: 'left' },
+        ],
+        series: [
+            {
+                type: 'area',
+                xKey: 'year',
+                yKeys: ['ie', 'firefox', 'safari', 'chrome'],
+                yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
+                marker: {
+                    enabled: true,
+                },
+            },
+        ],
+        title: {
+            text: 'Browser Wars',
+        },
+        subtitle: {
+            text: '2009-2019',
+        },
 }
 
 // START ADVANCED EXAMPLES =========================================================================

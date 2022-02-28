@@ -14,7 +14,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findMinMax } from "../../../util/array";
+import { extent } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
@@ -22,12 +22,16 @@ import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
-import { isNumber } from "../../../util/value";
+import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
-interface AreaSelectionDatum {
+interface FillSelectionDatum {
     readonly itemId: string;
     readonly points: { x: number, y: number }[];
+}
+
+interface StrokeSelectionDatum extends FillSelectionDatum {
+    readonly yValues: (number | undefined)[];
 }
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
@@ -72,6 +76,8 @@ interface LabelSelectionDatum {
 
 export { AreaTooltipRendererParams };
 
+type Coordinate = { x: number; y: number };
+type CumulativeValue = { left: number; right: number };
 class AreaSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: any }) => string;
 }
@@ -93,8 +99,8 @@ export class AreaSeries extends CartesianSeries {
     private markerGroup = this.pickGroup.appendChild(new Group);
     private labelGroup = this.group.appendChild(new Group);
 
-    private fillSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
-    private strokeSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
+    private fillSelection: Selection<Path, Group, FillSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
+    private strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
     private markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any> = Selection.select(this.markerGroup).selectAll<Marker>();
     private labelSelection: Selection<Text, Group, LabelSelectionDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
@@ -106,10 +112,12 @@ export class AreaSeries extends CartesianSeries {
 
     private xData: string[] = [];
     private yData: number[][] = [];
-    private areaSelectionData: AreaSelectionDatum[] = [];
+    private fillSelectionData: FillSelectionDatum[] = [];
+    private strokeSelectionData: StrokeSelectionDatum[] = [];
     private markerSelectionData: MarkerSelectionDatum[] = [];
     private labelSelectionData: LabelSelectionDatum[] = [];
     private yDomain: any[] = [];
+    private xDomain: any[] = [];
 
     directionKeys = {
         x: ['xKey'],
@@ -226,8 +234,12 @@ export class AreaSeries extends CartesianSeries {
     protected highlightedDatum?: MarkerSelectionDatum;
 
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
+
+        if (!xAxis || !yAxis) {
+            return false;
+        }
 
         // If the data is an array of rows like so:
         //
@@ -244,13 +256,23 @@ export class AreaSeries extends CartesianSeries {
         // }]
         //
 
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+        const normalized = normalizedTo && isFinite(normalizedTo);
+
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
             if (keysFound && !(xKey in datum)) {
                 keysFound = false;
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
-            return datum[xKey];
+
+            if (isContinuousX) {
+                return isContinuous(datum[xKey]) ? datum[xKey] : undefined;
+            } else {
+                // i.e. category axis
+                return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
+            }
         });
 
         this.yData = data.map(datum => yKeys.map(yKey => {
@@ -260,8 +282,19 @@ export class AreaSeries extends CartesianSeries {
             }
             const value = datum[yKey];
 
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            if (!seriesItemEnabled.get(yKey)) {
+                return 0;
+            }
+
+            if (isContinuousY) {
+                return isContinuous(value) ? value : normalized ? 0 : undefined;
+            } else {
+                return isDiscrete(value) ? value : String(value);
+            }
         }));
+
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x') : this.xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(this.yData, isContinuous), 'y') : this.yData;
 
         // xData: ['Jan', 'Feb']
         //
@@ -270,28 +303,64 @@ export class AreaSeries extends CartesianSeries {
         //   [10, -15, 20]
         // ]
 
-        const { yData, normalizedTo } = this;
+        const { yData } = this;
 
-        const yMinMax = yData.map(values => findMinMax(values)); // used for normalization
-        const yLargestMinMax = this.findLargestMinMax(yMinMax);
+        const processedYData: any[] = [];
 
-        // Calculate the sum of the absolute values of all items in each stack. Used for normalization of stacked areas.
-        const yAbsTotal = this.yData.map(values => values.reduce((acc, stack) => {
-            acc += Math.abs(stack);
-            return acc;
-        }, 0));
+        let yMin = 0;
+        let yMax = 0;
 
-        let yMin: number;
-        let yMax: number;
+        for (let stack of yData) {
 
-        if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
-            yData.forEach((stack, i) => stack.forEach((y, j) => stack[j] = y / yAbsTotal[i] * normalizedTo));
-        } else {
-            yMin = yLargestMinMax.min;
-            yMax = yLargestMinMax.max;
+            // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
+            const total = { sum: 0, absSum: 0 };
+            for (let i = 0; i < stack.length; i++) {
+                const y = stack[i];
+
+                total.absSum += Math.abs(y);
+                total.sum += y;
+
+                if (total.sum > yMax) {
+                    yMax = total.sum;
+                } else if (total.sum < yMin) {
+                    yMin = total.sum;
+                }
+            }
+
+            let normalizedTotal = 0;
+
+            for (let i = 0; i < stack.length; i++) {
+                if (normalized && normalizedTo) {
+                    // normalize y values using the absolute sum of y values in the stack
+                    const normalizedY = stack[i] / total.absSum * normalizedTo;
+                    stack[i] = normalizedY;
+
+                    // sum normalized values to get updated yMin and yMax of normalized area
+                    normalizedTotal += normalizedY;
+
+                    if (normalizedTotal > yMax) {
+                        yMax = normalizedTotal;
+                    } else if (normalizedTotal < yMin) {
+                        yMin = normalizedTotal;
+                    }
+                }
+
+                // TODO: test performance to see impact of this
+                // process data to be in the format required for creating node data and rendering area paths
+                (processedYData[i] || (processedYData[i] = [])).push(stack[i]);
+            }
         }
+
+        if (normalized && normalizedTo) {
+            // Multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
+            const domainWhitespaceAdjustment = 0.5;
+
+            // set the yMin and yMax based on cumulative sum of normalized values
+            yMin = yMin < (-normalizedTo * domainWhitespaceAdjustment) ? -normalizedTo : yMin;
+            yMax = yMax > (normalizedTo * domainWhitespaceAdjustment) ? normalizedTo : yMax;
+        }
+
+        this.yData = processedYData;
 
         if (yMin === 0 && yMax === 0) {
             yMax = 1;
@@ -322,7 +391,7 @@ export class AreaSeries extends CartesianSeries {
 
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
-            return this.xData;
+            return this.xDomain;
         } else {
             return this.yDomain;
         }
@@ -359,8 +428,16 @@ export class AreaSeries extends CartesianSeries {
 
     private createSelectionData() {
         const {
-            data, xAxis, yAxis, xData, yData,
-            areaSelectionData, markerSelectionData, labelSelectionData
+            data,
+            xAxis,
+            yAxis,
+            xData,
+            yData,
+            labelSelectionData,
+            markerSelectionData,
+            strokeSelectionData,
+            fillSelectionData,
+            xKey
         } = this;
 
         if (!data || !xAxis || !yAxis || !xData.length || !yData.length) {
@@ -371,59 +448,102 @@ export class AreaSeries extends CartesianSeries {
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
-        const xOffset = (xScale.bandwidth || 0) / 2;
-        const yOffset = (yScale.bandwidth || 0) / 2;
-        const last = xData.length * 2 - 1;
+        const continuousY = yScale instanceof ContinuousScale;
 
-        areaSelectionData.length = 0;
+        const xOffset = (xScale.bandwidth || 0) / 2;
+
         markerSelectionData.length = 0;
         labelSelectionData.length = 0;
+        strokeSelectionData.length = 0;
+        fillSelectionData.length = 0;
 
-        xData.forEach((xDatum, i) => {
-            const yDatum = yData[i];
-            const seriesDatum = data[i];
+        const cumulativePathValues: CumulativeValue[] = new Array(xData.length).fill(null).map(() => ({ left: 0, right: 0 }));
+        const cumulativeMarkerValues: number[] = new Array(xData.length).fill(0);
+
+        const createPathCoordinates = (
+            xDatum: any,
+            yDatum: number,
+            idx: number,
+            side: keyof CumulativeValue
+        ): [Coordinate, Coordinate] => {
+
             const x = xScale.convert(xDatum) + xOffset;
 
-            let prevMin = 0;
-            let prevMax = 0;
+            const prevY = cumulativePathValues[idx][side];
+            const currY = cumulativePathValues[idx][side] + yDatum;
 
-            yDatum.forEach((curr, j) => {
-                const prev = curr < 0 ? prevMin : prevMax;
+            const prevYCoordinate = yScale.convert(prevY, continuousY ? clamper : undefined);
+            const currYCoordinate = yScale.convert(currY, continuousY ? clamper : undefined);
 
-                const continuousY = yScale instanceof ContinuousScale;
-                const y = yScale.convert(prev + curr, continuousY ? clamper : undefined);
+            cumulativePathValues[idx][side] = currY;
 
-                const yKey = yKeys[j];
-                const yValue: number = seriesDatum[yKey];
+            return [
+                { x, y: currYCoordinate },
+                { x, y: prevYCoordinate },
+            ];
+        }
+
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number): Coordinate => {
+            let currY;
+            if (yDatum !== undefined) {
+                currY = cumulativeMarkerValues[idx] += yDatum;
+            }
+
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(currY, continuousY ? clamper : undefined);
+
+            return { x, y };
+        }
+
+        yData.forEach((seriesYs, seriesIdx) => {
+            const yKey = yKeys[seriesIdx];
+
+            const fillSelectionForSeries = fillSelectionData[seriesIdx] || (fillSelectionData[seriesIdx] = { itemId: yKey, points: [] });
+            const fillPoints = fillSelectionForSeries.points;
+            const fillPhantomPoints: Coordinate[] = [];
+
+            const strokeDatum = strokeSelectionData[seriesIdx] || (strokeSelectionData[seriesIdx] = { itemId: yKey, points: [], yValues: [] });
+            const strokePoints = strokeDatum.points;
+            const yValues = strokeDatum.yValues;
+
+            seriesYs.forEach((yDatum, datumIdx) => {
+                const xDatum = xData[datumIdx];
+                const nextXDatum = xData[datumIdx + 1];
+                const nextYDatum = seriesYs[datumIdx + 1];
+
+                // marker data
+                const point = createMarkerCoordinate(xDatum, yDatum, datumIdx);
+                const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
 
                 if (marker) {
                     markerSelectionData.push({
-                        index: i,
+                        index: datumIdx,
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
-                        yValue,
+                        yValue: yDatum,
                         yKey,
-                        point: { x, y },
-                        fill: fills[j % fills.length],
-                        stroke: strokes[j % strokes.length]
+                        point,
+                        fill: fills[seriesIdx % fills.length],
+                        stroke: strokes[seriesIdx % strokes.length]
                     });
                 }
 
+                // label data
                 let labelText: string;
 
                 if (label.formatter) {
-                    labelText = label.formatter({ value: yValue });
+                    labelText = label.formatter({ value: yDatum });
                 } else {
-                    labelText = isNumber(yValue) ? yValue.toFixed(2) : String(yValue);
+                    labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
                 }
 
                 if (label) {
                     labelSelectionData.push({
-                        index: i,
+                        index: datumIdx,
                         itemId: yKey,
-                        point: { x, y },
-                        label: labelText ? {
+                        point,
+                        label: this.seriesItemEnabled.get(yKey) && labelText ? {
                             text: labelText,
                             fontStyle: label.fontStyle,
                             fontWeight: label.fontWeight,
@@ -436,23 +556,46 @@ export class AreaSeries extends CartesianSeries {
                     });
                 }
 
-                const areaDatum = areaSelectionData[j] || (areaSelectionData[j] = { itemId: yKey, points: [] });
-                const areaPoints = areaDatum.points;
+                // fill data
+                // Handle data in pairs of current and next x and y values
+                const windowX = [xDatum, nextXDatum];
+                const windowY = [yDatum, nextYDatum];
 
-                areaPoints[i] = { x, y };
-                areaPoints[last - i] = { x, y: yScale.convert(prev) + yOffset }; // bottom y
+                if (windowX.some((v) => v == undefined)) {
+                    return;
+                }
+                if (windowY.some((v) => v == undefined)) {
+                    windowY[0] = 0;
+                    windowY[1] = 0;
+                }
 
-                if (curr < 0) {
-                    prevMin += curr;
-                } else {
-                    prevMax += curr;
+                const currCoordinates = createPathCoordinates(windowX[0], windowY[0], datumIdx, 'right');
+                fillPoints.push(currCoordinates[0]);
+                fillPhantomPoints.push(currCoordinates[1]);
+
+                const nextCoordinates = createPathCoordinates(windowX[1], windowY[1], datumIdx, 'left');
+                fillPoints.push(nextCoordinates[0]);
+                fillPhantomPoints.push(nextCoordinates[1]);
+
+                // stroke data
+                strokePoints.push({ x: NaN, y: NaN }); // moveTo
+                yValues.push(undefined);
+
+                strokePoints.push(currCoordinates[0]);
+                yValues.push(yDatum);
+
+                if (nextYDatum !== undefined) {
+                    strokePoints.push(nextCoordinates[0]);
+                    yValues.push(yDatum);
                 }
             });
+
+            fillPoints.push(...fillPhantomPoints.slice().reverse());
         });
     }
 
     private updateFillSelection(): void {
-        const updateFills = this.fillSelection.setData(this.areaSelectionData);
+        const updateFills = this.fillSelection.setData(this.fillSelectionData);
 
         updateFills.exit.remove();
 
@@ -467,14 +610,11 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateFillNodes() {
-        const { fills, fillOpacity, strokes, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
+        const { fills, fillOpacity, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
 
         this.fillSelection.each((shape, datum, index) => {
-            const path = shape.path;
-
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
-            shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
             shape.lineDash = this.lineDash;
@@ -483,9 +623,10 @@ export class AreaSeries extends CartesianSeries {
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
             shape.opacity = this.getOpacity(datum);
 
-            path.clear();
-
             const { points } = datum;
+
+            const path = shape.path;
+            path.clear();
 
             points.forEach(({ x, y }, i) => {
                 if (i > 0) {
@@ -500,7 +641,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateStrokeSelection(): void {
-        const updateStrokes = this.strokeSelection.setData(this.areaSelectionData);
+        const updateStrokes = this.strokeSelection.setData(this.strokeSelectionData);
 
         updateStrokes.exit.remove();
 
@@ -519,11 +660,11 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { data, strokes, strokeOpacity, seriesItemEnabled } = this;
+        const { strokes, strokeOpacity, seriesItemEnabled } = this;
+
+        let moveTo = true;
 
         this.strokeSelection.each((shape, datum, index) => {
-            const path = shape.path;
-
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
             shape.opacity = this.getOpacity(datum);
             shape.stroke = strokes[index % strokes.length];
@@ -532,19 +673,23 @@ export class AreaSeries extends CartesianSeries {
             shape.lineDash = this.lineDash;
             shape.lineDashOffset = this.lineDashOffset;
 
+            const { points, yValues } = datum;
+
+            const path = shape.path
             path.clear();
 
-            const { points } = datum;
-
-            // The stroke doesn't go all the way around the fill, only on top,
-            // that's why we iterate until `data.length` (rather than `points.length`) and stop.
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < points.length; i++) {
                 const { x, y } = points[i];
 
-                if (i > 0) {
-                    path.lineTo(x, y);
+                if (yValues[i] === undefined) {
+                    moveTo = true;
                 } else {
-                    path.moveTo(x, y);
+                    if (moveTo) {
+                        path.moveTo(x, y);
+                        moveTo = false;
+                    } else {
+                        path.lineTo(x, y);
+                    }
                 }
             }
         });
@@ -619,7 +764,7 @@ export class AreaSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x);
+            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
             node.opacity = this.getOpacity(datum);
         });
     }
@@ -708,8 +853,8 @@ export class AreaSeries extends CartesianSeries {
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const yKeyIndex = yKeys.indexOf(yKey);
-        const yGroup = yData[nodeDatum.index];
-        const processedYValue = yGroup[yKeyIndex];
+        const seriesYs = yData[yKeyIndex];
+        const processedYValue = seriesYs[nodeDatum.index];
         const yName = yNames[yKeyIndex];
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);

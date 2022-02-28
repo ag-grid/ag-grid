@@ -45,8 +45,8 @@ function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
 function hoverAction(x: number, y: number): (chart: Chart) => Promise<void> {
     return async (chart) => {
         // Reveal tooltip.
-        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1}));
-        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y}));
+        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
+        chart.scene.canvas.element.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
 
         return new Promise((resolve) => { setTimeout(resolve, 50) });
     };
@@ -162,6 +162,14 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['bar'] }),
     },
+    AREA_MISSING_DATA_EXAMPLE: {
+        options: examples.AREA_MISSING_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
+    },
+    STACKED_AREA_MISSING_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_MISSING_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
+    },
     // START ADVANCED EXAMPLES =====================================================================
     ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
         options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
@@ -202,11 +210,11 @@ describe('AgChartV2', () => {
         beforeEach(() => {
             console.warn = jest.fn();
         });
-    
+
         afterEach(() => {
             expect(console.warn).not.toBeCalled();
         });
-    
+
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
@@ -221,8 +229,8 @@ describe('AgChartV2', () => {
                     const canvas = chart.scene.canvas;
                     const imageDataUrl = canvas.getDataURL('image/png');
                     const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
-    
-                    (expect(imageData) as any).toMatchImageSnapshot({failureThreshold: 10, failureThresholdType: "percent"});
+
+                    (expect(imageData) as any).toMatchImageSnapshot({ failureThreshold: 10, failureThresholdType: "percent" });
                 };
 
                 const options: AgChartOptions = { ...example.options };
