@@ -35,6 +35,17 @@ gtm_data_layer('community-enterprise');
             <section class="packages">
                 <div>
                     <div>
+                        <img src="./images/loudspeaker_grey.png" style="max-width: 50px;" alt="warning" />
+                    </div>
+                    <div>
+                        <h3>Sales Update</h3>
+                        <p>
+                        In light of current events in Ukraine we are choosing to express our disappointment in the breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and community by not licensing software to companies or individuals registered or residing in the Russian Federation.
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div>
                         <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT" />
                     </div>
                     <div>

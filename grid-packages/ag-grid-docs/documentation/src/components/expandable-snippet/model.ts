@@ -13,11 +13,14 @@ type MetaRecord = {
     suggestions?: string[];
 };
 
+type InterfaceLookupMetaType = string | { parameters: Record<string, string>, returnType: string };
+
 export type InterfaceLookup = Record<
     string,
     {
         meta: {
             isTypeAlias?: boolean;
+            type?: InterfaceLookupMetaType;
         };
         docs: Record<string, string>;
         type: Record<string, string> | string;
@@ -44,19 +47,19 @@ type Overrides = {
     [key: string]: Record<string, MetaRecord>;
 };
 
-type JsonPrimitiveProperty = {
+export type JsonPrimitiveProperty = {
     type: "primitive";
     tsType: string;
     aliasType?: string;
 };
 
-type JsonObjectProperty = {
+export type JsonObjectProperty = {
     type: "nested-object";
     tsType: string;
     model: JsonModel;
 };
 
-type JsonArray = {
+export type JsonArray = {
     type: "array";
     depth: number;
     elements: Exclude<JsonProperty, JsonArray>;
@@ -65,35 +68,51 @@ type JsonArray = {
 export type JsonUnionType = {
     type: "union";
     tsType: string;
-    options: JsonObjectProperty[];
+    options: Exclude<JsonProperty, JsonUnionType>[];
 };
 
 export type JsonProperty = JsonPrimitiveProperty | JsonObjectProperty | JsonArray | JsonUnionType;
 
+export type JsonModelProperty = {
+    deprecated: boolean;
+    required: boolean;
+    documentation?: string;
+    default?: any;
+    desc: JsonProperty;
+};
+
 export interface JsonModel {
     type: "model";
     tsType: string;
-    properties: Record<string, {
-        deprecated: boolean;
-        required: boolean;
-        documentation?: string;
-        desc: JsonProperty;
-    }>;
+    properties: Record<string, JsonModelProperty>;
 }
+
+type Config = {
+    includeDeprecated: boolean,
+};
 
 export function buildModel(
     type: string,
     interfaceLookup: InterfaceLookup,
-    codeLookup: CodeLookup
+    codeLookup: CodeLookup,
+    config?: Partial<Config>,
+    context?: { typeStack: string[] }
 ): JsonModel {
-    const iLookup = interfaceLookup[type];
-    const cLookup = codeLookup[type];
+    const includeDeprecated = config?.includeDeprecated ?? false;
+    const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
+    const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
+    let typeStack = context?.typeStack ?? [];
 
     const result: JsonModel = { type: "model", tsType: type, properties: {} };
 
     if (iLookup == null || cLookup == null) {
         return result;
     }
+    if (typeStack.includes(type)) {
+        console.warn('Type recursion terminated due to infinite loop at: ' + type);
+        return result;
+    }
+    typeStack = typeStack.concat([type]);
 
     Object.entries(cLookup).forEach(([prop, propCLookup]) => {
         if (prop === "meta") {
@@ -109,17 +128,26 @@ export function buildModel(
             returnType: "unknown",
         };
         const documentation = description || docsProp;
-        const { isRequired } = metaProp;
+        const { isRequired, default: def } = metaProp;
 
         const required = optional === false || isRequired === true;
         const deprecated = docsProp?.indexOf("@deprecated") >= 0;
 
-        const declaredType: string = meta[prop]?.type || returnType;
+        if (deprecated && !includeDeprecated) { return; }
+
+        let declaredType: InterfaceLookupMetaType = meta[prop]?.type || returnType;
+        if (typeof declaredType === 'object') {
+            const params = Object.entries(declaredType.parameters)
+                .map(([name, type]) => `${name}: ${type}`)
+                .join(', ');
+            declaredType = `(${params}) => ${declaredType.returnType}`;
+        }
         result.properties[prop] = {
             deprecated,
             required,
             documentation,
-            desc: resolveType(declaredType, interfaceLookup, codeLookup),
+            default: def,
+            desc: resolveType(declaredType, interfaceLookup, codeLookup, { typeStack }, config),
         };
     });
 
@@ -127,20 +155,24 @@ export function buildModel(
 }
 
 const primitiveTypes = ["number", "string", "Date", "boolean", "any"];
-type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "alias" | "unknown";
+type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "union-mixed" | "alias" | "unknown";
 
 function resolveType(
     declaredType: string,
     interfaceLookup: InterfaceLookup,
-    codeLookup: CodeLookup
+    codeLookup: CodeLookup,
+    context: { typeStack: string[] },
+    config?: Partial<Config>,
 ): JsonProperty {
     const pType = plainType(declaredType);
     const wrapping = typeWrapping(declaredType);
+    const { typeStack } = context;
+
     if (wrapping === "array") {
         return {
             type: "array",
             depth: declaredType.match(/\[/).length,
-            elements: resolveType(pType, interfaceLookup, codeLookup) as Exclude<
+            elements: resolveType(pType, interfaceLookup, codeLookup, context, config) as Exclude<
                 JsonProperty,
                 JsonArray
             >,
@@ -153,29 +185,33 @@ function resolveType(
         case "unknown":
             return { type: "primitive", tsType: resolvedType };
         case "alias":
-            return resolveType(resolvedType, interfaceLookup, codeLookup);
+            return resolveType(resolvedType, interfaceLookup, codeLookup, context, config);
         case "union-nested-object":
+        case "union-mixed":
             return {
                 type: "union",
                 tsType: resolvedType,
-                options: resolvedType.split("|").map(unionType => ({
-                    type: "nested-object",
-                    model: buildModel(unionType.trim(), interfaceLookup, codeLookup),
-                    tsType: unionType.trim(),
-                })),
+                options: resolvedType.split("|")
+                    .map(unionType => resolveType(unionType.trim(), interfaceLookup, codeLookup, context))
+                    .filter((unionDesc): unionDesc is JsonUnionType['options'][number] => unionDesc.type !== 'union'),
             };
         case "nested-object":
             return {
                 type: "nested-object",
-                model: buildModel(resolvedType, interfaceLookup, codeLookup),
+                model: buildModel(resolvedType, interfaceLookup, codeLookup, config, { typeStack }),
                 tsType: resolvedType.trim(),
             };
     }
 }
 
 function plainType(type: string): string {
+    const genericIndex = type.indexOf('<');
+    if (genericIndex >= 0) {
+        type = type.substring(0, genericIndex);
+    }
     return type.replace(/[\[\]\?\!]/g, "");
-}
+} 
+
 
 function typeClass(
     type: string,
@@ -189,18 +225,24 @@ function typeClass(
     }
 
     if (pType.indexOf("|") >= 0) {
-        const firstUnionItemClass = typeClass(
-            pType.split("|")[0].trim(),
-            interfaceLookup,
-            codeLookup
-        );
-        switch (firstUnionItemClass.resolvedClass) {
-            case "alias":
-                return { resolvedClass: "unknown", resolvedType: type };
-            case "primitive":
-                return { resolvedClass: "primitive", resolvedType: type };
-            case "nested-object":
-                return { resolvedClass: "union-nested-object", resolvedType: type };
+        const unionItemResolvedClasses = pType.split("|")
+            .map(t => typeClass(
+                t.trim(),
+                interfaceLookup,
+                codeLookup
+            ))
+            .reduce((a, n) => a.add(n.resolvedClass), new Set<string>());
+        if (unionItemResolvedClasses.size === 1) {
+            switch (unionItemResolvedClasses.values().next().value) {
+                case "alias":
+                    return { resolvedClass: "unknown", resolvedType: type };
+                case "primitive":
+                    return { resolvedClass: "primitive", resolvedType: type };
+                case "nested-object":
+                    return { resolvedClass: "union-nested-object", resolvedType: type };
+            }
+        } else {
+            return { resolvedClass: "union-mixed", resolvedType: type };
         }
     }
 
@@ -209,7 +251,6 @@ function typeClass(
     }
 
     const iLookup = interfaceLookup[pType];
-    // const cLookup = codeLookup[pType];
     if (iLookup == null) {
         return { resolvedClass: "unknown", resolvedType: type };
     }

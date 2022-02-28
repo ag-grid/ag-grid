@@ -233,6 +233,7 @@
     }
   },
   "setValueColumns": {
+    "description": "/** Set the value columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"

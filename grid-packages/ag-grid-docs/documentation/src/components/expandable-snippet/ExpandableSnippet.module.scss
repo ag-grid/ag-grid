@@ -1,7 +1,67 @@
 .expandable-snippet {
-    height: 1px; // needed for divs to fit table cell heights correctly
 
-    &__code-sample {
-        composes: my-2 from global;
+    .json-property {
+
+        &-type-nested-object {
+            > .json-property {
+                padding-left: 18px;
+            }
+        }
+    }
+
+    .json-object-union, .json-object {
+        padding-left: 18px;
+    }
+
+    .indent-level {
+        margin-left: 18px;
+    }
+
+    .deprecated {
+        text-decoration: line-through;
+    }
+
+    .expandable {
+        & > * {
+            cursor: pointer;
+        }
+    }
+
+    .unexpandable {
+        cursor: default;
+    }
+
+    .expander {
+        color: #358ccb;
+    }
+
+    .property-name {
+        position: relative;
+
+        .expander {
+            position: absolute;
+            left: -18px;
+            top: 1px;
+        }
+    }
+
+    .union-type-property {
+        position: relative;
+
+        > .expander {
+            position: absolute;
+            left: -34px;
+            top: 1px;
+        }
+    }
+
+    .union-type-object {
+        position: relative;
+
+        > .expander {
+            position: absolute;
+            left: -16px;
+            top: 2px;
+        }
     }
 }

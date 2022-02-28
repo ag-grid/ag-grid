@@ -7,6 +7,7 @@ import { GridApi } from '../gridApi';
 import { AgPromise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import { ColumnApi } from '../columns/columnApi';
+import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 export type IFilterType = string | { new(): IFilterComp; } | boolean;
 export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
@@ -79,6 +80,13 @@ export interface IFilter {
      * filter.
      */
     getModelAsString?(model: any): string;
+
+    /**
+     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
 export interface ProvidedFilterModel {

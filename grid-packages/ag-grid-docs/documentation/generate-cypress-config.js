@@ -7,6 +7,7 @@
  */
 
 const fs = require('fs-extra');
+var glob = require("glob")
 const basePath = './doc-pages/';
 
 (async () => {
@@ -31,44 +32,74 @@ function getExamples() {
     var pageGroups = [];
 
     files.forEach(page => {
+
+        // We need to handle stale folders that have been deleted from Git but still exist due to containing unversioned files.
+        const indexFilePath = basePath + page + '/index.md';
+        const hasIndexMarkdown = fs.existsSync(indexFilePath);
         const exampleDir = basePath + page + '/examples/';
-        if (fs.existsSync(exampleDir)) {
+        if (hasIndexMarkdown && fs.existsSync(exampleDir)) {
+
+            const usedExamples = []
+            const fileNames = glob.sync(basePath + page + "/*.md")
+
+            fileNames.forEach(fileName => {
+                const indexMarkdownFile = fs.readFileSync(fileName).toString();
+
+                const gridExampleReg = /<grid-example.*?name='(.*?)'.*/g
+                const gridExamples = indexMarkdownFile.matchAll(gridExampleReg);
+                const chartExampleReg = /<chart-example.*?name='(.*?)'.*/g
+                const chartExamples = indexMarkdownFile.matchAll(chartExampleReg);
+                for (const match of gridExamples) {
+                    usedExamples.push(match[1])
+                }
+                for (const match of chartExamples) {
+                    usedExamples.push(match[1])
+                }
+
+            })
+
             const examples = fs.readdirSync(exampleDir);
             let pageExamples = [];
 
             examples.forEach(example => {
-                const exFolder = exampleDir + '/' + example;
 
-                const generatedFolder = `${exFolder}/_gen`
-                if (fs.existsSync(generatedFolder)) {
-                    // Examples follow the _gen generated pattern           
-                    ['modules', 'packages'].forEach(importType => {
-                        const importTypeFolder = `${exFolder}/_gen/${importType}/`;
-                        if (fs.existsSync(importTypeFolder)) {
-                            const frameworks = fs.readdirSync(importTypeFolder);
+                if (!usedExamples.includes(example)) {
+                    console.warn('Stale example is not referenced in the docs should it be deleted?', page, example)
+                } else {
+                    const exFolder = exampleDir + '/' + example;
+
+                    const generatedFolder = `${exFolder}/_gen`
+                    if (fs.existsSync(generatedFolder)) {
+                        // Examples follow the _gen generated pattern           
+                        ['modules', 'packages'].forEach(importType => {
+                            const importTypeFolder = `${exFolder}/_gen/${importType}/`;
+                            if (fs.existsSync(importTypeFolder)) {
+                                const frameworks = fs.readdirSync(importTypeFolder);
+                                frameworks.forEach(framework => {
+                                    pageExamples.push({ page, example, importType, framework, url: `${page}/${example}/${importType}/${framework}/index.html` });
+                                })
+                            }
+                        })
+                    } else {
+
+                        // Follows the hand written direct copy examples
+                        const customExampleFolder = exampleDir + example;
+
+                        const customContents = fs.readdirSync(customExampleFolder);
+                        if (customContents.some(f => f === 'app' || !fs.lstatSync(customExampleFolder + '/' + f).isDirectory())) {
+                            // if there is a file at this level then assume it is the example code
+                            pageExamples.push({ page, example, url: `${page}/${example}/index.html` });
+
+                        } else {
+                            // assume we have framework folders 
+                            const frameworks = fs.readdirSync(customExampleFolder);
                             frameworks.forEach(framework => {
-                                pageExamples.push({ page, example, importType, framework, url: `${page}/${example}/${importType}/${framework}/index.html` });
+                                pageExamples.push({ page, example, framework, url: `${page}/${example}/${framework}/index.html` });
                             })
                         }
-                    })
-                } else {
-
-                    // Follows the hand written direct copy examples
-                    const customExampleFolder = exampleDir + example;
-
-                    const customContents = fs.readdirSync(customExampleFolder);
-                    if (customContents.some(f => f === 'app' || !fs.lstatSync(customExampleFolder + '/' + f).isDirectory())) {
-                        // if there is a file at this level then assume it is the example code
-                        pageExamples.push({ page, example, url: `${page}/${example}/index.html` });
-
-                    } else {
-                        // assume we have framework folders 
-                        const frameworks = fs.readdirSync(customExampleFolder);
-                        frameworks.forEach(framework => {
-                            pageExamples.push({ page, example, framework, url: `${page}/${example}/${framework}/index.html` });
-                        })
                     }
                 }
+
             })
             pageGroups.push({ page: page, examples: pageExamples });
         }

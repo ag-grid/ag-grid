@@ -73,7 +73,7 @@ const gridOptions: GridOptions = {
       legend: {
         enabled: true,
         position: 'left',
-        padding: 20,
+        spacing: 20,
         item: {
           label: {
             fontStyle: 'italic',

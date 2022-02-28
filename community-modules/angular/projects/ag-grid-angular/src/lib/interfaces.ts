@@ -26,8 +26,6 @@ export interface AgFrameworkComponent<T> {
     /** Mandatory - Params for rendering this component. */
     agInit(params: T): void;
 
-    /* deprecated */
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
 export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkComponent<IHeaderGroupParams> {

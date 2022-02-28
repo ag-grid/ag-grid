@@ -17,6 +17,12 @@
 |    // from its getModel() method. The event is the FilterChangedEvent
 |    // that the grid fires.
 |    onParentModelChanged(parentModel: any, event: FilterChangedEvent): void;
+|
+|    // Gets called every time the popup is shown, after the GUI returned in
+|    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
+|    // called each time the filter is shown. This is useful for any logic that requires attachment
+|    // before executing, such as putting focus on a particular DOM element. 
+|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 |}
 |```
 |

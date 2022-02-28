@@ -7,37 +7,12 @@ This page documents the AG Charts API. You can find more details about getting s
 
 ## Cartesian Chart Options
 
-<interface-documentation interfaceName='AgCartesianChartOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-## Cartesian Series Options
-
-### Line Series Options
-<interface-documentation interfaceName='AgLineSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Bar/Column Series Options
-<interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Area Series Options
-<interface-documentation interfaceName='AgAreaSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Histogram Series Options
-<interface-documentation interfaceName='AgHistogramSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Scatter Series Options
-<interface-documentation interfaceName='AgScatterSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
+<expandable-snippet interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
 
 ## Polar Chart Options
 
-<interface-documentation interfaceName='AgPolarChartOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Pie Series Options
-
-<interface-documentation interfaceName='AgPieSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
+<expandable-snippet interfaceName='AgPolarChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
 
 ## Hierarchy Chart Options
 
-<interface-documentation interfaceName='AgHierarchyChartOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
-### Treemap Series Options
-<interface-documentation interfaceName='AgTreemapSeriesOptions' overridesrc="charts-api/api.json" config='{ "suppressSort": true }'></interface-documentation>
-
+<expandable-snippet interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>

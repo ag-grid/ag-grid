@@ -6,13 +6,14 @@ import {
     ICellRenderer,
     IDate,
     IFilter,
+    IFloatingFilter,
     IHeader,
     IHeaderGroup,
     IStatusPanel,
     IToolPanel,
     Module
 } from 'ag-grid-community';
-import {ChangeDetectionStrategyType} from './changeDetectionService';
+import { ChangeDetectionStrategyType } from './changeDetectionService';
 
 export interface SharedProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -51,6 +52,8 @@ export interface IDateReactComp extends IDate, AgReactComponent {
 export interface IFilterReactComp extends IFilter, AgReactComponent {
 }
 
+export interface IFloatingFilterReactComp extends IFloatingFilter, AgReactComponent {
+}
 export interface ICellRendererReactComp extends ICellRenderer, AgReactComponent {
 }
 

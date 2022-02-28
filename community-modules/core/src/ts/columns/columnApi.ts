@@ -122,6 +122,7 @@ export class ColumnApi {
     /** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
+    /** Set the value columns. */
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
     /** Get value columns. */
     public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }

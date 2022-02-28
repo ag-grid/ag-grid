@@ -12,10 +12,6 @@
 |    // Return the DOM element of your component, this is what the grid puts into the DOM.
 |    getGui(): HTMLElement;
 |
-|    // A hook to perform any necessary operation just after the gui for this component has been
-|    // rendered in the screen.
-|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
-|
 |    // Gets called when the grid is destroyed - if your status bar components needs to do any cleanup, do it here.
 |    destroy?(): void;
 |}

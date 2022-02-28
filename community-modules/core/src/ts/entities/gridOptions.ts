@@ -89,7 +89,6 @@ import {
     FullWidthCellKeyDownEvent,
     CellEditRequestEvent
 } from "../events";
-import { IComponent } from "../interfaces/iComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions } from "../interfaces/iChartOptions";
@@ -249,7 +248,7 @@ export interface GridOptions {
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
     /** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */
-    readOnlyEdit?: boolean;    
+    readOnlyEdit?: boolean;
 
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
@@ -1091,8 +1090,15 @@ export interface GridOptions {
     onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
 
-    // apis, set by the grid on init, set to null on destroy
+    /**
+     * The Grid Api for interacting with the grid. 
+     * Set by the grid on init, set to null on destroy.
+     */
     api?: GridApi | null;
+    /**
+     * The Column Api for interacting with the grid columns. 
+     * Set by the grid on init, set to null on destroy.
+     */
     columnApi?: ColumnApi | null;
 }
 
@@ -1217,7 +1223,7 @@ export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
 
-export interface MenuItemDef {
+export interface MenuItemLeafDef {
     /** Name of the menu item */
     name: string;
     /** It the item should be enabled / disabled */
@@ -1230,12 +1236,15 @@ export interface MenuItemDef {
     checked?: boolean;
     /** The icon to display, either a DOM element or HTML string */
     icon?: HTMLElement | string;
-    /** If this item is a sub menu, contains a list of menu item definitions */
-    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
     /** CSS classes to apply to the menu item */
     cssClasses?: string[];
     /** Tooltip for the menu item */
     tooltip?: string;
+}
+
+export interface MenuItemDef extends MenuItemLeafDef {
+    /** If this item is a sub menu, contains a list of menu item definitions */
+    subMenu?: (MenuItemDef | string)[];
 }
 
 export interface GetMainMenuItemsParams {

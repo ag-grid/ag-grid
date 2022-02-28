@@ -98,6 +98,7 @@
         "addValueColumns": {},
         "removeValueColumn": {},
         "removeValueColumns": {},
+        "setValueColumns": {},
         "setColumnAggFunc": {}
     },
     "rowGroups": {

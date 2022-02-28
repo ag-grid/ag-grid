@@ -2324,6 +2324,12 @@
     },
     "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
-  "api": { "type": { "returnType": "GridApi | null" } },
-  "columnApi": { "type": { "returnType": "ColumnApi | null" } }
+  "api": {
+    "description": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
+    "type": { "returnType": "GridApi | null" }
+  },
+  "columnApi": {
+    "description": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */",
+    "type": { "returnType": "ColumnApi | null" }
+  }
 }
