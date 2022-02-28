@@ -1,33 +1,33 @@
 import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
-const BoldRenderer = function (params: ICellRendererParams) {
-  return '<b>' + params.value.name + '</b>'
+const getMedalString = function ({ gold, silver, bronze }: { gold: number, silver: number, bronze: number }) {
+  const goldStr = gold > 0 ? `Gold: ${gold} ` : '';
+  const silverStr = silver > 0 ? `Silver: ${silver} ` : '';
+  const bronzeStr = bronze > 0 ? `Bronze: ${bronze}` : '';
+  return goldStr + silverStr + bronzeStr;
+};
+
+const MedalRenderer = function (params: ICellRendererParams) {
+  return '<b>' + getMedalString(params.value) + '</b>'
 };
 
 const gridOptions: GridOptions = {
   columnDefs: [
     // simple column, easy to understand
-    { headerName: 'A', field: 'a' },
+    { field: 'name' },
     // the grid works with embedded fields
-    { headerName: 'B', field: 'b.name' },
+    { headerName: 'Age', field: 'person.age' },
     // or use value getter, all works with quick filter
-    { headerName: 'C', valueGetter: "'zz' + data.c.name" },
+    { headerName: 'Country', valueGetter: "data.person.country" },
     // or use the object value, so value passed around is an object
     {
-      headerName: 'D',
-      field: 'd',
-      cellRenderer: BoldRenderer,
+      headerName: 'Results',
+      field: 'medals',
+      cellRenderer: MedalRenderer,
       // this is needed to avoid toString=[object,object] result with objects
       getQuickFilterText: function (params) {
-        return params.value.name
+        return getMedalString(params.value);
       },
-    },
-    // this fails filter - it's working with a complex object, so the quick filter
-    // text gets [object,object]
-    {
-      headerName: 'E',
-      field: 'e',
-      cellRenderer: BoldRenderer,
     },
   ],
   defaultColDef: {
