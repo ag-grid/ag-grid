@@ -63,10 +63,10 @@ When in use, the quick filter cache text can be reset in any of the following wa
 
 The example below shows the quick filter working on different data types. Each column demonstrates something different as follows:
 
-- Name - Simple column, nothing complex.
-- Age - Complex object with 'dot' in field, quick filter works fine.
-- Country - Complex object and value getter used, again quick filter works fine.
-- Results - Complex object, quick filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
+- `Name` - Simple column, nothing complex.
+- `Age` - Complex object with 'dot' in field, quick filter works fine.
+- `Country` - Complex object and value getter used, again quick filter works fine.
+- `Results` - Complex object, quick filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
 
 The example also demonstrates having the quick filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve quick filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 

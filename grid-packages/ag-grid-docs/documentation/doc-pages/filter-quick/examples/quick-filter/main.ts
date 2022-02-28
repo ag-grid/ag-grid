@@ -8,7 +8,7 @@ const getMedalString = function ({ gold, silver, bronze }: { gold: number, silve
 };
 
 const MedalRenderer = function (params: ICellRendererParams) {
-  return '<b>' + getMedalString(params.value) + '</b>'
+  return getMedalString(params.value)
 };
 
 const gridOptions: GridOptions = {
