@@ -102,8 +102,8 @@ const GridExample = () => {
             statusPanels: [{statusPanel: 'agAggregationComponent', align: 'right'}],
         }
     }, []);
-    const getRowKey = useCallback(function (data) {
-        return data.symbol;
+    const getRowKey = useCallback(function (params) {
+        return params.data.symbol;
     }, []);
 
 

@@ -66,8 +66,8 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowKey: function (rowData) {
-    return rowData.id
+  getRowKey: function (params) {
+    return params.data.id
   },
   onGridReady: function (params) {
     gridOptions.api!.setRowData(createRowData())

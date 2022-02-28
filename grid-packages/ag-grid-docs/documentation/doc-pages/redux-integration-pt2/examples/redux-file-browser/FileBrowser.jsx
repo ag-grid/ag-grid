@@ -44,7 +44,7 @@ class FileBrowser extends Component {
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
           modules={this.modules}
-          getRowKey={data => data.id}
+          getRowKey={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}
         >
         </AgGridReact>

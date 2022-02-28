@@ -78,8 +78,8 @@ export class AppComponent {
             "green-row": 'data.color == "Green"',
             "blue-row": 'data.color == "Blue"',
         },
-        getRowKey: function (data) {
-            return data.id
+        getRowKey: function (params) {
+            return params.data.id
         },
         rowData: this.createLeftRowData(),
         rowDragManaged: true,
@@ -98,8 +98,8 @@ export class AppComponent {
             "green-row": 'data.color == "Green"',
             "blue-row": 'data.color == "Blue"',
         },
-        getRowKey: function (data) {
-            return data.id
+        getRowKey: function (params) {
+            return params.data.id
         },
         rowData: [],
         rowDragManaged: true,

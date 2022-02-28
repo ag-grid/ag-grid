@@ -354,8 +354,8 @@ const GridExample = () => {
             },
         }
     }, []);
-    const getRowKey = useCallback(function (data) {
-        return data.trade;
+    const getRowKey = useCallback(function (params) {
+        return params.data.trade;
     }, []);
 
     const updateData = useCallback(() => {

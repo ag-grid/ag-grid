@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowKeyParams, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,8 +19,9 @@ const gridOptions: GridOptions = {
     minWidth: 180,
   },
 
-  getRowKey: function (data: any) {
+  getRowKey: function (params: GetRowKeyParams) {
     // use country for group level ids, or the id we assigned for leaf level
+    var data = params.data;
     return data.id || data.country;
   },
 

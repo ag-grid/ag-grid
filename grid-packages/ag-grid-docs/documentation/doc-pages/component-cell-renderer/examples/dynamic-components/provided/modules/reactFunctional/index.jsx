@@ -138,7 +138,7 @@ const GridExample = () => {
                         modules={[ClientSideRowModelModule]}
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        getRowKey={data => data.row}
+                        getRowKey={params => params.data.row}
                         context={{
                             methodFromParent
                         }}

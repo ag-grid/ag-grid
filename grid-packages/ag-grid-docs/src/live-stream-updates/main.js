@@ -77,8 +77,8 @@
         autoGroupColumnDef: {
             width: 200
         },
-        getRowKey: function(data) {
-            return data.trade;
+        getRowKey: function(params) {
+            return params.data.trade;
         }
     };
 

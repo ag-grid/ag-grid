@@ -208,7 +208,7 @@ render() {
                 {/* provide row drag end callback */}
                 onRowDragEnd={this.onRowDragEnd}
                 {/* return id required for tree data and immutable data */}
-                getRowKey={data => data.id}
+                getRowKey={params => params.data.id}
                 {/* specify our FileCellRenderer component */}
                 components={this.components}>
             </AgGridReact>
@@ -306,7 +306,7 @@ For more details see our documentation on [Row Dragging](/row-dragging/).
 One consequence of using Redux is that when part of the state is updated in the store, the entire
 state is replaced with a new version. The grid uses Row Keys to ensure only the rows that have been updated will be re-rendered inside the grid.
 
-The file browser enables this feature using: `getRowKey={data => data.id}`.
+The file browser enables this feature using: `getRowKey={params => params.data.id}`.
 
 ## Custom File Cell Renderer
 

@@ -29,9 +29,9 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
-  getRowKey: function (data) {
+  getRowKey: function (params) {
     // use 'account' as the row ID
-    return data.account
+    return params.data.account
   },
   defaultColDef: {
     flex: 1,

@@ -25,7 +25,7 @@ import { NodeManager } from "../nodeManager";
 export class PartialStoreBlock extends RowNodeBlock {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
+    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -310,7 +310,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     protected loadFromDatasource(): void {
-        this.cacheUtils.loadFromDatasource({
+        this.storeUtils.loadFromDatasource({
             startRow: this.startRow,
             endRow: this.startRow + this.storeParams.cacheBlockSize!,
             parentNode: this.parentRowNode,

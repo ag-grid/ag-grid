@@ -60,7 +60,7 @@ const TwoGridsWithDropPositionExample = () => {
         setRightRowData(createRowBlock(2));
     }, [createDataItem]);
 
-    const getRowKey = data => data.id
+    const getRowKey = params => params.data.id
 
     const addRecordToGrid = (side, data) => {
         // if data missing or data has no it, do nothing

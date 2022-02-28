@@ -53,8 +53,8 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   enableRangeSelection: true,
   groupDefaultExpanded: 1,
-  getRowKey: function (data) {
-    return data.id
+  getRowKey: function (params) {
+    return params.data.id
   },
   onCellValueChanged: function () {
     console.log('onCellValueChanged')

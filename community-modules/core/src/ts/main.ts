@@ -385,6 +385,7 @@ export {
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowKeyFunc,
+    GetRowKeyParams,
     ProcessRowParams,
     NavigateToNextHeaderParams,
     TabToNextHeaderParams,

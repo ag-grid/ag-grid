@@ -148,8 +148,8 @@ const GridExample = () => {
             floatingFilter: true,
         }
     }, []);
-    const getRowKey = useCallback(function (item) {
-        return item.id;
+    const getRowKey = useCallback(function (params) {
+        return params.data.id;
     }, []);
 
 

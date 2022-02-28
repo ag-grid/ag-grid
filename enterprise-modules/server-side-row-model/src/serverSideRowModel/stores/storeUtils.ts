@@ -14,25 +14,11 @@ import {
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 
-@Bean('ssrmCacheUtils')
+@Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-
-    public createGroupKeys(groupNode: RowNode): string[] {
-        const keys: string[] = [];
-
-        let pointer: RowNode | null = groupNode;
-        while (pointer && pointer.level >= 0) {
-            keys.push(pointer.key!);
-            pointer = pointer.parent;
-        }
-
-        keys.reverse();
-
-        return keys;
-    }
 
     public loadFromDatasource(p: {
         storeParams: SSRMParams,
@@ -44,7 +30,7 @@ export class StoreUtils extends BeanStub {
         startRow?: number,
         endRow?: number}
     ): void {
-        const groupKeys = this.createGroupKeys(p.parentNode);
+        const groupKeys = p.parentNode.getGroupKeys();
         const { storeParams } = p;
 
         if (!storeParams.datasource) { return; }

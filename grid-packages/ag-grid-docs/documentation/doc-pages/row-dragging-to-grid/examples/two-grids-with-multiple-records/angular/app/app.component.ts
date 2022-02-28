@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowKeyParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 @Component({
@@ -202,7 +202,7 @@ export class AppComponent {
         this.leftApi.setSuppressRowClickSelection(checked);
     }
 
-    getRowKey = (data: any) => data.athlete;
+    getRowKey = (params: GetRowKeyParams) => params.data.athlete;
 
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {

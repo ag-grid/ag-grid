@@ -63,7 +63,7 @@ export default class extends Component {
         return obj;
     }
 
-    getRowKey = data => data.id
+    getRowKey = params => params.data.id
 
     addRecordToGrid(side, data) {
         // if data missing or data has no it, do nothing

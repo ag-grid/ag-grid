@@ -227,6 +227,12 @@
   "setId": {
     "type": { "arguments": { "id?": "string" }, "returnType": "void" }
   },
+  "getGroupKeys": {
+    "type": {
+      "arguments": { "excludeSelf": "undefined = false" },
+      "returnType": "string[]"
+    }
+  },
   "isPixelInRange": {
     "type": { "arguments": { "pixel": "number" }, "returnType": "boolean" }
   },

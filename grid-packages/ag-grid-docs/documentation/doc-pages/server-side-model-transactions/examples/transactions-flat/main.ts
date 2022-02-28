@@ -39,8 +39,8 @@ const gridOptions: GridOptions = {
         width: 250,
         resizable: true,
     },
-    getRowKey: function (data) {
-        return data.product
+    getRowKey: function (params) {
+        return params.data.product
     },
     rowSelection: 'multiple',
     serverSideStoreType: 'full',

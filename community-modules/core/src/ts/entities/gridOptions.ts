@@ -1267,7 +1267,16 @@ export interface GetRowNodeIdFunc {
 }
 
 export interface GetRowKeyFunc {
-    (data: any): string;
+    (params: GetRowKeyParams): string;
+}
+
+export interface GetRowKeyParams {
+    /** The data item provided to the grid for the row in question */
+    data: any;
+    /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
+    level: number;
+    /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */
+    parentKeys?: string[];
 }
 
 export interface ProcessRowParams {

@@ -20,7 +20,8 @@ const gridOptions: GridOptions = {
     minWidth: 280,
     field: 'athlete',
   },
-  getRowKey: function (data) {
+  getRowKey: function (params) {
+    var data = params.data;
     var parts = []
     if (data.country != null) {
       parts.push(data.country)

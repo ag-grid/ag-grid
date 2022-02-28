@@ -24,8 +24,8 @@ export default class extends Component {
                     "green-row": 'data.color == "Green"',
                     "blue-row": 'data.color == "Blue"',
                 },
-                getRowKey: (data) => {
-                    return data.id
+                getRowKey: (params) => {
+                    return params.data.id
                 },
                 rowDragManaged: true,
                 columnDefs: [
@@ -49,8 +49,8 @@ export default class extends Component {
                     "green-row": 'data.color == "Green"',
                     "blue-row": 'data.color == "Blue"',
                 },
-                getRowKey: (data) => {
-                    return data.id
+                getRowKey: (params) => {
+                    return params.data.id
                 },
                 rowData: [],
                 rowDragManaged: true,

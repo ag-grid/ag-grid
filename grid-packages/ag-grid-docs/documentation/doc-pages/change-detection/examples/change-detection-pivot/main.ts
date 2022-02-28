@@ -33,8 +33,8 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
   animateRows: true,
-  getRowKey: function (data) {
-    return data.student
+  getRowKey: function (params) {
+    return params.data.student
   },
   onGridReady: function (params: GridReadyEvent) {
     (document.getElementById('pivot-mode') as HTMLInputElement).checked = true
