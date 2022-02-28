@@ -29,7 +29,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
             formattedImports = `${importStrings.join('\n')}\n`
 
             // Remove the original import statements
-            tsFile = tsFile.replace(/import.*from.*\n/g, '');
+            tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
         }
 
         return `${formattedImports}${tsFile} ${toAttach || ''}`;
