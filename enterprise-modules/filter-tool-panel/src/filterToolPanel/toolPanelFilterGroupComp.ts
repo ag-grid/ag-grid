@@ -68,6 +68,7 @@ export class ToolPanelFilterGroupComp extends Component {
             filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth + 1}-header`);
         });
 
+        this.refreshFilterClass();
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
         this.setupTooltip();
@@ -159,25 +160,29 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     }
 
-    private addFilterChangedListeners() {
+    private getColumns(): Column[] {
         if (this.columnGroup instanceof ProvidedColumnGroup) {
-            const group = this.columnGroup;
-            const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
-
-            group.getLeafColumns().forEach(column => {
-                this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                    this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', anyChildFiltersActive());
-                });
-            });
-        } else {
-            const column = this.columnGroup as Column;
-
-            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
-
-            this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', column.isFilterActive());
-            });
+            return this.columnGroup.getLeafColumns();
         }
+
+        return [this.columnGroup as Column];
+    }
+
+    private addFilterChangedListeners() {
+        this.getColumns().forEach(column => {
+            this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => this.refreshFilterClass());
+        });
+
+        if (!(this.columnGroup instanceof ProvidedColumnGroup)) {
+            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        }
+    }
+
+    private refreshFilterClass(): void {
+        const columns = this.getColumns();
+
+        const anyChildFiltersActive = () => columns.some(col => col.isFilterActive());
+        this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', anyChildFiltersActive());
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
