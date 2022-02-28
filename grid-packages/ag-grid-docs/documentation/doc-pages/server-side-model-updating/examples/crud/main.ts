@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GetRowKeyParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
 declare var window: any;
 
 const columnDefs: ColDef[] = [
@@ -24,8 +24,8 @@ const gridOptions: GridOptions = {
   getRowKey: getRowKey
 }
 
-function getRowKey(data: any) {
-  return data.id;
+function getRowKey(params: GetRowKeyParams) {
+  return params.data.id;
 }
 
 // setup the grid after the page has finished loading

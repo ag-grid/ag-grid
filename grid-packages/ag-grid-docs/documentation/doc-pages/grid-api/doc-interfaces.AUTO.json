@@ -4848,6 +4848,20 @@
   "GetMainMenuItems": {},
   "GetRowNodeIdFunc": {},
   "GetRowKeyFunc": {},
+  "GetRowKeyParams": {
+    "data": {
+      "description": "/** The data item provided to the grid for the row in question */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "level": {
+      "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentKeys": {
+      "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "type": { "returnType": "string[]", "optional": true }
+    }
+  },
   "ProcessRowParams": {
     "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
     "ePinnedLeftRow": {

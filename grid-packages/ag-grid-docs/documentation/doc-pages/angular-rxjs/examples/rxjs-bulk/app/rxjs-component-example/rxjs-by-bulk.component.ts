@@ -27,9 +27,9 @@ export class RxJsComponentByFullSet {
             columnDefs: this.createColumnDefs(),
 
             immutableData: true,
-            getRowKey: (data) => {
+            getRowKey: (params) => {
                 // the code is unique, so perfect for the id
-                return data.code;
+                return params.data.code;
             },
 
             onGridReady: () => {

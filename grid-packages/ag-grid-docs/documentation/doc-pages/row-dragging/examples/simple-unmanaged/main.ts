@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowDragMoveEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowKeyParams, RowDragMoveEvent } from '@ag-grid-community/core'
 
 var immutableStore: any[] = getData();
 
@@ -70,8 +70,8 @@ function onFilterChanged() {
   gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
 }
 
-function getRowKey(data: any) {
-  return data.id
+function getRowKey(params: GetRowKeyParams) {
+  return params.data.id
 }
 
 function onRowDragMove(event: RowDragMoveEvent) {

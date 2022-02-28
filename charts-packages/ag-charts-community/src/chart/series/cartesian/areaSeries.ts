@@ -836,16 +836,6 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const x = xAxis.scale.convert(xValue);
-        const y = yAxis.scale.convert(yValue);
-
-        // Don't show the tooltip for the off-screen markers.
-        // Node: some markers might still go off-screen despite virtual rendering
-        //       (to connect the dots and render the area properly).
-        if (!(xAxis.inRange(x) && yAxis.inRange(y))) {
-            return '';
-        }
-
         const { xName, yKeys, yNames, yData, fills, strokes, tooltip, marker } = this;
 
         const { size, formatter: markerFormatter, strokeWidth: markerStrokeWidth, fill: markerFill, stroke: markerStroke } = marker;

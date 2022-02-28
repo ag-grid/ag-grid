@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams, RowNodeTransaction } from '@ag-grid-community/core';
+import { ColDef, GridApi, GetRowKeyParams, GridReadyEvent, RowDropZoneParams, RowNodeTransaction } from '@ag-grid-community/core';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { Component, ViewChild } from '@angular/core';
@@ -117,8 +117,8 @@ export class AppComponent {
         this.leftRowData = createLeftRowData();
     }
 
-    getRowKey(data: any) {
-        return data.id;
+    getRowKey(params: GetRowKeyParams) {
+        return params.data.id;
     }
 
     onGridReady(params: GridReadyEvent, side: string) {

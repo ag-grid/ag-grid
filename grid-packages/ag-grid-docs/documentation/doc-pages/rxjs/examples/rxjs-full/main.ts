@@ -46,8 +46,8 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   // implement this so that we can do selection
-  getRowKey: function (data) {
-    return data.code
+  getRowKey: function (params) {
+    return params.data.code
   },
 
   onGridReady: function (params) {

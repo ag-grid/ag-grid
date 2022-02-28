@@ -45,8 +45,8 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   columnDefs: columnDefs,
-  getRowKey: function (data) {
-    return data.code
+  getRowKey: function (params) {
+    return params.data.code
   },
   onGridReady: function (params) {
     var mockServer = createMockServer(),

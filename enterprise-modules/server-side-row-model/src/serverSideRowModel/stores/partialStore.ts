@@ -44,7 +44,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
+    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired("focusService") private focusService: FocusService;
     @Autowired("columnModel") private columnModel: ColumnModel;
 
@@ -668,7 +668,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
             type: 'partial',
-            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            route: this.parentRowNode.getGroupKeys(),
             rowCount: this.rowCount,
             lastRowIndexKnown: this.lastRowIndexKnown,
             info: this.info,

@@ -11,8 +11,8 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowKey: function (data) {
-    return data.account
+  getRowKey: function (params) {
+    return params.data.account
   },
   masterDetail: true,
   enableCellChangeFlash: true,
@@ -35,8 +35,8 @@ const gridOptions: GridOptions = {
     detailGridOptions: {
       rowSelection: 'multiple',
       enableCellChangeFlash: true,
-      getRowKey: function (data) {
-        return data.callId
+      getRowKey: function (params) {
+        return params.data.callId
       },
       columnDefs: [
         { field: 'callId', checkboxSelection: true },

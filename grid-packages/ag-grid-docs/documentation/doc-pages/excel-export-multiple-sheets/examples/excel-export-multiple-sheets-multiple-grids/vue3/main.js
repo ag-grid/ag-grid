@@ -144,8 +144,8 @@ const VueExample = {
             });
     },
     methods: {
-        getRowKey(data) {
-            return data.athlete;
+        getRowKey(params) {
+            return params.data.athlete;
         },
 
         loadGrids() {

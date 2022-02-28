@@ -1253,7 +1253,14 @@ export class GridOptionsWrapper {
     }
 
     public getRowKeyFunc(): GetRowKeyFunc | undefined {
-        return this.gridOptions.getRowKey ? this.gridOptions.getRowKey : this.gridOptions.getRowNodeId;
+        const {getRowKey, getRowNodeId} = this.gridOptions;
+        if (getRowKey) {
+            return getRowKey;
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (getRowNodeId) {
+            return params => getRowNodeId(params.data)
+        }
     }
 
     public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {

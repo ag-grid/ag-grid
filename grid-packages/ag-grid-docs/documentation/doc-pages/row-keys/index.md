@@ -15,23 +15,24 @@ Setting Row Keys is done using the `getRowKey()` grid callback.
 <snippet>
 const gridOptions = {
     // assumes each data item provided by the application has the key stored in an attribute called id
-    getRowKey: item => item.id
+    getRowKey: params => params.data.id
 }
 </snippet>
+
+<interface-documentation interfaceName='GetRowKeyParams'></interface-documentation>
+
+The example below has `getRowKey()` implemented to return `params.data.id`. When the grid is ready, the key `car-f` is used to look up a row from the grid's API and then select that Row.
+
+<grid-example title='Get Row Key' name='get-row-key' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
+
+See [Accessing Data](/accessing-data/) for more information on `getRowNode(key)` API.
+
+## Key Identity
 
 When providing Keys the following rules must be obeyed:
 
 1. Keys must be unique
 1. Keys must not change
-
-[[note]]
-|Note the word "Row Key" is often synonymous with "Row ID". It's common to refer to Row Keys as Row IDs. In the grid, the Key is stored on the Row Node in an attribute called `id`.
-
-The example below has `getRowKey()` implemented to return `item.id`. When the grid is ready, the key `car-f` is used to look up a row from the grid's API and then select that Row.
-
-<grid-example title='Get Row Key' name='get-row-key' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
-
-See [Accessing Data](/accessing-data/) for more information on `getRowNode(key)` API.
 
 ## Grid Assigned Keys
 

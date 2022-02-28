@@ -1,4 +1,4 @@
-import { Grid, AsyncTransactionsFlushed, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, AsyncTransactionsFlushed, GetRowKeyParams, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 var fakeServer = new FakeServer()
 
@@ -147,7 +147,8 @@ const gridOptions: GridOptions = {
   },
 }
 
-function getRowKey(data: any) {
+function getRowKey(params: any) {
+  var data = params.data;
   if (data.tradeId) {
     return data.tradeId
   } else if (data.bookId) {

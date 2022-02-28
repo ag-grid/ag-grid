@@ -254,7 +254,7 @@ render() {
                 {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
                 {/* return key required for immutable data */}
-                getRowKey={data => data.id}>
+                getRowKey={params => params.data.id}>
             </AgGridReact>
         </div>
     )
@@ -332,7 +332,7 @@ One consequence of using Redux is that when part of the state is updated in the 
 entire state is replaced with a new version. The grid uses Row Keys to work specifically with immutable stores such as Redux to ensure only the rows
 that have been updated will be re-rendered inside the grid.
 
-The File View enables this feature using `getRowKey={data => data.id}`.
+The File View enables this feature using `getRowKey={params => params.data.id}`.
 
 ## Demo - Redux File View
 

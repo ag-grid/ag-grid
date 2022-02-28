@@ -34,7 +34,7 @@ import { TransactionManager } from "../transactionManager";
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
 
-    @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
+    @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -54,6 +54,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private usingTreeData: boolean;
 
+    
     private allRowNodes: RowNode[];
     private nodesAfterFilter: RowNode[];
     private nodesAfterSort: RowNode[];
@@ -224,13 +225,19 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private createOrRecycleNodes(nodesToRecycle?: {[id:string]: RowNode}, rowData?: any[]): void {
         if (!rowData) { return; }
 
-        const lookupNodeToRecycle = (dataItem: any): RowNode | undefined => {
+        const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
             const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
             if (!getRowKeyFunc) { return undefined; }
 
-            const id = getRowKeyFunc(dataItem);
+            const parentKeys = this.parentRowNode.getGroupKeys();
+            const level = this.level;
+            const id = getRowKeyFunc({
+                                data, 
+                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
+                                level
+                            });
             const foundNode = nodesToRecycle[id];
             if (!foundNode) { return undefined; }
 
@@ -609,7 +616,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         let rowNode: RowNode;
         if (getRowKeyFunc!=null) {
             // find rowNode using id
-            const id: string = getRowKeyFunc(data);
+            const level = this.level;
+            const parentKeys = this.parentRowNode.getGroupKeys();
+            const id: string = getRowKeyFunc({
+                                        data, 
+                                        parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
+                                        level});
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
@@ -630,7 +642,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
             type: 'full',
-            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            route: this.parentRowNode.getGroupKeys(),
             rowCount: this.allRowNodes.length,
             info: this.info
         });

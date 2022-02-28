@@ -19,9 +19,9 @@ To efficiently process this data we need the following:
 
 <snippet>
 const gridOptions = {
-    getRowKey: data => {
+    getRowKey: params => {
         // the code is unique, so perfect for the ID
-        return data.code;
+        return params.data.code;
     }
 }
 </snippet>
@@ -49,9 +49,9 @@ To efficiently process this data we need two things:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    getRowKey: data => {
+    getRowKey: params => {
         // the code is unique, so perfect for the ID
-        return data.code;
+        return params.data.code;
     }
 }
 </snippet>

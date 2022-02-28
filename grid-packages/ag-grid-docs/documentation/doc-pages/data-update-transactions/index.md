@@ -56,7 +56,7 @@ There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object
 
   <snippet>
   const gridOptions = {
-      getRowKey: (data) => data.employeeId
+      getRowKey: (params) => params.data.employeeId
   }
   </snippet>
 

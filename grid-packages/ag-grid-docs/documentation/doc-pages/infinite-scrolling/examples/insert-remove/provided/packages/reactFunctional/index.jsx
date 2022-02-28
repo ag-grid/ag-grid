@@ -106,8 +106,8 @@ const GridExample = () => {
             resizable: true,
         }
     }, []);
-    const getRowKey = useCallback(function (item) {
-        return item.id.toString();
+    const getRowKey = useCallback(function (params) {
+        return params.data.id.toString();
     }, []);
     const getRowStyle = useCallback(function (params) {
         if (params.data && params.data.make === 'Honda') {

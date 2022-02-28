@@ -20,7 +20,7 @@ var rowData = [
 var gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: rowData,
-  getRowKey: item => item.id,
+  getRowKey: params => params.data.id,
   rowSelection: 'single',
   onGridReady: params => {
     const carF = params.api.getRowNode('car-f')!;

@@ -294,8 +294,8 @@ const gridOptions: GridOptions = {
   animateRows: true,
   suppressAggFuncInHeader: true,
   suppressRowClickSelection: true,
-  getRowKey: function (data) {
-    return data.trade
+  getRowKey: function (params) {
+    return params.data.trade
   },
   onGridReady: function (params) {
     createRowData()

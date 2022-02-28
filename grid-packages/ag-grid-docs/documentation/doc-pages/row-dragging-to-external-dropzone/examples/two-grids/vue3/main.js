@@ -127,8 +127,8 @@ const VueExample = {
         this.leftRowData = createLeftRowData();
     },
     methods: {
-        getRowKey(data) {
-            return data.id;
+        getRowKey(params) {
+            return params.data.id;
         },
 
         onGridReady(params, side) {

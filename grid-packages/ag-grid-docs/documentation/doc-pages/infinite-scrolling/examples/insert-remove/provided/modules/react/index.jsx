@@ -67,8 +67,8 @@ class GridExample extends Component {
             maxBlocksInCache: 2,
             infiniteInitialRowCount: 500,
             maxConcurrentDatasourceRequests: 2,
-            getRowKey: function (item) {
-                return item.id.toString();
+            getRowKey: function (params) {
+                return params.data.id.toString();
             },
             getRowStyle: function (params) {
                 if (params.data && params.data.make === 'Honda') {

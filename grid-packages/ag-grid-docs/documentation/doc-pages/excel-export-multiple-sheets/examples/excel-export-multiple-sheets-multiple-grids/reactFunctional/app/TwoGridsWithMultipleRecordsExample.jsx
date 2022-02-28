@@ -118,7 +118,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         });
     }
 
-    const getRowKey = data => data.athlete
+    const getRowKey = params => params.data.athlete
 
     const onDragStop = useCallback(params => {
         var nodes = params.nodes;

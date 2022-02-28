@@ -112,7 +112,7 @@ export default class extends Component {
         this.loadGrids();
     }
 
-    getRowKey = data => data.athlete
+    getRowKey = params => params.data.athlete
 
 
     addGridDropZone = () => {

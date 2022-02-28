@@ -364,7 +364,16 @@ export class RowNode implements IEventEmitter {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
-                this.id = getRowKeyFunc(this.data);
+                // we pass 'true' as we skip this level when generating keys,
+                // as we don't always have the key for this level (eg when updating
+                // data via transaction on SSRM, we are getting key to look up the
+                // RowNode, don't have the RowNode yet, thus no way to get the current key)
+                const parentKeys = this.getGroupKeys(true);
+                this.id = getRowKeyFunc({
+                                data: this.data,
+                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                                level: this.level
+                            });
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id !== null && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
@@ -383,6 +392,22 @@ export class RowNode implements IEventEmitter {
         } else {
             this.id = id;
         }
+    }
+
+    public getGroupKeys(excludeSelf = false): string[] {
+        const keys: string[] = [];
+
+        let pointer: RowNode | null = this;
+        if (excludeSelf) {
+            pointer = pointer.parent;
+        }
+        while (pointer && pointer.level >= 0) {
+            keys.push(pointer.key!);
+            pointer = pointer.parent;
+        }
+        keys.reverse();
+
+        return keys;
     }
 
     public isPixelInRange(pixel: number): boolean {

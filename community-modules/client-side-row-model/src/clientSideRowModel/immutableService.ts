@@ -47,7 +47,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     // converts the setRowData() command to a transaction
-    private createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
+    private createTransactionForRowData(rowData: any[]): ([RowDataTransaction, { [id: string]: number } | undefined]) | undefined {
         if (_.missing(this.clientSideRowModel)) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
@@ -71,13 +71,13 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
-        if (_.exists(data)) {
+        if (_.exists(rowData)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            data.forEach((dataItem: any, index: number) => {
-                const id: string = getRowKeyFunc(dataItem);
+            rowData.forEach((data: any, index: number) => {
+                const id: string = getRowKeyFunc({data, level: 0});
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 if (orderMap) {
@@ -85,16 +85,16 @@ export class ImmutableService extends BeanStub implements IImmutableService {
                 }
 
                 if (existingNode) {
-                    const dataHasChanged = existingNode.data !== dataItem;
+                    const dataHasChanged = existingNode.data !== data;
                     if (dataHasChanged) {
-                        transaction.update!.push(dataItem);
+                        transaction.update!.push(data);
                     }
                     // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
 
                     // remove from list, so we know the item is not to be removed
                     existingNodesMap[id] = undefined;
                 } else {
-                    transaction.add!.push(dataItem);
+                    transaction.add!.push(data);
                 }
             });
         }

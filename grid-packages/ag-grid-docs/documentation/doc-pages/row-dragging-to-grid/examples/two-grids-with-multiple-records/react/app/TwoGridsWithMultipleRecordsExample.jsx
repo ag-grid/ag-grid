@@ -138,7 +138,7 @@ export default class extends Component {
         this.setState({ checkBoxSelected: checked });
     }
 
-    getRowKey = data => data.athlete
+    getRowKey = params => params.data.athlete
 
 
     addGridDropZone = () => {

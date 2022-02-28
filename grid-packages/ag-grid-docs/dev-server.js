@@ -419,7 +419,10 @@ const getLernaChainBuildInfo = async (skipFrameworks) => {
     } else {
         // we filter out all "core" modules as they'll be dealt with by TSC itself
         // this will leave us with frameworks and "legacy" packages like ag-grid-community
-        const includeFrameworksFilter = dependent => (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-');
+        const includeFrameworksFilter = dependent => (
+            (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) ||
+            (dependent.startsWith('ag-') && dependent !== 'ag-grid-documentation' && dependent !== 'ag-grid-docs')
+        );
         filterBuildChain(includeFrameworksFilter);
     }
 
@@ -662,7 +665,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 
 const readModulesState = () => {
     const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages'];
-    const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'polymer', 'ag-grid-polymer'];
+    const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'ag-grid-documentation'];
     const modulesState = {};
 
     moduleRootNames.forEach(moduleRootName => {

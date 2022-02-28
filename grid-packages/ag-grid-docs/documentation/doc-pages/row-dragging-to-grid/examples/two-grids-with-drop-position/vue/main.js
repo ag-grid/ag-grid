@@ -128,8 +128,8 @@ const VueExample = {
         this.rightRowData = createRowBlock(2);
     },
     methods: {
-        getRowKey(data) {
-            return data.id;
+        getRowKey(params) {
+            return params.data.id;
         },
 
         onGridReady(params, side) {
