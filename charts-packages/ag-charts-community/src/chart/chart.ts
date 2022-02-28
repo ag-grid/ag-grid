@@ -1048,6 +1048,15 @@ export abstract class Chart extends Observable {
                 if (!datum.point) {
                     return;
                 }
+
+                // Ignore off-screen points when finding the closest series node datum in tracking mode.
+                const { xAxis, yAxis } = series;
+                const isInRange = xAxis?.inRange(datum.point.x) && yAxis?.inRange(datum.point.y);
+
+                if (!isInRange) {
+                    return;
+                }
+
                 const distance = getDistance(hitPoint, datum.point);
                 if (distance < minDistance) {
                     minDistance = distance;
