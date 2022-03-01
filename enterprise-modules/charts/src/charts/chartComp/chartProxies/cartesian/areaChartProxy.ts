@@ -19,7 +19,7 @@ export class AreaChartProxy extends CartesianChartProxy {
             type: 'area',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-            axes: this.getAxes()
+            // axes: this.getAxes()
         });
     }
 
@@ -136,7 +136,7 @@ export class AreaChartProxy extends CartesianChartProxy {
 
     private getAxes() {
         const axisOptions = this.getAxesOptions();
-        return [
+        const options = [
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
@@ -150,5 +150,12 @@ export class AreaChartProxy extends CartesianChartProxy {
                 position: ChartAxisPosition.Left
             },
         ];
+
+        if (this.xAxisType === 'time') {
+            delete options[0].paddingInner;
+            delete options[0].paddingOuter;
+        }
+
+        return options;
     }
 }
