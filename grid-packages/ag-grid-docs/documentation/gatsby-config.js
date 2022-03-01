@@ -180,7 +180,7 @@ const plugins = [
     resolve: 'gatsby-plugin-sitemap',
     options: {
       excludes: [`/documentation`, '/changelog'],
-      output: 'sitemap-documentation.xml'
+      output: 'sitemap-documentation'
     }
   },
   {
