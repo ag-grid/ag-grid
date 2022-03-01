@@ -227,18 +227,10 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(defaultJSONNodesExpanded);
     const [isDocumentationExpanded, setDocumentationExpanded] = useState(defaultDocumentationNodesExpanded);
 
-    const { deprecated, documentation } = meta;
-    const defaultValue = meta.default;
+    const { deprecated } = meta;
     const jsdocsMode = config.jsdocsMode || 'jsdoc';
-    const formattedDocumentation: string[] = documentation?.trim() ? 
-        jsdocsMode === 'jsdoc' ? [ documentation ] :
-        [ formatJsDocString(documentation) ] :
-        [];
+    const formattedDocumentation = formatDocumentation(meta, config);
 
-    if (defaultValue && jsdocsMode !== 'jsdoc') {
-        formattedDocumentation.push('Default: `' + JSON.stringify(defaultValue) + '`');
-    }
- 
     let propertyRendering;
     let collapsePropertyRendering;
     let needsClosingSemi = true;
@@ -247,7 +239,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             propertyRendering = renderPrimitiveType(desc);
             break;
         case "array":
-            propertyRendering = renderArrayType(desc, config);
+            propertyRendering = renderArrayType(desc, isDocumentationExpanded, meta, config);
             collapsePropertyRendering = desc.elements.type !== 'primitive' && (
                 <Fragment>
                     <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>
@@ -257,7 +249,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             );
             break;
         case "nested-object":
-            propertyRendering = renderNestedObject(desc, config);
+            propertyRendering = renderNestedObject(desc, isDocumentationExpanded, meta, config);
             collapsePropertyRendering = renderCollapsedNestedObject(desc);
             break;
         case "union":
@@ -303,12 +295,15 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             }
             {(!isJSONNodeExpanded || needsClosingSemi) && <span className={classnames('token', 'punctuation')}>; </span>}
             { maybeRenderDocumentationExpander(jsdocsMode, formattedDocumentation, setDocumentationExpanded, isDocumentationExpanded) }
-            { maybeRenderDocumentation(jsdocsMode, meta, isDocumentationExpanded, formattedDocumentation) }
+            { maybeRenderDocumentation(meta, isDocumentationExpanded, config) }
         </div>
     );
 };
 
-function maybeRenderDocumentation(jsdocsMode: string, meta: Omit<JsonModel['properties'][number], 'desc'>, isDocumentationExpanded: boolean, formattedDocumentation: string[]): React.ReactNode {
+function maybeRenderDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, isDocumentationExpanded: boolean, config: Config): React.ReactNode {
+    const jsdocsMode = config.jsdocsMode || 'jsdoc';
+
+    const formattedDocumentation = formatDocumentation(meta, config);
     if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
@@ -405,11 +400,17 @@ function renderPrimitiveType(desc: JsonPrimitiveProperty) {
     return <span className={classnames('token', 'builtin')}>{desc.tsType}</span>;
 }
 
-function renderNestedObject(desc: JsonObjectProperty, config: Config) {
+function renderNestedObject(
+    desc: JsonObjectProperty,
+    isDocumentationExpanded: boolean,
+    meta: Omit<JsonModel['properties'][number], 'desc'>,
+    config: Config,
+) {
     return (
         <Fragment>
             <span className={classnames('token', 'punctuation')}>{'{ '}</span>
             {renderTsTypeComment(desc)}
+            {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
             <div className={classnames(styles['json-object'])}>
                 <ModelSnippet model={desc.model} config={config}></ModelSnippet>
             </div>
@@ -429,7 +430,12 @@ function renderCollapsedNestedObject(desc: JsonObjectProperty) {
     )    
 }
 
-function renderArrayType(desc: JsonArray, config: Config) {
+function renderArrayType(
+    desc: JsonArray,
+    isDocumentationExpanded: boolean,
+    meta: Omit<JsonModel['properties'][number], 'desc'>,
+    config: Config,
+) {
     let arrayElementRendering;
     let arrayBracketsSurround = true;
 
@@ -441,6 +447,7 @@ function renderArrayType(desc: JsonArray, config: Config) {
         case "nested-object":
             arrayElementRendering = (
                 <Fragment>
+                    {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                     <span className={classnames('token', 'comment')}>/* {desc.elements.tsType} */</span>
                     <div className={styles["json-object"]}>
@@ -453,6 +460,7 @@ function renderArrayType(desc: JsonArray, config: Config) {
         case "union":
             arrayElementRendering = (
                 <Fragment>
+                    {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
                     <ModelSnippet model={desc.elements} closeWith={''} config={config}></ModelSnippet>
                 </Fragment>
             );
@@ -473,6 +481,22 @@ function renderArrayType(desc: JsonArray, config: Config) {
 
 function isSimpleUnion(desc: JsonUnionType) {
     return desc.options.every(opt => opt.type === 'primitive');
+}
+
+function formatDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
+    const { documentation } = meta;
+    const defaultValue = meta.default;
+    const jsdocsMode = config.jsdocsMode || 'jsdoc';
+    const result: string[] = documentation?.trim() ? 
+        jsdocsMode === 'jsdoc' ? [ documentation ] :
+        [ formatJsDocString(documentation) ] :
+        [];
+
+    if (defaultValue && jsdocsMode !== 'jsdoc') {
+        result.push('Default: `' + JSON.stringify(defaultValue) + '`');
+    }
+    
+    return result;
 }
 
 export function buildObjectIndent(level: number): string {
