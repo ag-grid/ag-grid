@@ -12,6 +12,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
     private needRefresh = false;
 
+    private refreshStrategy: 'rows' | 'everything' | 'nothing';
+
     public init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void {
         this.params = params;
         this.comp = comp;
@@ -20,8 +22,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         if (doNothingBecauseInsidePinnedSection) { return; }
 
         this.setAutoHeightClasses();
-        this.checkForDeprecations();
-        this.ensureValidRefreshStrategy();
+        this.setupRefreshStrategy();
         this.addThemeToDetailGrid();
         this.createDetailGrid();
         this.loadRowData();
@@ -41,30 +42,28 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.comp.addOrRemoveDetailGridCssClass(detailClass, true);
     }
 
-    private checkForDeprecations(): void {
+    private setupRefreshStrategy(): void {
         if (this.params.suppressRefresh) {
             console.warn("AG Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
                 "longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.");
-            this.params.refreshStrategy = 'nothing';
-        }
-    }
-
-    private ensureValidRefreshStrategy(): void {
-        switch (this.params.refreshStrategy) {
-            case 'rows':
-            case 'nothing':
-            case 'everything':
-                return;
+            this.refreshStrategy = 'nothing';
+            return;
         }
 
-        // check for incorrectly supplied refresh strategy
-        if (this.params.refreshStrategy) {
-            console.warn("AG Grid: invalid cellRendererParams.refreshStrategy = '" + this.params.refreshStrategy +
+        const providedStrategy = this.params.refreshStrategy;
+
+        const validSelection = providedStrategy=='everything' || providedStrategy=='nothing' || providedStrategy=='rows';
+        if (validSelection) {
+            this.refreshStrategy = providedStrategy;
+            return;
+        }
+
+        if (providedStrategy!=null) {
+            console.warn("AG Grid: invalid cellRendererParams.refreshStrategy = '" + providedStrategy +
                 "' supplied, defaulting to refreshStrategy = 'rows'.");
         }
-
-        // use default strategy
-        this.params.refreshStrategy = 'rows';
+    
+        this.refreshStrategy = 'rows';
     }
 
     private addThemeToDetailGrid(): void {
@@ -162,7 +161,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // if we return true, it means we pretend to the grid
         // that we have refreshed, so refresh will never happen.
-        const doNotRefresh = !this.needRefresh || this.params.refreshStrategy === 'nothing';
+        const doNotRefresh = !this.needRefresh || this.refreshStrategy === 'nothing';
         if (doNotRefresh) {
             // we do nothing in this refresh method, and also tell the grid to do nothing
             return GET_GRID_TO_DO_NOTHING;
@@ -171,7 +170,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         // reset flag, so don't refresh again until more data changes.
         this.needRefresh = false;
 
-        if (this.params.refreshStrategy === 'everything') {
+        if (this.refreshStrategy === 'everything') {
             // we want full refresh, so tell the grid to destroy and recreate this cell
             return GET_GRID_TO_REFRESH;
         } else {
