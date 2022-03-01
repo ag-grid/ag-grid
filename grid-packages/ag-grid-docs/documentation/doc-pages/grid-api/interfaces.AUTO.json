@@ -7152,9 +7152,9 @@
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
       "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
-      "navigator?": "AgNavigatorOptions",
       "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
+      "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "number",
@@ -7170,9 +7170,9 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
-      "navigator?": "/** Configuration for the chart navigator. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",

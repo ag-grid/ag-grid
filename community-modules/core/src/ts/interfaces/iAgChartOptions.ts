@@ -1124,12 +1124,12 @@ export interface AgCartesianChartOptions<
     TSeriesOptions = AgCartesianSeriesOptions[]
 > extends AgBaseChartOptions {
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
-    /** Configuration for the chart navigator. */
-    navigator?: AgNavigatorOptions;
     /** Axis configurations. */
     axes?: TAxisOptions;
     /** Series configurations. */
     series?: TSeriesOptions;
+    /** Configuration for the chart navigator. */
+    navigator?: AgNavigatorOptions;
 }
 
 export interface AgPolarChartOptions<TSeriesOptions = AgPolarSeriesOptions[]> extends AgBaseChartOptions {

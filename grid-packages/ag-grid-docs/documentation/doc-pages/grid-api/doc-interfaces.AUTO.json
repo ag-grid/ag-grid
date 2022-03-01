@@ -12073,10 +12073,6 @@
         "optional": true
       }
     },
-    "navigator": {
-      "description": "/** Configuration for the chart navigator. */",
-      "type": { "returnType": "AgNavigatorOptions", "optional": true }
-    },
     "axes": {
       "description": "/** Axis configurations. */",
       "type": { "returnType": "TAxisOptions", "optional": true }
@@ -12084,6 +12080,10 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "TSeriesOptions", "optional": true }
+    },
+    "navigator": {
+      "description": "/** Configuration for the chart navigator. */",
+      "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "data": {

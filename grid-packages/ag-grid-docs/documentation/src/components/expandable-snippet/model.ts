@@ -1,9 +1,12 @@
 import { getJsonFromFile } from "../documentation-helpers";
 import useJsonFileNodes from "../use-json-file-nodes";
 
+type InterfaceLookupMetaType = string | { parameters: Record<string, string>, returnType: string };
+
 type MetaRecord = {
     description?: string;
-    type?: string;
+    type?: InterfaceLookupMetaType;
+    isTypeAlias?: boolean;
     isRequired?: boolean;
     default: any;
     min?: number;
@@ -11,17 +14,13 @@ type MetaRecord = {
     unit?: string;
     options?: string[];
     suggestions?: string[];
+    propertyOrder?: string[];
 };
-
-type InterfaceLookupMetaType = string | { parameters: Record<string, string>, returnType: string };
 
 export type InterfaceLookup = Record<
     string,
     {
-        meta: {
-            isTypeAlias?: boolean;
-            type?: InterfaceLookupMetaType;
-        };
+        meta: MetaRecord;
         docs: Record<string, string>;
         type: Record<string, string> | string;
     }
