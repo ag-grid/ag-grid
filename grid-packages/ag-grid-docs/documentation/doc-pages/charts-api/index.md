@@ -7,7 +7,7 @@ This page documents the AG Charts API. You can find more details about getting s
 
 ## Cartesian Chart Options
 
-<expandable-snippet interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
+<expandable-snippet interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "includeDeprecated": false, "jsdocsMode": "expandable" }'></expandable-snippet>
 
 ## Polar Chart Options
 
