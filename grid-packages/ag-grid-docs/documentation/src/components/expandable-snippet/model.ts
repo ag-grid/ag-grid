@@ -108,7 +108,6 @@ export function buildModel(
         return result;
     }
     if (typeStack.includes(type)) {
-        console.warn('Type recursion terminated due to infinite loop at: ' + type);
         return result;
     }
     typeStack = typeStack.concat([type]);
