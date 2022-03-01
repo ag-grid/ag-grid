@@ -116,8 +116,12 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
+    private static DEBUG = false;
+    
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
-        // console.log('user options', userOptions);
+        if (AgChartV2.DEBUG) {
+            console.log('user options', userOptions);
+        }
         const mergedOptions = prepareOptions(userOptions);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
@@ -134,7 +138,9 @@ export abstract class AgChartV2 {
     }
 
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
-        // console.log('user options', userOptions);
+        if (AgChartV2.DEBUG) {
+            console.log('user options', userOptions);
+        }
         const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
@@ -155,7 +161,9 @@ export abstract class AgChartV2 {
         if (update.type == null) {
             update = {...update, type: chart.options.type || optionsType(update)};
         }
-        // console.log('delta update', update);
+        if (AgChartV2.DEBUG) {
+            console.log('delta update', update);
+        }
         applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions)
     }
 }
@@ -175,7 +183,7 @@ function applyChartOptions<
     }
 
     let performProcessData = false;
-    if (options.series) {
+    if (options.series && options.series.length > 0) {
         chart.series = createSeries(options.series);
     }
     if (isAgCartesianChartOptions(options) && options.axes) {

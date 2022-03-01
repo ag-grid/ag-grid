@@ -292,7 +292,7 @@ export class CartesianChart extends Chart {
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
 
-            if (boundSeries.length === 0) {
+            if (boundSeries.length === 0 && this._series.length > 0) {
                 console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
             }
 
