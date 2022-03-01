@@ -19,7 +19,7 @@ export class AreaChartProxy extends CartesianChartProxy {
             type: 'area',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-            // axes: this.getAxes()
+            axes: this.getAxes(),
         });
     }
 
