@@ -1,12 +1,8 @@
 ---
-title: "AG Grid Packages & Modules"
+title: "AG Grid Packages vs Modules"
 ---
 
-There are two main ways to add AG Grid to your application depending on your requirements and priorities with respect to bundle size / developer effort.
-
-## Introduction
-
-You can install AG Grid by either using our feature complete `packages`, or by cherry picking the feature `modules` specific to your application's grid requirements. 
+There are two main ways to add AG Grid to your application depending on your requirements and priorities with respect to bundle size / developer effort. You can install AG Grid by either using our feature complete `packages`, or by cherry picking the feature `modules` specific to your application's grid requirements. 
 
 ## Which to use?
 

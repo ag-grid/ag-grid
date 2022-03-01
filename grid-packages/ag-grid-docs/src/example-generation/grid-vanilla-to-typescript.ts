@@ -1,5 +1,111 @@
-import { addBindingImports, ImportType } from './parser-utils';
+import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
 const fs = require('fs-extra');
+
+export function toTitleCase(value) {
+    return value[0].toUpperCase() + value.slice(1);
+};
+export function getImport(filename: string) {
+    const componentName = filename.split('.')[0];
+    return `import { ${toTitleCase(componentName)} } from './${componentName}';`;
+}
+function getPropertyInterfaces(properties) {
+    let propTypesUsed = [];
+    properties.forEach(prop => {
+        if (prop.typings?.typesToInclude?.length > 0) {
+            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
+        }
+    });
+    return [...new Set(propTypesUsed)];
+}
+function getModuleImports(bindings: any): string[] {
+    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const { modules } = gridSettings;
+
+    const imports = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
+
+    if (modules) {
+        let exampleModules = modules;
+        if (modules === true) {
+            exampleModules = ['clientside'];
+        }
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+
+        imports.push(...moduleImports);
+        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-alpine';
+        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
+    } else {
+        if (gridSettings.enterprise) {
+            throw new Error(`The Typescript example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
+        }
+        bindings.gridSuppliedModules = '[ ClientSideRowModelModule ]';
+        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+
+
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to alpine if it does
+        const theme = gridSettings.theme || 'ag-theme-alpine';
+        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
+    }
+
+
+    let propertyInterfaces = getPropertyInterfaces(properties);
+    const bImports = [...(bindingImports || [])];
+    bImports.push({
+        module: `'@ag-grid-community/core'`,
+        isNamespaced: false,
+        imports: [...propertyInterfaces]
+    })
+
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, false, false);
+    }
+
+    imports.push(`\nModuleRegistry.registerModules(${bindings.gridSuppliedModules})`)
+
+    return imports;
+}
+
+function getPackageImports(bindings: any): string[] {
+    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const imports = [];
+
+    if (gridSettings.enterprise) {
+        imports.push("import 'ag-grid-enterprise';");
+    }
+
+    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
+
+    let propertyInterfaces = getPropertyInterfaces(properties);
+    const bImports = [...(bindingImports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: [...propertyInterfaces]
+    })
+
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, false);
+    }
+    return imports;
+}
+
+function getImports(bindings: any, importType: ImportType): string[] {
+    if (importType === "packages") {
+        return getPackageImports(bindings);
+    } else {
+        return getModuleImports(bindings);
+    }
+}
 
 export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
     const { gridSettings, externalEventHandlers, imports } = bindings;
@@ -31,29 +137,15 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
         throw Error('DomContentLoaded replace failed for ' + mainFilePath)
     }
 
-    let formattedImports = '';
-    let importStrings = [];
-
-    if (gridSettings.enterprise) {
-        importStrings.push("import 'ag-grid-enterprise';");
-    }
-
-    importStrings.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
-
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
-    const theme = gridSettings.theme || 'ag-theme-alpine';
-    importStrings.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
-
-    if (imports.length > 0) {
-        // For now we dont support Modules in our Typescript examples so always convert to packages
-        addBindingImports(imports, importStrings, true, false);
-        formattedImports = `${importStrings.join('\n')}\n`;
+    return importType => {
+        const importStrings = getImports(bindings, importType);
+        const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
-    }
 
-    return importType => `${formattedImports}${unWrapped} ${toAttach || ''}`
+        return `${formattedImports}${unWrapped} ${toAttach || ''}`
+    }
 }
 
 if (typeof window !== 'undefined') {

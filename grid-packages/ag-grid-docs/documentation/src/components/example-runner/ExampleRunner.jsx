@@ -3,7 +3,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 import classnames from 'classnames';
 import fs from 'fs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCode, faExternalLinkAlt, faPlay, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { faCode, faExternalLinkAlt, faPlay, faQuestionCircle, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from 'components/GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
@@ -14,6 +14,7 @@ import isServerSideRendering from 'utils/is-server-side-rendering';
 import { getIndexHtml } from './index-html-helper';
 import anchorIcon from 'images/anchor';
 import styles from './ExampleRunner.module.scss';
+import DocumentationLink from 'components/DocumentationLink';
 
 /**
  * The example runner is used for displaying examples in the documentation, showing the example executing
@@ -185,16 +186,17 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     useVue3={useVue3}
                     onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
             }
-            {library === 'grid' && exampleInfo.framework !== 'javascript' && isGenerated &&
-                <ImportTypeSelector
-                    importType={exampleImportType}
-                    onChange={event => set({ exampleImportType: event.target.value })} />
-            }
             {exampleInfo.framework === 'javascript' && (isGenerated || type === 'multi') &&
                 (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript') &&
                 <TypscriptStyleSelector
                     useTypescript={useTypescript}
                     onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
+            }
+            {library === 'grid' && (exampleInfo.framework !== 'javascript' || exampleInfo.internalFramework === 'typescript') && isGenerated &&
+                <ImportTypeSelector
+                    framework={exampleInfo.framework}
+                    importType={exampleImportType}
+                    onChange={event => set({ exampleImportType: event.target.value })} />
             }
         </div>
         <div className={styles['example-runner__body']} style={exampleStyle}>
@@ -242,7 +244,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
     </div>;
 };
 
-const ImportTypeSelector = ({ importType, onChange }) => {
+const ImportTypeSelector = ({ importType, onChange, framework }) => {
     return <div className={styles['example-runner__import-type']}>
         {!isServerSideRendering() &&
             <select className={styles['example-runner__import-type__select']} style={{ width: 120 }} value={importType} onChange={onChange}
@@ -251,6 +253,13 @@ const ImportTypeSelector = ({ importType, onChange }) => {
                     <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
                 )}
             </select>}
+
+        <DocumentationLink framework={framework} target="_blank" href={`/packages-modules`} role="tooltip" title={importType === 'packages'
+            ? "Example is using AG Grid packages where all the grid features are included by default. Click for more info."
+            : "Example is using AG Grid modules to minimise application bundle size and only includes the modules required to demonstrate the given feature. Click for more info."}>
+            <FontAwesomeIcon style={{ marginLeft: '5px' }} icon={faQuestionCircle} inverse />
+        </DocumentationLink>
+
     </div>;
 };
 

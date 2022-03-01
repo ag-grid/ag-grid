@@ -59,8 +59,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
             let formattedImports = '';
             if (imports.length > 0) {
                 let importStrings = [];
-                // For now we dont support Modules in our Typescript examples so always convert to packages
-                const convertToPackage = framework == 'typescript' || importType === 'packages';
+                const convertToPackage = importType === 'packages';
                 addBindingImports(imports, importStrings, convertToPackage, true);
                 formattedImports = `${importStrings.join('\n')}\n`
 
