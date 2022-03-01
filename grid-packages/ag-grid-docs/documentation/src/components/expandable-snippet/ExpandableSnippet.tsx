@@ -3,19 +3,16 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus, faChevronCircleDown, faChevronCircleUp } from '@fortawesome/free-solid-svg-icons';
 
-import { escapeGenericCode, formatJsDocString, convertMarkdown } from "../documentation-helpers";
+import { formatJsDocString, convertMarkdown } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
 import codeStyles from '../Code.module.scss';
 
 import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups, JsonModelProperty, JsonObjectProperty, JsonPrimitiveProperty, JsonArray } from "./model";
 
-const defaultJSONNodesExpanded = false;
-const defaultDocumentationNodesExpanded = false;
-const singleExpanderMode = true;
+const DEFAULT_JSON_NODES_EXPANDED = false;
 
 type Config = {
     includeDeprecated?: boolean,
-    jsdocsMode?: 'jsdoc' | 'expandable'
 };
 
 export interface ExpandableSnippetParams {
@@ -159,7 +156,7 @@ function renderUnionNestedObject(
     closeWith: string,
     config: Config,
 ) { 
-    const [isExpanded, setExpanded] = useState(defaultJSONNodesExpanded);
+    const [isExpanded, setExpanded] = useState(DEFAULT_JSON_NODES_EXPANDED);
     const discriminatorProp = "type";
     const discriminator = desc.model.properties[discriminatorProp];
 
@@ -224,11 +221,9 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     meta,
     config,
 }) => {
-    const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(defaultJSONNodesExpanded);
-    const [isDocumentationExpanded, setDocumentationExpanded] = useState(defaultDocumentationNodesExpanded);
+    const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(DEFAULT_JSON_NODES_EXPANDED);
 
     const { deprecated } = meta;
-    const jsdocsMode = config.jsdocsMode || 'jsdoc';
     const formattedDocumentation = formatDocumentation(meta, config);
 
     let propertyRendering;
@@ -239,7 +234,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             propertyRendering = renderPrimitiveType(desc);
             break;
         case "array":
-            propertyRendering = renderArrayType(desc, isDocumentationExpanded, meta, config);
+            propertyRendering = renderArrayType(desc, meta, config);
             collapsePropertyRendering = desc.elements.type !== 'primitive' && (
                 <Fragment>
                     <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>
@@ -249,7 +244,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             );
             break;
         case "nested-object":
-            propertyRendering = renderNestedObject(desc, isDocumentationExpanded, meta, config);
+            propertyRendering = renderNestedObject(desc, meta, config);
             collapsePropertyRendering = renderCollapsedNestedObject(desc);
             break;
         case "union":
@@ -264,11 +259,8 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             console.warn(`AG Docs - unhandled sub-type: ${desc["type"]}`);
     }
 
-    let expandable = !!collapsePropertyRendering || (singleExpanderMode && formattedDocumentation.length > 0);
-    const toggleAll = () => {
-        setJSONNodeExpanded(!isJSONNodeExpanded);
-        setDocumentationExpanded(!isDocumentationExpanded);
-    };
+    let expandable = !!collapsePropertyRendering || (formattedDocumentation.length > 0);
+    let inlineDocumentation = !collapsePropertyRendering;
     return (
         <div
             className={classnames(
@@ -277,16 +269,8 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                 deprecated && styles['deprecated'],
                 styles['json-property-type-' + desc.type]
             )}
-            onClick={() => expandable ? toggleAll() : null}
+            onClick={() => expandable ? setJSONNodeExpanded(!isJSONNodeExpanded) : null}
         >
-            {
-                jsdocsMode === 'jsdoc' &&
-                <div
-                    className={classnames('token', 'comment', styles['jsdoc'])}
-                    dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
-                >
-                </div>
-            }
             {renderPropertyDeclaration(propName, meta, isJSONNodeExpanded, expandable)}
             {
                 !isJSONNodeExpanded && collapsePropertyRendering ? 
@@ -294,14 +278,17 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                     <span className={classnames(styles['unexpandable'])} onClick={(e) => e.stopPropagation()}>{propertyRendering}</span>
             }
             {(!isJSONNodeExpanded || needsClosingSemi) && <span className={classnames('token', 'punctuation')}>; </span>}
-            { maybeRenderDocumentationExpander(jsdocsMode, formattedDocumentation, setDocumentationExpanded, isDocumentationExpanded) }
-            { maybeRenderDocumentation(meta, isDocumentationExpanded, config) }
+            { maybeRenderDocumentation(meta, inlineDocumentation && isJSONNodeExpanded, config) }
         </div>
     );
 };
 
-function maybeRenderDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, isDocumentationExpanded: boolean, config: Config): React.ReactNode {
-    const jsdocsMode = config.jsdocsMode || 'jsdoc';
+function maybeRenderDocumentation(
+    meta: Omit<JsonModel['properties'][number], 'desc'>,
+    isDocumentationExpanded: boolean,
+    config: Config,
+): React.ReactNode {
+    if (!isDocumentationExpanded) { return; }
 
     const formattedDocumentation = formatDocumentation(meta, config);
     if (formattedDocumentation.length === 0) { return; }
@@ -311,23 +298,10 @@ function maybeRenderDocumentation(meta: Omit<JsonModel['properties'][number], 'd
 
     return (
         <Fragment>
-            {jsdocsMode === 'jsdoc' && renderPropertyDefault(meta)}
-            {
-                jsdocsMode !== 'jsdoc' && isDocumentationExpanded &&
-                    <div className={classnames('token', 'comment', styles['jsdoc-expandable'])} dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}>
-                    </div>
-            }
+            <div className={classnames('token', 'comment', styles['jsdoc-expandable'])} dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}>
+            </div>
         </Fragment>
     );
-}
-
-function maybeRenderDocumentationExpander(jsdocsMode: string, formattedDocumentation: string[], setDocumentationExpanded: React.Dispatch<React.SetStateAction<boolean>>, isDocumentationExpanded: boolean): React.ReactNode {
-    if (formattedDocumentation.length === 0 || defaultDocumentationNodesExpanded || singleExpanderMode) { return; }
-
-    return jsdocsMode === 'expandable' && formattedDocumentation.length > 0 &&
-        <span onClick={(e) => { setDocumentationExpanded(!isDocumentationExpanded); e.stopPropagation(); } } className={classnames(styles['documentation-expander'])}>
-            {renderDocumentationExpander(isDocumentationExpanded)}
-        </span>;
 }
 
 function renderTsTypeComment(desc: { tsType: string }) {
@@ -340,17 +314,6 @@ function renderJsonNodeExpander(isExpanded: boolean) {
             icon={isExpanded ? faMinus : faPlus}
             className={classnames(
                 styles['expander'],
-            )}
-        />
-    );
-}
-
-function renderDocumentationExpander(isExpanded: boolean) {
-    return (
-        <FontAwesomeIcon
-            icon={isExpanded ? faChevronCircleUp : faChevronCircleDown}
-            className={classnames(
-                styles['documentation-expander'],
             )}
         />
     );
@@ -402,7 +365,6 @@ function renderPrimitiveType(desc: JsonPrimitiveProperty) {
 
 function renderNestedObject(
     desc: JsonObjectProperty,
-    isDocumentationExpanded: boolean,
     meta: Omit<JsonModel['properties'][number], 'desc'>,
     config: Config,
 ) {
@@ -410,7 +372,7 @@ function renderNestedObject(
         <Fragment>
             <span className={classnames('token', 'punctuation')}>{'{ '}</span>
             {renderTsTypeComment(desc)}
-            {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
+            {maybeRenderDocumentation(meta, true, config)}
             <div className={classnames(styles['json-object'])}>
                 <ModelSnippet model={desc.model} config={config}></ModelSnippet>
             </div>
@@ -432,7 +394,6 @@ function renderCollapsedNestedObject(desc: JsonObjectProperty) {
 
 function renderArrayType(
     desc: JsonArray,
-    isDocumentationExpanded: boolean,
     meta: Omit<JsonModel['properties'][number], 'desc'>,
     config: Config,
 ) {
@@ -447,7 +408,7 @@ function renderArrayType(
         case "nested-object":
             arrayElementRendering = (
                 <Fragment>
-                    {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
+                    {maybeRenderDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                     <span className={classnames('token', 'comment')}>/* {desc.elements.tsType} */</span>
                     <div className={styles["json-object"]}>
@@ -460,7 +421,7 @@ function renderArrayType(
         case "union":
             arrayElementRendering = (
                 <Fragment>
-                    {maybeRenderDocumentation(meta, isDocumentationExpanded, config)}
+                    {maybeRenderDocumentation(meta, true, config)}
                     <ModelSnippet model={desc.elements} closeWith={''} config={config}></ModelSnippet>
                 </Fragment>
             );
@@ -486,13 +447,11 @@ function isSimpleUnion(desc: JsonUnionType) {
 function formatDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
     const { documentation } = meta;
     const defaultValue = meta.default;
-    const jsdocsMode = config.jsdocsMode || 'jsdoc';
     const result: string[] = documentation?.trim() ? 
-        jsdocsMode === 'jsdoc' ? [ documentation ] :
         [ formatJsDocString(documentation) ] :
         [];
 
-    if (defaultValue && jsdocsMode !== 'jsdoc') {
+    if (defaultValue) {
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
     
