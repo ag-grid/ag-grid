@@ -982,6 +982,10 @@ export class RowCtrl extends BeanStub {
     }
 
     private onModelUpdated(): void {
+        this.refreshFirstAndLastRowStyles();
+    }
+
+    private refreshFirstAndLastRowStyles(): void {
         const newFirst = this.isFirstRowOnPage();
         const newLast = this.isLastRowOnPage();
 
@@ -1317,6 +1321,8 @@ export class RowCtrl extends BeanStub {
             this.paginationPage = currentPage;
             this.onTopChanged();
         }
+
+        this.refreshFirstAndLastRowStyles();
     }
 
     private onTopChanged(): void {
