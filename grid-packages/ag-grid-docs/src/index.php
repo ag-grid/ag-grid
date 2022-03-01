@@ -114,7 +114,7 @@ $version = 'latest';
             <div>
                 <h3>Industry Leading</h3>
                 <p>
-                    Over 600,000 monthly downloads of AG Grid Community and over 50% of the Fortune 500
+                    Over 1.2 million monthly downloads of AG Grid Community and over 80% of the Fortune 500
                     using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice for Enterprise
                     JavaScript developers.
                 </p>
