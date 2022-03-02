@@ -22,18 +22,17 @@ const builds = {
         env: 'production',
         extension: '.cjs.min.js'
     }
-};
+}
 
-function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
+function genConfig(buildsToUse, buildName, sourceDirectory, moduleName, esmType) {
     const packageJson = require(path.resolve(sourceDirectory, './package.json'));
 
-    const banner = ['/**',
-        ` * ${packageJson.name} - ${packageJson.description}` +
-        ` * @version v${packageJson.version}`,
-        ` * @link ${packageJson.homepage}`,
-        `' * @license ${packageJson.license}`,
-        ' */',
-        ''].join('\n');
+    const banner =
+        `/**
+          * ${packageJson.name} - ${packageJson.description} * @version v${packageJson.version}
+          * @link ${packageJson.homepage}
+          * @license ${packageJson.license}
+          */`;
 
     const build = buildsToUse[buildName];
 
@@ -58,7 +57,8 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
 
     // cjs files are like modules - you need to import them individually
     // esm files are like umd files - they include everything
-    if (!buildName.startsWith('esm')) {
+    // if (!buildName.startsWith('esm')) {
+    if (!buildName.startsWith('esm') || esmType === "isolated") {
         config['external'] = id => /@ag-grid-/.test(id); // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
     }
 
@@ -87,9 +87,9 @@ const getBuilds = (umdModuleName) => {
         }
     }
     return buildsToUse;
-};
+}
 
-exports.getAllBuilds = (sourceDirectory, bundlePrefix, umdModuleName) => {
+exports.getAllBuilds = (sourceDirectory, bundlePrefix, esmType, umdModuleName) => {
     const buildsToUse = getBuilds(umdModuleName);
-    return Object.keys(buildsToUse).map(buildName => genConfig(buildsToUse, buildName, sourceDirectory, bundlePrefix));
-};
+    return Object.keys(buildsToUse).map(buildName => genConfig(buildsToUse, buildName, sourceDirectory, bundlePrefix, esmType));
+}

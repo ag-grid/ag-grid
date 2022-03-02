@@ -13,7 +13,7 @@
     "build": "npm run build-cjs && npm run build-esm && npm run build-css && npm run generate-doc-files && npm run hash",
     "watchWebpack": "npx webpack --watch",
     "webpack-updater": "node webpackUpdater.js",
-    "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community",
+    "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community --esmType complete",
     "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },

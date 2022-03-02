@@ -7,7 +7,8 @@ const commandLineArgs = require('command-line-args');
 
 const optionDefinitions = [
     {name: 'bundlePrefix', type: String},
-    {name: 'umdModuleName', type: String}
+    {name: 'umdModuleName', type: String},
+    {name: 'esmType', type: String}
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -19,7 +20,12 @@ if (options.bundlePrefix) {
     bundlePrefix = options.bundlePrefix;
 }
 
-let builds = require('./config').getAllBuilds(sourceDirectory, bundlePrefix, options.umdModuleName);
+let esmType = "isolated";
+if (options.esmType) {
+    esmType = options.esmType;
+}
+
+let builds = require('./config').getAllBuilds(sourceDirectory, bundlePrefix, esmType, options.umdModuleName);
 build(builds);
 
 function build(builds) {
@@ -45,7 +51,7 @@ function buildEntry(config) {
         .then(bundle => bundle.generate(output))
         .then(({output: [{code}]}) => {
             if (isProd) {
-                const minified = (banner ? banner + '\n' : '') + terser.minify(code, {
+                const minified = (banner ? `${banner}\n` : '') + terser.minify(code, {
                     toplevel: true,
                     output: {
                         ascii_only: true
@@ -64,7 +70,7 @@ function buildEntry(config) {
 function write(dest, code, zip) {
     return new Promise((resolve, reject) => {
         function report(extra) {
-            console.log(blue(path.relative(process.cwd(), dest)) + ' ' + getSize(code) + (extra || ''));
+            console.log(`${blue(path.relative(process.cwd(), dest))} ${getSize(code)}${extra || ''}`);
             resolve()
         }
 
@@ -73,7 +79,7 @@ function write(dest, code, zip) {
             if (zip) {
                 zlib.gzip(code, (err, zipped) => {
                     if (err) return reject(err);
-                    report(' (gzipped: ' + getSize(zipped) + ')')
+                    report(` (gzipped: ${getSize(zipped)})`)
                 })
             } else {
                 report()
@@ -83,9 +89,9 @@ function write(dest, code, zip) {
 }
 
 function getSize(code) {
-    return (code.length / 1024).toFixed(2) + 'kb'
+    return `${(code.length / 1024).toFixed(2)}kb`
 }
 
 function blue(str) {
-    return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
+    return `\x1b[1m\x1b[34m${str}\x1b[39m\x1b[22m`
 }

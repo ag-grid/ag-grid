@@ -56,6 +56,9 @@ module.exports.buildModules = () => executeLernaCommand(['run', 'build', getModu
 
 module.exports.buildChartsModules = () => executeLernaCommand(['run', 'build', getChartsModuleScopes()]);
 
+module.exports.packageModules = () => executeLernaCommand(['run', 'package', getModuleScopes()]);
+
 module.exports.testCommunityModules = () => executeLernaCommand(['run', 'test', getCommunityScopes()]);
 module.exports.testEnterpriseModules = () => executeLernaCommand(['run', 'test', getEnterpriseScopes()]);
 module.exports.testModules = () => executeLernaCommand(['run', 'test', getModuleScopes()]);
+

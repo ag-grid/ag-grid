@@ -18,7 +18,7 @@
     "watchWebpack": "npx webpack --watch",
     "precheck": "npx tsc -p tsconfig-precheck.json",
     "webpack-updater": "node webpackUpdater.js",
-    "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-enterprise",
+    "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-enterprise --esmType complete",
     "lint": "npx tsc -p tsconfig-lint.json && npx tslint --project tsconfig.cjs.es5.json"
   },
   "repository": {
