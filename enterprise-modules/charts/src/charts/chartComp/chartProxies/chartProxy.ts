@@ -151,7 +151,10 @@ export abstract class ChartProxy {
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
-        if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {
+        const usingGroupedCategory =
+            this.chartProxyParams.grouping || this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1;
+
+        if (usingGroupedCategory) {
             return data;
         }
 

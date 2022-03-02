@@ -6,7 +6,7 @@ import {
     ChartAxisPosition
 } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
@@ -20,7 +20,7 @@ export class ComboChartProxy extends CartesianChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.xAxisType = 'category';
+        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
 
         this.recreateChart();
@@ -69,25 +69,34 @@ export class ComboChartProxy extends CartesianChartProxy {
         return seriesChartTypesChanged || fieldsChanged || categoryChanged;
     }
 
-    private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
-        const axisOptions = this.getAxesOptions('cartesian');
-        const bottomOptions = deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom);
-        const leftOptions = deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left);
-        const rightOptions = deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].right);
+    private getSeriesOptions(params: UpdateChartParams): any {
+        const { fields, category, seriesChartTypes } = params;
 
-        const primaryYKeys: string[] = [];
-        const secondaryYKeys: string[] = [];
+        return fields.map(field => {
+            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
+            if (seriesChartType) {
+                const chartType: ChartType = seriesChartType.chartType;
+                return {
+                    ...this.extractSeriesOverrides(seriesChartType),
+                    type: getSeriesType(chartType),
+                    xKey: category.id,
+                    yKey: field.colId,
+                    yName: field.displayName,
+                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
+                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
+                }
+            }
+        });
+    }
+
+    private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
+        this.xAxisType = updateParams.grouping ? 'groupedCategory' : 'category';
 
         const fields = updateParams ? updateParams.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
-        fields.forEach(field => {
-            const colId = field.colId;
-            const seriesChartType = this.chartProxyParams.seriesChartTypes.find(s => s.colId === colId);
-            if (seriesChartType) {
-                seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
-            }
-        });
+        const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, updateParams.seriesChartTypes);
+        const { bottomOptions, leftOptions, rightOptions } = this.getAxisOptions();
 
         const axes = [
             {
@@ -157,24 +166,28 @@ export class ComboChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    private getSeriesOptions(params: UpdateChartParams): any {
-        const { fields, category, seriesChartTypes } = params;
+    private getAxisOptions() {
+        const axisOptions = this.getAxesOptions('cartesian');
+        return {
+            bottomOptions: deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+            leftOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+            rightOptions: deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].right),
+        };
+    }
 
-        return fields.map(field => {
-            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
+    private getYKeys(fields: FieldDefinition[], seriesChartTypes: SeriesChartType[]) {
+        const primaryYKeys: string[] = [];
+        const secondaryYKeys: string[] = [];
+
+        fields.forEach(field => {
+            const colId = field.colId;
+            const seriesChartType = seriesChartTypes.find(s => s.colId === colId);
             if (seriesChartType) {
-                const chartType: ChartType = seriesChartType.chartType;
-                return {
-                    ...this.extractSeriesOverrides(seriesChartType),
-                    type: getSeriesType(chartType),
-                    xKey: category.id,
-                    yKey: field.colId,
-                    yName: field.displayName,
-                    grouped: ['groupedColumn', 'groupedBar', 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
-                }
+                seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
             }
         });
+
+        return { primaryYKeys, secondaryYKeys };
     }
 
     private extractSeriesOverrides(seriesChartType: SeriesChartType) {
