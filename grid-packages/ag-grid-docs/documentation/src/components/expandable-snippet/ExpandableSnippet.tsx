@@ -14,6 +14,7 @@ const DEFAULT_JSON_NODES_EXPANDED = false;
 type Config = {
     includeDeprecated?: boolean,
     excludeProperties?: string[],
+    expandedProperties?: string[],
 };
 
 export interface ExpandableSnippetParams {
@@ -218,7 +219,8 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     meta,
     config,
 }) => {
-    const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(DEFAULT_JSON_NODES_EXPANDED);
+    const expandedInitially = config.expandedProperties?.includes(propName) ?? DEFAULT_JSON_NODES_EXPANDED;
+    const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(expandedInitially);
 
     const { deprecated } = meta;
     const formattedDocumentation = formatPropertyDocumentation(meta, config);
