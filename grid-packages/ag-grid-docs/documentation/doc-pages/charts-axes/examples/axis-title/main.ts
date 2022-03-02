@@ -1,7 +1,7 @@
-import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgCartesianSeriesOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeriesOptions[]> = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   data: [
     { os: 'Windows', share: 88.07 },
@@ -40,14 +40,5 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
 
 var chart = agCharts.AgChart.create(options)
 
-function showAxisTitles() {
-  options.axes![0].title!.enabled = true
-  options.axes![1].title!.enabled = true
-  agCharts.AgChart.update(chart, options)
-}
 
-function hideAxisTitles() {
-  options.axes![0].title!.enabled = false
-  options.axes![1].title!.enabled = false
-  agCharts.AgChart.update(chart, options)
-}
+

@@ -1,7 +1,7 @@
-import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgCartesianSeriesOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeriesOptions[]> = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   data: [
     { os: 'A', share: 10 },
@@ -38,87 +38,7 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
 
 var chart = agCharts.AgChart.create(options)
 
-function useNumberAxis() {
-  options.axes = [
-    {
-      type: 'category',
-      position: 'bottom',
-    },
-    {
-      type: 'number',
-      position: 'left',
-      min: 1,
-      label: {
-        format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
-    },
-  ]
-  agCharts.AgChart.update(chart, options)
-}
 
-function useLogAxis() {
-  options.axes = [
-    {
-      type: 'category',
-      position: 'bottom',
-    },
-    {
-      type: 'log',
-      position: 'left',
-      min: 10,
-      label: {
-        format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
-    },
-  ]
-  agCharts.AgChart.update(chart, options)
-}
 
-function useBaseTwoLogAxis() {
-  options.axes = [
-    {
-      type: 'category',
-      position: 'bottom',
-    },
-    {
-      type: 'log',
-      position: 'left',
-      min: 10,
-      label: {
-        format: '.0f',
-      },
-      tick: {
-        count: 10,
-      },
-      base: 2,
-    },
-  ]
-  agCharts.AgChart.update(chart, options)
-}
 
-function useLogAxisWithFewerTicks() {
-  options.axes = [
-    {
-      type: 'category',
-      position: 'bottom',
-    },
-    {
-      type: 'log',
-      position: 'left',
-      min: 10,
-      label: {
-        format: '.0f',
-      },
-      tick: {
-        count: 2, // a hint that we want a smaller tick count
-      },
-    },
-  ]
-  agCharts.AgChart.update(chart, options)
-}
+

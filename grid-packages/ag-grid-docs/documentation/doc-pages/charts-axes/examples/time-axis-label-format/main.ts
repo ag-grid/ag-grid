@@ -1,7 +1,7 @@
-import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgCartesianSeriesOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeriesOptions[]> = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   title: {
     text: 'Monthly average daily temperatures in the UK',
@@ -70,12 +70,5 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
 
 var chart = agCharts.AgChart.create(options)
 
-function useOneMonthInterval() {
-  options.axes![0].tick!.count = agCharts.time.month
-  agCharts.AgChart.update(chart, options)
-}
 
-function useTwoMonthInterval() {
-  options.axes![0].tick!.count = agCharts.time.month.every(2)
-  agCharts.AgChart.update(chart, options)
-}
+

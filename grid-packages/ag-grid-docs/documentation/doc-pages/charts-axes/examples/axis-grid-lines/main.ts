@@ -1,7 +1,7 @@
-import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgCartesianSeriesOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeriesOptions[]> = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   title: {
     text: "Most Common Girls' First Names In English",
@@ -40,48 +40,6 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
 
 var chart = agCharts.AgChart.create(options)
 
-function useGridStyle1() {
-  var gridStyle = [
-    {
-      stroke: 'gray',
-      lineDash: [10, 5],
-    },
-    {
-      stroke: 'lightgray',
-      lineDash: [5, 5],
-    },
-  ]
-  options.axes![0].gridStyle = gridStyle
-  options.axes![1].gridStyle = gridStyle
-  agCharts.AgChart.update(chart, options)
-}
 
-function useGridStyle2() {
-  var xGridStyle = [
-    {
-      stroke: 'red',
-      lineDash: [3, 3],
-    },
-  ]
-  var yGridStyle = [
-    {
-      stroke: 'green',
-      lineDash: [8, 3, 3, 3],
-    },
-  ]
-  options.axes![0].gridStyle = xGridStyle
-  options.axes![1].gridStyle = yGridStyle
-  agCharts.AgChart.update(chart, options)
-}
 
-function useDefaultGridStyle() {
-  var gridStyle = [
-    {
-      stroke: 'rgba(219, 219, 219, 1)',
-      lineDash: [4, 2],
-    },
-  ]
-  options.axes![0].gridStyle = gridStyle
-  options.axes![1].gridStyle = gridStyle
-  agCharts.AgChart.update(chart, options)
-}
+

@@ -52,29 +52,29 @@ export interface AgChartTheme extends AgChartThemeOptions {
 
 export interface AgChartThemeOverrides {
     /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
-    cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
+    cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
     /** Specifies defaults for column charts. */
-    column?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
     /** Specifies defaults for bar charts. */
-    bar?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    bar?: AgCartesianThemeOptions<AgBarSeriesOptions>;
     /** Specifies defaults for line charts. */
-    line?: AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>;
+    line?: AgCartesianThemeOptions<AgLineSeriesOptions>;
     /** Specifies defaults for area charts. */
-    area?: AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>;
+    area?: AgCartesianThemeOptions<AgAreaSeriesOptions>;
     /** Specifies defaults for scatter/bubble charts. */
-    scatter?: AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>;
+    scatter?: AgCartesianThemeOptions<AgScatterSeriesOptions>;
     /** Specifies defaults for histogram charts. */
-    histogram?: AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>;
+    histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions>;
     
     /** Specifies defaults for all polar charts (used for pie series) */
-    polar?: AgPolarChartOptions<AgPolarSeriesTheme>;
+    polar?: AgPolarThemeOptions<AgPolarSeriesTheme>;
     /** Specifies defaults for pie/doughnut charts. */
-    pie?: AgPolarChartOptions<AgPieSeriesOptions>;
+    pie?: AgPolarThemeOptions<AgPieSeriesOptions>;
     
     /** Specifies defaults for all hierarchy charts (used for treemap series) */
-    hierarchy?: AgHierarchyChartOptions<AgHierarchySeriesTheme>;
+    hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme>;
     /** Specifies defaults for all treemap charts. */
-    treemap?: AgHierarchyChartOptions<AgHierarchySeriesOptions>;
+    treemap?: AgHierarchyThemeOptions<AgHierarchySeriesOptions>;
 
     /** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */
     common?: any;
@@ -90,6 +90,25 @@ export interface AgCartesianAxisThemeOptions<T> {
     bottom?: Omit<T, 'bottom' | 'type'>;
     /** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */
     left?: Omit<T, 'left' | 'type'>;
+}
+
+export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgBaseChartOptions {
+    /** Axis configurations. */
+    axes?: AgCartesianAxesTheme;
+    /** Series configurations. */
+    series?: S;
+    /** Configuration for the chart navigator. */
+    navigator?: AgNavigatorOptions;
+}
+
+export interface AgPolarThemeOptions<S = AgPolarSeriesTheme> extends AgBaseChartOptions {
+    /** Series configurations. */
+    series?: S;
+}
+
+export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgBaseChartOptions {
+    /** Series configurations. */
+    series?: S;
 }
 
 export interface AgNumberAxisThemeOptions
@@ -1153,28 +1172,25 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
-export interface AgCartesianChartOptions<
-    TAxisOptions = AgCartesianAxisOptions[],
-    TSeriesOptions = AgCartesianSeriesOptions[]
-> extends AgBaseChartOptions {
+export interface AgCartesianChartOptions extends AgBaseChartOptions {
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
     /** Axis configurations. */
-    axes?: TAxisOptions;
+    axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
-    series?: TSeriesOptions;
+    series?: AgCartesianSeriesOptions[];
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarChartOptions<TSeriesOptions = AgPolarSeriesOptions[]> extends AgBaseChartOptions {
+export interface AgPolarChartOptions extends AgBaseChartOptions {
     type?: 'polar' | 'pie';
-    series?: TSeriesOptions;
+    series?: AgPolarSeriesOptions[];
 }
 
-export interface AgHierarchyChartOptions<TSeriesOptions = AgHierarchySeriesOptions[]> extends AgBaseChartOptions {
+export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     type?: 'hierarchy' | 'treemap';
     data?: any;
-    series?: TSeriesOptions;
+    series?: AgHierarchySeriesOptions[];
 }
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;

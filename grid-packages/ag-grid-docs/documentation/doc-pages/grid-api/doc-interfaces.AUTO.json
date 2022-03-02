@@ -9629,77 +9629,77 @@
     "cartesian": {
       "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>",
+        "returnType": "AgCartesianThemeOptions<AgCartesianSeriesTheme>",
         "optional": true
       }
     },
     "column": {
       "description": "/** Specifies defaults for column charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions>",
         "optional": true
       }
     },
     "bar": {
       "description": "/** Specifies defaults for bar charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions>",
         "optional": true
       }
     },
     "line": {
       "description": "/** Specifies defaults for line charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgLineSeriesOptions>",
         "optional": true
       }
     },
     "area": {
       "description": "/** Specifies defaults for area charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgAreaSeriesOptions>",
         "optional": true
       }
     },
     "scatter": {
       "description": "/** Specifies defaults for scatter/bubble charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgScatterSeriesOptions>",
         "optional": true
       }
     },
     "histogram": {
       "description": "/** Specifies defaults for histogram charts. */",
       "type": {
-        "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgHistogramSeriesOptions>",
         "optional": true
       }
     },
     "polar": {
       "description": "/** Specifies defaults for all polar charts (used for pie series) */",
       "type": {
-        "returnType": "AgPolarChartOptions<AgPolarSeriesTheme>",
+        "returnType": "AgPolarThemeOptions<AgPolarSeriesTheme>",
         "optional": true
       }
     },
     "pie": {
       "description": "/** Specifies defaults for pie/doughnut charts. */",
       "type": {
-        "returnType": "AgPolarChartOptions<AgPieSeriesOptions>",
+        "returnType": "AgPolarThemeOptions<AgPieSeriesOptions>",
         "optional": true
       }
     },
     "hierarchy": {
       "description": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
       "type": {
-        "returnType": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
+        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesTheme>",
         "optional": true
       }
     },
     "treemap": {
       "description": "/** Specifies defaults for all treemap charts. */",
       "type": {
-        "returnType": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
+        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesOptions>",
         "optional": true
       }
     },
@@ -9726,6 +9726,188 @@
       "type": { "returnType": "Omit<T, 'left' | 'type'>", "optional": true }
     },
     "meta": { "typeParams": ["T"] }
+  },
+  "AgCartesianThemeOptions": {
+    "axes": {
+      "description": "/** Axis configurations. */",
+      "type": { "returnType": "AgCartesianAxesTheme", "optional": true }
+    },
+    "series": {
+      "description": "/** Series configurations. */",
+      "type": { "returnType": "S", "optional": true }
+    },
+    "navigator": {
+      "description": "/** Configuration for the chart navigator. */",
+      "type": { "returnType": "AgNavigatorOptions", "optional": true }
+    },
+    "meta": { "typeParams": ["S"] },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
+    "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
+      "type": { "returnType": "AgChartBackground", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgChartLegendOptions", "optional": true }
+    },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "theme": {
+      "type": { "returnType": "string | AgChartTheme", "optional": true }
+    }
+  },
+  "AgPolarThemeOptions": {
+    "series": {
+      "description": "/** Series configurations. */",
+      "type": { "returnType": "S", "optional": true }
+    },
+    "meta": { "typeParams": ["S"] },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
+    "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
+      "type": { "returnType": "AgChartBackground", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgChartLegendOptions", "optional": true }
+    },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "theme": {
+      "type": { "returnType": "string | AgChartTheme", "optional": true }
+    }
+  },
+  "AgHierarchyThemeOptions": {
+    "series": {
+      "description": "/** Series configurations. */",
+      "type": { "returnType": "S", "optional": true }
+    },
+    "meta": { "typeParams": ["S"] },
+    "data": {
+      "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "container": {
+      "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
+    "width": {
+      "description": "/** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "autoSize": {
+      "description": "/** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding shown around the chart. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
+    "background": {
+      "description": "/** Configuration for the background shown behind the chart. */",
+      "type": { "returnType": "AgChartBackground", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown at the top of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "subtitle": {
+      "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Global configuration that applies to all tooltips in the chart. */",
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgChartLegendOptions", "optional": true }
+    },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "theme": {
+      "type": { "returnType": "string | AgChartTheme", "optional": true }
+    }
   },
   "AgNumberAxisThemeOptions": {
     "nice": {
@@ -12157,17 +12339,16 @@
     },
     "axes": {
       "description": "/** Axis configurations. */",
-      "type": { "returnType": "TAxisOptions", "optional": true }
+      "type": { "returnType": "AgCartesianAxisOptions[]", "optional": true }
     },
     "series": {
       "description": "/** Series configurations. */",
-      "type": { "returnType": "TSeriesOptions", "optional": true }
+      "type": { "returnType": "AgCartesianSeriesOptions[]", "optional": true }
     },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
-    "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -12222,8 +12403,9 @@
   },
   "AgPolarChartOptions": {
     "type": { "type": { "returnType": "'polar' | 'pie'", "optional": true } },
-    "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
-    "meta": { "typeParams": ["TSeriesOptions"] },
+    "series": {
+      "type": { "returnType": "AgPolarSeriesOptions[]", "optional": true }
+    },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -12281,8 +12463,9 @@
       "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
     },
     "data": { "type": { "returnType": "any", "optional": true } },
-    "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
-    "meta": { "typeParams": ["TSeriesOptions"] },
+    "series": {
+      "type": { "returnType": "AgHierarchySeriesOptions[]", "optional": true }
+    },
     "container": {
       "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */",
       "type": { "returnType": "HTMLElement | null", "optional": true }

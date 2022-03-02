@@ -1,7 +1,7 @@
-import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgCartesianSeriesOptions } from '@ag-grid-community/core'
+import { AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
-const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeriesOptions[]> = {
+const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
   data: generateSpiralData(),
   series: [
@@ -37,17 +37,7 @@ const options: AgCartesianChartOptions<AgCartesianAxisOptions[], AgCartesianSeri
 
 var chart = agCharts.AgChart.create(options)
 
-function setTickCountTo5() {
-  options.axes![0].tick!.count = 5
-  options.axes![1].tick!.count = 5
-  agCharts.AgChart.update(chart, options)
-}
 
-function setTickCountTo10() {
-  options.axes![0].tick!.count = 10
-  options.axes![1].tick!.count = 10
-  agCharts.AgChart.update(chart, options)
-}
 
 function generateSpiralData() {
   var a = 1

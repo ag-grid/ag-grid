@@ -34,7 +34,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
-    console.log(model);
+    // console.log(model);
 
     return (
         <div className={styles["expandable-snippet"]} role="presentation">
