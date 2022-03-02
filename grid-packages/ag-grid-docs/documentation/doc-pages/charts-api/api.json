@@ -1053,5 +1053,10 @@
     "gradient": {
       "default": true
     }
+  },
+  "AgChartTheme": {
+    "baseTheme": {
+      "default": "ag-default"
+    }
   }
 }
