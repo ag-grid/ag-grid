@@ -293,8 +293,7 @@ export class AreaSeries extends CartesianSeries {
             }
         }));
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x') : this.xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(this.yData, isContinuous), 'y') : this.yData;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis) : this.xData;
 
         // xData: ['Jan', 'Feb']
         //
@@ -315,7 +314,7 @@ export class AreaSeries extends CartesianSeries {
             // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
             const total = { sum: 0, absSum: 0 };
             for (let i = 0; i < stack.length; i++) {
-                const y = stack[i];
+                const y = +stack[i]; // convert to number as the value could be a Date object
 
                 total.absSum += Math.abs(y);
                 total.sum += y;
@@ -332,7 +331,7 @@ export class AreaSeries extends CartesianSeries {
             for (let i = 0; i < stack.length; i++) {
                 if (normalized && normalizedTo) {
                     // normalize y values using the absolute sum of y values in the stack
-                    const normalizedY = stack[i] / total.absSum * normalizedTo;
+                    const normalizedY = +stack[i] / total.absSum * normalizedTo;
                     stack[i] = normalizedY;
 
                     // sum normalized values to get updated yMin and yMax of normalized area
@@ -362,11 +361,7 @@ export class AreaSeries extends CartesianSeries {
 
         this.yData = processedYData;
 
-        if (yMin === 0 && yMax === 0) {
-            yMax = 1;
-        }
-
-        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
+        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', yAxis);
 
         this.fireEvent({ type: 'dataProcessed' });
 
@@ -512,8 +507,8 @@ export class AreaSeries extends CartesianSeries {
                 const nextYDatum = seriesYs[datumIdx + 1];
 
                 // marker data
-                const point = createMarkerCoordinate(xDatum, yDatum, datumIdx);
                 const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
+                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx);
 
                 if (marker) {
                     markerSelectionData.push({
@@ -569,11 +564,11 @@ export class AreaSeries extends CartesianSeries {
                     windowY[1] = 0;
                 }
 
-                const currCoordinates = createPathCoordinates(windowX[0], windowY[0], datumIdx, 'right');
+                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0], datumIdx, 'right');
                 fillPoints.push(currCoordinates[0]);
                 fillPhantomPoints.push(currCoordinates[1]);
 
-                const nextCoordinates = createPathCoordinates(windowX[1], windowY[1], datumIdx, 'left');
+                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1], datumIdx, 'left');
                 fillPoints.push(nextCoordinates[0]);
                 fillPhantomPoints.push(nextCoordinates[1]);
 
