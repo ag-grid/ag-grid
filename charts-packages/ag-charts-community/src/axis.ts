@@ -207,7 +207,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
      * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
      */
-    getMeta(): any {}
+    getMeta(): any { }
 
     constructor(scale: S) {
         this.scale = scale;
@@ -290,7 +290,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
             } catch (e) {
                 this.labelFormatter = undefined;
-                console.error(e);
+                console.warn(`AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`);
             }
         } else {
             this.labelFormatter = undefined;
@@ -547,7 +547,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.height = bbox.height;
     }
 
-    private positionTitle() : void {
+    private positionTitle(): void {
         const { title, lineNode } = this;
 
         if (!title) {
