@@ -90,11 +90,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        const frameworkOverrides = this.getFrameworkOverrides();
 
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, gridOptions, {
             $scope: this.params.$scope,
             $compile: this.params.$compile,
+            frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
                 frameworkComponentWrapper: frameworkComponentWrapper
