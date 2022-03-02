@@ -216,12 +216,12 @@ export class ScatterSeries extends CartesianSeries {
 
         this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x');
+            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
         } else {
             this.xDomain = this.xData;
         }
         if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), 'y');
+            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), 'y', yAxis);
         } else {
             this.yDomain = this.yData;
         }

@@ -7,6 +7,7 @@ import { createId } from "../../util/id";
 import { Label } from "../label";
 import { PointLabelDatum } from "../../util/labelPlacement";
 import { isNumber } from "../../util/value";
+import { TimeAxis } from "../axis/timeAxis";
 
 /**
  * Processed series datum used in node selections,
@@ -218,7 +219,7 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void {}
+    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void { }
 
     /**
      * @private
@@ -238,7 +239,7 @@ export abstract class Series extends Observable {
 
     // Each series is expected to have its own logic to efficiently update its nodes
     // on hightlight changes.
-    onHighlightChange() {}
+    onHighlightChange() { }
 
     readonly scheduleLayout = () => {
         this.fireEvent({ type: 'layoutChange' });
@@ -248,11 +249,8 @@ export abstract class Series extends Observable {
         this.fireEvent({ type: 'dataChange' });
     }
 
-    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string): [number, number] {
+    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string, axis?: ChartAxis): [number, number] {
         if (!extent) {
-            // if (type) {
-            //     console.warn(`The ${type}-domain could not be found (no valid values), using the default of [0, 1].`);
-            // }
             return [0, 1];
         }
 
@@ -260,22 +258,27 @@ export abstract class Series extends Observable {
         min = +min;
         max = +max;
 
+        if (min === 0 && max === 0) {
+            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
+            return [0, 1];
+        }
+
         if (min === max) {
-            const padding = Math.abs(min * 0.01);
-            min -= padding;
-            max += padding;
-            // if (type) {
-            //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
-            //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
-            // }
+            // domain has zero length, there is only a single valid value in data
+
+            if (axis instanceof TimeAxis) { // numbers in domain correspond to Unix timestamps
+                // automatically expand domain by 1 in each direction
+                min -= 1;
+                max += 1;
+            } else {
+                const padding = Math.abs(min * 0.01);
+                min -= padding;
+                max += padding;
+            }
         }
 
         if (!(isNumber(min) && isNumber(max))) {
-            min = 0;
-            max = 1;
-            // if (type) {
-            //     console.warn(`The ${type}-domain has infinite length, using the default of [0, 1].`);
-            // }
+            return [0, 1];
         }
 
         return [min, max];

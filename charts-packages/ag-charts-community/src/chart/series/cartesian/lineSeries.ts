@@ -187,8 +187,8 @@ export class LineSeries extends CartesianSeries {
             }
         }
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x') : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), 'y') : yData;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x', xAxis) : xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), 'y', yAxis) : yData;
 
         return true;
     }
