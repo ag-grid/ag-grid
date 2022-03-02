@@ -13,6 +13,7 @@ const DEFAULT_JSON_NODES_EXPANDED = false;
 
 type Config = {
     includeDeprecated?: boolean,
+    excludeProperties?: string[],
 };
 
 export interface ExpandableSnippetParams {
@@ -87,7 +88,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
         return <Fragment>{
             Object.entries(model.properties)
                 .map(([propName, propInfo]) => {
-                    if (skip.includes(propName)) {
+                    if (skip.includes(propName) || config.excludeProperties?.includes(propName)) {
                         return;
                     }
 
