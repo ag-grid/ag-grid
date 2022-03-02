@@ -499,6 +499,8 @@ export interface GridOptions {
      * Default: `false`
      */
     suppressMaxRenderedRowRestriction?: boolean;
+    /** Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false` */
+    suppressRowVirtualisation?: boolean;
 
     // *** Row Drag and Drop *** //
     /** Set to `true` to enable Managed Row Dragging. Default: `false` */

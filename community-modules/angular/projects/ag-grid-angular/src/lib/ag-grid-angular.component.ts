@@ -609,6 +609,8 @@ hence this property is deprecated as will be removed in the next major release.
      * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**
      * Default: `false`     */
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
+    /** Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
+    @Input() public suppressRowVirtualisation: boolean | undefined = undefined;
     /** Set to `true` to enable Managed Row Dragging. Default: `false`     */
     @Input() public rowDragManaged: boolean | undefined = undefined;
     /** Set to `true` to suppress row dragging. Default: `false`     */
@@ -1224,6 +1226,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_reactUi: boolean | null | '';
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
+    static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     // @END@
 }
 

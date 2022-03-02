@@ -969,6 +969,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressColumnVirtualisation);
     }
 
+    public isSuppressRowVirtualisation() {
+        return isTrue(this.gridOptions.suppressRowVirtualisation);
+    }
+
     public isSuppressContextMenu() {
         return isTrue(this.gridOptions.suppressContextMenu);
     }

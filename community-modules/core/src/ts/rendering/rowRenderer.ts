@@ -1035,6 +1035,7 @@ export class RowRenderer extends BeanStub {
         } else {
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
             const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            const suppressRowVirtualisation = this.gridOptionsWrapper.isSuppressRowVirtualisation();
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1044,12 +1045,17 @@ export class RowRenderer extends BeanStub {
                 const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
-                const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
-                const bodyTopPixel = bodyVRange.top;
-                const bodyBottomPixel = bodyVRange.bottom;
+                if (suppressRowVirtualisation) {
+                    firstPixel = pageFirstPixel + divStretchOffset;
+                    lastPixel = pageLastPixel + divStretchOffset;    
+                } else {
+                    const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
+                    const bodyTopPixel = bodyVRange.top;
+                    const bodyBottomPixel = bodyVRange.bottom;
 
-                firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
-                lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;
+                    firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
+                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;    
+                }
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
