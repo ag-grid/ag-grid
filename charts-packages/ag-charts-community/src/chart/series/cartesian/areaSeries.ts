@@ -478,9 +478,16 @@ export class AreaSeries extends CartesianSeries {
             ];
         }
 
-        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number): Coordinate => {
+        const createMarkerCoordinate = (xDatum: any, yDatum: number, idx: number, rawYDatum: any): Coordinate => {
             let currY;
-            if (yDatum !== undefined) {
+
+            // if not normalized, the invalid data points will be processed as `undefined` in processData()
+            // if normalized, the invalid data points will be processed as 0 rather than `undefined`
+            // check if unprocessed datum is valid as we only want to show markers for valid points
+            const normalized = this.normalizedTo && isFinite(this.normalizedTo);
+            const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
+
+            if (!normalized || normalizedAndValid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
 
@@ -507,8 +514,8 @@ export class AreaSeries extends CartesianSeries {
                 const nextYDatum = seriesYs[datumIdx + 1];
 
                 // marker data
-                const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
-                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx);
+                const seriesDatum = data[datumIdx];
+                const point = createMarkerCoordinate(xDatum, yDatum, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
                     markerSelectionData.push({
