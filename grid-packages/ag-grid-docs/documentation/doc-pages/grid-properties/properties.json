@@ -655,12 +655,7 @@
             }
         },
         "suppressColumnVirtualisation": {},
-        "suppressRowVirtualisation": {
-            "overrideMissingPropCheck": true,
-            "strikeThrough": true,
-            "type": "never",
-            "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
-        },
+        "suppressRowVirtualisation": {},
         "suppressMaxRenderedRowRestriction": {}
     },
     "rowDragging": {
