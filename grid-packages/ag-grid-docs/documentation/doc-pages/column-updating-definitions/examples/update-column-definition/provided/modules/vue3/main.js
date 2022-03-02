@@ -1,8 +1,11 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -22,7 +25,6 @@ const VueExample = {
             @grid-ready="onGridReady"
             :defaultColDef="defaultColDef"
             :columnDefs="columnDefs"
-            :modules="modules"
             :rowData="rowData"></ag-grid-vue>
       </div>
       </div>
@@ -42,7 +44,6 @@ const VueExample = {
                 filter: true,
             },
             columnDefs: null,
-            modules: [ClientSideRowModelModule],
             rowData: null,
         };
     },

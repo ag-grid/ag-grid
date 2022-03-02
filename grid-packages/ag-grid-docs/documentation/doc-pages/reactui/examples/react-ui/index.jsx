@@ -10,23 +10,23 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule]);
+
 // this is a hook, but we work also with classes
 function MyRenderer(params) {
     return (
-          <span className="my-renderer">
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
-              {params.value}
-          </span>
+        <span className="my-renderer">
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner" />
+            {params.value}
+        </span>
     );
 }
 
 function GridExample() {
 
     // never changes, so we can use useMemo
-    const modules = useMemo( ()=> [ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule], []);
-
-    // never changes, so we can use useMemo
-    const columnDefs = useMemo( ()=> [
+    const columnDefs = useMemo(() => [
         { field: 'athlete' },
         { field: 'age', cellRenderer: MyRenderer },
         { field: 'country' },
@@ -40,7 +40,7 @@ function GridExample() {
     ], []);
 
     // never changes, so we can use useMemo
-    const defaultColDef = useMemo( ()=> ({
+    const defaultColDef = useMemo(() => ({
         resizable: true,
         sortable: true
     }), []);
@@ -49,17 +49,16 @@ function GridExample() {
     const [rowData, setRowData] = useState();
 
     // gets called once, no dependencies, loads the grid data
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then( resp => resp.json())
-            .then( data => setRowData(data));
+            .then(resp => resp.json())
+            .then(data => setRowData(data));
     }, []);
 
     return (
-        <AgGridReact 
+        <AgGridReact
             className="ag-theme-alpine"
             animateRows="true"
-            modules={modules}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             enableRangeSelection="true"

@@ -1,18 +1,19 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [InfiniteRowModelModule],
             columnDefs: [
                 {
                     headerName: 'Item ID',
@@ -22,12 +23,12 @@ class GridExample extends Component {
                         if (props.value !== undefined) {
                             return props.value;
                         } else {
-                            return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                            return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                         }
                     },
                 },
-                {field: 'make'},
-                {field: 'model'},
+                { field: 'make' },
+                { field: 'model' },
                 {
                     field: 'price',
                     valueFormatter: valueFormatter,
@@ -165,9 +166,9 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
-                <div style={{"display": "flex", "flexDirection": "column", "height": "100%"}}>
-                    <div style={{"marginBottom": "10px"}}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div style={{ "display": "flex", "flexDirection": "column", "height": "100%" }}>
+                    <div style={{ "marginBottom": "10px" }}>
                         <button onClick={() => this.insertItemsAt2AndRefresh(5)}>Insert Rows</button>
                         <button onClick={() => this.removeItem(3, 10)}>Delete Rows</button>
                         <button onClick={() => this.setRowCountTo200()}>Set Row Count</button>
@@ -175,13 +176,13 @@ class GridExample extends Component {
                         <button onClick={() => this.jumpTo500()}>Jump to 500</button>
                         <button onClick={() => this.printCacheState()}>Print Cache State</button>
                     </div>
-                    <div style={{"marginBottom": "10px"}}>
+                    <div style={{ "marginBottom": "10px" }}>
                         <button onClick={() => this.setPricesHigh()}>Set Prices High</button>
                         <button onClick={() => this.setPricesLow()}>Set Prices Low</button>
                         <button onClick={() => this.refreshCache()}>Refresh Cache</button>
                         <button onClick={() => this.purgeCache()}>Purge Cache</button>
                     </div>
-                    <div style={{"flexGrow": "1"}}>
+                    <div style={{ "flexGrow": "1" }}>
                         <div
 
                             style={{
@@ -190,7 +191,6 @@ class GridExample extends Component {
                             }}
                             className="ag-theme-alpine">
                             <AgGridReact
-                                modules={this.state.modules}
                                 columnDefs={this.state.columnDefs}
                                 datasource={this.state.datasource}
                                 defaultColDef={this.state.defaultColDef}

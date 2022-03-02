@@ -6,6 +6,9 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%">
@@ -16,7 +19,6 @@ const VueExample = {
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
-                    :modules="modules"
                     :rowData="rowData"></ag-grid-vue>
         </div>
     `,
@@ -51,7 +53,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            modules: [ClientSideRowModelModule],
             rowData: null
         }
     },

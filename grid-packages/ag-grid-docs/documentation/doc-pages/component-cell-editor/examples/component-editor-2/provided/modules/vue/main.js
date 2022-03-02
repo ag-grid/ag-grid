@@ -1,14 +1,16 @@
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {RichSelectModule} from '@ag-grid-enterprise/rich-select';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import Vue from 'vue';
 import GenderRenderer from './genderRendererVue.js';
 import MoodEditor from './moodEditorVue.js';
 import MoodRenderer from './moodRendererVue.js';
 import NumericEditor from './numericEditorVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 class CountryCellRenderer {
     init(params) {
         this.eGui = document.createElement('div');
@@ -35,7 +37,7 @@ const VueExample = {
                 @grid-ready="onGridReady"
                 :rowData="rowData"
                 :defaultColDef="defaultColDef"
-                :modules="modules"></ag-grid-vue>
+                ></ag-grid-vue>
         </div>
     `,
     components: {
@@ -99,9 +101,9 @@ const VueExample = {
                     cellEditorParams: {
                         cellRenderer: CountryCellRenderer,
                         values: [
-                            {name: 'Ireland', code: 'IE'},
-                            {name: 'UK', code: 'UK'},
-                            {name: 'France', code: 'FR'},
+                            { name: 'Ireland', code: 'IE' },
+                            { name: 'UK', code: 'UK' },
+                            { name: 'France', code: 'FR' },
                         ],
                     },
                     editable: true,
@@ -111,7 +113,7 @@ const VueExample = {
                     editable: true,
                     cellEditor: 'agLargeTextCellEditor',
                     cellEditorPopup: true,
-                    cellEditorParams: {maxLength: '300', cols: '50', rows: '6'},
+                    cellEditorParams: { maxLength: '300', cols: '50', rows: '6' },
                 },
             ],
             gridApi: null,
@@ -124,8 +126,7 @@ const VueExample = {
                 filter: true,
                 resizable: true,
             },
-            rowData: null,
-            modules: [ClientSideRowModelModule, RichSelectModule],
+            rowData: null
         };
     },
     created() {

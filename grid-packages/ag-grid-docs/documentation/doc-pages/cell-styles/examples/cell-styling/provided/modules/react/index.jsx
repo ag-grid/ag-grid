@@ -1,20 +1,22 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule],
             columnDefs: [
-                {field: 'athlete'},
+                { field: 'athlete' },
                 {
                     field: 'age',
                     maxWidth: 90,
@@ -25,7 +27,7 @@ class GridExample extends Component {
                         'rag-red': 'x >= 25',
                     },
                 },
-                {field: 'country'},
+                { field: 'country' },
                 {
                     field: 'year',
                     maxWidth: 90,
@@ -33,7 +35,7 @@ class GridExample extends Component {
                     cellClassRules: ragCellClassRules,
                     cellRenderer: ragRenderer,
                 },
-                {field: 'date', cellClass: 'rag-amber'},
+                { field: 'date', cellClass: 'rag-amber' },
                 {
                     field: 'sport',
                     cellClass: cellClass,
@@ -85,7 +87,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
 
                     style={{
@@ -94,7 +96,6 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         onGridReady={this.onGridReady}

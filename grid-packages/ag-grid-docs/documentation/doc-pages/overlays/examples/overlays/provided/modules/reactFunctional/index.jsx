@@ -1,29 +1,31 @@
 'use strict'
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const GridExample = () => {
     const gridRef = useRef();
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
-    const modules = useMemo(() => [ClientSideRowModelModule], []);
     const [columnDefs, setColumnDefs] = useState([
-        {field: 'athlete', minWidth: 200},
-        {field: 'age'},
-        {field: 'country', minWidth: 200},
-        {field: 'year'},
-        {field: 'date', minWidth: 180},
-        {field: 'sport', minWidth: 200},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 200 },
+        { field: 'year' },
+        { field: 'date', minWidth: 180 },
+        { field: 'sport', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -58,7 +60,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{"marginBottom": "5px"}}>
+                <div style={{ "marginBottom": "5px" }}>
                     <button onClick={onBtShowLoading}>Show Loading Overlay</button>
                     <button onClick={onBtShowNoRows}>Show No Rows Overlay</button>
                     <button onClick={onBtHide}>Hide Overlay</button>
@@ -68,7 +70,6 @@ const GridExample = () => {
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
-                        modules={modules}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}

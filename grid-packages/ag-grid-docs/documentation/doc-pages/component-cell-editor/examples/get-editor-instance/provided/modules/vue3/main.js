@@ -5,6 +5,9 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditorVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -14,7 +17,6 @@ const VueExample = {
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
               :rowData="rowData"
-              :modules="modules"
               @grid-ready="onGridReady">
           </ag-grid-vue>
       </div>
@@ -72,7 +74,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            modules: [ClientSideRowModelModule],
             rowData: this.createRowData(),
             interval: null
         }

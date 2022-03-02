@@ -4,6 +4,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -17,7 +20,6 @@ const VueExample = {
           :defaultColDef="defaultColDef"
           :enableRangeSelection="true"
           :rowData="rowData"
-          :modules="modules"
           @cell-value-changed="onCellValueChanged"></ag-grid-vue>
       </div>
     `,
@@ -74,7 +76,6 @@ const VueExample = {
                 resizable: true,
             },
             rowData: this.createRowData(),
-            modules: [ClientSideRowModelModule],
         };
     },
     mounted() {

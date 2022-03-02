@@ -4,6 +4,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -21,7 +24,6 @@ const VueExample = {
             @grid-ready="onGridReady"
             :defaultColDef="defaultColDef"
             :maintainColumnOrder="true"
-            :modules="modules"
             :rowData="rowData"></ag-grid-vue>
       </div>
       </div>
@@ -41,7 +43,6 @@ const VueExample = {
                 resizable: true,
                 filter: true
             },
-            modules: [ClientSideRowModelModule],
             rowData: null
         }
     },

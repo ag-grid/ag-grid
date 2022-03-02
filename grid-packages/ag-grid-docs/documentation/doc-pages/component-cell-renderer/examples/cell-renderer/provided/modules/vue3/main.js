@@ -5,6 +5,9 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import DaysFrostRenderer from './daysFrostRendererVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
 * demonstrates what is at least possible, and may be preferable in certain use cases
@@ -74,7 +77,6 @@ const VueExample = {
                     :columnDefs="columnDefs"
                     :rowData="rowData"
                     :defaultColDef="defaultColDef"
-                    :modules="modules"
                     @grid-ready="onGridReady">
             </ag-grid-vue>
         </div>
@@ -140,9 +142,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
                 resizable: true
-            }
-            ,
-            modules: [ClientSideRowModelModule],
+            },
             rowData: null
         }
     },

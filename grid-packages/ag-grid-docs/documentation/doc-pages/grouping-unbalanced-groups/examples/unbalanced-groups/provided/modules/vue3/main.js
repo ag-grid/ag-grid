@@ -1,9 +1,12 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES = {
     Ireland: 'ie',
@@ -57,8 +60,7 @@ const VueExample = {
                     :rowData="rowData"
                     :groupDefaultExpanded="groupDefaultExpanded"
                     :rowGroupPanelShow="rowGroupPanelShow"
-                    :animateRows="true"
-                    :modules="modules"></ag-grid-vue>
+                    :animateRows="true"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -98,8 +100,7 @@ const VueExample = {
             columnTypes: null,
             rowData: null,
             groupDefaultExpanded: null,
-            rowGroupPanelShow: null,
-            modules: [ClientSideRowModelModule, RowGroupingModule]
+            rowGroupPanelShow: null
         }
     },
     created() {

@@ -1,16 +1,19 @@
 'use strict'
 
-import React, {useCallback, useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
-import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
+import React, { useCallback, useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-const filterParams = {values: countries()};
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
+
+const filterParams = { values: countries() };
 
 const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
     return sortData(sortModel, filterData(filterModel, allOfTheData));
@@ -91,10 +94,8 @@ const filterData = (filterModel, data) => {
 
 const GridExample = () => {
 
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
-
-    const modules = useMemo(() => [InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule], []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [columnDefs, setColumnDefs] = useState([
         // this row just shows the row index, doesn't use any data from the row
         {
@@ -105,7 +106,7 @@ const GridExample = () => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
-                    return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                    return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                 }
             },
             // we don't want to sort by the row index, this doesn't make sense as the point
@@ -113,7 +114,7 @@ const GridExample = () => {
             sortable: false,
             suppressMenu: true,
         },
-        {headerName: 'Athlete', field: 'athlete', suppressMenu: true},
+        { headerName: 'Athlete', field: 'athlete', suppressMenu: true },
         {
             field: 'age',
             filter: 'agNumberColumnFilter',
@@ -129,14 +130,14 @@ const GridExample = () => {
         {
             field: 'year',
             filter: 'agSetColumnFilter',
-            filterParams: {values: ['2000', '2004', '2008', '2012']},
+            filterParams: { values: ['2000', '2004', '2008', '2012'] },
         },
-        {field: 'date'},
-        {field: 'sport', suppressMenu: true},
-        {field: 'gold', suppressMenu: true},
-        {field: 'silver', suppressMenu: true},
-        {field: 'bronze', suppressMenu: true},
-        {field: 'total', suppressMenu: true},
+        { field: 'date' },
+        { field: 'sport', suppressMenu: true },
+        { field: 'gold', suppressMenu: true },
+        { field: 'silver', suppressMenu: true },
+        { field: 'bronze', suppressMenu: true },
+        { field: 'total', suppressMenu: true },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -190,9 +191,6 @@ const GridExample = () => {
 
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
-
-
-                    modules={modules}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowSelection={'multiple'}

@@ -9,6 +9,9 @@ import CurrencyRenderer from './currencyRendererVue.js';
 import ParamsRenderer from './paramsRendererVue.js';
 import SquareRenderer from './squareRendererVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%">
@@ -24,8 +27,7 @@ const VueExample = {
                     :columnDefs="columnDefs"
                     :rowData="rowData"
                     :context="context"
-                    :defaultColDef="defaultColDef"
-                    :modules="modules"></ag-grid-vue>
+                    :defaultColDef="defaultColDef"></ag-grid-vue>
         </div>
         </div>
     `,
@@ -94,8 +96,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
                 resizable: true
-            },
-            modules: [ClientSideRowModelModule]
+            }
         }
     },
     beforeMount() {

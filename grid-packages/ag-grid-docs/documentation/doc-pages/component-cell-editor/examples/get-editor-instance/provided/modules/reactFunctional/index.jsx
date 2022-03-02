@@ -8,6 +8,9 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const createRowData = () => {
     const cloneObject = obj => JSON.parse(JSON.stringify(obj));
     const students = [
@@ -138,7 +141,6 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine">
                 <AgGridReact
-                    modules={[ClientSideRowModelModule]}
                     ref={gridRef}
                     defaultColDef={{
                         editable: true,

@@ -11,6 +11,9 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
+
 class FileView extends Component {
   colDefs = [
     { field: "file" },
@@ -27,8 +30,6 @@ class FileView extends Component {
     }
   };
 
-  modules = [ClientSideRowModelModule, RowGroupingModule, MenuModule];
-
   render() {
     return (
       <div id='myGrid' style={{ flex: 1 }} className="ag-theme-alpine">
@@ -37,7 +38,6 @@ class FileView extends Component {
           rowData={this.props.files}
           getRowKey={params => params.data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
-          modules={this.modules}
           groupDefaultExpanded={-1}
           onFirstDataRendered={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}>

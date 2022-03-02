@@ -9,6 +9,9 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MoodEditor from './moodEditorVue.js';
 import NumericCellEditor from './numericCellEditorVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%">
@@ -20,7 +23,7 @@ const VueExample = {
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
                     :rowData="rowData"
-                    :modules="modules"
+                    
                     @row-editing-started="onRowEditingStarted"
                     @row-editing-stopped="onRowEditingStopped"
                     @cell-editing-started="onCellEditingStarted"
@@ -71,7 +74,6 @@ const VueExample = {
                 flex: 1,
             },
             rowData: null,
-            modules: [ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]
         }
     },
     created() {

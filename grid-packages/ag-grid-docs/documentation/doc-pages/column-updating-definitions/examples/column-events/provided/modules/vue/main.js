@@ -5,6 +5,9 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -56,7 +59,6 @@ const VueExample = {
             @grid-ready="onGridReady"
             :defaultColDef="defaultColDef"
             :rowData="rowData"
-            :modules="modules"
             @sort-changed="onSortChanged"
             @column-resized="onColumnResized"
             @column-visible="onColumnVisible"
@@ -84,7 +86,6 @@ const VueExample = {
             enablePivot: true,
             enableValue: true
         },
-        modules: [ClientSideRowModelModule, RowGroupingModule],
         rowData: null
     }),
     beforeMount() {

@@ -10,11 +10,14 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
-const SportRenderer =  {
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
+
+const SportRenderer = {
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
     methods: {
         applyTransaction() {
-            this.params.api.applyTransaction({remove: [this.params.node.data]});
+            this.params.api.applyTransaction({ remove: [this.params.node.data] });
         }
     }
 };
@@ -46,7 +49,7 @@ const VueExample = {
                             :rowData="leftRowData"
                             :columnDefs="leftColumns"
                             @grid-ready="onGridReady($event, 0)"
-                            :modules="modules">
+                            >
                         </ag-grid-vue>
                     </div>
                 </div>
@@ -62,7 +65,7 @@ const VueExample = {
                             :rowData="rightRowData"
                             :columnDefs="rightColumns"
                             @grid-ready="onGridReady($event, 1)"
-                            :modules="modules">
+                            >
                         </ag-grid-vue>
                     </div>
                 </div>
@@ -74,7 +77,6 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule],
             leftRowData: null,
             rightRowData: null,
             leftApi: null,

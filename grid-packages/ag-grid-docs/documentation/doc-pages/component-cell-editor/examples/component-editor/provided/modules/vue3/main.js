@@ -8,6 +8,9 @@ import MoodEditor from './moodEditorVue.js';
 import MoodRenderer from './moodRendererVue.js';
 import NumericEditor from './numericEditorVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%">
@@ -19,7 +22,7 @@ const VueExample = {
                         :columnDefs="columnDefs"
                         :rowData="rowData"
                         :defaultColDef="defaultColDef"
-                        :modules="modules"></ag-grid-vue>
+                        ></ag-grid-vue>
             </div>
         </div>
     `,
@@ -39,8 +42,6 @@ const VueExample = {
             filter: true,
             resizable: true
         };
-
-        const modules = [ClientSideRowModelModule];
 
         const columnDefs = [{
             headerName: "Doubling",
@@ -133,8 +134,7 @@ const VueExample = {
         return {
             columnDefs,
             rowData,
-            defaultColDef,
-            modules
+            defaultColDef
         }
     }
 }

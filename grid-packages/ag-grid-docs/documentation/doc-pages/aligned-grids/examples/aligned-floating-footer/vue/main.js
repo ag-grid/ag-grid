@@ -6,6 +6,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
@@ -15,14 +18,12 @@ const VueExample = {
                          @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
-                         :modules="modules"
             ></ag-grid-vue>
             <ag-grid-vue style="height: 60px; flex: none;"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"
                          :rowData="bottomData"
-                         :modules="modules"
                          :rowStyle="rowStyle"
             ></ag-grid-vue>
         </div>
@@ -42,8 +43,7 @@ const VueExample = {
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: { fontWeight: 'bold' },
-            modules: [ClientSideRowModelModule]
+            rowStyle: { fontWeight: 'bold' }
         };
     },
     beforeMount() {

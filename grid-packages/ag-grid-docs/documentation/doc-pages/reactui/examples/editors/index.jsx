@@ -10,11 +10,14 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule]);
+
 const MyReactEditor = memo(forwardRef((props, ref) => {
 
     const [value, setValue] = useState(parseInt(props.value));
     const refInput = useRef(null);
- 
+
     // Cell Editor interface, that the grid calls
     useImperativeHandle(ref, () => {
         return {
@@ -25,27 +28,24 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
             }
         };
     });
- 
-    const onChangeListener = useCallback( event => setValue(event.target.value), []);
-    useEffect( ()=> refInput.current.focus(), []);
+
+    const onChangeListener = useCallback(event => setValue(event.target.value), []);
+    useEffect(() => refInput.current.focus(), []);
 
     return (
         <input type="number" className="my-editor"
-               ref={refInput}
-               value={value}
-               onChange={onChangeListener}
+            ref={refInput}
+            value={value}
+            onChange={onChangeListener}
         />
     );
- }));
+}));
 
 
- function GridExample() {
-
-    // never changes, so we can use useMemo
-    const modules = useMemo( ()=> [ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule], []);
+function GridExample() {
 
     // never changes, so we can use useMemo
-    const columnDefs = useMemo( ()=> [
+    const columnDefs = useMemo(() => [
         {
             field: 'country'
         },
@@ -65,7 +65,7 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
     ], []);
 
     // never changes, so we can use useMemo
-    const defaultColDef = useMemo( ()=> ({
+    const defaultColDef = useMemo(() => ({
         resizable: true,
         editable: true,
         sortable: true,
@@ -76,17 +76,16 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
     const [rowData, setRowData] = useState();
 
     // gets called once, no dependencies, loads the grid data
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then( resp => resp.json())
-            .then( data => setRowData(data));
+            .then(resp => resp.json())
+            .then(data => setRowData(data));
     }, []);
 
     return (
-        <AgGridReact 
+        <AgGridReact
             className="ag-theme-alpine"
             animateRows="true"
-            modules={modules}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             rowData={rowData}

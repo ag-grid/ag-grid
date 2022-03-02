@@ -1,11 +1,14 @@
 'use strict'
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 const valueFormatter = function (params) {
     if (typeof params.value === 'number') {
@@ -51,10 +54,9 @@ const insertItemsAt2 = (count) => {
 
 const GridExample = () => {
     const gridRef = useRef();
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
-    const modules = useMemo(() => [InfiniteRowModelModule], []);
     const [columnDefs, setColumnDefs] = useState([
         {
             headerName: 'Item ID',
@@ -64,12 +66,12 @@ const GridExample = () => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
-                    return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                    return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                 }
             },
         },
-        {field: 'make'},
-        {field: 'model'},
+        { field: 'make' },
+        { field: 'model' },
         {
             field: 'price',
             valueFormatter: valueFormatter,
@@ -202,8 +204,8 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{"display": "flex", "flexDirection": "column", "height": "100%"}}>
-                <div style={{"marginBottom": "10px"}}>
+            <div style={{ "display": "flex", "flexDirection": "column", "height": "100%" }}>
+                <div style={{ "marginBottom": "10px" }}>
                     <button onClick={() => insertItemsAt2AndRefresh(5)}>Insert Rows</button>
                     <button onClick={() => removeItem(3, 10)}>Delete Rows</button>
                     <button onClick={setRowCountTo200}>Set Row Count</button>
@@ -211,19 +213,17 @@ const GridExample = () => {
                     <button onClick={jumpTo500}>Jump to 500</button>
                     <button onClick={printCacheState}>Print Cache State</button>
                 </div>
-                <div style={{"marginBottom": "10px"}}>
+                <div style={{ "marginBottom": "10px" }}>
                     <button onClick={setPricesHigh}>Set Prices High</button>
                     <button onClick={setPricesLow}>Set Prices Low</button>
                     <button onClick={refreshCache}>Refresh Cache</button>
                     <button onClick={purgeCache}>Purge Cache</button>
                 </div>
-                <div style={{"flexGrow": "1"}}>
+                <div style={{ "flexGrow": "1" }}>
 
                     <div style={gridStyle} className="ag-theme-alpine">
                         <AgGridReact
                             ref={gridRef}
-
-                            modules={modules}
                             columnDefs={columnDefs}
                             datasource={datasource}
                             defaultColDef={defaultColDef}

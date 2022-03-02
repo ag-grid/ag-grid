@@ -1,18 +1,21 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import { AgGridVue } from '@ag-grid-community/vue';
 
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
-const SportRenderer =  {
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+const SportRenderer = {
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
     methods: {
         applyTransaction() {
-            this.params.api.applyTransaction({remove: [this.params.node.data]});
+            this.params.api.applyTransaction({ remove: [this.params.node.data] });
         }
     }
 };
@@ -54,7 +57,7 @@ const VueExample = {
                                 :rowData="leftRowData"
                                 :columnDefs="leftColumns"
                                 @grid-ready="onGridReady($event, 0)"
-                                :modules="modules">
+                                >
                         </ag-grid-vue>
                     </div>
                 </div>
@@ -70,7 +73,7 @@ const VueExample = {
                                 :rowData="rightRowData"
                                 :columnDefs="rightColumns"
                                 @grid-ready="onGridReady($event, 1)"
-                                :modules="modules">
+                                >
                         </ag-grid-vue>
                     </div>
                 </div>
@@ -82,7 +85,6 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: [ClientSideRowModelModule],
             leftRowData: null,
             rightRowData: [],
             leftApi: null,
@@ -115,8 +117,8 @@ const VueExample = {
                     suppressMenu: true,
                     headerCheckboxSelection: true
                 },
-                {field: "athlete"},
-                {field: "sport"}
+                { field: "athlete" },
+                { field: "sport" }
             ],
             rightColumns: [
                 {
@@ -130,8 +132,8 @@ const VueExample = {
                         return params.rowNode.data.athlete;
                     },
                 },
-                {field: "athlete"},
-                {field: "sport"},
+                { field: "athlete" },
+                { field: "sport" },
                 {
                     suppressMenu: true,
                     maxWidth: 50,

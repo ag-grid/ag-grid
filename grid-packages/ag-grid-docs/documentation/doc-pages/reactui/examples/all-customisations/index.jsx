@@ -18,6 +18,9 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, StatusBarModule, MenuModule]);
+
 function GridExample() {
 
     const gridRef = useRef();
@@ -113,7 +116,6 @@ function GridExample() {
                 animateRows="true"
                 loadingOverlayComponent={MyLoadingOverlay}
                 noRowsOverlayComponent={MyNoRowsOverlay}
-                modules={[ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, StatusBarModule, MenuModule]}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 rowData={rowData}

@@ -5,6 +5,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const topOptions = {
     alignedGrids: [],
     defaultColDef: {
@@ -90,8 +93,7 @@ const SimpleGridComponent = () => {
                     gridOptions={topOptions}
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
-                    modules={[ClientSideRowModelModule]} />
+                    onFirstDataRendered={onFirstDataRendered} />
             </div>
 
             <div style={{ flex: 'none', height: '60px' }}>
@@ -100,7 +102,6 @@ const SimpleGridComponent = () => {
                     gridOptions={bottomOptions}
                     columnDefs={columnDefs}
                     headerHeight="0"
-                    modules={[ClientSideRowModelModule]}
                     rowStyle={{ fontWeight: 'bold' }}
                 />
             </div>

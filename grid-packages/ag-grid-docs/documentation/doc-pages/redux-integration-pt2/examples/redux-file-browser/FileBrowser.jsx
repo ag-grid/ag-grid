@@ -14,6 +14,9 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
+
 class FileBrowser extends Component {
 
   colDefs = [{ field: "dateModified" }, { field: "size" }];
@@ -29,8 +32,6 @@ class FileBrowser extends Component {
     }
   };
 
-  modules = [ClientSideRowModelModule, RowGroupingModule, MenuModule];
-
   render() {
     return (
       <div style={{ height: '100%' }} className="ag-theme-alpine">
@@ -43,7 +44,6 @@ class FileBrowser extends Component {
           autoGroupColumnDef={this.autoGroupColumnDef}
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
-          modules={this.modules}
           getRowKey={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}
         >

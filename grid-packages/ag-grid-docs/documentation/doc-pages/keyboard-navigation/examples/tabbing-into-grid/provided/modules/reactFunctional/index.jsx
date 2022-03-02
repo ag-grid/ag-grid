@@ -8,6 +8,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -22,15 +25,15 @@ const GridExample = () => {
             field: "athlete",
             minWidth: 170
         },
-        {field: "age"},
-        {field: "country"},
-        {field: "year"},
-        {field: "date"},
-        {field: "sport"},
-        {field: "gold"},
-        {field: "silver"},
-        {field: "bronze"},
-        {field: "total"}
+        { field: "age" },
+        { field: "country" },
+        { field: "year" },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
     ]);
     const myInput = useRef();
 
@@ -79,7 +82,6 @@ const GridExample = () => {
                 </div>
                 <div id="myGrid" style={{ height: '100%', width: '100%' }} className="ag-theme-alpine">
                     <AgGridReact
-                        modules={[ClientSideRowModelModule]}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={{

@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { AgGridReact } from "@ag-grid-community/react";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 export default class DetailCellRenderer extends Component {
   constructor(props) {
     super(props);
@@ -38,7 +41,6 @@ export default class DetailCellRenderer extends Component {
           columnDefs={this.state.colDefs}
           defaultColDef={this.state.defaultColDef}
           rowData={data.callRecords}
-          modules={[ClientSideRowModelModule]}
           onGridReady={this.onGridReady}
         />
       </div>

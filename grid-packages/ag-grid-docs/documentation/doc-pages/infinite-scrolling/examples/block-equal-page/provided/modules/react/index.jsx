@@ -1,22 +1,23 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
-import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule],
             columnDefs: [
                 // this row just shows the row index, doesn't use any data from the row
                 {
@@ -27,7 +28,7 @@ class GridExample extends Component {
                         if (props.value !== undefined) {
                             return props.value;
                         } else {
-                            return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                            return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                         }
                     },
                     // we don't want to sort by the row index, this doesn't make sense as the point
@@ -35,7 +36,7 @@ class GridExample extends Component {
                     sortable: false,
                     suppressMenu: true,
                 },
-                {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},
+                { headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true },
                 {
                     field: 'age',
                     filter: 'agNumberColumnFilter',
@@ -51,14 +52,14 @@ class GridExample extends Component {
                 {
                     field: 'year',
                     filter: 'agSetColumnFilter',
-                    filterParams: {values: ['2000', '2004', '2008', '2012']},
+                    filterParams: { values: ['2000', '2004', '2008', '2012'] },
                 },
-                {field: 'date'},
-                {field: 'sport', suppressMenu: true},
-                {field: 'gold', suppressMenu: true},
-                {field: 'silver', suppressMenu: true},
-                {field: 'bronze', suppressMenu: true},
-                {field: 'total', suppressMenu: true},
+                { field: 'date' },
+                { field: 'sport', suppressMenu: true },
+                { field: 'gold', suppressMenu: true },
+                { field: 'silver', suppressMenu: true },
+                { field: 'bronze', suppressMenu: true },
+                { field: 'total', suppressMenu: true },
             ],
             defaultColDef: {
                 flex: 1,
@@ -121,7 +122,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
 
                     style={{
@@ -130,7 +131,6 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         rowSelection={this.state.rowSelection}
@@ -150,7 +150,7 @@ class GridExample extends Component {
     }
 }
 
-var filterParams = {values: countries()};
+var filterParams = { values: countries() };
 
 function sortAndFilter(allOfTheData, sortModel, filterModel) {
     return sortData(sortModel, filterData(filterModel, allOfTheData));

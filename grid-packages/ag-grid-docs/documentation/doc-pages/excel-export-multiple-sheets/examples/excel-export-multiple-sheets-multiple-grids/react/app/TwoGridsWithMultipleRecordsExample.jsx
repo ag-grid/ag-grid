@@ -1,17 +1,20 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {CsvExportModule} from '@ag-grid-community/csv-export';
-import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterprise/excel-export';
+import React, { Component } from 'react';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
+
 const SportRenderer = props => {
     return (
         <i className="far fa-trash-alt"
-           style={{cursor: 'pointer'}}
-           onClick={() => props.api.applyTransaction({remove: [props.node.data]})}>
+            style={{ cursor: 'pointer' }}
+            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}>
         </i>
     )
 }
@@ -28,8 +31,8 @@ const leftColumns = [
             return params.rowNode.data.athlete;
         },
     },
-    {field: "athlete"},
-    {field: "sport"}
+    { field: "athlete" },
+    { field: "sport" }
 ];
 
 const rightColumns = [
@@ -44,8 +47,8 @@ const rightColumns = [
             return params.rowNode.data.athlete;
         },
     },
-    {field: "athlete"},
-    {field: "sport"},
+    { field: "athlete" },
+    { field: "sport" },
     {
         suppressMenu: true,
         maxWidth: 50,
@@ -90,7 +93,7 @@ export default class extends Component {
                     }
                     athletes.push(data[pos]);
                 }
-                this.setState({rawData: athletes});
+                this.setState({ rawData: athletes });
             });
     }
 
@@ -149,21 +152,21 @@ export default class extends Component {
 
     getTopToolBar = () => (
         <div>
-            <button type="button" className="btn btn-default reset" style={{marginRight: 5}} onClick={this.onExcelExport}>
-                <i className="far fa-file-excel" style={{marginRight: 5, color: 'green'}}></i>Export to Excel
+            <button type="button" className="btn btn-default reset" style={{ marginRight: 5 }} onClick={this.onExcelExport}>
+                <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
             </button>
             <button type="button" className="btn btn-default reset" onClick={this.reset}>
-                <i className="fas fa-redo" style={{marginRight: 5}}></i>Reset
+                <i className="fas fa-redo" style={{ marginRight: 5 }}></i>Reset
             </button>
         </div>
     );
 
     getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{marginRight: '10px'}}>
+        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{height: '100%;'}}
+                    style={{ height: '100%;' }}
                     defaultColDef={defaultColDef}
                     getRowKey={this.getRowKey}
                     rowDragManaged={true}
@@ -175,7 +178,7 @@ export default class extends Component {
                     rowData={id === 0 ? this.state.leftRowData : this.state.rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => this.onGridReady(params, id)}
-                    modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule]}>
+                >
                 </AgGridReact>
             </div>
         </div>
@@ -195,8 +198,8 @@ export default class extends Component {
         var spreadsheets = [];
 
         spreadsheets.push(
-            this.state.leftApi.getSheetDataForExcel({sheetName: 'Athletes'}),
-            this.state.rightApi.getSheetDataForExcel({sheetName: 'Selected Athletes'})
+            this.state.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
+            this.state.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
 
         exportMultipleSheetsAsExcel({

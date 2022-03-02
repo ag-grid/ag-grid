@@ -8,6 +8,9 @@ import MoodEditor from './moodEditorVue.js';
 import MoodRenderer from './moodRendererVue.js';
 import NumericEditor from './numericEditorVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%">
@@ -20,7 +23,7 @@ const VueExample = {
                         @grid-ready="onGridReady"
                         :rowData="rowData"
                         :defaultColDef="defaultColDef"
-                        :modules="modules"></ag-grid-vue>
+                        ></ag-grid-vue>
             </div>
         </div>
     `,
@@ -62,8 +65,7 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            rowData: null,
-            modules: [ClientSideRowModelModule]
+            rowData: null
         }
     },
     beforeMount() {

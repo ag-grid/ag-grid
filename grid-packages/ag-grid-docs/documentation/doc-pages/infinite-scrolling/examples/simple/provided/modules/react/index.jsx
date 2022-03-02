@@ -1,18 +1,20 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [InfiniteRowModelModule],
             columnDefs: [
                 // this row shows the row index, doesn't use any data from the row
                 {
@@ -25,20 +27,20 @@ class GridExample extends Component {
                         if (props.value !== undefined) {
                             return props.value;
                         } else {
-                            return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                            return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                         }
                     },
                 },
-                {field: 'athlete', minWidth: 150},
-                {field: 'age'},
-                {field: 'country', minWidth: 150},
-                {field: 'year'},
-                {field: 'date', minWidth: 150},
-                {field: 'sport', minWidth: 150},
-                {field: 'gold'},
-                {field: 'silver'},
-                {field: 'bronze'},
-                {field: 'total'},
+                { field: 'athlete', minWidth: 150 },
+                { field: 'age' },
+                { field: 'country', minWidth: 150 },
+                { field: 'year' },
+                { field: 'date', minWidth: 150 },
+                { field: 'sport', minWidth: 150 },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
+                { field: 'total' },
             ],
             defaultColDef: {
                 flex: 1,
@@ -93,7 +95,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
 
                     style={{
@@ -102,7 +104,6 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         rowBuffer={this.state.rowBuffer}

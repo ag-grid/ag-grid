@@ -1,35 +1,34 @@
 'use strict';
 
-import React, {useCallback, useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import React, { useCallback, useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 const GridExample = () => {
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
-    const modules = useMemo(
-        () => [ClientSideRowModelModule, RowGroupingModule],
-        []
-    );
     const [columnDefs, setColumnDefs] = useState([
-        {field: 'country', rowGroup: true, hide: true},
-        {field: 'year', rowGroup: true, hide: true},
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         {
             field: 'athlete',
             minWidth: 250,
             cellRenderer: function (params) {
-                return <span style={{marginLeft: 60}}>{params.value}</span>;
+                return <span style={{ marginLeft: 60 }}>{params.value}</span>;
             },
         },
-        {field: 'sport', minWidth: 200},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
+        { field: 'sport', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -53,7 +52,6 @@ const GridExample = () => {
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
                     rowData={rowData}
-                    modules={modules}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     groupDisplayType={'groupRows'}

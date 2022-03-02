@@ -1,12 +1,15 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MasterDetailModule} from '@ag-grid-enterprise/master-detail';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import DetailCellRenderer from './detailCellRendererVue.js';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 const VueExample = {
     template: `
@@ -26,7 +29,6 @@ const VueExample = {
                         :masterDetail="true"
                         :detailRowHeight="detailRowHeight"
                         :detailCellRenderer="detailCellRenderer"
-                        :modules="modules"
                         :rowData="rowData"
                         @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
             </div>
@@ -41,16 +43,15 @@ const VueExample = {
             columnDefs: [{
                 field: "name",
                 cellRenderer: "agGroupCellRenderer"
-            }, {field: "account"}, {field: "calls"}, {
+            }, { field: "account" }, { field: "calls" }, {
                 field: "minutes",
                 valueFormatter: "x.toLocaleString() + 'm'"
             }],
             gridApi: null,
             columnApi: null,
-            defaultColDef: {flex: 1},
+            defaultColDef: { flex: 1 },
             detailRowHeight: null,
             detailCellRenderer: null,
-            modules: [ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule],
             rowData: null
         }
     },

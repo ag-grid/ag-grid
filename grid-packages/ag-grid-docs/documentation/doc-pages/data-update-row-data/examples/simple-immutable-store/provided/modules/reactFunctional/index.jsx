@@ -1,12 +1,15 @@
 'use strict'
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data) {
@@ -40,7 +43,7 @@ function getInitialData() {
 
 function createItem(data) {
     const item = {
-        group: ['A','B','C'][Math.floor(Math.random()*3)],
+        group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
         symbol: createUniqueRandomSymbol(data),
         price: Math.floor(Math.random() * 100),
     };
@@ -51,15 +54,15 @@ function setGroupingEnabled(enabled, columnApi) {
     if (enabled) {
         columnApi.applyColumnState({
             state: [
-                {colId: 'group', rowGroup: true, hide: true},
-                {colId: 'symbol', hide: true},
+                { colId: 'group', rowGroup: true, hide: true },
+                { colId: 'symbol', hide: true },
             ],
         });
     } else {
         columnApi.applyColumnState({
             state: [
-                {colId: 'group', rowGroup: false, hide: false},
-                {colId: 'symbol', hide: false},
+                { colId: 'group', rowGroup: false, hide: false },
+                { colId: 'symbol', hide: false },
             ],
         });
     }
@@ -74,14 +77,13 @@ function setItemVisible(id, visible) {
 
 const GridExample = () => {
     const gridRef = useRef();
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState(getInitialData());
-    const modules = useMemo(() => [ClientSideRowModelModule, RowGroupingModule], []);
     const [columnDefs, setColumnDefs] = useState([
-        {headerName: 'Symbol', field: 'symbol'},
-        {headerName: 'Price', field: 'price'},
-        {headerName: 'Group', field: 'group'},
+        { headerName: 'Symbol', field: 'symbol' },
+        { headerName: 'Price', field: 'price' },
+        { headerName: 'Group', field: 'group' },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -99,7 +101,7 @@ const GridExample = () => {
     }, []);
     const statusBar = useMemo(() => {
         return {
-            statusPanels: [{statusPanel: 'agAggregationComponent', align: 'right'}],
+            statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
         }
     }, []);
     const getRowKey = useCallback(function (params) {
@@ -183,8 +185,8 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{"height": "100%", "width": "100%", "display": "flex", "flexDirection": "column"}}>
-                <div style={{"marginBottom": "5px", "minHeight": "30px"}}>
+            <div style={{ "height": "100%", "width": "100%", "display": "flex", "flexDirection": "column" }}>
+                <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
                     <button onClick={reverseItems}>Reverse</button>
                     <button onClick={() => addFiveItems(true)}>Append</button>
                     <button onClick={() => addFiveItems(false)}>Prepend</button>
@@ -200,19 +202,18 @@ const GridExample = () => {
                         "whiteSpace": "nowrap",
                         "display": "inline-block"
                     }}>
-            Group:
-            <button onClick={() => setSelectedToGroup('A')}>A</button>
-            <button onClick={() => setSelectedToGroup('B')}>B</button>
-            <button onClick={() => setSelectedToGroup('C')}>C</button>
-        </span>
+                        Group:
+                        <button onClick={() => setSelectedToGroup('A')}>A</button>
+                        <button onClick={() => setSelectedToGroup('B')}>B</button>
+                        <button onClick={() => setSelectedToGroup('C')}>C</button>
+                    </span>
                 </div>
-                <div style={{"flex": "1 1 0px"}}>
+                <div style={{ "flex": "1 1 0px" }}>
 
                     <div style={gridStyle} className="ag-theme-alpine">
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}
-                            modules={modules}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
                             animateRows={true}

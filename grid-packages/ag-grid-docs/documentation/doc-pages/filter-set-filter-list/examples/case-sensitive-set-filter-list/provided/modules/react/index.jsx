@@ -1,15 +1,18 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
-import {FiltersToolPanelModule} from '@ag-grid-enterprise/filter-tool-panel';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule, FiltersToolPanelModule]);
 
 const colourCellRenderer = props => {
     if (!props.value || props.value === '(Select All)') {
@@ -25,7 +28,7 @@ const colourCellRenderer = props => {
         height: 10,
         backgroundColor: props.value.toLowerCase()
     };
-    return <React.Fragment><div style={styles}/>{props.value}</React.Fragment>;
+    return <React.Fragment><div style={styles} />{props.value}</React.Fragment>;
 }
 
 class GridExample extends Component {
@@ -33,7 +36,6 @@ class GridExample extends Component {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule, FiltersToolPanelModule],
             columnDefs: [
                 {
                     headerName: 'Case Insensitive (default)',
@@ -63,27 +65,27 @@ class GridExample extends Component {
             },
             sideBar: 'filters',
             rowData: [
-                {colour: 'Black'},
-                {colour: 'BLACK'},
-                {colour: 'black'},
-                {colour: 'Red'},
-                {colour: 'RED'},
-                {colour: 'red'},
-                {colour: 'Orange'},
-                {colour: 'ORANGE'},
-                {colour: 'orange'},
-                {colour: 'White'},
-                {colour: 'WHITE'},
-                {colour: 'white'},
-                {colour: 'Yellow'},
-                {colour: 'YELLOW'},
-                {colour: 'yellow'},
-                {colour: 'Green'},
-                {colour: 'GREEN'},
-                {colour: 'green'},
-                {colour: 'Purple'},
-                {colour: 'PURPLE'},
-                {colour: 'purple'},
+                { colour: 'Black' },
+                { colour: 'BLACK' },
+                { colour: 'black' },
+                { colour: 'Red' },
+                { colour: 'RED' },
+                { colour: 'red' },
+                { colour: 'Orange' },
+                { colour: 'ORANGE' },
+                { colour: 'orange' },
+                { colour: 'White' },
+                { colour: 'WHITE' },
+                { colour: 'white' },
+                { colour: 'Yellow' },
+                { colour: 'YELLOW' },
+                { colour: 'yellow' },
+                { colour: 'Green' },
+                { colour: 'GREEN' },
+                { colour: 'green' },
+                { colour: 'Purple' },
+                { colour: 'PURPLE' },
+                { colour: 'purple' },
             ]
         };
     }
@@ -100,8 +102,8 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
-                <div style={{"display": "flex", "flexDirection": "column", "height": "100%"}}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div style={{ "display": "flex", "flexDirection": "column", "height": "100%" }}>
                     <div
 
                         style={{
@@ -110,7 +112,6 @@ class GridExample extends Component {
                         }}
                         className="ag-theme-alpine">
                         <AgGridReact
-                            modules={this.state.modules}
                             columnDefs={this.state.columnDefs}
                             defaultColDef={this.state.defaultColDef}
                             sideBar={this.state.sideBar}

@@ -11,43 +11,42 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule, RangeSelectionModule]);
+
 // this is a hook, but we work also with classes
 function MyRenderer(params) {
     return (
-          <span className="my-renderer">
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
-              {params.value}
-          </span>
+        <span className="my-renderer">
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner" />
+            {params.value}
+        </span>
     );
 }
 
- function GridExample() {
+function GridExample() {
 
     const [rowData, setRowData] = useState(null);
 
     const gridRef = useRef();
 
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
-        .then(resp => resp.json())
-        .then(data => {
-            setRowData(data);
-            setTimeout( ()=> gridRef.current.api.getDisplayedRowAtIndex(1).setExpanded(true), 100);
-        });
+            .then(resp => resp.json())
+            .then(data => {
+                setRowData(data);
+                setTimeout(() => gridRef.current.api.getDisplayedRowAtIndex(1).setExpanded(true), 100);
+            });
     }, []);
 
-    const columnDefs = useMemo( ()=> [
+    const columnDefs = useMemo(() => [
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
         { field: 'account', cellRenderer: MyRenderer },
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ], []);
 
-    const modules = useMemo( ()=> [
-        ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule, RangeSelectionModule
-    ], []);
-
-    const detailGridOptions = useMemo( ()=> ({
+    const detailGridOptions = useMemo(() => ({
         rowSelection: "multiple",
         suppressRowClickSelection: true,
         enableRangeSelection: true,
@@ -58,8 +57,8 @@ function MyRenderer(params) {
                 field: "callId",
                 checkboxSelection: true
             },
-            { 
-                field: "direction", 
+            {
+                field: "direction",
                 cellRenderer: MyRenderer
             },
             {
@@ -81,23 +80,22 @@ function MyRenderer(params) {
         }
     }), []);
 
-    const detailCellRendererParams = useMemo( ()=> ({
+    const detailCellRendererParams = useMemo(() => ({
         detailGridOptions: detailGridOptions,
         getDetailRowData: params => params.successCallback(params.data.callRecords)
     }), []);
 
-    return  (
-            <AgGridReact
-                ref={gridRef}
-                className="ag-theme-alpine"
-                columnDefs={columnDefs}
-                modules={modules}
-                defaultColDef={{ flex: 1 }}
-                masterDetail={true}
-                detailCellRendererParams={detailCellRendererParams}
-                rowData={rowData}
-            />
-        );
+    return (
+        <AgGridReact
+            ref={gridRef}
+            className="ag-theme-alpine"
+            columnDefs={columnDefs}
+            defaultColDef={{ flex: 1 }}
+            masterDetail={true}
+            detailCellRendererParams={detailCellRendererParams}
+            rowData={rowData}
+        />
+    );
 
 }
 

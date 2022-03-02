@@ -5,6 +5,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const columns = [
     { field: "id", rowDrag: true },
     { field: "color" },
@@ -188,7 +191,6 @@ export default class extends Component {
                     rowData={this.state[side === 'Left' ? 'leftRowData' : 'rightRowData']}
                     columnDefs={[...columns]}
                     onGridReady={this.onGridReady.bind(this, side)}
-                    modules={[ClientSideRowModelModule]}
                 />
             </div>
         </div>

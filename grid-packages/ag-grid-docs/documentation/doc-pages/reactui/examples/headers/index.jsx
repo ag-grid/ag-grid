@@ -7,19 +7,22 @@ import { AgGridReact } from '@ag-grid-community/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { render } from 'react-dom';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const SortingHeader = memo((props) => {
 
     const [sortState, setSortState] = useState();
 
-    const onClick = useCallback( ()=> {
+    const onClick = useCallback(() => {
         props.progressSort();
     });
 
-    useEffect( ()=> {
+    useEffect(() => {
         const listener = () => {
             if (props.column.isSortAscending()) {
                 setSortState('ASC');
-            } else if (props.column.isSortDescending() ) {
+            } else if (props.column.isSortDescending()) {
                 setSortState('DESC');
             } else {
                 setSortState(undefined);
@@ -28,12 +31,12 @@ const SortingHeader = memo((props) => {
 
         props.column.addEventListener('sortChanged', listener);
 
-        return ()=> props.column.removeEventListener('sortChanged', listener);;
+        return () => props.column.removeEventListener('sortChanged', listener);;
     }, []);
 
     return (
         <span className="my-header" onClick={onClick}>
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner" />
             {props.displayName} {sortState}
         </span>
     );
@@ -42,32 +45,32 @@ const SortingHeader = memo((props) => {
 const MyGroupHeader = memo((props) => {
 
     const [expanded, setExpanded] = useState();
-    const {columnGroup} = props;
+    const { columnGroup } = props;
     const expandable = columnGroup.isExpandable();
     const providedColumnGroup = columnGroup.getProvidedColumnGroup();
 
-    const onExpandClicked = useCallback( ()=> props.setExpanded(!columnGroup.isExpanded()), []);
+    const onExpandClicked = useCallback(() => props.setExpanded(!columnGroup.isExpanded()), []);
 
-    useEffect( ()=> {
-        const listener = ()=> {
+    useEffect(() => {
+        const listener = () => {
             setExpanded(columnGroup.isExpanded());
         };
         listener();
         providedColumnGroup.addEventListener('expandedChanged', listener);
-        return ()=> providedColumnGroup.removeEventListener('expandedChanged', listener);
+        return () => providedColumnGroup.removeEventListener('expandedChanged', listener);
     }, []);
 
-    const showExpandJsx = ()=> (
+    const showExpandJsx = () => (
         <button onClick={onExpandClicked} className="my-expand">
-            { expanded ? '<' : '>' }
+            {expanded ? '<' : '>'}
         </button>
     );
 
     return (
         <span className="my-group-header">
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
-            { props.displayName }
-            { expandable && showExpandJsx() }
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner" />
+            {props.displayName}
+            {expandable && showExpandJsx()}
         </span>
     );
 });
@@ -75,10 +78,7 @@ const MyGroupHeader = memo((props) => {
 function GridExample() {
 
     // never changes, so we can use useMemo
-    const modules = useMemo( ()=> [ClientSideRowModelModule], []);
-
-    // never changes, so we can use useMemo
-    const columnDefs = useMemo( ()=> [
+    const columnDefs = useMemo(() => [
         {
             headerName: 'Group A',
             headerGroupComponent: MyGroupHeader,
@@ -100,7 +100,7 @@ function GridExample() {
     ], []);
 
     // never changes, so we can use useMemo
-    const defaultColDef = useMemo( ()=> ({
+    const defaultColDef = useMemo(() => ({
         resizable: true,
         sortable: true
     }), []);
@@ -109,17 +109,16 @@ function GridExample() {
     const [rowData, setRowData] = useState();
 
     // gets called once, no dependencies, loads the grid data
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then( resp => resp.json())
-            .then( data => setRowData(data));
+            .then(resp => resp.json())
+            .then(data => setRowData(data));
     }, []);
 
     return (
-        <AgGridReact 
+        <AgGridReact
             className="ag-theme-alpine"
             animateRows="true"
-            modules={modules}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             rowData={rowData}

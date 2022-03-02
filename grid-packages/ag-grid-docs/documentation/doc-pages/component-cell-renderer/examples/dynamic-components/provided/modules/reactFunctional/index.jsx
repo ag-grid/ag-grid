@@ -1,11 +1,14 @@
 'use strict';
 
-import React, {useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React, { useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SquareRenderer = props => {
     const valueSquared = (value) => {
@@ -42,7 +45,7 @@ const ChildMessageRenderer = props => {
         props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef.field}`);
     };
 
-    return <span><button style={{height: 20, lineHeight: 0.5}} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
+    return <span><button style={{ height: 20, lineHeight: 0.5 }} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
 };
 
 const createRowData = () => {
@@ -107,7 +110,7 @@ const GridExample = () => {
     const refreshEvenRowsCurrencyData = () => {
         const newRowData = [];
         for (const data of rowData) {
-            let newData = {...data};
+            let newData = { ...data };
             if (newData.value % 2 === 0) {
                 newData.currency = newData.value + Number(Math.random().toFixed(2));
             }
@@ -121,10 +124,10 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
-                <button onClick={() => refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
-                        className="btn btn-primary">
+                <button onClick={() => refreshEvenRowsCurrencyData()} style={{ "marginBottom": "10px" }}
+                    className="btn btn-primary">
                     Refresh Even Row Currency Data
                 </button>
                 <div
@@ -135,7 +138,6 @@ const GridExample = () => {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={[ClientSideRowModelModule]}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         getRowKey={params => params.data.row}
@@ -158,6 +160,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useMemo, useEffect, useState, useRef, memo, useCallback} from 'react';
+import React, { useMemo, useEffect, useState, useRef, memo, useCallback } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -10,32 +10,32 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule]);
+
 // Custom Cell Renderer, no memo(), we will have wasted renders!!
 const RenderCounterCellRenderer = (params) => {
     const renderCountRef = useRef(1);
     return (
-          <span className="my-renderer">
-              <span className="render-count">({renderCountRef.current++})</span> {params.value} 
-          </span>
+        <span className="my-renderer">
+            <span className="render-count">({renderCountRef.current++})</span> {params.value}
+        </span>
     );
 };
 
 function GridExample() {
 
-    // never changes, so we can use useMemo
-    const modules = useMemo( ()=> [ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule], []);
-
     const gridRef = useRef();
 
-    const columnDefs = useMemo( ()=> [
-            { field: 'athlete', cellRenderer: RenderCounterCellRenderer },
-            { field: 'country', cellRenderer: RenderCounterCellRenderer },
-            { field: 'gold', cellRenderer: RenderCounterCellRenderer },
-            { field: 'silver', cellRenderer: RenderCounterCellRenderer }
-        ], []);
+    const columnDefs = useMemo(() => [
+        { field: 'athlete', cellRenderer: RenderCounterCellRenderer },
+        { field: 'country', cellRenderer: RenderCounterCellRenderer },
+        { field: 'gold', cellRenderer: RenderCounterCellRenderer },
+        { field: 'silver', cellRenderer: RenderCounterCellRenderer }
+    ], []);
 
     // never changes, so we can use useMemo
-    const defaultColDef = useMemo( ()=> ({
+    const defaultColDef = useMemo(() => ({
         resizable: true,
         sortable: true,
         flex: 1
@@ -45,16 +45,16 @@ function GridExample() {
     const [rowData, setRowData] = useState();
 
     // gets called once, no dependencies, loads the grid data
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then( resp => resp.json())
-            .then( data => setRowData(data.slice(0,10)));
+            .then(resp => resp.json())
+            .then(data => setRowData(data.slice(0, 10)));
     }, []);
 
-    const onClickIncreaseMedals = useCallback( () => {
+    const onClickIncreaseMedals = useCallback(() => {
         const gridApi = gridRef.current.api;
-        gridApi.forEachNode( rowNode => {
-            ['gold','silver'].forEach( colId => {
+        gridApi.forEachNode(rowNode => {
+            ['gold', 'silver'].forEach(colId => {
                 const currentVal = gridApi.getValue(colId, rowNode);
                 rowNode.setDataValue(colId, currentVal + 1);
             });
@@ -67,11 +67,10 @@ function GridExample() {
                 <button onClick={onClickIncreaseMedals}>Increase Medals</button>
             </div>
             <div className="grid-div">
-                <AgGridReact 
+                <AgGridReact
                     ref={gridRef}
                     className="ag-theme-alpine"
                     animateRows="true"
-                    modules={modules}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowData={rowData}

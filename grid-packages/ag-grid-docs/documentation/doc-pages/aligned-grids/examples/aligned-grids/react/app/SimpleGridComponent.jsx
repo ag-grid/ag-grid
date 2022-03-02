@@ -5,6 +5,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -122,16 +125,14 @@ export default class extends Component {
                         gridOptions={this.state.topOptions}
                         columnDefs={this.state.columnDefs}
                         onGridReady={this.onGridReady.bind(this)}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                        modules={[ClientSideRowModelModule]} />
+                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
                 </div>
 
                 <div className="grid ag-theme-alpine">
                     <AgGridReact
                         rowData={this.state.rowData}
                         gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs}
-                        modules={[ClientSideRowModelModule]} />
+                        columnDefs={this.state.columnDefs} />
                 </div>
             </div>
         );

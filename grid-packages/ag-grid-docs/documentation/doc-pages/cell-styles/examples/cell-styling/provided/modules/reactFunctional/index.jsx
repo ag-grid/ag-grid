@@ -1,11 +1,14 @@
 'use strict'
 
-import React, {useCallback, useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React, { useCallback, useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules = {
     'rag-green-outer': params => params.value === 2008,
@@ -52,12 +55,11 @@ const numberParser = (params) => {
 
 const GridExample = () => {
 
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
-    const modules = useMemo(() => [ClientSideRowModelModule], []);
     const [columnDefs, setColumnDefs] = useState([
-        {field: 'athlete'},
+        { field: 'athlete' },
         {
             field: 'age',
             maxWidth: 90,
@@ -68,7 +70,7 @@ const GridExample = () => {
                 'rag-red': 'x >= 25',
             },
         },
-        {field: 'country'},
+        { field: 'country' },
         {
             field: 'year',
             maxWidth: 90,
@@ -76,7 +78,7 @@ const GridExample = () => {
             cellClassRules: ragCellClassRules,
             cellRenderer: ragRenderer,
         },
-        {field: 'date', cellClass: 'rag-amber'},
+        { field: 'date', cellClass: 'rag-amber' },
         {
             field: 'sport',
             cellClass: cellClass,
@@ -127,7 +129,6 @@ const GridExample = () => {
                 <AgGridReact
 
                     rowData={rowData}
-                    modules={modules}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}

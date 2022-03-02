@@ -6,6 +6,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const columns = [
     { field: "id", rowDrag: true },
     { field: "color" },
@@ -182,7 +185,6 @@ const TwoGridsWithDropPositionExample = () => {
                     rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
                     onGridReady={params => onGridReady(side, params)}
-                    modules={[ClientSideRowModelModule]}
                 />
             </div>
         </div>

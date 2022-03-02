@@ -6,6 +6,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const topOptions = {
     alignedGrids: [],
     defaultColDef: {
@@ -113,16 +116,14 @@ export default () => {
                     gridOptions={topOptions}
                     columnDefs={columnDefs}
                     onGridReady={params => onGridReady(params)}
-                    onFirstDataRendered={params => onFirstDataRendered(params)}
-                    modules={[ClientSideRowModelModule]} />
+                    onFirstDataRendered={params => onFirstDataRendered(params)} />
             </div>
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     rowData={rowData}
                     gridOptions={bottomOptions}
-                    columnDefs={columnDefs}
-                    modules={[ClientSideRowModelModule]} />
+                    columnDefs={columnDefs} />
             </div>
         </div>
     );

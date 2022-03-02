@@ -8,6 +8,9 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
         <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
@@ -22,7 +25,7 @@ const VueExample = {
                          class="ag-theme-alpine"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
-                         :modules="modules"
+                         
                          :gridOptions="topOptions"
                          @first-data-rendered="onFirstDataRendered($event)">
             </ag-grid-vue>
@@ -32,7 +35,7 @@ const VueExample = {
                          class="ag-theme-alpine"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
-                         :modules="modules"
+                         
                          :gridOptions="bottomOptions">
             </ag-grid-vue>
         </div>
@@ -63,7 +66,6 @@ const VueExample = {
                 }
             ],
             rowData: null,
-            modules: [ClientSideRowModelModule],
             topOptions: {
                 alignedGrids: [],
                 defaultColDef: {

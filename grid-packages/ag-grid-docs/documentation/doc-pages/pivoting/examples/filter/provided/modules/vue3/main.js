@@ -1,13 +1,16 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
-import {FiltersToolPanelModule} from '@ag-grid-enterprise/filter-tool-panel';
-import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
-import {MenuModule} from '@ag-grid-enterprise/menu';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MenuModule } from '@ag-grid-enterprise/menu';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, MenuModule]);
 
 const VueExample = {
     template: `
@@ -32,7 +35,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :pivotMode="true"
                         :sideBar="sideBar"
-                        :modules="modules"
                         :rowData="rowData"></ag-grid-vue>
             </div>
         </div>
@@ -47,7 +49,7 @@ const VueExample = {
                 field: "country",
                 pivot: true,
                 enablePivot: true
-            }, {field: "year"}, {field: "date"}, {field: "sport"}, {
+            }, { field: "year" }, { field: "date" }, { field: "sport" }, {
                 field: "gold",
                 aggFunc: "sum"
             }, {
@@ -62,12 +64,11 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                filter: true,,
+                filter: true,
                 sortable: true,
                 resizable: true
             },
             sideBar: null,
-            modules: [ClientSideRowModelModule, RowGroupingModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, MenuModule],
             rowData: null
         }
     },

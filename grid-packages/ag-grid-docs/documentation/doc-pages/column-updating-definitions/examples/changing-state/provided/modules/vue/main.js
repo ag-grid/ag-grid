@@ -1,8 +1,11 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -19,7 +22,6 @@ const VueExample = {
             :columnDefs="columnDefs"
             @grid-ready="onGridReady"
             :defaultColDef="defaultColDef"
-            :modules="modules"
             :rowData="rowData"></ag-grid-vue>
       </div>
       </div>
@@ -40,7 +42,6 @@ const VueExample = {
                 pinned: null,
                 sort: null
             },
-            modules: [ClientSideRowModelModule],
             rowData: null
         }
     },
@@ -74,18 +75,18 @@ const VueExample = {
                     width: 100,
                     sort: 'asc'
                 },
-                {field: 'age'},
+                { field: 'age' },
                 {
                     field: 'country',
                     pinned: 'left'
                 },
-                {field: 'sport'},
-                {field: 'year'},
-                {field: 'date'},
-                {field: 'gold'},
-                {field: 'silver'},
-                {field: 'bronze'},
-                {field: 'total'}
+                { field: 'sport' },
+                { field: 'year' },
+                { field: 'date' },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
+                { field: 'total' }
             ];
         }
     }

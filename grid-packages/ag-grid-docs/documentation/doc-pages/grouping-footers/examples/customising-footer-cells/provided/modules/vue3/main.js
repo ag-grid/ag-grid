@@ -1,10 +1,13 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MyInnerRenderer from './myInnerRendererVue.js';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const VueExample = {
     template: `
@@ -19,8 +22,7 @@ const VueExample = {
                     :groupIncludeFooter="true"
                     :groupIncludeTotalFooter="true"
                     :animateRows="true"
-                    :rowData="rowData"
-                    :modules="modules"></ag-grid-vue>
+                    :rowData="rowData"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -61,8 +63,7 @@ const VueExample = {
                     innerRenderer: 'MyInnerRenderer'
                 }
             },
-            rowData: null,
-            modules: [ClientSideRowModelModule, RowGroupingModule]
+            rowData: null
         }
     },
     created() {

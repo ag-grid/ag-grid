@@ -8,6 +8,9 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import DaysFrostRenderer from './daysFrostRenderer.jsx';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
 * demonstrates what is at least possible, and may be preferable in certain use cases
@@ -67,7 +70,6 @@ class GridExample extends Component {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule],
             columnDefs: [
                 {
                     headerName: "Month",
@@ -161,7 +163,6 @@ class GridExample extends Component {
                         }}
                         className="ag-theme-alpine">
                         <AgGridReact
-                            modules={this.state.modules}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             defaultColDef={this.state.defaultColDef}

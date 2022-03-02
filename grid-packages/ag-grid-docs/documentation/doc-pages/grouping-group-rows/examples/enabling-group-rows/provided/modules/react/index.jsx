@@ -1,33 +1,35 @@
 'use strict';
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule, RowGroupingModule],
             columnDefs: [
-                {field: 'country', rowGroup: true, hide: true},
-                {field: 'year', rowGroup: true, hide: true},
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
                 {
                     field: 'athlete',
                     minWidth: 250,
                     cellRenderer: function (params) {
-                        return <span style={{marginLeft: 60}}>{params.value}</span>;
+                        return <span style={{ marginLeft: 60 }}>{params.value}</span>;
                     },
                 },
-                {field: 'sport', minWidth: 200},
-                {field: 'gold'},
-                {field: 'silver'},
-                {field: 'bronze'},
+                { field: 'sport', minWidth: 200 },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
             ],
             defaultColDef: {
                 flex: 1,
@@ -45,7 +47,7 @@ class GridExample extends Component {
         this.gridColumnApi = params.columnApi;
 
         const updateData = (data) => {
-            this.setState({rowData: data});
+            this.setState({ rowData: data });
         };
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -55,7 +57,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
                     style={{
                         height: '100%',
@@ -64,7 +66,6 @@ class GridExample extends Component {
                     className="ag-theme-alpine"
                 >
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         groupDisplayType={this.state.groupDisplayType}

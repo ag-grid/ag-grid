@@ -8,6 +8,9 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 let rowIdSequence = 100;
 
 function createDataItem(color) {
@@ -53,7 +56,7 @@ const VueExample = {
                         :rowData="leftRowData"
                         :columnDefs="columns"
                         @grid-ready="onGridReady($event, 'Left')"
-                        :modules="modules">
+                        >
                     </ag-grid-vue>
                 </div>
             </div>
@@ -88,7 +91,7 @@ const VueExample = {
                         :rowData="rightRowData"
                         :columnDefs="columns"
                         @grid-ready="onGridReady($event, 'Right')"
-                        :modules="modules">
+                        >
                     </ag-grid-vue>
                 </div>
             </div>
@@ -99,7 +102,6 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: [ClientSideRowModelModule],
             leftRowData: [],
             rightRowData: [],
             leftApi: null,

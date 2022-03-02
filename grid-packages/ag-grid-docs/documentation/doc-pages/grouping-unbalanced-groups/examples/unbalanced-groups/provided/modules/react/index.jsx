@@ -1,12 +1,15 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES = {
     Ireland: 'ie',
@@ -24,7 +27,7 @@ function countryCellRenderer(params) {
     } else {
         return (
             <React.Fragment>
-                <img border="0" width="15" height="10" src={`https://flagcdn.com/h20/${COUNTRY_CODES[params.value]}.png`}/>
+                <img border="0" width="15" height="10" src={`https://flagcdn.com/h20/${COUNTRY_CODES[params.value]}.png`} />
                 {params.value}
             </React.Fragment>)
     }
@@ -61,9 +64,8 @@ class GridExample extends Component {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule, RowGroupingModule],
             columnDefs: [
-                {field: 'city', type: 'dimension', cellRenderer: cityCellRenderer},
+                { field: 'city', type: 'dimension', cellRenderer: cityCellRenderer },
                 {
                     field: 'country',
                     type: 'dimension',
@@ -76,8 +78,8 @@ class GridExample extends Component {
                     cellRenderer: stateCellRenderer,
                     rowGroup: true,
                 },
-                {field: 'val1', type: 'numberValue'},
-                {field: 'val2', type: 'numberValue'},
+                { field: 'val1', type: 'numberValue' },
+                { field: 'val2', type: 'numberValue' },
             ],
             defaultColDef: {
                 flex: 1,
@@ -117,7 +119,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
 
 
                 <div
@@ -128,7 +130,6 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         autoGroupColumnDef={this.state.autoGroupColumnDef}

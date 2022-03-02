@@ -6,11 +6,14 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const SportRenderer = props => {
     return (
         <i className="far fa-trash-alt"
-           style={{cursor: 'pointer'}}
-           onClick={() => props.api.applyTransaction({remove: [props.node.data]})}>
+            style={{ cursor: 'pointer' }}
+            onClick={() => props.api.applyTransaction({ remove: [props.node.data] })}>
         </i>
     )
 }
@@ -203,8 +206,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
 
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
-                    onGridReady={(params) => onGridReady(params, id)}
-                    modules={[ClientSideRowModelModule]}>
+                    onGridReady={(params) => onGridReady(params, id)}>
                 </AgGridReact>
             </div>
         </div>

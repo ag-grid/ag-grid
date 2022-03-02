@@ -1,12 +1,15 @@
 'use strict'
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -190,15 +193,14 @@ const updateImmutableObject = (original, newValues) => {
 
 const GridExample = () => {
 
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
     // a list of the data, that we modify as we go. if you are using an immutable
     // data store (such as Redux) then this would be similar to your store of data.
     const [globalRowData, setGlobalData] = useState(createRowData());
 
     const [rowData, setRowData] = useState();
-    const modules = useMemo(() => [ClientSideRowModelModule, RowGroupingModule], []);
     const [columnDefs, setColumnDefs] = useState([
         // these are the row groups, so they are all hidden (they are showd in the group column)
         {
@@ -222,7 +224,7 @@ const GridExample = () => {
             rowGroupIndex: 2,
             hide: true,
         },
-        {field: 'trade', width: 100},
+        { field: 'trade', width: 100 },
         // all the other columns (visible and not grouped)
         {
             field: 'batch',
@@ -331,7 +333,7 @@ const GridExample = () => {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
         // some string values, that do not get aggregated
-        {field: 'dealType', enableRowGroup: true, enablePivot: true},
+        { field: 'dealType', enableRowGroup: true, enablePivot: true },
         {
             headerName: 'Bid',
             field: 'bidFlag',
@@ -339,7 +341,7 @@ const GridExample = () => {
             enablePivot: true,
             width: 100,
         },
-        {field: 'comment', editable: true},
+        { field: 'comment', editable: true },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -374,7 +376,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div style={{"marginBottom": "5px"}}>
+                <div style={{ "marginBottom": "5px" }}>
                     <button onClick={updateData}>Update</button>
                 </div>
 
@@ -382,7 +384,6 @@ const GridExample = () => {
                     <AgGridReact
 
                         rowData={rowData}
-                        modules={modules}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}

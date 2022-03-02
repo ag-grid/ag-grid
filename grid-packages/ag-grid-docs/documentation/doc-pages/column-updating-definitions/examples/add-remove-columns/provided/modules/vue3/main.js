@@ -1,30 +1,32 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const colDefsMedalsIncluded = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 const colDefsMedalsExcluded = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' }
 ];
 
 const VueExample = {
@@ -42,7 +44,6 @@ const VueExample = {
                         :columnDefs="columnDefs"
                         @grid-ready="onGridReady"
                         :defaultColDef="defaultColDef"
-                        :modules="modules"
                         :rowData="rowData"></ag-grid-vue>
             </div>
         </div>
@@ -61,7 +62,6 @@ const VueExample = {
                 sortable: true,
                 resizable: true
             },
-            modules: [ClientSideRowModelModule],
             rowData: null
         }
     },

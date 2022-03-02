@@ -1,12 +1,15 @@
 'use strict';
 
-import React, {forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState} from 'react';
-import ReactDOM, {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
+import ReactDOM, { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
 
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -49,10 +52,10 @@ const DoublingEditor = memo(forwardRef((props, ref) => {
 
     return (
         <input type="number"
-               ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               style={{width: "100%"}}
+            ref={refInput}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            style={{ width: "100%" }}
         />
     );
 }));
@@ -60,10 +63,10 @@ const DoublingEditor = memo(forwardRef((props, ref) => {
 const MoodRenderer = memo(props => {
     const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
-    const mood = useMemo( ()=> imageForMood(props.value), [props.value]);
+    const mood = useMemo(() => imageForMood(props.value), [props.value]);
 
     return (
-        <img width="20px" src={mood}/>
+        <img width="20px" src={mood} />
     );
 });
 
@@ -142,15 +145,15 @@ const MoodEditor = memo(forwardRef((props, ref) => {
 
     return (
         <div ref={refContainer}
-             style={mood}
-             tabIndex={1} // important - without this the key presses wont be caught
+            style={mood}
+            tabIndex={1} // important - without this the key presses wont be caught
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
-            }} style={happyStyle}/>
+            }} style={happyStyle} />
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
-            }} style={sadStyle}/>
+            }} style={sadStyle} />
         </div>
     );
 }));
@@ -242,7 +245,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
             if (event.preventDefault) event.preventDefault();
         }
 
-        if(finishedEditingPressed(event)) {
+        if (finishedEditingPressed(event)) {
             props.stopEditing();
         }
     };
@@ -273,29 +276,29 @@ const NumericEditor = memo(forwardRef((props, ref) => {
 
     return (
         <input ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               onKeyDown={event => onKeyDown(event)}
-               style={{width: "100%"}}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            onKeyDown={event => onKeyDown(event)}
+            style={{ width: "100%" }}
         />
     );
 }));
 
 const GridExample = () => {
     const [rowData] = useState([
-        {name: "Bob", mood: "Happy", number: 10},
-        {name: "Harry", mood: "Sad", number: 3},
-        {name: "Sally", mood: "Happy", number: 20},
-        {name: "Mary", mood: "Sad", number: 5},
-        {name: "John", mood: "Happy", number: 15},
-        {name: "Jack", mood: "Happy", number: 25},
-        {name: "Sue", mood: "Sad", number: 43},
-        {name: "Sean", mood: "Sad", number: 1335},
-        {name: "Niall", mood: "Happy", number: 2},
-        {name: "Alberto", mood: "Happy", number: 123},
-        {name: "Fred", mood: "Sad", number: 532},
-        {name: "Jenny", mood: "Happy", number: 34},
-        {name: "Larry", mood: "Happy", number: 13},
+        { name: "Bob", mood: "Happy", number: 10 },
+        { name: "Harry", mood: "Sad", number: 3 },
+        { name: "Sally", mood: "Happy", number: 20 },
+        { name: "Mary", mood: "Sad", number: 5 },
+        { name: "John", mood: "Happy", number: 15 },
+        { name: "Jack", mood: "Happy", number: 25 },
+        { name: "Sue", mood: "Sad", number: 43 },
+        { name: "Sean", mood: "Sad", number: 1335 },
+        { name: "Niall", mood: "Happy", number: 2 },
+        { name: "Alberto", mood: "Happy", number: 123 },
+        { name: "Fred", mood: "Sad", number: 532 },
+        { name: "Jenny", mood: "Happy", number: 34 },
+        { name: "Larry", mood: "Happy", number: 13 },
     ]);
 
     const columnDefs = useMemo(() => [
@@ -326,7 +329,7 @@ const GridExample = () => {
     ], [])
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -334,7 +337,6 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine test-grid">
                 <AgGridReact
-                    modules={[ClientSideRowModelModule]}
                     columnDefs={columnDefs}
                     rowData={rowData}
                     defaultColDef={{
@@ -352,6 +354,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

@@ -8,12 +8,14 @@ import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: [ClientSideRowModelModule],
             columnDefs: [
                 {
                     field: "first_name",
@@ -149,7 +151,6 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}

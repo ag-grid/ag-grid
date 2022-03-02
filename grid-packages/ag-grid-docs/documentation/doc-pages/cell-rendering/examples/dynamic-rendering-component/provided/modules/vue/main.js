@@ -6,6 +6,9 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import GenderRenderer from './genderRendererVue.js';
 import MoodRenderer from './moodRendererVue.js';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -15,8 +18,8 @@ const VueExample = {
           id="myGrid"
           :columnDefs="columnDefs"
           :rowData="rowData"
-          :defaultColDef="defaultColDef"
-          :modules="modules"></ag-grid-vue>
+          :defaultColDef="defaultColDef">
+      </ag-grid-vue>
       </div>
     `,
     components: {
@@ -79,8 +82,6 @@ const VueExample = {
                     type: "mood"
                 }
             ]
-            ,
-            modules: [ClientSideRowModelModule]
         }
     }
 }

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef = {
     width: 80,
@@ -155,7 +157,7 @@ const SimpleGridComponent = () => {
         <div className="outer">
             <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}>
-                <AgGridReact gridOptions={leftGridOptions} onGridReady={onLeftGridReady} modules={[ClientSideRowModelModule]} />
+                <AgGridReact gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
 
             <div className="inner-col factory-panel">
@@ -181,7 +183,7 @@ const SimpleGridComponent = () => {
 
             <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}>
-                <AgGridReact gridOptions={rightGridOptions} onGridReady={onRightGridReady} modules={[ClientSideRowModelModule]} />
+                <AgGridReact gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>
         </div>
     );

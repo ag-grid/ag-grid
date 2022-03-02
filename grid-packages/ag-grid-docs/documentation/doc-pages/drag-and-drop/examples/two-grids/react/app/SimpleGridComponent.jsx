@@ -5,6 +5,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -171,7 +174,7 @@ export default class extends Component {
             <div className="outer">
                 <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={this.gridDragOver}
                     onDrop={this.gridDrop.bind(this, 'left')}>
-                    <AgGridReact gridOptions={this.state.leftGridOptions} onGridReady={this.onGridReady} modules={[ClientSideRowModelModule]} />
+                    <AgGridReact gridOptions={this.state.leftGridOptions} onGridReady={this.onGridReady} />
                 </div>
 
                 <div className="inner-col factory-panel">
@@ -197,7 +200,7 @@ export default class extends Component {
 
                 <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={this.gridDragOver}
                     onDrop={this.gridDrop.bind(this, 'right')}>
-                    <AgGridReact gridOptions={this.state.rightGridOptions} modules={[ClientSideRowModelModule]} />
+                    <AgGridReact gridOptions={this.state.rightGridOptions} />
                 </div>
             </div>
         );

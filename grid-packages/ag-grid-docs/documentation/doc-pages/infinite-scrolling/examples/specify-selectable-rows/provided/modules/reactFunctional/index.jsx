@@ -1,18 +1,20 @@
 'use strict'
 
-import React, {useCallback, useMemo, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {InfiniteRowModelModule} from '@ag-grid-community/infinite-row-model';
+import React, { useCallback, useMemo, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
+
 const GridExample = () => {
 
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
-    const modules = useMemo(() => [InfiniteRowModelModule], []);
     const [columnDefs, setColumnDefs] = useState([
         // this row shows the row index, doesn't use any data from the row
         {
@@ -25,20 +27,20 @@ const GridExample = () => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
-                    return <img src="https://www.ag-grid.com/example-assets/loading.gif"/>;
+                    return <img src="https://www.ag-grid.com/example-assets/loading.gif" />;
                 }
             },
         },
-        {field: 'athlete', minWidth: 200},
-        {field: 'age'},
-        {field: 'country', minWidth: 200, checkboxSelection: true},
-        {field: 'year'},
-        {field: 'date', minWidth: 150},
-        {field: 'sport', minWidth: 150},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 200, checkboxSelection: true },
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -86,9 +88,6 @@ const GridExample = () => {
 
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
-
-
-                    modules={modules}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowBuffer={0}
