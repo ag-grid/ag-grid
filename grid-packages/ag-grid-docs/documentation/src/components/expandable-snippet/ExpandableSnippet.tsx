@@ -36,7 +36,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     console.log(model);
 
     return (
-        <div className={styles["expandable-snippet"]}>
+        <div className={styles["expandable-snippet"]} role="presentation">
             <pre className={classnames(codeStyles['code'], 'language-ts')}>
                 <code className={'language-ts'}>
                     <BuildSnippet breadcrumbs={breadcrumbs} model={model} config={config}/>
@@ -59,7 +59,7 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
     config = {},
 }) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
-        <div className={styles['json-object']}>
+        <div className={styles['json-object']} role="presentation">
             <ModelSnippet model={model} config={config}></ModelSnippet>
         </div>
     </Fragment>);
@@ -126,7 +126,7 @@ function renderUnion(
     }
 
     return (
-        <div className={styles["json-object-union"]}>
+        <div className={styles["json-object-union"]} role="presentation">
         {
             model.options
                 .map((desc, idx) => {
@@ -169,7 +169,7 @@ function renderUnionNestedObject(
                     {renderTsTypeComment(desc)}
                     {
                         isExpanded ?
-                            <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()}>
+                            <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()} role="presentation">
                                 <ModelSnippet model={desc.model} skip={[discriminatorProp]} config={config}></ModelSnippet>
                             </div> :
                             <span className={classnames('token', 'operator')}> ... </span>
@@ -192,7 +192,7 @@ function renderUnionNestedObject(
                 {renderTsTypeComment(desc)}
                 {
                     isExpanded ?
-                        <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()}>
+                        <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
                             <ModelSnippet model={desc.model} config={config}></ModelSnippet>
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
@@ -267,6 +267,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                 styles['json-property-type-' + desc.type]
             )}
             onClick={() => expandable ? setJSONNodeExpanded(!isJSONNodeExpanded) : null}
+            role="presentation"
         >
             {renderPropertyDeclaration(propName, meta, isJSONNodeExpanded, expandable)}
             {
@@ -295,7 +296,11 @@ function maybeRenderPropertyDocumentation(
 
     return (
         <Fragment>
-            <div className={classnames('token', 'comment', styles['jsdoc-expandable'])} dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}>
+            <div
+                className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
+                role="presentation"                
+            >
             </div>
         </Fragment>
     );
@@ -313,7 +318,11 @@ function maybeRenderModelDocumentation(
 
     return (
         <Fragment>
-            <div className={classnames('token', 'comment', styles['jsdoc-expandable'])} dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}>
+            <div
+                className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
+                role="presentation"
+            >
             </div>
         </Fragment>
     );
@@ -330,6 +339,7 @@ function renderJsonNodeExpander(isExpanded: boolean) {
             className={classnames(
                 styles['expander'],
             )}
+            role="button"
         />
     );
 }
@@ -388,7 +398,7 @@ function renderNestedObject(
             <span className={classnames('token', 'punctuation')}>{'{ '}</span>
             {renderTsTypeComment(desc)}
             {maybeRenderPropertyDocumentation(meta, true, config)}
-            <div className={classnames(styles['json-object'])}>
+            <div className={classnames(styles['json-object'])} role="presentation">
                 <ModelSnippet model={desc.model} config={config}></ModelSnippet>
             </div>
             <span className={classnames('token', 'punctuation')}>}</span>
@@ -426,7 +436,7 @@ function renderArrayType(
                     {maybeRenderPropertyDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                     <span className={classnames('token', 'comment')}>/* {desc.elements.tsType} */</span>
-                    <div className={styles["json-object"]}>
+                    <div className={styles["json-object"]} role="presentation">
                         <ModelSnippet model={desc.elements.model} config={config}></ModelSnippet>
                     </div>
                     <span className={classnames('token', 'punctuation')}>}</span>
@@ -495,14 +505,14 @@ export function renderObjectBreadcrumb(
             {
                 breadcrumbs.length > 0 && (
                     <Fragment>
-                        <div>{breadcrumbs[0]}: {'{'}</div>
+                        <div role="presentation">{breadcrumbs[0]}: {'{'}</div>
                     </Fragment>
                 )
             }
             {
                 breadcrumbs.length > 1 ?
-                    <div className={styles['json-object']}>
-                        <div>...</div>
+                    <div className={styles['json-object']} role="presentation">
+                        <div role="presentation">...</div>
                         {renderObjectBreadcrumb(breadcrumbs.slice(1), bodyContent)}
                     </div> :
                     bodyContent()
