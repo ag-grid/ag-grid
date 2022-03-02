@@ -1,6 +1,4 @@
-import { Grid, GridOptions } from "ag-grid-community";
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { Grid, GridOptions } from "@ag-grid-community/core";
 
 var gridOptions: GridOptions = {
     columnDefs: [
@@ -41,10 +39,3 @@ new Grid(gridDiv, gridOptions);
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => gridOptions.api!.setRowData(data));
-
-if (typeof window !== 'undefined') {
-    // Attach external event handlers to window so they can be called from index.html
-    (<any>window).fillLarge = fillLarge;
-    (<any>window).fillMedium = fillMedium;
-    (<any>window).fillExact = fillExact;
-}

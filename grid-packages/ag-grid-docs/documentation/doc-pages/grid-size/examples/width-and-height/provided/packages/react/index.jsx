@@ -1,15 +1,12 @@
+
+'use strict'
+
 import React, { Component } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-
-import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-export default class extends Component {
+import { render } from 'react-dom';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+class GridExample extends Component {
     constructor(props) {
         super(props);
 
@@ -93,3 +90,8 @@ export default class extends Component {
         );
     }
 }
+
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+);

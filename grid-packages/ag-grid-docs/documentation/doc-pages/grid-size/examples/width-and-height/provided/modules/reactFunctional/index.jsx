@@ -1,16 +1,19 @@
-'use strict';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
+'use strict'
+
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import { AgGridReact } from '@ag-grid-community/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { render } from 'react-dom';
 
-export default () => {
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
+const GridExample = () => {
+
     const [gridApi, setGridApi] = useState(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo(() => [
@@ -83,4 +86,7 @@ export default () => {
             </div>
         </div>
     );
-};
+
+}
+
+render(<GridExample></GridExample>, document.querySelector('#root'))

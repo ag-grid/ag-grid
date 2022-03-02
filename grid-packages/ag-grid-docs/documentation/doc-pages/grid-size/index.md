@@ -69,7 +69,7 @@ If the width and / or height change after the grid is initialised, the grid will
 
 The example below shows setting the grid size and then changing it as the user selects the buttons.
 
-<grid-example title='Width & Height' name='width-and-height' type='multi'></grid-example>
+<grid-example title='Width & Height' name='width-and-height' type='mixed'></grid-example>
 
 ## Grid Auto Height
 
