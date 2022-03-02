@@ -78,7 +78,7 @@ function createValueObject(gold: number, silver: number) {
   return {
     gold: gold,
     silver: silver,
-    toString: () => (gold && silver ? gold / silver : 0),
+    toString: () => `${(gold && silver ? gold / silver : 0)}`,
   }
 }
 
