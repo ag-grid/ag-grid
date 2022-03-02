@@ -122,7 +122,9 @@ export function buildModel(
 
     const genericArgs: Record<string, string> = {};
     if (typeParams != null && typeParams.length > 0) {
-        const genericParams = type.substring(type.indexOf('<') + 1, type.lastIndexOf('>')).split(',');
+        const genericParams = type.substring(type.indexOf('<') + 1, type.lastIndexOf('>'))
+            .split(',')
+            .map((p) => p.trim());
         typeParams.forEach((tp, idx) => {
             genericArgs[tp] = genericParams[idx];
         });

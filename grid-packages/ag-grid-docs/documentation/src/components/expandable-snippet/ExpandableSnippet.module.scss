@@ -1,3 +1,5 @@
+$indent: 24px;
+
 .expandable-snippet {
 
     .json-property {
@@ -5,17 +7,17 @@
 
         &-type-nested-object {
             > .json-property {
-                padding-left: 18px;
+                padding-left: $indent;
             }
         }
     }
 
     .json-object-union, .json-object {
-        padding-left: 18px;
+        padding-left: $indent;
     }
 
     .indent-level {
-        margin-left: 18px;
+        margin-left: $indent;
     }
 
     .deprecated {
@@ -43,30 +45,23 @@
 
     .property-name {
         position: relative;
+        font-weight: 800;
 
         .expander {
             position: absolute;
             left: -18px;
             top: 1px;
-        }
-
-        .documentation-expander {
-            position: absolute;
-            top: 1px;
+            font-weight: normal;
         }
     }
 
     .union-type-property {
         position: relative;
+        font-weight: 800;
 
         > .expander {
             position: absolute;
             left: -34px;
-            top: 1px;
-        }
-
-        > .documentation-expander {
-            position: absolute;
             top: 1px;
         }
     }
@@ -79,14 +74,6 @@
             left: -16px;
             top: 2px;
         }
-
-        > .documentation-expander {
-            position: absolute;
-            top: 1px;
-        }
-    }
-
-    .jsdoc {
     }
 
     .jsdoc-expandable {
