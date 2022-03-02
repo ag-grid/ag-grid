@@ -11,6 +11,7 @@ import MoodEditor from './moodEditor.jsx';
 import MoodRenderer from './moodRenderer.jsx';
 import NumericEditor from './numericEditor.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 class GridExample extends Component {

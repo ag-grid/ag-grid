@@ -6,6 +6,7 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import GenderRenderer from './genderRendererVue.js';
 import MoodRenderer from './moodRendererVue.js';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

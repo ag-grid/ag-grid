@@ -11,6 +11,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule, RangeSelectionModule]);
 

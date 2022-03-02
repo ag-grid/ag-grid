@@ -7,6 +7,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { render } from 'react-dom';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

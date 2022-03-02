@@ -12,6 +12,7 @@ import CurrencyRenderer from './currencyRenderer.jsx';
 import ParamsRenderer from './paramsRenderer.jsx';
 import SquareRenderer from './squareRenderer.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

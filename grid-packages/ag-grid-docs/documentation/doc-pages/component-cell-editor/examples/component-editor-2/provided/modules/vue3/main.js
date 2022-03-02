@@ -9,6 +9,7 @@ import MoodEditor from './moodEditorVue.js';
 import MoodRenderer from './moodRendererVue.js';
 import NumericEditor from './numericEditorVue.js';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 
