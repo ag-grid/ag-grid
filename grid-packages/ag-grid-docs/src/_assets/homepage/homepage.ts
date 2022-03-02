@@ -1,13 +1,5 @@
 import "./homepage.scss";
-import { $, initCookieDisclaimer } from "../common/vendor";
-import "./pipeline.ts";
-import "./changelog.ts";
-
-$(() => {
-    initCookieDisclaimer();
-
-    $('[data-toggle="popover"]').popover();
-});
+import { $ } from "../common/vendor";
 
 function loadDemos() {
     $(".stage-scenarios:not(.main) .demo").each(function() {
@@ -24,3 +16,4 @@ $(() => {
         $("#ag-grid-script").on("load", loadDemos);
     }
 });
+
