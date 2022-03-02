@@ -430,11 +430,7 @@ export class BarSeries extends CartesianSeries {
             yMax = yLargestMinMax.max;
         }
 
-        if (yMin === yMax && yMin === 0) {
-            yMax = 1;
-        }
-
-        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
+        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', this.yAxis);
 
         this.fireEvent({ type: 'dataProcessed' });
 
@@ -543,7 +539,7 @@ export class BarSeries extends CartesianSeries {
                 let prevMaxY = 0;
 
                 for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
-                    const currY = stackYs[levelIndex];
+                    const currY = +stackYs[levelIndex];
                     const yKey = yKeys[stackIndex][levelIndex];
                     const barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
 
