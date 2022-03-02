@@ -919,6 +919,7 @@
               {
                 "title": "Display Types",
                 "url": "/grouping-display-types/",
+                "enterprise": true,
                 "items": [
                   {
                     "title": "Single Group Column",
