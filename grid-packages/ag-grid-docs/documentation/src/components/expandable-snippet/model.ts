@@ -6,6 +6,7 @@ type InterfaceLookupMetaType = string | { parameters: Record<string, string>, re
 type MetaRecord = {
     description?: string;
     type?: InterfaceLookupMetaType;
+    typeParams?: string[],
     isTypeAlias?: boolean;
     isRequired?: boolean;
     default: any;
@@ -102,7 +103,8 @@ export function buildModel(
     const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
     const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
     let typeStack = context?.typeStack ?? [];
-    const description =  cLookup.description || iLookup?.meta?.doc;
+    const description = cLookup.description || iLookup?.meta?.doc;
+    const { typeParams} = iLookup?.meta;
 
     const result: JsonModel = {
         type: "model",
@@ -117,6 +119,14 @@ export function buildModel(
         return result;
     }
     typeStack = typeStack.concat([type]);
+
+    const genericArgs: Record<string, string> = {};
+    if (typeParams != null && typeParams.length > 0) {
+        const genericParams = type.substring(type.indexOf('<') + 1, type.lastIndexOf('>')).split(',');
+        typeParams.forEach((tp, idx) => {
+            genericArgs[tp] = genericParams[idx];
+        });
+    }
 
     result.documentation = typeof description ==='string' ? description : undefined;
     Object.entries(cLookup).forEach(([prop, propCLookup]) => {
@@ -146,6 +156,8 @@ export function buildModel(
                 .map(([name, type]) => `${name}: ${type}`)
                 .join(', ');
             declaredType = `(${params}) => ${declaredType.returnType}`;
+        } else if (genericArgs[declaredType] != null) {
+            declaredType = genericArgs[declaredType];
         }
         result.properties[prop] = {
             deprecated,

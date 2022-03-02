@@ -34,7 +34,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
-    // console.log(model);
+    console.log(model);
 
     return (
         <div className={styles["expandable-snippet"]} role="presentation">
@@ -75,14 +75,13 @@ interface ModelSnippetParams {
 
 const ModelSnippet: React.FC<ModelSnippetParams> = ({
     model,
-    skip = [],
     closeWith = ';',
     config = {},
 }) => {
     if (model.type === "model") {
         const propertiesRendering = Object.entries(model.properties)
             .map(([propName, propInfo]) => {
-                if (skip.includes(propName) || config.excludeProperties?.includes(propName)) {
+                if (config.excludeProperties?.includes(propName)) {
                     return;
                 }
 
@@ -163,15 +162,18 @@ function renderUnionNestedObject(
         return (
             <Fragment key={tsType}>
                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
-                    <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-                    {renderPropertyDeclaration(discriminatorProp, discriminator, isExpanded, true, 'union-type-property')}
-                    {renderPrimitiveType(discriminator.desc)}
-                    <span className={classnames('token', 'punctuation')}>; </span>
+                    <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
+                        {isExpanded && renderJsonNodeExpander(isExpanded)}
+                        {'{ '}
+                    </span>
+                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, discriminator, isExpanded, true, 'union-type-property')}
+                    {!isExpanded && renderPrimitiveType(discriminator.desc)}
+                    {!isExpanded && <span className={classnames('token', 'punctuation')}>; </span>}
                     {renderTsTypeComment(desc)}
                     {
                         isExpanded ?
                             <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()} role="presentation">
-                                <ModelSnippet model={desc.model} skip={[discriminatorProp]} config={config}></ModelSnippet>
+                                <ModelSnippet model={desc.model} config={config}></ModelSnippet>
                             </div> :
                             <span className={classnames('token', 'operator')}> ... </span>
                     }
