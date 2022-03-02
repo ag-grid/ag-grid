@@ -9592,108 +9592,137 @@
   "FontWeight": {},
   "AgChartThemeName": {},
   "AgChartThemePalette": {
-    "fills": { "type": { "returnType": "string[]", "optional": false } },
-    "strokes": { "type": { "returnType": "string[]", "optional": false } }
+    "fills": {
+      "description": "/** The array of fills to be used. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "strokes": {
+      "description": "/** The array of strokes to be used. */",
+      "type": { "returnType": "string[]", "optional": false }
+    }
   },
   "AgChartThemeOptions": {
     "palette": {
+      "description": "/** The palette to use. If specified, this replaces the palette from the base theme. */",
       "type": { "returnType": "AgChartThemePalette", "optional": true }
     },
     "overrides": {
+      "description": "/** Configuration from this object is merged over the defaults specified in the base theme. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     }
   },
   "AgChartTheme": {
     "baseTheme": {
+      "description": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from \n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see \n * below). */",
       "type": { "returnType": "AgChartThemeName", "optional": true }
     },
     "palette": {
+      "description": "/** The palette to use. If specified, this replaces the palette from the base theme. */",
       "type": { "returnType": "AgChartThemePalette", "optional": true }
     },
     "overrides": {
+      "description": "/** Configuration from this object is merged over the defaults specified in the base theme. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     }
   },
   "AgChartThemeOverrides": {
     "cartesian": {
+      "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>",
         "optional": true
       }
     },
     "column": {
+      "description": "/** Specifies defaults for column charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
         "optional": true
       }
     },
     "bar": {
+      "description": "/** Specifies defaults for bar charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
         "optional": true
       }
     },
     "line": {
+      "description": "/** Specifies defaults for line charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>",
         "optional": true
       }
     },
     "area": {
+      "description": "/** Specifies defaults for area charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>",
         "optional": true
       }
     },
     "scatter": {
+      "description": "/** Specifies defaults for scatter/bubble charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>",
         "optional": true
       }
     },
     "histogram": {
+      "description": "/** Specifies defaults for histogram charts. */",
       "type": {
         "returnType": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
         "optional": true
       }
     },
     "polar": {
+      "description": "/** Specifies defaults for all polar charts (used for pie series) */",
       "type": {
         "returnType": "AgPolarChartOptions<AgPolarSeriesTheme>",
         "optional": true
       }
     },
     "pie": {
+      "description": "/** Specifies defaults for pie/doughnut charts. */",
       "type": {
         "returnType": "AgPolarChartOptions<AgPieSeriesOptions>",
         "optional": true
       }
     },
     "hierarchy": {
+      "description": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
       "type": {
         "returnType": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
         "optional": true
       }
     },
     "treemap": {
+      "description": "/** Specifies defaults for all treemap charts. */",
       "type": {
         "returnType": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
         "optional": true
       }
     },
-    "common": { "type": { "returnType": "any", "optional": true } }
+    "common": {
+      "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "AgCartesianAxisThemeOptions": {
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": { "returnType": "Omit<T, 'top' | 'type'>", "optional": true }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": { "returnType": "Omit<T, 'right' | 'type'>", "optional": true }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": { "returnType": "Omit<T, 'bottom' | 'type'>", "optional": true }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": { "returnType": "Omit<T, 'left' | 'type'>", "optional": true }
     },
     "meta": { "typeParams": ["T"] }
@@ -9712,24 +9741,28 @@
       "type": { "returnType": "number", "optional": true }
     },
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
         "returnType": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgNumberAxisOptions, 'left' | 'type'>",
         "optional": true
@@ -9754,24 +9787,28 @@
       "type": { "returnType": "number", "optional": true }
     },
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
         "returnType": "Omit<AgLogAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgLogAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgLogAxisOptions, 'left' | 'type'>",
         "optional": true
@@ -9782,24 +9819,28 @@
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
         "returnType": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgCategoryAxisOptions, 'left' | 'type'>",
         "optional": true
@@ -9808,24 +9849,28 @@
   },
   "AgGroupedCategoryAxisThemeOptions": {
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
         "returnType": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>",
         "optional": true
@@ -9838,24 +9883,28 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "top": {
+      "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
         "returnType": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
+      "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
+      "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
+      "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
         "returnType": "Omit<AgTimeAxisOptions, 'left' | 'type'>",
         "optional": true
@@ -9864,21 +9913,26 @@
   },
   "AgCartesianAxesTheme": {
     "number": {
+      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
       "type": { "returnType": "AgNumberAxisThemeOptions", "optional": true }
     },
     "log": {
+      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
       "type": { "returnType": "AgLogAxisThemeOptions", "optional": true }
     },
     "category": {
+      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */",
       "type": { "returnType": "AgCategoryAxisThemeOptions", "optional": true }
     },
     "groupedCategory": {
+      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
       "type": {
         "returnType": "AgGroupedCategoryAxisThemeOptions",
         "optional": true
       }
     },
     "time": {
+      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */",
       "type": { "returnType": "AgTimeAxisThemeOptions", "optional": true }
     }
   },
@@ -10272,7 +10326,11 @@
     }
   },
   "AgBaseAxisOptions": {
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgCartesianAxisPosition": {},
   "AgAxisLineOptions": {
@@ -10393,7 +10451,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgNumberAxisOptions": {
     "type": { "type": { "returnType": "'number'", "optional": false } },
@@ -10433,7 +10495,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgLogAxisOptions": {
     "type": { "type": { "returnType": "'log'", "optional": false } },
@@ -10477,7 +10543,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgCategoryAxisOptions": {
     "type": { "type": { "returnType": "'category'", "optional": false } },
@@ -10507,7 +10577,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgGroupedCategoryAxisOptions": {
     "type": {
@@ -10537,7 +10611,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgTimeAxisOptions": {
     "type": { "type": { "returnType": "'time'", "optional": false } },
@@ -10569,7 +10647,11 @@
       "description": "/** Configuration of the lines used to form the grid in the chart area. */",
       "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
     },
-    "keys": { "type": { "returnType": "string[]", "optional": true } }
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "AgCartesianAxisOptions": {},
   "AgSeriesHighlightMarkerStyle": {

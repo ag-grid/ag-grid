@@ -27,41 +27,68 @@ export type AgChartThemeName =
     | 'ag-vivid-dark';
 
 export interface AgChartThemePalette {
+    /** The array of fills to be used. */
     fills: string[];
+    /** The array of strokes to be used. */
     strokes: string[];
 }
 
 export interface AgChartThemeOptions {
+    /** The palette to use. If specified, this replaces the palette from the base theme. */
     palette?: AgChartThemePalette;
+    /** Configuration from this object is merged over the defaults specified in the base theme. */
     overrides?: AgChartThemeOverrides;
 }
 
+/** This object is used to define the configuration for a custom chart theme. */
 export interface AgChartTheme extends AgChartThemeOptions {
+    /**
+     * The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from 
+     * the base theme, allowing you to override just the settings you wish to change using the `defaults` config (see 
+     * below).
+     */
     baseTheme?: AgChartThemeName; // | ChartTheme;
 }
 
 export interface AgChartThemeOverrides {
+    /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
     cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
+    /** Specifies defaults for column charts. */
     column?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    /** Specifies defaults for bar charts. */
     bar?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    /** Specifies defaults for line charts. */
     line?: AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>;
+    /** Specifies defaults for area charts. */
     area?: AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>;
+    /** Specifies defaults for scatter/bubble charts. */
     scatter?: AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>;
+    /** Specifies defaults for histogram charts. */
     histogram?: AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>;
-
+    
+    /** Specifies defaults for all polar charts (used for pie series) */
     polar?: AgPolarChartOptions<AgPolarSeriesTheme>;
+    /** Specifies defaults for pie/doughnut charts. */
     pie?: AgPolarChartOptions<AgPieSeriesOptions>;
-
+    
+    /** Specifies defaults for all hierarchy charts (used for treemap series) */
     hierarchy?: AgHierarchyChartOptions<AgHierarchySeriesTheme>;
+    /** Specifies defaults for all treemap charts. */
     treemap?: AgHierarchyChartOptions<AgHierarchySeriesOptions>;
 
+    /** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */
     common?: any;
 }
 
+/** This is the configuration shared by all types of axis. */
 export interface AgCartesianAxisThemeOptions<T> {
+    /** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */
     top?: Omit<T, 'top' | 'type'>;
+    /** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */
     right?: Omit<T, 'right' | 'type'>;
+    /** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */
     bottom?: Omit<T, 'bottom' | 'type'>;
+    /** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */
     left?: Omit<T, 'left' | 'type'>;
 }
 
@@ -82,10 +109,15 @@ export interface AgTimeAxisThemeOptions
         AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
 
 export interface AgCartesianAxesTheme {
+    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
     number?: AgNumberAxisThemeOptions;
+    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
     log?: AgLogAxisThemeOptions;
+    /** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */
     category?: AgCategoryAxisThemeOptions;
+    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
     groupedCategory?: AgGroupedCategoryAxisThemeOptions;
+    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */
     time?: AgTimeAxisThemeOptions;
 }
 
@@ -322,6 +354,8 @@ export interface AgBaseChartOptions {
 
 export interface AgBaseAxisOptions {
     keys?: string[];
+    /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
+    thickness?: number;
 }
 
 export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';

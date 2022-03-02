@@ -5497,21 +5497,36 @@
   },
   "AgChartThemePalette": {
     "meta": {},
-    "type": { "fills": "string[]", "strokes": "string[]" }
+    "type": { "fills": "string[]", "strokes": "string[]" },
+    "docs": {
+      "fills": "/** The array of fills to be used. */",
+      "strokes": "/** The array of strokes to be used. */"
+    }
   },
   "AgChartThemeOptions": {
     "meta": {},
     "type": {
       "palette?": "AgChartThemePalette",
       "overrides?": "AgChartThemeOverrides"
+    },
+    "docs": {
+      "palette?": "/** The palette to use. If specified, this replaces the palette from the base theme. */",
+      "overrides?": "/** Configuration from this object is merged over the defaults specified in the base theme. */"
     }
   },
   "AgChartTheme": {
-    "meta": {},
+    "meta": {
+      "doc": "/** This object is used to define the configuration for a custom chart theme. */"
+    },
     "type": {
       "baseTheme?": "AgChartThemeName",
       "palette?": "AgChartThemePalette",
       "overrides?": "AgChartThemeOverrides"
+    },
+    "docs": {
+      "baseTheme?": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from \n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see \n * below). */",
+      "palette?": "/** The palette to use. If specified, this replaces the palette from the base theme. */",
+      "overrides?": "/** Configuration from this object is merged over the defaults specified in the base theme. */"
     }
   },
   "AgChartThemeOverrides": {
@@ -5529,15 +5544,38 @@
       "hierarchy?": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
       "treemap?": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
       "common?": "any"
+    },
+    "docs": {
+      "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
+      "column?": "/** Specifies defaults for column charts. */",
+      "bar?": "/** Specifies defaults for bar charts. */",
+      "line?": "/** Specifies defaults for line charts. */",
+      "area?": "/** Specifies defaults for area charts. */",
+      "scatter?": "/** Specifies defaults for scatter/bubble charts. */",
+      "histogram?": "/** Specifies defaults for histogram charts. */",
+      "polar?": "/** Specifies defaults for all polar charts (used for pie series) */",
+      "pie?": "/** Specifies defaults for pie/doughnut charts. */",
+      "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
+      "treemap?": "/** Specifies defaults for all treemap charts. */",
+      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */"
     }
   },
   "AgCartesianAxisThemeOptions": {
-    "meta": { "typeParams": ["T"] },
+    "meta": {
+      "typeParams": ["T"],
+      "doc": "/** This is the configuration shared by all types of axis. */"
+    },
     "type": {
       "top?": "Omit<T, 'top' | 'type'>",
       "right?": "Omit<T, 'right' | 'type'>",
       "bottom?": "Omit<T, 'bottom' | 'type'>",
       "left?": "Omit<T, 'left' | 'type'>"
+    },
+    "docs": {
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgNumberAxisThemeOptions": {
@@ -5554,7 +5592,11 @@
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "min?": "/** User override for the automatically determined min value (based on series data). */",
-      "max?": "/** User override for the automatically determined max value (based on series data). */"
+      "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgLogAxisThemeOptions": {
@@ -5573,7 +5615,11 @@
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "min?": "/** User override for the automatically determined min value (based on series data). */",
       "max?": "/** User override for the automatically determined max value (based on series data). */",
-      "base?": "/** The base of the logarithm used. */"
+      "base?": "/** The base of the logarithm used. */",
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgCategoryAxisThemeOptions": {
@@ -5585,6 +5631,12 @@
       "right?": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
       "bottom?": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
       "left?": "Omit<AgCategoryAxisOptions, 'left' | 'type'>"
+    },
+    "docs": {
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
@@ -5594,6 +5646,12 @@
       "right?": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
       "left?": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>"
+    },
+    "docs": {
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgTimeAxisThemeOptions": {
@@ -5606,7 +5664,11 @@
       "left?": "Omit<AgTimeAxisOptions, 'left' | 'type'>"
     },
     "docs": {
-      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */"
+      "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
+      "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
+      "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
     }
   },
   "AgCartesianAxesTheme": {
@@ -5617,6 +5679,13 @@
       "category?": "AgCategoryAxisThemeOptions",
       "groupedCategory?": "AgGroupedCategoryAxisThemeOptions",
       "time?": "AgTimeAxisThemeOptions"
+    },
+    "docs": {
+      "number?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
+      "log?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
+      "category?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */",
+      "groupedCategory?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
+      "time?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */"
     }
   },
   "AgCartesianSeriesTheme": {
@@ -5904,7 +5973,13 @@
       "listeners?": "/** A map of event names to event listeners. */"
     }
   },
-  "AgBaseAxisOptions": { "meta": {}, "type": { "keys?": "string[]" } },
+  "AgBaseAxisOptions": {
+    "meta": {},
+    "type": { "keys?": "string[]", "thickness?": "number" },
+    "docs": {
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
+    }
+  },
   "AgCartesianAxisPosition": {
     "meta": { "isTypeAlias": true },
     "type": "'top' | 'right' | 'bottom' | 'left'"
@@ -5987,7 +6062,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -5995,7 +6071,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgNumberAxisOptions": {
@@ -6011,7 +6088,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6022,7 +6100,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgLogAxisOptions": {
@@ -6039,7 +6118,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6051,7 +6131,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCategoryAxisOptions": {
@@ -6066,7 +6147,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -6074,7 +6156,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgGroupedCategoryAxisOptions": {
@@ -6087,7 +6170,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -6095,7 +6179,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgTimeAxisOptions": {
@@ -6109,7 +6194,8 @@
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "keys?": "string[]"
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6118,7 +6204,8 @@
       "line?": "/** Configuration for the axis line. */",
       "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
-      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */"
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCartesianAxisOptions": {
