@@ -1,6 +1,6 @@
-import {getFunctionName, ImportType, isInstanceMethod, removeFunctionKeyword} from './parser-utils';
-import {convertTemplate, toAssignment, toConst, toInput, toMember} from './vue-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { getFunctionName, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
 export const GRID_WIDE_COMPONENTS = [
@@ -48,7 +48,7 @@ export const OVERRIDABLE_AG_COMPONENTS = [
 ];
 
 export function getOnGridReadyCode(bindings: any): string {
-    const {onGridReady, resizeToFit, data} = bindings;
+    const { onGridReady, resizeToFit, data } = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -60,7 +60,7 @@ export function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const {url, callback} = data;
+        const { url, callback } = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -183,11 +183,6 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             }
         });
 
-    if (importType === 'modules') {
-        propertyAttributes.push(':modules="modules"');
-        propertyVars.push(`modules: ${bindings.gridSuppliedModules}`);
-    }
-
     if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
@@ -202,7 +197,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
 }
 
 export function getTemplate(bindings: any, attributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue

@@ -315,7 +315,7 @@ function createExampleGenerator(prefix, importTypes) {
                     importTypes.forEach(importType => {
                         angularConfigs.set(importType, {
                             'app.component.ts': getSource(importType),
-                            'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings.gridSettings),
+                            'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
                         });
                     });
                 } catch (e) {

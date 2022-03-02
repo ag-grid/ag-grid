@@ -1,6 +1,8 @@
 import { toTitleCase, getImport } from './angular-utils';
+import { getModuleRegistration } from './parser-utils';
 
-export function appModuleAngular(componentFileNames: string[], gridSettings) {
+export function appModuleAngular(componentFileNames: string[], bindings) {
+  const { gridSettings } = bindings;
   const { includeNgFormsModule } = gridSettings;
   const components = [];
   const imports = [
@@ -10,6 +12,7 @@ export function appModuleAngular(componentFileNames: string[], gridSettings) {
     includeNgFormsModule ? "import { FormsModule } from '@angular/forms'" : "",
     "import { AgGridModule } from '@ag-grid-community/angular';",
     "import { AppComponent } from './app.component';",
+    ...getModuleRegistration(bindings)
   ];
 
   if (componentFileNames) {

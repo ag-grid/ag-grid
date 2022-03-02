@@ -1,6 +1,6 @@
 import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }, hasApi: boolean, hasColApi: boolean): string {
     const additionalLines = [];
@@ -42,7 +42,6 @@ function getPropertyInterfaces(properties) {
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
-    const { modules } = gridSettings;
 
     const imports = ["import { Component } from '@angular/core';"];
 
@@ -50,42 +49,18 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push("import { HttpClient } from '@angular/common/http';");
     }
 
-    if (modules) {
-        let exampleModules = modules;
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
-        imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            throw new Error(`The Angular example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        bindings.gridSuppliedModules = '[ ClientSideRowModelModule ]';
-        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
-    }
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi', 'Module']
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi']
     })
 
     if (bImports.length > 0) {
@@ -95,6 +70,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
     }
+
+    imports.push('// Required feature modules are registered in app.module.ts')
 
     return imports;
 }
@@ -183,11 +160,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const propertyVars = [];
         const propertyAssignments = [];
 
-        if (importType === 'modules') {
-            propertyAttributes.push('[modules]="modules"');
-            propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
-        }
-
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
@@ -236,7 +208,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
             .replace(/gridColumnApi!\./g, 'gridColumnApi.');
 
         return `
-${imports.join('\n')}${typeDeclares?.length > 0 ? typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? interfaces.join('\n') : ''}
+${imports.join('\n')}${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({
     selector: 'my-app',

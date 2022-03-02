@@ -1,4 +1,4 @@
-import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports, getModuleRegistration, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
 export function toTitleCase(value) {
@@ -17,42 +17,15 @@ function getPropertyInterfaces(properties) {
     });
     return [...new Set(propTypesUsed)];
 }
+
 function getModuleImports(bindings: any): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
-    const { modules } = gridSettings;
 
-    const imports = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
-
-    if (modules) {
-        let exampleModules = modules;
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
-
-        imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            throw new Error(`The Typescript example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        bindings.gridSuppliedModules = '[ ClientSideRowModelModule ]';
-        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
-    }
-
+    let imports = [];
+    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -66,7 +39,7 @@ function getModuleImports(bindings: any): string[] {
         addBindingImports(bImports, imports, false, false);
     }
 
-    imports.push(`\nModuleRegistry.registerModules(${bindings.gridSuppliedModules})`)
+    imports = [...imports, ...getModuleRegistration(bindings)]
 
     return imports;
 }

@@ -1,54 +1,31 @@
-import {ImportType, modulesProcessor} from './parser-utils';
-import {getImport, toOutput} from './vue-utils';
-import {convertDefaultColDef, getAllMethods, getColumnDefs, getOnGridReadyCode, getPropertyBindings, getTemplate} from "./grid-vanilla-to-vue-common";
+import { getModuleRegistration, ImportType } from './parser-utils';
+import { getImport, toOutput } from './vue-utils';
+import { convertDefaultColDef, getAllMethods, getColumnDefs, getOnGridReadyCode, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
 
-    const imports = [
+    let imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue';",
     ];
 
-    if (modules) {
-        let exampleModules = modules;
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
-
-        imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            throw new Error(`The Vue example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-        bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
-    }
+    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
     }
 
+    imports = [...imports, ...getModuleRegistration(bindings)]
+
     return imports;
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -123,11 +100,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-            .concat(externalEventHandlers)
-            .concat(onGridReady)
-            .concat(instanceMethods)
-            .map(snippet => `${snippet.trim()},`)
-            .join('\n')}
+                .concat(externalEventHandlers)
+                .concat(onGridReady)
+                .concat(instanceMethods)
+                .map(snippet => `${snippet.trim()},`)
+                .join('\n')}
     }
 }
 

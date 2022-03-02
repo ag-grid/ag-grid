@@ -1,49 +1,26 @@
-import { ImportType, isInstanceMethod, modulesProcessor, convertFunctionToProperty } from './parser-utils';
+import { ImportType, isInstanceMethod, convertFunctionToProperty, getModuleRegistration } from './parser-utils';
 import { convertTemplate, getImport } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
     const { gridSettings } = bindings;
-    const { modules } = gridSettings;
 
-    const imports = [
+    let imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
-    if (modules) {
-        let exampleModules = modules;
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
-
-        imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            throw new Error(`The React example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-        bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = bindings.gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
-    }
+    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
+
+    imports = [...imports, ...getModuleRegistration(bindings)];
 
     return imports;
 }
@@ -136,11 +113,6 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
         const stateProperties = [];
         const componentAttributes = [];
 
-        if (importType === 'modules') {
-            stateProperties.push(`modules: ${bindings.gridSuppliedModules}`);
-            componentAttributes.push('modules={this.state.modules}');
-        }
-
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.value === 'true' || property.value === 'false') {
                 componentAttributes.push(`${property.name}={${property.value}}`);
@@ -177,9 +149,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
         return `
 'use strict'
 
-${imports.join('\n')}
-
-${bindings.classes.join('\n')}
+${imports.join('\n')}${bindings.classes.length > 0 ? `\n\n${bindings.classes.join('\n')}` : ''}
 
 class GridExample extends Component {
     constructor(props) {

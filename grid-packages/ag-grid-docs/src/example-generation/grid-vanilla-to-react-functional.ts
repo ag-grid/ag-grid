@@ -1,58 +1,30 @@
-import {convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
-function getModuleImports(bindings: any, componentFilenames: string[], stateProperties: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
-
-    const imports = [
+function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
+    let imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
-    bindings.gridSuppliedModules = `modules`;
-    if (modules) {
-        let exampleModules = modules;
-
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-
-        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
-
-        imports.push(...moduleImports);
-        stateProperties.push(`const modules = useMemo(() => [${suppliedModules.join(', ')}], []);`)
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            throw new Error(`The React Functional example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-        stateProperties.push(`const modules = useMemo(() => [ ClientSideRowModelModule ], []);`)
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to alpine if it does
-        const theme = bindings.gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
-    }
+    imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
     }
 
+    imports = [...imports, ...getModuleRegistration(bindings)];
+
     return imports;
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
@@ -77,16 +49,16 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType, stateProperties: string[]): string[] {
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, componentFileNames);
     } else {
-        return getModuleImports(bindings, componentFileNames, stateProperties);
+        return getModuleImports(bindings, componentFileNames);
     }
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const agGridTag = `
         <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className="${gridSettings.theme}">             
             <AgGridReact
@@ -132,7 +104,7 @@ function getEventAndCallbackNames() {
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
 
     const eventAndCallbackNames = getEventAndCallbackNames();
 
@@ -152,7 +124,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             `const [rowData, setRowData] = useState();`
         ];
 
-        const imports = getImports(bindings, componentFilenames, importType, stateProperties);
+        const imports = getImports(bindings, componentFilenames, importType);
 
         // for when binding a method
         // see javascript-grid-keyboard-navigation for an example
@@ -160,12 +132,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         // rarely used (one example only - can be improved and this be removed)
         const instanceBindings = [];
 
-        // ie 'modules={modules}',
         const componentProps = ['rowData={rowData}'];
-
-        if (importType === 'modules') {
-            componentProps.push(`modules={${bindings.gridSuppliedModules}}`);
-        }
 
         const additionalInReady = [];
         if (data) {
@@ -322,7 +289,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace("const gridRef = useRef();", "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
-        if(generatedOutput.includes("const [rowData, setRowData] = useState();") && (generatedOutput.match(/setRowData/g) || []).length === 1) {
+        if (generatedOutput.includes("const [rowData, setRowData] = useState();") && (generatedOutput.match(/setRowData/g) || []).length === 1) {
             generatedOutput = generatedOutput.replace("const [rowData, setRowData] = useState();", "")
             generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }

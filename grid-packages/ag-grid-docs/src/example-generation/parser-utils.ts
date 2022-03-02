@@ -564,3 +564,30 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
         imports.push(`import { ${unique.join(', ')} }  from ${k};`);
     })
 }
+
+export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
+    const moduleRegistration = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
+    const modules = gridSettings.modules;
+
+    let gridSuppliedModules;
+    if (modules) {
+        let exampleModules = modules;
+        if (modules === true) {
+            exampleModules = ['clientside'];
+        }
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        moduleRegistration.push(...moduleImports);
+        gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+
+    } else {
+        if (enterprise) {
+            throw new Error(`The example ${exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
+        }
+        gridSuppliedModules = '[ ClientSideRowModelModule ]';
+        moduleRegistration.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+    }
+
+    moduleRegistration.push(`\n// Register the required feature modules with the Grid`);
+    moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
+    return moduleRegistration;
+}

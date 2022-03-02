@@ -1,6 +1,6 @@
 import { toTitleCase, getImport } from './angular-utils';
 
-export function appModuleAngular(componentFileNames: string[], gridSettings) {
+export function appModuleAngular(componentFileNames: string[], { gridSettings }) {
   const { includeNgFormsModule } = gridSettings;
   const components = [];
   const imports = [
