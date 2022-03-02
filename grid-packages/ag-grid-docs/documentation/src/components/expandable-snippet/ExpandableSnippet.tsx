@@ -58,17 +58,11 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
     breadcrumbs = [],
     config = {},
 }) => {
-    const { prefixLines, suffixLines } = buildObjectBreadcrumb(breadcrumbs);
-
-    return (
-        <Fragment>
-            {prefixLines.length > 0 && prefixLines.join('\n')}
-            <div className={styles['json-object']}>
-                <ModelSnippet model={model} config={config}></ModelSnippet>
-            </div>
-            {suffixLines.length > 0 && suffixLines.join('\n')}
-        </Fragment>
-    );
+    return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
+        <div className={styles['json-object']}>
+            <ModelSnippet model={model} config={config}></ModelSnippet>
+        </div>
+    </Fragment>);
 };
 
 interface ModelSnippetParams {
@@ -85,20 +79,22 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
     config = {},
 }) => {
     if (model.type === "model") {
-        return <Fragment>{
-            Object.entries(model.properties)
-                .map(([propName, propInfo]) => {
-                    if (skip.includes(propName) || config.excludeProperties?.includes(propName)) {
-                        return;
-                    }
+        const propertiesRendering = Object.entries(model.properties)
+            .map(([propName, propInfo]) => {
+                if (skip.includes(propName) || config.excludeProperties?.includes(propName)) {
+                    return;
+                }
 
-                    const { desc } = propInfo;
-                    return (
-                        <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo} config={config}/>
-                    );
-                })
-                .filter(v => !!v)
-        }</Fragment>;
+                const { desc } = propInfo;
+                return (
+                    <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo} config={config}/>
+                );
+            })
+            .filter(v => !!v);
+        return <Fragment>
+            {maybeRenderModelDocumentation(model, config)}
+            {propertiesRendering}
+        </Fragment>;
     } else if (model.type === "union") {
         return (
             <Fragment>
@@ -225,7 +221,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(DEFAULT_JSON_NODES_EXPANDED);
 
     const { deprecated } = meta;
-    const formattedDocumentation = formatDocumentation(meta, config);
+    const formattedDocumentation = formatPropertyDocumentation(meta, config);
 
     let propertyRendering;
     let collapsePropertyRendering;
@@ -279,19 +275,37 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                     <span className={classnames(styles['unexpandable'])} onClick={(e) => e.stopPropagation()}>{propertyRendering}</span>
             }
             {(!isJSONNodeExpanded || needsClosingSemi) && <span className={classnames('token', 'punctuation')}>; </span>}
-            { maybeRenderDocumentation(meta, inlineDocumentation && isJSONNodeExpanded, config) }
+            {maybeRenderPropertyDocumentation(meta, inlineDocumentation && isJSONNodeExpanded, config)}
         </div>
     );
 };
 
-function maybeRenderDocumentation(
+function maybeRenderPropertyDocumentation(
     meta: Omit<JsonModel['properties'][number], 'desc'>,
     isDocumentationExpanded: boolean,
     config: Config,
 ): React.ReactNode {
     if (!isDocumentationExpanded) { return; }
 
-    const formattedDocumentation = formatDocumentation(meta, config);
+    const formattedDocumentation = formatPropertyDocumentation(meta, config);
+    if (formattedDocumentation.length === 0) { return; }
+
+    const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
+    if (renderedDocs.trim().length === 0) { return };
+
+    return (
+        <Fragment>
+            <div className={classnames('token', 'comment', styles['jsdoc-expandable'])} dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}>
+            </div>
+        </Fragment>
+    );
+}
+
+function maybeRenderModelDocumentation(
+    model: JsonModel,
+    config: Config,
+): React.ReactNode {
+    const formattedDocumentation = formatModelDocumentation(model, config);
     if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
@@ -373,7 +387,7 @@ function renderNestedObject(
         <Fragment>
             <span className={classnames('token', 'punctuation')}>{'{ '}</span>
             {renderTsTypeComment(desc)}
-            {maybeRenderDocumentation(meta, true, config)}
+            {maybeRenderPropertyDocumentation(meta, true, config)}
             <div className={classnames(styles['json-object'])}>
                 <ModelSnippet model={desc.model} config={config}></ModelSnippet>
             </div>
@@ -409,7 +423,7 @@ function renderArrayType(
         case "nested-object":
             arrayElementRendering = (
                 <Fragment>
-                    {maybeRenderDocumentation(meta, true, config)}
+                    {maybeRenderPropertyDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                     <span className={classnames('token', 'comment')}>/* {desc.elements.tsType} */</span>
                     <div className={styles["json-object"]}>
@@ -422,7 +436,7 @@ function renderArrayType(
         case "union":
             arrayElementRendering = (
                 <Fragment>
-                    {maybeRenderDocumentation(meta, true, config)}
+                    {maybeRenderPropertyDocumentation(meta, true, config)}
                     <ModelSnippet model={desc.elements} closeWith={''} config={config}></ModelSnippet>
                 </Fragment>
             );
@@ -445,7 +459,7 @@ function isSimpleUnion(desc: JsonUnionType) {
     return desc.options.every(opt => opt.type === 'primitive');
 }
 
-function formatDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
+function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
     const { documentation } = meta;
     const defaultValue = meta.default;
     const result: string[] = documentation?.trim() ? 
@@ -459,33 +473,44 @@ function formatDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>
     return result;
 }
 
+function formatModelDocumentation(model: JsonModel, config: Config) {
+    const { documentation } = model;
+    const result: string[] = documentation?.trim() ? 
+        [ formatJsDocString(documentation) ] :
+        [];
+
+    return result;    
+}
+
 export function buildObjectIndent(level: number): string {
     return "  ".repeat(level);
 }
 
-export function buildObjectBreadcrumb(
-    breadcrumbs: string[]
-): { prefixLines: string[]; suffixLines: string[]; indentationLevel: number } {
-    const prefixLines = [];
-    const suffixLines = [];
-    let indentationLevel = 0;
-
-    breadcrumbs.forEach(key => {
-        const indent = buildObjectIndent(indentationLevel);
-
-        if (indentationLevel > 0) {
-            prefixLines.push(`${indent}...`);
-        }
-
-        prefixLines.push(`${indent}${key}: {`);
-        suffixLines.push(`${indent}}`);
-
-        indentationLevel++;
-    });
-
-    return {
-        prefixLines,
-        suffixLines,
-        indentationLevel,
-    };
+export function renderObjectBreadcrumb(
+    breadcrumbs: string[],
+    bodyContent: () => any,
+) {
+    return (
+        <Fragment>
+            {
+                breadcrumbs.length > 0 && (
+                    <Fragment>
+                        <div>{breadcrumbs[0]}: {'{'}</div>
+                    </Fragment>
+                )
+            }
+            {
+                breadcrumbs.length > 1 ?
+                    <div className={styles['json-object']}>
+                        <div>...</div>
+                        {renderObjectBreadcrumb(breadcrumbs.slice(1), bodyContent)}
+                    </div> :
+                    bodyContent()
+            }
+            {
+                breadcrumbs.length > 0 &&
+                    <div>{'}'}</div>
+            }
+        </Fragment>
+    );
 }

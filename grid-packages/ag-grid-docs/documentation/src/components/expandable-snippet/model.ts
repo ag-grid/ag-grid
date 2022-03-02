@@ -20,7 +20,7 @@ type MetaRecord = {
 export type InterfaceLookup = Record<
     string,
     {
-        meta: MetaRecord;
+        meta: MetaRecord & { doc?: string };
         docs: Record<string, string>;
         type: Record<string, string> | string;
     }
@@ -83,6 +83,7 @@ export type JsonModelProperty = {
 export interface JsonModel {
     type: "model";
     tsType: string;
+    documentation?: string;
     properties: Record<string, JsonModelProperty>;
 }
 
@@ -101,8 +102,13 @@ export function buildModel(
     const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
     const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
     let typeStack = context?.typeStack ?? [];
+    const description =  cLookup.description || iLookup?.meta?.doc;
 
-    const result: JsonModel = { type: "model", tsType: type, properties: {} };
+    const result: JsonModel = {
+        type: "model",
+        tsType: type,
+        properties: {},
+    };
 
     if (iLookup == null || cLookup == null) {
         return result;
@@ -112,6 +118,7 @@ export function buildModel(
     }
     typeStack = typeStack.concat([type]);
 
+    result.documentation = typeof description ==='string' ? description : undefined;
     Object.entries(cLookup).forEach(([prop, propCLookup]) => {
         if (prop === "meta") {
             return;
