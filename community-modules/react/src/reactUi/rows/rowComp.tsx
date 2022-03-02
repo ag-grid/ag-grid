@@ -101,6 +101,10 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const cssClassManager = useMemo( ()=> new CssClassManager( ()=> eGui.current! ), []);
 
     useEffect(() => {
+        // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
+        // happen if user calls two API methods one after the other, with the second API invalidating row Row's
+        // the first call created. Thus the rows for the first call could still get created even though no longer needed.
+        if (!rowCtrl.isAlive()) {  return; }
         const compProxy: IRowComp = {
             // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
             // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
