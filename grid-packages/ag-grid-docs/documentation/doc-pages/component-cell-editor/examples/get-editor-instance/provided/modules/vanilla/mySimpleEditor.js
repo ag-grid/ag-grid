@@ -12,7 +12,7 @@ class MySimpleEditor {
 
         let startValue = params.value;
 
-        const isBackspaceOrDelete = params.key === KEY_BACKSPACE || params.key === KEY_DELETE;
+        const isBackspaceOrDelete = params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE;
         if (isBackspaceOrDelete) {
             startValue = '';
         } else if (params.charPress) {

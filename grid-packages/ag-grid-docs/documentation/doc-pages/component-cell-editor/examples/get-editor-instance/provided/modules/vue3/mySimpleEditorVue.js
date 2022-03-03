@@ -25,7 +25,7 @@ export default {
         getInitialValue() {
             let startValue = this.params.value;
 
-            const isBackspaceOrDelete = this.params.key === KEY_BACKSPACE || this.params.key === KEY_DELETE;
+            const isBackspaceOrDelete = this.params.eventKey === KEY_BACKSPACE || this.params.eventKey === KEY_DELETE;
             if (isBackspaceOrDelete) {
                 startValue = '';
             } else if (this.params.charPress) {
