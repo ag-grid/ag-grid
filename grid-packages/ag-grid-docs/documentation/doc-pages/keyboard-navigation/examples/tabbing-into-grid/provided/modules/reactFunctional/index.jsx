@@ -1,5 +1,5 @@
 
-'use strict'
+'use strict';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { render } from 'react-dom';

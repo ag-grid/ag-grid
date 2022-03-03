@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { render } from 'react-dom';

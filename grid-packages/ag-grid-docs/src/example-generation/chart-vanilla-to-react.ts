@@ -67,7 +67,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): () 
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
         const instanceMethods = bindings.instanceMethods.map(processFunction);
 
-        return `'use strict'
+        return `'use strict';
 
 ${imports.join('\n')}
 

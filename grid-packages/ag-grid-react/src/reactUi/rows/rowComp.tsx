@@ -102,7 +102,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     useEffect(() => {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
-        // happen if user calls two API methods one after the other, with the second API invalidating row Row's
+        // happen if user calls two API methods one after the other, with the second API invalidating the row's
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
         if (!rowCtrl.isAlive()) {  return; }
         const compProxy: IRowComp = {

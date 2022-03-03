@@ -147,7 +147,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
         const template = getTemplate(bindings, componentAttributes);
 
         return `
-'use strict'
+'use strict';
 
 ${imports.join('\n')}${bindings.classes.length > 0 ? `\n\n${bindings.classes.join('\n')}` : ''}
 

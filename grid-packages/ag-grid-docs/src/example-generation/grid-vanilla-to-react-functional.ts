@@ -250,7 +250,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
 
         let generatedOutput = `
-'use strict'
+'use strict';
 
 ${imports.join('\n')}
 
