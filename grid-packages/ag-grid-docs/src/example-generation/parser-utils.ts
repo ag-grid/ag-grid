@@ -7,6 +7,7 @@ export interface BindingImport {
     isNamespaced: boolean;
     module: string;
     imports: string[];
+    external: string;
 }
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
@@ -336,23 +337,30 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     srcFile.statements.forEach(node => {
         if (ts.isImportDeclaration(node)) {
             const module = node.moduleSpecifier.getText();
-            const moduleImports = node.importClause;
-            const imports = [];
-            let isNamespaced = false;
-            if (moduleImports.namedBindings) {
-
-                if (ts.isNamespaceImport(moduleImports.namedBindings)) {
+            if (module.includes('ag-grid')) {
+                const moduleImports = node.importClause;
+                const imports = [];
+                let isNamespaced = false;
+                if (moduleImports?.namedBindings) {
+                    if (ts.isNamespaceImport(moduleImports.namedBindings)) {
+                        isNamespaced = true;
+                    }
+                    moduleImports.namedBindings.forEachChild(o => {
+                        imports.push(o.getText());
+                    })
+                } else {
                     isNamespaced = true;
                 }
-                moduleImports.namedBindings.forEachChild(o => {
-                    imports.push(o.getText());
+                allImports.push({
+                    module,
+                    isNamespaced,
+                    imports
+                })
+            } else {
+                allImports.push({
+                    external: node.getText()
                 })
             }
-            allImports.push({
-                module,
-                isNamespaced,
-                imports
-            })
         }
     })
     return allImports;
@@ -371,7 +379,7 @@ export function extractTypeDeclarations(srcFile: ts.SourceFile) {
 }
 
 
-export function extractClassDeclarations(srcFile: ts.SourceFile): BindingImport[] {
+export function extractClassDeclarations(srcFile: ts.SourceFile) {
     const allClasses = [];
     srcFile.statements.forEach(node => {
         if (ts.isClassDeclaration(node)) {
@@ -381,7 +389,7 @@ export function extractClassDeclarations(srcFile: ts.SourceFile): BindingImport[
     return allClasses;
 }
 
-export function extractInterfaces(srcFile: ts.SourceFile): BindingImport[] {
+export function extractInterfaces(srcFile: ts.SourceFile) {
     const allInterfaces = [];
     srcFile.statements.forEach(node => {
         if (ts.isInterfaceDeclaration(node)) {
@@ -519,11 +527,28 @@ export function findAllAccessedProperties(node) {
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
     if (convertToPackage) {
-        if (modulePackage.includes("@ag-grid-community/angular")) {
-            return `'ag-grid-angular'`
-        } else if (modulePackage.includes("@ag-grid-community")) {
+
+        const conversions = {
+            "'@ag-grid-community/angular'": "'ag-grid-angular'",
+            '"@ag-grid-community/angular"': "'ag-grid-angular'",
+            "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
+            '"@ag-grid-community/vue3"': "'ag-grid-vue3'",
+            "'@ag-grid-community/vue'": "'ag-grid-vue'",
+            '"@ag-grid-community/vue"': "'ag-grid-vue'",
+            "'@ag-grid-community/react'": "'ag-grid-react'",
+            '"@ag-grid-community/react"': "'ag-grid-react'",
+        }
+        if (conversions[modulePackage]) {
+            return conversions[modulePackage]
+        }
+
+        if (modulePackage.includes("@ag-grid-community/core/dist")) {
+            return modulePackage.replace('@ag-grid-community/core/dist', 'ag-grid-community/dist');
+        }
+        if (modulePackage.includes("@ag-grid-community")) {
             return `'ag-grid-community'`
-        } else if (modulePackage.includes("@ag-grid-enterprise")) {
+        }
+        if (modulePackage.includes("@ag-grid-enterprise")) {
             return `'ag-grid-enterprise'`
         }
     }
@@ -545,11 +570,18 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
     let namespacedImports = [];
 
     bindingImports.forEach((i: BindingImport) => {
-        if (i.imports.length > 0) {
+
+        if (i.external) {
+            imports.push(i.external)
+        } else {
             const path = convertImportPath(i.module, convertToPackage)
             if (!i.module.includes('_typescript') || !ignoreTsImports) {
                 if (i.isNamespaced) {
-                    namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
+                    if (i.imports.length > 0) {
+                        namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
+                    } else {
+                        namespacedImports.push(`import ${path};`);
+                    }
                 } else {
                     workingImports[path] = [...(workingImports[path] || []), ...i.imports];
                 }
@@ -560,8 +592,15 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
     [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
 
     Object.entries(workingImports).forEach(([k, v]: ([string, string[]])) => {
-        const unique = [...new Set(v)].sort();
-        imports.push(`import { ${unique.join(', ')} }  from ${k};`);
+        let unique = [...new Set(v)].sort();
+
+        if (convertToPackage && k.includes('ag-grid')) {
+            // Remove module related imports
+            unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
+        }
+        if (unique.length > 0) {
+            imports.push(`import { ${unique.join(', ')} }  from ${k};`);
+        }
     })
 }
 

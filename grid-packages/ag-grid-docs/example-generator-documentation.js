@@ -41,13 +41,13 @@ function writeFile(destination, contents) {
     }
 }
 
-function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, framework) {
+function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, forceConversion = false) {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
 
         const updateImports = (src) => {
-            if (!destinationFile.endsWith('.ts')) {
+            if (!forceConversion && !destinationFile.endsWith('.ts')) {
                 return src;
             }
 
@@ -64,7 +64,19 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                 formattedImports = `${importStrings.join('\n')}\n`
 
                 // Remove the original import statements
-                src = src.replace(/import.*from.*\n/g, '');
+                src = src.replace(/import.*from.*\n/g, '').replace(/import.*?;\n/g, '');
+                if (convertToPackage) {
+                    src = src
+                        .replace(/\/\/ Required feature modules are registered in app\.module\.ts\n/, '')
+                        .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
+                        .replace(/ModuleRegistry.registerModules.*?\n/, '');
+
+
+                    const ensureRegistryUsed = ['[modules]=', ':modules=', 'modules={', 'modules:'];
+                    if (ensureRegistryUsed.some(toCheck => src.includes(toCheck))) {
+                        throw new Error(sourceFile + ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().')
+                    }
+                }
                 src = formattedImports + src
             }
 
@@ -242,14 +254,36 @@ function createExampleGenerator(prefix, importTypes) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType, framework);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {
-            const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
-            const sourcePath = path.join(providedRootPath, importType, framework);
 
-            fs.copySync(sourcePath, destPath);
+            const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
+            const sourcePath = path.join(providedRootPath, 'modules', framework);
+            if (importType === 'packages') {
+                // Convert the modules provided example into a packages version
+                fs.mkdirSync(destPath, { recursive: true });
+
+                let fileOrFolders = fs.readdirSync(sourcePath);
+                let files = fileOrFolders.filter(f => f.includes('.'));
+                let folders = fileOrFolders.filter(f => !f.includes('.'));
+
+                if (files.length > 0) {
+                    copyFiles(files.map(f => sourcePath + '/' + f), destPath, `_IGNORE`, '', 'packages', true);
+                }
+                if (folders) {
+                    folders.forEach(f => {
+                        const folderPath = sourcePath + '/' + f;
+                        const subDest = destPath + '/' + f;
+                        fs.mkdirSync(subDest, { recursive: true });
+                        let subFiles = fs.readdirSync(folderPath);
+                        copyFiles(subFiles.map(s => folderPath + '/' + s), subDest, `_IGNORE`, '', 'packages', true);
+                    })
+                }
+            } else {
+                fs.copySync(sourcePath, destPath);
+            }
         };
 
         fs.emptyDirSync(createExamplePath(`_gen`));
