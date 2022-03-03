@@ -528,6 +528,7 @@ export class CellCtrl extends BeanStub {
         const res: any = {
             value: this.getValueFromValueService(),
             key: key,
+            eventKey: key,
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
