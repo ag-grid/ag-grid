@@ -145,7 +145,7 @@ export function buildModel(
         const metaProp = meta?.[prop] || meta?.[prop + '?'];
         const docsProp = docs?.[prop] || docs?.[prop + '?'];
         const { description, type } = propCLookup;
-        const { optional, returnType } = type || {
+        const { optional, arguments: args, returnType } = type || {
             optional: false,
             returnType: "unknown",
         };
@@ -157,8 +157,13 @@ export function buildModel(
 
         if (deprecated && !includeDeprecated) { return; }
 
-        let declaredType: InterfaceLookupMetaType = meta[prop]?.type || returnType;
-        if (typeof declaredType === 'object') {
+        let declaredType = meta[prop]?.type || returnType;
+        if (args != null) {
+            const params = Object.entries(args)
+                .map(([name, type]) => `${name}: ${type}`)
+                .join(', ');
+            declaredType = `(${params}) => ${type.returnType}`;
+        } else if (typeof declaredType === 'object') {
             const params = Object.entries(declaredType.parameters)
                 .map(([name, type]) => `${name}: ${type}`)
                 .join(', ');
