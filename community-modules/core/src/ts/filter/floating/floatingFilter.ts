@@ -8,7 +8,7 @@ import { FilterChangedEvent } from '../../events';
 export interface IFloatingFilterParent {
     /**
      * Notification that a new floating-filter value was input by the user.
-     * 
+     *
      * @param type operation type selected.
      * @param value model-typed value entered.
      */

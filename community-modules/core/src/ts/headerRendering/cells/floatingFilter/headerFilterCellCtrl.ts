@@ -116,6 +116,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const nextFocusableEl = this.focusService.findNextFocusableElement(this.eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
+            this.beans.headerNavigationService.scrollToColumn(this.column);
             e.preventDefault();
             nextFocusableEl.focus();
             return;
@@ -225,15 +226,14 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupUserComp(): void {
-
         if (!this.active) { return; }
 
         const colDef = this.column.getColDef();
-
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
 
         let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
+
         if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
         }
@@ -253,6 +253,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+
         if (compDetails) {
             this.comp.setCompDetails(compDetails);
         }
@@ -288,10 +289,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
             const compPromise = this.comp.getFloatingFilterComp();
+
             if (!compPromise) { return; }
+
             const parentModel = this.currentParentModel();
+
             compPromise.then(comp => {
-                comp && comp.onParentModelChanged(parentModel, filterChangedEvent)
+                if (comp) {
+                    comp.onParentModelChanged(parentModel, filterChangedEvent);
+                }
             });
         };
 
