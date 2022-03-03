@@ -22,7 +22,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
                 class="ag-theme-alpine"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"
-                [modules]="modules"
         >
         </ag-grid-angular>
     </div>

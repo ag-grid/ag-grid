@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, ICellRenderer, ICellRendererParams, Module, RowNode } from '@ag-grid-community/core';
+import { ColDef, GridApi, ICellRenderer, ICellRendererParams, RowNode } from '@ag-grid-community/core';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -52,7 +51,7 @@ class DaysSunshineRenderer implements ICellRenderer {
     getGui() {
         return this.eGui;
     }
-    refresh() {return false;}
+    refresh() { return false; }
 }
 
 // This is a plain JS (not Angular) component
@@ -79,7 +78,6 @@ class RainPerTenMmRenderer implements ICellRenderer {
                 #agGrid
                 style="width: 100%; height: 100%;"
                 class="ag-theme-alpine"
-                [modules]="modules"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
@@ -91,8 +89,6 @@ class RainPerTenMmRenderer implements ICellRenderer {
 export class AppComponent {
 
     private gridApi!: GridApi;
-
-    public modules: Module[] = [ClientSideRowModelModule];
 
     public columnDefs: ColDef[] = [
         {

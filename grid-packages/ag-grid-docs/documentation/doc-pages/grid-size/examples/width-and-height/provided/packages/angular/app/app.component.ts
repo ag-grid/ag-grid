@@ -21,7 +21,6 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
                 class="ag-theme-alpine"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"
-                [modules]="modules"
         >
         </ag-grid-angular>
     </div>

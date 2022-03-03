@@ -2,8 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { MySimpleEditor } from './mySimple-editor.component';
-import { ColDef, GridReadyEvent, Module } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -11,7 +10,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
       <ag-grid-angular
           style="width: 100%; height: 100%;"
           class="ag-theme-alpine"
-          [modules]="modules"
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [rowData]="rowData"
@@ -20,7 +18,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
     `
 })
 export class AppComponent implements OnDestroy {
-    public modules: Module[] = [ClientSideRowModelModule]
     public columnDefs: ColDef[] = [
         {
             field: "first_name",

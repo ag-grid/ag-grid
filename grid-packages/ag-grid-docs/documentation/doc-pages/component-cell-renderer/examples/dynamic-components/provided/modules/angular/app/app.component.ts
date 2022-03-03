@@ -7,8 +7,7 @@ import { SquareRenderer } from './square-renderer.component';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, RowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -22,7 +21,6 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent, Module, RowNode } from '@ag
                 style="width: 100%; height: 100%;"
                 id="myGrid"
                 class="ag-theme-alpine"
-                [modules]="modules"
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [context]="context"
@@ -35,7 +33,6 @@ export class AppComponent {
     private gridApi!: GridApi;
     private gridColumnApi!: ColumnApi;
 
-    public modules: Module[] = [ClientSideRowModelModule];
     public columnDefs: ColDef[] = [
         {
             headerName: "Row",
