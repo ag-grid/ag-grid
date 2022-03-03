@@ -9715,19 +9715,19 @@
   "AgCartesianAxisThemeOptions": {
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
-      "type": { "returnType": "Omit<T, 'top' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'right' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'bottom' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'left' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "meta": { "typeParams": ["T"] }
   },
@@ -9929,28 +9929,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -9975,28 +9975,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10007,28 +10007,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10037,28 +10037,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10071,28 +10071,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }

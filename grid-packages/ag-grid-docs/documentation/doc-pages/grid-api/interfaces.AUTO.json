@@ -5568,10 +5568,10 @@
       "doc": "/** This is the configuration shared by all types of axis. */"
     },
     "type": {
-      "top?": "Omit<T, 'top' | 'type'>",
-      "right?": "Omit<T, 'right' | 'type'>",
-      "bottom?": "Omit<T, 'bottom' | 'type'>",
-      "left?": "Omit<T, 'left' | 'type'>"
+      "top?": "Omit<T, 'position' | 'type'>",
+      "right?": "Omit<T, 'position' | 'type'>",
+      "bottom?": "Omit<T, 'position' | 'type'>",
+      "left?": "Omit<T, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5692,10 +5692,10 @@
       "nice?": "boolean",
       "min?": "number",
       "max?": "number",
-      "top?": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgNumberAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgNumberAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5714,10 +5714,10 @@
       "min?": "number",
       "max?": "number",
       "base?": "number",
-      "top?": "Omit<AgLogAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgLogAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgLogAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgLogAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5735,10 +5735,10 @@
     "type": {
       "paddingInner?": "number",
       "paddingOuter?": "number",
-      "top?": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgCategoryAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5750,10 +5750,10 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5766,10 +5766,10 @@
     "meta": {},
     "type": {
       "nice?": "boolean",
-      "top?": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgTimeAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgTimeAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
