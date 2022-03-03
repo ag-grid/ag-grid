@@ -12541,6 +12541,10 @@
       "type": { "returnType": "any", "optional": false }
     },
     "key": {
+      "description": "/** @deprecated Use `eventKey`.\n */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -14792,6 +14796,10 @@
       "type": { "returnType": "any", "optional": false }
     },
     "key": {
+      "description": "/** @deprecated Use `eventKey`.\n */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -17348,6 +17356,10 @@
       "type": { "returnType": "any", "optional": false }
     },
     "key": {
+      "description": "/** @deprecated Use `eventKey`.\n */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -17433,6 +17445,10 @@
       "type": { "returnType": "any", "optional": false }
     },
     "key": {
+      "description": "/** @deprecated Use `eventKey`.\n */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -17518,6 +17534,10 @@
       "type": { "returnType": "any", "optional": false }
     },
     "key": {
+      "description": "/** @deprecated Use `eventKey`.\n */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },

@@ -58,9 +58,11 @@ export interface ICellEditor {
 export interface ICellEditorParams {
     /** Current value of the cell */
     value: any;
-    /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
-     *  characters appear here */
+    /** @deprecated Use `eventKey`. */
     key: string | null;
+     /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
+      *  characters appear here */
+    eventKey: string | null;
     /** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if
      *  shift + letter 'a' only printable characters appear here */
     charPress: string | null;
