@@ -9631,7 +9631,7 @@
   },
   "AgChartThemeOverrides": {
     "cartesian": {
-      "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
+      "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgCartesianThemeOptions<AgCartesianSeriesTheme>",
         "optional": true
@@ -9680,7 +9680,7 @@
       }
     },
     "polar": {
-      "description": "/** Specifies defaults for all polar charts (used for pie series) */",
+      "description": "/** Specifies defaults for all polar charts (used for pie series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgPolarThemeOptions<AgPolarSeriesTheme>",
         "optional": true
@@ -9694,7 +9694,7 @@
       }
     },
     "hierarchy": {
-      "description": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
+      "description": "/** Specifies defaults for all hierarchy charts (used for treemap series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesTheme>",
         "optional": true
@@ -9708,7 +9708,7 @@
       }
     },
     "common": {
-      "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */",
+      "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": { "returnType": "any", "optional": true }
     }
   },

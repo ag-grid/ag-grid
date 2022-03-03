@@ -5548,18 +5548,18 @@
       "common?": "any"
     },
     "docs": {
-      "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
+      "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "column?": "/** Specifies defaults for column charts. */",
       "bar?": "/** Specifies defaults for bar charts. */",
       "line?": "/** Specifies defaults for line charts. */",
       "area?": "/** Specifies defaults for area charts. */",
       "scatter?": "/** Specifies defaults for scatter/bubble charts. */",
       "histogram?": "/** Specifies defaults for histogram charts. */",
-      "polar?": "/** Specifies defaults for all polar charts (used for pie series) */",
+      "polar?": "/** Specifies defaults for all polar charts (used for pie series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "pie?": "/** Specifies defaults for pie/doughnut charts. */",
-      "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
+      "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "treemap?": "/** Specifies defaults for all treemap charts. */",
-      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */"
+      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.\n * @deprecated prefer a concrete chart-type specific override\n */"
     }
   },
   "AgCartesianAxisThemeOptions": {

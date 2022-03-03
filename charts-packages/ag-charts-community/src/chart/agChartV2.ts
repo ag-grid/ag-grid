@@ -244,7 +244,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new TreemapSeries(), seriesOptions, {path, skip}));
                 break;
             default:
-                throw new Error('AG Charts - unknown series type: ' + seriesOptions.type);
+                throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
         }
     }
 
