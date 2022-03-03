@@ -263,6 +263,8 @@ export class CellCtrl extends BeanStub {
         const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
 
         const measureHeight = (timesCalled: number) => {
+            if (this.editing) { return; }
+            
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
