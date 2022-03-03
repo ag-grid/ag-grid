@@ -235,7 +235,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const level = this.level;
             const id = getRowKeyFunc({
                                 data, 
-                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
+                                parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
                                 level
                             });
             const foundNode = nodesToRecycle[id];
@@ -620,7 +620,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const parentKeys = this.parentRowNode.getGroupKeys();
             const id: string = getRowKeyFunc({
                                         data, 
-                                        parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
+                                        parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
                                         level});
             rowNode = this.allNodesMap[id];
             if (!rowNode) {

@@ -371,7 +371,7 @@ export class RowNode implements IEventEmitter {
                 const parentKeys = this.getGroupKeys(true);
                 this.id = getRowKeyFunc({
                                 data: this.data,
-                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                                parentGroups: parentKeys.length > 0 ? parentKeys : undefined,
                                 level: this.level
                             });
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
