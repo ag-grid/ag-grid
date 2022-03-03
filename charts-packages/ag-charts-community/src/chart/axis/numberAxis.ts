@@ -106,6 +106,11 @@ export class NumberAxis extends ChartAxis {
     }
 
     formatDatum(datum: number): string {
-        return datum.toFixed(2);
+        if (typeof datum === "number") {
+            return datum.toFixed(2);
+        } else {
+            console.warn('AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
+            return String(datum);
+        }
     }
 }
