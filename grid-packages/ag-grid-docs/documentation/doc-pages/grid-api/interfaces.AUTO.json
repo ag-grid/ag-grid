@@ -2332,11 +2332,11 @@
   },
   "GetRowKeyParams": {
     "meta": {},
-    "type": { "data": "any", "level": "number", "parentKeys?": "string[]" },
+    "type": { "data": "any", "level": "number", "parentGroups?": "string[]" },
     "docs": {
       "data": "/** The data item provided to the grid for the row in question */",
       "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
+      "parentGroups?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
     }
   },
   "ProcessRowParams": {
@@ -5548,18 +5548,18 @@
       "common?": "any"
     },
     "docs": {
-      "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
+      "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "column?": "/** Specifies defaults for column charts. */",
       "bar?": "/** Specifies defaults for bar charts. */",
       "line?": "/** Specifies defaults for line charts. */",
       "area?": "/** Specifies defaults for area charts. */",
       "scatter?": "/** Specifies defaults for scatter/bubble charts. */",
       "histogram?": "/** Specifies defaults for histogram charts. */",
-      "polar?": "/** Specifies defaults for all polar charts (used for pie series) */",
+      "polar?": "/** Specifies defaults for all polar charts (used for pie series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "pie?": "/** Specifies defaults for pie/doughnut charts. */",
-      "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
+      "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "treemap?": "/** Specifies defaults for all treemap charts. */",
-      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */"
+      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.\n * @deprecated prefer a concrete chart-type specific override\n */"
     }
   },
   "AgCartesianAxisThemeOptions": {
@@ -5568,10 +5568,10 @@
       "doc": "/** This is the configuration shared by all types of axis. */"
     },
     "type": {
-      "top?": "Omit<T, 'top' | 'type'>",
-      "right?": "Omit<T, 'right' | 'type'>",
-      "bottom?": "Omit<T, 'bottom' | 'type'>",
-      "left?": "Omit<T, 'left' | 'type'>"
+      "top?": "Omit<T, 'position' | 'type'>",
+      "right?": "Omit<T, 'position' | 'type'>",
+      "bottom?": "Omit<T, 'position' | 'type'>",
+      "left?": "Omit<T, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5692,10 +5692,10 @@
       "nice?": "boolean",
       "min?": "number",
       "max?": "number",
-      "top?": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgNumberAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgNumberAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5714,10 +5714,10 @@
       "min?": "number",
       "max?": "number",
       "base?": "number",
-      "top?": "Omit<AgLogAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgLogAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgLogAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgLogAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5735,10 +5735,10 @@
     "type": {
       "paddingInner?": "number",
       "paddingOuter?": "number",
-      "top?": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgCategoryAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5750,10 +5750,10 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -5766,10 +5766,10 @@
     "meta": {},
     "type": {
       "nice?": "boolean",
-      "top?": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
-      "right?": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
-      "bottom?": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
-      "left?": "Omit<AgTimeAxisOptions, 'left' | 'type'>"
+      "top?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "right?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "bottom?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "left?": "Omit<AgTimeAxisOptions, 'position' | 'type'>"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6618,61 +6618,6 @@
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
-  "AgOHLCTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "dateKey?": "string",
-      "dateName?": "string",
-      "openKey?": "string",
-      "openName?": "string",
-      "highKey?": "string",
-      "highName?": "string",
-      "lowKey?": "string",
-      "lowName?": "string",
-      "closeKey?": "string",
-      "closeName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string"
-    }
-  },
-  "AgOHLCSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "renderer?": "(params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
-    },
-    "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
-    }
-  },
-  "AgOHLCSeriesOptions": {
-    "meta": {},
-    "type": {
-      "type?": "'ohlc'",
-      "dateKey?": "string",
-      "openKey?": "string",
-      "highKey?": "string",
-      "lowKey?": "string",
-      "closeKey?": "string",
-      "labelKey?": "string",
-      "tooltip?": "AgOHLCSeriesTooltip",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
-      "highlightStyle?": "AgSeriesHighlightStyle"
-    },
-    "docs": {
-      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "visible?": "/** Whether or not to display the series. */",
-      "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
-    }
-  },
   "AgScatterSeriesTooltip": {
     "meta": {},
     "type": {
@@ -7333,7 +7278,7 @@
   },
   "AgCartesianSeriesOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | AgOHLCSeriesOptions"
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -7346,7 +7291,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
+      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",

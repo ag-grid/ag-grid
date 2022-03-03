@@ -51,7 +51,10 @@ export interface AgChartTheme extends AgChartThemeOptions {
 }
 
 export interface AgChartThemeOverrides {
-    /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
+    /**
+     * Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)
+     * @deprecated prefer a concrete chart-type specific override
+     */
     cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
     /** Specifies defaults for column charts. */
     column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
@@ -66,30 +69,39 @@ export interface AgChartThemeOverrides {
     /** Specifies defaults for histogram charts. */
     histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions>;
     
-    /** Specifies defaults for all polar charts (used for pie series) */
+    /**
+     * Specifies defaults for all polar charts (used for pie series)
+     * @deprecated prefer a concrete chart-type specific override
+     */
     polar?: AgPolarThemeOptions<AgPolarSeriesTheme>;
     /** Specifies defaults for pie/doughnut charts. */
     pie?: AgPolarThemeOptions<AgPieSeriesOptions>;
     
-    /** Specifies defaults for all hierarchy charts (used for treemap series) */
+    /**
+     * Specifies defaults for all hierarchy charts (used for treemap series)
+     * @deprecated prefer a concrete chart-type specific override
+     */
     hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme>;
     /** Specifies defaults for all treemap charts. */
     treemap?: AgHierarchyThemeOptions<AgHierarchySeriesOptions>;
 
-    /** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */
+    /**
+     * Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.
+     * @deprecated prefer a concrete chart-type specific override
+     */
     common?: any;
 }
 
 /** This is the configuration shared by all types of axis. */
 export interface AgCartesianAxisThemeOptions<T> {
     /** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */
-    top?: Omit<T, 'top' | 'type'>;
+    top?: Omit<T, 'position' | 'type'>;
     /** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */
-    right?: Omit<T, 'right' | 'type'>;
+    right?: Omit<T, 'position' | 'type'>;
     /** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */
-    bottom?: Omit<T, 'bottom' | 'type'>;
+    bottom?: Omit<T, 'position' | 'type'>;
     /** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */
-    left?: Omit<T, 'left' | 'type'>;
+    left?: Omit<T, 'position' | 'type'>;
 }
 
 export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgBaseChartOptions {
@@ -703,38 +715,6 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     tooltip?: AgLineSeriesTooltip;
 }
 
-export interface AgOHLCTooltipRendererParams extends AgSeriesTooltipRendererParams {
-    dateKey?: string;
-    dateName?: string;
-
-    openKey?: string;
-    openName?: string;
-
-    highKey?: string;
-    highName?: string;
-
-    lowKey?: string;
-    lowName?: string;
-
-    closeKey?: string;
-    closeName?: string;
-}
-
-export interface AgOHLCSeriesTooltip extends AgSeriesTooltip {
-    renderer?: (params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult;
-}
-
-export interface AgOHLCSeriesOptions extends AgBaseSeriesOptions {
-    type?: 'ohlc';
-    dateKey?: string;
-    openKey?: string;
-    highKey?: string;
-    lowKey?: string;
-    closeKey?: string;
-    labelKey?: string;
-    tooltip?: AgOHLCSeriesTooltip;
-}
-
 export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
@@ -1165,15 +1145,14 @@ export type AgCartesianSeriesOptions =
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
-    | AgHistogramSeriesOptions
-    | AgOHLCSeriesOptions;
+    | AgHistogramSeriesOptions;
 
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */

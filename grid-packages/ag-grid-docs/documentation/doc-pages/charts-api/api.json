@@ -309,6 +309,17 @@
     }
   },
   "AgCartesianChartOptions": {
+    "meta": {
+      "ordering": {
+        "type": "high",
+        "data": "high",
+        "container": "high",
+        "axes": "high",
+        "series": "high",
+        "navigator": "low",
+        "theme": "low"
+      }
+    },
     "axes": {
       "type": "AgCartesianAxisOptions[]"
     },
@@ -317,11 +328,29 @@
     }
   },
   "AgPolarChartOptions": {
+    "meta": {
+      "ordering": {
+        "type": "high",
+        "data": "high",
+        "container": "high",
+        "axes": "high",
+        "series": "high",
+        "theme": "low"
+      }
+    },
     "series": {
       "type": "AgPolarSeriesOptions[]"
     }
   },
   "AgHierarchyChartOptions": {
+    "ordering": {
+      "type": "high",
+      "data": "high",
+      "container": "high",
+      "axes": "high",
+      "series": "high",
+      "theme": "low"
+    },
     "series": {
       "type": "AgHierarchySeriesOptions[]"
     }

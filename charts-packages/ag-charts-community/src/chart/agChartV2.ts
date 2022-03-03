@@ -243,9 +243,8 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
             case 'treemap':
                 series.push(applySeriesValues(new TreemapSeries(), seriesOptions, {path, skip}));
                 break;
-            case 'ohlc':
             default:
-                throw new Error('AG Charts - unknown series type: ' + seriesOptions.type);
+                throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
         }
     }
 

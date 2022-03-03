@@ -8,7 +8,6 @@ import {
     AgPieSeriesOptions,
     AgScatterSeriesOptions,
     AgTreemapSeriesOptions,
-    AgOHLCSeriesOptions,
 } from '../agChartOptions';
 import { BarLabelPlacement } from '../series/cartesian/barSeries';
 
@@ -101,7 +100,6 @@ type SeriesType<T extends SeriesTypes['type']> =
     T extends 'pie' ? AgPieSeriesOptions :
     T extends 'scatter' ? AgScatterSeriesOptions :
     T extends 'treemap' ? AgTreemapSeriesOptions :
-    T extends 'ohlc' ? AgOHLCSeriesOptions :
     never;
 function identityTransform<T>(input: T): T { return input; };
 
@@ -113,7 +111,6 @@ const SERIES_TRANSFORMS: {
     column: barSeriesTransform,
     histogram: identityTransform,
     line: identityTransform,
-    ohlc: identityTransform,
     pie: identityTransform,
     scatter: identityTransform,
     treemap: identityTransform,

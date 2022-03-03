@@ -520,7 +520,6 @@ export const DEFAULT_SERIES_OPTIONS: {[K in NonNullable<SeriesOptionsTypes['type
     column: DEFAULT_COLUMN_SERIES_OPTIONS,
     histogram: DEFAULT_HISTOGRAM_SERIES_OPTIONS,
     scatter: DEFAULT_SCATTER_SERIES_OPTIONS,
-    ohlc: {},
     pie: DEFAULT_PIE_SERIES_OPTIONS,
     treemap: DEFAULT_TREEMAP_SERIES_OPTIONS,
 };

@@ -5,6 +5,7 @@ type InterfaceLookupMetaType = string | { parameters: Record<string, string>, re
 
 type MetaRecord = {
     description?: string;
+    doc?: string,
     type?: InterfaceLookupMetaType;
     typeParams?: string[],
     isTypeAlias?: boolean;
@@ -15,13 +16,17 @@ type MetaRecord = {
     unit?: string;
     options?: string[];
     suggestions?: string[];
-    propertyOrder?: string[];
+    ordering?: {[prop: string]: OrderingPriority},
 };
+
+type OrderingPriority = 'high' | 'natural' | 'low';
 
 export type InterfaceLookup = Record<
     string,
     {
-        meta: MetaRecord & { doc?: string };
+        meta: MetaRecord & {
+            [prop: string]: MetaRecord,
+        };
         docs: Record<string, string>;
         type: Record<string, string> | string;
     }
@@ -44,7 +49,7 @@ export type CodeLookup = Record<
 
 type Overrides = {
     _config_: {};
-    [key: string]: Record<string, MetaRecord>;
+    [key: string]: { meta?: MetaRecord } & Record<string, MetaRecord>;
 };
 
 export type JsonPrimitiveProperty = {
@@ -61,6 +66,7 @@ export type JsonObjectProperty = {
 
 export type JsonArray = {
     type: "array";
+    tsType: string;
     depth: number;
     elements: Exclude<JsonProperty, JsonArray>;
 };
@@ -97,14 +103,14 @@ export function buildModel(
     interfaceLookup: InterfaceLookup,
     codeLookup: CodeLookup,
     config?: Partial<Config>,
-    context?: { typeStack: string[] }
+    context?: { typeStack: string[], skipProperties: string[] }
 ): JsonModel {
     const includeDeprecated = config?.includeDeprecated ?? false;
     const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
     const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
-    let typeStack = context?.typeStack ?? [];
+    let { typeStack, skipProperties } = context || { typeStack: [], skipProperties: [] };
     const description = cLookup.description || iLookup?.meta?.doc;
-    const { typeParams} = iLookup?.meta;
+    const { typeParams, ordering } = iLookup?.meta;
 
     const result: JsonModel = {
         type: "model",
@@ -132,12 +138,11 @@ export function buildModel(
 
     result.documentation = typeof description ==='string' ? description : undefined;
     Object.entries(cLookup).forEach(([prop, propCLookup]) => {
-        if (prop === "meta") {
-            return;
-        }
+        if (prop === "meta") { return; }
+        if (skipProperties.includes(prop)) { return; }
 
         const { meta, docs } = iLookup;
-        const metaProp = meta?.[prop] || meta?.[prop + '?'] || {};
+        const metaProp = meta?.[prop] || meta?.[prop + '?'];
         const docsProp = docs?.[prop] || docs?.[prop + '?'];
         const { description, type } = propCLookup;
         const { optional, returnType } = type || {
@@ -145,7 +150,7 @@ export function buildModel(
             returnType: "unknown",
         };
         const documentation = description || docsProp;
-        const { isRequired, default: def } = metaProp;
+        const { isRequired, default: def } = metaProp || { isRequired: !optional };
 
         const required = optional === false || isRequired === true;
         const deprecated = docsProp?.indexOf("@deprecated") >= 0;
@@ -170,7 +175,45 @@ export function buildModel(
         };
     });
 
+    if (ordering) {
+        const newProperties = {};
+        const naturalOrder = Object.keys(result.properties);
+        Object.entries(result.properties)
+            .sort((a,b) => compare(a, b, ordering, naturalOrder))
+            .forEach(([k, v]) => {
+                newProperties[k] = v;
+            });
+
+        result.properties = newProperties;
+    }
+
     return result;
+}
+
+const ORDERING_PRIORITY: OrderingPriority[] = ['high', 'natural', 'low'];
+
+function compare(
+    propA: [string, JsonModelProperty],
+    propB: [string, JsonModelProperty],
+    ordering: MetaRecord['ordering'],
+    naturalOrder: string[],
+): number {
+    const priorities = [
+        ORDERING_PRIORITY.indexOf(ordering[propA[0]] || 'natural'),
+        ORDERING_PRIORITY.indexOf(ordering[propB[0]] || 'natural'),
+    ];
+
+    if (priorities[0] != priorities[1]) {
+        return priorities[0] - priorities[1];
+    }
+
+    const naturalPriority = ORDERING_PRIORITY.indexOf('natural');
+    if (priorities[0] === naturalPriority) {
+        return naturalOrder.indexOf(propA[0]) - naturalOrder.indexOf(propB[0]);
+    }
+
+    const orderingKeys = Object.keys(ordering);
+    return orderingKeys.indexOf(propA[0]) - orderingKeys.indexOf(propB[0]);
 }
 
 const primitiveTypes = ["number", "string", "Date", "boolean", "any"];
@@ -183,14 +226,36 @@ function resolveType(
     context: { typeStack: string[] },
     config?: Partial<Config>,
 ): JsonProperty {
-    const pType = plainType(declaredType);
-    const wrapping = typeWrapping(declaredType);
+    let cleanedType = declaredType;
+    let skipProperties: string[] = [];
+    if (declaredType.startsWith('Omit<')) {
+        const startTypeIndex = declaredType.indexOf('<') + 1;
+        const endTypeIndex = declaredType.lastIndexOf(',');
+
+        declaredType.substring(endTypeIndex + 1, declaredType.lastIndexOf('>'))
+            .trim()
+            .split('|')
+            .forEach((omitted) => {
+                const cleaned = omitted.trim()
+                    .replace(/^'/, '')
+                    .replace(/'$/, '');
+                if (typeof cleaned === 'string') {
+                    skipProperties.push(cleaned);
+                }
+            });
+
+        cleanedType = declaredType.substring(startTypeIndex, endTypeIndex).trim();
+    }
+
+    const pType = plainType(cleanedType);
+    const wrapping = typeWrapping(cleanedType);
     const { typeStack } = context;
 
     if (wrapping === "array") {
         return {
             type: "array",
-            depth: declaredType.match(/\[/).length,
+            tsType: declaredType,
+            depth: cleanedType.match(/\[/).length,
             elements: resolveType(pType, interfaceLookup, codeLookup, context, config) as Exclude<
                 JsonProperty,
                 JsonArray
@@ -198,7 +263,7 @@ function resolveType(
         };
     }
 
-    const { resolvedClass, resolvedType } = typeClass(declaredType, interfaceLookup, codeLookup);
+    const { resolvedClass, resolvedType } = typeClass(cleanedType, interfaceLookup, codeLookup);
     switch (resolvedClass) {
         case "primitive":
         case "unknown":
@@ -209,7 +274,7 @@ function resolveType(
         case "union-mixed":
             return {
                 type: "union",
-                tsType: resolvedType,
+                tsType: declaredType,
                 options: resolvedType.split("|")
                     .map(unionType => resolveType(unionType.trim(), interfaceLookup, codeLookup, context))
                     .filter((unionDesc): unionDesc is JsonUnionType['options'][number] => unionDesc.type !== 'union'),
@@ -217,8 +282,8 @@ function resolveType(
         case "nested-object":
             return {
                 type: "nested-object",
-                model: buildModel(resolvedType, interfaceLookup, codeLookup, config, { typeStack }),
-                tsType: resolvedType.trim(),
+                model: buildModel(resolvedType, interfaceLookup, codeLookup, config, { typeStack, skipProperties }),
+                tsType: declaredType.trim(),
             };
     }
 }
@@ -312,14 +377,20 @@ export function loadLookups(overridesrc?: string): { interfaceLookup; codeLookup
         Object.entries(overrides).forEach(([type, override]) => {
             const def = interfaceLookup[type];
 
-            Object.entries(override).forEach(([prop, propOverride]) => {
-                def.meta[prop] = {
-                    ...def.meta[prop],
-                    ...propOverride,
-                };
-                def.docs[prop] = propOverride.description || def.docs[prop];
-                def.type[prop] = propOverride.type || def.type[prop];
-            });
+            if (override.meta) {
+                Object.assign(def.meta, override.meta);
+            }
+
+            Object.entries(override)
+                .filter(([prop]) => prop !== 'meta')
+                .forEach(([prop, propOverride]) => {
+                    def.meta[prop] = {
+                        ...def.meta[prop],
+                        ...propOverride,
+                    };
+                    def.docs[prop] = propOverride.description || def.docs[prop];
+                    def.type[prop] = propOverride.type || def.type[prop];
+                });
         });
     }
 

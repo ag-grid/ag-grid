@@ -4861,7 +4861,7 @@
       "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
       "type": { "returnType": "number", "optional": false }
     },
-    "parentKeys": {
+    "parentGroups": {
       "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
       "type": { "returnType": "string[]", "optional": true }
     }
@@ -9631,7 +9631,7 @@
   },
   "AgChartThemeOverrides": {
     "cartesian": {
-      "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
+      "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgCartesianThemeOptions<AgCartesianSeriesTheme>",
         "optional": true
@@ -9680,7 +9680,7 @@
       }
     },
     "polar": {
-      "description": "/** Specifies defaults for all polar charts (used for pie series) */",
+      "description": "/** Specifies defaults for all polar charts (used for pie series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgPolarThemeOptions<AgPolarSeriesTheme>",
         "optional": true
@@ -9694,7 +9694,7 @@
       }
     },
     "hierarchy": {
-      "description": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
+      "description": "/** Specifies defaults for all hierarchy charts (used for treemap series)\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": {
         "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesTheme>",
         "optional": true
@@ -9708,26 +9708,26 @@
       }
     },
     "common": {
-      "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */",
+      "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.\n * @deprecated prefer a concrete chart-type specific override\n */",
       "type": { "returnType": "any", "optional": true }
     }
   },
   "AgCartesianAxisThemeOptions": {
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
-      "type": { "returnType": "Omit<T, 'top' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'right' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'bottom' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
-      "type": { "returnType": "Omit<T, 'left' | 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'position' | 'type'>", "optional": true }
     },
     "meta": { "typeParams": ["T"] }
   },
@@ -9929,28 +9929,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -9975,28 +9975,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgLogAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10007,28 +10007,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10037,28 +10037,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -10071,28 +10071,28 @@
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "description": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "description": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "description": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
       "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'left' | 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
     }
@@ -11218,73 +11218,6 @@
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
-  "AgOHLCTooltipRendererParams": {
-    "dateKey": { "type": { "returnType": "string", "optional": true } },
-    "dateName": { "type": { "returnType": "string", "optional": true } },
-    "openKey": { "type": { "returnType": "string", "optional": true } },
-    "openName": { "type": { "returnType": "string", "optional": true } },
-    "highKey": { "type": { "returnType": "string", "optional": true } },
-    "highName": { "type": { "returnType": "string", "optional": true } },
-    "lowKey": { "type": { "returnType": "string", "optional": true } },
-    "lowName": { "type": { "returnType": "string", "optional": true } },
-    "closeKey": { "type": { "returnType": "string", "optional": true } },
-    "closeName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
-  },
-  "AgOHLCSeriesTooltip": {
-    "renderer": {
-      "type": {
-        "arguments": { "params": "AgOHLCTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "enabled": {
-      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "AgOHLCSeriesOptions": {
-    "type": { "type": { "returnType": "'ohlc'", "optional": true } },
-    "dateKey": { "type": { "returnType": "string", "optional": true } },
-    "openKey": { "type": { "returnType": "string", "optional": true } },
-    "highKey": { "type": { "returnType": "string", "optional": true } },
-    "lowKey": { "type": { "returnType": "string", "optional": true } },
-    "closeKey": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "tooltip": {
-      "type": { "returnType": "AgOHLCSeriesTooltip", "optional": true }
-    },
-    "data": {
-      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
-    },
-    "visible": {
-      "description": "/** Whether or not to display the series. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "showInLegend": {
-      "description": "/** Whether or not to include the series in the legend. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "cursor": {
-      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
-        "optional": true
-      }
-    },
-    "highlightStyle": {
-      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
-      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
-    }
-  },
   "AgScatterSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
@@ -12337,7 +12270,7 @@
   "AgCartesianChartOptions": {
     "type": {
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
+        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
         "optional": true
       }
     },
