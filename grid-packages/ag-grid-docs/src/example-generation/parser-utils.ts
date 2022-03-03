@@ -337,7 +337,7 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     srcFile.statements.forEach(node => {
         if (ts.isImportDeclaration(node)) {
             const module = node.moduleSpecifier.getText();
-            if (module.includes('ag-grid')) {
+            if (module.includes('ag-grid') || module.includes('./')) {
                 const moduleImports = node.importClause;
                 const imports = [];
                 let isNamespaced = false;
