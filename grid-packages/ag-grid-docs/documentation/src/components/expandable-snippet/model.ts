@@ -66,6 +66,7 @@ export type JsonObjectProperty = {
 
 export type JsonArray = {
     type: "array";
+    tsType: string;
     depth: number;
     elements: Exclude<JsonProperty, JsonArray>;
 };
@@ -253,6 +254,7 @@ function resolveType(
     if (wrapping === "array") {
         return {
             type: "array",
+            tsType: declaredType,
             depth: cleanedType.match(/\[/).length,
             elements: resolveType(pType, interfaceLookup, codeLookup, context, config) as Exclude<
                 JsonProperty,

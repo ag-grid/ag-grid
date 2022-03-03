@@ -140,7 +140,7 @@ function renderUnion(
                             return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, config);
                         }
                 })
-                .map(el => <div className={styles["json-union-item"]}>{el}</div>)
+                .map(el => <div className={classnames(styles["json-union-item"])}>{el}</div>)
         }
         </div>
     );
@@ -164,12 +164,10 @@ function renderUnionNestedObject(
                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
                     <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                         {isExpanded && renderJsonNodeExpander(isExpanded)}
-                        {'{ '}
+                        {' { '}
                     </span>
-                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, discriminator, isExpanded, true, 'union-type-property')}
-                    {!isExpanded && renderPrimitiveType(discriminator.desc)}
+                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, tsType, discriminator, isExpanded, true, 'union-type-property')}
                     {!isExpanded && <span className={classnames('token', 'punctuation')}>; </span>}
-                    {renderTsTypeComment(desc)}
                     {
                         isExpanded ?
                             <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()} role="presentation">
@@ -177,7 +175,8 @@ function renderUnionNestedObject(
                             </div> :
                             <span className={classnames('token', 'operator')}> ... </span>
                     }
-                    <span className={classnames('token', 'punctuation')}>{' }'}</span>
+                    <span className={classnames('token', 'punctuation')}>{' }: '}</span>
+                    <span className={classnames('token', 'builtin')}>{desc.tsType}</span>
                     {!last && <span className={classnames('token', 'operator')}> | <br/></span>}
                     {last && closeWith && <span className={classnames('token', 'punctuation')}>{closeWith}</span>}
                 </span>
@@ -190,9 +189,8 @@ function renderUnionNestedObject(
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
                 <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                     {renderJsonNodeExpander(isExpanded)}
-                    {'{ '}
+                    {' {'}
                 </span>
-                {renderTsTypeComment(desc)}
                 {
                     isExpanded ?
                         <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
@@ -200,7 +198,8 @@ function renderUnionNestedObject(
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
                 }
-                <span className={classnames('token', 'punctuation')}>{'}'}</span>
+                <span className={classnames('token', 'punctuation')}>{'}: '}</span>
+                <span className={classnames('token', 'builtin')}>{desc.tsType}</span>
                 {!last && <span className={classnames('token', 'operator')}> | <br/></span>}
                 {last && closeWith && <span className={classnames('token', 'punctuation')}>{closeWith}</span>}
             </span>
@@ -225,6 +224,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(expandedInitially);
 
     const { deprecated } = meta;
+    const { tsType } = desc;
     const formattedDocumentation = formatPropertyDocumentation(meta, config);
 
     let propertyRendering;
@@ -232,13 +232,13 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     let needsClosingSemi = true;
     switch (desc.type) {
         case "primitive":
-            propertyRendering = renderPrimitiveType(desc);
+            propertyRendering = null;
             break;
         case "array":
             propertyRendering = renderArrayType(desc, meta, config);
             collapsePropertyRendering = desc.elements.type !== 'primitive' && (
                 <Fragment>
-                    <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>
+                    <span className={classnames('token', 'punctuation')}> {"[".repeat(desc.depth)}</span>
                     <span className={classnames('token', 'operator')}> ... </span>
                     <span className={classnames('token', 'punctuation')}>{"]".repeat(desc.depth)}</span>
                 </Fragment>
@@ -250,9 +250,9 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             break;
         case "union":
             const simpleUnion = isSimpleUnion(desc);
-            propertyRendering = <ModelSnippet model={desc} config={config}></ModelSnippet>;
+            propertyRendering = !simpleUnion ? <ModelSnippet model={desc} config={config}></ModelSnippet> : null;
             collapsePropertyRendering = !simpleUnion ?
-                <span className={classnames('token', 'type')}>{desc.tsType}</span> :
+                <Fragment></Fragment> :
                 null;
             needsClosingSemi = simpleUnion;
             break;
@@ -273,7 +273,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             onClick={() => expandable ? setJSONNodeExpanded(!isJSONNodeExpanded) : null}
             role="presentation"
         >
-            {renderPropertyDeclaration(propName, meta, isJSONNodeExpanded, expandable)}
+            {renderPropertyDeclaration(propName, tsType, meta, isJSONNodeExpanded, expandable)}
             {
                 !isJSONNodeExpanded && collapsePropertyRendering ? 
                     collapsePropertyRendering : 
@@ -332,10 +332,6 @@ function maybeRenderModelDocumentation(
     );
 }
 
-function renderTsTypeComment(desc: { tsType: string }) {
-    return <span className={classnames('token', 'comment')}>/* {desc.tsType} */</span>;
-}
-
 function renderJsonNodeExpander(isExpanded: boolean) {
     return (
         <FontAwesomeIcon
@@ -350,6 +346,7 @@ function renderJsonNodeExpander(isExpanded: boolean) {
 
 function renderPropertyDeclaration(
     propName: string,
+    tsType: string,
     propDesc: { required: boolean },
     isExpanded: boolean,
     expandable: boolean,
@@ -364,19 +361,9 @@ function renderPropertyDeclaration(
             </span>
             {!required && <span className={classnames('token', 'operator')}>?</span>}
             <span className={classnames('token', 'operator')}>: </span>
+            {tsType && <span className={classnames('token', 'builtin')}>{tsType}</span>}
         </Fragment>
     );
-}
-
-function renderPropertyDefault(
-    meta: { default?: any },
-) {
-    return (
-        <Fragment>
-            {meta.default != null &&
-                <span className={classnames('token', 'comment')}>// Default: {JSON.stringify(meta.default)}</span>}
-        </Fragment>
-    )
 }
 
 function renderPrimitiveType(desc: JsonPrimitiveProperty) {
@@ -399,8 +386,7 @@ function renderNestedObject(
 ) {
     return (
         <Fragment>
-            <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-            {renderTsTypeComment(desc)}
+            <span className={classnames('token', 'punctuation')}>{' { '}</span>
             {maybeRenderPropertyDocumentation(meta, true, config)}
             <div className={classnames(styles['json-object'])} role="presentation">
                 <ModelSnippet model={desc.model} config={config}></ModelSnippet>
@@ -413,8 +399,7 @@ function renderNestedObject(
 function renderCollapsedNestedObject(desc: JsonObjectProperty) {
     return (
         <Fragment>
-            <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-            {renderTsTypeComment(desc)}
+            <span className={classnames('token', 'punctuation')}>{' {'}</span>
             <span className={classnames('token', 'operator')}> ... </span>
             <span className={classnames('token', 'punctuation')}>}</span>
         </Fragment>
@@ -427,19 +412,18 @@ function renderArrayType(
     config: Config,
 ) {
     let arrayElementRendering;
-    let arrayBracketsSurround = true;
+    let arrayBracketMode = 'surround';
 
     switch (desc.elements.type) {
         case "primitive":
-            arrayBracketsSurround = false;
-            arrayElementRendering = <span className={classnames('token', 'builtin')}>{desc.elements.tsType}</span>;
+            arrayBracketMode = 'none';
+            arrayElementRendering = null;
             break;
         case "nested-object":
             arrayElementRendering = (
                 <Fragment>
                     {maybeRenderPropertyDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
-                    <span className={classnames('token', 'comment')}>/* {desc.elements.tsType} */</span>
                     <div className={styles["json-object"]} role="presentation">
                         <ModelSnippet model={desc.elements.model} config={config}></ModelSnippet>
                     </div>
@@ -461,10 +445,10 @@ function renderArrayType(
 
     return (
         <Fragment>
-            {arrayBracketsSurround && <span className={classnames('token', 'punctuation')}>{"[".repeat(desc.depth)}</span>}
+            {arrayBracketMode === 'surround' && <span className={classnames('token', 'punctuation')}> {"[".repeat(desc.depth)}</span>}
             {arrayElementRendering}
-            {arrayBracketsSurround && <span className={classnames('token', 'punctuation')}>{"]".repeat(desc.depth)}</span>}
-            {!arrayBracketsSurround && <span className={classnames('token', 'punctuation')}>{"[]".repeat(desc.depth)}</span>}
+            {arrayBracketMode === 'surround' && <span className={classnames('token', 'punctuation')}>{"]".repeat(desc.depth)}</span>}
+            {arrayBracketMode === 'after' && <span className={classnames('token', 'punctuation')}>{"[]".repeat(desc.depth)}</span>}
         </Fragment>
     );
 }

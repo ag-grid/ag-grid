@@ -55,25 +55,21 @@ $indent: 24px;
         }
     }
 
-    .union-type-property {
-        position: relative;
-        font-weight: 800;
-
-        > .expander {
-            position: absolute;
-            left: -34px;
-            top: 1px;
-        }
-    }
-
-    .union-type-object {
+    .json-union-item {
         position: relative;
 
-        > .expander {
+        .expander {
             position: absolute;
             left: -16px;
             top: 2px;
         }
+    }
+
+    .union-type-property {
+        font-weight: 800;
+    }
+
+    .union-type-object {
     }
 
     .jsdoc-expandable {
