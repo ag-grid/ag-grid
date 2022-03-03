@@ -461,14 +461,14 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
     const { documentation } = meta;
     const defaultValue = meta.default;
     const result: string[] = documentation?.trim() ? 
-        [ formatJsDocString(documentation) ] :
+        [ formatJsDocString(documentation.trim()) ] :
         [];
 
     if (defaultValue) {
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
     
-    return result;
+    return result.filter(v => !!v.trim());
 }
 
 function formatModelDocumentation(model: JsonModel, config: Config) {
