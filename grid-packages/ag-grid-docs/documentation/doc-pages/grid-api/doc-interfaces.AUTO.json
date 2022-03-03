@@ -11218,73 +11218,6 @@
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
     }
   },
-  "AgOHLCTooltipRendererParams": {
-    "dateKey": { "type": { "returnType": "string", "optional": true } },
-    "dateName": { "type": { "returnType": "string", "optional": true } },
-    "openKey": { "type": { "returnType": "string", "optional": true } },
-    "openName": { "type": { "returnType": "string", "optional": true } },
-    "highKey": { "type": { "returnType": "string", "optional": true } },
-    "highName": { "type": { "returnType": "string", "optional": true } },
-    "lowKey": { "type": { "returnType": "string", "optional": true } },
-    "lowName": { "type": { "returnType": "string", "optional": true } },
-    "closeKey": { "type": { "returnType": "string", "optional": true } },
-    "closeName": { "type": { "returnType": "string", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
-  },
-  "AgOHLCSeriesTooltip": {
-    "renderer": {
-      "type": {
-        "arguments": { "params": "AgOHLCTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "enabled": {
-      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "type": { "returnType": "boolean", "optional": true }
-    }
-  },
-  "AgOHLCSeriesOptions": {
-    "type": { "type": { "returnType": "'ohlc'", "optional": true } },
-    "dateKey": { "type": { "returnType": "string", "optional": true } },
-    "openKey": { "type": { "returnType": "string", "optional": true } },
-    "highKey": { "type": { "returnType": "string", "optional": true } },
-    "lowKey": { "type": { "returnType": "string", "optional": true } },
-    "closeKey": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "tooltip": {
-      "type": { "returnType": "AgOHLCSeriesTooltip", "optional": true }
-    },
-    "data": {
-      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "type": { "returnType": "any[]", "optional": true }
-    },
-    "visible": {
-      "description": "/** Whether or not to display the series. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "showInLegend": {
-      "description": "/** Whether or not to include the series in the legend. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "cursor": {
-      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "listeners": {
-      "description": "/** A map of event names to event listeners. */",
-      "type": {
-        "returnType": "AgBaseSeriesListeners | {[key: string]: Function}",
-        "optional": true
-      }
-    },
-    "highlightStyle": {
-      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
-      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
-    }
-  },
   "AgScatterSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
@@ -12337,7 +12270,7 @@
   "AgCartesianChartOptions": {
     "type": {
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
+        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
         "optional": true
       }
     },

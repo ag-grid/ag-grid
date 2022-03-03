@@ -231,7 +231,6 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
             break;
         case 'treemap':
             break;
-        case 'ohlc':
         default:
             throw new Error('AG Charts - unknown series type: ' + input.type);
     }

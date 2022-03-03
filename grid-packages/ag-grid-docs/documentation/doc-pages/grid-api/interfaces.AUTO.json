@@ -6618,61 +6618,6 @@
       "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
     }
   },
-  "AgOHLCTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "dateKey?": "string",
-      "dateName?": "string",
-      "openKey?": "string",
-      "openName?": "string",
-      "highKey?": "string",
-      "highName?": "string",
-      "lowKey?": "string",
-      "lowName?": "string",
-      "closeKey?": "string",
-      "closeName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "string"
-    }
-  },
-  "AgOHLCSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "renderer?": "(params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
-    },
-    "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
-    }
-  },
-  "AgOHLCSeriesOptions": {
-    "meta": {},
-    "type": {
-      "type?": "'ohlc'",
-      "dateKey?": "string",
-      "openKey?": "string",
-      "highKey?": "string",
-      "lowKey?": "string",
-      "closeKey?": "string",
-      "labelKey?": "string",
-      "tooltip?": "AgOHLCSeriesTooltip",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "cursor?": "string",
-      "listeners?": "AgBaseSeriesListeners | { [key: string]: Function; }",
-      "highlightStyle?": "AgSeriesHighlightStyle"
-    },
-    "docs": {
-      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "visible?": "/** Whether or not to display the series. */",
-      "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "listeners?": "/** A map of event names to event listeners. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */"
-    }
-  },
   "AgScatterSeriesTooltip": {
     "meta": {},
     "type": {
@@ -7333,7 +7278,7 @@
   },
   "AgCartesianSeriesOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | AgOHLCSeriesOptions"
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -7346,7 +7291,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
+      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",

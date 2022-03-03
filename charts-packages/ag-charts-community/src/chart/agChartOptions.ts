@@ -703,38 +703,6 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     tooltip?: AgLineSeriesTooltip;
 }
 
-export interface AgOHLCTooltipRendererParams extends AgSeriesTooltipRendererParams {
-    dateKey?: string;
-    dateName?: string;
-
-    openKey?: string;
-    openName?: string;
-
-    highKey?: string;
-    highName?: string;
-
-    lowKey?: string;
-    lowName?: string;
-
-    closeKey?: string;
-    closeName?: string;
-}
-
-export interface AgOHLCSeriesTooltip extends AgSeriesTooltip {
-    renderer?: (params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult;
-}
-
-export interface AgOHLCSeriesOptions extends AgBaseSeriesOptions {
-    type?: 'ohlc';
-    dateKey?: string;
-    openKey?: string;
-    highKey?: string;
-    lowKey?: string;
-    closeKey?: string;
-    labelKey?: string;
-    tooltip?: AgOHLCSeriesTooltip;
-}
-
 export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
@@ -1165,15 +1133,14 @@ export type AgCartesianSeriesOptions =
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
-    | AgHistogramSeriesOptions
-    | AgOHLCSeriesOptions;
+    | AgHistogramSeriesOptions;
 
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
