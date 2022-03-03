@@ -139,6 +139,10 @@ export class CartesianChart extends Chart {
             }
         });
 
+        // width and height should not be negative
+        shrinkRect.width = Math.max(0, shrinkRect.width);
+        shrinkRect.height = Math.max(0, shrinkRect.height);
+
         axes.forEach(axis => {
             switch (axis.position) {
                 case ChartAxisPosition.Top:
