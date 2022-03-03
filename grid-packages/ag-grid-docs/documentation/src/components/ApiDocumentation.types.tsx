@@ -52,7 +52,7 @@ export interface ChildDocEntry {
         include?: string[]
     },
     /** We check for properties that are not present in the source code. Set this to true to allow this property to be include
-     * even though there is no matching code property for it. i.e suppressRowVirtualisation
+     * even though there is no matching code property for it.
      */
     overrideMissingPropCheck?: true;
 
