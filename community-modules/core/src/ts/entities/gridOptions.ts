@@ -1273,6 +1273,10 @@ export interface GetRowKeyFunc {
 }
 
 export interface GetRowKeyParams {
+    /** Grid's API */
+    api: GridApi;
+    /** Grid's Column API */
+    columnApi: ColumnApi;
     /** The data item provided to the grid for the row in question */
     data: any;
     /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */

@@ -257,7 +257,7 @@ export class ClientSideNodeManager {
         let rowNode: RowNode | undefined;
         if (getRowKeyFunc) {
             // find rowNode using id
-            const id: string = getRowKeyFunc({data, level: 0});
+            const id: string = getRowKeyFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);

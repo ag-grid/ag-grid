@@ -370,6 +370,8 @@ export class RowNode implements IEventEmitter {
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
                 const parentKeys = this.getGroupKeys(true);
                 this.id = getRowKeyFunc({
+                                api: this.beans.gridApi,
+                                columnApi: this.beans.columnApi,
                                 data: this.data,
                                 parentGroups: parentKeys.length > 0 ? parentKeys : undefined,
                                 level: this.level

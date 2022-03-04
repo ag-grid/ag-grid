@@ -9,7 +9,9 @@ import {
     RowDataTransaction,
     RowNode,
     BeanStub,
-    RowRenderer
+    RowRenderer,
+    ColumnApi,
+    GridApi
 } from "@ag-grid-community/core";
 
 import { ClientSideRowModel } from "./clientSideRowModel";
@@ -19,6 +21,8 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -77,7 +81,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             // if update, push to 'update'
             // if not changed, do not include in the transaction
             rowData.forEach((data: any, index: number) => {
-                const id: string = getRowKeyFunc({data, level: 0});
+                const id: string = getRowKeyFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 if (orderMap) {

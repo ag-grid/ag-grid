@@ -24,7 +24,9 @@ import {
     ServerSideTransactionResultStatus,
     SortController,
     StoreRefreshAfterParams,
-    StoreUpdatedEvent
+    StoreUpdatedEvent,
+    ColumnApi,
+    GridApi
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -43,6 +45,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -53,7 +57,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private nodeIdSequence: NumberSequence = new NumberSequence();
 
     private usingTreeData: boolean;
-
     
     private allRowNodes: RowNode[];
     private nodesAfterFilter: RowNode[];
@@ -236,7 +239,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const id = getRowKeyFunc({
                                 data, 
                                 parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
-                                level
+                                level,
+                                api: this.gridApi,
+                                columnApi: this.columnApi
                             });
             const foundNode = nodesToRecycle[id];
             if (!foundNode) { return undefined; }
@@ -621,7 +626,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const id: string = getRowKeyFunc({
                                         data, 
                                         parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
-                                        level});
+                                        level,
+                                        api: this.gridApi,
+                                        columnApi: this.columnApi});
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
