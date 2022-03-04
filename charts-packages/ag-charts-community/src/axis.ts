@@ -10,6 +10,7 @@ import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
+import { doOnce } from "./util/function";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -290,7 +291,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
             } catch (e) {
                 this.labelFormatter = undefined;
-                console.warn(`AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`);
+                doOnce(() => console.warn(`AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`), `invalid axis label format string ${format}`);
             }
         } else {
             this.labelFormatter = undefined;

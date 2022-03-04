@@ -4,6 +4,7 @@ import { LinearScale } from "../../scale/linearScale";
 import { extent } from "../../util/array";
 import { isContinuous } from "../../util/value";
 import { ChartAxis } from "../chartAxis";
+import { doOnce } from "../../util/function";
 
 // Instead of clamping the values outside of domain to the range,
 // return NaNs to indicate invalid input.
@@ -109,7 +110,7 @@ export class NumberAxis extends ChartAxis {
         if (typeof datum === "number") {
             return datum.toFixed(2);
         } else {
-            console.warn('AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.');
+            doOnce(() => console.warn('AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'), `number axis config used with Date objects`);
             return String(datum);
         }
     }
