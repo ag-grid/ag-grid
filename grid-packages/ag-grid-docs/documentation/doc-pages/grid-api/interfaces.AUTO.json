@@ -115,6 +115,8 @@
       "componentFromFramework": "boolean",
       "params": "any",
       "type": "ComponentType",
+      "popupFromSelector?": "boolean",
+      "popupPositionFromSelector?": "string",
       "newAgStackInstance": "() => AgPromise<any>"
     }
   },
@@ -1369,7 +1371,7 @@
       "component?": "/** Equivalent of setting `colDef.cellEditor` */",
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */",
-      "popup?": "/** Equivalent of setting `colDef.cellEditorPopup`, leave as undefined/null to be not used, otherwise set to true/false */",
+      "popup?": "/** Equivalent of setting `colDef.cellEditorPopup` */",
       "popupPosition?": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */"
     }
   },
