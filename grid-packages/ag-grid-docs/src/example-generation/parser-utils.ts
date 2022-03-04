@@ -6,8 +6,8 @@ export type ImportType = 'packages' | 'modules';
 export interface BindingImport {
     isNamespaced: boolean;
     module: string;
+    namedImport: string;
     imports: string[];
-    external: string;
 }
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
@@ -337,30 +337,29 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     srcFile.statements.forEach(node => {
         if (ts.isImportDeclaration(node)) {
             const module = node.moduleSpecifier.getText();
-            if (module.includes('ag-grid') || module.includes('./')) {
-                const moduleImports = node.importClause;
-                const imports = [];
-                let isNamespaced = false;
-                if (moduleImports?.namedBindings) {
-                    if (ts.isNamespaceImport(moduleImports.namedBindings)) {
-                        isNamespaced = true;
-                    }
-                    moduleImports.namedBindings.forEachChild(o => {
-                        imports.push(o.getText());
-                    })
-                } else {
-                    isNamespaced = true;
+            const moduleImports = node.importClause;
+            const imports = [];
+            let namedImport = undefined;
+            let isNamespaced = true;
+
+            if (moduleImports?.namedBindings) {
+                if (!ts.isNamespaceImport(moduleImports.namedBindings)) {
+                    isNamespaced = false;
                 }
-                allImports.push({
-                    module,
-                    isNamespaced,
-                    imports
-                })
-            } else {
-                allImports.push({
-                    external: node.getText()
+                moduleImports.namedBindings.forEachChild(o => {
+                    imports.push(o.getText());
                 })
             }
+            if (moduleImports?.name) {
+                namedImport = moduleImports.name.getText();
+                isNamespaced = false;
+            }
+            allImports.push({
+                module,
+                isNamespaced,
+                namedImport,
+                imports
+            })
         }
     })
     return allImports;
@@ -571,19 +570,21 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
     bindingImports.forEach((i: BindingImport) => {
 
-        if (i.external) {
-            imports.push(i.external)
-        } else {
-            const path = convertImportPath(i.module, convertToPackage)
-            if (!i.module.includes('_typescript') || !ignoreTsImports) {
-                if (i.isNamespaced) {
-                    if (i.imports.length > 0) {
-                        namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
-                    } else {
-                        namespacedImports.push(`import ${path};`);
-                    }
+        const path = convertImportPath(i.module, convertToPackage)
+        if (!i.module.includes('_typescript') || !ignoreTsImports) {
+            workingImports[path] = workingImports[path] || { namedImport: undefined, imports: [] };
+            if (i.isNamespaced) {
+                if (i.imports.length > 0) {
+                    namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
                 } else {
-                    workingImports[path] = [...(workingImports[path] || []), ...i.imports];
+                    namespacedImports.push(`import ${path};`);
+                }
+            } else {
+                if (i.namedImport) {
+                    workingImports[path] = { ...workingImports[path], namedImport: i.namedImport };
+                }
+                if (i.imports) {
+                    workingImports[path] = { ...workingImports[path], imports: [...workingImports[path].imports, ...i.imports] };
                 }
             }
         }
@@ -591,15 +592,18 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
     [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
 
-    Object.entries(workingImports).forEach(([k, v]: ([string, string[]])) => {
-        let unique = [...new Set(v)].sort();
+    Object.entries(workingImports).forEach(([k, v]: ([string, { namedImport: string, imports: string[] }])) => {
+        let unique = [...new Set(v.imports)].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
             unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
         }
-        if (unique.length > 0) {
-            imports.push(`import { ${unique.join(', ')} }  from ${k};`);
+        if (unique.length > 0 || v.namedImport) {
+            const namedImport = v.namedImport ? v.namedImport : '';
+            const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : ''
+            const joiningComma = namedImport && importStr ? ", " : "";
+            imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
         }
     })
 }
