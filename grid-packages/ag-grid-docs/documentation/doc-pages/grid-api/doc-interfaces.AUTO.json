@@ -184,6 +184,12 @@
     },
     "params": { "type": { "returnType": "any", "optional": false } },
     "type": { "type": { "returnType": "ComponentType", "optional": false } },
+    "popupFromSelector": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "popupPositionFromSelector": {
+      "type": { "returnType": "string", "optional": true }
+    },
     "newAgStackInstance": {
       "type": {
         "arguments": {},
@@ -2011,7 +2017,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "popup": {
-      "description": "/** Equivalent of setting `colDef.cellEditorPopup`, leave as undefined/null to be not used, otherwise set to true/false */",
+      "description": "/** Equivalent of setting `colDef.cellEditorPopup` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "popupPosition": {
