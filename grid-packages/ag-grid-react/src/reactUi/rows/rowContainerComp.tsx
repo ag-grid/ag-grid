@@ -1,5 +1,5 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
-import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
+import React, { useEffect, useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
@@ -10,6 +10,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const {context} = useContext(BeansContext);
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
+    const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
     const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
     const [domOrder, setDomOrder] = useState<boolean>(false);
     const [containerWidth, setContainerWidth] = useState<string>('');
@@ -35,24 +36,28 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
+    // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
+    // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
+    useEffect( () => {
+        setRowCtrlsOrdered( prev => {
+            if (domOrder) {
+                return rowCtrls;
+            }
+            // if dom order not important, we don't want to change the order
+            // of the elements in the dom, as this would break transition styles
+            const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
+            const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
+            const next = [...oldRows, ...newRows];
+            return next;
+        });
+    }, [domOrder, rowCtrls]);
+
     useEffect(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
             setViewportHeight: setViewportHeight,
-            setRowCtrls: rowCtrls => {
-                setRowCtrls( prev => {
-                    if (domOrder) {
-                        return rowCtrls;
-                    }
-                    // if dom order not important, we don't want to change the order
-                    // of the elements in the dom, as this would break transition styles
-                    const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
-                    const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-                    const next = [...oldRows, ...newRows];
-                    return next;
-                });
-            },
+            setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
             setDomOrder: domOrder => setDomOrder(domOrder),
             setContainerWidth: width => setContainerWidth(width)
         };
@@ -82,7 +87,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             role="rowgroup" 
             style={ containerStyle }>
             {
-                rowCtrls.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)
+                rowCtrlsOrdered.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)
             }
         </div>
     );
