@@ -24,7 +24,7 @@
             target: "es5",
             module: "system", //gets rid of console warning
             moduleResolution: "node",
-            sourceMap: true,
+            sourceMap: false,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
             lib: ["es2015", "dom"],
