@@ -15,6 +15,7 @@ type Config = {
     includeDeprecated?: boolean,
     excludeProperties?: string[],
     expandedProperties?: string[],
+    expandedPaths?: string[],
 };
 
 export interface ExpandableSnippetParams {
@@ -61,7 +62,7 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
 }) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
         <div className={styles['json-object']} role="presentation">
-            <ModelSnippet model={model} config={config}></ModelSnippet>
+            <ModelSnippet model={model} config={config} path={[]}></ModelSnippet>
         </div>
     </Fragment>);
 };
@@ -70,12 +71,14 @@ interface ModelSnippetParams {
     model: JsonModel | JsonUnionType;
     skip?: string[];
     closeWith?: string;
+    path: string[];
     config: Config;
 }
 
 const ModelSnippet: React.FC<ModelSnippetParams> = ({
     model,
     closeWith = ';',
+    path,
     config = {},
 }) => {
     if (model.type === "model") {
@@ -87,7 +90,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
 
                 const { desc } = propInfo;
                 return (
-                    <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo} config={config}/>
+                    <PropertySnippet key={propName} propName={propName} desc={desc} meta={propInfo} path={path} config={config}/>
                 );
             })
             .filter(v => !!v);
@@ -98,7 +101,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
     } else if (model.type === "union") {
         return (
             <Fragment>
-                {renderUnion(model, closeWith, config)}
+                {renderUnion(model, closeWith, path, config)}
             </Fragment>
         );
     }
@@ -109,6 +112,7 @@ const ModelSnippet: React.FC<ModelSnippetParams> = ({
 function renderUnion(
     model: JsonUnionType,
     closeWith: string,
+    path: string[],
     config: Config,
 ) {
     const renderPrimitiveUnionOption = (opt: JsonPrimitiveProperty, idx: number, last: boolean) => 
@@ -137,7 +141,7 @@ function renderUnion(
                         case "array":
                             break;
                         case "nested-object":
-                            return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, config);
+                            return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, path, config);
                         }
                 })
                 .map(el => <div className={classnames(styles["json-union-item"])}>{el}</div>)
@@ -151,27 +155,32 @@ function renderUnionNestedObject(
     index: number,
     last: boolean,
     closeWith: string,
+    path: string[],
     config: Config,
 ) { 
-    const [isExpanded, setExpanded] = useState(DEFAULT_JSON_NODES_EXPANDED);
     const discriminatorProp = "type";
     const discriminator = desc.model.properties[discriminatorProp];
+    const discriminatorType = discriminator && discriminator.desc.type === "primitive" ? 
+        discriminator.desc.tsType :
+        null;
+    const unionPath = path.concat(`[${discriminatorType || index}]`);
+    const expandedInitially = isExpandedInitially(discriminatorType || String(index), unionPath, config);
+    const [isExpanded, setExpanded] = useState(expandedInitially);
 
-    if (discriminator && discriminator.desc.type === "primitive") {
-        const { tsType } = discriminator.desc;
+    if (discriminatorType) {
         return (
-            <Fragment key={tsType}>
+            <Fragment key={discriminatorType}>
                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
                     <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                         {isExpanded && renderJsonNodeExpander(isExpanded)}
                         {' { '}
                     </span>
-                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, tsType, discriminator, isExpanded, true, 'union-type-property')}
+                    {!isExpanded && renderPropertyDeclaration(discriminatorProp, discriminatorType, discriminator, isExpanded, true, 'union-type-property')}
                     {!isExpanded && <span className={classnames('token', 'punctuation')}>; </span>}
                     {
                         isExpanded ?
                             <div className={classnames(styles['json-object'])} onClick={(e) => e.stopPropagation()} role="presentation">
-                                <ModelSnippet model={desc.model} config={config}></ModelSnippet>
+                                <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                             </div> :
                             <span className={classnames('token', 'operator')}> ... </span>
                     }
@@ -194,7 +203,7 @@ function renderUnionNestedObject(
                 {
                     isExpanded ?
                         <div className={classnames(styles['json-object'], styles['unexpandable'])} onClick={(e) => e.stopPropagation()} role="presentation">
-                            <ModelSnippet model={desc.model} config={config}></ModelSnippet>
+                            <ModelSnippet model={desc.model} config={config} path={unionPath}></ModelSnippet>
                         </div> :
                         <span className={classnames('token', 'operator')}> ... </span>
                 }
@@ -211,6 +220,7 @@ interface PropertySnippetParams {
     propName: string;
     desc: JsonProperty;
     meta: Omit<JsonModel['properties'][number], 'desc'>;
+    path: string[],
     config: Config;
 }
 
@@ -218,9 +228,11 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     propName,
     desc,
     meta,
+    path,
     config,
 }) => {
-    const expandedInitially = config.expandedProperties?.includes(propName) ?? DEFAULT_JSON_NODES_EXPANDED;
+    const propPath = path.concat(propName);
+    const expandedInitially = isExpandedInitially(propName, propPath, config);
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(expandedInitially);
 
     const { deprecated } = meta;
@@ -235,7 +247,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             propertyRendering = null;
             break;
         case "array":
-            propertyRendering = renderArrayType(desc, meta, config);
+            propertyRendering = renderArrayType(desc, meta, propPath, config);
             collapsePropertyRendering = desc.elements.type !== 'primitive' && (
                 <Fragment>
                     <span className={classnames('token', 'punctuation')}> {"[".repeat(desc.depth)}</span>
@@ -245,12 +257,12 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             );
             break;
         case "nested-object":
-            propertyRendering = renderNestedObject(desc, meta, config);
+            propertyRendering = renderNestedObject(desc, meta, propPath, config);
             collapsePropertyRendering = renderCollapsedNestedObject(desc);
             break;
         case "union":
             const simpleUnion = isSimpleUnion(desc);
-            propertyRendering = !simpleUnion ? <ModelSnippet model={desc} config={config}></ModelSnippet> : null;
+            propertyRendering = !simpleUnion ? <ModelSnippet model={desc} config={config} path={propPath}></ModelSnippet> : null;
             collapsePropertyRendering = !simpleUnion ?
                 <Fragment></Fragment> :
                 null;
@@ -382,6 +394,7 @@ function renderPrimitiveType(desc: JsonPrimitiveProperty) {
 function renderNestedObject(
     desc: JsonObjectProperty,
     meta: Omit<JsonModel['properties'][number], 'desc'>,
+    path: string[],
     config: Config,
 ) {
     return (
@@ -389,7 +402,7 @@ function renderNestedObject(
             <span className={classnames('token', 'punctuation')}>{' { '}</span>
             {maybeRenderPropertyDocumentation(meta, true, config)}
             <div className={classnames(styles['json-object'])} role="presentation">
-                <ModelSnippet model={desc.model} config={config}></ModelSnippet>
+                <ModelSnippet model={desc.model} config={config} path={path}></ModelSnippet>
             </div>
             <span className={classnames('token', 'punctuation')}>}</span>
         </Fragment>    
@@ -409,6 +422,7 @@ function renderCollapsedNestedObject(desc: JsonObjectProperty) {
 function renderArrayType(
     desc: JsonArray,
     meta: Omit<JsonModel['properties'][number], 'desc'>,
+    path: string[],
     config: Config,
 ) {
     let arrayElementRendering;
@@ -425,7 +439,7 @@ function renderArrayType(
                     {maybeRenderPropertyDocumentation(meta, true, config)}
                     <span className={classnames('token', 'punctuation')}>{'{ '}</span>
                     <div className={styles["json-object"]} role="presentation">
-                        <ModelSnippet model={desc.elements.model} config={config}></ModelSnippet>
+                        <ModelSnippet model={desc.elements.model} path={path.concat('[]')} config={config}></ModelSnippet>
                     </div>
                     <span className={classnames('token', 'punctuation')}>}</span>
                 </Fragment>
@@ -435,7 +449,7 @@ function renderArrayType(
             arrayElementRendering = (
                 <Fragment>
                     {maybeRenderPropertyDocumentation(meta, true, config)}
-                    <ModelSnippet model={desc.elements} closeWith={''} config={config}></ModelSnippet>
+                    <ModelSnippet model={desc.elements} closeWith={''} path={path.concat('[]')} config={config}></ModelSnippet>
                 </Fragment>
             );
             break;
@@ -455,6 +469,16 @@ function renderArrayType(
 
 function isSimpleUnion(desc: JsonUnionType) {
     return desc.options.every(opt => opt.type === 'primitive');
+}
+
+
+function isExpandedInitially(propName: string, path: string[], config: Config) {
+    const currentPath = path.join('.')
+        .replace(/\.\[/g, '[')
+        .replace(/'/g, '');
+    return config.expandedProperties?.includes(propName) ??
+        config.expandedPaths?.some(p => p.startsWith(currentPath)) ??
+        DEFAULT_JSON_NODES_EXPANDED;
 }
 
 function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
