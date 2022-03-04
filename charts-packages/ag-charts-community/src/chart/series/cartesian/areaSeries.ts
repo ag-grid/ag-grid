@@ -515,7 +515,7 @@ export class AreaSeries extends CartesianSeries {
 
                 // marker data
                 const seriesDatum = data[datumIdx];
-                const point = createMarkerCoordinate(xDatum, yDatum, datumIdx, seriesDatum[yKey]);
+                const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
                     markerSelectionData.push({

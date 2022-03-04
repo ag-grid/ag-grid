@@ -5,6 +5,24 @@ function groupedData(game: string, country: string): {} {
     };
 }
 
+export const DATA_TIME_SENSOR = [
+    {
+        time: new Date('01 Jan 2020 13:25:30 GMT'),
+        sensor: 25,
+    },
+    {
+        time: new Date('02 Jan 2020 13:26:30 GMT'),
+        sensor: 24,
+    },
+];
+
+export const DATA_SINGLE_DATUM_TIME_SENSOR = [
+    {
+        time: new Date('01 Jan 2020 13:25:30 GMT'),
+        sensor: 21,
+    },
+]
+
 export const DATA_INTERNET_EXPLORER_MARKET_SHARE = [
     {
         year: '2009',

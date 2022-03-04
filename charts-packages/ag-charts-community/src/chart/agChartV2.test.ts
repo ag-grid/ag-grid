@@ -170,6 +170,38 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.STACKED_AREA_MISSING_DATA_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
     },
+    LINE_TIME_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    LINE_NUMBER_X_AXIS_TIME_Y_AXIS: {
+        options: examples.LINE_NUMBER_X_AXIS_TIME_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('line', 2) }),
+    },
+    LINE_NUMBER_AXES_0_X_DOMAIN: {
+        options: examples.LINE_NUMBER_AXES_0_X_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    LINE_NUMBER_AXES_0_Y_DOMAIN : {
+        options: examples.LINE_NUMBER_AXES_0_Y_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
+    },
+    AREA__TIME_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.AREA_TIME_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: repeat('area', 2) }),
+    },
+    AREA_NUMBER_X_AXIS_TIME_Y_AXIS: {
+        options: examples.AREA_NUMBER_X_AXIS_TIME_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('area', 2) }),
+    },
+    AREA_NUMBER_AXES_0_X_DOMAIN: {
+        options: examples.AREA_NUMBER_AXES_0_X_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
+    },
+    AREA_NUMBER_AXES_0_Y_DOMAIN : {
+        options: examples.AREA_NUMBER_AXES_0_Y_DOMAIN,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
+    },
     // START ADVANCED EXAMPLES =====================================================================
     ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
         options: examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,

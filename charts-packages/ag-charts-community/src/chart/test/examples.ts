@@ -1,5 +1,5 @@
 import { AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -194,6 +194,286 @@ export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions =  {
         subtitle: {
             text: '2009-2019',
         },
+}
+
+export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS: AgChartOptions = {
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR,
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'Internal',
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR,
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'External',
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
+}
+
+export const LINE_NUMBER_X_AXIS_TIME_Y_AXIS: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'time',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR,
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'Internal',
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR,
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'External',
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
+}
+
+export const LINE_NUMBER_AXES_0_X_DOMAIN: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'Internal',
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'External',
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
+}
+
+
+export const LINE_NUMBER_AXES_0_Y_DOMAIN: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'Internal',
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'External',
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
+}
+
+export const AREA_TIME_X_AXIS_NUMBER_Y_AXIS: AgChartOptions = {
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR,
+            type: 'area',
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'Internal',
+            marker: {
+                size: 10,
+            },
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR,
+            type: 'area',
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'External',
+            marker: {
+                size: 10,
+            },
+        },
+    ],
+    legend: {
+        position: 'top',
+    },
+}
+
+export const AREA_NUMBER_X_AXIS_TIME_Y_AXIS: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'time',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR,
+            type: 'area',
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'Internal',
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR,
+            type: 'area',
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'External',
+            marker: {
+                enabled: true,
+            },
+        },
+    ],
+    legend: {
+        position: 'top',
+    },
+}
+
+export const AREA_NUMBER_AXES_0_X_DOMAIN: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            type: 'area',
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'Internal',
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            type: 'area',
+            xKey: 'time',
+            yKey: 'sensor',
+            yName: 'External',
+            marker: {
+                enabled: true,
+            },
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
+}
+
+
+export const AREA_NUMBER_AXES_0_Y_DOMAIN: AgChartOptions = {
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+
+        },
+    ],
+    series: [
+        {
+            data: DATA_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            type: 'area',
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'Internal',
+            marker: {
+                enabled: true,
+            },
+        },
+        {
+            data: DATA_SINGLE_DATUM_TIME_SENSOR.map(datum => { return { ...datum, time: 0 } }),
+            type: 'area',
+            yKey: 'time',
+            xKey: 'sensor',
+            yName: 'External',
+            marker: {
+                enabled: true,
+            },
+        },
+    ],
+    legend: {
+        position: 'right',
+    },
 }
 
 // START ADVANCED EXAMPLES =========================================================================
