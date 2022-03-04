@@ -17,3 +17,8 @@
     border: 1px solid lightgreen !important;
     padding: 4px;
 }
+
+.simple-input-editor {
+    width: 100%;
+    height: 100%;
+}

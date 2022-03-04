@@ -699,4 +699,8 @@ export interface CellEditorSelectorResult {
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;
+    /** Equivalent of setting `colDef.cellEditorPopup` */
+    popup?: boolean;
+    /** Equivalent of setting `colDef.cellEditorPopupPosition` */
+    popupPosition?: string;
 }

@@ -57,16 +57,18 @@ const VueExample = {
                                 params: {
                                     values: ['Male', 'Female'],
                                 },
+                                popup: true
                             };
                         }
                         if (params.data.type === 'mood') {
                             return {
                                 component: 'MoodEditor',
+                                popup: true,
+                                popupPosition: 'under'
                             };
                         }
                         return undefined;
-                    },
-                    cellEditorPopup: true
+                    }
                 }
             ],
             gridApi: null,

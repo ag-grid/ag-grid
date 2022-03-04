@@ -102,6 +102,12 @@ cellEditorSelector: params => {
 }
 ```
 
+The return type for the selector is `CellEditorSelectorResult` and has the following attributes:
+
+<interface-documentation interfaceName='CellEditorSelectorResult' config='{"description":""}'></interface-documentation>
+
+names='["buttons","closeOnApply","debounceMs","readOnly"]'
+
 Here is a full example:
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).

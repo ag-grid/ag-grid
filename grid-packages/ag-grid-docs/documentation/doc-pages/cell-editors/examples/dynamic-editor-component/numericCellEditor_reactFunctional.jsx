@@ -100,6 +100,7 @@ export default forwardRef((props, ref) => {
 
     return (
         <input ref={refInput}
+            className={'simple-input-editor'}
             value={value}
             onChange={event => setValue(event.target.value)}
             onKeyDown={event => onKeyDown(event)}

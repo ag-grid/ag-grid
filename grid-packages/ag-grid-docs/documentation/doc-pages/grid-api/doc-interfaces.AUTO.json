@@ -2009,6 +2009,14 @@
     "params": {
       "description": "/** Equivalent of setting `colDef.cellEditorParams` */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "popup": {
+      "description": "/** Equivalent of setting `colDef.cellEditorPopup`, leave as undefined/null to be not used, otherwise set to true/false */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "popupPosition": {
+      "description": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */",
+      "type": { "returnType": "string", "optional": true }
     }
   },
   "GridOptions": {

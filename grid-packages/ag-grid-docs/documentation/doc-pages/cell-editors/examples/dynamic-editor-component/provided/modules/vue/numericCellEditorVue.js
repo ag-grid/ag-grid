@@ -6,7 +6,7 @@ const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
 export default {
-    template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
+    template: `<input :ref="'input'" class="simple-input-editor" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
             value: '',

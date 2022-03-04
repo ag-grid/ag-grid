@@ -8,8 +8,7 @@ const gridOptions: GridOptions = {
     {
       field: 'value',
       editable: true,
-      cellEditorSelector: cellEditorSelector,
-      cellEditorPopup: true
+      cellEditorSelector: cellEditorSelector
     }
   ],
   defaultColDef: {
@@ -51,14 +50,17 @@ function cellEditorSelector(params: ICellEditorParams) {
       component
         : 'agRichSelectCellEditor',
       params: {
-        values: ['Male', 'Female'],
+        values: ['Male', 'Female']
       },
+      popup: true
     }
   }
 
   if (params.data.type === 'mood') {
     return {
       component: MoodEditor,
+      popup: true,
+      popupPosition: 'under'
     }
   }
 

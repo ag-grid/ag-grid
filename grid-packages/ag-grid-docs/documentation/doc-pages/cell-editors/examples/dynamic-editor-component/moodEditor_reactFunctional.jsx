@@ -31,10 +31,6 @@ export default forwardRef((props, ref) => {
         return {
             getValue() {
                 return happy ? 'Happy' : 'Sad';
-            },
-
-            isPopup() {
-                return true;
             }
         };
     });

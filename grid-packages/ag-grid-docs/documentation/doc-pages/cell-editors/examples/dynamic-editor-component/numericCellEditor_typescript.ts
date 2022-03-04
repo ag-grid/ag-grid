@@ -8,6 +8,7 @@ export class NumericCellEditor implements ICellEditorComp {
     init(params: ICellEditorParams) {
         // create the cell
         this.eInput = document.createElement('input');
+        this.eInput.className = 'simple-input-editor';
 
         if (this.isCharNumeric(params.charPress)) {
             this.eInput.value = params.charPress!;
@@ -16,7 +17,6 @@ export class NumericCellEditor implements ICellEditorComp {
                 this.eInput.value = params.value;
             }
         }
-
 
         this.eInput.addEventListener('keypress', (event) => {
             if (!this.isKeyPressedNumeric(event)) {
@@ -76,11 +76,5 @@ export class NumericCellEditor implements ICellEditorComp {
     // any cleanup we need to be done here
     destroy() {
         // but this example is simple, no cleanup, we could  even leave this method out as it's optional
-    }
-
-    // if true, then this editor will appear in a popup
-    isPopup() {
-        // and we could leave this method out also, false is the default
-        return false;
     }
 }

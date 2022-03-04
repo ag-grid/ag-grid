@@ -58,10 +58,6 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
         return this.happy ? "Happy" : "Sad";
     }
 
-    isPopup(): boolean {
-        return true;
-    }
-
     setHappy(happy: boolean): void {
         this.happy = happy;
     }

@@ -26,6 +26,7 @@ export default class NumericEditor extends Component {
     render() {
         return (
             <input ref={this.inputRef}
+                className={'simple-input-editor'}
                 value={this.state.value}
                 onKeyDown={this.onKeyDown}
                 onChange={this.handleChange}

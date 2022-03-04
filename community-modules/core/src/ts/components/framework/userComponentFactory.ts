@@ -1,6 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
-import { CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
+import { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
 import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
@@ -64,6 +64,8 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
+    popupFromSelector?: boolean,
+    popupPositionFromSelector?: string,
     newAgStackInstance: () => AgPromise<any>;
 }
 
@@ -162,7 +164,7 @@ export class UserComponentFactory extends BeanStub {
 
         const {propertyName, cellRenderer} = type;
 
-        let {compName, jsComp, fwComp, paramsFromSelector} = this.getCompKeys(defObject, type, params);
+        let {compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector} = this.getCompKeys(defObject, type, params);
 
         const lookupFromRegistry = (key: string) => {
             const item = this.userComponentRegistry.retrieve(key);
@@ -204,16 +206,20 @@ export class UserComponentFactory extends BeanStub {
             componentClass,
             params: paramsMerged,
             type: type,
+            popupFromSelector,
+            popupPositionFromSelector,
             newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
         };
     }
 
     private getCompKeys(defObject: DefinitionObject, type: ComponentType, params?: any): 
                                                 {
-                                                    compName: string | undefined, 
+                                                    compName?: string, 
                                                     jsComp: any, 
                                                     fwComp: any, 
-                                                    paramsFromSelector: any
+                                                    paramsFromSelector: any,
+                                                    popupFromSelector?: boolean,
+                                                    popupPositionFromSelector?: string
                                                 } {
 
         const {propertyName} = type;
@@ -223,6 +229,8 @@ export class UserComponentFactory extends BeanStub {
         let fwComp: any;
 
         let paramsFromSelector: any;
+        let popupFromSelector: boolean | undefined;
+        let popupPositionFromSelector: string | undefined;
 
         // there are two types of js comps, class based and func based. we can only check for
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
@@ -272,13 +280,15 @@ export class UserComponentFactory extends BeanStub {
                     assignComp(selectorRes.component, undefined);
                 }
                 paramsFromSelector = selectorRes.params;
+                popupFromSelector = (selectorRes as CellEditorSelectorResult).popup;
+                popupPositionFromSelector = (selectorRes as CellEditorSelectorResult).popupPosition;
             } else {
                 // if no selector, or result of selector is empty, take from defObject
                 assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
             }
         }
 
-        return {compName, jsComp, fwComp, paramsFromSelector};
+        return {compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector};
     }
 
     private newAgStackInstance(
@@ -352,7 +362,8 @@ export class UserComponentFactory extends BeanStub {
 
         let defaultFloatingFilterType: string | null = null;
 
-        let {compName, jsComp, fwComp} = this.getCompKeys(def, FilterComponent);
+        let {compName, jsComp, fwComp} 
+                    = this.getCompKeys(def, FilterComponent);
 
         if (compName) {
             // will be undefined if not in the map

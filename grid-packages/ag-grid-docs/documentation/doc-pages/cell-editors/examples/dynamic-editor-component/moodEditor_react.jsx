@@ -50,10 +50,6 @@ export default class MoodEditor extends Component {
         return this.state.happy ? 'Happy' : 'Sad';
     }
 
-    isPopup() {
-        return true;
-    }
-
     setHappy(happy) {
         this.setState({
             happy

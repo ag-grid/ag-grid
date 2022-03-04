@@ -18,10 +18,6 @@ export default {
             return this.happy ? 'Happy' : 'Sad';
         },
 
-        isPopup() {
-            return true;
-        },
-
         setHappy(happy) {
             this.happy = happy;
         },

@@ -70,8 +70,4 @@ export class MoodEditor implements ICellEditorComp {
     // any cleanup we need to be done here
     destroy() {
     }
-
-    isPopup() {
-        return true;
-    }
 }

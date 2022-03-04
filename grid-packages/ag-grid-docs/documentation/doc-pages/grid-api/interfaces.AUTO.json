@@ -1361,12 +1361,16 @@
     "type": {
       "component?": "any",
       "frameworkComponent?": "any",
-      "params?": "any"
+      "params?": "any",
+      "popup?": "boolean",
+      "popupPosition?": "string"
     },
     "docs": {
       "component?": "/** Equivalent of setting `colDef.cellEditor` */",
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too.\n */",
-      "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
+      "params?": "/** Equivalent of setting `colDef.cellEditorParams` */",
+      "popup?": "/** Equivalent of setting `colDef.cellEditorPopup`, leave as undefined/null to be not used, otherwise set to true/false */",
+      "popupPosition?": "/** Equivalent of setting `colDef.cellEditorPopupPosition` */"
     }
   },
   "GridOptions": {
