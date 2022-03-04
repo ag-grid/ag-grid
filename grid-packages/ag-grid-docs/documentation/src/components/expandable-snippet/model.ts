@@ -224,7 +224,7 @@ function compare(
 }
 
 const primitiveTypes = ["number", "string", "Date", "boolean", "any"];
-type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "union-mixed" | "alias" | "unknown";
+type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "union-mixed" | "alias" | "unknown" | "function";
 
 function resolveType(
     declaredType: InterfaceLookupMetaType,
@@ -234,31 +234,10 @@ function resolveType(
     config?: Partial<Config>,
 ): JsonProperty {
     if (typeof declaredType === 'object') {
-        const { parameters, returnType } = declaredType;
-        const formattedParameters = Object.entries(parameters).map(([k, t]) => `${k}: ${t}`).join(', ');
-        const modeledParameters = Object.entries(parameters)
-            .map(([param, typeStr]): [string, JsonProperty] => [
-                param,
-                resolveType(typeStr, interfaceLookup, codeLookup, context, config),
-            ])
-            .reduce(
-                (result, [param, type]) => {
-                    result[param] = {
-                        deprecated: false,
-                        desc: type,
-                        required: true,
-                    };
-                    return result;
-                },
-                {} as Record<string, JsonModelProperty>,
-            );
-
-        return {
-            type: "function",
-            tsType: `(${formattedParameters}) => ${returnType}`,
-            parameters: modeledParameters,
-            returnType: resolveType(returnType, interfaceLookup, codeLookup, context, config),
-        };
+        return resolveFunctionType(declaredType, interfaceLookup, codeLookup, context, config);
+    }
+    if (declaredType.startsWith('(')) {
+        return resolveFunctionTypeFromString(declaredType, interfaceLookup, codeLookup, context, config);
     }
 
     let cleanedType = declaredType;
@@ -303,6 +282,7 @@ function resolveType(
         case "primitive":
         case "unknown":
             return { type: "primitive", tsType: resolvedType };
+        case "function":
         case "alias":
             return resolveType(resolvedType, interfaceLookup, codeLookup, context, config);
         case "union-nested-object":
@@ -323,6 +303,79 @@ function resolveType(
     }
 }
 
+function resolveFunctionType(
+    declaredType: Exclude<InterfaceLookupMetaType, string>,
+    interfaceLookup: InterfaceLookup,
+    codeLookup: CodeLookup,
+    context: { typeStack: string[] },
+    config?: Partial<Config>,
+): JsonFunction {
+    const { parameters, returnType } = declaredType;
+    const formattedParameters = Object.entries(parameters).map(([k, t]) => `${k}: ${t}`).join(', ');
+    const modeledParameters = Object.entries(parameters)
+        .map(([param, typeStr]): [string, JsonProperty] => [
+            param,
+            resolveType(typeStr, interfaceLookup, codeLookup, context, config),
+        ])
+        .reduce(
+            (result, [param, type]) => {
+                result[param] = {
+                    deprecated: false,
+                    desc: type,
+                    required: true,
+                };
+                return result;
+            },
+            {} as Record<string, JsonModelProperty>,
+        );
+
+    return {
+        type: "function",
+        tsType: `(${formattedParameters}) => ${returnType}`,
+        parameters: modeledParameters,
+        returnType: resolveType(returnType, interfaceLookup, codeLookup, context, config),
+    };
+}
+
+function resolveFunctionTypeFromString(
+    declaredType: string,
+    interfaceLookup: InterfaceLookup,
+    codeLookup: CodeLookup,
+    context: { typeStack: string[] },
+    config?: Partial<Config>,
+): JsonFunction {
+    const stripOuterBrackets = (str) => str.match(/^\((.*)\)$/)?.[1] ?? str;
+    declaredType = stripOuterBrackets(declaredType);
+
+    const returnArrowIdx = declaredType.lastIndexOf('=>');
+    const returnType = declaredType.substring(returnArrowIdx + 2).trim();
+    const paramsString = stripOuterBrackets(declaredType.substring(0, returnArrowIdx).trim());
+
+    if (paramsString.startsWith('new ')) {
+        return {
+            tsType: declaredType,
+            parameters: {},
+            returnType: resolveType(returnType, interfaceLookup, codeLookup, context),
+            type: 'function',
+        };
+    }
+
+    const parameters = paramsString.split(',')
+        .map((paramString) => {
+            const semiIndex = paramString.indexOf(':');
+            return [
+                paramString.substring(0, semiIndex).trim(),
+                paramString.substring(semiIndex + 1).trim(),
+            ];
+        })
+        .reduce((result, [name, type]) => {
+            result[name] = type;
+            return result;
+        }, {})
+
+    return resolveFunctionType({ parameters, returnType }, interfaceLookup, codeLookup, context, config);
+}
+
 function plainType(type: string): string {
     const genericIndex = type.indexOf('<');
     if (genericIndex >= 0) {
@@ -341,6 +394,10 @@ function typeClass(
 
     if (primitiveTypes.includes(pType)) {
         return { resolvedClass: "primitive", resolvedType: type };
+    }
+
+    if (pType.startsWith('(')) {
+        return { resolvedClass: "function", resolvedType: type };
     }
 
     if (pType.indexOf("|") >= 0) {

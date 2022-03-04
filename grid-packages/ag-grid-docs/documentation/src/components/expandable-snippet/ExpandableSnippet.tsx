@@ -143,9 +143,9 @@ function renderUnion(
                             break;
                         case "nested-object":
                             return renderUnionNestedObject(desc, idx, idx >= lastIdx, closeWith, path, config);
-                        }
+                    }
                 })
-                .map(el => <div className={classnames(styles["json-union-item"])}>{el}</div>)
+                .map((el, idx) => <div key={idx} className={classnames(styles["json-union-item"])}>{el}</div>)
         }
         </div>
     );
