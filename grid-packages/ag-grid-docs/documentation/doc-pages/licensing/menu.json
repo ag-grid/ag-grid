@@ -209,6 +209,12 @@
         "icon": "icon-rows",
         "items": [
           {
+            "title": "Row Keys",
+            "box-title": "Keys",
+            "url": "/row-keys/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Row Sorting",
             "box-title": "Sorting",
             "url": "/row-sorting/",
@@ -424,12 +430,6 @@
           {
             "title": "Overview",
             "url": "/client-side-model/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Keys",
-            "box-title": "Keys",
-            "url": "/row-keys/",
             "showInCollapsed": true
           },
           {
