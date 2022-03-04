@@ -7,7 +7,7 @@ import { formatJsDocString, convertMarkdown } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
 import codeStyles from '../Code.module.scss';
 
-import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups, JsonModelProperty, JsonObjectProperty, JsonPrimitiveProperty, JsonArray } from "./model";
+import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups, JsonModelProperty, JsonObjectProperty, JsonPrimitiveProperty, JsonArray, JsonFunction } from "./model";
 
 const DEFAULT_JSON_NODES_EXPANDED = false;
 
@@ -16,6 +16,7 @@ type Config = {
     excludeProperties?: string[],
     expandedProperties?: string[],
     expandedPaths?: string[],
+    expandAll?: boolean,
 };
 
 export interface ExpandableSnippetParams {
@@ -220,6 +221,8 @@ interface PropertySnippetParams {
     propName: string;
     desc: JsonProperty;
     meta: Omit<JsonModel['properties'][number], 'desc'>;
+    forceInitiallyExpanded?: boolean,
+    needsClosingSemi?: boolean,
     path: string[],
     config: Config;
 }
@@ -228,11 +231,13 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
     propName,
     desc,
     meta,
+    forceInitiallyExpanded,
+    needsClosingSemi = true,
     path,
     config,
 }) => {
     const propPath = path.concat(propName);
-    const expandedInitially = isExpandedInitially(propName, propPath, config);
+    const expandedInitially = forceInitiallyExpanded || isExpandedInitially(propName, propPath, config);
     const [isJSONNodeExpanded, setJSONNodeExpanded] = useState(expandedInitially);
 
     const { deprecated } = meta;
@@ -241,7 +246,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
 
     let propertyRendering;
     let collapsePropertyRendering;
-    let needsClosingSemi = true;
+    let renderTsType = true;
     switch (desc.type) {
         case "primitive":
             propertyRendering = null;
@@ -268,12 +273,17 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
                 null;
             needsClosingSemi = simpleUnion;
             break;
+        case "function":
+            propertyRendering = isJSONNodeExpanded ? renderFunction(desc, propPath, config) : null;
+            collapsePropertyRendering = renderCollapsedFunction(desc);
+            renderTsType = isSimpleFunction(desc);
+            break;
         default:
             console.warn(`AG Docs - unhandled sub-type: ${desc["type"]}`);
     }
 
     let expandable = !!collapsePropertyRendering || (formattedDocumentation.length > 0);
-    let inlineDocumentation = !collapsePropertyRendering;
+    let inlineDocumentation = desc.type === 'function' || !collapsePropertyRendering;
     return (
         <div
             className={classnames(
@@ -285,7 +295,7 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
             onClick={() => expandable ? setJSONNodeExpanded(!isJSONNodeExpanded) : null}
             role="presentation"
         >
-            {renderPropertyDeclaration(propName, tsType, meta, isJSONNodeExpanded, expandable)}
+            {renderPropertyDeclaration(propName, renderTsType ? tsType : null, meta, isJSONNodeExpanded, expandable)}
             {
                 !isJSONNodeExpanded && collapsePropertyRendering ? 
                     collapsePropertyRendering : 
@@ -323,7 +333,7 @@ function maybeRenderPropertyDocumentation(
 }
 
 function maybeRenderModelDocumentation(
-    model: JsonModel,
+    model: JsonModel | JsonFunction,
     config: Config,
 ): React.ReactNode {
     const formattedDocumentation = formatModelDocumentation(model, config);
@@ -358,7 +368,7 @@ function renderJsonNodeExpander(isExpanded: boolean) {
 
 function renderPropertyDeclaration(
     propName: string,
-    tsType: string,
+    tsType: string | null,
     propDesc: { required: boolean },
     isExpanded: boolean,
     expandable: boolean,
@@ -467,12 +477,76 @@ function renderArrayType(
     );
 }
 
+function renderCollapsedFunction(desc: JsonFunction) {
+    if (isSimpleFunction(desc)) {
+        return null;
+    }
+
+    const paramEntries = Object.entries(desc.parameters);
+    return (
+        <Fragment>
+            <span className={classnames('token', 'punctuation')}>(</span>
+            {
+                paramEntries.map(([name, type], idx) => (
+                    <Fragment key={name}>
+                        <span className={classnames('token', 'name')}>{name}</span>
+                        <span className={classnames('token', 'punctuation')}>: </span>
+                        <span className={classnames('token', 'builtin')}>{type.desc.tsType}</span>
+                        {(idx + 1) < paramEntries.length && <span className={classnames('token', 'punctuation')}>, </span>}
+                    </Fragment>
+                ))
+            }
+            <span className={classnames('token', 'punctuation')}>)</span>
+            <span className={classnames('token', 'operator')}> => </span>
+            <span className={classnames('token', 'builtin')}>{desc.returnType.tsType}</span>
+        </Fragment>
+    );
+}
+
+function renderFunction(
+    desc: JsonFunction,
+    path: string[],
+    config: Config,
+) {
+    if (isSimpleFunction(desc)) {
+        return null;
+    }
+
+    const paramEntries = Object.entries(desc.parameters);
+    const singleParameter = paramEntries.length === 1;
+    return (
+        <Fragment>
+            {maybeRenderModelDocumentation(desc, config)}
+            <span className={classnames('token', 'punctuation')}>(</span>
+                <div className={styles['json-object']} role="presentation">
+                {
+                    paramEntries.map(([prop, model], idx) => (
+                        <Fragment key={prop}>
+                            <PropertySnippet propName={prop} desc={model.desc} meta={model} path={path} config={config} forceInitiallyExpanded={singleParameter} needsClosingSemi={false}></PropertySnippet>
+                            {(idx + 1) < paramEntries.length && <span className={classnames('token', 'punctuation')}>, </span>}
+                        </Fragment>
+                    ))
+                }
+            </div>
+            <span className={classnames('token', 'punctuation')}>)</span>
+            <span className={classnames('token', 'operator')}> => </span>
+            <span className={classnames('token', 'builtin')}>{desc.returnType.tsType}</span>
+        </Fragment>
+    );
+}
+
 function isSimpleUnion(desc: JsonUnionType) {
     return desc.options.every(opt => opt.type === 'primitive');
 }
 
+function isSimpleFunction(desc: JsonFunction) {
+    return Object.entries(desc.parameters)
+        .every(([_, type]) => type.desc.type === "primitive");
+}
 
 function isExpandedInitially(propName: string, path: string[], config: Config) {
+    if (config.expandAll) { return true; }
+
     const currentPath = path.join('.')
         .replace(/\.\[/g, '[')
         .replace(/'/g, '');
@@ -495,7 +569,7 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
     return result.filter(v => !!v.trim());
 }
 
-function formatModelDocumentation(model: JsonModel, config: Config) {
+function formatModelDocumentation(model: JsonModel | JsonFunction, config: Config) {
     const { documentation } = model;
     const result: string[] = documentation?.trim() ? 
         [ formatJsDocString(documentation) ] :

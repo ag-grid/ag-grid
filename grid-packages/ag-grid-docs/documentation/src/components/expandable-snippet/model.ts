@@ -77,7 +77,15 @@ export type JsonUnionType = {
     options: Exclude<JsonProperty, JsonUnionType>[];
 };
 
-export type JsonProperty = JsonPrimitiveProperty | JsonObjectProperty | JsonArray | JsonUnionType;
+export interface JsonFunction {
+    type: "function";
+    tsType: string;
+    documentation?: string;
+    parameters: Record<string, JsonModelProperty>;
+    returnType: JsonProperty;
+}
+
+export type JsonProperty = JsonPrimitiveProperty | JsonObjectProperty | JsonArray | JsonUnionType | JsonFunction;
 
 export type JsonModelProperty = {
     deprecated: boolean;
@@ -159,15 +167,9 @@ export function buildModel(
 
         let declaredType = meta[prop]?.type || returnType;
         if (args != null) {
-            const params = Object.entries(args)
-                .map(([name, type]) => `${name}: ${type}`)
-                .join(', ');
-            declaredType = `(${params}) => ${type.returnType}`;
+            declaredType = { parameters: args, returnType };
         } else if (typeof declaredType === 'object') {
-            const params = Object.entries(declaredType.parameters)
-                .map(([name, type]) => `${name}: ${type}`)
-                .join(', ');
-            declaredType = `(${params}) => ${declaredType.returnType}`;
+            declaredType = { parameters: args, returnType };
         } else if (genericArgs[declaredType] != null) {
             declaredType = genericArgs[declaredType];
         }
@@ -225,12 +227,40 @@ const primitiveTypes = ["number", "string", "Date", "boolean", "any"];
 type PropertyClass = "primitive" | "nested-object" | "union-nested-object" | "union-mixed" | "alias" | "unknown";
 
 function resolveType(
-    declaredType: string,
+    declaredType: InterfaceLookupMetaType,
     interfaceLookup: InterfaceLookup,
     codeLookup: CodeLookup,
     context: { typeStack: string[] },
     config?: Partial<Config>,
 ): JsonProperty {
+    if (typeof declaredType === 'object') {
+        const { parameters, returnType } = declaredType;
+        const formattedParameters = Object.entries(parameters).map(([k, t]) => `${k}: ${t}`).join(', ');
+        const modeledParameters = Object.entries(parameters)
+            .map(([param, typeStr]): [string, JsonProperty] => [
+                param,
+                resolveType(typeStr, interfaceLookup, codeLookup, context, config),
+            ])
+            .reduce(
+                (result, [param, type]) => {
+                    result[param] = {
+                        deprecated: false,
+                        desc: type,
+                        required: true,
+                    };
+                    return result;
+                },
+                {} as Record<string, JsonModelProperty>,
+            );
+
+        return {
+            type: "function",
+            tsType: `(${formattedParameters}) => ${returnType}`,
+            parameters: modeledParameters,
+            returnType: resolveType(returnType, interfaceLookup, codeLookup, context, config),
+        };
+    }
+
     let cleanedType = declaredType;
     let skipProperties: string[] = [];
     if (declaredType.startsWith('Omit<')) {
