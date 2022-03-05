@@ -1,3 +1,7 @@
+
+
+
+
 const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
@@ -435,6 +439,13 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
+        .filter(changedPackage => {
+            if(!lernaBuildChainInfo[changedPackage]) {
+                console.log(`${changedPackage} changed but not in build chain - skipping`);
+                return false;
+            }
+            return true;
+        })
         .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
     const lernaPackagesToRebuild = new Set();
@@ -766,6 +777,16 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             const httpServer = http.createServer(app).listen(EXPRESS_HTTP_PORT);
             const httpsServer = https.createServer(credentials, app).listen(EXPRESS_HTTPS_PORT);
+
+            process.on('exit', () => {
+                httpServer.kill();
+                httpsServer.kill();
+            });
+
+            process.on('SIGINT', () => {
+                httpServer.kill();
+                httpsServer.kill();
+            });
 
             // todo handle cleanup (ie when process killed by user)
 

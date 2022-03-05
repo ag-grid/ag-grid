@@ -50,7 +50,3 @@
 	path = examples-grid/ag-grid-react-package-example
 	url = https://github.com/ag-grid/ag-grid-react-package-example.git
 	branch = latest
-[submodule "grid-packages/ag-grid-cypress"]
-	path = grid-packages/ag-grid-cypress
-	url = https://github.com/ag-grid/ag-grid-cypress.git
-	branch = latest
