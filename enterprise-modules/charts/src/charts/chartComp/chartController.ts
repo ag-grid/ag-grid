@@ -272,6 +272,9 @@ export class ChartController extends BeanStub {
             // replace existing custom series types with this latest version
             this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
 
+            // series chart types can be modified, i.e. column chart types should be moved to primary axis
+            this.model.updateSeriesChartTypes();
+
             this.updateForDataChange();
 
             if (updateChartType) {
@@ -287,7 +290,6 @@ export class ChartController extends BeanStub {
                     type: ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED
                 }));
             }
-
         }
     }
 

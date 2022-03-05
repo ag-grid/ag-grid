@@ -9,7 +9,8 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
@@ -90,17 +91,9 @@ export class SeriesPanel extends Component {
 
     private refreshWidgets(): void {
         this.destroyActivePanels();
-
-        const chartTypes: ChartSeriesType[] = this.chartController.getSeriesChartTypes().map(s =>  getSeriesType(s.chartType));
-        if (this.seriesType && !chartTypes.includes(this.seriesType)) {
-            this.seriesType = chartTypes[0];
-        }
-
+        this.updateSeriesType();
         this.initSeriesSelect();
-
-        if (this.seriesType) {
-            this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
-        }
+        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
     }
 
     private initSeriesSelect() {
@@ -281,12 +274,25 @@ export class SeriesPanel extends Component {
             ]);
         }
 
-        const options = new Set<ListOption>();
-        this.chartController.getSeriesChartTypes().forEach(s => {
+        const seriesSelectOptions = new Set<ListOption>();
+        this.getActiveSeriesChartTypes().forEach(s => {
             const chartType = getSeriesType(s.chartType);
-            options.add(this.seriesSelectOptions.get(chartType) as ListOption);
+            seriesSelectOptions.add(this.seriesSelectOptions.get(chartType) as ListOption);
         });
-        return Array.from(options);
+        return Array.from(seriesSelectOptions);
+    }
+
+    private updateSeriesType() {
+        const activeChartTypes = this.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
+        const invalidSeriesType = !activeChartTypes.includes(this.seriesType);
+        if (invalidSeriesType && activeChartTypes.length > 0) {
+            this.seriesType = activeChartTypes[0]; // default to first active series type
+        }
+    }
+
+    private getActiveSeriesChartTypes(): SeriesChartType[] {
+        const selectedColIds = this.chartController.getSelectedValueColState().map(c => c.colId);
+        return this.chartController.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
 
     private translate(key: string, defaultText?: string) {

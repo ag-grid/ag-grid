@@ -254,6 +254,7 @@ export class ChartDataPanel extends Component {
                 .createManagedBean(new AgCheckbox())
                 .setLabel(this.chartTranslationService.translate('secondaryAxis'))
                 .setLabelWidth("flex")
+                .setDisabled(['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType))
                 .setValue(!!seriesChartType.secondaryAxis)
                 .onValueChange((enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled));
 

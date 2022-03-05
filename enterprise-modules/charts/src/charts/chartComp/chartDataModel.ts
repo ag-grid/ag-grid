@@ -147,6 +147,13 @@ export class ChartDataModel extends BeanStub {
             return;
         }
 
+        // ensure primary only chart types are not placed on secondary axis
+        this.seriesChartTypes = this.seriesChartTypes.map(seriesChartType => {
+            const primaryOnly = ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType);
+            seriesChartType.secondaryAxis = primaryOnly ? false : seriesChartType.secondaryAxis;
+            return seriesChartType;
+        });
+
         if (this.chartType === 'customCombo') {
             this.updateSeriesChartTypesForCustomCombo();
             return;
