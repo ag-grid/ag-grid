@@ -152,12 +152,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const isRowDragMultiRow = this.gridOptionsWrapper.isRowDragMultiRow();
-        const selectedNodes = this.selectionService.getSelectedNodes();
+        const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
+            (a, b) => this.getRowIndexNumber(a) - this.getRowIndexNumber(b)
+        );
+
         const currentNode = draggingEvent.dragItem.rowNode!;
 
         if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
-            return [...selectedNodes];
+            return selectedNodes;
         }
 
         this.isMultiRowDrag = false;
@@ -166,6 +169,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
+        // builds a lits of all rows being dragged before firing events
+        draggingEvent.dragItem.rowNodes = this.getRowNodes(draggingEvent);
+
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
@@ -212,24 +218,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
-        let rowNodes: RowNode[];
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
-
-        if (isFromThisGrid) {
-            rowNodes = [draggingEvent.dragItem.rowNode!];
-
-            if (this.isMultiRowDrag) {
-                rowNodes = [...this.selectionService.getSelectedNodes()].sort(
-                    (a, b) => this.getRowIndexNumber(a) - this.getRowIndexNumber(b)
-                );
-            }
-
-            draggingEvent.dragItem.rowNodes = rowNodes;
-        } else {
-            rowNodes = draggingEvent.dragItem.rowNodes!;
-        }
-
         const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        const rowNodes = draggingEvent.dragItem.rowNodes!;
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
