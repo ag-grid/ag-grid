@@ -18,7 +18,17 @@ export type ChartType =
     | 'histogram'
     | 'columnLineCombo'
     | 'areaColumnCombo'
-    | 'customCombo'
+    | 'customCombo';
+
+export type CrossFilterChartType =
+      'column'
+    | 'bar'
+    | 'line'
+    | 'scatter'
+    | 'bubble'
+    | 'pie'
+    | 'doughnut'
+    | 'area';
 
 export type ChartMenuOptions =
       'chartSettings'

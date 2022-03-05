@@ -73,7 +73,7 @@ import {
     RowClassParams,
     RowHeightParams
 } from "./entities/gridOptions";
-import { ChartType, SeriesChartType } from "./interfaces/iChartOptions";
+import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
@@ -167,6 +167,8 @@ export interface CreateRangeChartParams extends CreateChartParams {
     seriesChartTypes?: SeriesChartType[];
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
+    /** The type of cross-filter chart to create. */
+    chartType: CrossFilterChartType;
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
     cellRange: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */

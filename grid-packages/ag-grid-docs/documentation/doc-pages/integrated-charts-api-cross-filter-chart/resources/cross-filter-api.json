@@ -6,9 +6,7 @@
             "description": "The type of cross-filtering chart to create.",
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": [
-                    "ChartType"
-                ]
+                "include": []
             }
         },
         "cellRange": {

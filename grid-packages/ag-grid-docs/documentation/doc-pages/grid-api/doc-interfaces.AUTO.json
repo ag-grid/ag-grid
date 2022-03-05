@@ -8361,6 +8361,10 @@
     }
   },
   "CreateCrossFilterChartParams": {
+    "chartType": {
+      "description": "/** The type of cross-filter chart to create. */",
+      "type": { "returnType": "CrossFilterChartType", "optional": false }
+    },
     "cellRange": {
       "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "type": { "returnType": "ChartParamsCellRange", "optional": false }
@@ -8372,10 +8376,6 @@
     "aggFunc": {
       "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
-    },
-    "chartType": {
-      "description": "/** The type of chart to create. */",
-      "type": { "returnType": "ChartType", "optional": false }
     },
     "chartThemeName": {
       "description": "/** The default theme to use, either a default option or your own custom theme. */",
@@ -12704,6 +12704,7 @@
     }
   },
   "ChartType": {},
+  "CrossFilterChartType": {},
   "ChartMenuOptions": {},
   "SeriesChartType": {
     "colId": { "type": { "returnType": "string", "optional": false } },

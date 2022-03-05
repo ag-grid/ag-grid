@@ -4900,20 +4900,20 @@
   "CreateCrossFilterChartParams": {
     "meta": {},
     "type": {
+      "chartType": "CrossFilterChartType",
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "unlinkChart?": "boolean"
     },
     "docs": {
+      "chartType": "/** The type of cross-filter chart to create. */",
       "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
-      "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
       "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
@@ -7527,6 +7527,10 @@
   "ChartType": {
     "meta": { "isTypeAlias": true },
     "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo'"
+  },
+  "CrossFilterChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area'"
   },
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
