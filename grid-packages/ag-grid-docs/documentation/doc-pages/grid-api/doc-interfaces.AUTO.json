@@ -4867,6 +4867,14 @@
   "GetRowNodeIdFunc": {},
   "GetRowKeyFunc": {},
   "GetRowKeyParams": {
+    "api": {
+      "description": "/** Grid's API */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** Grid's Column API */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "data": {
       "description": "/** The data item provided to the grid for the row in question */",
       "type": { "returnType": "any", "optional": false }

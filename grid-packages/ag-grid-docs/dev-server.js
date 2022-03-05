@@ -1,7 +1,3 @@
-
-
-
-
 const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
@@ -18,11 +14,11 @@ const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const { generateDocumentationExamples } = require('./example-generator-documentation');
-const { watchValidateExampleTypes } = require('./example-validator');
-const { updateBetweenStrings, getAllModules } = require('./utils');
-const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
-const { EOL } = os;
+const {generateDocumentationExamples} = require('./example-generator-documentation');
+const {watchValidateExampleTypes} = require('./example-validator');
+const {updateBetweenStrings, getAllModules} = require('./utils');
+const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
 const cert = fs.readFileSync(process.env.AG_DOCS_CRT || './selfsigned.crt', 'utf8');
@@ -41,7 +37,7 @@ const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
 function reporter(middlewareOptions, options) {
-    const { log, state, stats } = options;
+    const {log, state, stats} = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -143,8 +139,8 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
-    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue3' });
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -264,11 +260,11 @@ async function watchAndGenerateExamples() {
     }
 
     chokidar
-        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
+        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar
-        .watch([`./documentation/doc-pages/**/*.md`], { ignoreInitial: true })
+        .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
         .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
@@ -440,7 +436,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
         .filter(changedPackage => {
-            if(!lernaBuildChainInfo[changedPackage]) {
+            if (!lernaBuildChainInfo[changedPackage]) {
                 console.log('****************************************************************');
                 console.log(`${changedPackage} changed but not in build chain - skipping`);
                 console.log('****************************************************************');
@@ -563,7 +559,7 @@ function updateModuleChangedHash(moduleRoot) {
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const resolvedPath = resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
-    cp.spawnSync(npm, ['run', 'hash'], { cwd: resolvedPath });
+    cp.spawnSync(npm, ['run', 'hash'], {cwd: resolvedPath});
 }
 
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules) {
@@ -684,13 +680,13 @@ const readModulesState = () => {
     moduleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
 
-        fs.readdirSync(moduleRootDirectory, { withFileTypes: true })
+        fs.readdirSync(moduleRootDirectory, {withFileTypes: true})
             .filter(d => d.isDirectory())
             .filter(d => !exclusions.includes(d.name))
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
+                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
             });
     });
 
@@ -722,7 +718,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
                 process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
             }
 
-            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
+            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
 
             const app = express();
 
@@ -777,20 +773,43 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             app.use(`/images/star.svg`, express.static(`./src/images/star.svg`));
             app.use(`/images/lab.svg`, express.static(`./src/images/lab.svg`));
 
-            const httpServer = http.createServer(app).listen(EXPRESS_HTTP_PORT);
-            const httpsServer = https.createServer(credentials, app).listen(EXPRESS_HTTPS_PORT);
+            function createServer(name, serverCreation) {
+                const server = serverCreation();
 
-            process.on('exit', () => {
-                httpServer.kill();
-                httpsServer.kill();
-            });
+                const sockets = {};
+                let nextSocketId = 0;
+                server.on('connection', function (socket) {
+                    // Add a newly connected socket
+                    const socketId = nextSocketId++;
+                    sockets[socketId] = socket;
 
-            process.on('SIGINT', () => {
-                httpServer.kill();
-                httpsServer.kill();
-            });
+                    // Remove the socket when it closes
+                    socket.once('close', function () {
+                        delete sockets[socketId];
+                    });
 
-            // todo handle cleanup (ie when process killed by user)
+                });
+
+                const cleanup = () => {
+                    // Close the server
+                    server.close(() => console.log(`${name} Server closed!`));
+                    // Destroy all open sockets
+                    for (let socketId in sockets) {
+                        sockets[socketId].destroy();
+                    }
+                }
+
+                process.on('exit', cleanup);
+                process.on('SIGINT', cleanup);
+
+                return server;
+            }
+
+            // http server
+            createServer('http', () => http.createServer(app).listen(EXPRESS_HTTP_PORT));
+
+            // https server
+            createServer('https', () => https.createServer(credentials, app).listen(EXPRESS_HTTPS_PORT));
 
             launchGatsby();
 

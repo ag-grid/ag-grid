@@ -132,7 +132,6 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
             } else if (property.name === 'groupRowRendererParams') {
-                debugger
                 const perLine = property.value.split('\n');
                 const result = [];
                 perLine.forEach(line => {
