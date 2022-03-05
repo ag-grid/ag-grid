@@ -441,7 +441,9 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
         .filter(key => modulesState[key].moduleChanged)
         .filter(changedPackage => {
             if(!lernaBuildChainInfo[changedPackage]) {
+                console.log('****************************************************************');
                 console.log(`${changedPackage} changed but not in build chain - skipping`);
+                console.log('****************************************************************');
                 return false;
             }
             return true;
