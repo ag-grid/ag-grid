@@ -3,16 +3,9 @@
         <div></div>
         AG Grid
     </a>
-    <button id="navbar-toggle"
-        type="button"
-        data-toggle="collapse"
-        data-target="#main-nav"
-        aria-label="Toggle navigation">
-        <span>&nbsp;</span>
-    </button>
-    <div class="collapse navbar-collapse" id="main-nav">
+    <div class="" id="main-nav" style="display: flex; flex-wrap: wrap; flex-grow: 1;">
         <?php if ($version == 'latest') { ?>
-            <ul>
+            <ul style="flex-flow: wrap;">
                 <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                     <a href="/example.php">Demo</a>
                 </li>
