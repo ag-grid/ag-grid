@@ -1757,7 +1757,7 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
       "suppressClipboardPaste?": "/** Set to `true` to turn off paste operations within the grid. */",

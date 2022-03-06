@@ -147,7 +147,10 @@ export interface GridOptions {
     copyGroupHeadersToClipboard?: boolean;
     /** @deprecated Use `clipboardDelimiter` */
     clipboardDeliminator?: string;
-    /** Specify the delimiter to use when copying to clipboard. */
+    /** 
+     * Specify the delimiter to use when copying to clipboard. 
+     * Default: `\t`
+    */
     clipboardDelimiter?: string;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
     suppressCopyRowsToClipboard?: boolean;

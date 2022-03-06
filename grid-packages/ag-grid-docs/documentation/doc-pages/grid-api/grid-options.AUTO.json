@@ -56,7 +56,7 @@
     "type": { "returnType": "string" }
   },
   "clipboardDelimiter": {
-    "description": "/** Specify the delimiter to use when copying to clipboard. */",
+    "description": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
