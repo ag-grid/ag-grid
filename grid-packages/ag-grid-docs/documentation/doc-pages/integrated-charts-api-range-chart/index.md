@@ -56,6 +56,17 @@ For more details refer to [Range Chart API](/integrated-charts-api-range-chart/#
 
 ## Combination Charts
 
+It is possible to create the following combination chart types via `api.createRangeChart()`:
+
+- Column & Line (`chartType: 'columnLineCombo'`)
+- Area & Column (`chartType: 'areaColumnCombo'`)
+- Custom Combination (`chartType: 'customCombo'`)
+
+When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied and 
+when `seriesChartTypes` is present, a `customCombo` chart type is assumed, regardless of the `chartType` properties supplied.
+
+The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as shown below:
+
 <snippet>
 api.createRangeChart({
     chartType: 'customCombo',
@@ -71,6 +82,17 @@ api.createRangeChart({
   });
 </snippet>
 
+Note that combination charts only support the following chart types:
+
+- Line (`chartType: 'line'`)
+- Area (`chartType: 'Area'`)
+- Stacked Area (`chartType: 'stackedArea'`)
+- Grouped Column (`chartType: 'groupedColumn'`)
+- Stacked Column (`chartType: 'stackedColumn'`)
+
+And only `line` and `area` chart types can be plotted against a secondary axis.
+
+The following example demonstrates the above configuration.
 
 <grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
 
