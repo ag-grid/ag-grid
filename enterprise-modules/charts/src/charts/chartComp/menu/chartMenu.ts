@@ -56,13 +56,14 @@ export class ChartMenu extends Component {
         this.createButtons();
         this.refreshMenuClasses();
 
-        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
-            // creating settings panel ahead of time to prevent an undesirable 'jitter' when the canvas resizes
-            // caused as a result of scrollIntoView() when the selected chart type is scrolled into view
-            if (e.chartId === this.chartController.getChartId()) {
-                this.createMenuPanel(0);
-            }
-        });
+        // TODO requires a better solution as this causes the docs the 'jump' when pages are reloaded
+        // this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
+        //     // creating settings panel ahead of time to prevent an undesirable 'jitter' when the canvas resizes
+        //     // caused as a result of scrollIntoView() when the selected chart type is scrolled into view
+        //     if (e.chartId === this.chartController.getChartId()) {
+        //         this.createMenuPanel(0);
+        //     }
+        // });
     }
 
     public isVisible(): boolean {
