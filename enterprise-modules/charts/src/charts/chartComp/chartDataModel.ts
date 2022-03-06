@@ -43,6 +43,7 @@ export interface ChartModelParams {
 export class ChartDataModel extends BeanStub {
 
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
+    public static SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
@@ -154,6 +155,7 @@ export class ChartDataModel extends BeanStub {
             return seriesChartType;
         });
 
+        // note that when seriesChartTypes are supplied the chart type is also changed to 'customCombo'
         if (this.chartType === 'customCombo') {
             this.updateSeriesChartTypesForCustomCombo();
             return;
@@ -167,6 +169,15 @@ export class ChartDataModel extends BeanStub {
         if (!seriesChartTypesSupplied && !this.suppressComboChartWarnings) {
             console.warn(`AG Grid: 'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
         }
+
+        // ensure correct chartTypes are supplied
+        this.seriesChartTypes = this.seriesChartTypes.map(s => {
+            if (!ChartDataModel.SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
+                console.warn(`AG Grid: invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`);
+                s.chartType = 'line';
+            }
+            return s;
+        });
 
         const getSeriesChartType = (valueCol: ColState): SeriesChartType => {
             if (!this.savedCustomSeriesChartTypes || this.savedCustomSeriesChartTypes.length === 0) {
