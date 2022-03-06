@@ -10,7 +10,7 @@ gtm_data_layer('cookies');
 meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines our policy in relation to
   the cookies that we collect on our website.", "cookies.php", true);
 ?>
-<!--<script src="dist/homepage.js"></script>-->
+<script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 

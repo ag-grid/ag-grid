@@ -1,9 +1,9 @@
 .header-nav {
-    composes: navbar navbar-expand-sm navbar-dark px-0 py-0 from global;
+    composes: navbar navbar-expand-md navbar-dark px-0 py-0 from global;
     margin-left: auto;
 
     &__wrapper {
-        composes: d-flex flex-column-reverse flex-sm-row px-sm-0 from global;
+        composes: d-flex flex-column-reverse flex-md-row px-md-0 from global;
         text-align: right;
     }
 
@@ -45,7 +45,7 @@
             a {
                 color: $light;
             }
-            @include media-breakpoint-up(sm) {
+            @include media-breakpoint-up(md) {
                 &::after {
                     content: "";
                     height: 0.2rem;
@@ -60,6 +60,6 @@
     }
 
     &__link-anchor {
-        composes: py-2 px-sm-4 from global;
+        composes: py-2 px-md-4 from global;
     }
 }

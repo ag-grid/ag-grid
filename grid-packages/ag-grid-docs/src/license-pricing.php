@@ -516,6 +516,6 @@ gtm_data_layer('community-enterprise');
     </div>
     <?php include_once("./includes/footer.php"); ?>
 </div>
-<!--<script src="dist/homepage.js"></script>-->
+<script src="dist/homepage.js"></script>
 </body>
 </html>

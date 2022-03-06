@@ -6,27 +6,27 @@ header#nav {
     min-height: 4rem;
 
     nav.nav {
-        @extend .navbar, .navbar-dark, .navbar-expand-sm, .full-width-row, .align-middle;
+        @extend .navbar, .navbar-dark, .navbar-expand-md, .full-width-row, .align-middle;
 
         #logo {
-            @extend .navbar-brand, .text-hide;
+            @extend .text-hide;
             background-image: url('../svg/logo-white.svg');
             background-repeat: no-repeat;
             background-size: contain;
             min-height: 40px;
-            min-width: 15rem;
+            min-width: 235px;
         }
 
         ul {
             @extend .navbar-nav, .ml-auto;
 
             li {
-                @extend .nav-item, .ml-3;
+                @extend .nav-item, .px-2;
                 position: relative;
                 &.active {
                     @extend .active;
 
-                    @include media-breakpoint-up(sm) {
+                    @include media-breakpoint-up(md) {
                         &::after {
                             content: '';
                             height: 0.2rem;
@@ -34,6 +34,7 @@ header#nav {
                             background-color: white;
                             position: absolute;
                             bottom: -0.7rem;
+                            left: 0;
                         }
                     }
                 }

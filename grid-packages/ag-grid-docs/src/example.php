@@ -92,7 +92,7 @@ meta_and_links("AG Grid: Demo of high performance datagrid", "react angular vue 
 
 <?= globalAgGridScript(true) ?>
 
-<!--<script src="dist/homepage.js"></script>-->
+<script src="dist/homepage.js"></script>
 <script src="example.js"></script>
 
 </body>
