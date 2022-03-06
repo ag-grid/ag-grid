@@ -92,10 +92,14 @@ Note that combination charts only support the following chart types:
 
 And only `line` and `area` chart types can be plotted against a secondary axis.
 
-The following example demonstrates the above configuration.
+The following example demonstrates the above configuration, note the following:
+
+- The 'Rain' series uses a `groupedColumn` chart type and is plotted against the primary Y axis (`secondaryAxis=false`)
+- 'Pressure' and 'Temp' use a `line` chart type and are plotted against separate secondary Y axes (`secondaryAxis=true`)
+- Values are aggregated by the 'Month' category by setting `aggFunc: 'sum'` 
+- Chart Ranges are hidden using `suppressChartRanges=true`
 
 <grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
-
 
 ## Range Chart API
 
