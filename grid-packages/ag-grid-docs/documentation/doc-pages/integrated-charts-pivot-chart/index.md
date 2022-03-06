@@ -20,4 +20,4 @@ Notice from the demonstration above that all data is charted when using the Pivo
 
 ## Next Up
 
-Continue to the next section to learn about the: [Cross Filter API](/integrated-charts-api-cross-filter-chart/).
+Continue to the next section to learn about the: [Chart Toolbar](/integrated-charts-toolbar/).

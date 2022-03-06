@@ -54,7 +54,7 @@ The following example shows how to create a simple cross-filtering pie chart. No
 
 ## Cross-filter API
 
-The cross-filter api shares a similar api to [Range Chart](/integrated-charts-api-range-chart/#range-charts), however there are
+The cross-filter api shares a similar api to [Range Chart](/integrated-charts-api-range-chart/), however there are
 different defaults which make sense for cross-filtering.
 
 <api-documentation source='grid-api/api.json' section='charts' names='["createCrossFilterChart"]'></api-documentation>

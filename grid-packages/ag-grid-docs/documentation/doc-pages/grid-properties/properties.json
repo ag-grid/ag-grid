@@ -303,8 +303,8 @@
         },
         "enableCharts": {
             "more": {
-                "name": "Enable Charts",
-                "url": "/integrated-charts-customisation/#enabling-charts"
+                "name": "Enabling User Created Charts",
+                "url": "/integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
         "chartThemes": {
@@ -316,7 +316,7 @@
                 "ag-solar"
             ],
             "more": {
-                "name": "Chart Themes",
+                "name": "Provided Themes",
                 "url": "/integrated-charts-customisation/#provided-themes"
             }
         },

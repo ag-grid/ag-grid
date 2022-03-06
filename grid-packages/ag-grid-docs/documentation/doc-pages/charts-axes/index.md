@@ -22,7 +22,7 @@ Each type is tailored to be used with certain types of data. An axis can be posi
 
 The category axis is meant to be used with relatively small datasets of discrete values or categories, such as sales per product, person or quarter, where _product_, _person_ and _quarter_ are categories.
 
-The category axis renders a [tick](#ticks), a [label](#labels) and a [grid line](#grid-lines) for each category, and spaces out all ticks evenly.
+The category axis renders a [tick](#axis-ticks), a [label](#axis-labels) and a [grid line](#axis-grid-lines) for each category, and spaces out all ticks evenly.
 
 The category axis is used as the x-axis by default, positioned at the bottom of a chart.
 

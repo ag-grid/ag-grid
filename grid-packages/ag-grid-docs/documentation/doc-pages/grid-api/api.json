@@ -570,7 +570,7 @@
         "createRangeChart": {
             "more": {
                 "name": "Range Chart API",
-                "url": "/integrated-charts-api/#range-charts"
+                "url": "/integrated-charts-api-range-chart/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
@@ -582,13 +582,13 @@
         "createPivotChart": {
             "more": {
                 "name": "Pivot Chart API",
-                "url": "/integrated-charts-api/#pivot-charts"
+                "url": "/integrated-charts-api-pivot-chart/"
             }
         },
         "createCrossFilterChart": {
             "more": {
                 "name": "Cross-filter API",
-                "url": "/integrated-charts-cross-filtering/#cross-filter-api"
+                "url": "/integrated-charts-api-cross-filter-chart/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
@@ -600,8 +600,8 @@
         "getChartRef": {},
         "getChartModels": {
             "more": {
-                "name": "Saving and Restoring Charts",
-                "url": "/integrated-charts-api/#saving-and-restoring-charts"
+                "name": "Saving / Restoring Charts",
+                "url": "/integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
@@ -614,8 +614,8 @@
         },
         "restoreChart": {
             "more": {
-                "name": "Saving and Restoring Charts",
-                "url": "/integrated-charts-api/#saving-and-restoring-charts"
+                "name": "Saving / Restoring Charts",
+                "url": "/integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
@@ -629,7 +629,7 @@
         "getChartImageDataURL": {
             "more": {
                 "name": "Downloading Chart Image",
-                "url": "/integrated-charts-api/#downloading-chart-image"
+                "url": "/integrated-charts-api-downloading-image/"
             }
         }
     },

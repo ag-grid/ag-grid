@@ -46,6 +46,13 @@ location other than the grid's popup window. Note the following:
 
 <grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
 
+## Hiding Chart Ranges
+
+In some cases it may be desirable to hide the chart ranges in the grid, see [Combination Charts](/integrated-charts-api-range-chart/#example-combination-chart).
+
+To hide the chart ranges simply enable `suppressChartRanges=true` on the `ChartRangeParams`.
+
+For more details refer to [Range Chart API](/integrated-charts-api-range-chart/#range-chart-api).
 
 ## Combination Charts
 

@@ -49,7 +49,7 @@ The following example demonstrates when the described events occur by writing to
 
 ## Accessing Chart Instance
 
-Charts in the grid are produced by the [AG Charts](/charts-overview/) library, which is integrated
+Charts in the grid are produced by the [Standalone Charts](/charts-overview/) library, which is integrated
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
 instance that is produced by AG Charts, in order to interact with the chart directly.
 
@@ -74,4 +74,4 @@ it dynamically as you change the range selection.
 
 ## Other Resources
 
-To learn about series events refer to the standalone charting library [documentation](/charts-events/).
+To learn about events see [Standalone Chart Events](/charts-events/).

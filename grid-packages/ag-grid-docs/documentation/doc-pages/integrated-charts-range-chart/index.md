@@ -5,13 +5,7 @@ enterprise: true
 
 This section covers how charts can be created directly from a range of selected cells.
 
-Range charts provide a quick and easy way for users to create charts from inside the grid. Once users have selected a range of cells in the grid, a chart can be created from the context menu, as shown below:
-
-<gif src="range-chart.gif" alt="Range Chart"></gif>
-
-Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by highlighting the charted category and series data in the grid.
-
-Note that developers can also programmatically create range charts through the [Chart API](/integrated-charts-api/).
+Range charts provide a quick and easy way for users to create charts from inside the grid.
 
 ## Creating Chart Ranges
 
@@ -25,15 +19,7 @@ To see how chart ranges are created from a cell range, using our [demo page](../
 
 <gif src="charting-ranges.gif" alt="Charting Ranges"></gif>
 
-As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle, located at the bottom right corner of the chart range.
-
-## Hiding Chart Ranges
-
-In some cases it may be desirable to hide the chart ranges in the grid, like in this [example](/integrated-charts/#example-application-created-charts).
-
-To hide the chart ranges simply enable `suppressChartRanges=true` on the `ChartRangeParams`.
-
-For more details refer to [Range Chart API](/integrated-charts-api/#range-charts).
+As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle, located in the bottom right corner of the chart range.
 
 ## Category and Series Ranges
 
@@ -44,7 +30,7 @@ A category range can only contain cells from a single column, whereas a series r
 Chart ranges can be adjusted from within the grid by dragging on the chart range handle located at the bottom right of the series range. Both the category and series ranges are connected so when the chart range is dragged in an up or down direction they will be updated together.
 
 [[note]]
-| The chart range handle will only appear when all series columns are contiguous. However it is possible to move columns around in the grid to connect the series range.
+| The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
 
 ## Defining categories and series
 

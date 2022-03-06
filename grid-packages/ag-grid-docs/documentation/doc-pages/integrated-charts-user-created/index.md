@@ -6,12 +6,19 @@ enterprise: true
 User created charts are designed to provide an out-of-the box charting experience, similar to that found in spreadsheet 
 applications such as Excel, but fully integrated inside your applications.
 
+Users can select a range of cells in the grid and create a chart from the context menu, as shown below:
+
 <gif src="chart-showcase.gif" alt="Chart Showcase"></gif>
+
+Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by
+highlighting the charted category and series data in the grid.
 
 Try it out on our [demo page](../../example.php) by doing the following:
 
 - Select a [Cell Range](/range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
+
+Note that developers can also programmatically create range charts, see [Application Created Charts](/integrated-charts-application-created/).
 
 ## Enabling User Created Charts
 
@@ -23,7 +30,7 @@ const gridOptions = {
 }
 </snippet>
 
-To allow users to create charts from a [Range Selection](/range-selection/) and / or display the [Chart Ranges](/integrated-charts-range-chart/)
+To allow users to create charts from a [Range Selection](/range-selection/) and / or display the [Chart Ranges](/integrated-charts-range-chart/#creating-chart-ranges)
 in the grid, `enableRangeSelection` should also be enabled as follows:
 
 <snippet>
