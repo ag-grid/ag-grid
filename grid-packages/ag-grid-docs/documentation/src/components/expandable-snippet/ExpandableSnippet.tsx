@@ -318,7 +318,7 @@ function maybeRenderPropertyDocumentation(
     if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
-    if (renderedDocs.trim().length === 0) { return };
+    if (!renderedDocs || renderedDocs?.trim().length === 0) { return };
 
     return (
         <Fragment>
@@ -340,7 +340,7 @@ function maybeRenderModelDocumentation(
     if (formattedDocumentation.length === 0) { return; }
 
     const renderedDocs = convertMarkdown(formattedDocumentation.join('\n'));
-    if (renderedDocs.trim().length === 0) { return };
+    if (!renderedDocs || renderedDocs?.trim().length === 0) { return };
 
     return (
         <Fragment>
@@ -566,7 +566,7 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
     
-    return result.filter(v => !!v.trim());
+    return result.filter(v => !!v?.trim());
 }
 
 function formatModelDocumentation(model: JsonModel | JsonFunction, config: Config) {

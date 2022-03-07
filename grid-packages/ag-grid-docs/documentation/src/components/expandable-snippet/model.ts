@@ -116,9 +116,7 @@ export function buildModel(
     const includeDeprecated = config?.includeDeprecated ?? false;
     const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
     const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
-    let { typeStack, skipProperties } = context || { typeStack: [], skipProperties: [] };
-    const description = cLookup.description || iLookup?.meta?.doc;
-    const { typeParams, ordering } = iLookup?.meta;
+    let { typeStack, skipProperties, visitedTypes } = context || { typeStack: [], skipProperties: [], visitedTypes: new Set() };
 
     const result: JsonModel = {
         type: "model",
@@ -133,6 +131,9 @@ export function buildModel(
         return result;
     }
     typeStack = typeStack.concat([type]);
+
+    const description = cLookup?.description || iLookup?.meta?.doc;
+    const { typeParams, ordering } = iLookup?.meta;
 
     const genericArgs: Record<string, string> = {};
     if (typeParams != null && typeParams.length > 0) {

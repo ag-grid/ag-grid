@@ -1,6 +1,11 @@
 module.exports = {
+    globals: {
+        'ts-jest': {
+            tsConfig: 'tsconfig.test.json'
+        }
+    },
     transform: {
-        '^.+\\.jsx?$': '<rootDir>/jest-preprocess.js',
+        '^.+\\.(t|j)sx?$': '<rootDir>/jest-preprocess.js',
     },
     moduleNameMapper: {
         '.+\\.(css|styl|less|sass|scss)$': 'identity-obj-proxy',
@@ -13,4 +18,12 @@ module.exports = {
         __PATH_PREFIX__: '',
     },
     setupFiles: ['<rootDir>/loadershim.js'],
+    moduleFileExtensions: [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "node"
+    ],
 }
