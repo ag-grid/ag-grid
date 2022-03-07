@@ -1,4 +1,4 @@
-import { AgChartOptions, AgTreemapSeriesTooltipRendererParams } from '@ag-grid-community/core'
+import { AgChartOptions, AgTreemapSeriesTooltipRendererParams } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 declare var data: any;
 

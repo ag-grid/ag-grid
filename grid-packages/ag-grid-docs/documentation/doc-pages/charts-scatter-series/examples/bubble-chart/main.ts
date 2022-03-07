@@ -1,4 +1,4 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 declare var maleHeightWeight: any[];
 declare var femaleHeightWeight: any[];

@@ -1,4 +1,4 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 
 function formatter({ yKey, size }: { yKey: string, size: number }) {
@@ -34,16 +34,16 @@ const options: AgChartOptions = {
   ],
   series: [
     {
-        type: 'area',
-        xKey: 'quarter',
-        yKey: 'petrol',
-        marker: { formatter },
+      type: 'area',
+      xKey: 'quarter',
+      yKey: 'petrol',
+      marker: { formatter },
     },
     {
-        type: 'area',
-        xKey: 'quarter',
-        yKey: 'electric',
-        marker: { formatter },
+      type: 'area',
+      xKey: 'quarter',
+      yKey: 'electric',
+      marker: { formatter },
     },
   ],
 }

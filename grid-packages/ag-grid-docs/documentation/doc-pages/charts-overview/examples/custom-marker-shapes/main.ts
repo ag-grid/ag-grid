@@ -1,4 +1,4 @@
-import { AgChartOptions } from "@ag-grid-community/core"
+import { AgChartOptions } from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
 
 var markerSize = 10

@@ -1,5 +1,5 @@
-import { AgCartesianSeriesTooltipRendererParams } from "@ag-grid-community/core"
-import { AgChartOptions } from "@ag-grid-community/core"
+import { AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
+import { AgChartOptions } from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
 
 function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
@@ -10,14 +10,14 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
   var tooltipHtml = [
     '<div class="my-tooltip">',
     '<span class="my-tooltip__title" style="color: ' +
-      params.color +
-      '">' +
-      params.yName,
+    params.color +
+    '">' +
+    params.yName,
     "(" +
-      params.datum[params.xKey] +
-      "):</span> " +
-      formatThousands(params.datum[params.yKey]) +
-      " tonnes",
+    params.datum[params.xKey] +
+    "):</span> " +
+    formatThousands(params.datum[params.yKey]) +
+    " tonnes",
     "</div>",
   ]
 

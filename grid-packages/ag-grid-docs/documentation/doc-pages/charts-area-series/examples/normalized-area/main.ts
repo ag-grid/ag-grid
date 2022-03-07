@@ -1,4 +1,4 @@
-import { AgChartOptions } from "@ag-grid-community/core"
+import { AgChartOptions } from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
 
 const options: AgChartOptions = {
@@ -11,7 +11,7 @@ const options: AgChartOptions = {
   },
   data: getData(),
   series: [
-    { 
+    {
       type: "area",
       xKey: "year",
       yKey: "ie",

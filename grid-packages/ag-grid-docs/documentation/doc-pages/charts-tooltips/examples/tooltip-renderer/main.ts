@@ -1,7 +1,7 @@
 import {
   AgCartesianSeriesTooltipRendererParams,
   AgChartOptions,
-} from "@ag-grid-community/core"
+} from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
 
 function renderer(params: AgCartesianSeriesTooltipRendererParams) {

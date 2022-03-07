@@ -1,10 +1,10 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   theme: {
-    palette: { fills: ['#f44336', '#8bc34a'], strokes: ['#ab2f26','#618834']},
+    palette: { fills: ['#f44336', '#8bc34a'], strokes: ['#ab2f26', '#618834'] },
   },
   title: {
     text: 'Microsoft Internet Explorer vs Google Chrome',

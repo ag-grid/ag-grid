@@ -1,4 +1,4 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 declare var data: any;
 
@@ -9,7 +9,7 @@ const options: AgChartOptions = {
       fills: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
       strokes: ['#5BC0EB', '#FDE74C', '#9BC53D', '#E55934', '#FA7921', '#fa3081'],
     },
-    overrides: { line: { series: { strokeWidth: 3, marker: { enabled: false } }}},
+    overrides: { line: { series: { strokeWidth: 3, marker: { enabled: false } } } },
   },
   autoSize: true,
   title: {

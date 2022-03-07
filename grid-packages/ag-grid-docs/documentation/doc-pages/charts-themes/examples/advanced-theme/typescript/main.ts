@@ -1,5 +1,5 @@
 import * as agCharts from "ag-charts-community"
-import { AgChartOptions, AgChartTheme } from "ag-grid-community"
+import { AgChartOptions, AgChartTheme } from "ag-charts-community"
 
 var myTheme: AgChartTheme = {
   baseTheme: "ag-default-dark",

@@ -1,4 +1,4 @@
-import { AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 
 var lastTime = new Date('07 Jan 2020 13:25:00 GMT').getTime()

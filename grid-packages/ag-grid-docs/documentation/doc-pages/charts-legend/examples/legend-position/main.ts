@@ -1,4 +1,4 @@
-import { Grid, AgChartLegendPosition, AgChartOptions } from '@ag-grid-community/core'
+import { Grid, AgChartLegendPosition, AgChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 
 const options: AgChartOptions = {
