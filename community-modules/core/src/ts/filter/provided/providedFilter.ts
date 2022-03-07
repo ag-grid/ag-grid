@@ -313,7 +313,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public onNewRowsLoaded(): void {
-        this.resetUiToDefaults().then(() => this.appliedModel = null);
     }
 
     public close(e?: Event): void {
