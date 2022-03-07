@@ -14,12 +14,9 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths:
-            assign(
-                {
-                    // paths serve as alias
-                    "npm:": "https://unpkg.com/",
-                }, systemJsPaths),
+        paths: {
+            'npm:': 'https://unpkg.com/'
+        },
         map: assign(
             {
                 // babel transpiler
@@ -31,7 +28,7 @@
 
                 // vuejs
                 'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
-                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
+                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.js',
 
                 // vue class component
                 'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
@@ -66,10 +63,6 @@
                 main: './dist/ag-grid-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-community/vue3': {
-                main: './lib/AgGridVue.js',
-                defaultExtension: 'js'
-            }
         },
         meta: {
             '*.js': {

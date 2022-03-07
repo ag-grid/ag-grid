@@ -14,12 +14,9 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths:
-            assign(
-                {
-                    // paths serve as alias
-                    "npm:": "https://unpkg.com/",
-                }, systemJsPaths),
+        paths: {
+            'npm:': 'https://unpkg.com/'
+        },
         map: assign(
             {
                 // css plugin
@@ -78,10 +75,6 @@
                 main: './dist/ag-grid-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-community/react': {
-                main: './main.js',
-                defaultExtension: 'js'
-            }
         },
         meta: {
             '*.jsx': {
