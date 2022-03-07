@@ -1,4 +1,4 @@
-import { AgChartOptions } from '../agChartOptions';
+import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
 import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR } from './data';
 import { readFileSync } from 'fs';
 
@@ -474,6 +474,31 @@ export const AREA_NUMBER_AXES_0_Y_DOMAIN: AgChartOptions = {
     legend: {
         position: 'right',
     },
+}
+
+export const INVALID_AXIS_LABEL_FORMAT: AgCartesianChartOptions = {
+    data: DATA_TIME_SENSOR,
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+            label: {
+                format: '%H:%M',
+            },
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'time',
+            yKey: 'sensor',
+            showInLegend: false,
+        },
+    ],
 }
 
 // START ADVANCED EXAMPLES =========================================================================

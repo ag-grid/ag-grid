@@ -308,7 +308,7 @@ Simple filters are not affected by data changes, as is demonstrated by the follo
 - Hit the `Refresh Data` button to update the grid data.
 - Observe that filters remain unchanged.
 
-<grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside"] }'></grid-example>
 
 ## Style Header on Filter
 

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var filterParams = {
   comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
