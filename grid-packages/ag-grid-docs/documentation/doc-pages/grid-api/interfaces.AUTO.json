@@ -2350,7 +2350,7 @@
       "columnApi": "/** Grid's Column API */",
       "data": "/** The data item provided to the grid for the row in question */",
       "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "parentGroups?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
+      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
     }
   },
   "ProcessRowParams": {

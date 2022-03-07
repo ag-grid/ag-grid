@@ -24,8 +24,8 @@ const gridOptions: GridOptions = {
     var parts = [];
 
     // if parent groups, add the value for the parent group
-    if (params.parentGroups){
-      parts.push(...params.parentGroups);
+    if (params.parentKeys){
+      parts.push(...params.parentKeys);
     }
 
     // it we are a group, add the value for this level's group

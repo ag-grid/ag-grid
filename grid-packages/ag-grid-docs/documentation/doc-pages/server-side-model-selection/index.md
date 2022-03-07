@@ -40,7 +40,7 @@ For selection to work with Server-Side Row Model, you must provide [Row IDs](/ro
 
 Without Row IDs provided, the grid would have no way of identifying Rows across loads. For example if a Sort is applied after a selection is made, which resulted in the rows getting reloaded, the grid needs to identify which rows to keep selection on in the new Row order.
 
-When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. This means all the groups and all leaf-level nodes must have unique Row IDs, even if the leaves are not part of the same group. To assist with this, the grid provides the attributes `parentGroups` and `level` to the `getRowId()` callback when used with the Server-Side Row Model.
+When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. This means all the groups and all leaf-level nodes must have unique Row IDs, even if the leaves are not part of the same group. To assist with this, the grid provides the attributes `parentKeys` and `level` to the `getRowId()` callback when used with the Server-Side Row Model.
 
 ## Selecting Group Nodes
 

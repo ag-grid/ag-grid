@@ -4,7 +4,7 @@ title: "Row IDs"
 
 Row IDs are provided by the application to the grid to enable the grid to identify rows.
 
-Once the grid can identify rows, it can then maintain state between changes of Row Data. Maintained State includes both the DOM (where a Row exists in the old and new list of Row Data, the row is kept inside the DOM) and Business State (e.g. Row Selection and Row Group Open / Closed).
+Once the grid can identify rows, it can then maintain state between changes of Row Data. Maintained State includes both the DOM (i.e. the DOM is not redrawn) and Business State (e.g. Row Selection and Row Group Open / Closed).
 
 The Row ID also allows accessing the grid's rows via the Grid API. For example if you decide to use `employeeId` as your Row ID, then you can look up rows inside the grid by providing `employeeId` to the `getRowNode(id)` API.
 
@@ -63,7 +63,7 @@ When [Row Grouping](/server-side-model-grouping/), the grid will issue IDs for e
 As the default IDs are not based on the underlying data, the would give strange behaviour. For example if the first displayed row in the grid is selected, and then the rows are sorted (resulting in a refresh to the server), then the first row will remain selected (as it has the same ID). It's for this reason Row Selection requires Row IDs to be provided.
 ### Custom IDs
 
-When providing custom IDs, you can assign any ID that you like, once it's unique across all groups. You may wish to use the `parentGroups` and `level` attributes of the provided params to the callback. Depending on your application, you may use these details to build your own IDs including the parent Row Group names.
+When providing custom IDs, you can assign any ID that you like, once it's unique across all groups. You may wish to use the `parentKeys` and `level` attributes of the provided params to the callback. Depending on your application, you may use these details to build your own IDs including the parent Row Group names.
 
 The most simple Custom ID is to return from as sequence as follows:
 
@@ -83,8 +83,8 @@ const gridOptions = {
         const parts = [];
         //
         // if parent groups, add the value for the parent group
-        if (params.parentGroups){
-            params.parentGroups.forEach(part => parts.push(part));
+        if (params.parentKeys){
+            params.parentKeys.forEach(part => parts.push(part));
         }
         //
         // it we are a group, add the value for this level's group

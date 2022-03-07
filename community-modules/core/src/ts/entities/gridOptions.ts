@@ -1285,7 +1285,7 @@ export interface GetRowIdParams {
     /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
     level: number;
     /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */
-    parentGroups?: string[];
+    parentKeys?: string[];
 }
 
 export interface ProcessRowParams {

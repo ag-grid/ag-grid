@@ -4883,7 +4883,7 @@
       "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
       "type": { "returnType": "number", "optional": false }
     },
-    "parentGroups": {
+    "parentKeys": {
       "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
       "type": { "returnType": "string[]", "optional": true }
     }

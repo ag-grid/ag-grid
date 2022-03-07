@@ -373,7 +373,7 @@ export class RowNode implements IEventEmitter {
                                 api: this.beans.gridApi,
                                 columnApi: this.beans.columnApi,
                                 data: this.data,
-                                parentGroups: parentKeys.length > 0 ? parentKeys : undefined,
+                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
                                 level: this.level
                             });
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that

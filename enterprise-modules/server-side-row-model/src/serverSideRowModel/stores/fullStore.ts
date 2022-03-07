@@ -238,7 +238,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const level = this.level;
             const id = getRowIdFunc({
                                 data, 
-                                parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
+                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
                                 level,
                                 api: this.gridApi,
                                 columnApi: this.columnApi
@@ -625,7 +625,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const parentKeys = this.parentRowNode.getGroupKeys();
             const id: string = getRowIdFunc({
                                         data, 
-                                        parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
+                                        parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
                                         level,
                                         api: this.gridApi,
                                         columnApi: this.columnApi});
