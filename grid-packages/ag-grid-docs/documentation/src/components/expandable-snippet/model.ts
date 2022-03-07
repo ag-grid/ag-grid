@@ -116,7 +116,7 @@ export function buildModel(
     const includeDeprecated = config?.includeDeprecated ?? false;
     const iLookup = interfaceLookup[type] ?? interfaceLookup[plainType(type)];
     const cLookup = codeLookup[type] ?? codeLookup[plainType(type)];
-    let { typeStack, skipProperties, visitedTypes } = context || { typeStack: [], skipProperties: [], visitedTypes: new Set() };
+    let { typeStack, skipProperties } = context || { typeStack: [], skipProperties: [] };
 
     const result: JsonModel = {
         type: "model",
