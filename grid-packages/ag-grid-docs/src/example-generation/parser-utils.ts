@@ -592,12 +592,14 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
     [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
 
+    let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: ([string, { namedImport: string, imports: string[] }])) => {
         let unique = [...new Set(v.imports)].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
             unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
+            hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
             const namedImport = v.namedImport ? v.namedImport : '';
@@ -606,29 +608,24 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
             imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
         }
     })
+    if (hasEnterpriseModules && convertToPackage) {
+        imports.push(`import 'ag-grid-enterprise';`)
+    }
 }
 
 export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
     const moduleRegistration = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
     const modules = gridSettings.modules;
 
-    let gridSuppliedModules;
-    if (modules) {
-        let exampleModules = modules;
-        if (modules === true) {
-            exampleModules = ['clientside'];
-        }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
-        moduleRegistration.push(...moduleImports);
-        gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-    } else {
-        if (enterprise) {
-            throw new Error(`The example ${exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
-        }
-        gridSuppliedModules = '[ ClientSideRowModelModule ]';
-        moduleRegistration.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+    if (enterprise && !Array.isArray(modules)) {
+        throw new Error(`The example ${exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
     }
+
+    let gridSuppliedModules;
+    let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
+    const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+    moduleRegistration.push(...moduleImports);
+    gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
 
     moduleRegistration.push(`\n// Register the required feature modules with the Grid`);
     moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
