@@ -71,7 +71,8 @@ This following shows the Selector always returning back an AG Rich Select Cell E
 cellEditorSelector: params => {
     return {
         component: 'agRichSelect',
-        params: { values: ['Male', 'Female'] }
+        params: { values: ['Male', 'Female'] },
+        popup: true
     };
 }
 ```
@@ -81,32 +82,37 @@ However a selector only makes sense when a selection is made. The following demo
 ```js
 cellEditorSelector: params => {
 
-    const type = params.data.type;
-
-    if (params.data.type === 'age') {
-        return { component: NumericCellEditor };
+  if (params.data.type === 'age') {
+    return {
+      component: NumericCellEditor,
     }
+  }
 
-    if (params.data.type === 'gender') {
-        return {
-            component: 'agRichSelect',
-            params: { values: ['Male', 'Female'] }
-        };
+  if (params.data.type === 'gender') {
+    return {
+      component: 'agRichSelectCellEditor',
+      params: {
+        values: ['Male', 'Female']
+      },
+      popup: true
     }
+  }
 
-    if (params.data.type === 'mood') {
-        return { component: MoodEditor };
+  if (params.data.type === 'mood') {
+    return {
+      component: MoodEditor,
+      popup: true,
+      popupPosition: 'under'
     }
+  }
 
-    return undefined;
+  return undefined
 }
 ```
 
 The return type for the selector is `CellEditorSelectorResult` and has the following attributes:
 
 <interface-documentation interfaceName='CellEditorSelectorResult' config='{"description":""}'></interface-documentation>
-
-names='["buttons","closeOnApply","debounceMs","readOnly"]'
 
 Here is a full example:
 
