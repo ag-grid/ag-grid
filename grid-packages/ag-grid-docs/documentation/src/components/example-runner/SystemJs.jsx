@@ -15,21 +15,11 @@ import {
 
 import { isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
+const moduleMapping = require('../../../doc-pages/modules/modules.json');
 
 const localConfiguration = {
     gridMap: {
-        /* START OF GRID CSS DEV - DO NOT DELETE */
-        "@ag-grid-community/core/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-grid.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-alpine.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-balham.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-blue.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-blue.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-fresh.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-fresh.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-material.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`,
-        /* END OF GRID CSS DEV - DO NOT DELETE */
+        "@ag-grid-community/core/dist/styles": `${localPrefix}/@ag-grid-community/core/dist/styles`,
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
         "@ag-grid-community/angular": `${localPrefix}/@ag-grid-community/angular`,
         "@ag-grid-community/vue": `${localPrefix}/@ag-grid-community/vue`,
@@ -94,18 +84,7 @@ const localConfiguration = {
 
 const publishedConfiguration = {
     gridMap: {
-        /* START OF GRID CSS PROD - DO NOT DELETE */
-        "@ag-grid-community/core/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-grid.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-alpine-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-alpine.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-alpine.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-balham-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-balham.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-balham.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-blue.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-blue.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-bootstrap.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-dark.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-fresh.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-fresh.css`,
-        "@ag-grid-community/core/dist/styles/ag-theme-material.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-material.css`,
-        /* END OF GRID CSS PROD - DO NOT DELETE */
+        "@ag-grid-community/core/dist/styles": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles`,
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,
         "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridAngularVersion}/`,
         "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVueVersion}/`,
@@ -161,14 +140,124 @@ const publishedConfiguration = {
     chartPaths: {}
 };
 
+function findModules(modules) {
+    const requiredModules = [];
+    modules.forEach(module => {
+        let found = false;
+        moduleMapping.forEach(moduleConfig => {
+            if ((moduleConfig.shortname && moduleConfig.shortname === module) || (moduleConfig.module === module)) {
+                requiredModules.push(moduleConfig);
+                found = true;
+            }
+        });
+        if (!found && module !== 'ag-charts-community') {
+            console.error(`Could not find module ${module} in modules.json`);
+        }
+    });
+    return requiredModules;
+}
+
+function getRelevantConfig(configuration, framework, importType, library, modules) {
+    const filterByFramework = ([k, v]) => {
+        const inverseFrameworks = {
+            react: ['angular', 'vue', 'vue3'],
+            angular: ['react', 'vue', 'vue3'],
+            vue: ['angular', 'react', 'vue3'],
+            vue3: ['angular', 'react', 'vue'],
+            typescript: ['angular', 'react', 'vue', 'vue3'],
+        }
+        return !inverseFrameworks[framework].some(f => k.endsWith(f));
+    }
+    const filterByImportType = ([k, v]) => {
+        let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
+        const moduleNames = findModules(exampleModules).map(m => m.module);
+
+        if (importType === 'packages') {
+
+            if (!k.startsWith('@')) {
+                let hideCharts = true;
+                if (moduleNames.some(i => i.includes('charts'))) {
+                    hideCharts = false;
+                }
+                if (hideCharts && k.includes('ag-charts')) {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        // Require the framework modules
+        // All the grid modules depend on core so add that here.
+        let required = [`@ag-grid-community/${framework}`, '@ag-grid-community/core'];
+        if (moduleNames.some(i => i.includes('enterprise'))) {
+            required.push('@ag-grid-enterprise/core');
+        }
+
+        const addDependentModules = (names) => {
+            required = [...required, ...names]
+            const mods = findModules(names);
+            mods.forEach(m => {
+                if (m.dependencies) {
+                    addDependentModules(m.dependencies)
+                }
+            })
+        }
+        addDependentModules(moduleNames);
+
+        return required.some(m => k.includes(m));
+    }
+
+    const filterOutChartWrapper = ([k, v]) => {
+
+        // integrated does not need the charts framework wrapper
+        if (k.includes('ag-charts')) {
+            return k !== `ag-charts-${framework}`;
+        }
+        return true;
+    }
+
+    const buildCopy = (config) => {
+        let valid = {};
+        Object.entries(config)
+            .filter(filterOutChartWrapper)
+            .filter(filterByFramework)
+            .filter(filterByImportType)
+            .sort(([k1, v1], [k2, v2]) => k1 < k2 ? -1 : 1)
+            .forEach(([k, v]) => {
+                valid[k] = v;
+            })
+        return valid;
+    }
+
+    const buildChartCopy = (config) => {
+        let valid = {};
+        Object.entries(config)
+            .filter(filterByFramework)
+            .sort(([k1, v1], [k2, v2]) => k1 < k2 ? -1 : 1)
+            .forEach(([k, v]) => {
+                valid[k] = v;
+            })
+        return valid;
+    }
+
+    return {
+        gridMap: buildCopy(configuration.gridMap),
+        gridCommunityPaths: buildCopy(configuration.gridCommunityPaths),
+        gridEnterprisePaths: buildCopy(configuration.gridEnterprisePaths),
+        chartMap: buildChartCopy(configuration.chartMap),
+        chartPaths: buildChartCopy(configuration.chartPaths),
+    }
+}
+
 /**
  * Our framework examples use SystemJS to load the various dependencies. This component is used to insert the required
  * code to load SystemJS and the relevant modules depending on the framework.
  */
-const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options }) => {
+const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, framework, importType }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
-    const configuration = isUsingPublishedPackages() ? publishedConfiguration : localConfiguration;
+    let configuration = isUsingPublishedPackages() ? publishedConfiguration : localConfiguration;
 
     if (isDevelopment()) {
         configuration.gridCommunityPaths = {
@@ -216,6 +305,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options })
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
         };
     }
+    configuration = getRelevantConfig(configuration, framework, importType, library, options.modules);
 
     let systemJsMap;
     let systemJsPaths;
