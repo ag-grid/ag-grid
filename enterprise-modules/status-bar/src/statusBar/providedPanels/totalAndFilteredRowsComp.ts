@@ -28,6 +28,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         this.setDisplayed(true);
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.onDataChanged();
     }
 
     private onDataChanged() {
