@@ -88,10 +88,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             const config = { allowedCharPattern };
 
             this.resetTemplate({
-                eValueFrom1: config,
-                eValueTo1: config,
-                eValueFrom2: config,
-                eValueTo2: config,
+                'eValue-index0-1': config,
+                'eValue-index1-1': config,
+                'eValue-index0-2': config,
+                'eValue-index1-2': config,
             });
         }
 
