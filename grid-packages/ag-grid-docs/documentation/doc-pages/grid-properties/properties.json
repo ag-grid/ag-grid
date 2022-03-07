@@ -655,7 +655,12 @@
             }
         },
         "suppressColumnVirtualisation": {},
-        "suppressRowVirtualisation": {},
+        "suppressRowVirtualisation": {
+            "more": {
+                "name": "Suppress Row Virtualisation",
+                "url": "/dom-virtualisation/#suppress-virtualisation"
+            }
+        },
         "suppressMaxRenderedRowRestriction": {}
     },
     "rowDragging": {

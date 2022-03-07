@@ -24,7 +24,7 @@ To change the row buffer, set grid property `rowBuffer` to the number of rows yo
 
 The Row Buffer is a Pixel Range based on Default Row Height and not a Row Count. For example if you were to set `rowBuffer=10` and the default row height is 42px, then the grid will extend the vertical pixel range by 420px in both directions and then draw rows into that. This detail doesn't matter if all rows are default height, however if using rows of different heights, then note the Row Buffer will not relate to Row Count, but how many Pixels it would take to draw x Default Height Rows.
 
-## Mat Rendered Rows
+## Max Rendered Rows
 
 As a safety measure, the grid will render a maximum of 500 rows. This is to stop applications
 from crashing if they incorrectly set the grid size. For example if the grid height is not set correctly,
@@ -41,6 +41,8 @@ There is no column buffer - no additional columns are rendered apart from the vi
 ## Suppress Virtualisation
 
 To turn off Column Virtualisation off set the grid property `suppressColumnVirtualisation=true`. To turn off Row Virtualisation set the grid property `suppressRowVirtualisation=true`.
+
+Note if `suppressRowVirtualisation=true`, then there is no Row Buffer and the `rowBuffer` property is ignored.
 
 The example below demonstrates these two properties. Note that each Cell uses a Value Formatter that prints to the console when it is used, which equates to each time a Cell is created. Note that it is called 900 times when the grid starts, as there are 900 Cells of data (9 Columns x 100 Rows). If you were to edit this example, and remove `suppressColumnVirtualisation` and `suppressRowVirtualisation`, you would observe the Cells getting created as the grid is scrolled.
 
