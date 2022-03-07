@@ -2343,7 +2343,7 @@
       "columnApi": "ColumnApi",
       "data": "any",
       "level": "number",
-      "parentGroups?": "string[]"
+      "parentKeys?": "string[]"
     },
     "docs": {
       "api": "/** Grid's API */",
