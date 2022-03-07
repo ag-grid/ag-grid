@@ -54,7 +54,11 @@
     "shortname": "charts",
     "module": "@ag-grid-enterprise/charts",
     "enterprise": true,
-    "exported": "GridChartsModule"
+    "exported": "GridChartsModule",
+    "dependencies": [
+      "ag-charts-community",
+      "@ag-grid-enterprise/range-selection"
+    ]
   },
   {
     "title": "Sparklines<enterprise-icon></enterprise-icon>",
@@ -68,28 +72,41 @@
     "shortname": "clipboard",
     "module": "@ag-grid-enterprise/clipboard",
     "enterprise": true,
-    "exported": "ClipboardModule"
+    "exported": "ClipboardModule",
+    "dependencies": [
+      "@ag-grid-community/csv-export"
+    ]
   },
   {
     "title": "Column Tool Panel & Column Menu Panel<enterprise-icon></enterprise-icon>",
     "shortname": "columnpanel",
     "module": "@ag-grid-enterprise/column-tool-panel",
     "enterprise": true,
-    "exported": "ColumnsToolPanelModule"
+    "exported": "ColumnsToolPanelModule",
+    "dependencies": [
+      "@ag-grid-enterprise/row-grouping",
+      "@ag-grid-enterprise/side-bar"
+    ]
   },
   {
     "title": "Excel Export<enterprise-icon></enterprise-icon>",
     "shortname": "excel",
     "module": "@ag-grid-enterprise/excel-export",
     "enterprise": true,
-    "exported": "ExcelExportModule"
+    "exported": "ExcelExportModule",
+    "dependencies": [
+      "@ag-grid-community/csv-export"
+    ]
   },
   {
     "title": "Filter Tool Panel<enterprise-icon></enterprise-icon>",
     "shortname": "filterpanel",
     "module": "@ag-grid-enterprise/filter-tool-panel",
     "enterprise": true,
-    "exported": "FiltersToolPanelModule"
+    "exported": "FiltersToolPanelModule",
+    "dependencies": [
+      "@ag-grid-enterprise/side-bar"
+    ]
   },
   {
     "title": "Master Detail<enterprise-icon></enterprise-icon>",
@@ -103,7 +120,10 @@
     "shortname": "menu",
     "module": "@ag-grid-enterprise/menu",
     "enterprise": true,
-    "exported": "MenuModule"
+    "exported": "MenuModule",
+    "dependencies": [
+      "@ag-grid-enterprise/column-tool-panel"
+    ]
   },
   {
     "title": "Range Selection<enterprise-icon></enterprise-icon>",
