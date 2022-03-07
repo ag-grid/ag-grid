@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChartOptions } from './agChartOptions';
+import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
 import { CartesianChart } from './cartesianChart';
 import { Chart } from './chart';
@@ -14,7 +14,7 @@ expect.extend({ toMatchImageSnapshot });
 function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
     const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
 
-    return (chart: Chart) => {
+    return async (chart: Chart) => {
         expect(chart).toBeInstanceOf(CartesianChart);
         expect(chart.axes).toHaveLength(axisTypes.length);
         expect(chart.axes.map((a) => a.type)).toEqual(axisTypes);
@@ -25,7 +25,7 @@ function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]
 function polarChartAssertions(params?: { seriesTypes?: string[] }) {
     const { seriesTypes = ['pie'] } = params || {};
 
-    return (chart: Chart) => {
+    return async (chart: Chart) => {
         expect(chart).toBeInstanceOf(PolarChart);
         expect(chart.axes).toHaveLength(0);
         expect(chart.series.map((s) => s.type)).toEqual(seriesTypes);
@@ -35,7 +35,7 @@ function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     const { seriesTypes = ['treemap'] } = params || {};
 
-    return (chart: Chart) => {
+    return async (chart: Chart) => {
         expect(chart).toBeInstanceOf(HierarchyChart);
         expect(chart.axes).toHaveLength(0);
         expect(chart.series.map((s) => s.type)).toEqual(seriesTypes);
@@ -52,9 +52,47 @@ function hoverAction(x: number, y: number): (chart: Chart) => Promise<void> {
     };
 }
 
+function consoleWarnAssertions(options: AgCartesianChartOptions) {
+    return async (chart: Chart) => {
+        expect(console.warn).toBeCalledTimes(1);
+        expect(console.warn).toBeCalledWith('AG Charts - the axis label format string %H:%M is invalid. No formatting will be applied');
+
+        jest.clearAllMocks();
+        options.axes[0].label.format = '%X %M' // format string for Date objects, not valid for number values
+        AgChartV2.update(chart, options);
+
+        expect(console.warn).toBeCalledTimes(1);
+        expect(console.warn).toBeCalledWith('AG Charts - the axis label format string %X %M is invalid. No formatting will be applied');
+
+        jest.clearAllMocks();
+        options.axes[0].label.format = '%' // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
+        AgChartV2.update(chart, options);
+
+        expect(console.warn).not.toBeCalled();
+
+        // hovering on chart calls getTooltipHtml() which uses formatDatum() from NumberAxis to format the data points
+        // if formatting non-numeric values (Date objects), a warning will be displayed
+        await waitForChartStability(chart);
+        await hoverAction(200, 100)(chart);
+
+        expect(console.warn).toBeCalledTimes(1);
+        expect(console.warn).toBeCalledWith("AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.");
+
+        jest.clearAllMocks(); // this is to make sure the afterAll check for console warnings passes
+    }
+}
+
+function combineAssertions(...assertions: ((chart) => void)[]) {
+    return async (chart: Chart) => {
+        for (const assertion of assertions) {
+            await assertion(chart);
+        }
+    }
+}
+
 type TestCase = {
     options: AgChartOptions;
-    assertions: (chart: Chart) => void;
+    assertions: (chart: Chart) => Promise<void>;
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
 };
 const EXAMPLES: Record<string, TestCase> = {
@@ -182,7 +220,7 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.LINE_NUMBER_AXES_0_X_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
     },
-    LINE_NUMBER_AXES_0_Y_DOMAIN : {
+    LINE_NUMBER_AXES_0_Y_DOMAIN: {
         options: examples.LINE_NUMBER_AXES_0_Y_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),
     },
@@ -198,9 +236,16 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.AREA_NUMBER_AXES_0_X_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
     },
-    AREA_NUMBER_AXES_0_Y_DOMAIN : {
+    AREA_NUMBER_AXES_0_Y_DOMAIN: {
         options: examples.AREA_NUMBER_AXES_0_Y_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('area', 2) }),
+    },
+    INVALID_AXIS_LABEL_FORMAT: {
+        options: examples.INVALID_AXIS_LABEL_FORMAT,
+        assertions: combineAssertions(
+            cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
+            consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT),
+        ),
     },
     // START ADVANCED EXAMPLES =====================================================================
     ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: {
@@ -251,7 +296,7 @@ describe('AgChartV2', () => {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
                 const chart = AgChartV2.create<any>(options);
-                example.assertions(chart);
+                await example.assertions(chart);
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
