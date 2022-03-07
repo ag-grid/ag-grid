@@ -56,7 +56,7 @@ For more details refer to [Range Chart API](/integrated-charts-api-range-chart/#
 
 ## Combination Charts
 
-It is possible to create the following combination chart types via `api.createRangeChart()`:
+It is possible to create the following combination chart types via `gridApi.createRangeChart()`:
 
 - Column & Line (`chartType: 'columnLineCombo'`)
 - Area & Column (`chartType: 'areaColumnCombo'`)
