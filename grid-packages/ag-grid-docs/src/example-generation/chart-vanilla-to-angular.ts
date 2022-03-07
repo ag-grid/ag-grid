@@ -11,7 +11,7 @@ function getImports(bindingImports, componentFileNames: string[], { typeParts })
     const bImports = [...(bindingImports || [])];
 
     bImports.push({
-        module: `'@ag-grid-community/core'`,
+        module: `'ag-charts-community'`,
         isNamespaced: false,
         imports: typeParts
     })
