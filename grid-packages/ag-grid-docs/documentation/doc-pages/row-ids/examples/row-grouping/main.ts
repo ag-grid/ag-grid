@@ -4,7 +4,7 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
-    { headerName: 'Row Key', valueGetter: 'node.id' },
+    { headerName: 'Row ID', valueGetter: 'node.id' },
     { field: 'gold', aggFunc: 'sum' }
   ],
   defaultColDef: {

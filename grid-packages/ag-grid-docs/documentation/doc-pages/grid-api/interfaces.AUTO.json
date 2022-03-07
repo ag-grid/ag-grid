@@ -1657,7 +1657,7 @@
       "getServerSideGroupKey?": "GetServerSideGroupKey",
       "getBusinessKeyForNode?": "(node: RowNode) => string",
       "getRowNodeId?": "GetRowNodeIdFunc",
-      "getRowId?": "GetRowKeyFunc",
+      "getRowId?": "GetRowIdFunc",
       "processRowPostCreate?": "(params: ProcessRowParams) => void",
       "isRowSelectable?": "IsRowSelectable",
       "isRowMaster?": "IsRowMaster",
@@ -2329,14 +2329,14 @@
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "data": "any" }, "returnType": "string" }
   },
-  "GetRowKeyFunc": {
+  "GetRowIdFunc": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": { "params": "GetRowKeyParams" },
+      "arguments": { "params": "GetRowIdParams" },
       "returnType": "string"
     }
   },
-  "GetRowKeyParams": {
+  "GetRowIdParams": {
     "meta": {},
     "type": {
       "api": "GridApi",

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GetRowKeyParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
 declare var window: any;
 
 const columnDefs: ColDef[] = [
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   getRowId: getRowId
 }
 
-function getRowId(params: GetRowKeyParams) {
+function getRowId(params: GetRowIdParams) {
   return params.data.id;
 }
 

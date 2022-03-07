@@ -1,4 +1,4 @@
-import { Grid, GetServerSideStoreParamsParams, GetRowKeyParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideStoreParams } from '@ag-grid-community/core'
+import { Grid, GetServerSideStoreParamsParams, GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideStoreParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -34,7 +34,7 @@ const gridOptions: GridOptions = {
   getRowId: getRowId
 }
 
-function getRowId(params: GetRowKeyParams) {
+function getRowId(params: GetRowIdParams) {
   return Math.random().toString();
 }
 

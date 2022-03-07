@@ -42,9 +42,9 @@ When passing in data to be updated or removed, the grid will be asking:
 
 _"What row do you mean exactly by this data item you are passing?"_
 
-There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object References.
+There are two approaches you can take: 1) Providing Row IDs, or 2) Using Object References.
 
-- ### Providing Row Keys (Faster)
+- ### Providing Row IDs (Faster)
 
   If you are providing [Row IDs](/row-ids/) using the grid callback `getRowId()` then the grid will match data provided in the transaction with data in the grid using the key.
 

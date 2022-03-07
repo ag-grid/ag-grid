@@ -1163,7 +1163,7 @@
   },
   "getRowId": {
     "description": "/** Allows you to set the ID for a particular row based on the data. */",
-    "type": { "returnType": "GetRowKeyFunc" }
+    "type": { "returnType": "GetRowIdFunc" }
   },
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",

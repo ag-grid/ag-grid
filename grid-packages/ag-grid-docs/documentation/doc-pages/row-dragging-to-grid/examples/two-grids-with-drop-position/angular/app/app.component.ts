@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ColDef, GridApi, GetRowKeyParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
+import { ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -117,7 +117,7 @@ export class AppComponent {
         this.rightRowData = createRowBlock(2);
     }
 
-    getRowId(params: GetRowKeyParams) {
+    getRowId(params: GetRowIdParams) {
         return params.data.id;
     }
 

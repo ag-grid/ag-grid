@@ -23,7 +23,7 @@ import {
     RowGroupingDisplayType,
     TreeDataDisplayType,
     RowHeightParams,
-    GetRowKeyFunc
+    GetRowIdFunc
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -1256,7 +1256,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getRowIdFunc(): GetRowKeyFunc | undefined {
+    public getRowIdFunc(): GetRowIdFunc | undefined {
         const {getRowId, getRowNodeId} = this.gridOptions;
         if (getRowId) {
             return getRowId;

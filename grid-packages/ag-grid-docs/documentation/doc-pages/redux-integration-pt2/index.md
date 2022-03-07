@@ -304,7 +304,7 @@ For more details see our documentation on [Row Dragging](/row-dragging/).
 ## Immutable Data
 
 One consequence of using Redux is that when part of the state is updated in the store, the entire
-state is replaced with a new version. The grid uses Row Keys to ensure only the rows that have been updated will be re-rendered inside the grid.
+state is replaced with a new version. The grid uses Row IDs to ensure only the rows that have been updated will be re-rendered inside the grid.
 
 The file browser enables this feature using: `getRowId={params => params.data.id}`.
 

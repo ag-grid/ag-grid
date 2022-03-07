@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GetRowKeyParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
 
 declare var LINUX_DISTROS: string[];
 declare var CITIES: string[];
@@ -92,7 +92,7 @@ function getMyFilter(): IFilterType {
 
 var myFilter = getMyFilter()
 
-function getRowId(params: GetRowKeyParams) {
+function getRowId(params: GetRowIdParams) {
   return params.data.id
 }
 

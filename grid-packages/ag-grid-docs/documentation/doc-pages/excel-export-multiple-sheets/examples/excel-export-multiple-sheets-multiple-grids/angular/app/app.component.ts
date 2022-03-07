@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { ColDef, ColumnApi, GetRowKeyParams, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
@@ -173,7 +173,7 @@ export class AppComponent {
         this.loadGrids();
     }
 
-    getRowId = (params: GetRowKeyParams) => params.data.athlete;
+    getRowId = (params: GetRowIdParams) => params.data.athlete;
 
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {

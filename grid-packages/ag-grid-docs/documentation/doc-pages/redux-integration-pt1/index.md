@@ -329,7 +329,7 @@ For more details see our documentation on [Context Menu](/context-menu/).
 ## Immutable Data
 
 One consequence of using Redux is that when part of the state is updated in the store, the
-entire state is replaced with a new version. The grid uses Row Keys to work specifically with immutable stores such as Redux to ensure only the rows
+entire state is replaced with a new version. The grid uses Row IDs to work specifically with immutable stores such as Redux to ensure only the rows
 that have been updated will be re-rendered inside the grid.
 
 The File View enables this feature using `getRowId={params => params.data.id}`.

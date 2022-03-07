@@ -10,7 +10,7 @@ The example below shows the data with two sets of data. Clicking the buttons tog
 
 The example below is identical to the above except [Row IDs](/row-ids/) are provided via the `getRowId()` callback. This results in Row Selection is maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in Row Animation (`animateRows=true`) of the rows.
 
-<grid-example title='Simple Row Key' name='simple-row-key' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
+<grid-example title='Simple Row ID' name='simple-row-id' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
 
 Providing [Row IDs](/row-ids/) allows the grid to work more optimally in a few ares which are outlined as follows:
 
@@ -73,7 +73,7 @@ The grid works out what changes need to be applied to the grid using the followi
 
 Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over three columns. As far as Client-Side Row Data goes, this is a fairly complex grid. From the example, note the following:
 
-- Row Keys are provided using the callback `getRowId()`.
+- Row IDs are provided using the callback `getRowId()`.
 - Selecting the Update button updates a range of the data.
 - Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
 
@@ -81,11 +81,11 @@ Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over 
 
 ## Comparison to Transaction Updates
 
-When setting Row Data and not providing Row Keys, the grid rips all data out of the grid and starts from scratch with the new Row Data.
+When setting Row Data and not providing Row IDs, the grid rips all data out of the grid and starts from scratch with the new Row Data.
 
-However when providing Row Keys and updating Row Data, the grid creates a [Transaction Update](/data-update-transactions/) underneath the hood. In other words, once the grid has worked out what rows have been added, updated and removed, it then creates a transaction with these details and applies it. This means all the operational benefits to Transaction Updates equally apply to setting Row Data with providing Row Keys.
+However when providing Row IDs and updating Row Data, the grid creates a [Transaction Update](/data-update-transactions/) underneath the hood. In other words, once the grid has worked out what rows have been added, updated and removed, it then creates a transaction with these details and applies it. This means all the operational benefits to Transaction Updates equally apply to setting Row Data with providing Row IDs.
 
-There are however some differences with updating Row Data (with Row Keys) and Transaction Updates. These differences are as follows:
+There are however some differences with updating Row Data (with Row IDs) and Transaction Updates. These differences are as follows:
 
 - When setting Row Data, the grid will have the overhead of identifying what rows are added, removed and updated.
 

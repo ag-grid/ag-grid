@@ -1,4 +1,4 @@
-import { Grid, GridOptions, GetRowKeyParams, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     sortable: true,
   },
-  getRowId: function (params: GetRowKeyParams) {
+  getRowId: function (params: GetRowIdParams) {
     var data = params.data;
     // use year for group level ids, or the id we assigned for leaf level
     return data.id || data.year;

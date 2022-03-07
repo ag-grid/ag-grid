@@ -58,7 +58,7 @@ Maintaining open groups is achieved when all of the following are configured:
 
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
-- Row Keys are provided (`getRowId()` implemented, see [Row IDs](/row-ids/)). If not providing Row Keys, groups and children will be lost
+- Row IDs are provided (`getRowId()` implemented, see [Row IDs](/row-ids/)). If not providing Row IDs, groups and children will be lost
 
 When all the above is true, when a refresh is done, open groups will remain open and children will be kept.
 

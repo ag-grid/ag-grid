@@ -884,7 +884,7 @@ export interface GridOptions {
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to set the ID for a particular row based on the data. */
-    getRowId?: GetRowKeyFunc;
+    getRowId?: GetRowIdFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
@@ -1271,11 +1271,11 @@ export interface GetRowNodeIdFunc {
     (data: any): string;
 }
 
-export interface GetRowKeyFunc {
-    (params: GetRowKeyParams): string;
+export interface GetRowIdFunc {
+    (params: GetRowIdParams): string;
 }
 
-export interface GetRowKeyParams {
+export interface GetRowIdParams {
     /** Grid's API */
     api: GridApi;
     /** Grid's Column API */
