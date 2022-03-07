@@ -26,6 +26,8 @@ var filterParams = {
   browserDatePicker: true,
 }
 
+var fetchedData: any[];
+
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete' },
@@ -45,9 +47,12 @@ const gridOptions: GridOptions = {
 }
 
 function refreshData() {
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+  if (fetchedData) {
+    gridOptions.api!.setRowData(
+      // Force reload by mutating fetched data - some frameworks otherwise don't trigger an update.
+      fetchedData.map(d => ({ ...d, random: Math.random() }))
+    );
+  }
 }
 
 // setup the grid after the page has finished loading
@@ -55,5 +60,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
-  refreshData();
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    .then(response => response.json())
+    .then(data => {
+      fetchedData = data;
+      gridOptions.api!.setRowData(data);
+    });
 });
