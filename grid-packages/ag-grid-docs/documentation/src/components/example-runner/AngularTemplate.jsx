@@ -9,7 +9,7 @@ import MetaData from './MetaData';
 /**
  * This is the template for executing Angular examples in the example runner.
  */
-const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType }) =>
     <html lang="en">
         <head>
             <MetaData title="Angular example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
@@ -29,6 +29,8 @@ const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath
                 boilerplatePath={boilerplatePath}
                 appLocation={appLocation}
                 startFile={boilerplatePath + 'main.ts'}
+                framework={'angular'}
+                importType={importType}
                 options={options} />
         </body>
     </html>;

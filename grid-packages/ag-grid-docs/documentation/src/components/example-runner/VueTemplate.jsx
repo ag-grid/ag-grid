@@ -9,25 +9,27 @@ import MetaData from './MetaData';
 /**
  * This is the template for executing Vue examples in the example runner.
  */
-const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType }) =>
     <html lang="en">
-    <head>
-        <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
-        <ExampleStyle rootId="app" />
-        <Styles files={styleFiles} />
-        <Extras options={options} />
-    </head>
-    <body>
-    <div id="app" dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
+        <head>
+            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <ExampleStyle rootId="app" />
+            <Styles files={styleFiles} />
+            <Extras options={options} />
+        </head>
+        <body>
+            <div id="app" dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
 
-    <Scripts files={scriptFiles} />
-    <SystemJs
-        library={library}
-        boilerplatePath={boilerplatePath}
-        appLocation={appLocation}
-        startFile={appLocation + 'main.js'}
-        options={options} />
-    </body>
+            <Scripts files={scriptFiles} />
+            <SystemJs
+                library={library}
+                boilerplatePath={boilerplatePath}
+                appLocation={appLocation}
+                startFile={appLocation + 'main.js'}
+                framework={'vue'}
+                importType={importType}
+                options={options} />
+        </body>
     </html>;
 
 export default VueTemplate;
