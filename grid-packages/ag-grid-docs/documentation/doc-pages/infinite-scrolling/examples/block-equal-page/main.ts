@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
     maxBlocksInCache: 2,
     pagination: true,
     // debug: true,
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.id
     },
 }

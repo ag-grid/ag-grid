@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     field: 'athlete',
   },
 
-  getRowKey: params => {
+  getRowId: params => {
     // this array will contain items that will compose the unique key
     var parts = [];
 

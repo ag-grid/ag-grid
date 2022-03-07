@@ -142,7 +142,7 @@ export default class extends Component {
         this.setState({ checkBoxSelected: checked });
     }
 
-    getRowKey = params => params.data.athlete
+    getRowId = params => params.data.athlete
 
 
     addGridDropZone = () => {
@@ -210,7 +210,7 @@ export default class extends Component {
                 <AgGridReact
                     style={{ height: '100%;' }}
                     defaultColDef={defaultColDef}
-                    getRowKey={this.getRowKey}
+                    getRowId={this.getRowId}
                     rowDragManaged={true}
                     animateRows={true}
                     rowSelection={id === 0 ? "multiple" : undefined}

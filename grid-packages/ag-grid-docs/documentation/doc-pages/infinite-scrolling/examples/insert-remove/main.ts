@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
     infiniteInitialRowCount: 500,
     maxConcurrentDatasourceRequests: 2,
 
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.id.toString()
     },
 

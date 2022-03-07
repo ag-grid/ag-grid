@@ -78,7 +78,7 @@ export class PropertyKeys {
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent',
         'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 
-        'loadingCellRendererSelector', 'getRowKey'
+        'loadingCellRendererSelector', 'getRowId'
     ];
 
     public static ALL_PROPERTIES = [

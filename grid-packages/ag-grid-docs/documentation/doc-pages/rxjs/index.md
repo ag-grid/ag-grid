@@ -15,11 +15,11 @@ The second subscription only provides changed rows - it does not provide the ful
 
 To efficiently process this data we need the following:
 
-- A unique key per row - we do this by making use of the `getRowKey` callback:
+- A unique key per row - we do this by making use of the `getRowId` callback:
 
 <snippet>
 const gridOptions = {
-    getRowKey: params => {
+    getRowId: params => {
         // the code is unique, so perfect for the ID
         return params.data.code;
     }
@@ -45,11 +45,11 @@ This time however the second subscription has the full row data, with altered ro
 
 To efficiently process this data we need two things:
 
-- A unique key per row - we do this by making use of the `getRowKey` callback.
+- A unique key per row - we do this by making use of the `getRowId` callback.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    getRowKey: params => {
+    getRowId: params => {
         // the code is unique, so perfect for the ID
         return params.data.code;
     }

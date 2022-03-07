@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
   getDataPath: function (data) {
     return data.filePath
   },
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.id
   },
 }

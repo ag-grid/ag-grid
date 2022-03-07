@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         width: 250,
         resizable: true,
     },
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.product
     },
     rowSelection: 'multiple',

@@ -255,7 +255,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
+            const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
@@ -267,7 +267,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 add: rowNodes!
                     .map(node => node.data)
                     .filter(data => !this.clientSideRowModel.getRowNode(
-                        getRowKeyFunc ? getRowKeyFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi}) : data.id)
+                        getRowIdFunc ? getRowIdFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi}) : data.id)
                     ),
                 addIndex
             });

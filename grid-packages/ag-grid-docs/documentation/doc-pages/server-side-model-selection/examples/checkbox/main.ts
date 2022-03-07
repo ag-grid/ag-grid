@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     sortable: true,
   },
-  getRowKey: function (params: GetRowKeyParams) {
+  getRowId: function (params: GetRowKeyParams) {
     var data = params.data;
     // use year for group level ids, or the id we assigned for leaf level
     return data.id || data.year;

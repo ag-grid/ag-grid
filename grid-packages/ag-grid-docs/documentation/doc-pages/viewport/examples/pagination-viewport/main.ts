@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
   viewportRowModelPageSize: 1,
   viewportRowModelBufferSize: 0,
   // implement this so that we can do selection
-  getRowKey: function (params) {
+  getRowId: function (params) {
     // the code is unique, so perfect for the id
     return params.data.code
   },

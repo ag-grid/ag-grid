@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.account
   },
   detailCellRendererParams: {

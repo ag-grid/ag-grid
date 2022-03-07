@@ -175,7 +175,7 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     rowData: immutableStore,
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.symbol
     },
     onGridReady: function (params) {

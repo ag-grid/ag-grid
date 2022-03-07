@@ -61,7 +61,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     rowSelection="multiple"
                                     [rowDragMultiRow]="true"
                                     [suppressRowClickSelection]="true"
-                                    [getRowKey]="getRowKey"
+                                    [getRowId]="getRowId"
                                     [rowDragManaged]="true"
                                     [suppressMoveWhenRowDragging]="true"
                                     [animateRows]="true"
@@ -80,7 +80,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             <ag-grid-angular
                                     style="height: 100%;"
                                     [defaultColDef]="defaultColDef"
-                                    [getRowKey]="getRowKey"
+                                    [getRowId]="getRowId"
                                     [rowDragManaged]="true"
                                     [animateRows]="true"
                                     [rowData]="rightRowData"
@@ -202,7 +202,7 @@ export class AppComponent {
         this.leftApi.setSuppressRowClickSelection(checked);
     }
 
-    getRowKey = (params: GetRowKeyParams) => params.data.athlete;
+    getRowId = (params: GetRowKeyParams) => params.data.athlete;
 
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {

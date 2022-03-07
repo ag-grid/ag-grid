@@ -252,12 +252,12 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
+        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
 
         let rowNode: RowNode | undefined;
-        if (getRowKeyFunc) {
+        if (getRowIdFunc) {
             // find rowNode using id
-            const id: string = getRowKeyFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
+            const id: string = getRowIdFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
@@ -268,7 +268,7 @@ export class ClientSideNodeManager {
             rowNode = this.rootNode.allLeafChildren.find(node => node.data === data);
             if (!rowNode) {
                 console.error(`AG Grid: could not find data item as object was not found`, data);
-                console.error(`Consider using getRowKey to help the Grid find matching row data`);
+                console.error(`Consider using getRowId to help the Grid find matching row data`);
                 return null;
             }
         }

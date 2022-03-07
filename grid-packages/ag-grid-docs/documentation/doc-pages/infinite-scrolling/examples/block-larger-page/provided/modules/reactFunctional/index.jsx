@@ -149,7 +149,7 @@ const GridExample = () => {
             floatingFilter: true,
         }
     }, []);
-    const getRowKey = useCallback(function (params) {
+    const getRowId = useCallback(function (params) {
         return params.data.id;
     }, []);
 
@@ -203,7 +203,7 @@ const GridExample = () => {
                     maxBlocksInCache={2}
                     pagination={true}
                     paginationAutoPageSize={true}
-                    getRowKey={getRowKey}
+                    getRowId={getRowId}
                     onGridReady={onGridReady}
                 >
                 </AgGridReact>

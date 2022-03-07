@@ -92,7 +92,7 @@ function getMyFilter(): IFilterType {
 
 var myFilter = getMyFilter()
 
-function getRowKey(params: GetRowKeyParams) {
+function getRowId(params: GetRowKeyParams) {
   return params.data.id
 }
 
@@ -208,7 +208,7 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
   },
-  getRowKey: getRowKey,
+  getRowId: getRowId,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   animateRows: true,

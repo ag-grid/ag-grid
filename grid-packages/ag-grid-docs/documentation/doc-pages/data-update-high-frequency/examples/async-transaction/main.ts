@@ -146,7 +146,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.trade
   },
   defaultColDef: {

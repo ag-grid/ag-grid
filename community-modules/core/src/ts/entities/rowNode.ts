@@ -358,9 +358,9 @@ export class RowNode implements IEventEmitter {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowKeyFunc = this.beans.gridOptionsWrapper.getRowKeyFunc();
+        const getRowIdFunc = this.beans.gridOptionsWrapper.getRowIdFunc();
 
-        if (getRowKeyFunc) {
+        if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
@@ -369,7 +369,7 @@ export class RowNode implements IEventEmitter {
                 // data via transaction on SSRM, we are getting key to look up the
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
                 const parentKeys = this.getGroupKeys(true);
-                this.id = getRowKeyFunc({
+                this.id = getRowIdFunc({
                                 api: this.beans.gridApi,
                                 columnApi: this.beans.columnApi,
                                 data: this.data,
@@ -379,7 +379,7 @@ export class RowNode implements IEventEmitter {
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id !== null && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error(`AG Grid: Row Keys cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
+                    console.error(`AG Grid: Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
                 // force id to be a string
                 if (this.id !== null && typeof this.id !== 'string') {

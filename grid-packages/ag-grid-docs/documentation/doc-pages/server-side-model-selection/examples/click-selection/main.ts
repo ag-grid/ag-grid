@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     minWidth: 180,
   },
 
-  getRowKey: function (params: GetRowKeyParams) {
+  getRowId: function (params: GetRowKeyParams) {
     // use country for group level ids, or the id we assigned for leaf level
     var data = params.data;
     return data.id || data.country;

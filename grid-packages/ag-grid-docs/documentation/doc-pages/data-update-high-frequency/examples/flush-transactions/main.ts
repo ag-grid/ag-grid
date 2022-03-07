@@ -152,7 +152,7 @@ const gridOptions: GridOptions = {
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   asyncTransactionWaitMillis: 4000,
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.trade
   },
   defaultColDef: {

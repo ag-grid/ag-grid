@@ -75,7 +75,7 @@ The example has Cell Editing enabled, however the editing does nothing because `
 This next example extends the above by getting the application to update the data.
 
 1. The application listens for `cellEditRequest` and updates the Row Data.
-1. The Row Data has ID's and `getRowKey` is implemented. This allows the grid to only refresh the desired row after new Row Data is set.
+1. The Row Data has ID's and `getRowId` is implemented. This allows the grid to only refresh the desired row after new Row Data is set.
 
 <grid-example title='Read Only Edit - Row Data' name='read-only-row-data' type='generated'></grid-example>
 

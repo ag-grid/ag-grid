@@ -111,7 +111,7 @@ const GridExample = () => {
             resizable: true,
         }
     }, []);
-    const getRowKey = useCallback(function (params) {
+    const getRowId = useCallback(function (params) {
         return params.data.id.toString();
     }, []);
     const getRowStyle = useCallback(function (params) {
@@ -233,7 +233,7 @@ const GridExample = () => {
                             maxBlocksInCache={2}
                             infiniteInitialRowCount={500}
                             maxConcurrentDatasourceRequests={2}
-                            getRowKey={getRowKey}
+                            getRowId={getRowId}
                             getRowStyle={getRowStyle}
                             onGridReady={onGridReady}
                         >

@@ -57,7 +57,7 @@ The following code snippet outlines the general approach, to iterate through all
 </snippet>
 
 [[note]]
-| Setting row data will NOT change the row node ID, so if you are using `getRowKey()`
+| Setting row data will NOT change the row node ID, so if you are using `getRowId()`
 | and the data changes such that the ID will be different, the `rowNode` will not have its ID updated.
 
 The example below shows this in action where the following can be noted:

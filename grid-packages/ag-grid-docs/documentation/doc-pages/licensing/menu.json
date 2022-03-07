@@ -209,9 +209,9 @@
         "icon": "icon-rows",
         "items": [
           {
-            "title": "Row Keys",
-            "box-title": "Keys",
-            "url": "/row-keys/",
+            "title": "Row IDs",
+            "box-title": "IDs",
+            "url": "/row-ids/",
             "showInCollapsed": true
           },
           {

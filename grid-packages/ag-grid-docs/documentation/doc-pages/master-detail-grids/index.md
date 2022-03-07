@@ -91,7 +91,7 @@ gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
 - The example is made more compact by a) setting Detail Row Height to 200 pixels and b) setting CSS to reduce padding around the Detail Grid.
-- The callback `getRowKey` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
+- The callback `getRowId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
 - Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
 - Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
 

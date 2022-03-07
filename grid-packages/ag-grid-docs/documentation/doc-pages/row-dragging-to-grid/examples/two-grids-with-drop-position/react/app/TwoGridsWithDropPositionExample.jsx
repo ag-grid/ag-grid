@@ -72,7 +72,7 @@ export default class extends Component {
         return obj;
     }
 
-    getRowKey = params => params.data.id
+    getRowId = params => params.data.id
 
     addRecordToGrid(side, data) {
         // if data missing or data has no it, do nothing
@@ -193,7 +193,7 @@ export default class extends Component {
             <div style={{ height: '100%' }} className="inner-col" ref={this[`e${side}Grid`]}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
-                    getRowKey={this.getRowKey}
+                    getRowId={this.getRowId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}

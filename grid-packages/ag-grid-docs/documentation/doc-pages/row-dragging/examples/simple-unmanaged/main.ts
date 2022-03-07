@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
   // this tells the grid we are doing updates when setting new data
   animateRows: true,
   onRowDragMove: onRowDragMove,
-  getRowKey: getRowKey,
+  getRowId: getRowId,
   onSortChanged: onSortChanged,
   onFilterChanged: onFilterChanged,
   onGridReady: function onGridReady() {
@@ -70,7 +70,7 @@ function onFilterChanged() {
   gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
 }
 
-function getRowKey(params: GetRowKeyParams) {
+function getRowId(params: GetRowKeyParams) {
   return params.data.id
 }
 

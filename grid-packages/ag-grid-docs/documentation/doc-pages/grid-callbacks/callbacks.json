@@ -7,7 +7,7 @@
             "displayName": "Rows"
         },
         "getBusinessKeyForNode": {},
-        "getRowKey": {},
+        "getRowId": {},
         "processRowPostCreate": {},
         "isRowSelectable": {
             "more": {

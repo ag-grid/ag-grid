@@ -46,7 +46,7 @@ There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object
 
 - ### Providing Row Keys (Faster)
 
-  If you are providing [Row Keys](/row-keys/) using the grid callback `getRowKey()` then the grid will match data provided in the transaction with data in the grid using the key.
+  If you are providing [Row IDs](/row-ids/) using the grid callback `getRowId()` then the grid will match data provided in the transaction with data in the grid using the key.
 
   For updating rows, the grid will find the row with the same key and then swap the data out for the
   newly provided data.
@@ -56,7 +56,7 @@ There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object
 
   <snippet>
   const gridOptions = {
-      getRowKey: (params) => params.data.employeeId
+      getRowId: (params) => params.data.employeeId
   }
   </snippet>
 
@@ -82,7 +82,7 @@ There are two approaches you can take: 1) Providing Row Keys, or 2) Using Object
 
 - ### Using Object References (Slower)
 
-  If you do not provide [Row Keys](/row-keys/) for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid will find those rows using the `===` operator on the data that you previously provided.
+  If you do not provide [Row IDs](/row-ids/) for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid will find those rows using the `===` operator on the data that you previously provided.
 
   When using object references, note the following:
 

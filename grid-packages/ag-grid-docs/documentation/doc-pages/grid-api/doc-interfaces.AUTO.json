@@ -2763,7 +2763,7 @@
       "type": { "returnType": "any[] | null", "optional": true }
     },
     "immutableData": {
-      "description": "/** @deprecated Immutable Data is on by default when grid callback getRowKey() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
+      "description": "/** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented\nEnables Immutable Data mode, for compatibility with immutable stores. Default: `false`\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "asyncTransactionWaitMillis": {
@@ -3266,10 +3266,10 @@
       }
     },
     "getRowNodeId": {
-      "description": "/** @deprecated Use getRowKey instead - however be aware, getRowKey() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "description": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
-    "getRowKey": {
+    "getRowId": {
       "description": "/** Allows you to set the ID for a particular row based on the data. */",
       "type": { "returnType": "GetRowKeyFunc", "optional": true }
     },

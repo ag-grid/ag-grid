@@ -141,7 +141,7 @@ const GridExample = () => {
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        getRowKey={params => params.data.row}
+                        getRowId={params => params.data.row}
                         context={{
                             methodFromParent
                         }}

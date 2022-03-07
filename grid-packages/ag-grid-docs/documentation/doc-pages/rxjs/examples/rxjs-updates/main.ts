@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   columnDefs: columnDefs,
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.code
   },
   onGridReady: function (params) {

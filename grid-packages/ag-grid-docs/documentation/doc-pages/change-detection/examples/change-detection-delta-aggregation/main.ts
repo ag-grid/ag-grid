@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.id
   },
   onGridReady: function (params) {

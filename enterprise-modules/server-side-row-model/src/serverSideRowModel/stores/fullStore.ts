@@ -231,12 +231,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
-            if (!getRowKeyFunc) { return undefined; }
+            const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+            if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
             const level = this.level;
-            const id = getRowKeyFunc({
+            const id = getRowIdFunc({
                                 data, 
                                 parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
                                 level,
@@ -616,14 +616,14 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
+        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
 
         let rowNode: RowNode;
-        if (getRowKeyFunc!=null) {
+        if (getRowIdFunc!=null) {
             // find rowNode using id
             const level = this.level;
             const parentKeys = this.parentRowNode.getGroupKeys();
-            const id: string = getRowKeyFunc({
+            const id: string = getRowIdFunc({
                                         data, 
                                         parentGroups: parentKeys.length > 0 ? parentKeys : undefined, 
                                         level,

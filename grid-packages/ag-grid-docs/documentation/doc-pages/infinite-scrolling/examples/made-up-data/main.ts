@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   maxBlocksInCache: 2,
   suppressRowClickSelection: true,
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.a
   },
   datasource: getDataSource(100),

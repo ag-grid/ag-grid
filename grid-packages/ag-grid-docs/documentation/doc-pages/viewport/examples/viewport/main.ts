@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   rowModelType: 'viewport',
   // implement this so that we can do selection
-  getRowKey: function (params) {
+  getRowId: function (params) {
     // the code is unique, so perfect for the id
     return params.data.code
   },

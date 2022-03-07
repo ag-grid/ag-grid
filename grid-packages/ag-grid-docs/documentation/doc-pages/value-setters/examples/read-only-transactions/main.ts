@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     editable: true,
   },
-  getRowKey: params => params.data.id,
+  getRowId: params => params.data.id,
   readOnlyEdit: true,
   onCellEditRequest: onCellEditRequest
 }

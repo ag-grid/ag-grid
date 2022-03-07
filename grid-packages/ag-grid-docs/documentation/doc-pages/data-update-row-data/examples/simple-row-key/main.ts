@@ -28,7 +28,7 @@ var gridOptions: GridOptions = {
   rowData: rowDataA,
   rowSelection: 'single',
   animateRows: true,
-  getRowKey: params => params.data.id
+  getRowId: params => params.data.id
 };
 
 function onRowDataA() {

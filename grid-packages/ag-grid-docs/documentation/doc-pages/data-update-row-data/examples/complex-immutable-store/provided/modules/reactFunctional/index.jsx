@@ -359,7 +359,7 @@ const GridExample = () => {
             },
         }
     }, []);
-    const getRowKey = useCallback(function (params) {
+    const getRowId = useCallback(function (params) {
         return params.data.trade;
     }, []);
 
@@ -392,7 +392,7 @@ const GridExample = () => {
                         groupSelectsChildren={true}
                         animateRows={true}
                         suppressAggFuncInHeader={true}
-                        getRowKey={getRowKey}
+                        getRowId={getRowId}
                     >
                     </AgGridReact>
                 </div>

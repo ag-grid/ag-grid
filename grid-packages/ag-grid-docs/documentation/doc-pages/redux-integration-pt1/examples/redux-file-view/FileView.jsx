@@ -37,7 +37,7 @@ class FileView extends Component {
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}
-          getRowKey={params => params.data.id}
+          getRowId={params => params.data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
           groupDefaultExpanded={-1}
           onFirstDataRendered={params => params.api.sizeColumnsToFit()}

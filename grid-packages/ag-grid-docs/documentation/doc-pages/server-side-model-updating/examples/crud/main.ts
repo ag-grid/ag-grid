@@ -21,10 +21,10 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
   serverSideStoreType: 'partial',
-  getRowKey: getRowKey
+  getRowId: getRowId
 }
 
-function getRowKey(params: GetRowKeyParams) {
+function getRowId(params: GetRowKeyParams) {
   return params.data.id;
 }
 

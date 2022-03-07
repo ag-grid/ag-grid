@@ -620,7 +620,7 @@ export interface GridOptions {
     /** Set the data to be displayed as rows in the grid. */
     rowData?: any[] | null;
     /** 
-     * @deprecated Immutable Data is on by default when grid callback getRowKey() is implemented
+     * @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
      * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
     immutableData?: boolean;
     /** How many milliseconds to wait before executing a batch of async transactions. */
@@ -880,11 +880,11 @@ export interface GridOptions {
      */
     getBusinessKeyForNode?: (node: RowNode) => string;
     /**
-     * @deprecated Use getRowKey instead - however be aware, getRowKey() will also set grid option immutableData=true 
+     * @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true 
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to set the ID for a particular row based on the data. */
-    getRowKey?: GetRowKeyFunc;
+    getRowId?: GetRowKeyFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */

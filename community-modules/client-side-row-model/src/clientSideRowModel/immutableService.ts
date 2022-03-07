@@ -57,9 +57,9 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             return;
         }
 
-        const getRowKeyFunc = this.gridOptionsWrapper.getRowKeyFunc();
-        if (getRowKeyFunc==null) {
-            console.error('AG Grid: ImmutableService requires getRowKey() callback to be implemented, your row data needs IDs!');
+        const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+        if (getRowIdFunc==null) {
+            console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;
         }
 
@@ -81,7 +81,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             // if update, push to 'update'
             // if not changed, do not include in the transaction
             rowData.forEach((data: any, index: number) => {
-                const id: string = getRowKeyFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
+                const id: string = getRowIdFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 if (orderMap) {

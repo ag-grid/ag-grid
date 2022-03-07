@@ -68,7 +68,7 @@ const leftGridOptions = {
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.athlete;
     },
     rowDragManaged: true,
@@ -88,7 +88,7 @@ const rightGridOptions = {
         filter: true,
         resizable: true
     },
-    getRowKey: function (params) {
+    getRowId: function (params) {
         return params.data.athlete;
     },
     rowDragManaged: true,

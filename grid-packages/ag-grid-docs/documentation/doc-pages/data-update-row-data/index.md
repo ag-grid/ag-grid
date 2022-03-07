@@ -8,14 +8,14 @@ The example below shows the data with two sets of data. Clicking the buttons tog
 
 <grid-example title='Simple Row Data' name='simple-row-data' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
 
-The example below is identical to the above except [Row Keys](/row-keys/) are provided via the `getRowKey()` callback. This results in Row Selection is maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in Row Animation (`animateRows=true`) of the rows.
+The example below is identical to the above except [Row IDs](/row-ids/) are provided via the `getRowId()` callback. This results in Row Selection is maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in Row Animation (`animateRows=true`) of the rows.
 
 <grid-example title='Simple Row Key' name='simple-row-key' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
 
-Providing [Row Keys](/row-keys/) allows the grid to work more optimally in a few ares which are outlined as follows:
+Providing [Row IDs](/row-ids/) allows the grid to work more optimally in a few ares which are outlined as follows:
 
 
-| Function | Row Keys Provided | Row Keys Missing | 
+| Function | Row IDs Provided | Row IDs Missing | 
 | ----------------------------- | ------------------------- | ------------------------ | 
 | Row Selection | Row Selection maintained | Row Selection lost |
 | Row Grouping | Row Groups re-created, all open groups closed | Groups kept / updated, open groups stay open |
@@ -54,7 +54,7 @@ Note the following.
 
 ## How It Works
 
-When providing Row Keys, the grid assumes it is fed with data from an immutable store where the following is true about the data:
+When providing Row IDs, the grid assumes it is fed with data from an immutable store where the following is true about the data:
 
 - Changes to a single row data item results in a new row data item object instance.
 - Any changes within the list or row data results in a new list.
@@ -73,7 +73,7 @@ The grid works out what changes need to be applied to the grid using the followi
 
 Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over three columns. As far as Client-Side Row Data goes, this is a fairly complex grid. From the example, note the following:
 
-- Row Keys are provided using the callback `getRowKey()`.
+- Row Keys are provided using the callback `getRowId()`.
 - Selecting the Update button updates a range of the data.
 - Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
 

@@ -105,7 +105,7 @@ const GridExample = () => {
             statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
         }
     }, []);
-    const getRowKey = useCallback(function (params) {
+    const getRowId = useCallback(function (params) {
         return params.data.symbol;
     }, []);
 
@@ -222,7 +222,7 @@ const GridExample = () => {
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}
-                            getRowKey={getRowKey}
+                            getRowId={getRowId}
                             onGridReady={onGridReady}
                         >
                         </AgGridReact>

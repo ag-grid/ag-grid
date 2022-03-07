@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
     }
     params.api.setServerSideDatasource(dataSource)
   },
-  getRowKey: function (params) {
+  getRowId: function (params) {
     return params.data.product
   },
   rowSelection: 'multiple',

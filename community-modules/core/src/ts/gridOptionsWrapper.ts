@@ -813,8 +813,8 @@ export class GridOptionsWrapper {
 
     public isImmutableData() {
         // we used to have a property immutableData for this. however this was deprecated
-        // in favour of having Immutable Data on by default when getRowKey is provided
-        return this.gridOptions.getRowKey!=null || isTrue(this.gridOptions.immutableData);
+        // in favour of having Immutable Data on by default when getRowId is provided
+        return this.gridOptions.getRowId!=null || isTrue(this.gridOptions.immutableData);
     }
 
     public isEnsureDomOrder() {
@@ -1256,10 +1256,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getRowKeyFunc(): GetRowKeyFunc | undefined {
-        const {getRowKey, getRowNodeId} = this.gridOptions;
-        if (getRowKey) {
-            return getRowKey;
+    public getRowIdFunc(): GetRowKeyFunc | undefined {
+        const {getRowId, getRowNodeId} = this.gridOptions;
+        if (getRowId) {
+            return getRowId;
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
@@ -1734,10 +1734,10 @@ export class GridOptionsWrapper {
         }
 
         if (options.getRowNodeId) {
-            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecate and has been replaced by `getRowKey`. The difference is if getRowKey() is implemented, immutable data is on by default.');
+            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecate and has been replaced by `getRowId`. The difference is if getRowId() is implemented, immutable data is on by default.');
         }
         if (options.immutableData) {
-            console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To turn on, implement `getRowKey` has been replaced by `getRowKey`. The difference is if getRowKey() is implemented, immutable data is on by default.');
+            console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To turn on, implement `getRowId` has been replaced by `getRowId`. The difference is if getRowId() is implemented, immutable data is on by default.');
         }
         if (options.clipboardDeliminator) {
             console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
