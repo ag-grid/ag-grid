@@ -45,7 +45,9 @@ The `allowedCharPattern` is a regex of all the characters that are allowed to be
 
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
 
-The example below shows custom number support in action. The first column shows the default behaviour, and the second column uses commas for decimals and allows a dollar sign ($) to be included.
+The example below shows custom number support in action:
+-  The first column shows the default behaviour, and the second column uses commas for decimals and allows a dollar sign ($) to be included.
+- Floating filters are enabled and also react to the configuration of `allowedCharPattern`.
 
 <grid-example title='Number Filter' name='number-filter' type='generated'></grid-example>
 

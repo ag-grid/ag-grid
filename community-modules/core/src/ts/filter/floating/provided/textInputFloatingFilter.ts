@@ -11,7 +11,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
-import { NumberFilterModel } from '../../provided/number/numberFilter';
+import { NumberFilterModel, INumberFilterParams } from '../../provided/number/numberFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
@@ -24,10 +24,15 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
     @PostConstruct
     private postConstruct(): void {
+        this.resetTemplate();
+    }
+
+    private resetTemplate(paramsMap?: any) {
         this.setTemplate(/* html */`
             <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>
-            </div>`);
+            </div>
+        `, paramsMap);
     }
 
     protected getDefaultDebounceMs(): number {
@@ -50,6 +55,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
 
         this.params = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
+
+        const { allowedCharPattern } = this.params.filterParams as INumberFilterParams;
+        if (allowedCharPattern != null) {
+            this.resetTemplate({ eFloatingFilterInput: { allowedCharPattern } });
+        }
 
         if (!this.isReadOnly()) {
             const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());

@@ -233,7 +233,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public getModel(): M | null {
-        return this.appliedModel ? _.deepCloneObject(this.appliedModel) : null;
+        return this.appliedModel ? this.appliedModel : null;
     }
 
     public setModel(model: M | null): AgPromise<void> {
