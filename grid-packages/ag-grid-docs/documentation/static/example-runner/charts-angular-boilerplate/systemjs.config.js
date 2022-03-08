@@ -127,7 +127,7 @@
                 }
             },
             'ag-charts-angular': {
-                main: './bundles/ag-charts-angular.umd.js',
+                main: './bundles/ag-charts-angular.umd.min.js',
                 defaultExtension: 'js'
             },
             rxjs: {
