@@ -55,12 +55,7 @@ export const getExampleInfo = (
             framework === 'javascript' ?
                 useTypescript ? 'typescript' : 'javascript' :
                 framework;
-    let boilerplatePath;
-    if (library === 'charts') {
-        boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
-    } else {
-        boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/${importType}/`;
-    }
+    const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;

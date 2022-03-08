@@ -15,7 +15,6 @@ import {
 
 import { isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
-const moduleMapping = require('../../../doc-pages/modules/modules.json');
 
 const localConfiguration = {
     gridMap: {
@@ -140,24 +139,8 @@ const publishedConfiguration = {
     chartPaths: {}
 };
 
-function findModules(modules) {
-    const requiredModules = [];
-    modules.forEach(module => {
-        let found = false;
-        moduleMapping.forEach(moduleConfig => {
-            if ((moduleConfig.shortname && moduleConfig.shortname === module) || (moduleConfig.module === module)) {
-                requiredModules.push(moduleConfig);
-                found = true;
-            }
-        });
-        if (!found && module !== 'ag-charts-community') {
-            console.error(`Could not find module ${module} in modules.json`);
-        }
-    });
-    return requiredModules;
-}
 
-function getRelevantConfig(configuration, framework, importType, library, modules) {
+function getRelevantConfig(configuration, framework, importType, modules) {
     const filterByFramework = ([k, v]) => {
         const inverseFrameworks = {
             react: ['angular', 'vue', 'vue3'],
@@ -168,48 +151,9 @@ function getRelevantConfig(configuration, framework, importType, library, module
         }
         return !inverseFrameworks[framework].some(f => k.endsWith(f));
     }
-    const filterByImportType = ([k, v]) => {
-        let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
-        const moduleNames = findModules(exampleModules).map(m => m.module);
 
-        if (importType === 'packages') {
-
-            if (!k.startsWith('@')) {
-                let hideCharts = true;
-                if (moduleNames.some(i => i.includes('charts'))) {
-                    hideCharts = false;
-                }
-                if (hideCharts && k.includes('ag-charts')) {
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        // Require the framework modules
-        // All the grid modules depend on core so add that here.
-        let required = [`@ag-grid-community/${framework}`, '@ag-grid-community/core'];
-        if (moduleNames.some(i => i.includes('enterprise'))) {
-            required.push('@ag-grid-enterprise/core');
-        }
-
-        const addDependentModules = (names) => {
-            required = [...required, ...names]
-            const mods = findModules(names);
-            mods.forEach(m => {
-                if (m.dependencies) {
-                    addDependentModules(m.dependencies)
-                }
-            })
-        }
-        addDependentModules(moduleNames);
-
-        return required.some(m => k.includes(m));
-    }
 
     const filterOutChartWrapper = ([k, v]) => {
-
         // integrated does not need the charts framework wrapper
         if (k.includes('ag-charts')) {
             return k !== `ag-charts-${framework}`;
@@ -222,7 +166,6 @@ function getRelevantConfig(configuration, framework, importType, library, module
         Object.entries(config)
             .filter(filterOutChartWrapper)
             .filter(filterByFramework)
-            .filter(filterByImportType)
             .sort(([k1, v1], [k2, v2]) => k1 < k2 ? -1 : 1)
             .forEach(([k, v]) => {
                 valid[k] = v;
@@ -305,7 +248,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
         };
     }
-    configuration = getRelevantConfig(configuration, framework, importType, library, options.modules);
+    configuration = getRelevantConfig(configuration, framework, importType, options.modules);
 
     let systemJsMap;
     let systemJsPaths;
