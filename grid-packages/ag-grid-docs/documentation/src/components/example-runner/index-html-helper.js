@@ -13,7 +13,7 @@ import { getEntryFile } from './helpers';
  * This generates the HTML to execute an example.
  */
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
-    const { sourcePath, options, library } = exampleInfo;
+    const { sourcePath, options, library, importType } = exampleInfo;
     let { boilerplatePath, appLocation, framework, internalFramework } = exampleInfo;
 
     const getFileUrl = file =>
@@ -44,7 +44,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         library,
         appLocation,
         options,
-        styleFiles
+        styleFiles,
+        importType
     };
 
     switch (framework) {
@@ -72,16 +73,28 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         }
 
         case 'angular':
-        case 'react':
-        case 'vue': {
+        case 'react': {
             const frameworkTemplates = {
                 angular: AngularTemplate,
                 react: ReactTemplate,
+            };
+
+            const FrameworkTemplate = frameworkTemplates[framework];
+
+            element = <FrameworkTemplate
+                boilerplatePath={boilerplatePath}
+                scriptFiles={scriptFiles}
+                {...templateProps} />;
+
+            break;
+        }
+        case 'vue': {
+            const frameworkTemplates = {
                 vue: VueTemplate,
                 vue3: Vue3Template
             };
 
-            const FrameworkTemplate = frameworkTemplates[framework];
+            const FrameworkTemplate = frameworkTemplates[internalFramework];
 
             element = <FrameworkTemplate
                 boilerplatePath={boilerplatePath}

@@ -14,7 +14,7 @@ const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 /**
  * This is the template for executing Typescript examples in the example runner.
  */
-const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, indexFragment }) => {
+const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, indexFragment, importType }) => {
 
     return <html lang="en">
         <head>
@@ -29,12 +29,13 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
             boilerplatePath={boilerplatePath}
             options={options}
             scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
-            indexFragment={indexFragment} />
+            indexFragment={indexFragment}
+            importType={importType} />
     </html>;
 
 }
 
-const TypescriptBody = ({ library, boilerplatePath, appLocation, options, scriptFiles, indexFragment }) => {
+const TypescriptBody = ({ library, boilerplatePath, appLocation, options, scriptFiles, indexFragment, importType }) => {
 
     const bodySuffix = ReactDOMServer.renderToStaticMarkup(
         <>
@@ -45,6 +46,8 @@ const TypescriptBody = ({ library, boilerplatePath, appLocation, options, script
                 boilerplatePath={boilerplatePath}
                 appLocation={appLocation}
                 startFile={appLocation + 'main.ts'}
+                framework={'typescript'}
+                importType={importType}
                 options={options} />
         </>
     );

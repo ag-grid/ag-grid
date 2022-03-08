@@ -359,16 +359,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
         module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`);
 
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID CSS DEV - DO NOT DELETE */',
-        '        /* END OF GRID CSS DEV - DO NOT DELETE */',
-        cssFiles,
-        [],
-        cssFile => [
-            `        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`
-        ].join(EOL),
-        () => {
-        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
@@ -386,17 +376,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridEnterpriseModules.filter(module => module.moduleDirName !== 'all-modules'),
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`);
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID CSS PROD - DO NOT DELETE */',
-        '        /* END OF GRID CSS PROD - DO NOT DELETE */',
-        cssFiles,
-        [],
-        cssFile => [
-            `        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`
-        ].join(EOL),
-        () => {
-        });
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
