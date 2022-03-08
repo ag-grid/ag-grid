@@ -16,6 +16,10 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         if (this.config.allowedCharPattern) {
             this.preventDisallowedCharacters();
         }
+
+        if (this.eInput.type === 'number') {
+            this.eInput.step = 'any';
+        }
     }
 
     public setValue(value?: string | null, silent?: boolean): this {
