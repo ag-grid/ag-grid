@@ -195,14 +195,6 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Rich select editor.</td>
         </tr>
         <tr>
-            <td>agPopupTextCellEditor</td>
-            <td>Popup text cell editor.</td>
-        </tr>
-        <tr>
-            <td>agPopupSelectCellEditor</td>
-            <td>Popup select cell editor.</td>
-        </tr>
-        <tr>
             <td>agLargeTextCellEditor</td>
             <td>Large text cell editor.</td>
         </tr>
