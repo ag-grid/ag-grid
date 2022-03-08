@@ -23,7 +23,11 @@ const gridOptions = {
             // provides params to the Cell Editor
             cellEditorParams: {
                 foo: 'bar'
-            }
+            },
+            // show this editor in a popup
+            cellEditorPopup: true,
+            // position the popup under the cell
+            cellEditorPopupPosition: 'under'
         }
     ]
 }
