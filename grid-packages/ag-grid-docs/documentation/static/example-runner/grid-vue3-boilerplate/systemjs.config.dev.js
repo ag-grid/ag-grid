@@ -19,19 +19,19 @@
         },
         map: assign(
             {
-                // css plugin
-                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
-
                 // babel transpiler
                 'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-                // react
-                react: 'npm:react@16.13.1',
-                'react-dom': 'npm:react-dom@16.13.1',
-                redux: 'npm:redux@3.6.0',
-                'react-redux': 'npm:react-redux@5.0.6',
-                'prop-types': 'npm:prop-types@15.8.1',
+                // css plugin
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+
+                // vuejs
+                'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
+                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.js',
+
+                // vue class component
+                'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
                 app: appLocation + 'app'
             },
@@ -39,32 +39,32 @@
         ), // systemJsMap comes from index.html
 
         packages: {
-            react: {
-                main: './umd/react.profiling.min.js'
-            },
-            'react-dom': {
-                main: './umd/react-dom.profiling.min.js'
-            },
-            'react-dom/server': {
-                main: '../umd/react-dom-server.browser.production.min.js'
-            },
-            'prop-types': {
-                main: './prop-types.min.js',
+            'vue': {
                 defaultExtension: 'js'
             },
-            redux: {
-                main: './dist/redux.min.js',
+            'vue-class-component': {
                 defaultExtension: 'js'
             },
-            'react-redux': {
-                main: './dist/react-redux.min.js',
+            'vue-property-decorator': {
                 defaultExtension: 'js'
             },
             app: {
-                defaultExtension: 'jsx'
+                defaultExtension: 'js'
             },
-            '@ag-grid-community/react': {
-                main: './main.js',
+            'ag-grid-vue3': {
+                main: './lib/AgGridVue.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-community': {
+                main: './dist/ag-grid-community.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-enterprise': {
+                main: './dist/ag-grid-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-community/vue3': {
+                main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
@@ -180,9 +180,11 @@
             /* END OF MODULES - DO NOT DELETE */
         },
         meta: {
-            '*.jsx': {
+            '*.js': {
                 babelOptions: {
-                    react: true
+                    stage1: true,
+                    stage2: true,
+                    es2015: true
                 }
             },
             '*.css': { loader: 'css' }

@@ -51,6 +51,18 @@
             app: {
                 defaultExtension: 'js'
             },
+            'ag-grid-vue': {
+                main: './lib/AgGridVue.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-community': {
+                main: './dist/ag-grid-community.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-enterprise': {
+                main: './dist/ag-grid-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/vue': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
