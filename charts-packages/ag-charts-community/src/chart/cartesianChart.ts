@@ -121,14 +121,14 @@ export class CartesianChart extends Chart {
                 case ChartAxisPosition.Right:
                     axisPositionVisited[ChartAxisPosition.Right] = true;
                     shrinkRect.width -= axisThickness;
-                    axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width);
+                    axis.translation.x = Math.max(Math.floor(shrinkRect.x), Math.floor(shrinkRect.x + shrinkRect.width));
                     axis.label.mirrored = true;
                     break;
                 case ChartAxisPosition.Bottom:
                     axisPositionVisited[ChartAxisPosition.Bottom] = true;
                     shrinkRect.height -= axisThickness;
                     bottomAxesHeight += axisThickness;
-                    axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
+                    axis.translation.y = Math.max(Math.floor(shrinkRect.y), Math.floor(shrinkRect.y + shrinkRect.height + 1));
                     break;
                 case ChartAxisPosition.Left:
                     axisPositionVisited[ChartAxisPosition.Left] = true;
