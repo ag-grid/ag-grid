@@ -140,7 +140,7 @@ const publishedConfiguration = {
 };
 
 
-function getRelevantConfig(configuration, framework, importType, modules) {
+function getRelevantConfig(configuration, framework) {
     const filterByFramework = ([k, v]) => {
         const inverseFrameworks = {
             react: ['angular', 'vue', 'vue3'],
@@ -197,7 +197,7 @@ function getRelevantConfig(configuration, framework, importType, modules) {
  * Our framework examples use SystemJS to load the various dependencies. This component is used to insert the required
  * code to load SystemJS and the relevant modules depending on the framework.
  */
-const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, framework, importType }) => {
+const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, framework }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
     let configuration = isUsingPublishedPackages() ? publishedConfiguration : localConfiguration;
@@ -248,7 +248,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
         };
     }
-    configuration = getRelevantConfig(configuration, framework, importType, options.modules);
+    configuration = getRelevantConfig(configuration, framework);
 
     let systemJsMap;
     let systemJsPaths;
