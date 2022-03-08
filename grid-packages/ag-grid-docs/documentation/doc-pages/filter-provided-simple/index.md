@@ -298,14 +298,14 @@ In the following example you can filter by age or date and see how blank values 
 
 ## Data Updates
 
-Grid data can be updated in a number of way, including:
+Grid data can be updated in a number of ways, including:
 - [Cell Editing](/cell-editing/).
 - [Updating Data](/data-update/).
 - [Clipboard Operations](/clipboard/).
 
 Simple filters are not affected by data changes, as is demonstrated by the following example:
-- Apply filters to observe the configured simple filters becoming active.
-- Hit the `Refresh Data` button to update the grid data.
+- Perform some filtering using the configured simple filters.
+- Click the **Refresh Data** button to update the grid data.
 - Observe that filters remain unchanged.
 
 <grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside"] }'></grid-example>
