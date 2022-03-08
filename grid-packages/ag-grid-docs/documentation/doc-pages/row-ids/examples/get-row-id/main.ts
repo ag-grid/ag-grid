@@ -2,6 +2,7 @@ import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
 
 
 var columnDefs: ColDef[] = [
+  {headerName: "Row ID", valueGetter: 'node.id'},
   {field: "make"},
   {field: "model"},
   {field: "price"}
@@ -9,23 +10,18 @@ var columnDefs: ColDef[] = [
     
 // specify the data
 var rowData = [
-  {id: 'car-t', make: "Toyota", model: "Celica", price: 35000},
-  {id: 'car-f', make: "Ford", model: "Mondeo", price: 32000},
-  {id: 'car-p', make: "Porsche", model: "Boxter", price: 72000},
-  {id: 'car-b', make: "BMW", model: "M50", price: 60000},
-  {id: 'car-a', make: "Aston Martin", model: "DBX", price: 190000}
+  {id: 'c1', make: "Toyota", model: "Celica", price: 35000},
+  {id: 'c2', make: "Ford", model: "Mondeo", price: 32000},
+  {id: 'c8', make: "Porsche", model: "Boxter", price: 72000},
+  {id: 'c4', make: "BMW", model: "M50", price: 60000},
+  {id: 'c14', make: "Aston Martin", model: "DBX", price: 190000}
 ];
 
 // let the grid know which columns and what data to use
 var gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: rowData,
-  getRowId: params => params.data.id,
-  rowSelection: 'single',
-  onGridReady: params => {
-    const carF = params.api.getRowNode('car-f')!;
-    carF.setSelected(true);
-  }
+  getRowId: params => params.data.id
 };
 
 // setup the grid after the page has finished loading

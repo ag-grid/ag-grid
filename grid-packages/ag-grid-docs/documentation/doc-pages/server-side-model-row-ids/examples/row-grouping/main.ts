@@ -20,6 +20,11 @@ const gridOptions: GridOptions = {
   },
 
   getRowId: params => {
+    // if leaf level, we have ID
+    if (params.data.id!=null) {
+      return params.data.id;
+    }
+
     // this array will contain items that will compose the unique key
     var parts = [];
 
@@ -33,11 +38,6 @@ const gridOptions: GridOptions = {
     var thisGroupCol = rowGroupCols[params.level];
     if (thisGroupCol) {
       parts.push(params.data[thisGroupCol.getColDef().field!]);
-    }
-
-    // if there is an id (happens on leaf level for this example) then add that
-    if (params.data.id) {
-      parts.push(params.data.id);      
     }
 
     const res = parts.join('-');
