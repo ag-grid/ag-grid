@@ -48,7 +48,7 @@ By default, the quick filter checks each column's value, including running value
 
 <api-documentation source='grid-properties/properties.json' section='filter' names='["cacheQuickFilter"]'></api-documentation>
 
-When the cache is enabled, a 'quick filter text' is generated for each node by concatenating all the values for each column. For example, a table with columns of "Employee Name" and "Job" could have a row with quick filter text of `'NIALL CROSBY\nCOFFEE MAKER'`. The grid then performs a simple string search, so if you search for `'Niall'`, it will find our example text. Joining all the column's values into one string gives a huge performance boost. The values are joined after the quick filter is requested for the first time and stored in the `rowNode` - the original data that you provide is not changed.
+When the cache is enabled, a 'quick filter text' is generated for each node by concatenating all the values for each column. For example, a table with columns of "Employee Name" and "Job" could have a row with quick filter text of `'NIALL CROSBY\nCOFFEE MAKER'`. The grid then performs a simple string search, so if you search for `'Niall'`, it will find our example text. Joining all the column's values into one string gives a performance boost. The values are joined after the quick filter is requested for the first time and stored in the `rowNode` - the original data that you provide is not changed.
 
 ## Reset Cache Text
 
@@ -70,8 +70,8 @@ The example below shows the quick filter working on different data types. Each c
 
 The example also demonstrates having the quick filter cache turned on. The grid works very fast even when the cache is turned off, so you probably don't need it for small data sets. For large data sets (e.g. over 10,000 rows), turning the cache on will improve quick filter speed. Tweaking the `cacheQuickFilter` option in the example allows both modes to be experimented with:
 
-- **Cache Quick Filter (example default):** The cache is used. Value getters are executed the first time the quick filter is run. Hitting 'Print Quick Filter Texts' will return back the quick filter text for each row which will initially be `undefined` and then return the quick filter text after the quick filter is executed for the first time. You will notice the quick filter text is correct for each column except E (which would be fixed by adding an appropriate `getQuickFilterText` method as we do for D).
-- **Normal Quick Filter:** The cache is not used. Value getters are executed on every node each time the filter is executed. Hitting 'Print Quick Filter Texts' will always return `undefined` for every row because the cache is not used.
+- **Cache Quick Filter (example default):** The cache is used. Value getters are executed the first time the quick filter is run. Hitting 'Print Quick Filter Cache Texts' will return back the quick filter text for each row which will initially be `undefined` and then return the quick filter text after the quick filter is executed for the first time.
+- **Normal Quick Filter:** The cache is not used. Value getters are executed on every node each time the filter is executed. Hitting 'Print Quick Filter Cache Texts' will always return `undefined` for every row because the cache is not used.
 
 <grid-example title='Quick Filter' name='quick-filter' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
 
