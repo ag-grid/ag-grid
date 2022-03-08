@@ -46,12 +46,16 @@ const gridOptions: GridOptions = {
   },
 }
 
-function refreshData() {
+function jumbleData() {
   if (fetchedData) {
-    gridOptions.api!.setRowData(
-      // Force reload by mutating fetched data - some frameworks otherwise don't trigger an update.
-      fetchedData.map(d => ({ ...d, random: Math.random() }))
-    );
+    const ages = fetchedData.map(d => d.age);
+    // Force reload by mutating fetched data - jumble the ages.
+    const jumbledData = fetchedData.map(d => { 
+      const randomAgeIndex = Math.round(Math.random() * (ages.length - 1));
+      return { ...d, age: ages.splice(randomAgeIndex, 1)[0] };
+    });
+
+    gridOptions.api!.setRowData(jumbledData);
   }
 }
 
@@ -63,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      fetchedData = data;
-      gridOptions.api!.setRowData(data);
+      fetchedData = data.slice(0, 9);
+      gridOptions.api!.setRowData(fetchedData);
     });
 });

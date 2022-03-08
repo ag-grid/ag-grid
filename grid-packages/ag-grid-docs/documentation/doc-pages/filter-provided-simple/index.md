@@ -304,9 +304,12 @@ Grid data can be updated in a number of ways, including:
 - [Clipboard Operations](/clipboard/).
 
 Simple filters are not affected by data changes, as is demonstrated by the following example:
-- Perform some filtering using the configured simple filters.
-- Click the **Refresh Data** button to update the grid data.
-- Observe that filters remain unchanged.
+- Perform some filtering using the configured simple filters, such as filtering by **Age** equals
+  `24`.
+- Click the **Jumble Ages** button to update the grid data by jumbling values in the **Age** column
+  between rows.
+- Observe that filters remain unchanged, but the displayed rows change to those now assigned an age
+  of `24`.
 
 <grid-example title='Date Updates' name='simple-data-update' type='generated' options='{ "enterprise": false, "modules": ["clientside"] }'></grid-example>
 
