@@ -84,7 +84,8 @@ export class CheckboxSelectionComponent extends Component {
             const isSelected = this.eCheckbox.getValue();
             const previousValue = this.eCheckbox.getPreviousValue();
 
-            if (previousValue === undefined) { // indeterminate
+            if (previousValue === undefined || isSelected === undefined) {
+                // Indeterminate state - try toggling children to determine action.
                 const result = this.onUncheckedClicked(event || {});
                 if (result === 0) {
                     this.onCheckedClicked(event);
