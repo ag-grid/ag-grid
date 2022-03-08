@@ -1782,7 +1782,7 @@ export class GridOptionsWrapper {
         const { localeText } = this.gridOptions;
 
         return (key: string, defaultValue: string) => {
-            let localisedText = localeText && localeText[key];
+            const localisedText = localeText && localeText[key];
 
             return localisedText ?? defaultValue;
         };
@@ -1800,7 +1800,7 @@ export class GridOptionsWrapper {
             (this.gridOptions as any)[callbackMethodName](event);
         }
     }
-    
+
     private setRowHeightVariable(height: number): void {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-row-height').trim();
         const newRowHeight = `${height}px`;

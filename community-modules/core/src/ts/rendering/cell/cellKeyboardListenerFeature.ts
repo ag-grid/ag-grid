@@ -36,17 +36,17 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 this.onEnterKeyDown(event);
                 break;
             case KeyCode.F2:
-                this.onF2KeyDown();
+                this.onF2KeyDown(event);
                 break;
             case KeyCode.ESCAPE:
-                this.onEscapeKeyDown();
+                this.onEscapeKeyDown(event);
                 break;
             case KeyCode.TAB:
                 this.onTabKeyDown(event);
                 break;
             case KeyCode.BACKSPACE:
             case KeyCode.DELETE:
-                this.onBackspaceOrDeleteKeyPressed(key);
+                this.onBackspaceOrDeleteKeyPressed(key, event);
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
@@ -84,9 +84,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         this.beans.navigationService.onTabKeyDown(this.cellCtrl, event);
     }
 
-    private onBackspaceOrDeleteKeyPressed(key: string): void {
+    private onBackspaceOrDeleteKeyPressed(key: string, event: KeyboardEvent): void {
         if (!this.cellCtrl.isEditing()) {
-            this.cellCtrl.startRowOrCellEdit(key);
+            this.cellCtrl.startRowOrCellEdit(key, undefined, event);
         }
     }
 
@@ -97,7 +97,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
                 this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
             } else {
-                this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER);
+                this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, undefined, e);
                 if (this.cellCtrl.isEditing()) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
@@ -109,13 +109,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
         }
     }
 
-    private onF2KeyDown(): void {
+    private onF2KeyDown(event: KeyboardEvent): void {
         if (!this.cellCtrl.isEditing()) {
-            this.cellCtrl.startRowOrCellEdit(KeyCode.F2);
+            this.cellCtrl.startRowOrCellEdit(KeyCode.F2, undefined, event);
         }
     }
 
-    private onEscapeKeyDown(): void {
+    private onEscapeKeyDown(event: KeyboardEvent): void {
         if (this.cellCtrl.isEditing()) {
             this.cellCtrl.stopRowOrCellEdit(true);
             this.cellCtrl.focusCell(true);
@@ -134,7 +134,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (pressedChar === ' ') {
             this.onSpaceKeyPressed(event);
         } else if (isEventFromPrintableCharacter(event)) {
-            this.cellCtrl.startRowOrCellEdit(null, pressedChar);
+            this.cellCtrl.startRowOrCellEdit(null, pressedChar, event);
             // if we don't prevent default, then the keypress also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes

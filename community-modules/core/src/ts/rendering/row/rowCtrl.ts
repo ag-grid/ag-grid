@@ -1029,16 +1029,16 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(key: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
+    public startRowEditing(key: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null, event: KeyboardEvent | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
         this.getAllCellCtrls().forEach(cellCtrl => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellCtrl.startEditing(key, charPress, cellStartedEdit);
+                cellCtrl.startEditing(key, charPress, cellStartedEdit, event);
             } else {
-                cellCtrl.startEditing(null, null, cellStartedEdit);
+                cellCtrl.startEditing(null, null, cellStartedEdit, event);
             }
         });
         this.setEditingRow(true);
@@ -1083,8 +1083,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private getPinnedForContainer(rowContainerType: RowContainerType): string | null {
-        const pinned = rowContainerType===RowContainerType.LEFT ? Constants.PINNED_LEFT :
-                        rowContainerType===RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
+        const pinned = rowContainerType === RowContainerType.LEFT ? Constants.PINNED_LEFT :
+                        rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
         return pinned;
     }
 

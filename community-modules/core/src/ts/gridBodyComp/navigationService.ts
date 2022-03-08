@@ -336,7 +336,7 @@ export class NavigationService extends BeanStub {
     // result of keyboard event
     public onTabKeyDown(previous: CellCtrl | RowCtrl, keyboardEvent: KeyboardEvent): void {
         const backwards = keyboardEvent.shiftKey;
-        const movedToNextCell = this.tabToNextCellCommon(previous, backwards);
+        const movedToNextCell = this.tabToNextCellCommon(previous, backwards, keyboardEvent);
 
         if (movedToNextCell) {
             // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
@@ -369,7 +369,7 @@ export class NavigationService extends BeanStub {
     }
 
     // comes from API
-    public tabToNextCell(backwards: boolean): boolean {
+    public tabToNextCell(backwards: boolean, event?: KeyboardEvent): boolean {
         const focusedCell = this.focusService.getFocusedCell();
         // if no focus, then cannot navigate
         if (!focusedCell) { return false; }
@@ -385,10 +385,10 @@ export class NavigationService extends BeanStub {
             }
         }
 
-        return this.tabToNextCellCommon(cellOrRow, backwards);
+        return this.tabToNextCellCommon(cellOrRow, backwards, event);
     }
 
-    private tabToNextCellCommon(previous: CellCtrl | RowCtrl, backwards: boolean): boolean {
+    private tabToNextCellCommon(previous: CellCtrl | RowCtrl, backwards: boolean, event?: KeyboardEvent): boolean {
         let editing = previous.isEditing();
 
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
@@ -405,9 +405,9 @@ export class NavigationService extends BeanStub {
         if (editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
             if (this.gridOptionsWrapper.isFullRowEdit()) {
-                res = this.moveToNextEditingRow(previous as CellCtrl, backwards);
+                res = this.moveToNextEditingRow(previous as CellCtrl, backwards, event);
             } else {
-                res = this.moveToNextEditingCell(previous as CellCtrl, backwards);
+                res = this.moveToNextEditingCell(previous as CellCtrl, backwards, event);
             }
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards);
@@ -417,7 +417,7 @@ export class NavigationService extends BeanStub {
         return res || !!this.focusService.getFocusedHeader();
     }
 
-    private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean): boolean {
+    private moveToNextEditingCell(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean {
         const previousPos = previousCell.getCellPosition();
 
         // need to do this before getting next cell to edit, in case the next cell
@@ -433,12 +433,12 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        nextCell.startEditing(null, null, true);
+        nextCell.startEditing(null, null, true, event);
         nextCell.focusCell(false);
         return true;
     }
 
-    private moveToNextEditingRow(previousCell: CellCtrl, backwards: boolean): boolean {
+    private moveToNextEditingRow(previousCell: CellCtrl, backwards: boolean, event: KeyboardEvent | null = null): boolean {
         const previousPos = previousCell.getCellPosition();
 
         // find the next cell to start editing
@@ -461,7 +461,7 @@ export class NavigationService extends BeanStub {
             pRow!.stopEditing();
 
             const nRow = nextCell.getRowCtrl();
-            nRow!.startRowEditing();
+            nRow!.startRowEditing(undefined, undefined, undefined, event);
         }
 
         if (nextEditable) {

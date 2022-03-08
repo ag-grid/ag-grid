@@ -99,7 +99,7 @@ export class CellMouseListenerFeature extends Beans {
         const editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
             && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnDoubleClick) {
-            this.cellCtrl.startRowOrCellEdit();
+            this.cellCtrl.startRowOrCellEdit(null, null, mouseEvent);
         }
     }
 

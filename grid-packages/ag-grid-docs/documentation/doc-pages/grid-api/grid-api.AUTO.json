@@ -1092,11 +1092,17 @@
   },
   "tabToNextCell": {
     "description": "/** Navigates the grid focus to the next cell, as if tabbing. */",
-    "type": { "arguments": {}, "returnType": "boolean" }
+    "type": {
+      "arguments": { "event?": "KeyboardEvent" },
+      "returnType": "boolean"
+    }
   },
   "tabToPreviousCell": {
     "description": "/** Navigates the grid focus to the previous cell, as if shift-tabbing. */",
-    "type": { "arguments": {}, "returnType": "boolean" }
+    "type": {
+      "arguments": { "event?": "KeyboardEvent" },
+      "returnType": "boolean"
+    }
   },
   "getCellRendererInstances": {
     "description": "/** Returns the list of active cell renderer instances. */",

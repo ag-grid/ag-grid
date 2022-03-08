@@ -1635,13 +1635,13 @@ export class GridApi {
     }
 
     /** Navigates the grid focus to the next cell, as if tabbing. */
-    public tabToNextCell(): boolean {
-        return this.navigationService.tabToNextCell(false);
+    public tabToNextCell(event?: KeyboardEvent): boolean {
+        return this.navigationService.tabToNextCell(false, event);
     }
 
     /** Navigates the grid focus to the previous cell, as if shift-tabbing. */
-    public tabToPreviousCell(): boolean {
-        return this.navigationService.tabToNextCell(true);
+    public tabToPreviousCell(event?: KeyboardEvent): boolean {
+        return this.navigationService.tabToNextCell(true, event);
     }
 
     /** Returns the list of active cell renderer instances. */

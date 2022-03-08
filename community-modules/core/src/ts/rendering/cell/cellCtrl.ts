@@ -264,7 +264,7 @@ export class CellCtrl extends BeanStub {
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
-            
+
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
@@ -366,7 +366,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false): void {
+    public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false, event: KeyboardEvent | MouseEvent | null = null): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
         const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
@@ -374,14 +374,14 @@ export class CellCtrl extends BeanStub {
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-        const popup = compDetails?.popupFromSelector!=null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
-        const position = compDetails?.popupPositionFromSelector!=null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
+        const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
+        const position = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true, popup);
         this.cellComp.setEditDetails(compDetails!, popup, position);
 
-        const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
-        this.beans.eventService.dispatchEvent(event);
+        const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
+        this.beans.eventService.dispatchEvent(e);
     }
 
     private setEditing(editing: boolean, inPopup = false): void {
@@ -965,11 +965,11 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(key?: string | null, charPress?: string | null): void {
+    public startRowOrCellEdit(key?: string | null, charPress?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowCtrl.startRowEditing(key, charPress, this);
         } else {
-            this.startEditing(key, charPress, true);
+            this.startEditing(key, charPress, true, event);
         }
     }
 
