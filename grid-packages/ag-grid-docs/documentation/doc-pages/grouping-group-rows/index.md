@@ -117,7 +117,7 @@ functionality. Note the following:
 |- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
 |- Each medal column is editable, you can change the number of medals for any of the athletes.
 |- The column Year has a filter on it.
-|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full with row is updated if:
+|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full width row is updated if:
 |    1. If you edit any cell
 |    1. If you filter the data (ie take rows out).
 [[only-angular]]
@@ -125,7 +125,7 @@ functionality. Note the following:
 |- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
 |- Each medal column is editable, you can change the number of medals for any of the athletes.
 |- The column Year has a filter on it.
-|- Aggregation data in the full with row is updated if:
+|- Aggregation data in the full width row is updated if:
 |    1. If you edit any cell
 |    1. If you filter the data (ie take rows out).
 [[only-react]]
@@ -133,7 +133,7 @@ functionality. Note the following:
 |- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
 |- Each medal column is editable, you can change the number of medals for any of the athletes.
 |- The column Year has a filter on it.
-|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full with row is updated if:
+|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full width row is updated if:
 |    1. If you edit any cell
 |    1. If you filter the data (ie take rows out).
 [[only-vue]]
