@@ -5,7 +5,7 @@ export class PopupTextCellEditor extends TextCellEditor {
 
     constructor() {
         super();
-        doOnce( ()=> console.warn('AG Grid: The PopupTextCellEditor (agPopupTextCellEditor) is deprecated. Instead use {cellEditor: "agPopupTextCellEditor", cellEditorPopup: true} '), 'PopupTextCellEditor.deprecated');
+        doOnce( ()=> console.warn('AG Grid: The PopupTextCellEditor (agPopupTextCellEditor) is deprecated. Instead use {cellEditor: "agTextCellEditor", cellEditorPopup: true} '), 'PopupTextCellEditor.deprecated');
     }
 
     public isPopup(): boolean {
