@@ -66,6 +66,12 @@ exports.onPostBootstrap = ({ reporter }) => {
  */
 exports.onPostBuild = exports.onCreateDevServer = ({ reporter }) => {
     showHideEsLintConfigFile(reporter, false);
+
+    // gatsby-plugin-sitemap generates sitemap-index.xml, but most tools expect sitemap.xml
+    // we rename the generated file here
+    if (fs.existsSync('./public/sitemap-index.xml')) {
+        fs.renameSync('./public/sitemap-index.xml', './public/sitemap.xml');
+    }
 };
 
 /**
