@@ -24,7 +24,10 @@ will have IDs `row-group-0`, `row-group-1` and `row-group-2`.
 
 ## Application Assigned IDs
 
-<span style="color: red">TODO: Explain WHY and WHEN users should do this</span>.
+When the Application assigns Row IDs, this provides a common Row ID across the grid and the Application. This has advantages such as:
+
+1. The grid API `getRowNode(id)` can be called with the Application known ID (eg `employeeId`) to get the Row Node for a particular piece of data.
+1. When updating Row Data (either by updating the `rowData` attribute, or using [Update Transactions](/data-update-transactions/)), the grid uses the Row ID to map old vs new data (e.g. it can work out which Rows to add / remove / update rather than doing a blanket replacement of old vs new data).
 
 Setting Row IDs is done using the `getRowId()` grid callback:
 

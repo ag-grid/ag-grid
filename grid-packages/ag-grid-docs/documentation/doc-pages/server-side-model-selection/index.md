@@ -36,21 +36,21 @@ This is for comparison in the example only. Normal applications generally have t
 
 ## Providing Row IDs
 
-Row Selection in the Server-side Row Model requires unique row IDs in order to correctly identify selected rows across
+Row Selection in the Server-side Row Model requires unique Row IDs in order to correctly identify selected rows across
 data loads. For example, if a sort is applied which results in new rows loaded, the grid needs to locate the previously
 selected rows.
 
-Row ids are provided by the application using the `getRowId()` callback:
+Row IDs are provided by the application using the `getRowId()` callback:
 
 <api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowId"]' ></api-documentation>
 
-When implementing `getRowId()` you must ensure the rows have unique row IDs across the entire data set. Using an ID that
+When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. Using an ID that
 is provided in the data such as a database Primary Key would be ideal.
 
-### Supplying Unique Group Ids
+### Supplying Unique Group IDs
 
-When grouping there may not be an easy way to get unique IDs from the data for group levels. This is because as a group
-doesn't always correspond to one row in the store. 
+When grouping there may not be an easy way to get unique Row IDs from the data for group levels. This is because as a group
+doesn't always correspond to one Row in the store. 
 
 To handle this scenario, the grid provides `parentKeys` and `level` properties in the `GetRowIdParams` supplied to `getRowId()`.
 
