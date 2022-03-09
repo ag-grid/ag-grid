@@ -79,8 +79,7 @@ These can be used to create unique group id's as shown below:
 |            parts.push(params.data[thisGroupCol.getColDef().field]);
 |        }
 |        
-|        const res = parts.join('-');
-|        return res;
+|        return parts.join('-');
 |    }
 |}
 </snippet>

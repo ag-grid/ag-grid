@@ -4,7 +4,7 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
-    { headerName: 'Row ID', valueGetter: 'node.id' },
+    { headerName: 'Row ID', valueGetter: 'node.id', sortable: false },
     { field: 'gold', aggFunc: 'sum' }
   ],
   defaultColDef: {
@@ -39,8 +39,7 @@ const gridOptions: GridOptions = {
       parts.push(params.data[thisGroupCol.getColDef().field!]);
     }
 
-    const res = parts.join('-');
-    return res;
+    return parts.join('-');
   },
 
   // use the server-side row model
@@ -71,7 +70,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // inform the grid request failed
           params.fail()
         }
-      }, 1000)
+      }, 300)
     },
   }
 }
