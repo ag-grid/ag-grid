@@ -19,6 +19,7 @@ export interface GetChartImageDataUrlParams {
 export type ChartModelType = 'range' | 'pivot';
 
 export interface ChartModel {
+    version?: string;
     modelType: ChartModelType;
     chartId: string;
     chartType: ChartType;

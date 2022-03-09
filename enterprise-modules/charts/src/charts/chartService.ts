@@ -22,6 +22,7 @@ import {
     SeriesChartType
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import { upgradeChartModel, CURRENT_VERSION } from "./chartModelMigration";
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
@@ -47,7 +48,10 @@ export class ChartService extends BeanStub implements IChartService {
     public getChartModels(): ChartModel[] {
         const models: ChartModel[] = [];
 
-        this.activeChartComps.forEach(c => models.push(c.getChartModel()));
+        const versionedModel = (c: ChartModel) => {
+            return {...c, version: CURRENT_VERSION };
+        };
+        this.activeChartComps.forEach(c => models.push(versionedModel(c.getChartModel())));
 
         return models;
     }
@@ -83,6 +87,10 @@ export class ChartService extends BeanStub implements IChartService {
         if (!model) {
             console.warn("AG Grid - unable to restore chart as no chart model is provided");
             return;
+        }
+
+        if (model.version !== CURRENT_VERSION) {
+            model = upgradeChartModel(model);
         }
 
         const params = {
