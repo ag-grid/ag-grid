@@ -22,7 +22,11 @@ By default the grid will render 10 rows before the first visible row and 10 rows
 
 To change the row buffer, set grid property `rowBuffer` to the number of rows you would like to render in addition to the visible rows. Set `rowBuffer=0` to turn off row buffering.
 
-The Row Buffer is a Pixel Range based on Default Row Height and not a Row Count. For example if you were to set `rowBuffer=10` and the default row height is 42px, then the grid will extend the vertical pixel range by 420px in both directions and then draw rows into that. This detail doesn't matter if all rows are default height, however if using rows of different heights, then note the Row Buffer will not relate to Row Count, but how many Pixels it would take to draw x Default Height Rows.
+The Row Buffer value is used to create a Pixel Range based on the row buffer value multiplied by the Default Row Height. For example if you were to set `rowBuffer=10` and the default row height is 42px (for the Alpine theme), the grid will extend the vertical pixel range by 420px in both directions and then draw rows into that. 
+
+This detail is important when using dynamic and auto row height as depending on the actual row height a different number of rows can fit inside the pixel range as its height is based on the default row height. 
+
+For example, as described above, if `rowBuffer=10`, the grid will use a vertical pixel range of 420px in both directions. However, if you’re setting custom row height, or auto-height is setting a row height of 100px (instead of the default 42px), each of these two 420px pixel ranges above and below the grid will only fit 5 of these 100px rows, instead of 10 rows with default height of 42px.
 
 ## Max Rendered Rows
 
@@ -40,7 +44,7 @@ There is no column buffer - no additional columns are rendered apart from the vi
 
 ## Suppress Virtualisation
 
-To turn off Column Virtualisation off set the grid property `suppressColumnVirtualisation=true`. To turn off Row Virtualisation set the grid property `suppressRowVirtualisation=true`.
+To turn off Column Virtualisation set the grid property `suppressColumnVirtualisation=true`. To turn off Row Virtualisation set the grid property `suppressRowVirtualisation=true`.
 
 Note if `suppressRowVirtualisation=true`, then there is no Row Buffer and the `rowBuffer` property is ignored.
 
