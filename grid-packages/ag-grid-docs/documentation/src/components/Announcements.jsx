@@ -61,22 +61,16 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         </p>
     </Announcement>
 
-    <Announcement highlight={false}>
-        <p>Work at AG Grid:</p>
-        <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
-        <h6 className="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
-        <p className="card-text">
-            Would you like to join the AG Grid team in London?<br /><br />
-            Check the <a href="/ag-grid-jobs-board/">jobs board</a>
-        </p>
-    </Announcement>
+    {/*<Announcement highlight={false}>*/}
+    {/*    <p>Work at AG Grid:</p>*/}
+    {/*    <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>*/}
+    {/*    <h6 className="card-subtitle mb-2 text-muted">London, United Kingdom</h6>*/}
+    {/*    <p className="card-text">*/}
+    {/*        Would you like to join the AG Grid team in London?<br /><br />*/}
+    {/*        Check the <a href="/ag-grid-jobs-board/">jobs board</a>*/}
+    {/*    </p>*/}
+    {/*</Announcement>*/}
 
-    <Announcement title="Best Web Grids for 2020" date="Jan 27th">
-        <p className="card-text">
-            AG Grid is the "Absolute Winner" according
-            to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
-        </p>
-    </Announcement>
 </div>;
 
 
