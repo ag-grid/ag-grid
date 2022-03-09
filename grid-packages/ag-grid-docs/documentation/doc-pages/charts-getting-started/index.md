@@ -385,7 +385,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 <div class="text-right" style="margin-top: -1.5rem;">
 
 [[only-javascript]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/OYoLfV7OfOXHyOAOiR86?p=preview" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" target="_blank">
 |     Open in <img src="plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
 | </a>
 
