@@ -8,7 +8,7 @@ Just set the property `rowSelection` to either `'single'` or `'multiple'` as wit
 
 ## Example: Click Selection
 
-The example below shows both simple 'click' selection as well as multiple 'shift-click' selections.
+The example below shows both simple 'click' selection and multiple 'shift-click' selections.
 
 - **Single 'Click' Selection** - when you click on a leaf level row, the row is selected.
 - **Multiple 'Shift-Click' Selections** - select a leaf row (single click) and then 'shift-click' another leaf row within the same group to select all rows between that range.
@@ -34,13 +34,63 @@ This is for comparison in the example only. Normal applications generally have t
 
 <grid-example title='Checkbox Example' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Providing Node IDs
+## Providing Row IDs
 
-For selection to work with Server-Side Row Model, you must provide [Row IDs](/row-ids/). This is done using the using the `getRowId()` callback.
+Row Selection in the Server-side Row Model requires unique row IDs in order to correctly identify selected rows across
+data loads. For example, if a sort is applied which results in new rows loaded, the grid needs to locate the previously
+selected rows.
 
-Without Row IDs provided, the grid would have no way of identifying Rows across loads. For example if a Sort is applied after a selection is made, which resulted in the rows getting reloaded, the grid needs to identify which rows to keep selection on in the new Row order.
+Row ids are provided by the application using the `getRowId()` callback:
 
-When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. This means all the groups and all leaf-level nodes must have unique Row IDs, even if the leaves are not part of the same group. To assist with this, the grid provides the attributes `parentKeys` and `level` to the `getRowId()` callback when used with the Server-Side Row Model.
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowId"]' ></api-documentation>
+
+When implementing `getRowId()` you must ensure the rows have unique row IDs across the entire data set. Using an ID that
+is provided in the data such as a database Primary Key would be ideal.
+
+### Supplying Unique Group Ids
+
+When grouping there may not be an easy way to get unique IDs from the data for group levels. This is because as a group
+doesn't always correspond to one row in the store. 
+
+To handle this scenario, the grid provides `parentKeys` and `level` properties in the `GetRowIdParams` supplied to `getRowId()`.
+
+These can be used to create unique group id's as shown below:
+
+<snippet suppressFrameworkContext=true>
+|const gridOptions = {
+|    getRowId: params => { 
+|        // if leaf level, we have ID
+|        if (params.data.id!=null) {
+|            return params.data.id;
+|        }
+|        
+|        // this array will contain items that will compose the unique key
+|        var parts = [];
+|
+|        // if parent groups, add the value for the parent group
+|        if (params.parentKeys){
+|            parts.push(...params.parentKeys);
+|        }
+|        
+|        // it we are a group, add the value for this level's group
+|        var rowGroupCols = params.columnApi.getRowGroupColumns();
+|        var thisGroupCol = rowGroupCols[params.level];
+|        if (thisGroupCol) {
+|            parts.push(params.data[thisGroupCol.getColDef().field]);
+|        }
+|        
+|        const res = parts.join('-');
+|        return res;
+|    }
+|}
+</snippet>
+
+The following example using the `getRowId()` implementation shown above. Note the following:
+
+- The **Row ID** column displays the id for the current row.
+- Row IDs are deterministic, i.e. sorting on the **Gold** column reorders rows, but each row maintains its unique Row ID.
+
+<grid-example title='Unique Group Ids' name='unique-group-ids' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Selecting Group Nodes
 
@@ -51,9 +101,9 @@ Row Model (e.g. if using the default Client-side Row Model) it is possible to do
 `groupSelectsChildren=true`. This is not possible in the Server-Side Row Model because the children
 for a group may not be loaded into the grid. Without all the children loaded, it is not possible to select them all.
 
-If you want selecting a group to also select children, this is something you will need to implement within the
-application as it will require selecting rows that are not yet loaded into the grid, probably not even loaded
-into the client.
+Selecting a group where it selects all children is not support out-of-the-box, this is something you will need to 
+implement within the application as it will require selecting rows that are not yet loaded into the grid, probably 
+not even loaded into the client.
 
 ## Next Up
 

@@ -553,12 +553,6 @@
                 "enterprise": true
               },
               {
-                "title": "Row IDs",
-                "box-title": "IDs",
-                "url": "/server-side-model-row-ids/",
-                "showInCollapsed": true
-              },
-              {
                 "title": "Row Selection",
                 "url": "/server-side-model-selection/",
                 "enterprise": true

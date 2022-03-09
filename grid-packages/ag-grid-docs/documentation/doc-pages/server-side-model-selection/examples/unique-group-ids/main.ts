@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
     minWidth: 280,
     field: 'athlete',
   },
-
   getRowId: params => {
     // if leaf level, we have ID
     if (params.data.id!=null) {
@@ -48,9 +47,10 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   serverSideStoreType: 'partial',
 
-  suppressAggFuncInHeader: true,
+  // allow multiple row selections
+  rowSelection: 'multiple',
 
-  cacheBlockSize: 5,
+  suppressAggFuncInHeader: true,
 
   animateRows: true
 }
