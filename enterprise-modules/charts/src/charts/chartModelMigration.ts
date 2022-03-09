@@ -1,11 +1,11 @@
 import { ChartModel } from "@ag-grid-community/core";
 
-export const CURRENT_VERSION = "27.0.1";
+export const CURRENT_VERSION = "27.1.0";
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     if (model.version == null) {
         // First release with version field.
-        model.version = "27.0.1";
+        model.version = "27.1.0";
     }
 
     const { major, minor, patch } = versionParts(model.version);
