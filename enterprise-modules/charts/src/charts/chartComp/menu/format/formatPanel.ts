@@ -48,6 +48,10 @@ export class FormatPanel extends Component {
             case 'groupedColumn':
             case 'stackedColumn':
             case 'normalizedColumn':
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'column'));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
+                break;
             case 'groupedBar':
             case 'stackedBar':
             case 'normalizedBar':
