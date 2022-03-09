@@ -37,6 +37,7 @@ const getAllModules = () => {
 
             const cjsRelativePath = realCjsRelativePath ? realCjsRelativePath : derivedCjsRelativePath;
             const cjsFilename = `${publishedName}/${allModules ? enterprise ? "dist/ag-grid-enterprise.cjs.js" : "dist/ag-grid-community.cjs.js" : cjsRelativePath}`;
+            const minVersionedCjs = cjsFilename.replace('.cjs.js', '.cjs.min.js').replace('/dist/', '@\${agGridVersion}/dist/')
 
             return {
                 publishedName,
@@ -47,7 +48,8 @@ const getAllModules = () => {
                 sourceDir,
                 rootDir,
                 moduleDirName,
-                cjsFilename
+                cjsFilename,
+                minVersionedCjs
             };
         });
 
