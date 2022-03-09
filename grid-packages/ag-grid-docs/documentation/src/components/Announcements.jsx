@@ -6,9 +6,26 @@ import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 
 /**
- * This are the announcement cards shown underneath the left-hand navigation menu.
+ * These are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
+
+    <Announcement date="Mar 15" version="27.1.0">
+        <p className="card-text">
+            Minor release with new features and bug fixes.
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/javascript-data-grid/integrated-charts-api-range-chart/#combination-charts">Integrated Combo Charts</a>
+            </li>
+        </ul>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/javascript-data-grid/javascript-charts/api/">Chart Option Enhancements</a>
+            </li>
+        </ul>
+    </Announcement>
+
 
     <Announcement date="Feb 8" version="27.0.0">
         <p className="card-text">
