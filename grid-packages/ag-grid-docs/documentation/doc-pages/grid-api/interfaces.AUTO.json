@@ -7559,6 +7559,7 @@
   "ChartModel": {
     "meta": {},
     "type": {
+      "version?": "string",
       "modelType": "ChartModelType",
       "chartId": "string",
       "chartType": "ChartType",

@@ -12723,6 +12723,7 @@
   },
   "ChartModelType": {},
   "ChartModel": {
+    "version": { "type": { "returnType": "string", "optional": true } },
     "modelType": {
       "type": { "returnType": "ChartModelType", "optional": false }
     },
