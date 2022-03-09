@@ -5709,7 +5709,15 @@
       "top?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
-      "left?": "Omit<AgNumberAxisOptions, 'position' | 'type'>"
+      "left?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5718,7 +5726,14 @@
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgLogAxisThemeOptions": {
@@ -5731,7 +5746,15 @@
       "top?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
-      "left?": "Omit<AgLogAxisOptions, 'position' | 'type'>"
+      "left?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -5741,7 +5764,14 @@
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCategoryAxisThemeOptions": {
@@ -5752,13 +5782,28 @@
       "top?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
-      "left?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>"
+      "left?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
@@ -5767,13 +5812,28 @@
       "top?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
-      "left?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>"
+      "left?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgTimeAxisThemeOptions": {
@@ -5783,14 +5843,29 @@
       "top?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
-      "left?": "Omit<AgTimeAxisOptions, 'position' | 'type'>"
+      "left?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]",
+      "thickness?": "number"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
-      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */"
+      "left?": "/** An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above. */",
+      "position?": "/** The position on the chart where the axis should be rendered. */",
+      "title?": "/** Configuration for the title shown next to the axis. */",
+      "line?": "/** Configuration for the axis line. */",
+      "tick?": "/** Configuration for the axis ticks. */",
+      "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCartesianAxesTheme": {

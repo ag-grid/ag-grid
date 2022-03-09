@@ -125,6 +125,13 @@ function getAncestors(extensions, child) {
     if (parents) {
         ancestors = [...ancestors, ...parents];
         parents.forEach(p => {
+            if (p.extends === 'Omit') {
+                // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+                // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
+                // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
+                p = p.params[0];
+            }
+            
             ancestors = [...ancestors, ...getAncestors(extensions, p)]
         })
     }
@@ -203,33 +210,19 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
             let extended = a.extends;
 
             let extInt = undefined;
+            let omitFields = [];
             if (extended === 'Omit') {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
                 // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
                 extended = a.params[0];
                 const fullInterface = interfaces[extended];
-                if (isDocStyle) {
-                    let toOmitFrom = { ...fullInterface };
-                    a.params.slice(1).forEach(toRemove => {
-                        const typeName = toRemove.replace(/'/g, "");
-                        delete toOmitFrom[typeName];
-                    })
-                    extInt = toOmitFrom;
-                } else {
-                    let toOmitFrom = { ...fullInterface, type: { ...fullInterface.type }, docs: fullInterface.docs ? { ...fullInterface.docs } : fullInterface.docs };
-                    a.params.slice(1).forEach(toRemove => {
-                        const typeName = toRemove.replace(/'/g, "");
-                        delete toOmitFrom.type[typeName];
-                        if (toOmitFrom.docs) {
-                            delete toOmitFrom.docs[typeName];
-                        }
-                    })
-                    extInt = toOmitFrom;
-                }
-            } else {
-                extInt = interfaces[extended];
+                a.params.slice(1).forEach(toRemove => {
+                    const typeName = toRemove.replace(/'/g, "");
+                    omitFields.push(typeName);
+                });
             }
+            extInt = interfaces[extended];
 
             if (!extInt) {
                 //Check for type params                
@@ -240,6 +233,9 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 if (extInt) {
                     extendedInterface = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a), extendedInterface);
                 }
+                omitFields.forEach((f) => {
+                    delete extendedInterface[f];
+                });
             } else {
                 if (extInt && extInt.type) {
                     extendedInterface.type = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.type), extendedInterface.type);
@@ -247,6 +243,11 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 if (extInt && extInt.docs) {
                     extendedInterface.docs = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.docs), extendedInterface.docs);
                 }
+                omitFields.forEach((f) => {
+                    delete extendedInterface.docs?.[f];
+                    delete extendedInterface.meta?.[f];
+                    delete extendedInterface.type?.[f];
+                });
             }
         });
         interfaces[i] = extendedInterface;

@@ -9975,6 +9975,35 @@
         "returnType": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
         "optional": true
       }
+    },
+    "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgLogAxisThemeOptions": {
@@ -10021,6 +10050,35 @@
         "returnType": "Omit<AgLogAxisOptions, 'position' | 'type'>",
         "optional": true
       }
+    },
+    "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgCategoryAxisThemeOptions": {
@@ -10053,6 +10111,35 @@
         "returnType": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
+    },
+    "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
@@ -10083,6 +10170,35 @@
         "returnType": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
         "optional": true
       }
+    },
+    "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgTimeAxisThemeOptions": {
@@ -10117,6 +10233,35 @@
         "returnType": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
         "optional": true
       }
+    },
+    "position": {
+      "description": "/** The position on the chart where the axis should be rendered. */",
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "description": "/** Configuration for the title shown next to the axis. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": {
+      "description": "/** Configuration for the axis line. */",
+      "type": { "returnType": "AgAxisLineOptions", "optional": true }
+    },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTickOptions", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the axis labels, shown next to the ticks. */",
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "description": "/** Configuration of the lines used to form the grid in the chart area. */",
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } },
+    "thickness": {
+      "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgCartesianAxesTheme": {
