@@ -88,6 +88,7 @@ The following example using the `getRowId()` implementation shown above. Note th
 
 - The **Row ID** column displays the id for the current row.
 - Row IDs are deterministic, i.e. sorting on the **Gold** column reorders rows, but each row maintains its unique Row ID.
+- Selected Rows remain selected after new rows are loaded, i.e. after sorting on the **Gold** column.
 
 <grid-example title='Unique Group Ids' name='unique-group-ids' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
