@@ -70,5 +70,12 @@ const options: AgCartesianChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
+function useOneMonthInterval() {
+  options.axes![0].tick!.count = agCharts.time.month
+  agCharts.AgChart.update(chart, options)
+}
 
-
+function useTwoMonthInterval() {
+  options.axes![0].tick!.count = agCharts.time.month.every(2)
+  agCharts.AgChart.update(chart, options)
+}

@@ -28,5 +28,14 @@ const options: AgCartesianChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
+function setYNames() {
+  options.series![0].yName = "Sweaters Made";
+  options.series![1].yName = "Hats Made";
+  agCharts.AgChart.update(chart, options)
+}
 
-
+function resetYNames() {
+  options.series![0].yName = undefined;;
+  options.series![1].yName = undefined;;
+  agCharts.AgChart.update(chart, options)
+}
