@@ -51,10 +51,7 @@ export interface AgChartTheme extends AgChartThemeOptions {
 }
 
 export interface AgChartThemeOverrides {
-    /**
-     * Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series)
-     * @deprecated prefer a concrete chart-type specific override
-     */
+    /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
     cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
     /** Specifies defaults for column charts. */
     column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
@@ -69,26 +66,17 @@ export interface AgChartThemeOverrides {
     /** Specifies defaults for histogram charts. */
     histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions>;
     
-    /**
-     * Specifies defaults for all polar charts (used for pie series)
-     * @deprecated prefer a concrete chart-type specific override
-     */
+    /** Specifies defaults for all polar charts (used for pie series) */
     polar?: AgPolarThemeOptions<AgPolarSeriesTheme>;
     /** Specifies defaults for pie/doughnut charts. */
     pie?: AgPolarThemeOptions<AgPieSeriesOptions>;
     
-    /**
-     * Specifies defaults for all hierarchy charts (used for treemap series)
-     * @deprecated prefer a concrete chart-type specific override
-     */
+    /** Specifies defaults for all hierarchy charts (used for treemap series) */
     hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme>;
     /** Specifies defaults for all treemap charts. */
     treemap?: AgHierarchyThemeOptions<AgHierarchySeriesOptions>;
 
-    /**
-     * Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.
-     * @deprecated prefer a concrete chart-type specific override
-     */
+    /** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */
     common?: any;
 }
 
