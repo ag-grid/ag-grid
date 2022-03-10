@@ -155,8 +155,7 @@ export class DisplayedGroupCreator extends BeanStub {
                 const node = columnTree[i];
 
                 if (node instanceof ProvidedColumnGroup) {
-                    const nextNode = node;
-                    recursePath(nextNode.getChildren(), dept + 1);
+                    recursePath(node.getChildren(), dept + 1);
                     result[dept] = node;
                 } else if (node === column) {
                     found = true;

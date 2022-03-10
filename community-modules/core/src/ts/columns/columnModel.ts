@@ -644,6 +644,7 @@ export class ColumnModel extends BeanStub {
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
 
+    // Possible candidate for reuse (alot of recursive traversal duplication)
     private getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
         const result: Column[] = [];
 
@@ -1791,17 +1792,18 @@ export class ColumnModel extends BeanStub {
     }
 
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
-        const result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
+        return ([] as Column[]).concat(...[
+            this.primaryColumns || [],
+            this.groupAutoColumns || [],
+            this.secondaryColumns || [],
+        ]);
+    }
 
-        if (this.groupAutoColumns && exists(this.groupAutoColumns)) {
-            this.groupAutoColumns.forEach(col => result.push(col));
-        }
-
-        if (this.secondaryColumnsPresent && this.secondaryColumns) {
-            this.secondaryColumns.forEach(column => result.push(column));
-        }
-
-        return result;
+    private getPrimaryAndAutoGroupCols(): Column[] {
+        return ([] as Column[]).concat(...[
+            this.primaryColumns || [],
+            this.groupAutoColumns || [],
+        ]);
     }
 
     private createStateItemFromColumn(column: Column): ColumnState {
@@ -1843,21 +1845,13 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private getPrimaryAndAutoGroupCols(): Column[] | undefined {
-        if (!this.groupAutoColumns) {
-            return this.primaryColumns;
-        }
-
-        return [...(this.primaryColumns || []), ...this.groupAutoColumns];
-    }
-
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const gridColumnIdMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
+        const colIdToGridIndexMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
-            const posA = gridColumnIdMap.has(itemA.colId) ? gridColumnIdMap.get(itemA.colId) : -1;
-            const posB = gridColumnIdMap.has(itemB.colId) ? gridColumnIdMap.get(itemB.colId) : -1;
+            const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
+            const posB = colIdToGridIndexMap.has(itemB.colId) ? colIdToGridIndexMap.get(itemB.colId) : -1;
             return posA! - posB!;
         });
     }
@@ -1976,11 +1970,10 @@ export class ColumnModel extends BeanStub {
 
         if (params.state) {
             params.state.forEach((state: ColumnState) => {
-                const groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(groupAutoColumnId);
+                const isAutoGroupColumn = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
@@ -2085,12 +2078,9 @@ export class ColumnModel extends BeanStub {
         let newOrder: Column[] = [];
         const processedColIds: { [id: string]: boolean } = {};
 
-        const gridColumnsMap: { [id: string]: Column } = {};
-        this.gridColumns.forEach(col => gridColumnsMap[col.getId()] = col);
-
         params.state.forEach(item => {
             if (!item.colId || processedColIds[item.colId]) { return; }
-            const col = gridColumnsMap[item.colId];
+            const col = this.gridColumnsMap[item.colId];
             if (col) {
                 newOrder.push(col);
                 processedColIds[item.colId] = true;
@@ -2101,7 +2091,7 @@ export class ColumnModel extends BeanStub {
         let autoGroupInsertIndex = 0;
         this.gridColumns.forEach(col => {
             const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId]!=null;
+            const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
             const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
@@ -2176,7 +2166,7 @@ export class ColumnModel extends BeanStub {
             const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
                 const changedColumns: Column[] = [];
 
-                (colsForState || []).forEach(column => {
+                colsForState.forEach(column => {
                     const colStateBefore = columnStateBeforeMap[column.getColId()];
                     if (colStateBefore && changedPredicate(colStateBefore, column)) {
                         changedColumns.push(column);
@@ -2919,10 +2909,9 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const providedColumnGroup = node;
                 columnGroupState.push({
-                    groupId: providedColumnGroup.getGroupId(),
-                    open: providedColumnGroup.isExpanded()
+                    groupId: node.getGroupId(),
+                    open: node.isExpanded()
                 });
             }
         });
@@ -2988,9 +2977,8 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const providedColumnGroup = node;
-                if (providedColumnGroup.getId() === key) {
-                    res = providedColumnGroup;
+                if (node.getId() === key) {
+                    res = node;
                 }
             }
         });
