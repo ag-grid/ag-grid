@@ -162,6 +162,8 @@ const processIndexForFramework = async framework => {
     const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
 
+    const exclusions = ["charts-api-themes", "charts-api"];
+
     console.log(`Generating records for ${indexName}...`);
 
     const iterateItems = async (items, prefix) => {
@@ -174,8 +176,7 @@ const processIndexForFramework = async framework => {
         for (const item of items) {
             const breadcrumb = breadcrumbPrefix + item.title;
 
-            // the charts api themes section is too big atm - for now filter it out
-            if (item.url && !item.url.includes("charts-api-themes")) {
+            if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
                 records.push(...await createRecords(item.url, framework, breadcrumb, rank));
 
                 rank -= 10;
