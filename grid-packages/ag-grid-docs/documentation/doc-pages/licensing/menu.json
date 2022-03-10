@@ -1765,6 +1765,10 @@
               {
                 "title": "Treemap",
                 "url": "/charts-treemap-series/"
+              },
+              {
+                "title": "Combination",
+                "url": "/charts-combination-series/"
               }
             ]
           },
