@@ -2,19 +2,20 @@
 title: "Scrolling Performance"
 ---
 
-The grid is fast. However the grid can also be configured and extended in many ways. This page explains how you can make the grid go faster.
+The grid is fast. However, the grid can also be configured and extended in many ways. This page explains how you can make the grid go faster.
+
+[[only-react]]
+| [[warning]]
+| | ### **React Dev vs Prod Mode**
+| |
+| | React in Production Mode works faster. Given the DOM complexity of the grid, React Production Mode will make sure the grid is performing at it's fastest. It is unfair to do Performance Metrics or Comparisons when running React in Development Mode.
+| |
+| | Check the [React Docs](https://reactjs.org/docs/optimizing-performance.html) to learn how to check which mode React is running in.
 
 ## Setting Expectations
 
 The grid can be as fast as demonstrated in the demo application [Demo Application](../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
-[[only-react]]
-|
-| ## React Dev vs Prod Mode
-|
-| React in Production Mode works faster. Given the DOM complexity of the grid, React Production Mode will make sure the grid is performing at it's fastest. It is unfair to do Performance Metrics or Comparisons when running React in Development Mode.
-|
-| Check the [React Docs](https://reactjs.org/docs/optimizing-performance.html) to learn how to check which mode React is running in.
 ## Check Cell Renderers
 
 The grid can be slowed down by custom [Cell Renderers](/component-cell-renderer/). To test this, remove all Cell Renderers from the grid and compare the speed again. If the grid does improve it's speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out which ones are adding the most overhead.
