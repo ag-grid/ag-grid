@@ -91,15 +91,16 @@ export class SeriesPanel extends Component {
 
     private refreshWidgets(): void {
         this.destroyActivePanels();
-        this.updateSeriesType();
-        this.initSeriesSelect();
+
+        if (this.chartController.isComboChart()) {
+            this.updateSeriesType();
+            this.initSeriesSelect();
+        }
+
         this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
     }
 
     private initSeriesSelect() {
-        // only combo charts require series select
-        if (!this.chartController.isComboChart()) { return; }
-
         const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
         seriesSelect
             .setLabel(this.translate('seriesType'))
