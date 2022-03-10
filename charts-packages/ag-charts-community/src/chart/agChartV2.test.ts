@@ -4,24 +4,35 @@ import { AgCartesianChartOptions, AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
-import { repeat, waitForChartStability, cartesianChartAssertions, combineAssertions, hoverAction } from './test/utils';
+import {
+    repeat,
+    waitForChartStability,
+    cartesianChartAssertions,
+    combineAssertions,
+    hoverAction,
+    IMAGE_SNAPSHOT_DEFAULTS,
+} from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
 
 function consoleWarnAssertions(options: AgCartesianChartOptions) {
     return async (chart: Chart) => {
         expect(console.warn).toBeCalledTimes(1);
-        expect(console.warn).toBeCalledWith('AG Charts - the axis label format string %H:%M is invalid. No formatting will be applied');
+        expect(console.warn).toBeCalledWith(
+            'AG Charts - the axis label format string %H:%M is invalid. No formatting will be applied'
+        );
 
         jest.clearAllMocks();
-        options.axes[0].label.format = '%X %M' // format string for Date objects, not valid for number values
+        options.axes[0].label.format = '%X %M'; // format string for Date objects, not valid for number values
         AgChartV2.update(chart, options);
 
         expect(console.warn).toBeCalledTimes(1);
-        expect(console.warn).toBeCalledWith('AG Charts - the axis label format string %X %M is invalid. No formatting will be applied');
+        expect(console.warn).toBeCalledWith(
+            'AG Charts - the axis label format string %X %M is invalid. No formatting will be applied'
+        );
 
         jest.clearAllMocks();
-        options.axes[0].label.format = '%' // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
+        options.axes[0].label.format = '%'; // multiply by 100, and then decimal notation with a percent sign - valid format string for number values
         AgChartV2.update(chart, options);
 
         expect(console.warn).not.toBeCalled();
@@ -32,10 +43,12 @@ function consoleWarnAssertions(options: AgCartesianChartOptions) {
         await hoverAction(200, 100)(chart);
 
         expect(console.warn).toBeCalledTimes(1);
-        expect(console.warn).toBeCalledWith("AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.");
+        expect(console.warn).toBeCalledWith(
+            'AG Charts - Data contains Date objects which are being plotted against a number axis, please only use a number axis for numbers.'
+        );
 
         jest.clearAllMocks(); // this is to make sure the afterAll check for console warnings passes
-    }
+    };
 }
 
 type TestCase = {
@@ -88,7 +101,7 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.INVALID_AXIS_LABEL_FORMAT,
         assertions: combineAssertions(
             cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
-            consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT),
+            consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT)
         ),
     },
 };
@@ -118,7 +131,7 @@ describe('AgChartV2', () => {
                     const imageDataUrl = canvas.getDataURL('image/png');
                     const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
 
-                    (expect(imageData) as any).toMatchImageSnapshot({ failureThreshold: 10, failureThresholdType: "percent" });
+                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 
                 const options: AgChartOptions = { ...example.options };

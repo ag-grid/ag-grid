@@ -4,6 +4,8 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 
+export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 10, failureThresholdType: "percent" };
+
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
     for (let idx = 0; idx < count; idx++) {

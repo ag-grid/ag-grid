@@ -10,7 +10,7 @@ import {
     cartesianChartAssertions,
     polarChartAssertions,
     hierarchyChartAssertions,
-    hoverAction,
+    IMAGE_SNAPSHOT_DEFAULTS,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -152,10 +152,7 @@ describe('Gallery Examples', () => {
                     const imageDataUrl = canvas.getDataURL('image/png');
                     const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
 
-                    (expect(imageData) as any).toMatchImageSnapshot({
-                        failureThreshold: 10,
-                        failureThresholdType: 'percent',
-                    });
+                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 
                 const options: AgChartOptions = { ...example.options };
