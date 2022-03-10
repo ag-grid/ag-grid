@@ -36,12 +36,12 @@ series: [
 The above snippet demonstrates the config required for a combination chart consisting of a `column` and `line` series.
 Note that just like `type`, `data` can also be configured on a per series basis, which is convenient if the series data is coming from different sources.
 
-Some common combinations can be seen in the example below by clicking through the buttons.
+Two common combinations can be seen in the example below by clicking the buttons.
 
 Note that:
 - The series will be rendered and overlaid on each other based on the order they are specified in the `series` array.
 - This example reorders the `series` config to ensure the `area` series are placed behind the `column` series, for better visibility of the columns.
-- A [secondary axis](../axes/#multiple-axes-in-a-single-direction/) in the Y direction has been added as values across the `portions` series and the rest of the series differ in magnitudes.
+- A [secondary axis](../axes/#multiple-axes-in-a-single-direction) in the Y direction has been added as values across the `portions` series and the rest of the series differ in magnitudes.
 - You can inspect the different `series` configurations logged to the console when you switch chart series types.
 
 <chart-example title='Combination Charts' name='combination' type='generated'></chart-example>
