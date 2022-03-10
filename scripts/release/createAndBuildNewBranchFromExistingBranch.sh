@@ -67,3 +67,7 @@ echo "########################################################################"
 echo "##################### Updating licenses #############################"
 ./scripts/release/updateLicenses.sh
 
+echo "########################################################################"
+echo "################### Updating Chart Model Version #######################"
+node ./scripts/release/updateChartModel.js
+
