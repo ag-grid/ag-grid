@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState, useMemo, memo, useContext } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
@@ -53,8 +53,7 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
 
 const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) => {
 
-    const {context} = useContext(BeansContext);
-
+    const { context } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
     const [rowIndex, setRowIndex] = useState<string>();
@@ -83,7 +82,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     // could be a stateless React Func Comp which won't work with useRef, so we need
     // to poll (we limit to 10) looking for the Detail HTMLElement (which will be the only
     // child) after the fullWidthCompDetails is set.
-    useEffect( ()=> {
+    useEffect(() => {
         if (autoHeightSetup.current) { return; }
         if (!fullWidthCompDetails) { return; }
         if (autoHeightSetupAttempt>10) { return; }
@@ -98,7 +97,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
-    const cssClassManager = useMemo( ()=> new CssClassManager( ()=> eGui.current! ), []);
+    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
     useEffect(() => {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
@@ -131,15 +130,13 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
         rowCtrl.setComp(compProxy, eGui.current!, containerType);
     }, []);
 
-    useEffect(() => {
-        return showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef);
-    }, [fullWidthCompDetails]);
+    useEffect(() => showJsComp(
+        fullWidthCompDetails, context, eGui.current!, fullWidthCompRef
+    ), [fullWidthCompDetails]);
 
     const rowStyles = useMemo(() => {
-        const res = {
-            top,
-            transform
-        };
+        const res = { top, transform };
+
         Object.assign(res, userStyles);
         return res;
     }, [top, transform, userStyles]);
@@ -147,19 +144,19 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
     const showCells = cellCtrls != null;
     
-    const reactFullWidthCellRendererStateless = useMemo( ()=> {
-        const res = fullWidthCompDetails 
-                    && fullWidthCompDetails.componentFromFramework 
-                    && isComponentStateless(fullWidthCompDetails.componentClass);
+    const reactFullWidthCellRendererStateless = useMemo(() => {
+        const res = fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
 
-    const showCellsJsx = () => cellCtrls.list.map(cellCtrl =>
-        (
-            <CellComp cellCtrl={ cellCtrl }
-                        editingRow={ rowCtrl.isEditing() } printLayout={ rowCtrl.isPrintLayout() }
-                        key={ cellCtrl.getInstanceId() }/>
-        ));
+    const showCellsJsx = () => cellCtrls.list.map(cellCtrl => (
+        <CellComp
+            cellCtrl={ cellCtrl }
+            editingRow={ rowCtrl.isEditing() }
+            printLayout={ rowCtrl.isPrintLayout() }
+            key={ cellCtrl.getInstanceId() }
+        />
+    ));
 
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
@@ -178,14 +175,17 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     };
 
     return (
-        <div ref={ eGui } role={ role } style={ rowStyles } row-index={ rowIndex }
-             row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
-            {
-                showCells && showCellsJsx()
-            }
-            {
-                showFullWidthFramework && showFullWidthFrameworkJsx() 
-            }
+        <div
+            ref={ eGui }
+            role={ role }
+            style={ rowStyles }
+            row-index={ rowIndex }
+            row-id={ rowId }
+            row-business-key={ rowBusinessKey }
+            tabIndex={ tabIndex }
+        >
+            { showCells && showCellsJsx() }
+            { showFullWidthFramework && showFullWidthFrameworkJsx() }
         </div>
     );
 };
