@@ -1,5 +1,5 @@
 ---
-title: "Themes API Reference"
+title: "Themes Reference"
 ---
 
 This page documents the AG Charts Themes API. You can find more details about AG Charts themes in the [Themes](/charts-themes/) section.
