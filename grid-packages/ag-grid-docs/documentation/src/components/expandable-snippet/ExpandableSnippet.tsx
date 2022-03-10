@@ -324,6 +324,7 @@ function maybeRenderPropertyDocumentation(
         <Fragment>
             <div
                 className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                onClick={(e) => e.stopPropagation()}
                 dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"                
             >
@@ -346,6 +347,7 @@ function maybeRenderModelDocumentation(
         <Fragment>
             <div
                 className={classnames('token', 'comment', styles['jsdoc-expandable'])}
+                onClick={(e) => e.stopPropagation()}
                 dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
                 role="presentation"
             >
