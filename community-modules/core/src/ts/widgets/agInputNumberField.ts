@@ -21,6 +21,8 @@ export class AgInputNumberField extends AgInputTextField {
                 this.setValue(value);
             }
         });
+
+        this.eInput.step = 'any';
     }
 
     public normalizeValue(value: string): string {
