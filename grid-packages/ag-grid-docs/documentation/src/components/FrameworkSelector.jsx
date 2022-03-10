@@ -20,7 +20,7 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
                 const alt = `${frameworkCapitalised} Data Grid`;
                 return <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
-                    <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} />
+                    <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} style={{height: 30, width: 30}} />
                 </a>;
             })}
     </div>;

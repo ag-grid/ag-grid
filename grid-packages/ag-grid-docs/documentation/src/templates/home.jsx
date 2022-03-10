@@ -74,7 +74,7 @@ const GettingStartedPane = ({ framework, data }) => {
                 return (
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(link.icon, framework)} alt={alt} />
+                            <img src={getLogo(link.icon, framework)} alt={alt} style={{height: 64, width: 64}} />
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
                             {link.title}

@@ -51,7 +51,7 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
             <Helmet htmlAttributes={{ lang: 'en' }} />
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
-                    <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" /></a>
+                    <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" style={{width: 235, height: 40}} /></a>
                     <HeaderNav />
                 </div>
             </header>
