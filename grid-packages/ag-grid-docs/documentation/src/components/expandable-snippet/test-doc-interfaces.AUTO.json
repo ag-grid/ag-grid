@@ -1,0 +1,190 @@
+{
+  "TypeAliasExample": {},
+  "TestFnBaseArgs": {
+    "param1": { "type": { "returnType": "number", "optional": false } },
+    "param2": { "type": { "returnType": "string", "optional": false } },
+    "param3": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "TestFnArgs": {
+    "param4": {
+      "type": { "returnType": "TestFnNestedResult", "optional": false }
+    },
+    "param1": { "type": { "returnType": "number", "optional": false } },
+    "param2": { "type": { "returnType": "string", "optional": false } },
+    "param3": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "TestFnResult": {
+    "resultPrimitive": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "resultObject": {
+      "type": { "returnType": "TestFnNestedResult[]", "optional": false }
+    }
+  },
+  "TestFnNestedResult": {
+    "primitiveNumber": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "primitiveString": { "type": { "returnType": "number", "optional": false } }
+  },
+  "TestUnionBaseElement": {
+    "parentProperty": { "type": { "returnType": "string", "optional": false } }
+  },
+  "TestUnionElement1": {
+    "type": {
+      "type": { "returnType": "'union-element-1'", "optional": false }
+    },
+    "property": { "type": { "returnType": "string", "optional": false } },
+    "nestedProperty": {
+      "type": { "returnType": "TestFnResult", "optional": false }
+    },
+    "parentProperty": { "type": { "returnType": "string", "optional": false } }
+  },
+  "TestUnionElement2": {
+    "type": {
+      "type": { "returnType": "'union-element-2'", "optional": false }
+    },
+    "property": { "type": { "returnType": "string", "optional": false } },
+    "nestedProperty": {
+      "type": { "returnType": "TestFnResult", "optional": false }
+    },
+    "parentProperty": { "type": { "returnType": "string", "optional": false } }
+  },
+  "TestUnionElement3": {
+    "type": {
+      "type": { "returnType": "'union-element-3'", "optional": false }
+    },
+    "property": { "type": { "returnType": "string", "optional": false } },
+    "nestedProperty": {
+      "type": { "returnType": "TestFnResult", "optional": false }
+    },
+    "parentProperty": { "type": { "returnType": "string", "optional": false } }
+  },
+  "TestTypeUnion": {},
+  "TestOmitExtension": {
+    "concreteProperty": {
+      "type": { "returnType": "string", "optional": false }
+    },
+    "param4": {
+      "type": { "returnType": "TestFnNestedResult", "optional": false }
+    },
+    "param2": { "type": { "returnType": "string", "optional": false } },
+    "param3": { "type": { "returnType": "boolean", "optional": false } },
+    "resultPrimitive": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "resultObject": {
+      "type": { "returnType": "TestFnNestedResult[]", "optional": false }
+    },
+    "param1": { "type": { "returnType": "number", "optional": false } }
+  },
+  "ExpandableSnippetTestInterface": {
+    "primitiveString": {
+      "description": "/** JSDoc for primitiveString. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "primitiveNumber": {
+      "description": "/** JSDoc for primitiveNumber. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "primitiveBoolean": {
+      "description": "/** JSDoc for primitiveBoolean. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "primitiveOptional": {
+      "description": "/** JSDoc for primitiveOptional. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "simpleAlias": {
+      "description": "/** This is a simple alias field. */",
+      "type": { "returnType": "TypeAliasExample", "optional": false }
+    },
+    "primitiveArray": {
+      "description": "/** JSDoc for primitiveArray. */",
+      "type": { "returnType": "string[][]", "optional": false }
+    },
+    "objectArray": {
+      "description": "/** JSDoc for objectArray. */",
+      "type": { "returnType": "TestFnResult[]", "optional": false }
+    },
+    "typeUnion": {
+      "description": "/** JSDoc for typeUnion. */",
+      "type": { "returnType": "TestTypeUnion", "optional": true }
+    },
+    "typeUnionArray": {
+      "description": "/** JSDoc for typeUnionArray. */",
+      "type": { "returnType": "TestTypeUnion[]", "optional": false }
+    },
+    "simpleFn": {
+      "description": "/** JSDoc for simpleFn. */",
+      "type": {
+        "arguments": { "a": "number", "b": "string", "c": "boolean" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "complexFn": {
+      "description": "/** JSDoc for complexFn. */",
+      "type": {
+        "arguments": { "test": "TestFnArgs" },
+        "returnType": "TestFnResult",
+        "optional": false
+      }
+    },
+    "simpleOmit": {
+      "description": "/** JSDoc for simpleOmit. */",
+      "type": {
+        "returnType": "Omit<TestFnResult, 'resultPrimitive'>",
+        "optional": true
+      }
+    },
+    "complexOmit": {
+      "description": "/** JSDoc for complexOmit. */",
+      "type": { "returnType": "TestOmitExtension", "optional": true }
+    },
+    "deprecatedField": {
+      "description": "/** This is a deprecated field. @deprecated */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "InterfaceLookupMetaType": {},
+  "MetaRecord": {},
+  "OrderingPriority": {},
+  "InterfaceLookup": {},
+  "CodeLookup": {},
+  "Overrides": {},
+  "JsonPrimitiveProperty": {},
+  "JsonObjectProperty": {},
+  "JsonArray": {},
+  "JsonUnionType": {},
+  "JsonFunction": {
+    "type": { "type": { "returnType": "\"function\"", "optional": false } },
+    "tsType": { "type": { "returnType": "string", "optional": false } },
+    "documentation": { "type": { "returnType": "string", "optional": true } },
+    "parameters": {
+      "type": {
+        "returnType": "Record<string, JsonModelProperty>",
+        "optional": false
+      }
+    },
+    "returnType": {
+      "type": { "returnType": "JsonProperty", "optional": false }
+    }
+  },
+  "JsonProperty": {},
+  "JsonModelProperty": {},
+  "JsonModel": {
+    "type": { "type": { "returnType": "\"model\"", "optional": false } },
+    "tsType": { "type": { "returnType": "string", "optional": false } },
+    "documentation": { "type": { "returnType": "string", "optional": true } },
+    "properties": {
+      "type": {
+        "returnType": "Record<string, JsonModelProperty>",
+        "optional": false
+      }
+    }
+  },
+  "Config": {},
+  "PropertyClass": {},
+  "Wrapping": {}
+}

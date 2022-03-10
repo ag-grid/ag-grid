@@ -21,7 +21,7 @@ type Config = {
 
 export interface ExpandableSnippetParams {
     interfacename: string;
-    overridesrc: string;
+    overridesrc?: string;
     breadcrumbs?: string[];
     config?: Config;
 }

@@ -13,27 +13,22 @@ import { getJsonFromFile } from '../documentation-helpers';
 describe('ExpandableSnippet', () => {
     let mockInterfaces: {};
     let mockDocInterfaces: {};
-    let mockOverrides: {};
 
     beforeAll(() => {
-        mockInterfaces = JSON.parse(fs.readFileSync('./doc-pages/grid-api/interfaces.AUTO.json').toString());
-        mockDocInterfaces = JSON.parse(fs.readFileSync('./doc-pages/grid-api/doc-interfaces.AUTO.json').toString());
-        mockOverrides = JSON.parse(fs.readFileSync('./doc-pages/charts-api/api.json').toString());
+        mockInterfaces = JSON.parse(fs.readFileSync('./src/components/expandable-snippet/test-interfaces.AUTO.json').toString());
+        mockDocInterfaces = JSON.parse(fs.readFileSync('./src/components/expandable-snippet/test-doc-interfaces.AUTO.json').toString());
     });
 
     beforeEach(() => {
         (getJsonFromFile as any)
             .mockReturnValueOnce(mockInterfaces)
-            .mockReturnValueOnce(mockDocInterfaces)
-            .mockReturnValueOnce(mockOverrides);
+            .mockReturnValueOnce(mockDocInterfaces);
     });
     
-    it('renders with title', () => {
+    it('renders HTML as expected', () => {
         const tree = renderer
-            // .create({ type: ExpandableSnippet, props: { interfacename: "AgChartOptions", overridesrc: "" }, key: null })
             .create(<ExpandableSnippet
-                interfacename={"AgCartesianChartOptions"}
-                overridesrc={"overrides.test.json"}
+                interfacename={"ExpandableSnippetTestInterface"}
                 config={({expandAll: true})}
             ></ExpandableSnippet>)
             .toJSON();

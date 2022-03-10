@@ -10,21 +10,18 @@ import { getJsonFromFile } from '../documentation-helpers';
 describe('ExpandableSnippet Model', () => {
     let mockInterfaces: {};
     let mockDocInterfaces: {};
-    let mockOverrides: {};
 
     let loadedInterfaces: {};
     let loadedDocInterfaces: {};
 
     beforeAll(() => {
-        mockInterfaces = JSON.parse(fs.readFileSync('./doc-pages/grid-api/interfaces.AUTO.json').toString());
-        mockDocInterfaces = JSON.parse(fs.readFileSync('./doc-pages/grid-api/doc-interfaces.AUTO.json').toString());
-        mockOverrides = JSON.parse(fs.readFileSync('./doc-pages/charts-api/api.json').toString());
+        mockInterfaces = JSON.parse(fs.readFileSync('./src/components/expandable-snippet/test-interfaces.AUTO.json').toString());
+        mockDocInterfaces = JSON.parse(fs.readFileSync('./src/components/expandable-snippet/test-doc-interfaces.AUTO.json').toString());
         (getJsonFromFile as any)
             .mockReturnValueOnce(mockInterfaces)
-            .mockReturnValueOnce(mockDocInterfaces)
-            .mockReturnValueOnce(mockOverrides);
+            .mockReturnValueOnce(mockDocInterfaces);
     
-        const loaded = loadLookups('overrides.test.json');
+        const loaded = loadLookups();
         loadedInterfaces = loaded.interfaceLookup;
         loadedDocInterfaces = loaded.codeLookup;
     });
