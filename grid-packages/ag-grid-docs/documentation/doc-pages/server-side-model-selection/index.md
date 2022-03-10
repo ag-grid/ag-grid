@@ -50,7 +50,7 @@ is provided in the data such as a database Primary Key would be ideal.
 ### Supplying Unique Group IDs
 
 When grouping there may not be an easy way to get unique Row IDs from the data for group levels. This is because as a group
-doesn't always correspond to one Row in the store. 
+row doesn't always correspond to one Row in the store. 
 
 To handle this scenario, the grid provides `parentKeys` and `level` properties in the `GetRowIdParams` supplied to `getRowId()`.
 
