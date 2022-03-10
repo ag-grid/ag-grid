@@ -7,7 +7,8 @@ const project = new Project({
 });
 
 const gridOptions = project.getSourceFile('gridOptions.ts')
-const imports = gridOptions?.getImportDeclarations();
+const colDef = project.getSourceFile('colDef.ts')
+const imports = [...gridOptions?.getImportDeclarations(), ...colDef?.getImportDeclarations()];
 
 const sourceFiles = imports?.map(i => i.getModuleSpecifierSourceFile()).filter(sf => !sf?.getFilePath()?.includes('iAgChartOptions'));
 sourceFiles?.unshift(gridOptions);
@@ -41,22 +42,21 @@ while (updateInterfaces.length > 0) {
 
 
         var re = new RegExp(ui.getName() + '(?![\\w])', "g");
+        const applyGenericType = (type: string, toUpdate: string) => type.replace(re, toUpdate + '<T>').replace(/<T><T>/g, '<T>');
 
         allInterfaces.forEach(i => {
-            //    console.log(i.getName())
             const props = i.getMembers();
             props.forEach(p => {
                 const toCheck = p.getText();
-                // console.log(ui.getName(), toCheck)
                 if (toCheck.includes(ui.getName())) {
 
                     let currStructure = p.getStructure() as any;
                     if (currStructure.type) {
-                        currStructure.type = currStructure.type.replace(re, ui.getName() + '<T>').replace('<T><T>', '<T>');
+                        currStructure.type = applyGenericType(currStructure.type, ui.getName());
                     }
                     if (currStructure.parameters?.length > 0) {
                         currStructure.parameters = currStructure.parameters.map((p: any) => {
-                            p.type = p.type.replace(re, ui.getName() + '<T>').replace('<T><T>', '<T>');
+                            p.type = applyGenericType(p.type, ui.getName());
                             return p
                         })
                     }
@@ -77,7 +77,7 @@ while (updateInterfaces.length > 0) {
                         if (!i.getTypeParameters().some(t => t.getText() == 'T')) {
                             i.addTypeParameter("T")
                         }
-                        const genericExt = ex.getText().replace(re, ui.getName() + '<T>').replace('<T><T>', '<T>');
+                        const genericExt = applyGenericType(ex.getText(), ui.getName());
                         i.removeExtends(ex)
                         i.addExtends(genericExt)
                         updateInterfaces.push(i)
