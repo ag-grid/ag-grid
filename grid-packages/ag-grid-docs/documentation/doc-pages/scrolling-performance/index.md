@@ -8,7 +8,9 @@ The grid is fast. However, the grid can also be configured and extended in many 
 | [[warning]]
 | | ### **React Dev vs Prod Mode**
 | |
-| | React in Production Mode works faster. Given the DOM complexity of the grid, React Production Mode will make sure the grid is performing at it's fastest. It is unfair to do Performance Metrics or Comparisons when running React in Development Mode.
+| | React in Production Mode works faster than Dev Mode. Given the DOM complexity of the grid, React Production Mode will
+| | allow the grid to perform optimally without any overhead introduced by Dev Mode. Performance testing should be 
+| | performed in Production Mode only.
 | |
 | | Check the [React Docs](https://reactjs.org/docs/optimizing-performance.html) to learn how to check which mode React is running in.
 
