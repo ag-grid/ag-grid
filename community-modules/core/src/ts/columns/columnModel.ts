@@ -1846,9 +1846,7 @@ export class ColumnModel extends BeanStub {
         const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
-        if (!this.pivotMode) {
-            this.orderColumnStateList(res);
-        }
+        this.orderColumnStateList(res);
 
         return res;
     }
