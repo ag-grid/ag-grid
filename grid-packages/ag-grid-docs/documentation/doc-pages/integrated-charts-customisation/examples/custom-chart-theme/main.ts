@@ -80,7 +80,7 @@ const gridOptions: GridOptions = {
                 color: '#555',
               },
               marker: {
-                type: 'diamond',
+                shape: 'diamond',
                 size: 10,
                 padding: 10,
                 strokeWidth: 2,
