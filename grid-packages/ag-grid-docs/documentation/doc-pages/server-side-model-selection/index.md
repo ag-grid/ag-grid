@@ -84,7 +84,7 @@ These can be used to create unique group id's as shown below:
 |}
 </snippet>
 
-The following example using the `getRowId()` implementation shown above. Note the following:
+The following example uses the `getRowId()` implementation shown above. Note the following:
 
 - The **Row ID** column displays the id for the current row.
 - Row IDs are deterministic, i.e. sorting on the **Gold** column reorders rows, but each row maintains its unique Row ID.
@@ -101,7 +101,7 @@ Row Model (e.g. if using the default Client-side Row Model) it is possible to do
 `groupSelectsChildren=true`. This is not possible in the Server-Side Row Model because the children
 for a group may not be loaded into the grid. Without all the children loaded, it is not possible to select them all.
 
-Selecting a group where it selects all children is not support out-of-the-box, this is something you will need to 
+Selecting a group where it selects all children is not supported out-of-the-box, this is something you will need to 
 implement within the application as it will require selecting rows that are not yet loaded into the grid, probably 
 not even loaded into the client.
 
