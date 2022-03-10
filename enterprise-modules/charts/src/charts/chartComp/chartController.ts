@@ -94,6 +94,8 @@ export class ChartController extends BeanStub {
     public getChartModel(): ChartModel {
         const modelType: ChartModelType = this.model.pivotChart ? 'pivot' : 'range';
 
+        const seriesChartTypes = this.isComboChart() ? this.model.seriesChartTypes : undefined;
+
         return {
             modelType,
             chartId: this.model.chartId,
@@ -104,7 +106,7 @@ export class ChartController extends BeanStub {
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
-            seriesChartTypes: this.model.seriesChartTypes
+            seriesChartTypes
         };
     }
 
@@ -123,9 +125,7 @@ export class ChartController extends BeanStub {
     public setChartType(chartType: ChartType): void {
         this.model.chartType = chartType;
 
-        if (this.isComboChart()) {
-            this.model.updateSeriesChartTypes();
-        }
+        this.model.updateSeriesChartTypes();
 
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
