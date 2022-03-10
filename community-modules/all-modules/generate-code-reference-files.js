@@ -22,6 +22,9 @@ const INTERFACE_GLOBS = [
     ...buildGlob('../../enterprise-modules/multi-filter/src'),
     ...buildGlob('../angular/projects/ag-grid-angular/src/lib'),
 ];
+const TEST_INTERFACE_GLOBS = [
+    ...buildGlob('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet'),
+];
 
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
@@ -104,10 +107,10 @@ function parseFile(sourceFile) {
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
-function getInterfaces() {
+function getInterfaces(globs) {
     let interfaces = {};
     let extensions = {};
-    INTERFACE_GLOBS.forEach(file => {
+    globs.forEach(file => {
         const parsedFile = parseFile(file);
         interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
     });
@@ -356,11 +359,11 @@ function getClassProperties(filePath, className) {
 }
 
 /** Build the interface file in the format that can be used by <interface-documentation> */
-function buildInterfaceProps() {
+function buildInterfaceProps(globs) {
 
     let interfaces = {};
     let extensions = {};
-    INTERFACE_GLOBS.forEach(file => {
+    globs.forEach(file => {
         const parsedFile = parseFile(file);
 
         // Using this method to build the extensions lookup required to get inheritance correct
@@ -492,13 +495,16 @@ function getColumn() {
 
 const generateMetaFiles = () => {
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
+    // Tests.
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));
 };
 
 console.log(`--------------------------------------------------------------------------------`);
