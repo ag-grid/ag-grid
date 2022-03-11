@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
   sideBar: 'columns',
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  functionsReadOnly: false,
+  functionsReadOnly: true,
 }
 
 function setReadOnly() {
