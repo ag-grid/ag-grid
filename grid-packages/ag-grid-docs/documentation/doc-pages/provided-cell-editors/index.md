@@ -9,6 +9,8 @@ The grid comes with some cell editors provided out of the box. These cell editor
 - Select Cell Editor
 - Rich Select Cell Editor (AG Grid Enterprise Only)
 
+<grid-example title='Editors' name='editors' type='generated' options='{ "enterprise": true, "modules": ["clientside","richselect"] }'></grid-example>
+
 ## Text Cell Editor
 
 Simple text editors that use the standard HTML `input`. This editor is the default if none other specified.
@@ -16,7 +18,7 @@ Simple text editors that use the standard HTML `input`. This editor is the defau
 Specified with `agTextCellEditor`.
 
 Takes the following parameters:
-- `useFormatter`: If `true`, the grid will use the provided `colDef.cellFormatter`.
+- `useFormatter`: If `true`, the editor will use the provided `colDef.cellFormatter` to format the value displayed in the editor.
 
 ```js
 columnDefs: [
@@ -77,7 +79,7 @@ columnDefs: [
 ]
 ```
 
-Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid. Gaelien, Nicolson Bray, 
+Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 
 [[note]]
 |
