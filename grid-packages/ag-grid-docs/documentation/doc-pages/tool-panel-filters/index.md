@@ -16,7 +16,7 @@ The example below shows the filters tool panel. The following can be noted:
 
 ## Suppress Options
 
-It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `componentParams` whenever you are using the agFiltersToolPanel component properties to `true`:
+It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `toolPanelParams` whenever you are using the agFiltersToolPanel component properties to `true`:
 
 <interface-documentation interfaceName='ToolPanelFiltersCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 

@@ -197,7 +197,7 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 ## Providing Parameters to Tool Panels
 
-Parameters are passed to tool panels via the `componentParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](/tool-panel-columns/).
+Parameters are passed to tool panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](/tool-panel-columns/).
 
 <snippet>
 const gridOptions = {

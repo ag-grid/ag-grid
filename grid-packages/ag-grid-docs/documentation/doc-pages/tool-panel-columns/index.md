@@ -63,7 +63,7 @@ The column tool panel is split into different sections as follows:
 
 ## Section Visibility
 
-It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
+It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
 
 <interface-documentation interfaceName='ToolPanelColumnCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 

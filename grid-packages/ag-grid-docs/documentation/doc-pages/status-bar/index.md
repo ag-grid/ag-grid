@@ -100,7 +100,7 @@ See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-stat
 
 ## Configuration with Component Parameters
 
-Some of the status panel components, or your own custom components, can take further parameters. These are provided using `componentParams`.
+Some of the status panel components, or your own custom components, can take further parameters. These are provided using `statusPanelParams`.
 
 The snippet below shows a status bar configured with the grid provided aggregation component only. The component is further configured to only show average and sum functions.
 
@@ -138,17 +138,19 @@ If you have a component that you wish to work on data once it's ready (calculate
 need to hook into either the `gridReady` or the `firstDataRendered` events.
 
 ```js
-function ClickableStatusBarComponent() {
-}
-
-ClickableStatusBarComponent.prototype.init = function(params) {
+class ClickableStatusBarComponent() {
+  init(params) {
     this.params = params;
+    
+    // No rows will be available yet
+    console.log(params.api.getModel().rowsToDisplay);
 
-    console.log(params.api.getModel().rowsToDisplay);       // No rows will be available yet
-
-    params.api.addEventListener('gridReady', () => {        // Or the firstDataRendered event
-        console.log(params.api.getModel().rowsToDisplay);   // Rows will now be available
+    params.api.addEventListener('firstDataRendered', () => {
+        // On the firstDataRendered event rows will now be available
+        console.log(params.api.getModel().rowsToDisplay);
     });
+
+  }
 }
 ```
 
