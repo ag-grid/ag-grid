@@ -342,6 +342,28 @@ title: "Testing AG Grid"
 | });
 | ```
 |
+| ## Testing Row click Event
+|
+| To test the `rowClicked` event, you must use `waitForAsync` and `whenStable`. If you are using angular 9, use `async` instead of `waitForAsync`.
+|
+| For example, given the following code:
+|
+| ```ts
+| describe('When click in a row', () => {
+|     it('it should call done service', waitForAsync(() => {
+|         const spyDoneTasksService = spyOn(tasksService, 'done');    
+|         const firstColumn = fixture.debugElement.query(By.css('.ag-cell-value'));
+| 
+|         firstColumn.nativeElement.click();
+|         fixture.detectChanges();
+| 
+|         fixture.whenStable().then(() => {
+|             expect(spyDoneTasksService).toHaveBeenCalled();
+|         })
+|     }));
+| })
+| ```
+|
 | ## Testing User Supplied Components
 |
 | The easiest way to test user supplied components is to access them via the grid API.
