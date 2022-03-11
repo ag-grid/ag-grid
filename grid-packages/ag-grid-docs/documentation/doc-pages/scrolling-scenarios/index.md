@@ -20,7 +20,7 @@ Shows the autoHeight feature working with fullWidth and pagination.
     - Embedded rows scroll horizontally with the other rows.
 - There are 15 rows and pagination page size is 10, so as you go from one page to the other, the grid re-sizes to fit the page (10 rows on the first page, 5 rows on the second page).
 
-<grid-example title='Auto Height & Full Width' name='auto-height-full-width' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ], "noStyle": 1 }'></grid-example>
+<grid-example title='Auto Height & Full Width' name='auto-height-full-width' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ], "noStyle": 1 }'></grid-example>
 
 ## Expanding Groups & Vertical Scroll Location
 
