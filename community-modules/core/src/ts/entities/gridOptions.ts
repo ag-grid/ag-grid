@@ -97,6 +97,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
+import { BaseCallback, INavigateToNextCellParams, ITabToNextCellParams } from "./iGridCallbacks";
 
 export interface GridOptions {
 
@@ -1329,33 +1330,8 @@ export interface TabToNextHeaderParams {
     columnApi: ColumnApi;
 }
 
-export interface NavigateToNextCellParams {
-    /** The keycode for the arrow key pressed:
-     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
-    key: string;
-    /** The cell that currently has focus */
-    previousCellPosition: CellPosition;
-    /** The cell the grid would normally pick as the next cell for navigation */
-    nextCellPosition: CellPosition | null;
-
-    event: KeyboardEvent | null;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface TabToNextCellParams {
-    /** True if the Shift key is also down */
-    backwards: boolean;
-    /** True if the current cell is editing
-     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */
-    editing: boolean;
-    /** The cell that currently has focus */
-    previousCellPosition: CellPosition;
-    /** The cell the grid would normally pick as the next cell for navigation.  */
-    nextCellPosition: CellPosition | null;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
+export interface NavigateToNextCellParams extends INavigateToNextCellParams, BaseCallback { }
+export interface TabToNextCellParams extends ITabToNextCellParams, BaseCallback { }
 
 export interface PostProcessPopupParams {
     /** If popup is for a column, this gives the Column */

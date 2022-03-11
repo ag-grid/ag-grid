@@ -15,7 +15,6 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
-import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { doOnce } from "../utils/function";
 import { Constants } from "../constants/constants";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
@@ -23,6 +22,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { INavigateToNextCellParams, ITabToNextCellParams } from "../entities/iGridCallbacks";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -517,13 +517,11 @@ export class NavigationService extends BeanStub {
             const userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
 
             if (exists(userFunc)) {
-                const params: TabToNextCellParams = {
+                const params: ITabToNextCellParams = {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
                     nextCellPosition: nextPosition ? nextPosition : null,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!
                 };
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
@@ -665,13 +663,11 @@ export class NavigationService extends BeanStub {
         if (allowUserOverride) {
             const userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
             if (exists(userFunc)) {
-                const params: NavigateToNextCellParams = {
+                const params: INavigateToNextCellParams = {
                     key: key,
                     previousCellPosition: currentCell,
                     nextCellPosition: nextCell ? nextCell : null,
-                    event: event,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!
+                    event: event
                 };
                 const userCell = userFunc(params);
                 if (exists(userCell)) {

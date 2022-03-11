@@ -18,7 +18,6 @@ import {
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ServerSideStoreParams,
-    TabToNextCellParams,
     TabToNextHeaderParams,
     RowGroupingDisplayType,
     TreeDataDisplayType,
@@ -55,6 +54,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
+import { BaseCallback, ITabToNextCellParams } from './entities/iGridCallbacks';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1275,12 +1275,29 @@ export class GridOptionsWrapper {
         return this.gridOptions.tabToNextHeader;
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined {
-        return this.gridOptions.navigateToNextCell;
+    public getNavigateToNextCellFunc() {
+        return this.applyCallbackParams(this.gridOptions.navigateToNextCell);
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => (CellPosition | null)) | undefined {
-        return this.gridOptions.tabToNextCell;
+    /**
+     * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+     * @param callback User provided callback
+     * @returns Wrapped callback where the params object not require api, columnApi and context
+     */
+    private applyCallbackParams<P extends BaseCallback, T>(callback: ((params: P) => T) | undefined):
+        ((params: Omit<P, keyof (BaseCallback)>) => T) | undefined {
+        if (callback) {
+            const wrapped = (callbackParams: Omit<P, keyof (BaseCallback)>): T => {
+                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+                return callback(mergedParams);
+            }
+            return wrapped;
+        }
+        return callback;
+    }
+
+    public getTabToNextCellFunc(): ((params: ITabToNextCellParams) => (CellPosition | null)) | undefined {
+        return this.applyCallbackParams(this.gridOptions.tabToNextCell)
     }
 
     public getGridTabIndex(): string {
