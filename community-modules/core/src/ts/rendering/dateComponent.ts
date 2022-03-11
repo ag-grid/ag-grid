@@ -2,7 +2,7 @@ import { IComponent } from "../interfaces/iComponent";
 import { IDateFilterParams } from "../filter/provided/date/dateFilter";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 export interface IDate {
-    /** Returns the current date represented by this editor */
+    /** Returns the current date represented by this component */
     getDate(): Date | null;
 
     /** Sets the date represented by this component */

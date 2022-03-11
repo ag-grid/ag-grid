@@ -1,5 +1,4 @@
 import { AgPromise } from '../utils';
-import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {

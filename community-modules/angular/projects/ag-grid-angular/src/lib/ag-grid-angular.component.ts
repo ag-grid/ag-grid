@@ -979,7 +979,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
     @Output() public cellValueChanged: EventEmitter<CellValueChangedEvent> = new EventEmitter<CellValueChangedEvent>();
-    /** Value has changed after editing. Only fires when doing Read Only Edits, ie readOnlyEdit=true.     */
+    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
     @Output() public cellEditRequest: EventEmitter<CellEditRequestEvent> = new EventEmitter<CellEditRequestEvent>();
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     @Output() public rowValueChanged: EventEmitter<RowValueChangedEvent> = new EventEmitter<RowValueChangedEvent>();
