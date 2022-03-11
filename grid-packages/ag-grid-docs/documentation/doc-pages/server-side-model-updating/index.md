@@ -23,18 +23,18 @@ The options available for doing updates depends on what [Row Store](/server-side
 
 ## Partial Store Updates
 
-If using the Partial Store, then it is not possible to insert or remove rows from the set provided to the grid. The only update option is [Single Row](#single-row) updates which is explained below.
+If using the Partial Store, then it is not possible to insert or remove rows from the set provided to the grid. The only update option is [Single Row](#single-row-updates) updates which is explained below.
 
-The reason inserts and removes are not allowed is because doing inserts or removes would impact the block
-boundaries. For example suppose a block of 100 rows is read back from the server and you try to insert 10
+The reason inserts and removes are not allowed is that doing inserts or removes would impact the block
+boundaries. For example suppose a block of 100 rows is read back from the server, and you try to insert 10
 rows into the middle of the block - this would result in 10 rows falling off the end of the block as they
-get pushed out. Similarly if rows were removed, rows would be missing from the end of the block.
+get pushed out. Similarly, if rows were removed, rows would be missing from the end of the block.
 
-If you do need to insert or remove rows while using the Partial Store, then the update needs to be done on the server and then have the grid refresh. The example [Update & Refresh](#update-and-refresh) below demonstrates this.
+If you do need to insert or remove rows while using the Partial Store, then the update needs to be done on the server and then have the grid refresh. The example [Update & Refresh](#update--refresh) below demonstrates this.
 
 ## Full Store Updates
 
-If using the Full store, then you can update using [Single Row](#single-row) and [Update & Refresh](#update-and-refresh) just like the Partial Store.
+If using the Full store, then you can update using [Single Row](#single-row-updates) and [Update & Refresh](#update--refresh) just like the Partial Store.
 
 
 On top of that, you can also update using [Transactions](/server-side-model-transactions/) and [High Frequency](/server-side-model-high-frequency/) Transactions.
@@ -77,7 +77,7 @@ The example below shows this in action where the following can be noted:
 
 - The **Add Row** will add a row before the currently selected row.
 - The **Remove Row** will remove the currently selected row.
-- All operations are done outside of the grid and the grid is then told to refresh.
+- All operations are done outside the grid and the grid is then told to refresh.
 
 <grid-example title='Server-Side Row Model & CRUD' name='crud' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
