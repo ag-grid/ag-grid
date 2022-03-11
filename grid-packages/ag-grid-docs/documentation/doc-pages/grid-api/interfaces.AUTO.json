@@ -2651,13 +2651,13 @@
     },
     "docs": {
       "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
-      "labelKey": "/** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */",
+      "labelKey": "/** The key used for localisation for displaying the label. The label is displayed in the tab button. */",
       "labelDefault": "/** The default label if `labelKey` is missing or does not map to valid text through localisation. */",
       "minWidth?": "/** The min width of the tool panel. Default: `100` */",
       "maxWidth?": "/** The max width of the tool panel. Default: `undefined` */",
       "width?": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
-      "iconKey": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
-      "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
+      "iconKey": "/** The key of the icon to be used as a graphical aid beside the label in the side bar. */",
+      "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
       "toolPanelFramework?": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components\n */",
       "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
     }

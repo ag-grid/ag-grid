@@ -5297,7 +5297,7 @@
       "type": { "returnType": "string", "optional": false }
     },
     "labelKey": {
-      "description": "/** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */",
+      "description": "/** The key used for localisation for displaying the label. The label is displayed in the tab button. */",
       "type": { "returnType": "string", "optional": false }
     },
     "labelDefault": {
@@ -5317,11 +5317,11 @@
       "type": { "returnType": "number", "optional": true }
     },
     "iconKey": {
-      "description": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
+      "description": "/** The key of the icon to be used as a graphical aid beside the label in the side bar. */",
       "type": { "returnType": "string", "optional": false }
     },
     "toolPanel": {
-      "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
+      "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
       "type": { "returnType": "any", "optional": true }
     },
     "toolPanelFramework": {
