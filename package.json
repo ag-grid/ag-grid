@@ -56,7 +56,8 @@
     "ciBuildPackageAndFullyTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildAndTestsEverythingBasedOnState()'",
     "ciUpdateBuildAndUnitTest": "npm i && npm run bootstrap && npm run ciBuildAndUnitTest",
     "ciUpdateBuildPackageAndFullyTest": "npm i && npm run bootstrap && npm run ciBuildPackageAndFullyTest",
-    "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest"
+    "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest",
+    "ciBuildNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildBasedOnState()'"
   },
   "devDependencies": {
     "@types/node": "12.20.20",
