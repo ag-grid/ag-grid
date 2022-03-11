@@ -1,0 +1,276 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const chart_1 = require("./chart");
+const categoryAxis_1 = require("./axis/categoryAxis");
+const groupedCategoryAxis_1 = require("./axis/groupedCategoryAxis");
+const chartAxis_1 = require("./chartAxis");
+const bbox_1 = require("../scene/bbox");
+const clipRect_1 = require("../scene/clipRect");
+const navigator_1 = require("./navigator/navigator");
+const numberAxis_1 = require("./axis/numberAxis");
+class CartesianChart extends chart_1.Chart {
+    constructor(document = window.document) {
+        super(document);
+        this._seriesRoot = new clipRect_1.ClipRect();
+        this.navigator = new navigator_1.Navigator(this);
+        // Prevent the scene from rendering chart components in an invalid state
+        // (before first layout is performed).
+        this.scene.root.visible = false;
+        const root = this.scene.root;
+        root.append(this.seriesRoot);
+        root.append(this.legend.group);
+        this.navigator.enabled = false;
+    }
+    get seriesRoot() {
+        return this._seriesRoot;
+    }
+    performLayout() {
+        if (this.dataPending) {
+            return;
+        }
+        this.scene.root.visible = true;
+        const { width, height, axes, legend, navigator } = this;
+        const shrinkRect = new bbox_1.BBox(0, 0, width, height);
+        this.positionCaptions();
+        this.positionLegend();
+        if (legend.enabled && legend.data.length) {
+            const { legendAutoPadding } = this;
+            const legendPadding = this.legend.spacing;
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+            switch (this.legend.position) {
+                case 'right':
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'bottom':
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case 'left':
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'top':
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
+        }
+        const { captionAutoPadding, padding } = this;
+        this.updateAxes();
+        shrinkRect.x += padding.left;
+        shrinkRect.width -= padding.left + padding.right;
+        shrinkRect.y += padding.top + captionAutoPadding;
+        shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
+        if (navigator.enabled) {
+            shrinkRect.height -= navigator.height + navigator.margin;
+        }
+        let bottomAxesHeight = 0;
+        const axisPositionVisited = {
+            top: false,
+            right: false,
+            bottom: false,
+            left: false,
+            angle: false,
+            radius: false
+        };
+        axes.forEach(axis => {
+            axis.group.visible = true;
+            let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
+            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
+            const axisPadding = axis.title && axis.title.padding.top || 15;
+            if (axisPositionVisited[axis.position]) {
+                axisThickness += axisPadding;
+            }
+            switch (axis.position) {
+                case chartAxis_1.ChartAxisPosition.Top:
+                    axisPositionVisited[chartAxis_1.ChartAxisPosition.Top] = true;
+                    shrinkRect.y += axisThickness;
+                    shrinkRect.height -= axisThickness;
+                    axis.translation.y = Math.floor(shrinkRect.y + 1);
+                    axis.label.mirrored = true;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Right:
+                    axisPositionVisited[chartAxis_1.ChartAxisPosition.Right] = true;
+                    shrinkRect.width -= axisThickness;
+                    axis.translation.x = Math.max(Math.floor(shrinkRect.x), Math.floor(shrinkRect.x + shrinkRect.width));
+                    axis.label.mirrored = true;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Bottom:
+                    axisPositionVisited[chartAxis_1.ChartAxisPosition.Bottom] = true;
+                    shrinkRect.height -= axisThickness;
+                    bottomAxesHeight += axisThickness;
+                    axis.translation.y = Math.max(Math.floor(shrinkRect.y), Math.floor(shrinkRect.y + shrinkRect.height + 1));
+                    break;
+                case chartAxis_1.ChartAxisPosition.Left:
+                    axisPositionVisited[chartAxis_1.ChartAxisPosition.Left] = true;
+                    shrinkRect.x += axisThickness;
+                    shrinkRect.width -= axisThickness;
+                    axis.translation.x = Math.floor(shrinkRect.x);
+                    break;
+            }
+        });
+        // width and height should not be negative
+        shrinkRect.width = Math.max(0, shrinkRect.width);
+        shrinkRect.height = Math.max(0, shrinkRect.height);
+        axes.forEach(axis => {
+            switch (axis.position) {
+                case chartAxis_1.ChartAxisPosition.Top:
+                case chartAxis_1.ChartAxisPosition.Bottom:
+                    axis.translation.x = Math.floor(shrinkRect.x);
+                    axis.range = [0, shrinkRect.width];
+                    axis.gridLength = shrinkRect.height;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Left:
+                case chartAxis_1.ChartAxisPosition.Right:
+                    axis.translation.y = Math.floor(shrinkRect.y);
+                    if (axis instanceof categoryAxis_1.CategoryAxis || axis instanceof groupedCategoryAxis_1.GroupedCategoryAxis) {
+                        axis.range = [0, shrinkRect.height];
+                    }
+                    else {
+                        axis.range = [shrinkRect.height, 0];
+                    }
+                    axis.gridLength = shrinkRect.width;
+                    break;
+            }
+        });
+        this.createNodeData();
+        this.seriesRect = shrinkRect;
+        this.series.forEach(series => {
+            series.group.translationX = Math.floor(shrinkRect.x);
+            series.group.translationY = Math.floor(shrinkRect.y);
+            series.update(); // this has to happen after the `updateAxes` call
+        });
+        const { seriesRoot } = this;
+        seriesRoot.x = shrinkRect.x;
+        seriesRoot.y = shrinkRect.y;
+        seriesRoot.width = shrinkRect.width;
+        seriesRoot.height = shrinkRect.height;
+        if (navigator.enabled) {
+            navigator.x = shrinkRect.x;
+            navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
+            navigator.width = shrinkRect.width;
+        }
+        this.axes.forEach(axis => axis.update());
+    }
+    initSeries(series) {
+        super.initSeries(series);
+    }
+    freeSeries(series) {
+        super.freeSeries(series);
+    }
+    setupDomListeners(chartElement) {
+        super.setupDomListeners(chartElement);
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onTouchCancel = this.onTouchCancel.bind(this);
+        chartElement.addEventListener('touchstart', this._onTouchStart, { passive: true });
+        chartElement.addEventListener('touchmove', this._onTouchMove, { passive: true });
+        chartElement.addEventListener('touchend', this._onTouchEnd, { passive: true });
+        chartElement.addEventListener('touchcancel', this._onTouchCancel, { passive: true });
+    }
+    cleanupDomListeners(chartElement) {
+        super.cleanupDomListeners(chartElement);
+        chartElement.removeEventListener('touchstart', this._onTouchStart);
+        chartElement.removeEventListener('touchmove', this._onTouchMove);
+        chartElement.removeEventListener('touchend', this._onTouchEnd);
+        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
+    }
+    getTouchOffset(event) {
+        const rect = this.scene.canvas.element.getBoundingClientRect();
+        const touch = event.touches[0];
+        return touch ? {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top
+        } : undefined;
+    }
+    onTouchStart(event) {
+        const offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDragStart(offset);
+        }
+    }
+    onTouchMove(event) {
+        const offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDrag(offset);
+        }
+    }
+    onTouchEnd(event) {
+        this.navigator.onDragStop();
+    }
+    onTouchCancel(event) {
+        this.navigator.onDragStop();
+    }
+    onMouseDown(event) {
+        super.onMouseDown(event);
+        this.navigator.onDragStart(event);
+    }
+    onMouseMove(event) {
+        super.onMouseMove(event);
+        this.navigator.onDrag(event);
+    }
+    onMouseUp(event) {
+        super.onMouseUp(event);
+        this.navigator.onDragStop();
+    }
+    onMouseOut(event) {
+        super.onMouseOut(event);
+        this.navigator.onDragStop();
+    }
+    assignAxesToSeries(force = false) {
+        super.assignAxesToSeries(force);
+        this.series.forEach(series => {
+            if (!series.xAxis) {
+                console.warn(`Could not find a matching xAxis for the ${series.id} series.`);
+            }
+            if (!series.yAxis) {
+                console.warn(`Could not find a matching yAxis for the ${series.id} series.`);
+            }
+        });
+    }
+    updateAxes() {
+        const { navigator } = this;
+        let clipSeries = false;
+        let primaryTickCount;
+        this.axes.forEach(axis => {
+            const { direction, boundSeries } = axis;
+            if (boundSeries.length === 0 && this._series.length > 0) {
+                console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
+            }
+            if (axis.linkedTo) {
+                axis.domain = axis.linkedTo.domain;
+            }
+            else {
+                const domains = [];
+                boundSeries.filter(s => s.visible).forEach(series => {
+                    domains.push(series.getDomain(direction));
+                });
+                const domain = new Array().concat(...domains);
+                const isYAxis = axis.direction === 'y';
+                if (axis instanceof numberAxis_1.NumberAxis && isYAxis) {
+                    // the `primaryTickCount` is used to align the secondary axis tick count with the primary
+                    axis.setDomain(domain, primaryTickCount);
+                    primaryTickCount = primaryTickCount || axis.scale.ticks(axis.tick.count).length;
+                }
+                else {
+                    axis.domain = domain;
+                }
+            }
+            if (axis.direction === chartAxis_1.ChartAxisDirection.X) {
+                axis.visibleRange = [navigator.min, navigator.max];
+            }
+            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+                clipSeries = true;
+            }
+            axis.update();
+        });
+        this.seriesRoot.enabled = clipSeries;
+    }
+}
+exports.CartesianChart = CartesianChart;
+CartesianChart.className = 'CartesianChart';
+CartesianChart.type = 'cartesian';
+//# sourceMappingURL=cartesianChart.js.map

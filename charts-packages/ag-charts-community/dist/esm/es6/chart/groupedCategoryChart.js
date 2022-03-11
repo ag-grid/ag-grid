@@ -1,0 +1,36 @@
+import { CartesianChart } from "./cartesianChart";
+import { extent } from "../util/array";
+import { ChartAxisDirection } from "./chartAxis";
+import { isContinuous } from "../util/value";
+export class GroupedCategoryChart extends CartesianChart {
+    updateAxes() {
+        this.axes.forEach(axis => {
+            const { direction, boundSeries } = axis;
+            const domains = [];
+            let isNumericX = undefined;
+            boundSeries.filter(s => s.visible).forEach(series => {
+                if (direction === ChartAxisDirection.X) {
+                    if (isNumericX === undefined) {
+                        // always add first X domain
+                        const domain = series.getDomain(direction);
+                        domains.push(domain);
+                        isNumericX = typeof domain[0] === 'number';
+                    }
+                    else if (isNumericX) {
+                        // only add further X domains if the axis is numeric
+                        domains.push(series.getDomain(direction));
+                    }
+                }
+                else {
+                    domains.push(series.getDomain(direction));
+                }
+            });
+            const domain = new Array().concat(...domains);
+            axis.domain = extent(domain, isContinuous) || domain;
+            axis.update();
+        });
+    }
+}
+GroupedCategoryChart.className = 'GroupedCategoryChart';
+GroupedCategoryChart.type = 'groupedCategory';
+//# sourceMappingURL=groupedCategoryChart.js.map
