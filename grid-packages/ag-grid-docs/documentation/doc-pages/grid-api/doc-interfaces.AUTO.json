@@ -18248,7 +18248,7 @@
   },
   "IDate": {
     "getDate": {
-      "description": "/** Returns the current date represented by this editor */",
+      "description": "/** Returns the current date represented by this component */",
       "type": {
         "arguments": {},
         "returnType": "Date | null",
@@ -18327,7 +18327,7 @@
       }
     },
     "getDate": {
-      "description": "/** Returns the current date represented by this editor */",
+      "description": "/** Returns the current date represented by this component */",
       "type": {
         "arguments": {},
         "returnType": "Date | null",
@@ -19357,7 +19357,7 @@
   },
   "IDateAngularComp": {
     "getDate": {
-      "description": "/** Returns the current date represented by this editor */",
+      "description": "/** Returns the current date represented by this component */",
       "type": {
         "arguments": {},
         "returnType": "Date | null",

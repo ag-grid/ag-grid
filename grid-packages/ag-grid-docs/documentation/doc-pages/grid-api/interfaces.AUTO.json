@@ -10466,7 +10466,7 @@
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
@@ -10501,7 +10501,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "init?(params: IDateParams)": "/** The init(params) method is called on the component once. */",
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
@@ -11237,7 +11237,7 @@
       "agInit(params: IDateParams)": "void"
     },
     "docs": {
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
