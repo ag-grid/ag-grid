@@ -333,7 +333,7 @@ var gridOptions = {
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
     // suppressScrollWhenPopupsAreOpen: true,
-    debug: true,
+    // debug: true,
     // editType: 'fullRow',
     // debug: true,
     // suppressMultiRangeSelection: true,
@@ -512,14 +512,14 @@ var gridOptions = {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
     onGridSizeChanged: function(params) {
-        console.log("Callback onGridSizeChanged: ", params);
+        // console.log("Callback onGridSizeChanged: ", params);
     },
     // callback when cell clicked
     onCellClicked: function(params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onColumnVisible: function(event) {
-        console.log("Callback onColumnVisible:", event);
+        // console.log("Callback onColumnVisible:", event);
     },
     onColumnResized: function(event) {
         // leave this out, as it slows things down when resizing
@@ -531,7 +531,7 @@ var gridOptions = {
         // console.log("Callback onCellValueChanged:", params);
     },
     onRowDataChanged: function(params) {
-        console.log('Callback onRowDataChanged: ');
+        // console.log('Callback onRowDataChanged: ');
     },
     // callback when cell double clicked
     onCellDoubleClicked: function(params) {
@@ -539,26 +539,26 @@ var gridOptions = {
     },
     // callback when cell right clicked
     onCellContextMenu: function(params) {
-        console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+        // console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onCellFocused: function(params) {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
     onPasteStart: function(params) {
-        console.log('Callback onPasteStart:', params);
+        // console.log('Callback onPasteStart:', params);
     },
     onPasteEnd: function(params) {
-        console.log('Callback onPasteEnd:', params);
+        // console.log('Callback onPasteEnd:', params);
     },
     onGridReady: function(event) {
-        console.log('Callback onGridReady: api = ' + event.api);
+        // console.log('Callback onGridReady: api = ' + event.api);
 
         if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
     },
     onRowGroupOpened: function(event) {
-        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
+        // console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
     },
     onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
@@ -1305,7 +1305,7 @@ function pseudoRandom() {
 }
 
 function selectionChanged(event) {
-    console.log('Callback selectionChanged: selection count = ' + gridOptions.api.getSelectedNodes().length);
+    // console.log('Callback selectionChanged: selection count = ' + gridOptions.api.getSelectedNodes().length);
 }
 
 function rowSelected(event) {
@@ -1314,7 +1314,7 @@ function rowSelected(event) {
     // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
-        console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
+        // console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
     }
 }
 

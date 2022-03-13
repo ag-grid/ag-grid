@@ -108,7 +108,7 @@
                     gridOptions.api.applyTransactionAsync({ update: e.data.records });
                     break;
                 default:
-                    console.log("unrecognised event type " + e.type);
+                    // console.log("unrecognised event type " + e.type);
             }
         };
     }
@@ -124,7 +124,7 @@
               (1000 / interval * updateCount).toLocaleString() +
               " updates per second.";
 
-        console.log(message);
+        // console.log(message);
     }
 
     function logStressResults(messageCount, updateCount) {
@@ -138,21 +138,21 @@
             "Processed " + totalUpdates.toLocaleString() + " updates in " + duration.toLocaleString() + "ms, that's " + updatesPerSecond.toLocaleString() + " updates per second."
         );
 
-        console.log("####################");
-        console.log("# -- Stress test results --");
-        console.log(
-            "# The grid was pumped with " +
-                messageCount.toLocaleString() +
-                " messages. Each message had " +
-                updateCount.toLocaleString() +
-                " record updates which gives a total number of updates of " +
-                totalUpdates.toLocaleString() +
-                "."
-        );
-        console.log(
-            "# Time taken to execute the test was " + duration.toLocaleString() + " milliseconds which gives " + updatesPerSecond.toLocaleString() + " updates per second."
-        );
-        console.log("####################");
+        // console.log("####################");
+        // console.log("# -- Stress test results --");
+        // console.log(
+        //     "# The grid was pumped with " +
+        //         messageCount.toLocaleString() +
+        //         " messages. Each message had " +
+        //         updateCount.toLocaleString() +
+        //         " record updates which gives a total number of updates of " +
+        //         totalUpdates.toLocaleString() +
+        //         "."
+        // );
+        // console.log(
+        //     "# Time taken to execute the test was " + duration.toLocaleString() + " milliseconds which gives " + updatesPerSecond.toLocaleString() + " updates per second."
+        // );
+        // console.log("####################");
     }
 
     function initLiveStreamUpdates() {
