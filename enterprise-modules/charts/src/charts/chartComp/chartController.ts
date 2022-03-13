@@ -21,6 +21,7 @@ import {
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
 import { getChartTheme } from "ag-charts-community";
+import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -291,6 +292,16 @@ export class ChartController extends BeanStub {
                 }));
             }
         }
+    }
+
+    public getActiveSeriesChartTypes(): SeriesChartType[] {
+        const selectedColIds = this.getSelectedValueColState().map(c => c.colId);
+        return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
+    }
+
+    public getChartSeriesTypes(): ChartSeriesType[] {
+        const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'column', 'area'];
+        return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
 
     private getCellRanges(): CellRange[] {

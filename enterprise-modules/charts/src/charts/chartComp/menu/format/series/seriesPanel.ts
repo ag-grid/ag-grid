@@ -276,7 +276,7 @@ export class SeriesPanel extends Component {
         }
 
         const seriesSelectOptions = new Set<ListOption>();
-        this.getActiveSeriesChartTypes().forEach(s => {
+        this.chartController.getActiveSeriesChartTypes().forEach(s => {
             const chartType = getSeriesType(s.chartType);
             seriesSelectOptions.add(this.seriesSelectOptions.get(chartType) as ListOption);
         });
@@ -284,16 +284,11 @@ export class SeriesPanel extends Component {
     }
 
     private updateSeriesType() {
-        const activeChartTypes = this.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
+        const activeChartTypes = this.chartController.getActiveSeriesChartTypes().map(s => getSeriesType(s.chartType));
         const invalidSeriesType = !activeChartTypes.includes(this.seriesType);
         if (invalidSeriesType && activeChartTypes.length > 0) {
             this.seriesType = activeChartTypes[0]; // default to first active series type
         }
-    }
-
-    private getActiveSeriesChartTypes(): SeriesChartType[] {
-        const selectedColIds = this.chartController.getSelectedValueColState().map(c => c.colId);
-        return this.chartController.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
 
     private translate(key: string, defaultText?: string) {

@@ -50,9 +50,10 @@ export class ChartOptionsService extends BeanStub {
 
     public setChartOption<T = string>(expression: string, value: T): void {
         // update chart options
-        const optionsType = getSeriesType(this.getChartType());
-        const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
-        _.set(options, expression, value);
+        this.chartController.getChartSeriesTypes().forEach(optionsType => {
+            const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
+            _.set(options, expression, value);
+        });
 
         // update chart
         _.set(this.getChart(), expression, value);
