@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, RowDragEnterEvent, RowDragEndEvent } from '@ag-grid-community/core'
 import { CustomCellRenderer } from "./customCellRenderer_typescript";
 
 const columnDefs: ColDef[] = [
@@ -25,6 +25,16 @@ const gridOptions: GridOptions = {
   rowDragManaged: true,
   columnDefs: columnDefs,
   animateRows: true,
+  onRowDragEnter: onRowDragEnter,
+  onRowDragEnd: onRowDragEnd,
+}
+
+function onRowDragEnter(e: RowDragEnterEvent) {
+  console.log('onRowDragEnter', e)
+}
+
+function onRowDragEnd(e: RowDragEndEvent) {
+  console.log('onRowDragEnd', e)
 }
 
 // setup the grid after the page has finished loading
