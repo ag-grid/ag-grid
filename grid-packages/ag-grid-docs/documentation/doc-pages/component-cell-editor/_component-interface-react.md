@@ -7,7 +7,7 @@
 |The editor interface is as follows:
 |
 |```ts
-|interface {
+|interface ICellEditorReactComp {
 |
 |    // Mandatory - Return the final value - called by the grid once after editing is complete
 |    getValue(): any;

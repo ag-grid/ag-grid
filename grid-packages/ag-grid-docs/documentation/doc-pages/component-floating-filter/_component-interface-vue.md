@@ -7,7 +7,7 @@
 |The interface for a custom filter component is as follows:
 |
 |```ts
-|interface {
+|interface IFloatingFilter {
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter

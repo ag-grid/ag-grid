@@ -4,7 +4,7 @@
 |The interface for a custom filter component is as follows:
 |
 |```ts
-|interface {
+|interface IFloatingFilterReactComp {
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
 |    // state. The provided parentModel is what the parent filter returns

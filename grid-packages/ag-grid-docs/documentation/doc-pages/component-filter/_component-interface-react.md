@@ -4,7 +4,7 @@
 |The interface for a custom filter component is as follows:
 |
 |```ts
-|interface {
+|interface IFilterReactComp {
 |    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
 |    // header and 2) the filter will be included in the filtering of the data.
 |    isFilterActive(): boolean;
