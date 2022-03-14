@@ -42,7 +42,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         this.addManagedListener(this.eInput, 'paste', e => {
             const text = e.clipboardData.getData('text');
 
-            if (text.some((c: string) => !pattern.test(c))) {
+            if (text.split('').some((c: string) => !pattern.test(c))) {
                 e.preventDefault();
             }
         });
