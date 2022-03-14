@@ -12,6 +12,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
     <Announcement date="Mar 15" version="27.1.0">
         <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27.1/">What's new in AG Grid 27.1.0</a><br/><br/>
             Minor release with new features and bug fixes.
         </p>
         <ul>
