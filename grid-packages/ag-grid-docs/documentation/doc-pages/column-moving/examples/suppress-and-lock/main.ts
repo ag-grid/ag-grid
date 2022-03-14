@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 150,
+    lockPinned: true, // Dont allow pinning for this example
   },
   suppressDragLeaveHidesColumns: true,
 }
