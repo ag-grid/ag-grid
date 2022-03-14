@@ -19,6 +19,12 @@
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.button-group {
+    white-space: nowrap;
+    display: inline-block;
+}
+
 #myChart {
     height: 100%;
 }
+
