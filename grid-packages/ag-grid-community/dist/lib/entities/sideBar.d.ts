@@ -1,7 +1,7 @@
 export interface ToolPanelDef {
     /** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */
     id: string;
-    /** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */
+    /** The key used for localisation for displaying the label. The label is displayed in the tab button. */
     labelKey: string;
     /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
     labelDefault: string;
@@ -11,12 +11,12 @@ export interface ToolPanelDef {
     maxWidth?: number;
     /** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */
     width?: number;
-    /** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */
+    /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
     iconKey: string;
     /**
      * The tool panel component to use as the panel.
      * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.
-     * To provide your own custom panel component, you reference it by name here.
+     * To provide your own custom panel component, you reference it here.
      */
     toolPanel?: any;
     /** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components */

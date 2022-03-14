@@ -1418,7 +1418,7 @@ let AgGridAngular = class AgGridAngular {
         this.componentStateChanged = new EventEmitter();
         /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
         this.cellValueChanged = new EventEmitter();
-        /** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true.     */
+        /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
         this.cellEditRequest = new EventEmitter();
         /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
         this.rowValueChanged = new EventEmitter();
@@ -1426,9 +1426,9 @@ let AgGridAngular = class AgGridAngular {
         this.cellEditingStarted = new EventEmitter();
         /** Editing a cell has stopped.     */
         this.cellEditingStopped = new EventEmitter();
-        /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell.     */
+        /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
         this.rowEditingStarted = new EventEmitter();
-        /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell.     */
+        /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
         this.rowEditingStopped = new EventEmitter();
         /** Filter has been opened.     */
         this.filterOpened = new EventEmitter();

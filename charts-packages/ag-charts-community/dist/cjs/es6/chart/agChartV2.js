@@ -53,9 +53,7 @@ class AgChart {
 exports.AgChart = AgChart;
 class AgChartV2 {
     static create(userOptions) {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         const mergedOptions = prepare_1.prepareOptions(userOptions);
         const chart = prepare_1.isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new groupedCategoryChart_1.GroupedCategoryChart(document) : new cartesianChart_1.CartesianChart(document)) :
             prepare_1.isAgHierarchyChartOptions(mergedOptions) ? new hierarchyChart_1.HierarchyChart(document) :
@@ -68,9 +66,7 @@ class AgChartV2 {
         return chart;
     }
     static update(chart, userOptions) {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         const mergedOptions = prepare_1.prepareOptions(userOptions, chart.userOptions);
         if (chartType(mergedOptions) !== chartType(chart.options)) {
             chart.destroy();
@@ -87,14 +83,17 @@ class AgChartV2 {
         if (update.type == null) {
             update = Object.assign(Object.assign({}, update), { type: chart.options.type || prepare_1.optionsType(update) });
         }
-        if (AgChartV2.DEBUG) {
-            console.log('delta update', update);
-        }
+        debug('delta update', update);
         applyChartOptions(chart, update, userOptions);
     }
 }
 exports.AgChartV2 = AgChartV2;
 AgChartV2.DEBUG = false;
+function debug(message, ...optionalParams) {
+    if (AgChartV2.DEBUG) {
+        console.log(message, ...optionalParams);
+    }
+}
 function applyChartOptions(chart, options, userOptions) {
     if (prepare_1.isAgCartesianChartOptions(options)) {
         applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
@@ -110,11 +109,10 @@ function applyChartOptions(chart, options, userOptions) {
     }
     let performProcessData = false;
     if (options.series && options.series.length > 0) {
-        chart.series = createSeries(options.series);
+        applySeries(chart, options);
     }
     if (prepare_1.isAgCartesianChartOptions(options) && options.axes) {
-        chart.axes = createAxis(options.axes);
-        performProcessData = true;
+        performProcessData = applyAxes(chart, options);
     }
     if (options.data) {
         chart.data = options.data;
@@ -134,6 +132,50 @@ function applyChartOptions(chart, options, userOptions) {
     chart.performLayout();
     chart.options = json_1.jsonMerge(chart.options || {}, options);
     chart.userOptions = json_1.jsonMerge(chart.userOptions || {}, userOptions);
+}
+function applySeries(chart, options) {
+    const optSeries = options.series;
+    if (!optSeries) {
+        return;
+    }
+    const matchingTypes = chart.series.length === optSeries.length &&
+        chart.series.every((s, i) => { var _a; return s.type === ((_a = optSeries[i]) === null || _a === void 0 ? void 0 : _a.type); });
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        chart.series.forEach((s, i) => {
+            var _a, _b;
+            const previousOpts = ((_b = (_a = chart.options) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[i]) || {};
+            const seriesDiff = json_1.jsonDiff(previousOpts, optSeries[i] || {});
+            debug(`applying series diff idx ${i}`, seriesDiff);
+            json_1.jsonApply(s, seriesDiff);
+        });
+        return;
+    }
+    chart.series = createSeries(optSeries);
+}
+function applyAxes(chart, options) {
+    const optAxes = options.axes;
+    if (!optAxes) {
+        return false;
+    }
+    const matchingTypes = chart.axes.length === optAxes.length &&
+        chart.axes.every((a, i) => a.type === optAxes[i].type);
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        const oldOpts = chart.options;
+        if (prepare_1.isAgCartesianChartOptions(oldOpts)) {
+            chart.axes.forEach((a, i) => {
+                var _a;
+                const previousOpts = ((_a = oldOpts.axes) === null || _a === void 0 ? void 0 : _a[i]) || {};
+                const axisDiff = json_1.jsonDiff(previousOpts, optAxes[i]);
+                debug(`applying axis diff idx ${i}`, axisDiff);
+                json_1.jsonApply(a, axisDiff);
+            });
+            return true;
+        }
+    }
+    chart.axes = createAxis(optAxes);
+    return true;
 }
 function createSeries(options) {
     const series = [];

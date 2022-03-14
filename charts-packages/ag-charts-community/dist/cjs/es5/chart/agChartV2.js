@@ -10,17 +10,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -40,6 +29,17 @@ var __read = (this && this.__read) || function (o, n) {
 var __spread = (this && this.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
     return ar;
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var cartesianChart_1 = require("./cartesianChart");
@@ -100,9 +100,7 @@ var AgChartV2 = /** @class */ (function () {
     function AgChartV2() {
     }
     AgChartV2.create = function (userOptions) {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         var mergedOptions = prepare_1.prepareOptions(userOptions);
         var chart = prepare_1.isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new groupedCategoryChart_1.GroupedCategoryChart(document) : new cartesianChart_1.CartesianChart(document)) :
             prepare_1.isAgHierarchyChartOptions(mergedOptions) ? new hierarchyChart_1.HierarchyChart(document) :
@@ -115,9 +113,7 @@ var AgChartV2 = /** @class */ (function () {
         return chart;
     };
     AgChartV2.update = function (chart, userOptions) {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         var mergedOptions = prepare_1.prepareOptions(userOptions, chart.userOptions);
         if (chartType(mergedOptions) !== chartType(chart.options)) {
             chart.destroy();
@@ -134,15 +130,22 @@ var AgChartV2 = /** @class */ (function () {
         if (update.type == null) {
             update = __assign(__assign({}, update), { type: chart.options.type || prepare_1.optionsType(update) });
         }
-        if (AgChartV2.DEBUG) {
-            console.log('delta update', update);
-        }
+        debug('delta update', update);
         applyChartOptions(chart, update, userOptions);
     };
     AgChartV2.DEBUG = false;
     return AgChartV2;
 }());
 exports.AgChartV2 = AgChartV2;
+function debug(message) {
+    var optionalParams = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        optionalParams[_i - 1] = arguments[_i];
+    }
+    if (AgChartV2.DEBUG) {
+        console.log.apply(console, __spread([message], optionalParams));
+    }
+}
 function applyChartOptions(chart, options, userOptions) {
     if (prepare_1.isAgCartesianChartOptions(options)) {
         applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
@@ -158,11 +161,10 @@ function applyChartOptions(chart, options, userOptions) {
     }
     var performProcessData = false;
     if (options.series && options.series.length > 0) {
-        chart.series = createSeries(options.series);
+        applySeries(chart, options);
     }
     if (prepare_1.isAgCartesianChartOptions(options) && options.axes) {
-        chart.axes = createAxis(options.axes);
-        performProcessData = true;
+        performProcessData = applyAxes(chart, options);
     }
     if (options.data) {
         chart.data = options.data;
@@ -182,6 +184,50 @@ function applyChartOptions(chart, options, userOptions) {
     chart.performLayout();
     chart.options = json_1.jsonMerge(chart.options || {}, options);
     chart.userOptions = json_1.jsonMerge(chart.userOptions || {}, userOptions);
+}
+function applySeries(chart, options) {
+    var optSeries = options.series;
+    if (!optSeries) {
+        return;
+    }
+    var matchingTypes = chart.series.length === optSeries.length &&
+        chart.series.every(function (s, i) { var _a; return s.type === ((_a = optSeries[i]) === null || _a === void 0 ? void 0 : _a.type); });
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        chart.series.forEach(function (s, i) {
+            var _a, _b;
+            var previousOpts = ((_b = (_a = chart.options) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[i]) || {};
+            var seriesDiff = json_1.jsonDiff(previousOpts, optSeries[i] || {});
+            debug("applying series diff idx " + i, seriesDiff);
+            json_1.jsonApply(s, seriesDiff);
+        });
+        return;
+    }
+    chart.series = createSeries(optSeries);
+}
+function applyAxes(chart, options) {
+    var optAxes = options.axes;
+    if (!optAxes) {
+        return false;
+    }
+    var matchingTypes = chart.axes.length === optAxes.length &&
+        chart.axes.every(function (a, i) { return a.type === optAxes[i].type; });
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        var oldOpts_1 = chart.options;
+        if (prepare_1.isAgCartesianChartOptions(oldOpts_1)) {
+            chart.axes.forEach(function (a, i) {
+                var _a;
+                var previousOpts = ((_a = oldOpts_1.axes) === null || _a === void 0 ? void 0 : _a[i]) || {};
+                var axisDiff = json_1.jsonDiff(previousOpts, optAxes[i]);
+                debug("applying axis diff idx " + i, axisDiff);
+                json_1.jsonApply(a, axisDiff);
+            });
+            return true;
+        }
+    }
+    chart.axes = createAxis(optAxes);
+    return true;
 }
 function createSeries(options) {
     var e_1, _a;

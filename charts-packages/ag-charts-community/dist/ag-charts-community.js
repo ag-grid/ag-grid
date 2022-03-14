@@ -14523,7 +14523,7 @@
                     highlighted: false
                 });
             }
-            var color = format && format.fill || markerFill;
+            var color = format && format.fill || fill;
             var defaults = {
                 title: title,
                 backgroundColor: color,
@@ -21437,17 +21437,6 @@
         };
         return __assign$b.apply(this, arguments);
     };
-    var __values$8 = (undefined && undefined.__values) || function(o) {
-        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-        if (m) return m.call(o);
-        if (o && typeof o.length === "number") return {
-            next: function () {
-                if (o && i >= o.length) o = void 0;
-                return { value: o && o[i++], done: !o };
-            }
-        };
-        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-    };
     var __read$l = (undefined && undefined.__read) || function (o, n) {
         var m = typeof Symbol === "function" && o[Symbol.iterator];
         if (!m) return o;
@@ -21467,6 +21456,17 @@
     var __spread$a = (undefined && undefined.__spread) || function () {
         for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$l(arguments[i]));
         return ar;
+    };
+    var __values$8 = (undefined && undefined.__values) || function(o) {
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+        if (m) return m.call(o);
+        if (o && typeof o.length === "number") return {
+            next: function () {
+                if (o && i >= o.length) o = void 0;
+                return { value: o && o[i++], done: !o };
+            }
+        };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
     };
     function chartType(options) {
         if (isAgCartesianChartOptions(options)) {
@@ -21505,9 +21505,7 @@
         function AgChartV2() {
         }
         AgChartV2.create = function (userOptions) {
-            if (AgChartV2.DEBUG) {
-                console.log('user options', userOptions);
-            }
+            debug('user options', userOptions);
             var mergedOptions = prepareOptions(userOptions);
             var chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
                 isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
@@ -21520,9 +21518,7 @@
             return chart;
         };
         AgChartV2.update = function (chart, userOptions) {
-            if (AgChartV2.DEBUG) {
-                console.log('user options', userOptions);
-            }
+            debug('user options', userOptions);
             var mergedOptions = prepareOptions(userOptions, chart.userOptions);
             if (chartType(mergedOptions) !== chartType(chart.options)) {
                 chart.destroy();
@@ -21539,14 +21535,21 @@
             if (update.type == null) {
                 update = __assign$b(__assign$b({}, update), { type: chart.options.type || optionsType(update) });
             }
-            if (AgChartV2.DEBUG) {
-                console.log('delta update', update);
-            }
+            debug('delta update', update);
             applyChartOptions(chart, update, userOptions);
         };
         AgChartV2.DEBUG = false;
         return AgChartV2;
     }());
+    function debug(message) {
+        var optionalParams = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            optionalParams[_i - 1] = arguments[_i];
+        }
+        if (AgChartV2.DEBUG) {
+            console.log.apply(console, __spread$a([message], optionalParams));
+        }
+    }
     function applyChartOptions(chart, options, userOptions) {
         if (isAgCartesianChartOptions(options)) {
             applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
@@ -21562,11 +21565,10 @@
         }
         var performProcessData = false;
         if (options.series && options.series.length > 0) {
-            chart.series = createSeries(options.series);
+            applySeries(chart, options);
         }
         if (isAgCartesianChartOptions(options) && options.axes) {
-            chart.axes = createAxis(options.axes);
-            performProcessData = true;
+            performProcessData = applyAxes(chart, options);
         }
         if (options.data) {
             chart.data = options.data;
@@ -21586,6 +21588,50 @@
         chart.performLayout();
         chart.options = jsonMerge(chart.options || {}, options);
         chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+    }
+    function applySeries(chart, options) {
+        var optSeries = options.series;
+        if (!optSeries) {
+            return;
+        }
+        var matchingTypes = chart.series.length === optSeries.length &&
+            chart.series.every(function (s, i) { var _a; return s.type === ((_a = optSeries[i]) === null || _a === void 0 ? void 0 : _a.type); });
+        // Try to optimise series updates if series count and types didn't change.
+        if (matchingTypes) {
+            chart.series.forEach(function (s, i) {
+                var _a, _b;
+                var previousOpts = ((_b = (_a = chart.options) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[i]) || {};
+                var seriesDiff = jsonDiff(previousOpts, optSeries[i] || {});
+                debug("applying series diff idx " + i, seriesDiff);
+                jsonApply(s, seriesDiff);
+            });
+            return;
+        }
+        chart.series = createSeries(optSeries);
+    }
+    function applyAxes(chart, options) {
+        var optAxes = options.axes;
+        if (!optAxes) {
+            return false;
+        }
+        var matchingTypes = chart.axes.length === optAxes.length &&
+            chart.axes.every(function (a, i) { return a.type === optAxes[i].type; });
+        // Try to optimise series updates if series count and types didn't change.
+        if (matchingTypes) {
+            var oldOpts_1 = chart.options;
+            if (isAgCartesianChartOptions(oldOpts_1)) {
+                chart.axes.forEach(function (a, i) {
+                    var _a;
+                    var previousOpts = ((_a = oldOpts_1.axes) === null || _a === void 0 ? void 0 : _a[i]) || {};
+                    var axisDiff = jsonDiff(previousOpts, optAxes[i]);
+                    debug("applying axis diff idx " + i, axisDiff);
+                    jsonApply(a, axisDiff);
+                });
+                return true;
+            }
+        }
+        chart.axes = createAxis(optAxes);
+        return true;
     }
     function createSeries(options) {
         var e_1, _a;

@@ -33,7 +33,6 @@ export declare class SeriesPanel extends Component {
     private getChartSeriesType;
     private getSeriesSelectOptions;
     private updateSeriesType;
-    private getActiveSeriesChartTypes;
     private translate;
     private destroyActivePanels;
     protected destroy(): void;

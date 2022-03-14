@@ -208,22 +208,18 @@ class SeriesPanel extends core_1.Component {
             ]);
         }
         const seriesSelectOptions = new Set();
-        this.getActiveSeriesChartTypes().forEach(s => {
+        this.chartController.getActiveSeriesChartTypes().forEach(s => {
             const chartType = seriesTypeMapper_1.getSeriesType(s.chartType);
             seriesSelectOptions.add(this.seriesSelectOptions.get(chartType));
         });
         return Array.from(seriesSelectOptions);
     }
     updateSeriesType() {
-        const activeChartTypes = this.getActiveSeriesChartTypes().map(s => seriesTypeMapper_1.getSeriesType(s.chartType));
+        const activeChartTypes = this.chartController.getActiveSeriesChartTypes().map(s => seriesTypeMapper_1.getSeriesType(s.chartType));
         const invalidSeriesType = !activeChartTypes.includes(this.seriesType);
         if (invalidSeriesType && activeChartTypes.length > 0) {
             this.seriesType = activeChartTypes[0]; // default to first active series type
         }
-    }
-    getActiveSeriesChartTypes() {
-        const selectedColIds = this.chartController.getSelectedValueColState().map(c => c.colId);
-        return this.chartController.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
     translate(key, defaultText) {
         return this.chartTranslationService.translate(key, defaultText);

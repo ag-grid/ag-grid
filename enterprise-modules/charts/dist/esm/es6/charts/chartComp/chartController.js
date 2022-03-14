@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Autowired, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
 import { ChartDataModel } from "./chartDataModel";
 import { getChartTheme } from "ag-charts-community";
+import { getSeriesType } from "./utils/seriesTypeMapper";
 export class ChartController extends BeanStub {
     constructor(model) {
         super();
@@ -212,6 +213,14 @@ export class ChartController extends BeanStub {
                 }));
             }
         }
+    }
+    getActiveSeriesChartTypes() {
+        const selectedColIds = this.getSelectedValueColState().map(c => c.colId);
+        return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
+    }
+    getChartSeriesTypes() {
+        const supportedComboSeriesTypes = ['line', 'column', 'area'];
+        return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
     getCellRanges() {
         return [this.model.dimensionCellRange, this.model.valueCellRange].filter(r => r);

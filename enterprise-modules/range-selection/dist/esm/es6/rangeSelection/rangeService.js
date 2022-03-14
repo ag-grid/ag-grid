@@ -143,7 +143,7 @@ let RangeService = class RangeService extends BeanStub {
             };
             this.cellRanges.push(cellRange);
         }
-        this.newestRangeStartCell = cell;
+        this.setNewestRangeStartCell(cell);
         this.onDragStop();
         this.dispatchChangedEvent(true, true, cellRange.id);
     }
@@ -244,15 +244,18 @@ let RangeService = class RangeService extends BeanStub {
         this.removeAllCellRanges(true);
         cellRanges.forEach(newRange => {
             if (newRange.columns && newRange.startRow) {
-                this.newestRangeStartCell = {
+                this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
                     column: newRange.columns[0]
-                };
+                });
             }
             this.cellRanges.push(newRange);
         });
         this.dispatchChangedEvent(false, true);
+    }
+    setNewestRangeStartCell(position) {
+        this.newestRangeStartCell = position;
     }
     createCellRangeFromCellRangeParams(params) {
         let columns;
@@ -291,6 +294,13 @@ let RangeService = class RangeService extends BeanStub {
         }
         const newRange = this.createCellRangeFromCellRangeParams(params);
         if (newRange) {
+            if (newRange.startRow) {
+                this.setNewestRangeStartCell({
+                    rowIndex: newRange.startRow.rowIndex,
+                    rowPinned: newRange.startRow.rowPinned,
+                    column: newRange.columns[0]
+                });
+            }
             this.cellRanges.push(newRange);
             this.dispatchChangedEvent(false, true, newRange.id);
         }
@@ -446,10 +456,9 @@ let RangeService = class RangeService extends BeanStub {
             return;
         }
         this.dragging = true;
-        this.draggingCell = this.lastCellHovered;
         this.lastMouseEvent = mouseEvent;
         if (!extendRange) {
-            this.newestRangeStartCell = this.lastCellHovered;
+            this.setNewestRangeStartCell(this.lastCellHovered);
         }
         // if we didn't clear the ranges, then dragging means the user clicked, and when the
         // user clicks it means a range of one cell was created. we need to extend this range
@@ -500,7 +509,6 @@ let RangeService = class RangeService extends BeanStub {
         if (!columns) {
             return;
         }
-        this.draggingCell = cellPosition;
         this.draggingRange.endRow = {
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned
@@ -522,7 +530,6 @@ let RangeService = class RangeService extends BeanStub {
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;
-        this.draggingCell = undefined;
         this.lastCellHovered = undefined;
         this.dispatchChangedEvent(false, true, id);
     }

@@ -14,7 +14,7 @@ export declare abstract class AgChart {
     static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]): void;
 }
 export declare abstract class AgChartV2 {
-    private static DEBUG;
+    static DEBUG: boolean;
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T;
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void;
     private static updateDelta;

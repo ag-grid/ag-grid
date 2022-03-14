@@ -34,10 +34,12 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return _.get(this.getChart(), expression, undefined);
     };
     ChartOptionsService.prototype.setChartOption = function (expression, value) {
+        var _this = this;
         // update chart options
-        var optionsType = getSeriesType(this.getChartType());
-        var options = _.get(this.getChartOptions(), "" + optionsType, undefined);
-        _.set(options, expression, value);
+        this.chartController.getChartSeriesTypes().forEach(function (optionsType) {
+            var options = _.get(_this.getChartOptions(), "" + optionsType, undefined);
+            _.set(options, expression, value);
+        });
         // update chart
         _.set(this.getChart(), expression, value);
         this.raiseChartOptionsChangedEvent();

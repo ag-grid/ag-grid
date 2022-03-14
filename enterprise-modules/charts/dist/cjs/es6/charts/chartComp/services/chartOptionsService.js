@@ -22,9 +22,10 @@ class ChartOptionsService extends core_1.BeanStub {
     }
     setChartOption(expression, value) {
         // update chart options
-        const optionsType = seriesTypeMapper_1.getSeriesType(this.getChartType());
-        const options = core_1._.get(this.getChartOptions(), `${optionsType}`, undefined);
-        core_1._.set(options, expression, value);
+        this.chartController.getChartSeriesTypes().forEach(optionsType => {
+            const options = core_1._.get(this.getChartOptions(), `${optionsType}`, undefined);
+            core_1._.set(options, expression, value);
+        });
         // update chart
         core_1._.set(this.getChart(), expression, value);
         this.raiseChartOptionsChangedEvent();

@@ -31,9 +31,10 @@ export class AgInputTextField extends AgAbstractInputField {
             }
         };
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
-        this.addManagedListener(this.eInput, 'paste', e => {
-            const text = e.clipboardData.getData('text');
-            if (text.some((c) => !pattern.test(c))) {
+        this.addManagedListener(this.eInput, 'paste', (e) => {
+            var _a;
+            const text = (_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text');
+            if (text && text.split('').some((c) => !pattern.test(c))) {
                 e.preventDefault();
             }
         });

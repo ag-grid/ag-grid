@@ -20,6 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Autowired, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
 import { ChartDataModel } from "./chartDataModel";
 import { getChartTheme } from "ag-charts-community";
+import { getSeriesType } from "./utils/seriesTypeMapper";
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(model) {
@@ -230,6 +231,14 @@ var ChartController = /** @class */ (function (_super) {
                 }));
             }
         }
+    };
+    ChartController.prototype.getActiveSeriesChartTypes = function () {
+        var selectedColIds = this.getSelectedValueColState().map(function (c) { return c.colId; });
+        return this.getSeriesChartTypes().filter(function (s) { return selectedColIds.includes(s.colId); });
+    };
+    ChartController.prototype.getChartSeriesTypes = function () {
+        var supportedComboSeriesTypes = ['line', 'column', 'area'];
+        return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     };
     ChartController.prototype.getCellRanges = function () {
         return [this.model.dimensionCellRange, this.model.valueCellRange].filter(function (r) { return r; });

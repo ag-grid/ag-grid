@@ -1,6 +1,7 @@
 import { AgChartThemePalette, AgEvent, BeanStub, ChartModel, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
+import { ChartSeriesType } from "./utils/seriesTypeMapper";
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
 export declare class ChartController extends BeanStub {
@@ -53,6 +54,8 @@ export declare class ChartController extends BeanStub {
     getSeriesChartTypes(): SeriesChartType[];
     isComboChart(): boolean;
     updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void;
+    getActiveSeriesChartTypes(): SeriesChartType[];
+    getChartSeriesTypes(): ChartSeriesType[];
     private getCellRanges;
     private getCellRangeParams;
     private raiseChartUpdatedEvent;

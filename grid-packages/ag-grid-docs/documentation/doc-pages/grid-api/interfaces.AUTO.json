@@ -5878,11 +5878,11 @@
       "time?": "AgTimeAxisThemeOptions"
     },
     "docs": {
-      "number?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
-      "log?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
-      "category?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */",
-      "groupedCategory?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
-      "time?": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */"
+      "number?": "/** This extends the common axis configuration with options specific to number axes. */",
+      "log?": "/** This extends the common axis configuration with options specific to number axes. */",
+      "category?": "/** This extends the common axis configuration with options specific to category axes. */",
+      "groupedCategory?": "/** This extends the common axis configuration with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
+      "time?": "/** This extends the common axis configuration with options specific to time axes. */"
     }
   },
   "AgCartesianSeriesTheme": {

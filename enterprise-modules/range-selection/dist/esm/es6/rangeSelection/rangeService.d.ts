@@ -18,7 +18,6 @@ export declare class RangeService extends BeanStub implements IRangeService {
     private cellHasChanged;
     private newestRangeStartCell?;
     private dragging;
-    private draggingCell?;
     private draggingRange?;
     autoScrollService: AutoScrollService;
     private init;
@@ -38,6 +37,7 @@ export declare class RangeService extends BeanStub implements IRangeService {
     extendLatestRangeInDirection(key: string): CellPosition | undefined;
     setCellRange(params: CellRangeParams): void;
     setCellRanges(cellRanges: CellRange[]): void;
+    private setNewestRangeStartCell;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
     addCellRange(params: CellRangeParams): void;
     getCellRanges(): CellRange[];

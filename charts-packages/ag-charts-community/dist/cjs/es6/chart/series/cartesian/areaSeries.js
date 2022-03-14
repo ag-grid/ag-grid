@@ -639,7 +639,7 @@ class AreaSeries extends cartesianSeries_1.CartesianSeries {
                 highlighted: false
             });
         }
-        const color = format && format.fill || markerFill;
+        const color = format && format.fill || fill;
         const defaults = {
             title,
             backgroundColor: color,

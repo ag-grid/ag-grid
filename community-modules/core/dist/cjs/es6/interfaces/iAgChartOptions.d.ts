@@ -89,15 +89,15 @@ export interface AgGroupedCategoryAxisThemeOptions extends Omit<AgGroupedCategor
 export interface AgTimeAxisThemeOptions extends Omit<AgTimeAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgTimeAxisOptions> {
 }
 export interface AgCartesianAxesTheme {
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     number?: AgNumberAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     log?: AgLogAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */
+    /** This extends the common axis configuration with options specific to category axes. */
     category?: AgCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
+    /** This extends the common axis configuration with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
     groupedCategory?: AgGroupedCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */
+    /** This extends the common axis configuration with options specific to time axes. */
     time?: AgTimeAxisThemeOptions;
 }
 export interface AgCartesianSeriesTheme {
@@ -174,7 +174,7 @@ export interface AgNavigatorMaskOptions {
     stroke?: string;
     /** The stroke width used by the mask. */
     strokeWidth?: number;
-    /** The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking. */
+    /** The opacity of the mask's fill in the `[0, 1]` interval, where `0` is effectively no masking. */
     fillOpacity?: number;
 }
 export interface AgNavigatorHandleOptions {
@@ -200,9 +200,9 @@ export interface AgNavigatorOptions {
     height?: number;
     /** The distance between the navigator and the bottom axis. */
     margin?: number;
-    /** The start of the visible range in the <code>[0, 1]</code> interval. */
+    /** The start of the visible range in the `[0, 1]` interval. */
     min?: number;
-    /** The end of the visible range in the <code>[0, 1]</code> interval. */
+    /** The end of the visible range in the `[0, 1]` interval. */
     max?: number;
     /** Configuration for the navigator's visible range mask. */
     mask?: AgNavigatorMaskOptions;
@@ -215,7 +215,7 @@ export declare type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
 export interface AgChartLegendMarkerOptions {
     /** The size in pixels of the markers in the legend. */
     size?: number;
-    /** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none. */
+    /** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to `'square'` if there is none. */
     shape?: string | (new () => any);
     /** The padding in pixels between a legend marker and the corresponding label. */
     padding?: number;
@@ -233,7 +233,7 @@ export interface AgChartLegendLabelOptions {
     fontSize?: number;
     /** The font family to use for the legend. */
     fontFamily?: string;
-    /** Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index. */
+    /** Function used to render legend labels. Where `id` is a series ID, `itemId` is component ID within a series, such as a field name or an item index. */
     formatter?: (id: string, itemId: any, value: string) => string;
 }
 export interface AgChartLegendItemOptions {
@@ -282,13 +282,13 @@ export interface AgBaseChartListeners {
 export interface AgBaseChartOptions {
     /** The data to render the chart from. If this is not specified, it must be set on individual series instead. */
     data?: any[];
-    /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default). */
+    /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */
     container?: HTMLElement | null;
-    /** The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */
+    /** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
     width?: number;
-    /** The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>. */
+    /** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
     height?: number;
-    /** By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
+    /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
@@ -351,13 +351,13 @@ export interface AgAxisLabelOptions {
     rotation?: number;
     /** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../axes/#time-label-format-string\">click here</a> */
     format?: string;
-    /** Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code> */
+    /** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */
     formatter?: (params: AgAxisLabelFormatterParams) => string;
 }
 export interface AgAxisGridStyle {
     /** The colour of the grid line. */
     stroke?: string;
-    /** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
 }
 export declare type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'log' | 'time';
@@ -509,7 +509,7 @@ export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesT
 export interface AgSeriesMarker {
     /** Whether or not to show markers. */
     enabled?: boolean;
-    /** The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass. */
+    /** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */
     shape?: string | (new () => any);
     /** The size in pixels of the markers. */
     size?: number;
@@ -546,7 +546,7 @@ export interface AgCartesianSeriesMarkerFormat {
 }
 export declare type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat | undefined;
 export interface AgCartesianSeriesMarker extends AgSeriesMarker {
-    /** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    /** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 export interface AgSeriesTooltip {
@@ -576,7 +576,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     xName?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not. */
+    /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */
     title?: string;
     /** The colour of the stroke for the lines. */
     stroke?: string;
@@ -584,7 +584,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     /** The opacity of the stroke for the lines. */
     strokeOpacity?: number;
-    /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
@@ -623,7 +623,7 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     labelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters.  */
     labelName?: string;
-    /** The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.  */
+    /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */
     title?: string;
     /** @deprecated Use {@link marker.fill} instead. */
     fill?: string;
@@ -653,7 +653,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     /** Configuration for the markers used in the series. */
     marker?: AgCartesianSeriesMarker;
-    /** The number to normalise the area stacks to. For example, if <code>normalizedTo</code> is set to <code>100</code>, the stacks will all be scaled proportionally so that their total height is always 100. */
+    /** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
@@ -696,7 +696,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     /** The opacity of the stroke for the areas. */
     strokeOpacity?: number;
-    /** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
@@ -740,7 +740,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     /** Whether to show different y-values as separate bars (grouped) or not (stacked). */
     grouped?: boolean;
     stacked?: boolean;
-    /** The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>. For example, if <code>normalizedTo</code> is set to <code>100</code>, the bar stacks will all be scaled proportionally so that each of their totals is 100. */
+    /** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
@@ -787,7 +787,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     /** The opacity of the stroke for the bars. */
     strokeOpacity?: number;
-    /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
@@ -797,7 +797,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     label?: AgBarSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
     tooltip?: AgBarSeriesTooltip;
-    /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
+    /** Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
     formatter?: (params: AgBarSeriesFormatterParams) => AgBarSeriesFormat;
 }
 export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
@@ -823,7 +823,7 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     strokeOpacity?: number;
     /** The width in pixels of the stroke for the histogram bars. */
     strokeWidth?: number;
-    /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;
@@ -835,11 +835,11 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /** For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */
+    /** For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins. */
     areaPlot?: boolean;
-    /** Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting. */
+    /** Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting. */
     bins?: [number, number][];
-    /** The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting. */
+    /** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */
     binCount?: number;
     /** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */
     aggregation?: 'count' | 'sum' | 'mean';
@@ -916,7 +916,7 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     strokeOpacity?: number;
     /** The width in pixels of the stroke for the segments. */
     strokeWidth?: number;
-    /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels. */
+    /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: number[];
     /** The initial offset of the dashed line in pixels. */
     lineDashOffset?: number;

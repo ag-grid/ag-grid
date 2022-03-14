@@ -236,22 +236,18 @@ var SeriesPanel = /** @class */ (function (_super) {
             ]);
         }
         var seriesSelectOptions = new Set();
-        this.getActiveSeriesChartTypes().forEach(function (s) {
+        this.chartController.getActiveSeriesChartTypes().forEach(function (s) {
             var chartType = seriesTypeMapper_1.getSeriesType(s.chartType);
             seriesSelectOptions.add(_this.seriesSelectOptions.get(chartType));
         });
         return Array.from(seriesSelectOptions);
     };
     SeriesPanel.prototype.updateSeriesType = function () {
-        var activeChartTypes = this.getActiveSeriesChartTypes().map(function (s) { return seriesTypeMapper_1.getSeriesType(s.chartType); });
+        var activeChartTypes = this.chartController.getActiveSeriesChartTypes().map(function (s) { return seriesTypeMapper_1.getSeriesType(s.chartType); });
         var invalidSeriesType = !activeChartTypes.includes(this.seriesType);
         if (invalidSeriesType && activeChartTypes.length > 0) {
             this.seriesType = activeChartTypes[0]; // default to first active series type
         }
-    };
-    SeriesPanel.prototype.getActiveSeriesChartTypes = function () {
-        var selectedColIds = this.chartController.getSelectedValueColState().map(function (c) { return c.colId; });
-        return this.chartController.getSeriesChartTypes().filter(function (s) { return selectedColIds.includes(s.colId); });
     };
     SeriesPanel.prototype.translate = function (key, defaultText) {
         return this.chartTranslationService.translate(key, defaultText);

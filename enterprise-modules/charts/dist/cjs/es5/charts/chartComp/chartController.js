@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var chartDataModel_1 = require("./chartDataModel");
 var ag_charts_community_1 = require("ag-charts-community");
+var seriesTypeMapper_1 = require("./utils/seriesTypeMapper");
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(model) {
@@ -232,6 +233,14 @@ var ChartController = /** @class */ (function (_super) {
                 }));
             }
         }
+    };
+    ChartController.prototype.getActiveSeriesChartTypes = function () {
+        var selectedColIds = this.getSelectedValueColState().map(function (c) { return c.colId; });
+        return this.getSeriesChartTypes().filter(function (s) { return selectedColIds.includes(s.colId); });
+    };
+    ChartController.prototype.getChartSeriesTypes = function () {
+        var supportedComboSeriesTypes = ['line', 'column', 'area'];
+        return this.isComboChart() ? supportedComboSeriesTypes : [seriesTypeMapper_1.getSeriesType(this.getChartType())];
     };
     ChartController.prototype.getCellRanges = function () {
         return [this.model.dimensionCellRange, this.model.valueCellRange].filter(function (r) { return r; });

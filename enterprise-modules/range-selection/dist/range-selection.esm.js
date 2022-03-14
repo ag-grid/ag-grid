@@ -199,7 +199,7 @@ var RangeService = /** @class */ (function (_super) {
             };
             this.cellRanges.push(cellRange);
         }
-        this.newestRangeStartCell = cell;
+        this.setNewestRangeStartCell(cell);
         this.onDragStop();
         this.dispatchChangedEvent(true, true, cellRange.id);
     };
@@ -302,15 +302,18 @@ var RangeService = /** @class */ (function (_super) {
         this.removeAllCellRanges(true);
         cellRanges.forEach(function (newRange) {
             if (newRange.columns && newRange.startRow) {
-                _this.newestRangeStartCell = {
+                _this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
                     column: newRange.columns[0]
-                };
+                });
             }
             _this.cellRanges.push(newRange);
         });
         this.dispatchChangedEvent(false, true);
+    };
+    RangeService.prototype.setNewestRangeStartCell = function (position) {
+        this.newestRangeStartCell = position;
     };
     RangeService.prototype.createCellRangeFromCellRangeParams = function (params) {
         var _this = this;
@@ -350,6 +353,13 @@ var RangeService = /** @class */ (function (_super) {
         }
         var newRange = this.createCellRangeFromCellRangeParams(params);
         if (newRange) {
+            if (newRange.startRow) {
+                this.setNewestRangeStartCell({
+                    rowIndex: newRange.startRow.rowIndex,
+                    rowPinned: newRange.startRow.rowPinned,
+                    column: newRange.columns[0]
+                });
+            }
             this.cellRanges.push(newRange);
             this.dispatchChangedEvent(false, true, newRange.id);
         }
@@ -523,10 +533,9 @@ var RangeService = /** @class */ (function (_super) {
             return;
         }
         this.dragging = true;
-        this.draggingCell = this.lastCellHovered;
         this.lastMouseEvent = mouseEvent;
         if (!extendRange) {
-            this.newestRangeStartCell = this.lastCellHovered;
+            this.setNewestRangeStartCell(this.lastCellHovered);
         }
         // if we didn't clear the ranges, then dragging means the user clicked, and when the
         // user clicks it means a range of one cell was created. we need to extend this range
@@ -580,7 +589,6 @@ var RangeService = /** @class */ (function (_super) {
         if (!columns) {
             return;
         }
-        this.draggingCell = cellPosition;
         this.draggingRange.endRow = {
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned
@@ -602,7 +610,6 @@ var RangeService = /** @class */ (function (_super) {
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;
-        this.draggingCell = undefined;
         this.lastCellHovered = undefined;
         this.dispatchChangedEvent(false, true, id);
     };

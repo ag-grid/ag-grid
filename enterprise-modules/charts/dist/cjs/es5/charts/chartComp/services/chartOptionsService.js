@@ -36,10 +36,12 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return core_1._.get(this.getChart(), expression, undefined);
     };
     ChartOptionsService.prototype.setChartOption = function (expression, value) {
+        var _this = this;
         // update chart options
-        var optionsType = seriesTypeMapper_1.getSeriesType(this.getChartType());
-        var options = core_1._.get(this.getChartOptions(), "" + optionsType, undefined);
-        core_1._.set(options, expression, value);
+        this.chartController.getChartSeriesTypes().forEach(function (optionsType) {
+            var options = core_1._.get(_this.getChartOptions(), "" + optionsType, undefined);
+            core_1._.set(options, expression, value);
+        });
         // update chart
         core_1._.set(this.getChart(), expression, value);
         this.raiseChartOptionsChangedEvent();

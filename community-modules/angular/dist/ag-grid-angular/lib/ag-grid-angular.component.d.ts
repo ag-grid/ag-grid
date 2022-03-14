@@ -728,7 +728,7 @@ Allows you to set the ID for a particular row node based on the data.
     componentStateChanged: EventEmitter<ComponentStateChangedEvent>;
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed).     */
     cellValueChanged: EventEmitter<CellValueChangedEvent>;
-    /** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true.     */
+    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`.     */
     cellEditRequest: EventEmitter<CellEditRequestEvent>;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only.     */
     rowValueChanged: EventEmitter<RowValueChangedEvent>;
@@ -736,9 +736,9 @@ Allows you to set the ID for a particular row node based on the data.
     cellEditingStarted: EventEmitter<CellEditingStartedEvent>;
     /** Editing a cell has stopped.     */
     cellEditingStopped: EventEmitter<CellEditingStoppedEvent>;
-    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell.     */
+    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     rowEditingStarted: EventEmitter<RowEditingStartedEvent>;
-    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell.     */
+    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.     */
     rowEditingStopped: EventEmitter<RowEditingStoppedEvent>;
     /** Filter has been opened.     */
     filterOpened: EventEmitter<FilterOpenedEvent>;

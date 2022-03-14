@@ -10266,26 +10266,26 @@
   },
   "AgCartesianAxesTheme": {
     "number": {
-      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
+      "description": "/** This extends the common axis configuration with options specific to number axes. */",
       "type": { "returnType": "AgNumberAxisThemeOptions", "optional": true }
     },
     "log": {
-      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */",
+      "description": "/** This extends the common axis configuration with options specific to number axes. */",
       "type": { "returnType": "AgLogAxisThemeOptions", "optional": true }
     },
     "category": {
-      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */",
+      "description": "/** This extends the common axis configuration with options specific to category axes. */",
       "type": { "returnType": "AgCategoryAxisThemeOptions", "optional": true }
     },
     "groupedCategory": {
-      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
+      "description": "/** This extends the common axis configuration with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */",
       "type": {
         "returnType": "AgGroupedCategoryAxisThemeOptions",
         "optional": true
       }
     },
     "time": {
-      "description": "/** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */",
+      "description": "/** This extends the common axis configuration with options specific to time axes. */",
       "type": { "returnType": "AgTimeAxisThemeOptions", "optional": true }
     }
   },

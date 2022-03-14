@@ -28,7 +28,7 @@ const DetailCellRenderer = (props, ref) => {
         }));
     }
     react_1.useEffect(() => {
-        if (props.template) {
+        if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
     }, []);

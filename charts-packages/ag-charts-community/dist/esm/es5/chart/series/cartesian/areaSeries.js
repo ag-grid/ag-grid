@@ -733,7 +733,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 highlighted: false
             });
         }
-        var color = format && format.fill || markerFill;
+        var color = format && format.fill || fill;
         var defaults = {
             title: title,
             backgroundColor: color,
