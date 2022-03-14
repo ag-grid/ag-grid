@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
 
 var filterParams = {
   comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
@@ -50,6 +50,12 @@ const gridOptions: GridOptions = {
     minWidth: 150,
     filter: true,
     sortable: true,
+  },
+  sideBar: 'filters',
+  onGridReady: function (params) {
+    ((params.api.getToolPanelInstance(
+      'filters'
+    ) as any) as IFiltersToolPanel).expandFilters()
   },
 }
 
