@@ -209,7 +209,7 @@ The following example demonstrates loading set filter values asynchronously. Not
 - Opening the set filter shows a loading message before the values are set. See the [Localisation](/localisation/) section for details on how to change this message.
 - The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are not loaded again.
 
-<grid-example title='Callback/Async' name='callback-async' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Callback/Async' name='callback-async' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ### Refreshing Values
 
@@ -335,7 +335,7 @@ The example below demonstrates this in action. Note the following:
 - For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 - Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
 
-<grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Default State
 
@@ -363,7 +363,7 @@ The following example demonstrates different default states. Note the following:
 - The Country column has nothing selected by default, as `defaultToNothingSelected = true`.
 - When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has been selected.
 
-<grid-example title='Default State' name='default-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Default State' name='default-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Filter Value Tooltips
 
@@ -392,7 +392,7 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 - **Col B** has Set Filter Tooltips enabled via `filterParams.showTooltips=true`.
 - **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 
-<grid-example title='Filter Value Tooltips' name='filter-value-tooltips' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Filter Value Tooltips' name='filter-value-tooltips' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Next Up
 
