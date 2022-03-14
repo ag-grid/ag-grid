@@ -227,7 +227,7 @@
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         animateRows: true,
-        debug: true
+        // debug: true
     };
 
     var btBringGridBack;

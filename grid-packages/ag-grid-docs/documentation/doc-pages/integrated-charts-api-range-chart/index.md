@@ -62,8 +62,9 @@ It is possible to create the following combination chart types via `gridApi.crea
 - Area & Column (`chartType: 'areaColumnCombo'`)
 - Custom Combination (`chartType: 'customCombo'`)
 
-When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied and 
-when `seriesChartTypes` is present, a `customCombo` chart type is assumed, regardless of the `chartType` properties supplied.
+When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied. 
+Conversely, when `seriesChartTypes` is present a `customCombo` chart type is assumed, regardless of the `chartType` 
+properties supplied.
 
 The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as shown below:
 
@@ -82,7 +83,7 @@ api.createRangeChart({
   });
 </snippet>
 
-Note that combination charts only support the following chart types:
+The following series chart types are supported with combination charts:
 
 - Line (`chartType: 'line'`)
 - Area (`chartType: 'Area'`)
@@ -90,7 +91,7 @@ Note that combination charts only support the following chart types:
 - Grouped Column (`chartType: 'groupedColumn'`)
 - Stacked Column (`chartType: 'stackedColumn'`)
 
-And only `line` and `area` chart types can be plotted against a secondary axis.
+Note that only `line` and `area` series chart types can be plotted against a secondary axis.
 
 The following example demonstrates the above configuration, note the following:
 

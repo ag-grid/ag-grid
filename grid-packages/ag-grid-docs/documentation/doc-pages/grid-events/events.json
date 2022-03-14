@@ -89,7 +89,12 @@
             }
         },
         "cellValueChanged": {},
-        "cellEditRequest": {},
+        "cellEditRequest": {
+            "more": {
+                "name": "Read Only Edits",
+                "url": "/value-setters/#read-only-edit"
+            }
+        },
         "rowValueChanged": {
             "more": {
                 "name": "Full Row Editing",

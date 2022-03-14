@@ -3,7 +3,7 @@ title: "Context Menu"
 enterprise: true
 ---
 
-The user can bring up the context menu by right clicking on a cell. By default, the context menu provides the values 'copy' and 'paste'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled.
+The user can bring up the context menu by right clicking on a cell. By default, the context menu provides 'copy', 'paste' and 'export'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled.
 
 [[note]]
 | The 'paste' operation in the context menu is not possible and hence always disabled.

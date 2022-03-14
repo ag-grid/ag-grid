@@ -85,7 +85,7 @@ function countryHeaderValueGetter(params: HeaderValueGetterParams) {
       return 'CSV Country'
     case 'clipboard':
       return 'CLIP Country'
-    case 'toolPanel':
+    case 'columnToolPanel':
       return 'TP Country'
     case 'columnDrop':
       return 'CD Country'

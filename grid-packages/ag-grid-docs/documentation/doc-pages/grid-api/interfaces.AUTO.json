@@ -2044,12 +2044,12 @@
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "onComponentStateChanged?(event: ComponentStateChangedEvent)": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "onCellValueChanged?(event: CellValueChangedEvent)": "/** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */",
-      "onCellEditRequest?(event: CellEditRequestEvent)": "/** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true. */",
+      "onCellEditRequest?(event: CellEditRequestEvent)": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
       "onRowValueChanged?(event: RowValueChangedEvent)": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "onCellEditingStarted?(event: CellEditingStartedEvent)": "/** Editing a cell has started. */",
       "onCellEditingStopped?(event: CellEditingStoppedEvent)": "/** Editing a cell has stopped. */",
-      "onRowEditingStarted?(event: RowEditingStartedEvent)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. */",
-      "onRowEditingStopped?(event: RowEditingStoppedEvent)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. */",
+      "onRowEditingStarted?(event: RowEditingStartedEvent)": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
+      "onRowEditingStopped?(event: RowEditingStoppedEvent)": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */",
       "onFilterOpened?(event: FilterOpenedEvent)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -2651,13 +2651,13 @@
     },
     "docs": {
       "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
-      "labelKey": "/** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */",
+      "labelKey": "/** The key used for localisation for displaying the label. The label is displayed in the tab button. */",
       "labelDefault": "/** The default label if `labelKey` is missing or does not map to valid text through localisation. */",
       "minWidth?": "/** The min width of the tool panel. Default: `100` */",
       "maxWidth?": "/** The max width of the tool panel. Default: `undefined` */",
       "width?": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
-      "iconKey": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
-      "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
+      "iconKey": "/** The key of the icon to be used as a graphical aid beside the label in the side bar. */",
+      "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
       "toolPanelFramework?": "/** @deprecated Same as `toolPanel` but for framework specific components. As of v27, use toolPanel instead for Framework components\n */",
       "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
     }
@@ -10466,7 +10466,7 @@
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
@@ -10501,7 +10501,7 @@
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "init?(params: IDateParams)": "/** The init(params) method is called on the component once. */",
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
@@ -11237,7 +11237,7 @@
       "agInit(params: IDateParams)": "void"
     },
     "docs": {
-      "getDate()": "/** Returns the current date represented by this editor */",
+      "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",

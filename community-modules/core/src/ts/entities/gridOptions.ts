@@ -961,7 +961,7 @@ export interface GridOptions {
     // *** Editing *** //
     /** Value has changed after editing. This event will not fire if editing was cancelled (eg ESC was pressed). */
     onCellValueChanged?(event: CellValueChangedEvent): void;
-    /** Value has changed after editing, however the grid has not updated the value as grid property readOnlyEdit=true. */
+    /** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */
     onCellEditRequest?(event: CellEditRequestEvent): void;
     /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent): void;
@@ -969,9 +969,9 @@ export interface GridOptions {
     onCellEditingStarted?(event: CellEditingStartedEvent): void;
     /** Editing a cell has stopped. */
     onCellEditingStopped?(event: CellEditingStoppedEvent): void;
-    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. */
+    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. Only fires when doing Full Row Editing. */
     onRowEditingStarted?(event: RowEditingStartedEvent): void;
-    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. */
+    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing. */
     onRowEditingStopped?(event: RowEditingStoppedEvent): void;
 
     // *** Filtering *** //

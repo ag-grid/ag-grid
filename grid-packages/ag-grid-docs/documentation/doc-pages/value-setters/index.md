@@ -68,7 +68,7 @@ const gridOptions = {
 }
 </snippet>
 
-The example has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. Because the application does not try to update the data, the cell keeps it's old value, giving the impressing editing is not working.
+The example has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. Because the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
 <grid-example title='Read Only Edit' name='read-only' type='generated'></grid-example>
 

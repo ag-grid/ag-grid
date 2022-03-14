@@ -37,7 +37,7 @@ Things to try:
 
 Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
 
-- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. If you drag a column from the tool panel onto the grid it will make it visible.
+- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true` you can drag a column from the tool panel onto the grid it will become visible.
 - **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Column Tool Panel Sections
@@ -63,7 +63,7 @@ The column tool panel is split into different sections as follows:
 
 ## Section Visibility
 
-It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
+It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
 
 <interface-documentation interfaceName='ToolPanelColumnCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 

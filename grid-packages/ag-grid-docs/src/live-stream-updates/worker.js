@@ -76,7 +76,7 @@ function createRowData() {
             }
         }
     }
-    console.log("Total number of records sent to grid = " + globalRowData.length);
+    // console.log("Total number of records sent to grid = " + globalRowData.length);
 }
 
 // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -200,19 +200,19 @@ self.addEventListener("message", function(e) {
     latestTestNumber++;
     switch (e.data) {
         case "startStress":
-            console.log("starting stress test");
+            // console.log("starting stress test");
             sendMessagesNoThrottle();
             break;
         case "startLoad":
-            console.log("starting load test");
+            // console.log("starting load test");
             sendMessagesWithThrottle(latestTestNumber);
             break;
         case "stopTest":
-            console.log("stopping test");
+            // console.log("stopping test");
             // sendMessagesNoThrottle();
             break;
         default:
-            console.log("unknown message type " + e.data);
+            // console.log("unknown message type " + e.data);
             break;
     }
 });

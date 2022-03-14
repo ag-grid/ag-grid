@@ -9,12 +9,12 @@ This section covers how to configure the Side Bar which contains Tool Panels.
 
 The side bar is configured using the grid property `sideBar`. The property takes multiple forms to allow easy configuration or more advanced configuration. The different forms for the `sideBar` property are as follows:
 
-| Type                       | Description                                                                                        |
-| -------------------------- | -------------------------------------------------------------------------------------------------- |
-| undefined / null           | No side bar provided.                                                                              |
-| boolean                    | Set to `true` to display the side bar with default configuration.                       |
-| string                     | Set to `'columns'` or `'filters'` to display side bar with just one of [Columns](/tool-panel-columns/) or [Filters](/tool-panel-filters/) tool panels. |
-| SideBarDef<br/>(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the columns or filters panel) or to include custom tool panels. |
+| Type                         | Description                                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `undefined` / `null`         | No side bar provided.                                                                              |
+| `boolean`                    | Set to `true` to display the side bar with default configuration.                       |
+| `string`                     | Set to `'columns'` or `'filters'` to display side bar with just one of [Columns](/tool-panel-columns/) or [Filters](/tool-panel-filters/) tool panels. |
+| `SideBarDef`<br/>(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the columns or filters panel) or to include custom tool panels. |
 
 
 ### Boolean Configuration
@@ -197,7 +197,7 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 ## Providing Parameters to Tool Panels
 
-Parameters are passed to tool panels via the `componentParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](/tool-panel-columns/).
+Parameters are passed to tool panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](/tool-panel-columns/).
 
 <snippet>
 const gridOptions = {
