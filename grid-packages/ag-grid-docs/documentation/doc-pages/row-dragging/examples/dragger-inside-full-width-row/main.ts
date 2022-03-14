@@ -30,6 +30,9 @@ const gridOptions: GridOptions = {
 }
 
 function countryCellRenderer(params: ICellRendererParams) {
+  if (!params.fullWidth) {
+      return params.value;
+  }
   var flag =
     '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/' +
     params.data.code +
