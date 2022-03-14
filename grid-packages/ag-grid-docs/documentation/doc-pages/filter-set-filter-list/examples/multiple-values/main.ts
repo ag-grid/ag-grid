@@ -48,6 +48,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   rowData: getData(),
+  sideBar: 'filters',
 }
 
 // setup the grid after the page has finished loading
