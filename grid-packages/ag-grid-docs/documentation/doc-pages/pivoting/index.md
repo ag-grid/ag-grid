@@ -98,7 +98,7 @@ As mentioned above, the secondary columns in the grid are created by the grid by
 |gridOptions.columnApi.setColumnWidth(irelandGoldColumn, newWidth);
 |
 |// look up the column that pivots on country SausageKingdom and year 2002 and aggregates silver
-|const sausageKingdomColumn = gridOptions.columnApi.getSecondaryPivotColumn(['SausageKingdom','2002'],'gold');
+|const sausageKingdomColumn = gridOptions.columnApi.getSecondaryPivotColumn(['SausageKingdom','2002'],'silver');
 |
 |console.log('found column with id ' + sausageKingdomColumn.getId());
 </snippet>
