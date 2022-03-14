@@ -19,14 +19,14 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'country',
-    filter: 'agSetColumnFilter',
+    filter: 'agTextColumnFilter',
     filterParams: {
       buttons: ['clear', 'apply'],
     },
   },
   {
     field: 'year',
-    filter: 'agSetColumnFilter',
+    filter: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply', 'cancel'],
       closeOnApply: true,

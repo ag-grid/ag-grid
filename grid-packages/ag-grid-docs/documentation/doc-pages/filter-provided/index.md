@@ -62,7 +62,7 @@ The example below demonstrates using the different buttons. It also demonstrates
 - `onFilterChanged` is called only after a new filter is applied.
 - Looking at the console, it can be noted when a filter is changed, the result of `getModel()` and `getModelFromUi()` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied).
 
-<grid-example title='Buttons and Filter Events' name='buttons-and-filter-events' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Buttons and Filter Events' name='buttons-and-filter-events' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside"] }'></grid-example>
 
 ## Applying the UI Model
 
