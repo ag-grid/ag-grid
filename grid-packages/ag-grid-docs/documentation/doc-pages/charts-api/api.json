@@ -69,11 +69,7 @@
     },
     "fontStyle": {
       "default": "normal",
-      "options": [
-        "normal",
-        "italic",
-        "oblique"
-      ]
+      "options": ["normal", "italic", "oblique"]
     },
     "fontWeight": {
       "default": "bold",
@@ -115,12 +111,7 @@
     },
     "position": {
       "default": "right",
-      "options": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ]
+      "options": ["top", "right", "bottom", "left"]
     },
     "spacing": {
       "default": 20,
@@ -153,14 +144,7 @@
       "unit": "px"
     },
     "shape": {
-      "options": [
-        "circle",
-        "cross",
-        "diamond",
-        "plus",
-        "square",
-        "triangle"
-      ]
+      "options": ["circle", "cross", "diamond", "plus", "square", "triangle"]
     },
     "size": {
       "default": 15,
@@ -181,11 +165,7 @@
     },
     "fontStyle": {
       "default": "normal",
-      "options": [
-        "normal",
-        "italic",
-        "oblique"
-      ]
+      "options": ["normal", "italic", "oblique"]
     },
     "fontWeight": {
       "default": "normal",
@@ -412,11 +392,7 @@
   "AgAxisLabelOptions": {
     "fontStyle": {
       "default": "normal",
-      "options": [
-        "normal",
-        "italic",
-        "oblique"
-      ]
+      "options": ["normal", "italic", "oblique"]
     },
     "fontWeight": {
       "default": "normal",
@@ -478,10 +454,7 @@
       "default": "rgba(195, 195, 195, 1)"
     },
     "lineDash": {
-      "default": [
-        4,
-        2
-      ]
+      "default": [4, 2]
     }
   },
   "AgBaseSeriesOptions": {
@@ -555,14 +528,7 @@
       },
       "shape": {
         "default": "circle",
-        "options": [
-          "circle",
-          "cross",
-          "diamond",
-          "plus",
-          "square",
-          "triangle"
-        ]
+        "options": ["circle", "cross", "diamond", "plus", "square", "triangle"]
       },
       "size": {
         "default": 8,
@@ -591,11 +557,7 @@
       },
       "fontStyle": {
         "default": "normal",
-        "options": [
-          "normal",
-          "italic",
-          "oblique"
-        ]
+        "options": ["normal", "italic", "oblique"]
       },
       "fontWeight": {
         "default": "normal",
@@ -732,21 +694,14 @@
       },
       "placement": {
         "default": "inside",
-        "options": [
-          "inside",
-          "outside"
-        ]
+        "options": ["inside", "outside"]
       },
       "color": {
         "default": "rgba(70, 70, 70, 1)"
       },
       "fontStyle": {
         "default": "normal",
-        "options": [
-          "normal",
-          "italic",
-          "oblique"
-        ]
+        "options": ["normal", "italic", "oblique"]
       },
       "fontWeight": {
         "default": "normal",
@@ -794,10 +749,7 @@
     },
     "aggregation": {
       "default": "sum",
-      "options": [
-        "sum",
-        "mean"
-      ]
+      "options": ["sum", "mean"]
     },
     "lineDashOffset": {
       "default": 0,
@@ -866,14 +818,7 @@
     "shape": {
       "type": "string | Marker",
       "default": "circle",
-      "options": [
-        "circle",
-        "cross",
-        "diamond",
-        "plus",
-        "square",
-        "triangle"
-      ]
+      "options": ["circle", "cross", "diamond", "plus", "square", "triangle"]
     },
     "size": {
       "default": 8,
@@ -942,7 +887,7 @@
         "#c84164",
         "#888888"
       ]
-   },
+    },
     "fillOpacity": {
       "default": 1,
       "min": 0,
@@ -1086,6 +1031,38 @@
   "AgChartTheme": {
     "baseTheme": {
       "default": "ag-default"
+    }
+  },
+  "AgCartesianAxesTheme": {
+    "number": {
+      "more": {
+        "name": "Common Axis Config",
+        "url": "/charts-api-themes/#reference-axis"
+      }
+    },
+    "log": {
+      "more": {
+        "name": "Common Axis Config",
+        "url": "/charts-api-themes/#reference-axis"
+      }
+    },
+    "category": {
+      "more": {
+        "name": "Common Axis Config",
+        "url": "/charts-api-themes/#reference-axis"
+      }
+    },
+    "groupedCategory": {
+      "more": {
+        "name": "Common Axis Config",
+        "url": "/charts-api-themes/#reference-axis"
+      }
+    },
+    "time": {
+      "more": {
+        "name": "Common Axis Config",
+        "url": "/charts-api-themes/#reference-axis"
+      }
     }
   }
 }
