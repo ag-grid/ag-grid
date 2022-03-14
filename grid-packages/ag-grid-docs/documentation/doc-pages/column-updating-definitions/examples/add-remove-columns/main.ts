@@ -2,15 +2,15 @@ import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefsMedalsIncluded: ColDef[] = [
   { field: 'athlete' },
+  { field: 'gold' },
+  { field: 'silver' },
+  { field: 'bronze' },
+  { field: 'total' },
   { field: 'age' },
   { field: 'country' },
   { field: 'sport' },
   { field: 'year' },
   { field: 'date' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
 ]
 
 const colDefsMedalsExcluded: ColDef[] = [
