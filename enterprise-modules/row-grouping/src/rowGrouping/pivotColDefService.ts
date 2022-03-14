@@ -80,7 +80,7 @@ export class PivotColDefService extends BeanStub {
                     headerName: key,
                     pivotKeys: newPivotKeys,
                     columnGroupShow: 'open',
-                    groupId: 'pivot' + columnIdSequence.next()
+                    groupId: this.generateColumnGroupId(newPivotKeys, columnIdSequence),
                 };
 
                 parentChildren.push(groupDef);
@@ -92,7 +92,7 @@ export class PivotColDefService extends BeanStub {
                     headerName: key,
                     pivotKeys: newPivotKeys,
                     columnGroupShow: 'open',
-                    groupId: 'pivot' + columnIdSequence.next()
+                    groupId: this.generateColumnGroupId(newPivotKeys, columnIdSequence),
                 };
                 // if no value columns selected, then we insert one blank column, so the user at least sees columns
                 // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
@@ -311,7 +311,7 @@ export class PivotColDefService extends BeanStub {
         const valueGroup: ColGroupDef = {
             children: [],
             pivotKeys: newPivotKeys,
-            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + '_' + this.generateColumnGroupId(newPivotKeys, columnIdSequence),
         };
 
         if (measureColumns.length === 0) {
@@ -333,6 +333,7 @@ export class PivotColDefService extends BeanStub {
 
         const colDef: ColDef = {};
 
+        // This is null when there are no measure columns and we're creating placeholder columns
         if (valueColumn) {
             const colDefToCopy = valueColumn.getColDef();
             Object.assign(colDef, colDefToCopy);
@@ -342,7 +343,7 @@ export class PivotColDefService extends BeanStub {
         }
 
         colDef.headerName = headerName;
-        colDef.colId = 'pivot_' + columnIdSequence.next();
+        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn ? valueColumn.getColId() : '', columnIdSequence);
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
@@ -400,5 +401,15 @@ export class PivotColDefService extends BeanStub {
             const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
         });
+    }
+
+    private generateColumnGroupId(pivotKeys: string[], idSeq: NumberSequence): string {
+        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}_${idSeq.next()}`;
+    }
+
+    private generateColumnId(pivotKeys: string[], measureColumnId: string, idSeq: NumberSequence) {
+        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}_${idSeq.next()}`;
     }
 }
