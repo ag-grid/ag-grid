@@ -2,7 +2,7 @@ import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 function getColumnDefs(): ColDef[] {
   return [
-    { field: 'athlete', width: 100, sort: 'asc' },
+    { field: 'athlete', width: 150, sort: 'asc' },
     { field: 'age' },
     { field: 'country', pinned: 'left' },
     { field: 'sport' },
@@ -18,6 +18,7 @@ function getColumnDefs(): ColDef[] {
 const gridOptions: GridOptions = {
   defaultColDef: {
     initialWidth: 100,
+    width: 100, // resets col widths if manually resized
     sortable: true,
     resizable: true,
     pinned: null, // important - clears pinned if not specified in col def
