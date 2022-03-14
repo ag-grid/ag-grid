@@ -1,5 +1,5 @@
 [[only-vue]]
-|Below is a simple example of an loading overlay component:
+|Below is a example of loading overlay class with a custom `loadingMessage` param:
 |
 |```js
 |const MyOverlay = {
@@ -8,6 +8,14 @@
 |          <i class="fas fa-hourglass-half"> {{ params.loadingMessage }} </i>
 |      </div>
 |    `
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  loadingOverlayComponent: 'MyOverlay',
+|  loadingOverlayComponentParams: {
+|    loadingMessage: 'One moment please...',
+|  },
 |}
 |```
  

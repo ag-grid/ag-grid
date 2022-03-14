@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of overlay component as a Hook:
+|Below is an example of overlay component with custom `loadingMessage` param as a Hook:
 |
 |```jsx
 |export default props => {
@@ -9,6 +9,14 @@
 |        </div>
 |    );
 |};
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  loadingOverlayComponent: CustomLoadingOverlay,
+|  loadingOverlayComponentParams: {
+|    loadingMessage: 'One moment please...',
+|  },
+|}
 |```
 |
 |And here is the same example as a Class-based Component:
@@ -22,5 +30,13 @@
 |            </div>
 |        );
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  loadingOverlayComponent: CustomLoadingOverlay,
+|  loadingOverlayComponentParams: {
+|    loadingMessage: 'One moment please...',
+|  },
 |}
 |```

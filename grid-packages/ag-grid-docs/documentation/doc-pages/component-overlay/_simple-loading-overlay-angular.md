@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of a loading overlay component:
+|Below is a example of loading overlay class with a custom `loadingMessage` param:
 |
 |```js
 |import {Component} from '@angular/core';
@@ -15,10 +15,18 @@
 |    `
 |})
 |export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
-|    private params: ILoadingOverlayParams;
+|    public params: ILoadingOverlayParams & { loadingMessage: string};
 |
-|    agInit(params: ILoadingOverlayParams): void {
+|    agInit(params: ILoadingOverlayParams & { loadingMessage: string}): void {
 |        this.params = params;
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  loadingOverlayComponent: CustomLoadingOverlay,
+|  loadingOverlayComponentParams: {
+|    loadingMessage: 'One moment please...',
+|  },
 |}
 |```

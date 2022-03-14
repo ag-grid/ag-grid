@@ -11,9 +11,9 @@ import { ILoadingOverlayAngularComp } from "@ag-grid-community/angular";
     `
 })
 export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
-  public params!: ILoadingOverlayParams;
+  public params!: ILoadingOverlayParams & { loadingMessage: string };
 
-  agInit(params: ILoadingOverlayParams): void {
+  agInit(params: ILoadingOverlayParams & { loadingMessage: string }): void {
     this.params = params;
   }
 }

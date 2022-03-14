@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of a no rows overlay component:
+|Below is an example of no rows overlay class with custom `noRowsMessageFunc()` param:
 |
 |```js
 |import {Component} from '@angular/core';
@@ -14,10 +14,18 @@
 |      </div>`
 |})
 |export class CustomNoRowsOverlay implements INoRowsOverlayAngularComp {
-|    private params: INoRowsOverlayParams;
+|    public params: INoRowsOverlayParams & { noRowsMessageFunc: () => string};
 |
-|    agInit(params: INoRowsOverlayParams): void {
+|    agInit(params: INoRowsOverlayParams & { noRowsMessageFunc: () => string}): void {
 |        this.params = params;
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  noRowsOverlayComponent: CustomNoRowsOverlay,
+|  noRowsOverlayComponentParams: {
+|    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+|  },
 |}
 |```
