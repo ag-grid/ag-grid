@@ -870,7 +870,7 @@ export class AreaSeries extends CartesianSeries {
             });
         }
 
-        const color = format && format.fill || markerFill;
+        const color = format && format.fill || fill;
 
         const defaults: TooltipRendererResult = {
             title,
