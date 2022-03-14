@@ -48,7 +48,7 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 ## Preventing Range Reduction
 
 Reducing a range selection with the Fill Handle will clear cell contents by default, as can be observed in the 
-[Range Reduction](/range-selection-fill-handle/#range-reduction/) example above.
+[Range Reduction](/range-selection-fill-handle/#range-reduction) example above.
 
 If this behaviour for decreasing selection needs to be prevented, the flag `suppressClearOnFillReduction` should be set to `true`.
 
