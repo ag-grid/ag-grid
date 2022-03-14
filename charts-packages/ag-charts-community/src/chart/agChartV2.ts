@@ -116,12 +116,10 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    private static DEBUG = false;
+    static DEBUG = false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         const mergedOptions = prepareOptions(userOptions);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
@@ -138,9 +136,7 @@ export abstract class AgChartV2 {
     }
 
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
-        if (AgChartV2.DEBUG) {
-            console.log('user options', userOptions);
-        }
+        debug('user options', userOptions);
         const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
@@ -161,10 +157,14 @@ export abstract class AgChartV2 {
         if (update.type == null) {
             update = {...update, type: chart.options.type || optionsType(update)};
         }
-        if (AgChartV2.DEBUG) {
-            console.log('delta update', update);
-        }
+        debug('delta update', update);
         applyChartOptions(chart, update as ChartOptionType<typeof chart>, userOptions)
+    }
+}
+
+function debug(message?: any, ...optionalParams: any[]): void {
+    if (AgChartV2.DEBUG) {
+        console.log(message, ...optionalParams);
     }
 }
 
@@ -184,11 +184,10 @@ function applyChartOptions<
 
     let performProcessData = false;
     if (options.series && options.series.length > 0) {
-        chart.series = createSeries(options.series);
+        applySeries<T, O>(chart, options);
     }
     if (isAgCartesianChartOptions(options) && options.axes) {
-        chart.axes = createAxis(options.axes);
-        performProcessData = true;
+        performProcessData = applyAxes<T, O>(chart, options);
     }
     if (options.data) {
         chart.data = options.data;
@@ -211,6 +210,67 @@ function applyChartOptions<
 
     chart.options = jsonMerge(chart.options || {}, options);
     chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+}
+
+function applySeries<
+    T extends CartesianChart | PolarChart | HierarchyChart,
+    O extends ChartOptionType<T>
+>(chart: T, options: O) {
+    const optSeries = options.series;
+    if (!optSeries) {
+        return;
+    }
+
+    const matchingTypes = chart.series.length === optSeries.length &&
+        chart.series.every((s, i) => s.type === optSeries[i]?.type);
+
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        chart.series.forEach((s, i) => {
+            const previousOpts = chart.options?.series?.[i] || {};
+            const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
+
+            debug(`applying series diff idx ${i}`, seriesDiff);
+
+            jsonApply(s, seriesDiff);
+        });
+
+        return;
+    }
+
+    chart.series = createSeries(optSeries);
+}
+
+function applyAxes<
+    T extends CartesianChart | PolarChart | HierarchyChart,
+    O extends ChartOptionType<T>,
+>(chart: T, options: O  & AgCartesianChartOptions) {
+    const optAxes = options.axes;
+    if (!optAxes) {
+        return false;
+    }
+
+    const matchingTypes = chart.axes.length === optAxes.length &&
+        chart.axes.every((a, i) => a.type === optAxes[i].type);
+
+    // Try to optimise series updates if series count and types didn't change.
+    if (matchingTypes) {
+        const oldOpts = chart.options;
+        if (isAgCartesianChartOptions(oldOpts)) {
+            chart.axes.forEach((a, i) => {
+                const previousOpts = oldOpts.axes?.[i] || {};
+                const axisDiff = jsonDiff(previousOpts, optAxes[i]) as any;
+
+                debug(`applying axis diff idx ${i}`, axisDiff);
+
+                jsonApply(a, axisDiff);
+            });
+            return true;
+        }
+    }
+
+    chart.axes = createAxis(optAxes);
+    return true;
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
