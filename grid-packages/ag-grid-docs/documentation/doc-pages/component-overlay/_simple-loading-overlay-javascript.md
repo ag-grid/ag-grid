@@ -1,5 +1,5 @@
 [[only-javascript]]
-|Below is a simple example of loading overlay class:
+|Below is a example of loading overlay class with a custom `loadingMessage` param:
 |
 |```js
 |class CustomLoadingCellRenderer {
@@ -16,5 +16,13 @@
 |    getGui() {
 |        return this.eGui;
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  loadingOverlayComponent: CustomLoadingCellRenderer,
+|  loadingOverlayComponentParams: {
+|    loadingMessage: 'One moment please...',
+|  },
 |}
 |```

@@ -10,9 +10,9 @@ import { INoRowsOverlayAngularComp } from "@ag-grid-community/angular";
       </div>`
 })
 export class CustomNoRowsOverlay implements INoRowsOverlayAngularComp {
-  private params!: INoRowsOverlayParams;
+  public params!: INoRowsOverlayParams & { noRowsMessageFunc: () => string };
 
-  agInit(params: INoRowsOverlayParams): void {
+  agInit(params: INoRowsOverlayParams & { noRowsMessageFunc: () => string }): void {
     this.params = params;
   }
 }

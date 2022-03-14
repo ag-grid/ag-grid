@@ -3,7 +3,7 @@
 |
 |The interface for a custom date component is as follows:
 |
-| <interface-documentation interfaceName='IDate' config='{"asCode":true, "hideName" : true }' ></interface-documentation>
+| <interface-documentation interfaceName='IDateReactComp' config='{"asCode":true }' ></interface-documentation>
 |
 |[[note]]
 ||Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the

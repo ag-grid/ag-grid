@@ -27,6 +27,7 @@ const gridOptions: GridOptions = {
       },
     },
   ],
+  sideBar: 'filters',
   defaultColDef: {
     flex: 1,
     resizable: true,

@@ -1,5 +1,5 @@
 [[only-javascript]]
-|Below is a simple example of no rows overlay class:
+|Below is an example of no rows overlay class with custom `noRowsMessageFunc()` param:
 |
 |```js
 |class CustomNoRowsOverlay {
@@ -15,5 +15,13 @@
 |    getGui() {
 |        return this.eGui;
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  noRowsOverlayComponent: CustomNoRowsOverlay,
+|  noRowsOverlayComponentParams: {
+|    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+|  },
 |}
 |```

@@ -140,7 +140,7 @@ tooltip: {
     renderer: function (params) {
         return {
             content: params.yValue.toFixed(0),
-            title: params.xValue // optional, same as default
+            title: params.xValue
         };
     }
 }

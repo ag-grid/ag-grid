@@ -21,6 +21,7 @@ const INTERFACE_GLOBS = [
     ...buildGlob('../../enterprise-modules/filter-tool-panel/src'),
     ...buildGlob('../../enterprise-modules/multi-filter/src'),
     ...buildGlob('../angular/projects/ag-grid-angular/src/lib'),
+    ...buildGlob('../react/src/shared'),
 ];
 const TEST_INTERFACE_GLOBS = [
     ...buildGlob('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet'),

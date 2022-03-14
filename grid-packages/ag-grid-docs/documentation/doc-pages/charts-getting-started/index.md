@@ -576,9 +576,6 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | npm start
 | ```
 |
-| [[note]]
-| | <a href="https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b" rel="nofollow">npx</a> comes with npm 5.2+ and higher, for older npm versions use [these instructions](https://gist.github.com/gaearon/4064d3c23a77c74a3614c498a8bb1c5f)
-|
 | If everything goes well, `npm start` has started the web server and conveniently opened a browser pointing to <a href="http://localhost:3000" target="_blank">localhost:3000</a>.
 |
 | As a next step, let's add the AG Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ISetFilter, IFiltersToolPanel } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [{ field: 'athlete', filter: 'agSetColumnFilter' }]
 
@@ -9,6 +9,12 @@ const gridOptions: GridOptions = {
     minWidth: 150,
     filter: true,
     sortable: true,
+  },
+  sideBar: 'filters',
+  onGridReady: function (params) {
+    ((params.api.getToolPanelInstance(
+      'filters'
+    ) as any) as IFiltersToolPanel).expandFilters()
   },
 }
 

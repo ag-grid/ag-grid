@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of a no rows overlay component as a Hook:
+|Below is an example of a no rows overlay component with custom `noRowsMessageFunc()` params as a Hook:
 |
 |```jsx
 |export default props => {
@@ -9,6 +9,14 @@
 |        </div>
 |    );
 |};
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  noRowsOverlayComponent: CustomNoRowsOverlay,
+|  noRowsOverlayComponentParams: {
+|    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+|  },
+|}
 |```
 |
 |And here is the same example as a Class-based Component:
@@ -22,5 +30,13 @@
 |            </div>
 |        );
 |    }
+|}
+|
+|const gridOptions: GridOptions = {
+|  ...
+|  noRowsOverlayComponent: CustomNoRowsOverlay,
+|  noRowsOverlayComponentParams: {
+|    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+|  },
 |}
 |```

@@ -17,6 +17,7 @@ const gridOptions: GridOptions = {
     { field: 'silver', filter: 'agNumberColumnFilter' },
     { field: 'bronze', filter: 'agNumberColumnFilter' },
   ],
+  sideBar: 'filters',
   defaultColDef: {
     flex: 1,
     minWidth: 200,

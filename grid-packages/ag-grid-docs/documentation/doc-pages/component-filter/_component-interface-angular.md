@@ -66,6 +66,6 @@
 |
 |### Custom Filter Parameters
 |
-|The `agInit(params)` method takes a params object with the items listed below. If the user provides params via the `colDef.filterParams` attribute, these
+|The `agInit(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
 |

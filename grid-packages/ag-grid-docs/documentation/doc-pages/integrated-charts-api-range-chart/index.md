@@ -62,9 +62,9 @@ It is possible to create the following combination chart types via `gridApi.crea
 - Area & Column (`chartType: 'areaColumnCombo'`)
 - Custom Combination (`chartType: 'customCombo'`)
 
-When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied. 
-Conversely, when `seriesChartTypes` is present a `customCombo` chart type is assumed, regardless of the `chartType` 
-properties supplied.
+When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied.
+Also note that when `seriesChartTypes` is present a `customCombo` chart type is assumed, regardless of which `chartType` 
+is supplied.
 
 The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as shown below:
 

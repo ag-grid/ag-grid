@@ -6,5 +6,5 @@
 |
 |The interface for a custom filter component is as follows:
 |
-| <interface-documentation interfaceName='IDate' config='{"asCode":true, "hideName" : true }' ></interface-documentation>
+| <interface-documentation interfaceName='IDate' config='{"asCode":true }' ></interface-documentation>
 |

@@ -22,12 +22,14 @@ series: [
         type: 'area',
         xKey: 'quarter',
         yKey: 'petrol',
+        stacked: true,
         marker: { formatter },
     },
     {
         type: 'area',
         xKey: 'quarter',
         yKey: 'electric',
+        stacked: true,
         marker: { formatter },
     },
 ]

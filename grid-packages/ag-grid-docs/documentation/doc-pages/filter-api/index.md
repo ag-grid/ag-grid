@@ -129,7 +129,7 @@ The example below shows how you can interact with an individual filter instance,
 
 (Note: the example uses the Enterprise-only [Set Filter](/filter-set/)).
 
-<grid-example title='Accessing Individual Filters' name='filter-api' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Accessing Individual Filters' name='filter-api' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Read-only Filter UI
 
