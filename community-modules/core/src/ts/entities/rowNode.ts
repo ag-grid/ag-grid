@@ -166,6 +166,9 @@ export class RowNode implements IEventEmitter {
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode[] | null;
 
+    /** Filtered children of this aggregated group. */
+    public childrenAfterAggregateFilter: RowNode[] | null;
+
     /** Sorted children of this group. */
     public childrenAfterSort: RowNode[] | null;
 

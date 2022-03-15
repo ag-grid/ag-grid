@@ -97,7 +97,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         const refreshFilters = () => {
 
-            const includeFloatingFilter = !this.columnModel.isPivotMode() && this.columnModel.hasFloatingFilters();
+            const includeFloatingFilter = this.columnModel.hasFloatingFilters();
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);

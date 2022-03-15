@@ -340,6 +340,10 @@ var gridOptions = {
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
     suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+    processSecondaryColDef: (colDef) => {
+        colDef.floatingFilter = true;
+        colDef.filter = 'agNumberColumnFilter';
+    },
     // suppressExpandablePivotGroups: true,
     // pivotColumnGroupTotals: 'before',
     // pivotRowTotals: 'before',

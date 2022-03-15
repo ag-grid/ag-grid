@@ -59,6 +59,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
+    @Autowired('filterAggregatesStage') private filterAggregatesStage: IRowNodeStage;
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
 
@@ -358,7 +359,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: ClientSideRowModelSteps.FILTER, keepRenderedRows: true, animate: animate });
+
+        // If a primary column is included in the filter, we refresh the model at that level as it causes secondary to refilter anyway.
+        // if there's no columns in the event, we also refresh everything due to quick filtering
+        const primaryColumnFilterChanged = !event.columns.length || event.columns.some(col => col.isPrimary());
+        const eventType: ClientSideRowModelSteps = primaryColumnFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
+        this.refreshModel({ step: eventType, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {
@@ -442,6 +448,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.doPivot(changedPath);
             case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
                 this.doAggregate(changedPath);
+            case ClientSideRowModelSteps.FILTER_AGGREGATES:
+                this.doAggregateFilter(changedPath);
             case ClientSideRowModelSteps.SORT:
                 this.doSort(params.rowNodeTransactions, changedPath);
             case ClientSideRowModelSteps.MAP:
@@ -750,6 +758,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private doFilter(changedPath: ChangedPath) {
         this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
+    }
+
+    private doAggregateFilter(changedPath: ChangedPath) {
+        this.filterAggregatesStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
     private doPivot(changedPath: ChangedPath) {

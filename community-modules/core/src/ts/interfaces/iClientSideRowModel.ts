@@ -10,6 +10,7 @@ export enum ClientSideRowModelSteps {
     SORT = 'sort',
     MAP = 'map',
     AGGREGATE = 'aggregate',
+    FILTER_AGGREGATES = "filter_aggregates",
     PIVOT = 'pivot',
     NOTHING = 'nothing'
 }

@@ -37,6 +37,7 @@ export class FilterManager extends BeanStub {
 
     private allAdvancedFilters = new Map<string, FilterWrapper>();
     private activeAdvancedFilters: IFilterComp[] = [];
+    private activeAggregateFilters: IFilterComp[] = [];
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
 
@@ -167,11 +168,16 @@ export class FilterManager extends BeanStub {
         return this.activeAdvancedFilters.length > 0;
     }
 
+    public isAggregateFilterPresent(): boolean {
+        return this.activeAggregateFilters.length > 0;
+    }
+
     // called by:
     // 1) onFilterChanged()
     // 2) onNewRowsLoaded()
     private updateActiveFilters(): void {
         this.activeAdvancedFilters.length = 0;
+        this.activeAggregateFilters.length = 0;
 
         const isFilterActive = (filter: IFilter | null) => {
             if (!filter) { return false; } // this never happens, including to avoid compile error
@@ -185,6 +191,10 @@ export class FilterManager extends BeanStub {
         this.allAdvancedFilters.forEach(filterWrapper => {
             if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
+                if (!filterWrapper.column.isPrimary()) {
+                    this.activeAggregateFilters.push(resolvedPromise!);
+                    return;
+                }
                 this.activeAdvancedFilters.push(resolvedPromise!);
             }
         });
@@ -202,25 +212,24 @@ export class FilterManager extends BeanStub {
         return this.isQuickFilterPresent() || this.isAdvancedFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
-    private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp): boolean {
-        const { data } = node;
+    private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp, filterAggregate?: boolean): boolean {
+        const { data, aggData } = node;
+        const dataTarget = filterAggregate ? aggData : data;
+        const filterTarget = filterAggregate ? this.activeAggregateFilters : this.activeAdvancedFilters;
 
-        for (let i = 0; i < this.activeAdvancedFilters.length; i++) {
-            const filter = this.activeAdvancedFilters[i];
-
-            if (filter == null || filter === filterToSkip) { continue; }
+        return !filterTarget.some(filter => {
+            if (filter === null || filter === filterToSkip) {
+                // return true if any fail to stop function execution early
+                return true;
+            }
 
             if (typeof filter.doesFilterPass !== 'function') {
                 // because users can do custom filters, give nice error message
                 throw new Error('Filter is missing method doesFilterPass');
             }
 
-            if (!filter.doesFilterPass({ node, data })) {
-                return false;
-            }
-        }
-
-        return true;
+            return !filter.doesFilterPass({ node, data: dataTarget });
+        });
     }
 
     private parseQuickFilter(newFilter?: string): string | null {
@@ -327,12 +336,19 @@ export class FilterManager extends BeanStub {
         );
     }
 
+    public doesAggregatedRowPassFilter(params: {
+        rowNode: RowNode;
+        filterInstanceToSkip?: IFilterComp;
+    }): boolean {
+        return !(this.activeAggregateFilters.length > 0 && !this.doAdvancedFiltersPass(params.rowNode, params.filterInstanceToSkip, true));
+    }
+
     public doesRowPassFilter(params: {
-        rowNode: RowNode,
+        rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
     }): boolean {
         // the row must pass ALL of the filters, so if any of them fail,
-        // we return true. that means if a row passes the quick filter,
+        // we return false. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
 
         // first up, check quick filter
@@ -568,7 +584,7 @@ export class FilterManager extends BeanStub {
         const columns: Column[] = [];
 
         this.allAdvancedFilters.forEach((wrapper, colId) => {
-            const currentColumn = this.columnModel.getPrimaryColumn(colId);
+            const currentColumn = this.columnModel.getPrimaryColumn(colId) || this.columnModel.getGridColumn(colId);
             if (currentColumn) { return; }
 
             columns.push(wrapper.column);

@@ -74,12 +74,18 @@ export class ChangedPath {
         callback(pathItem.rowNode);
     }
 
-    private depthFirstSearchEverything(rowNode: RowNode, callback: (rowNode: RowNode) => void, traverseEverything: boolean): void {
-        if (rowNode.childrenAfterGroup) {
-            for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                const childNode = rowNode.childrenAfterGroup[i];
+    private depthFirstSearchEverything(
+        rowNode: RowNode,
+        callback: (rowNode: RowNode) => void,
+        traverseEverything: boolean,
+        getChildren: (node: RowNode) => RowNode[] | null = node => node.childrenAfterGroup,
+    ): void {
+        const children = getChildren(rowNode);
+        if (children) {
+            for (let i = 0; i < children.length; i++) {
+                const childNode = children[i];
                 if (childNode.childrenAfterGroup) {
-                    this.depthFirstSearchEverything(rowNode.childrenAfterGroup[i], callback, traverseEverything);
+                    this.depthFirstSearchEverything(childNode, callback, traverseEverything);
                 } else if (traverseEverything) {
                     callback(childNode);
                 }
@@ -90,14 +96,18 @@ export class ChangedPath {
 
     // traverseLeafNodes -> used when NOT doing changed path, ie traversing everything. the callback
     // will be called for child nodes in addition to parent nodes.
-    public forEachChangedNodeDepthFirst(callback: (rowNode: RowNode) => void, traverseLeafNodes = false): void {
+    public forEachChangedNodeDepthFirst(
+        callback: (rowNode: RowNode) => void,
+        traverseLeafNodes = false,
+        getChildren: (node: RowNode) => RowNode[] | null = node => node.childrenAfterGroup,
+    ): void {
         if (this.active) {
             // if we are active, then use the change path to callback
             // only for updated groups
             this.depthFirstSearchChangedPath(this.pathRoot, callback);
         } else {
             // we are not active, so callback for everything, walk the entire path
-            this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes);
+            this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes, getChildren);
         }
     }
 

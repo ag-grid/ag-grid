@@ -25,6 +25,33 @@ export class FilterService extends BeanStub {
         this.filterNodes(filterActive, changedPath);
     }
 
+    public filterAggregatedRows(changedPath: ChangedPath) {
+        const filterActive: boolean = this.filterManager.isAggregateFilterPresent();
+
+        const doesNodePassFilters = (node: RowNode): boolean => (
+            // Return the node if there's no filter active (it's important to iterate here essentially to deep clone the object)
+            (!filterActive) || 
+            // Returns true if child has passed the filter
+            (!!node.childrenAfterAggregateFilter && !!node.childrenAfterAggregateFilter.length) ||
+            // Returns true if current node passes filter (and is the leaf node)
+            (node.leafGroup && this.filterManager.doesAggregatedRowPassFilter({ rowNode: node }))
+        );
+
+        changedPath.forEachChangedNodeDepthFirst(
+            node => {
+                if (node.childrenAfterFilter) {
+                    node.childrenAfterAggregateFilter = node.childrenAfterFilter.filter(doesNodePassFilters);
+
+                    if (node.sibling) {
+                        node.sibling.childrenAfterAggregateFilter = node.childrenAfterAggregateFilter;
+                    }
+                }
+            },
+            false,
+            node => node.childrenAfterFilter,
+        );
+    }
+
     private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
 
         const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {

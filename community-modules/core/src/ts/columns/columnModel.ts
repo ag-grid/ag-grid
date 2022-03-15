@@ -3118,6 +3118,12 @@ export class ColumnModel extends BeanStub {
                     const colDef = abstractColDef as ColDef;
                     if (columnCallback) {
                         columnCallback(colDef);
+
+                        const supportedFilters = ['agTextColumnFilter', 'agNumberColumnFilter'];
+                        if (colDef.filter && !supportedFilters.some(filter => filter === colDef.filter)) {
+                            const message = `AG Grid -  Only text and number floating filters are supported on secondary columns.`;
+                            doOnce(() => console.warn(message), 'secondaryColumns.unsupportedFilter');
+                        }
                     }
                 }
             });
