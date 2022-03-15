@@ -1000,11 +1000,11 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.stopEditing(cancel));
+        const cellEdits = this.getAllCellCtrls().map(cellCtrl => cellCtrl.stopEditing(cancel));
 
         if (!this.editingRow) { return; }
 
-        if (!cancel) {
+        if (!cancel && cellEdits.some(edit => edit)) {
             const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
         }
