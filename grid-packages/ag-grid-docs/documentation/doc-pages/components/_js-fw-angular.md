@@ -23,11 +23,11 @@
 |})
 |export class AppComponent {
 |   // JS and Angular components, only need register if looking up by name
-|   components: [
+|   components = [
 |       'javascriptComponent': JavascriptComponent,
 |       'angularComponent': AngularComponent
 |   ];
-|   columnDefs: [
+|   columnDefs = [
 |       {
 |           headerName: "JS Cell",
 |           field: "value",

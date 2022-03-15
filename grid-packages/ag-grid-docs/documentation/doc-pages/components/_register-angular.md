@@ -60,10 +60,10 @@
 |`
 |})
 |export class AppComponent {
-|   components: {
+|   components = {
 |       'cubeComponent': CubeComponent
 |   };          
-|   columnDefs: [
+|   columnDefs = [
 |       {
 |           field: "cube",
 |           cellRenderer: 'cubeComponent',     
