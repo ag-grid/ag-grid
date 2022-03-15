@@ -10,6 +10,19 @@ const options: AgChartOptions = {
       fills: ['#00c851', '#ffbb33', '#ff4444'],
       strokes: ['#006428', '#996500', '#a10000'],
     },
+    overrides: {
+      bar: {
+        series: {
+          strokeWidth: 0,
+          highlightStyle: {
+            series: {
+              strokeWidth: 1,
+              dimOpacity: 0.2,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: 'Internet Users by Geographical Location (2019)',

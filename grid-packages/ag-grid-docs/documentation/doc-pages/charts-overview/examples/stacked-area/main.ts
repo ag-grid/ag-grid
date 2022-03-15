@@ -17,7 +17,18 @@ const options: AgChartOptions = {
         "#af225a",
       ],
     },
-    overrides: { area: { series: { marker: { enabled: true } } } },
+    overrides: {
+      area: {
+        series: {
+          marker: { enabled: true },
+          highlightStyle: {
+            series: {
+              dimOpacity: 0.2
+            }
+          }
+        }
+      }
+    },
   },
   title: {
     text: "Total Visitors to Science Museums (2019)",

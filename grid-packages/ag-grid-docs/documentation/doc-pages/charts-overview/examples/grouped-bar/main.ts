@@ -10,6 +10,19 @@ const options: AgChartOptions = {
       fills: ["rgba(0, 117, 163, 0.9)", "rgba(226, 188, 34, 0.9)"],
       strokes: ["rgba(0, 117, 163, 0.9)", "rgba(226, 188, 34, 0.9)"],
     },
+    overrides: {
+      bar: {
+        series: {
+          strokeWidth: 0,
+          highlightStyle: {
+            series: {
+              strokeWidth: 1,
+              dimOpacity: 0.2,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: "Annual Growth in Pay (2018-2019)",

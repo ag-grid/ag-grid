@@ -5,6 +5,15 @@ const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
+  theme: {
+    overrides: {
+      area: {
+        series: {
+          fillOpacity: 0.8,
+        }
+      }
+    },
+  },
   title: {
     text: 'Total Visitors to Tate Galleries',
     fontSize: 18,
@@ -18,7 +27,6 @@ const options: AgChartOptions = {
       xKey: 'date',
       yKey: 'Tate Modern',
       fill: '#c16068',
-      fillOpacity: 0.8,
       stroke: '#874349',
     },
     {
@@ -26,7 +34,6 @@ const options: AgChartOptions = {
       xKey: 'date',
       yKey: 'Tate Britain',
       fill: '#a2bf8a',
-      fillOpacity: 0.8,
       stroke: '#718661',
     },
     {
@@ -34,7 +41,6 @@ const options: AgChartOptions = {
       xKey: 'date',
       yKey: 'Tate Liverpool',
       fill: '#ebcc87',
-      fillOpacity: 0.8,
       stroke: '#a48f5f',
     },
     {
@@ -42,7 +48,6 @@ const options: AgChartOptions = {
       xKey: 'date',
       yKey: 'Tate St Ives',
       fill: '#80a0c3',
-      fillOpacity: 0.8,
       stroke: '#5a7088',
     },
   ],
