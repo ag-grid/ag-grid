@@ -22,7 +22,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         </ul>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/javascript-data-grid/javascript-charts/api/">Chart Option Enhancements</a>
+                <a href="https://www.ag-grid.com/javascript-charts/api/">Chart Option Enhancements</a>
             </li>
         </ul>
     </Announcement>
