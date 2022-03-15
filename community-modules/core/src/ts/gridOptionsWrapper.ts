@@ -54,7 +54,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
-import { BaseCallback, ITabToNextCellParams } from './entities/iGridCallbacks';
+import { BaseCallbackParams, ITabToNextCellParams } from './entities/iGridCallbacks';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1284,10 +1284,10 @@ export class GridOptionsWrapper {
      * @param callback User provided callback
      * @returns Wrapped callback where the params object not require api, columnApi and context
      */
-    private applyCallbackParams<P extends BaseCallback, T>(callback: ((params: P) => T) | undefined):
-        ((params: Omit<P, keyof (BaseCallback)>) => T) | undefined {
+    private applyCallbackParams<P extends BaseCallbackParams, T>(callback: ((params: P) => T) | undefined):
+        ((params: Omit<P, keyof (BaseCallbackParams)>) => T) | undefined {
         if (callback) {
-            const wrapped = (callbackParams: Omit<P, keyof (BaseCallback)>): T => {
+            const wrapped = (callbackParams: Omit<P, keyof (BaseCallbackParams)>): T => {
                 const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
                 return callback(mergedParams);
             }

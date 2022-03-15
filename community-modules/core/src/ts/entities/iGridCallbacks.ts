@@ -2,7 +2,14 @@ import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { CellPosition } from "./cellPosition";
 
-export interface BaseCallback {
+// Callback interfaces in this file should remain internal to AG Grid. 
+// They are used to create the params without the need to have BaseCallbackParams properties 
+// repeatedly assigned throughout the code base.
+
+/**
+ * Shared properties for all callbacks
+ */
+export interface BaseCallbackParams {
     api: GridApi;
     columnApi: ColumnApi;
     context: any;

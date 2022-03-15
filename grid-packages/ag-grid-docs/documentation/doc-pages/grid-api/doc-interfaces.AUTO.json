@@ -4970,7 +4970,8 @@
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": false } }
   },
   "TabToNextCellParams": {
     "backwards": {
@@ -4990,7 +4991,8 @@
       "type": { "returnType": "CellPosition | null", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": false } }
   },
   "PostProcessPopupParams": {
     "column": {
@@ -5121,6 +5123,46 @@
     "params": {
       "description": "/** Equivalent of setting `loadingCellRendererParams` */",
       "type": { "returnType": "any", "optional": true }
+    }
+  },
+  "BaseCallback": {
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": false } }
+  },
+  "ITabToNextCellParams": {
+    "backwards": {
+      "description": "/** True if the Shift key is also down */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "editing": {
+      "description": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "previousCellPosition": {
+      "description": "/** The cell that currently has focus */",
+      "type": { "returnType": "CellPosition", "optional": false }
+    },
+    "nextCellPosition": {
+      "description": "/** The cell the grid would normally pick as the next cell for navigation. */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    }
+  },
+  "INavigateToNextCellParams": {
+    "key": {
+      "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "previousCellPosition": {
+      "description": "/** The cell that currently has focus */",
+      "type": { "returnType": "CellPosition", "optional": false }
+    },
+    "nextCellPosition": {
+      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "event": {
+      "type": { "returnType": "KeyboardEvent | null", "optional": false }
     }
   },
   "IHeaderColumn": {

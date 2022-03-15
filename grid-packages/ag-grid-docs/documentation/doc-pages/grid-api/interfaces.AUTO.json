@@ -2413,7 +2413,8 @@
       "nextCellPosition": "CellPosition | null",
       "event": "KeyboardEvent | null",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
@@ -2429,7 +2430,8 @@
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "backwards": "/** True if the Shift key is also down */",
@@ -2554,6 +2556,39 @@
       "component?": "/** Equivalent of setting `loadingCellRenderer` */",
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
+    }
+  },
+  "BaseCallback": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" }
+  },
+  "ITabToNextCellParams": {
+    "meta": {},
+    "type": {
+      "backwards": "boolean",
+      "editing": "boolean",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */"
+    }
+  },
+  "INavigateToNextCellParams": {
+    "meta": {},
+    "type": {
+      "key": "string",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null",
+      "event": "KeyboardEvent | null"
+    },
+    "docs": {
+      "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
     }
   },
   "IHeaderColumn": {

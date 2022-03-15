@@ -97,7 +97,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { BaseCallback, INavigateToNextCellParams, ITabToNextCellParams } from "./iGridCallbacks";
+import { BaseCallbackParams, INavigateToNextCellParams, ITabToNextCellParams } from "./iGridCallbacks";
 
 export interface GridOptions {
 
@@ -1330,8 +1330,8 @@ export interface TabToNextHeaderParams {
     columnApi: ColumnApi;
 }
 
-export interface NavigateToNextCellParams extends INavigateToNextCellParams, BaseCallback { }
-export interface TabToNextCellParams extends ITabToNextCellParams, BaseCallback { }
+export interface NavigateToNextCellParams extends INavigateToNextCellParams, BaseCallbackParams { }
+export interface TabToNextCellParams extends ITabToNextCellParams, BaseCallbackParams { }
 
 export interface PostProcessPopupParams {
     /** If popup is for a column, this gives the Column */
