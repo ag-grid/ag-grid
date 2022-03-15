@@ -564,7 +564,7 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
         [ formatJsDocString(documentation.trim()) ] :
         [];
 
-    if (defaultValue) {
+    if (meta.hasOwnProperty('default')) {
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
     
