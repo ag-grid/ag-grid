@@ -76,7 +76,7 @@ export class CssClassApplier {
         }
 
         if (typeof classToUse === 'string') { return [classToUse]; }
-        if (Array.isArray(classToUse)) { return classToUse; }
+        if (Array.isArray(classToUse)) { return [...classToUse]; }
 
         return [];
     }
