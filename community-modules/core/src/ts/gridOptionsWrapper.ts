@@ -814,7 +814,7 @@ export class GridOptionsWrapper {
     public isImmutableData() {
         // we used to have a property immutableData for this. however this was deprecated
         // in favour of having Immutable Data on by default when getRowId is provided
-        return this.gridOptions.getRowId!=null || isTrue(this.gridOptions.immutableData);
+        return this.gridOptions.getRowId != null || isTrue(this.gridOptions.immutableData);
     }
 
     public isEnsureDomOrder() {
@@ -1257,7 +1257,7 @@ export class GridOptionsWrapper {
     }
 
     public getRowIdFunc(): GetRowIdFunc | undefined {
-        const {getRowId, getRowNodeId} = this.gridOptions;
+        const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
             return getRowId;
         }
@@ -1734,10 +1734,14 @@ export class GridOptionsWrapper {
         }
 
         if (options.getRowNodeId) {
-            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecate and has been replaced by `getRowId`. The difference is if getRowId() is implemented, immutable data is on by default.');
+            console.warn('AG Grid: since v27.1, `getRowNodeId` is deprecated and has been replaced by `getRowId`. The difference: if getRowId() is implemented then immutable data is enabled by default.');
         }
         if (options.immutableData) {
-            console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To turn on, implement `getRowId` has been replaced by `getRowId`. The difference is if getRowId() is implemented, immutable data is on by default.');
+            if (options.getRowId) {
+                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. With the `getRowId` callback implemented, immutable data is enabled by default so you can remove `immutableData=true`.');
+            } else {
+                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To enable immutable data you must implement the `getRowId()` callback.');
+            }
         }
         if (options.clipboardDeliminator) {
             console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
