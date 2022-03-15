@@ -47020,8 +47020,9 @@ var AgInputTextField = /** @class */ (function (_super) {
         };
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
         this.addManagedListener(this.eInput, 'paste', function (e) {
-            var text = e.clipboardData.getData('text');
-            if (text.some(function (c) { return !pattern.test(c); })) {
+            var _a;
+            var text = (_a = e.clipboardData) === null || _a === void 0 ? void 0 : _a.getData('text');
+            if (text && text.split('').some(function (c) { return !pattern.test(c); })) {
                 e.preventDefault();
             }
         });
