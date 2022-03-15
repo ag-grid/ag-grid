@@ -352,11 +352,12 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
 
         super.afterGuiAttached(params);
 
-        this.refreshVirtualList();
-
         if (this.setFilterParams.excelMode) {
             this.resetUiToActiveModel();
+            this.showOrHideResults();
         }
+
+        this.refreshVirtualList();
 
         const { eMiniFilter } = this;
 
