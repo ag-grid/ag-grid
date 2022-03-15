@@ -40,7 +40,18 @@ $indent: 24px;
     }
 
     .expander {
-        color: #358ccb;
+        height: 0.8rem;
+        width: 1rem;
+        color: #212529;
+    }
+
+    .expander-bar {
+        position: absolute;
+        width: 3px;
+        bottom: 1px;
+        left: -12px;
+        top: 17px;
+        background: #e8e9ea;
     }
 
     .property-name {
@@ -50,7 +61,7 @@ $indent: 24px;
         .expander {
             position: absolute;
             left: -18px;
-            top: 1px;
+            top: 3px;
             font-weight: normal;
         }
     }
@@ -60,8 +71,9 @@ $indent: 24px;
 
         .expander {
             position: absolute;
-            left: -16px;
-            top: 2px;
+            left: -18px;
+            top: 3px;
+            font-weight: normal;
         }
     }
 
