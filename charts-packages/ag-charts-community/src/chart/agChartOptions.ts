@@ -128,15 +128,15 @@ export interface AgTimeAxisThemeOptions
         AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
 
 export interface AgCartesianAxesTheme {
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     number?: AgNumberAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     log?: AgLogAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */
+    /** This extends the common axis configuration with options specific to category axes. */
     category?: AgCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
+    /** This extends the common axis configuration with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
     groupedCategory?: AgGroupedCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */
+    /** This extends the common axis configuration with options specific to time axes. */
     time?: AgTimeAxisThemeOptions;
 }
 
