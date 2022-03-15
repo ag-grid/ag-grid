@@ -657,6 +657,8 @@ export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
+export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker {}
+
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
@@ -764,7 +766,7 @@ export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     /** Configuration for the markers used in the series. */
-    marker?: AgCartesianSeriesMarker;
+    marker?: AgAreaSeriesMarker;
     /** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
