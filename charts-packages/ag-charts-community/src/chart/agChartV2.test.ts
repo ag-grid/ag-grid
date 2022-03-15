@@ -106,7 +106,7 @@ const EXAMPLES: Record<string, TestCase> = {
     },
 };
 
-describe.skip('AgChartV2', () => {
+describe('AgChartV2', () => {
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
