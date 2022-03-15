@@ -421,6 +421,7 @@ const printState = async () => {
 };
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
+exports.rebuildBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, false, false, false, false, false);
 exports.rebuildAndUnitTestBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, false, false, false);
 exports.rebuildAndTestsEverythingBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, true, true, true);
 exports.printState = printState;
