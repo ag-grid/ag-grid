@@ -1280,8 +1280,10 @@ export abstract class Chart extends Observable {
     }
 
     dehighlightDatum(): void {
-        this.scene.canvas.element.style.cursor = 'default';
-        this.highlightedDatum = undefined;
-        this.series.forEach(s => s.updatePending = true);
+        if (this.highlightedDatum) {
+            this.scene.canvas.element.style.cursor = 'default';
+            this.highlightedDatum = undefined;
+            this.series.forEach(s => s.updatePending = true);
+        }
     }
 }
