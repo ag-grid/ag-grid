@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   enableRangeSelection: true,
-  // implement this so that we can do selection
+  // implement this so that we can do selection and have immutable data
   getRowId: function (params) {
     return params.data.code
   },

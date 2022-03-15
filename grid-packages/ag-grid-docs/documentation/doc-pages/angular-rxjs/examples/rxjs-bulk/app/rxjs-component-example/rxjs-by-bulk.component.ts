@@ -1,11 +1,12 @@
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { ColDef, GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
+import { ColDef, GridOptions, ModuleRegistry, ValueFormatterParams } from "@ag-grid-community/core";
 import { Component } from "@angular/core";
 import { MockServerService } from "./mockServer.service";
 import { Observable } from "rxjs";
 
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     selector: 'my-app',
     templateUrl: './rxjs-by-bulk.component.html',
@@ -16,8 +17,6 @@ export class RxJsComponentByFullSet {
     initialRowDataLoad$: Observable<any[]>;
     rowDataUpdates$: Observable<any[]>;
 
-    modules = [ClientSideRowModelModule];
-
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
         this.rowDataUpdates$ = mockServerService.allDataUpdates();
@@ -26,7 +25,6 @@ export class RxJsComponentByFullSet {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
 
-            immutableData: true,
             getRowId: (params) => {
                 // the code is unique, so perfect for the id
                 return params.data.code;

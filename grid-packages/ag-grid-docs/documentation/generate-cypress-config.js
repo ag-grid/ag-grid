@@ -88,13 +88,14 @@ function getExamples() {
                         const customContents = fs.readdirSync(customExampleFolder);
                         if (customContents.some(f => f === 'app' || !fs.lstatSync(customExampleFolder + '/' + f).isDirectory())) {
                             // if there is a file at this level then assume it is the example code
-                            pageExamples.push({ page, example, url: `${page}/${example}/index.html` });
+                            pageExamples.push({ page, example, framework: 'UNKNOWN', importType: 'UNKNOWN', url: `${page}/${example}/index.html` });
 
                         } else {
                             // assume we have framework folders 
                             const frameworks = fs.readdirSync(customExampleFolder);
                             frameworks.forEach(framework => {
-                                pageExamples.push({ page, example, framework, url: `${page}/${example}/${framework}/index.html` });
+                                // Just put down as importType: modules so that these tests get run under modules filter
+                                pageExamples.push({ page, example, framework, importType: 'modules', url: `${page}/${example}/${framework}/index.html` });
                             })
                         }
                     }
