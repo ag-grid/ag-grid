@@ -1,20 +1,28 @@
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
+import { AgGridCommon, WithoutGridCommon } from "../interfaces/iParams";
 import { CellPosition } from "./cellPosition";
 
 // Callback interfaces in this file should remain internal to AG Grid. 
-// They are used to create the params without the need to have BaseCallbackParams properties 
+// They are used to create the params without the need to have BaseGridParams properties 
 // repeatedly assigned throughout the code base.
 
 /**
- * Shared properties for all callbacks
+ * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+ * @param callback User provided callback
+ * @returns Wrapped callback where the params object not require api, columnApi and context
  */
-export interface BaseCallbackParams {
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
+export function mergeGridCommonParams<P extends AgGridCommon, T>(callback: ((params: P) => T) | undefined):
+    ((params: WithoutGridCommon<P>) => T) | undefined {
+    if (callback) {
+        const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
+            const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+            return callback(mergedParams);
+        }
+        return wrapped;
+    }
+    return callback;
 }
-export interface ITabToNextCellParams {
+
+export interface TabToNextCellParams extends AgGridCommon {
     /** True if the Shift key is also down */
     backwards: boolean;
     /** True if the current cell is editing
@@ -27,7 +35,7 @@ export interface ITabToNextCellParams {
 
 }
 
-export interface INavigateToNextCellParams {
+export interface NavigateToNextCellParams extends AgGridCommon {
     /** The keycode for the arrow key pressed:
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;

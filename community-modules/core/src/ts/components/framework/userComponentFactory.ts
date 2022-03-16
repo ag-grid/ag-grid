@@ -48,6 +48,7 @@ import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { doOnce } from "../../utils/function";
+import { AgGridCommon } from "src/ts/interfaces/iParams";
 
 export type DefinitionObject =
     GridOptions
@@ -330,7 +331,11 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params = {} as any;
+        const params: AgGridCommon = {
+            context: this.gridOptionsWrapper.getContext(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsWrapper.getApi()!
+        };
 
         mergeDeep(params, paramsFromGrid);
 

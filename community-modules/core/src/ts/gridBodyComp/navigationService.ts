@@ -22,7 +22,8 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { INavigateToNextCellParams, ITabToNextCellParams } from "../entities/iGridCallbacks";
+import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iGridCallbacks";
+import { WithoutGridCommon } from "../interfaces/iParams";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -517,11 +518,11 @@ export class NavigationService extends BeanStub {
             const userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
 
             if (exists(userFunc)) {
-                const params: ITabToNextCellParams = {
+                const params: WithoutGridCommon<TabToNextCellParams> = {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
-                    nextCellPosition: nextPosition ? nextPosition : null,
+                    nextCellPosition: nextPosition ? nextPosition : null
                 };
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
@@ -663,7 +664,7 @@ export class NavigationService extends BeanStub {
         if (allowUserOverride) {
             const userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
             if (exists(userFunc)) {
-                const params: INavigateToNextCellParams = {
+                const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,
                     previousCellPosition: currentCell,
                     nextCellPosition: nextCell ? nextCell : null,

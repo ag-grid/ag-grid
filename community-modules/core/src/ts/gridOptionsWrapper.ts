@@ -12,7 +12,6 @@ import {
     IsRowMaster,
     IsRowSelectable,
     IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
@@ -33,7 +32,6 @@ import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context
 import { ColumnApi } from './columns/columnApi';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
-import { CellPosition } from './entities/cellPosition';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams } from './interfaces/exportParams';
 import { AgEvent } from './events';
@@ -54,7 +52,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
-import { BaseCallbackParams, ITabToNextCellParams } from './entities/iGridCallbacks';
+import { mergeGridCommonParams } from './entities/iGridCallbacks';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1276,28 +1274,11 @@ export class GridOptionsWrapper {
     }
 
     public getNavigateToNextCellFunc() {
-        return this.applyCallbackParams(this.gridOptions.navigateToNextCell);
+        return mergeGridCommonParams(this.gridOptions.navigateToNextCell);
     }
 
-    /**
-     * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
-     * @param callback User provided callback
-     * @returns Wrapped callback where the params object not require api, columnApi and context
-     */
-    private applyCallbackParams<P extends BaseCallbackParams, T>(callback: ((params: P) => T) | undefined):
-        ((params: Omit<P, keyof (BaseCallbackParams)>) => T) | undefined {
-        if (callback) {
-            const wrapped = (callbackParams: Omit<P, keyof (BaseCallbackParams)>): T => {
-                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
-                return callback(mergedParams);
-            }
-            return wrapped;
-        }
-        return callback;
-    }
-
-    public getTabToNextCellFunc(): ((params: ITabToNextCellParams) => (CellPosition | null)) | undefined {
-        return this.applyCallbackParams(this.gridOptions.tabToNextCell)
+    public getTabToNextCellFunc() {
+        return mergeGridCommonParams(this.gridOptions.tabToNextCell)
     }
 
     public getGridTabIndex(): string {

@@ -389,8 +389,6 @@ export {
     ProcessRowParams,
     NavigateToNextHeaderParams,
     TabToNextHeaderParams,
-    NavigateToNextCellParams,
-    TabToNextCellParams,
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ChartRef,
@@ -410,8 +408,13 @@ export {
     RowGroupingDisplayType,
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
-    LoadingCellRendererSelectorResult
+    LoadingCellRendererSelectorResult,
 } from "./entities/gridOptions";
+
+export {
+    NavigateToNextCellParams,
+    TabToNextCellParams,
+} from "./entities/iGridCallbacks"
 
 export * from "./propertyKeys";
 export { IProvidedColumn } from "./entities/iProvidedColumn";
