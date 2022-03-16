@@ -415,6 +415,10 @@ export {
     NavigateToNextCellParams,
     TabToNextCellParams,
 } from "./entities/iGridCallbacks"
+export {
+    WithoutGridCommon
+} from "./interfaces/iCommon";
+
 
 export * from "./propertyKeys";
 export { IProvidedColumn } from "./entities/iProvidedColumn";

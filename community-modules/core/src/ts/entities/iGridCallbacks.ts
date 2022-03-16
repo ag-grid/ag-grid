@@ -1,4 +1,4 @@
-import { AgGridCommon, WithoutGridCommon } from "../interfaces/iParams";
+import { AgGridCommon, WithoutGridCommon } from "../interfaces/iCommon";
 import { CellPosition } from "./cellPosition";
 
 // Callback interfaces in this file should remain internal to AG Grid. 

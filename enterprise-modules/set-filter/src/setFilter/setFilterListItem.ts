@@ -13,6 +13,7 @@ import {
     RefSelector,
     UserComponentFactory,
     ValueFormatterService,
+    WithoutGridCommon
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -105,7 +106,7 @@ export class SetFilterListItem extends Component {
         this.renderCell(params);
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'setFilterValue';
         res.colDef = this.getComponentHolder();

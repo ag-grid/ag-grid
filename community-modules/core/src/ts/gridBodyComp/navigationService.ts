@@ -23,7 +23,7 @@ import { HeaderNavigationService } from "../headerRendering/common/headerNavigat
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iGridCallbacks";
-import { WithoutGridCommon } from "../interfaces/iParams";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */

@@ -1,8 +1,7 @@
+import { ColDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
-import { ColDef } from "../entities/colDef";
+import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
 
 export interface ICellEditor {
@@ -55,13 +54,13 @@ export interface ICellEditor {
     afterGuiAttached?(): void;
 }
 
-export interface ICellEditorParams {
+export interface ICellEditorParams extends AgGridCommon {
     /** Current value of the cell */
     value: any;
     /** @deprecated Use `eventKey`. */
     key: string | null;
-     /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
-      *  characters appear here */
+    /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
+     *  characters appear here */
     eventKey: string | null;
     /** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if
      *  shift + letter 'a' only printable characters appear here */
@@ -76,13 +75,9 @@ export interface ICellEditorParams {
     data: any;
     /** Editing row index */
     rowIndex: number;
-    api: GridApi;
-    columnApi: ColumnApi;
     /** If doing full row edit, this is true if the cell is the one that started the edit
      *  (eg it is the cell the use double clicked on, or pressed a key on etc). */
     cellStartedEdit: boolean;
-    /** Context  as set on gridOptions.context */
-    context: any;
     /** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */
     $scope: any;
     /** callback to tell grid a key was pressed - useful to pass control key events (tab,
