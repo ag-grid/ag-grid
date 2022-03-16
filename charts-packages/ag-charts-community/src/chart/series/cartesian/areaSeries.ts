@@ -314,15 +314,17 @@ export class AreaSeries extends CartesianSeries {
             // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
             const total = { sum: 0, absSum: 0 };
             for (let i = 0; i < stack.length; i++) {
-                const y = +stack[i]; // convert to number as the value could be a Date object
+                if (stack[i] !== undefined) {
+                    const y = +stack[i]; // convert to number as the value could be a Date object
 
-                total.absSum += Math.abs(y);
-                total.sum += y;
+                    total.absSum += Math.abs(y);
+                    total.sum += y;
 
-                if (total.sum > yMax) {
-                    yMax = total.sum;
-                } else if (total.sum < yMin) {
-                    yMin = total.sum;
+                    if (total.sum > yMax) {
+                        yMax = total.sum;
+                    } else if (total.sum < yMin) {
+                        yMin = total.sum;
+                    }
                 }
             }
 
@@ -487,7 +489,9 @@ export class AreaSeries extends CartesianSeries {
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
 
-            if (!normalized || normalizedAndValid) {
+            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+
+            if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
 
