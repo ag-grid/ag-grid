@@ -11,6 +11,8 @@ import {
     combineAssertions,
     hoverAction,
     IMAGE_SNAPSHOT_DEFAULTS,
+    setupMockCanvas,
+    CANVAS_TO_BUFFER_DEFAULTS,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -107,6 +109,8 @@ const EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('AgChartV2', () => {
+    let ctx = setupMockCanvas();
+
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
@@ -127,10 +131,7 @@ describe('AgChartV2', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const canvas = chart.scene.canvas;
-                    const imageDataUrl = canvas.getDataURL('image/png');
-                    const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
-
+                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 
