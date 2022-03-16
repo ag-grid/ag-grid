@@ -10,7 +10,19 @@ const options: AgChartOptions = {
       fills: ["#FA7921", "#5BC0EB", "#9BC53D", "#E55934", "#FDE74C"],
       strokes: ["#af5517", "#4086a4", "#6c8a2b", "#a03e24", "#b1a235"],
     },
-    overrides: { area: { series: { fillOpacity: 0.6 } } },
+    overrides: {
+      area: {
+        series: {
+          fillOpacity: 0.6,
+          highlightStyle: {
+            series: {
+              strokeWidth: 3,
+              dimOpacity: 0.1,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: "Changes in UK Energy Stock (2018)",

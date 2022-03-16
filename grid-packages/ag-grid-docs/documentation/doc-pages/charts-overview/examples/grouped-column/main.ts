@@ -5,6 +5,18 @@ const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
+  theme: {
+    overrides: {
+      column: {
+        series: {
+          strokeWidth: 0,
+          highlightStyle: {
+            strokeWidth: 1,
+          },
+        },
+      },
+    },
+  },
   title: {
     text: "Regular Internet Users",
     fontSize: 18,

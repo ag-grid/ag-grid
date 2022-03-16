@@ -980,7 +980,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1030,7 +1031,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1080,7 +1082,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1130,7 +1133,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1180,7 +1184,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1230,7 +1235,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1280,7 +1286,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -1340,6 +1347,18 @@ Object {
     "text": "Source: HM Revenue & Customs",
   },
   "theme": Object {
+    "overrides": Object {
+      "line": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.2,
+              "strokeWidth": 3,
+            },
+          },
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "#f3622d",
@@ -1603,7 +1622,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#aa4520",
         "#b07513",
@@ -1665,6 +1684,7 @@ Object {
     "overrides": Object {
       "column": Object {
         "series": Object {
+          "strokeWidth": 0,
           "tooltip": Object {
             "renderer": [Function],
           },
@@ -2575,7 +2595,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.1,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -2639,7 +2660,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.1,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -2703,7 +2725,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.1,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -2767,7 +2790,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.1,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -2831,7 +2855,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.1,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -2905,6 +2930,12 @@ Object {
       "area": Object {
         "series": Object {
           "fillOpacity": 0.6,
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.1,
+              "strokeWidth": 3,
+            },
+          },
         },
       },
     },
@@ -3158,7 +3189,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#aa4520",
       ],
@@ -3194,6 +3225,15 @@ Object {
       "top": 10,
     },
     "text": "Source: Office for National Statistics",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "bar": Object {
+        "series": Object {
+          "strokeWidth": 0,
+        },
+      },
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4188,7 +4228,7 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.3,
         },
       },
       "label": Object {
@@ -4258,6 +4298,17 @@ Object {
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
   },
   "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.3,
+            },
+          },
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "#19A0AA",
@@ -4476,7 +4527,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
         },
       },
       "label": Object {
@@ -4503,7 +4555,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "rgba(0, 117, 163, 0.9)",
         "rgba(226, 188, 34, 0.9)",
@@ -4546,6 +4598,19 @@ Object {
     "text": "Source: Office for National Statistics",
   },
   "theme": Object {
+    "overrides": Object {
+      "bar": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.2,
+              "strokeWidth": 1,
+            },
+          },
+          "strokeWidth": 0,
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "rgba(0, 117, 163, 0.9)",
@@ -4770,6 +4835,7 @@ Object {
         "series": Object {
           "dimOpacity": 1,
         },
+        "strokeWidth": 1,
       },
       "label": Object {
         "color": "rgb(70, 70, 70)",
@@ -4795,7 +4861,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#aa4520",
         "#b07513",
@@ -4861,6 +4927,18 @@ Object {
       "top": 10,
     },
     "text": "Source: Office for National Statistics",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "strokeWidth": 1,
+          },
+          "strokeWidth": 0,
+        },
+      },
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7170,7 +7248,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 1,
         },
       },
       "label": Object {
@@ -7197,7 +7276,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#006428",
         "#996500",
@@ -7241,6 +7320,19 @@ Object {
     "text": "Source: Office for National Statistics",
   },
   "theme": Object {
+    "overrides": Object {
+      "bar": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.2,
+              "strokeWidth": 1,
+            },
+          },
+          "strokeWidth": 0,
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "#00c851",
@@ -7465,7 +7557,7 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.3,
         },
       },
       "label": Object {
@@ -7492,7 +7584,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#f39c12",
         "#d35400",
@@ -7545,6 +7637,18 @@ Object {
     "text": "Source: Department for Education",
   },
   "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.3,
+            },
+          },
+          "strokeWidth": 0,
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "#f1c40f",
@@ -8021,6 +8125,15 @@ Object {
     },
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
+  "theme": Object {
+    "overrides": Object {
+      "area": Object {
+        "series": Object {
+          "fillOpacity": 0.8,
+        },
+      },
+    },
+  },
   "title": Object {
     "color": "rgb(70, 70, 70)",
     "enabled": true,
@@ -8255,9 +8368,9 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
-        "#00407f",
+        "#aa4520",
       ],
       "tooltip": Object {
         "enabled": true,
@@ -8935,7 +9048,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -8985,7 +9099,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
+          "strokeWidth": 3,
         },
       },
       "label": Object {
@@ -9043,6 +9158,20 @@ Object {
       "top": 10,
     },
     "text": "Source: Department for Business, Energy & Industrial Strategy",
+  },
+  "theme": Object {
+    "overrides": Object {
+      "line": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.2,
+              "strokeWidth": 3,
+            },
+          },
+        },
+      },
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9691,7 +9820,7 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.2,
         },
       },
       "label": Object {
@@ -9772,6 +9901,11 @@ Object {
     "overrides": Object {
       "area": Object {
         "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.2,
+            },
+          },
           "marker": Object {
             "enabled": true,
           },
@@ -10005,7 +10139,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
         },
       },
       "label": Object {
@@ -10032,7 +10167,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#aa4520",
         "#b07513",
@@ -10080,14 +10215,15 @@ Object {
   },
   "theme": Object {
     "overrides": Object {
-      "area": Object {
+      "bar": Object {
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
               "dimOpacity": 0.3,
-              "strokeWidth": 3,
+              "strokeWidth": 1,
             },
           },
+          "strokeWidth": 0,
         },
       },
     },
@@ -10301,7 +10437,8 @@ Object {
           "fill": "yellow",
         },
         "series": Object {
-          "dimOpacity": 1,
+          "dimOpacity": 0.3,
+          "strokeWidth": 1,
         },
       },
       "label": Object {
@@ -10328,7 +10465,7 @@ Object {
       },
       "showInLegend": true,
       "strokeOpacity": 1,
-      "strokeWidth": 1,
+      "strokeWidth": 0,
       "strokes": Array [
         "#4086a4",
         "#b1a235",
@@ -10378,6 +10515,19 @@ Object {
     "text": "Source: Transport for London",
   },
   "theme": Object {
+    "overrides": Object {
+      "column": Object {
+        "series": Object {
+          "highlightStyle": Object {
+            "series": Object {
+              "dimOpacity": 0.3,
+              "strokeWidth": 1,
+            },
+          },
+          "strokeWidth": 0,
+        },
+      },
+    },
     "palette": Object {
       "fills": Array [
         "#5BC0EB",

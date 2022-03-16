@@ -32,6 +32,7 @@ const options: AgChartOptions = {
     overrides: {
       column: {
         series: {
+          strokeWidth: 0,
           tooltip: {
             renderer: tooltipRenderer,
           },

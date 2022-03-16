@@ -10,6 +10,17 @@ const options: AgChartOptions = {
       fills: ["#19A0AA", "#F15F36"],
       strokes: ["#19A0AA", "#F15F36"],
     },
+    overrides: {
+      column: {
+        series: {
+          highlightStyle: {
+            series: {
+              dimOpacity: 0.3,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: "Changes in Prison Population (2019)",

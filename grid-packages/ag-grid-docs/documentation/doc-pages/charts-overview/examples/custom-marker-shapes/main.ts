@@ -30,6 +30,18 @@ const options: AgChartOptions = {
         "#5f5f5f",
       ],
     },
+    overrides: {
+      line: {
+        series: {
+          highlightStyle: {
+            series: {
+              strokeWidth: 3,
+              dimOpacity: 0.2,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: "Taxed Alcohol Consumption (UK)",

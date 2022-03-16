@@ -18,11 +18,12 @@ const options: AgChartOptions = {
   }),
   theme: {
     overrides: {
-      area: {
+      bar: {
         series: {
+          strokeWidth: 0,
           highlightStyle: {
             series: {
-              strokeWidth: 3,
+              strokeWidth: 1,
               dimOpacity: 0.3,
             },
           },

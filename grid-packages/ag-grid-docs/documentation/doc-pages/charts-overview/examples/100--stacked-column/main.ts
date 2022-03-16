@@ -17,6 +17,18 @@ const options: AgChartOptions = {
         "#2c3e50",
       ],
     },
+    overrides: {
+      column: {
+        series: {
+          strokeWidth: 0,
+          highlightStyle: {
+            series: {
+              dimOpacity: 0.3,
+            },
+          },
+        },
+      },
+    },
   },
   title: {
     text: "Ethnic Diversity of School Pupils (2019)",
