@@ -4953,47 +4953,6 @@
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
-  "NavigateToNextCellParams": {
-    "key": {
-      "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "previousCellPosition": {
-      "description": "/** The cell that currently has focus */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    },
-    "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
-      "type": { "returnType": "CellPosition | null", "optional": false }
-    },
-    "event": {
-      "type": { "returnType": "KeyboardEvent | null", "optional": false }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": false } }
-  },
-  "TabToNextCellParams": {
-    "backwards": {
-      "description": "/** True if the Shift key is also down */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "editing": {
-      "description": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "previousCellPosition": {
-      "description": "/** The cell that currently has focus */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    },
-    "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation. */",
-      "type": { "returnType": "CellPosition | null", "optional": false }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": false } }
-  },
   "PostProcessPopupParams": {
     "column": {
       "description": "/** If popup is for a column, this gives the Column */",
@@ -5125,12 +5084,7 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
-  "BaseCallback": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": false } }
-  },
-  "ITabToNextCellParams": {
+  "TabToNextCellParams": {
     "backwards": {
       "description": "/** True if the Shift key is also down */",
       "type": { "returnType": "boolean", "optional": false }
@@ -5146,9 +5100,21 @@
     "nextCellPosition": {
       "description": "/** The cell the grid would normally pick as the next cell for navigation. */",
       "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
-  "INavigateToNextCellParams": {
+  "NavigateToNextCellParams": {
     "key": {
       "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
       "type": { "returnType": "string", "optional": false }
@@ -5163,6 +5129,18 @@
     },
     "event": {
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IHeaderColumn": {
@@ -7328,7 +7306,6 @@
       "description": "/** Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed. */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
     "currentParentModel": {
       "description": "/** This is a shortcut to invoke getModel on the parent filter.\n * If the parent filter doesn't exist (filters are lazily created as needed)\n * then it returns null rather than calling getModel() on the parent filter. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
@@ -7345,7 +7322,19 @@
       "description": "/** Shows the parent filter popup. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
-    "meta": { "typeParams": ["P"] }
+    "meta": { "typeParams": ["P"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "IFloatingFilter": {
     "onParentModelChanged": {
@@ -7542,11 +7531,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IDateComparatorFunc": {},
@@ -7679,11 +7674,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "FilterButtonType": {},
@@ -7740,11 +7741,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IProvidedFilter": {
@@ -7901,11 +7908,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -8052,11 +8065,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ISimpleFilterModelType": {},
@@ -8232,11 +8251,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "GridParams": {
@@ -8947,11 +8972,17 @@
       "description": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IHeader": {
@@ -9066,11 +9097,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IHeaderGroup": {},
@@ -12781,15 +12818,9 @@
       "description": "/** Editing row index */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "context": {
-      "description": "/** Context  as set on gridOptions.context */",
-      "type": { "returnType": "any", "optional": false }
     },
     "$scope": {
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
@@ -12830,6 +12861,18 @@
         "returnType": "any",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ICellEditorComp": {
@@ -13361,6 +13404,21 @@
     "displayName": { "type": { "returnType": "string", "optional": false } },
     "field": { "type": { "returnType": "string", "optional": true } },
     "aggFunc": { "type": { "returnType": "string", "optional": true } }
+  },
+  "WithoutGridCommon": { "meta": { "typeParams": ["T extends AgGridCommon"] } },
+  "AgGridCommon": {
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "IComponent": {
     "getGui": {
@@ -14205,11 +14263,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IFiltersToolPanel": {
@@ -14657,11 +14721,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IMultiFilterModel": {
@@ -15038,15 +15108,9 @@
       "description": "/** Editing row index */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "context": {
-      "description": "/** Context  as set on gridOptions.context */",
-      "type": { "returnType": "any", "optional": false }
     },
     "$scope": {
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
@@ -15087,6 +15151,18 @@
         "returnType": "any",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "RowBounds": {
@@ -16023,11 +16099,17 @@
         "optional": false
       }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ISideBar": {
@@ -16123,12 +16205,6 @@
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -16173,6 +16249,18 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "SparklineOptions": {},
@@ -16894,11 +16982,17 @@
     "statusPanelParams": { "type": { "returnType": "any", "optional": true } }
   },
   "IStatusPanelParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IStatusPanel": {},
@@ -16925,8 +17019,18 @@
     }
   },
   "IToolPanelParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "IToolPanel": {
     "refresh": {
@@ -16999,8 +17103,18 @@
       "description": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "IPrimaryColsPanel": {
     "getGui": {
@@ -17223,12 +17337,6 @@
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -17273,6 +17381,18 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "GetDetailRowData": {},
@@ -17598,15 +17718,9 @@
       "description": "/** Editing row index */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "context": {
-      "description": "/** Context  as set on gridOptions.context */",
-      "type": { "returnType": "any", "optional": false }
     },
     "$scope": {
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
@@ -17647,6 +17761,18 @@
         "returnType": "any",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ISelectCellEditorParams": {
@@ -17687,15 +17813,9 @@
       "description": "/** Editing row index */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "context": {
-      "description": "/** Context  as set on gridOptions.context */",
-      "type": { "returnType": "any", "optional": false }
     },
     "$scope": {
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
@@ -17736,6 +17856,18 @@
         "returnType": "any",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ITextCellEditorParams": {
@@ -17776,15 +17908,9 @@
       "description": "/** Editing row index */",
       "type": { "returnType": "number", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "context": {
-      "description": "/** Context  as set on gridOptions.context */",
-      "type": { "returnType": "any", "optional": false }
     },
     "$scope": {
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
@@ -17825,6 +17951,18 @@
         "returnType": "any",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IGroupCellRenderer": {
@@ -17968,12 +18106,6 @@
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -18018,6 +18150,18 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ICellRendererParams": {
@@ -18061,12 +18205,6 @@
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -18111,12 +18249,23 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ISetFilterCellRendererParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
     "valueFormatted": { "type": { "returnType": "any", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
     "colDef": {
       "description": "/** The cell's column definition. */",
       "type": { "returnType": "ColDef", "optional": true }
@@ -18125,10 +18274,17 @@
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
     },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ICellRenderer": {
@@ -18213,12 +18369,6 @@
       "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
       "type": { "returnType": "HTMLElement", "optional": false }
@@ -18263,6 +18413,18 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "ILoadingCellRenderer": {},
@@ -18345,6 +18507,18 @@
     },
     "filterParams": {
       "type": { "returnType": "IDateFilterParams", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IDateComp": {
@@ -18451,7 +18625,18 @@
     }
   },
   "ILoadingOverlayParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "ILoadingOverlayComp": {
     "getGui": {
@@ -18476,7 +18661,18 @@
     }
   },
   "INoRowsOverlayParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "INoRowsOverlayComp": {
     "getGui": {
@@ -18692,12 +18888,18 @@
       "description": "/** Data for the row node in question. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "context": {
-      "description": "/** Context as set on gridOptions.context. */",
-      "type": { "returnType": "any", "optional": true }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": true } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": true } }
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "ITooltipComp": {
     "getGui": {
@@ -19089,7 +19291,7 @@
     "getTooltipParams": {
       "type": {
         "arguments": {},
-        "returnType": "ITooltipParams",
+        "returnType": "WithoutGridCommon<ITooltipParams>",
         "optional": false
       }
     },
@@ -19327,8 +19529,18 @@
       "description": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "EXPAND_STATE": {},
   "ToolPanelFilterItem": {},

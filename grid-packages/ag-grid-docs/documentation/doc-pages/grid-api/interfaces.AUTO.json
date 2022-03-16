@@ -2405,41 +2405,6 @@
       "headerRowCount": "/** The number of header rows present in the grid */"
     }
   },
-  "NavigateToNextCellParams": {
-    "meta": {},
-    "type": {
-      "key": "string",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "event": "KeyboardEvent | null",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
-    }
-  },
-  "TabToNextCellParams": {
-    "meta": {},
-    "type": {
-      "backwards": "boolean",
-      "editing": "boolean",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */"
-    }
-  },
   "PostProcessPopupParams": {
     "meta": {},
     "type": {
@@ -2558,37 +2523,45 @@
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
     }
   },
-  "BaseCallback": {
-    "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" }
-  },
-  "ITabToNextCellParams": {
+  "TabToNextCellParams": {
     "meta": {},
     "type": {
       "backwards": "boolean",
       "editing": "boolean",
       "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null"
+      "nextCellPosition": "CellPosition | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "backwards": "/** True if the Shift key is also down */",
       "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
       "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */"
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "INavigateToNextCellParams": {
+  "NavigateToNextCellParams": {
     "meta": {},
     "type": {
       "key": "string",
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
-      "event": "KeyboardEvent | null"
+      "event": "KeyboardEvent | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
       "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeaderColumn": {
@@ -4262,10 +4235,12 @@
       "column": "Column",
       "filterParams": "IFilterParams",
       "suppressFilterButton": "boolean",
-      "api": "GridApi",
       "currentParentModel": "() => any",
       "parentFilterInstance": "(callback: IFloatingFilterParentCallback<P>) => void",
-      "showParentFilter": "() => void"
+      "showParentFilter": "() => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -4273,7 +4248,10 @@
       "suppressFilterButton": "/** Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed. */",
       "currentParentModel": "/** This is a shortcut to invoke getModel on the parent filter.\n * If the parent filter doesn't exist (filters are lazily created as needed)\n * then it returns null rather than calling getModel() on the parent filter. */",
       "parentFilterInstance": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
-      "showParentFilter": "/** Shows the parent filter popup. */"
+      "showParentFilter": "/** Shows the parent filter popup. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IFloatingFilter": {
@@ -4357,7 +4335,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "comparator?": "/** Required if the data for the column are not native JS `Date` objects. */",
@@ -4385,7 +4363,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IDateComparatorFunc": {
@@ -4438,7 +4418,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "allowedCharPattern?": "/** When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.\n * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari). */",
@@ -4464,7 +4444,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "FilterButtonType": {
@@ -4487,7 +4469,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
@@ -4501,7 +4483,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IProvidedFilter": {
@@ -4559,7 +4543,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "inRangeInclusive?": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
@@ -4583,7 +4567,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "Comparator": {
@@ -4646,7 +4632,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "filterOptions?": "/** Array of filter options to present to the user. */",
@@ -4665,7 +4651,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISimpleFilterModelType": {
@@ -4775,7 +4763,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "textMatcher?": "/** Used to override how to filter based on the user input. */",
@@ -4798,7 +4786,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GridParams": {
@@ -5176,7 +5166,7 @@
       "eGridHeader": "HTMLElement",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "column": "/** The column the header is for. */",
@@ -5187,7 +5177,9 @@
       "progressSort": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
       "setSort": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
       "eGridHeader": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeader": {
@@ -5236,13 +5228,15 @@
       "setExpanded": "(expanded: boolean) => void",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "columnGroup": "/** The column group the header is for. */",
       "displayName": "/** The text label to render.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
       "setExpanded": "/** Opens / closes the column group */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeaderGroup": { "meta": {}, "type": {} },
@@ -7574,16 +7568,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -7596,13 +7590,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellEditorComp": {
@@ -7822,6 +7818,19 @@
       "displayName": "string",
       "field?": "string",
       "aggFunc?": "string"
+    }
+  },
+  "WithoutGridCommon": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends AgGridCommon"] },
+    "type": "Omit<T, keyof AgGridCommon>"
+  },
+  "AgGridCommon": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context?": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IComponent": {
@@ -8319,7 +8328,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -8329,7 +8338,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IFiltersToolPanel": {
@@ -8493,7 +8504,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
@@ -8505,7 +8516,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IMultiFilterModel": {
@@ -8679,16 +8692,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -8701,13 +8714,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowBounds": {
@@ -9063,7 +9078,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "values?": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. */",
@@ -9092,7 +9107,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISideBar": {
@@ -9123,16 +9140,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -9145,14 +9162,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SparklineOptions": {
@@ -9675,9 +9694,11 @@
   },
   "IStatusPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context?": "any" },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IStatusPanel": { "meta": {}, "type": {} },
@@ -9696,7 +9717,12 @@
   },
   "IToolPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi" }
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context?": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
+    }
   },
   "IToolPanel": { "meta": {}, "type": { "refresh()": "void" } },
   "IToolPanelComp": {
@@ -9727,7 +9753,8 @@
       "contractColumnSelection": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "suppressColumnMove": "/** Suppress Column Move section */",
@@ -9739,7 +9766,10 @@
       "suppressColumnSelectAll": "/** Suppress Select / Un-select all widget */",
       "suppressColumnExpandAll": "/** Suppress Expand / Collapse all widget */",
       "contractColumnSelection": "/** By default, column groups start expanded. Pass `true` to default to contracted groups */",
-      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IPrimaryColsPanel": {
@@ -9842,16 +9872,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "detailGridOptions": "/** Provide Grid Options to use for the Detail Grid. */",
@@ -9870,14 +9900,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GetDetailRowData": {
@@ -10128,16 +10160,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10150,13 +10182,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISelectCellEditorParams": {
@@ -10172,16 +10206,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10194,13 +10228,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ITextCellEditorParams": {
@@ -10218,16 +10254,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10240,13 +10276,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IGroupCellRenderer": {
@@ -10295,16 +10333,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "pinned": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
@@ -10330,14 +10368,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellRendererParams": {
@@ -10353,16 +10393,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10375,14 +10415,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISetFilterCellRendererParams": {
@@ -10390,16 +10432,18 @@
     "type": {
       "value": "any",
       "valueFormatted": "any",
-      "api": "GridApi",
       "colDef?": "ColDef",
       "column?": "Column",
+      "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any"
+      "context?": "any"
     },
     "docs": {
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellRenderer": {
@@ -10444,16 +10488,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10466,14 +10510,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ILoadingCellRenderer": { "meta": {}, "type": {} },
@@ -10513,10 +10559,16 @@
     "meta": {},
     "type": {
       "onDateChanged": "() => void",
-      "filterParams": "IDateFilterParams"
+      "filterParams": "IDateFilterParams",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
-      "onDateChanged": "/** Method for component to tell AG Grid that the date has changed. */"
+      "onDateChanged": "/** Method for component to tell AG Grid that the date has changed. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IDateComp": {
@@ -10574,7 +10626,15 @@
     "meta": {},
     "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
   },
-  "ILoadingOverlayParams": { "meta": {}, "type": { "api": "GridApi" } },
+  "ILoadingOverlayParams": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context?": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
   "ILoadingOverlayComp": {
     "meta": {},
     "type": {
@@ -10588,7 +10648,15 @@
       "init?(params: ILoadingOverlayParams)": "/** The init(params) method is called on the component once. */"
     }
   },
-  "INoRowsOverlayParams": { "meta": {}, "type": { "api": "GridApi" } },
+  "INoRowsOverlayParams": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context?": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
   "INoRowsOverlayComp": {
     "meta": {},
     "type": {
@@ -10707,9 +10775,9 @@
       "rowIndex?": "number",
       "node?": "RowNode",
       "data?": "any",
-      "context?": "any",
-      "api?": "GridApi",
-      "columnApi?": "ColumnApi"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "location": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
@@ -10720,7 +10788,9 @@
       "rowIndex?": "/** The index of the row containing the cell rendering the tooltip. */",
       "node?": "/** The row node. */",
       "data?": "/** Data for the row node in question. */",
-      "context?": "/** Context as set on gridOptions.context. */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ITooltipComp": {
@@ -11059,7 +11129,7 @@
   "TooltipParentComp": {
     "meta": {},
     "type": {
-      "getTooltipParams()": "ITooltipParams",
+      "getTooltipParams()": "WithoutGridCommon<ITooltipParams>",
       "getGui()": "HTMLElement"
     }
   },
@@ -11205,12 +11275,16 @@
       "suppressFilterSearch": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context?": "any"
     },
     "docs": {
       "suppressExpandAll": "/** To suppress Expand / Collapse All */",
       "suppressFilterSearch": "/** To suppress the Filter Search */",
-      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context?": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "EXPAND_STATE": {
