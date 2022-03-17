@@ -3,11 +3,12 @@ import { Chart } from "../chart";
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { Canvas, createCanvas, PngConfig, registerFont } from 'canvas';
+import { Canvas, createCanvas, PngConfig } from 'canvas';
 
-export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0, failureThresholdType: "percent" };
+export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0.5, failureThresholdType: "percent" };
 export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filters: (Canvas as any).PNG_NO_FILTERS };
 
+// process.env.FC_DEBUG = String(0xffff);
 process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
