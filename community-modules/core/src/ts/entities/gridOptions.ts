@@ -80,7 +80,7 @@ import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCe
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { Column } from "./column";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -1136,13 +1136,6 @@ export interface RowClassParams extends AgGridCommon {
     $scope: any;
 }
 
-export interface RowHeightParams {
-    data: any;
-    node: RowNode;
-    api: GridApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];

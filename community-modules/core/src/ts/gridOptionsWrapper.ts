@@ -4,8 +4,8 @@ import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
-import { GridOptions, RowGroupingDisplayType, RowHeightParams, TreeDataDisplayType } from './entities/gridOptions';
-import { mergeGridCommonParams } from './entities/iGridCallbacks';
+import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
+import { mergeGridCommonParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -19,6 +19,7 @@ import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
+import { WithoutGridCommon } from './main';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -698,11 +699,11 @@ export class GridOptionsWrapper {
     }
 
     public getRowStyleFunc() {
-        return this.gridOptions.getRowStyle;
+        return mergeGridCommonParams(this.gridOptions.getRowStyle);
     }
 
     public getRowClassFunc() {
-        return this.gridOptions.getRowClass;
+        return mergeGridCommonParams(this.gridOptions.getRowClass);
     }
 
     public rowClassRules() {
@@ -1823,14 +1824,12 @@ export class GridOptionsWrapper {
                 return { height: defaultRowHeight, estimated: true };
             }
 
-            const params: RowHeightParams = {
+            const params: WithoutGridCommon<RowHeightParams> = {
                 node: rowNode,
-                data: rowNode.data,
-                api: this.gridOptions.api!,
-                context: this.gridOptions.context
+                data: rowNode.data
             };
 
-            const height = this.gridOptions.getRowHeight!(params);
+            const height = mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {

@@ -915,7 +915,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    /** Allows you to set the ID for a particular row based on the data.     */
+    /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;

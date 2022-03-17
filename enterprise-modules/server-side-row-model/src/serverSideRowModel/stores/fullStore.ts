@@ -18,7 +18,6 @@ import {
     SelectionChangedEvent,
     ServerSideStoreParams,
     ServerSideStoreState,
-    ServerSideStoreType,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -57,13 +56,13 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private nodeIdSequence: NumberSequence = new NumberSequence();
 
     private usingTreeData: boolean;
-    
+
     private allRowNodes: RowNode[];
     private nodesAfterFilter: RowNode[];
     private nodesAfterSort: RowNode[];
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private allNodesMap: {[id:string]: RowNode};
+    private allNodesMap: { [id: string]: RowNode };
 
     private groupField: string;
     private rowGroupColumn: Column;
@@ -118,8 +117,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.destroyRowNodes();
         for (let i = 0; i < loadingRowsCount; i++) {
             const loadingRowNode = this.blockUtils.createRowNode(
-                {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
-                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+                {
+                    field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
+                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
+                }
             );
             if (failedLoad) {
                 loadingRowNode.failedLoad = true;
@@ -160,8 +161,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private createDataNode(data: any, index?: number): RowNode {
         const rowNode = this.blockUtils.createRowNode(
-            {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
-                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+            {
+                field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
+                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn
+            }
         );
 
         if (index != null) {
@@ -225,7 +228,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.flushAsyncTransactions();
     }
 
-    private createOrRecycleNodes(nodesToRecycle?: {[id:string]: RowNode}, rowData?: any[]): void {
+    private createOrRecycleNodes(nodesToRecycle?: { [id: string]: RowNode }, rowData?: any[]): void {
         if (!rowData) { return; }
 
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
@@ -237,12 +240,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const parentKeys = this.parentRowNode.getGroupKeys();
             const level = this.level;
             const id = getRowIdFunc({
-                                data, 
-                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
-                                level,
-                                api: this.gridApi,
-                                columnApi: this.columnApi
-                            });
+                data,
+                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                level,
+            });
             const foundNode = nodesToRecycle[id];
             if (!foundNode) { return undefined; }
 
@@ -314,7 +315,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         this.nodesAfterFilter = this.allRowNodes.filter(
-            rowNode => this.filterManager.doesRowPassFilter({rowNode: rowNode})
+            rowNode => this.filterManager.doesRowPassFilter({ rowNode: rowNode })
         );
     }
 
@@ -339,7 +340,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
-        const visibleNodeIds: {[id: string]: boolean} = {};
+        const visibleNodeIds: { [id: string]: boolean } = {};
 
         // set on all visible nodes
         this.nodesAfterSort.forEach(rowNode => {
@@ -544,7 +545,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private executeAdd(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult): void {
-        const {add, addIndex} = rowDataTran;
+        const { add, addIndex } = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
@@ -563,11 +564,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private executeRemove(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
-        const {remove} = rowDataTran;
+        const { remove } = rowDataTran;
 
         if (remove == null) { return; }
 
-        const rowIdsRemoved: {[key: string]: boolean} = {};
+        const rowIdsRemoved: { [key: string]: boolean } = {};
 
         remove.forEach(item => {
             const rowNode = this.lookupRowNode(item);
@@ -598,7 +599,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private executeUpdate(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
-        const {update} = rowDataTran;
+        const { update } = rowDataTran;
         if (update == null) { return; }
 
         update.forEach(item => {
@@ -619,16 +620,15 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
 
         let rowNode: RowNode;
-        if (getRowIdFunc!=null) {
+        if (getRowIdFunc != null) {
             // find rowNode using id
             const level = this.level;
             const parentKeys = this.parentRowNode.getGroupKeys();
             const id: string = getRowIdFunc({
-                                        data, 
-                                        parentKeys: parentKeys.length > 0 ? parentKeys : undefined, 
-                                        level,
-                                        api: this.gridApi,
-                                        columnApi: this.columnApi});
+                data,
+                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                level,
+            });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);

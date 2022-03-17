@@ -384,7 +384,6 @@ export {
     RowClassRules,
     RowStyle,
     RowClassParams,
-    RowHeightParams,
     ServerSideStoreType,
     ServerSideStoreParams,
     GetServerSideGroupKey,
@@ -398,6 +397,7 @@ export {
 
 export {
     FillOperationParams,
+    RowHeightParams,
     GetRowIdParams,
     ProcessRowParams,
     IsServerSideGroupOpenByDefaultParams,

@@ -21,9 +21,9 @@ import {
     IsRowSelectable,
     IsServerSideGroup,
     RowClassParams,
-    RowHeightParams, ServerSideStoreParams,
+    ServerSideStoreParams,
 } from "./entities/gridOptions";
-import { ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams } from "./entities/iGridCallbacks";
+import { RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams } from "./entities/iGridCallbacks";
 import { RowNode } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";

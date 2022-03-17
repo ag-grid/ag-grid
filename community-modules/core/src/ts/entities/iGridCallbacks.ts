@@ -206,3 +206,8 @@ export interface FillOperationParams extends AgGridCommon {
     /** The direction of the Fill Operation. */
     direction: 'up' | 'down' | 'left' | 'right';
 }
+
+export interface RowHeightParams extends AgGridCommon {
+    data: any;
+    node: RowNode;
+}
