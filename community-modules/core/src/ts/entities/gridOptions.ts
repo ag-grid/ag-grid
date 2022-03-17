@@ -97,7 +97,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { NavigateToNextCellParams, TabToNextCellParams } from "./iGridCallbacks";
+import { GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, PostProcessPopupParams, TabToNextCellParams } from "./iGridCallbacks";
 import { AgGridCommon } from "../interfaces/iCommon";
 
 export interface GridOptions {
@@ -1196,22 +1196,6 @@ export interface RowHeightParams {
 export interface SendToClipboardParams {
     data: string;
 }
-
-export interface GetContextMenuItemsParams {
-    /** Names of the items that would be provided by default. */
-    defaultItems: string[] | undefined;
-    /** The column, if a cell was clicked, otherwise null. */
-    column: Column | null;
-    /** The row node, if a cell was clicked, otherwise null. */
-    node: RowNode | null;
-    /** The value, if a cell was clicked, otherwise null.  */
-    value: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
@@ -1249,18 +1233,6 @@ export interface MenuItemDef extends MenuItemLeafDef {
     /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[];
 }
-
-export interface GetMainMenuItemsParams {
-    /** The column that was clicked */
-    column: Column;
-    /** List of the items that would be displayed by default */
-    defaultItems: string[];
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
 }
@@ -1325,24 +1297,6 @@ export interface TabToNextHeaderParams {
     headerRowCount: number;
     api: GridApi;
     columnApi: ColumnApi;
-}
-
-export interface PostProcessPopupParams {
-    /** If popup is for a column, this gives the Column */
-    column?: Column | null;
-    /** If popup is for a row, this gives the RowNode */
-    rowNode?: RowNode | null;
-    /** The popup we are showing */
-    ePopup: HTMLElement;
-    /** The different types are:
-     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
-    type: string;
-    /** If the popup is as a result of a button click (eg menu button),
-     *  this is the component that the user clicked */
-    eventSource?: HTMLElement | null;
-    /** If the popup is as a result of a click or touch,
-     *  this is the event - eg user showing context menu */
-    mouseEvent?: MouseEvent | Touch | null;
 }
 
 export interface PaginationNumberFormatterParams {

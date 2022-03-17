@@ -64,7 +64,6 @@ import {
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
-    PostProcessPopupParams,
     ProcessRowParams,
     ServerSideStoreParams,
     TabToNextHeaderParams,
@@ -98,7 +97,7 @@ import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComp
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
-import { NavigateToNextCellParams, TabToNextCellParams } from "./entities/iGridCallbacks";
+import { NavigateToNextCellParams, PostProcessPopupParams, TabToNextCellParams } from "./entities/iGridCallbacks";
 
 export interface StartEditingCellParams {
     /** The row index of the row to start editing */

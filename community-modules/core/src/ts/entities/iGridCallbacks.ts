@@ -1,5 +1,7 @@
 import { AgGridCommon, WithoutGridCommon } from "../interfaces/iCommon";
 import { CellPosition } from "./cellPosition";
+import { Column } from "./column";
+import { RowNode } from "./rowNode";
 
 // Callback interfaces in this file should remain internal to AG Grid. 
 // They are used to create the params without the need to have BaseGridParams properties 
@@ -22,6 +24,41 @@ export function mergeGridCommonParams<P extends AgGridCommon, T>(callback: ((par
     return callback;
 }
 
+export interface GetContextMenuItemsParams extends AgGridCommon {
+    /** Names of the items that would be provided by default. */
+    defaultItems: string[] | undefined;
+    /** The column, if a cell was clicked, otherwise null. */
+    column: Column | null;
+    /** The row node, if a cell was clicked, otherwise null. */
+    node: RowNode | null;
+    /** The value, if a cell was clicked, otherwise null.  */
+    value: any;
+}
+
+export interface GetMainMenuItemsParams extends AgGridCommon {
+    /** The column that was clicked */
+    column: Column;
+    /** List of the items that would be displayed by default */
+    defaultItems: string[];
+}
+
+export interface PostProcessPopupParams extends AgGridCommon {
+    /** If popup is for a column, this gives the Column */
+    column?: Column | null;
+    /** If popup is for a row, this gives the RowNode */
+    rowNode?: RowNode | null;
+    /** The popup we are showing */
+    ePopup: HTMLElement;
+    /** The different types are:
+     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
+    type: string;
+    /** If the popup is as a result of a button click (eg menu button),
+     *  this is the component that the user clicked */
+    eventSource?: HTMLElement | null;
+    /** If the popup is as a result of a click or touch,
+     *  this is the event - eg user showing context menu */
+    mouseEvent?: MouseEvent | Touch | null;
+}
 export interface TabToNextCellParams extends AgGridCommon {
     /** True if the Shift key is also down */
     backwards: boolean;

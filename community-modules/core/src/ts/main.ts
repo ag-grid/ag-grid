@@ -373,7 +373,6 @@ export {
     IsGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsApplyServerSideTransaction,
-    GetContextMenuItemsParams,
     GetContextMenuItems,
     GetChartToolbarItemsParams,
     GetDataPath,
@@ -381,7 +380,6 @@ export {
     IsRowSelectable,
     MenuItemLeafDef,
     MenuItemDef,
-    GetMainMenuItemsParams,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
@@ -389,7 +387,6 @@ export {
     ProcessRowParams,
     NavigateToNextHeaderParams,
     TabToNextHeaderParams,
-    PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ChartRef,
     RowClassRules,
@@ -414,6 +411,9 @@ export {
 export {
     NavigateToNextCellParams,
     TabToNextCellParams,
+    GetContextMenuItemsParams,
+    GetMainMenuItemsParams,
+    PostProcessPopupParams,
 } from "./entities/iGridCallbacks"
 export {
     WithoutGridCommon

@@ -3,8 +3,6 @@ import {
     ChartRef,
     FillOperationParams,
     GetChartToolbarItems,
-    GetContextMenuItems,
-    GetMainMenuItems,
     GetServerSideStoreParamsParams,
     GridOptions,
     IsApplyServerSideTransaction,
@@ -14,7 +12,6 @@ import {
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
-    PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ServerSideStoreParams,
     TabToNextHeaderParams,
@@ -753,8 +750,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.blockLoadDebounceMillis;
     }
 
-    public getPostProcessPopupFunc(): ((params: PostProcessPopupParams) => void) | undefined {
-        return this.gridOptions.postProcessPopup;
+    public getPostProcessPopupFunc() {
+        return mergeGridCommonParams(this.gridOptions.postProcessPopup);
     }
 
     public getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined {
@@ -1246,12 +1243,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.groupRowAggNodes;
     }
 
-    public getContextMenuItemsFunc(): GetContextMenuItems | undefined {
-        return this.gridOptions.getContextMenuItems;
+    public getContextMenuItemsFunc() {
+        return mergeGridCommonParams(this.gridOptions.getContextMenuItems);
     }
 
-    public getMainMenuItemsFunc(): GetMainMenuItems | undefined {
-        return this.gridOptions.getMainMenuItems;
+    public getMainMenuItemsFunc() {
+        return mergeGridCommonParams(this.gridOptions.getMainMenuItems);
     }
 
     public getRowIdFunc(): GetRowIdFunc | undefined {
