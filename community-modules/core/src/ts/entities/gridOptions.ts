@@ -80,7 +80,7 @@ import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCe
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { Column } from "./column";
-import { GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -869,7 +869,7 @@ export interface GridOptions {
      * @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true 
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
-    /** Allows you to set the ID for a particular row based on the data. */
+    /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
     getRowId?: GetRowIdFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
@@ -1096,29 +1096,6 @@ export interface GridOptions {
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface FillOperationParams {
-    /** The mouse event for the fill operation. */
-    event: MouseEvent;
-    /** The values that have been processed by the fill operation. */
-    values: any[];
-    /** The RowNode of the current cell being changed. */
-    rowNode: RowNode;
-    /** The Column of the current cell being changed. */
-    column: Column;
-    /** The values that were present before processing started. */
-    initialValues: any[];
-    /** The index of the current processed value. */
-    currentIndex: number;
-    /** The value of the cell being currently processed by the Fill Operation. */
-    currentCellValue: any;
-    /** The direction of the Fill Operation. */
-    direction: 'up' | 'down' | 'left' | 'right';
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
 export interface GetDataPath {
     (data: any): string[];
 }
@@ -1206,32 +1183,6 @@ export interface GetRowNodeIdFunc {
 
 export interface GetRowIdFunc {
     (params: GetRowIdParams): string;
-}
-
-export interface GetRowIdParams {
-    /** Grid's API */
-    api: GridApi;
-    /** Grid's Column API */
-    columnApi: ColumnApi;
-    /** The data item provided to the grid for the row in question */
-    data: any;
-    /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
-    level: number;
-    /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */
-    parentKeys?: string[];
-}
-
-export interface ProcessRowParams {
-    eRow: HTMLElement;
-    ePinnedLeftRow: HTMLElement;
-    ePinnedRightRow: HTMLElement;
-    rowIndex: number;
-    node: RowNode;
-    api: GridApi;
-    columnApi: ColumnApi;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface ChartRef {

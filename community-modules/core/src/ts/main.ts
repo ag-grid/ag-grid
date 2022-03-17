@@ -379,8 +379,6 @@ export {
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
-    GetRowIdParams,
-    ProcessRowParams,
     ChartRef,
     ChartRefParams,
     RowClassRules,
@@ -392,7 +390,6 @@ export {
     GetServerSideGroupKey,
     IsServerSideGroup,
     GetChartToolbarItems,
-    FillOperationParams,
     RowGroupingDisplayType,
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
@@ -400,6 +397,9 @@ export {
 } from "./entities/gridOptions";
 
 export {
+    FillOperationParams,
+    GetRowIdParams,
+    ProcessRowParams,
     IsServerSideGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,

@@ -4,10 +4,7 @@ import { ComponentUtil } from './components/componentUtil';
 import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
-import {
-    FillOperationParams, GetRowIdFunc, GridOptions, IsRowMaster,
-    IsRowSelectable, RowGroupingDisplayType, RowHeightParams, TreeDataDisplayType
-} from './entities/gridOptions';
+import { GridOptions, RowGroupingDisplayType, RowHeightParams, TreeDataDisplayType } from './entities/gridOptions';
 import { mergeGridCommonParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
@@ -1058,8 +1055,8 @@ export class GridOptionsWrapper {
         return direction;
     }
 
-    public getFillOperation(): ((params: FillOperationParams) => any) | undefined {
-        return this.gridOptions.fillOperation;
+    public getFillOperation() {
+        return mergeGridCommonParams(this.gridOptions.fillOperation);
     }
 
     public isSuppressMultiRangeSelection(): boolean {
@@ -1113,11 +1110,11 @@ export class GridOptionsWrapper {
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
-    public getIsRowMasterFunc(): IsRowMaster | undefined {
+    public getIsRowMasterFunc() {
         return this.gridOptions.isRowMaster;
     }
 
-    public getIsRowSelectableFunc(): IsRowSelectable | undefined {
+    public getIsRowSelectableFunc() {
         return this.gridOptions.isRowSelectable;
     }
 
@@ -1233,14 +1230,14 @@ export class GridOptionsWrapper {
         return mergeGridCommonParams(this.gridOptions.getMainMenuItems);
     }
 
-    public getRowIdFunc(): GetRowIdFunc | undefined {
+    public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return getRowId;
+            return mergeGridCommonParams(getRowId);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
-            return params => getRowNodeId(params.data)
+            return (params: any) => getRowNodeId(params.data)
         }
     }
 
@@ -1302,8 +1299,8 @@ export class GridOptionsWrapper {
         return mergeGridCommonParams(this.gridOptions.sendToClipboard);
     }
 
-    public getProcessRowPostCreateFunc(): any {
-        return this.gridOptions.processRowPostCreate;
+    public getProcessRowPostCreateFunc() {
+        return mergeGridCommonParams(this.gridOptions.processRowPostCreate);
     }
 
     public getProcessCellForClipboardFunc() {

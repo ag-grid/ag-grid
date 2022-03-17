@@ -169,3 +169,40 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon {
     //** Store info, if any, as passed via the success() callback when loading data. */
     storeInfo: any;
 }
+
+export interface GetRowIdParams extends AgGridCommon {
+    /** The data item provided to the grid for the row in question */
+    data: any;
+    /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
+    level: number;
+    /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */
+    parentKeys?: string[];
+}
+
+export interface ProcessRowParams extends AgGridCommon {
+    eRow: HTMLElement;
+    ePinnedLeftRow: HTMLElement;
+    ePinnedRightRow: HTMLElement;
+    rowIndex: number;
+    node: RowNode;
+    addRenderedRowListener: (eventType: string, listener: Function) => void;
+}
+
+export interface FillOperationParams extends AgGridCommon {
+    /** The mouse event for the fill operation. */
+    event: MouseEvent;
+    /** The values that have been processed by the fill operation. */
+    values: any[];
+    /** The RowNode of the current cell being changed. */
+    rowNode: RowNode;
+    /** The Column of the current cell being changed. */
+    column: Column;
+    /** The values that were present before processing started. */
+    initialValues: any[];
+    /** The index of the current processed value. */
+    currentIndex: number;
+    /** The value of the cell being currently processed by the Fill Operation. */
+    currentCellValue: any;
+    /** The direction of the Fill Operation. */
+    direction: 'up' | 'down' | 'left' | 'right';
+}
