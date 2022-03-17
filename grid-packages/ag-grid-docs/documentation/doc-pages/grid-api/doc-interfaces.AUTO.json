@@ -680,10 +680,16 @@
       "description": "/** data (if any) of the parent RowNode */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -693,10 +699,17 @@
     "columnGroup": {
       "type": { "returnType": "ColumnGroup | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": true }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "HeaderClass": {},
@@ -706,10 +719,17 @@
     "columnGroup": {
       "type": { "returnType": "ProvidedColumnGroup | null", "optional": true }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": true }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ToolPanelClass": {},
@@ -1349,10 +1369,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1373,10 +1399,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1398,10 +1430,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1423,10 +1461,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1438,6 +1482,18 @@
     "dragEvent": {
       "description": "/** The DOM event that represents a drag and drop interaction */",
       "type": { "returnType": "DragEvent", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "DndSourceCallback": {},
@@ -1458,10 +1514,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1483,10 +1545,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1508,10 +1576,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1519,8 +1593,18 @@
   "HeaderCheckboxSelectionCallbackParams": {
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "HeaderCheckboxSelectionCallback": {},
   "IsColumnFunc": {},
@@ -1541,10 +1625,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1554,8 +1644,16 @@
     "data": { "type": { "returnType": "any", "optional": false } },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "colDef": { "type": { "returnType": "ColDef", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1598,10 +1696,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1626,10 +1730,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1658,10 +1768,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1687,10 +1803,17 @@
       "description": "/** Where the column is going to appear */",
       "type": { "returnType": "string | null", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": true }
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "HeaderValueGetterFunc": {},
@@ -1719,10 +1842,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1751,10 +1880,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1784,10 +1919,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1813,10 +1954,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1842,10 +1989,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1866,10 +2019,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1890,10 +2049,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1922,10 +2087,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -1944,12 +2115,18 @@
       "description": "/** The keyboard event the grid received */",
       "type": { "returnType": "KeyboardEvent", "optional": false }
     },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "CellClassParams": {
     "colDef": {
@@ -1976,10 +2153,16 @@
       "description": "/** If using AngularJs, is the row's child scope, otherwise null */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -4723,10 +4906,16 @@
       "description": "/** If using AngularJs, is the row's child scope, otherwise null */",
       "type": { "returnType": "any", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -5111,7 +5300,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "NavigateToNextCellParams": {
@@ -5140,7 +5329,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IHeaderColumn": {
@@ -7333,7 +7522,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IFloatingFilter": {
@@ -7541,7 +7730,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IDateComparatorFunc": {},
@@ -7684,7 +7873,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "FilterButtonType": {},
@@ -7751,7 +7940,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IProvidedFilter": {
@@ -7918,7 +8107,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -8075,7 +8264,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISimpleFilterModelType": {},
@@ -8146,10 +8335,16 @@
       "description": "/** ColDef provided for this column */",
       "type": { "returnType": "ColDef", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -8261,7 +8456,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "GridParams": {
@@ -8982,7 +9177,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IHeader": {
@@ -9107,7 +9302,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IHeaderGroup": {},
@@ -12872,7 +13067,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ICellEditorComp": {
@@ -13417,7 +13612,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IComponent": {
@@ -14273,7 +14468,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IFiltersToolPanel": {
@@ -14731,7 +14926,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IMultiFilterModel": {
@@ -15162,7 +15357,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "RowBounds": {
@@ -16109,7 +16304,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISideBar": {
@@ -16260,7 +16455,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "SparklineOptions": {},
@@ -16992,7 +17187,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IStatusPanel": {},
@@ -17029,7 +17224,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IToolPanel": {
@@ -17113,7 +17308,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IPrimaryColsPanel": {
@@ -17392,7 +17587,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "GetDetailRowData": {},
@@ -17772,7 +17967,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISelectCellEditorParams": {
@@ -17867,7 +18062,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ITextCellEditorParams": {
@@ -17962,7 +18157,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IGroupCellRenderer": {
@@ -18161,7 +18356,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ICellRendererParams": {
@@ -18260,7 +18455,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ISetFilterCellRendererParams": {
@@ -18284,7 +18479,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ICellRenderer": {
@@ -18424,7 +18619,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ILoadingCellRenderer": {},
@@ -18518,7 +18713,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "IDateComp": {
@@ -18635,7 +18830,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ILoadingOverlayComp": {
@@ -18671,7 +18866,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "INoRowsOverlayComp": {
@@ -18898,7 +19093,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "ITooltipComp": {
@@ -19539,7 +19734,7 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": true }
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "EXPAND_STATE": {},

@@ -11,6 +11,7 @@ import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
 import { IHeaderCellComp } from "./headerCellCtrl";
 import { setAriaRole } from "../../../utils/aria";
+import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -191,13 +192,15 @@ export class SelectAllFeature extends BeanStub {
         let result = this.column.getColDef().headerCheckboxSelection;
 
         if (typeof result === 'function') {
-            const func = result as (params: any) => boolean;
-            result = func({
+            const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
+            const params: HeaderCheckboxSelectionCallbackParams = {
                 column: this.column,
                 colDef: this.column.getColDef(),
                 columnApi: this.columnApi,
-                api: this.gridApi
-            });
+                api: this.gridApi,
+                context: this.gridOptionsWrapper.getContext()
+            }
+            result = func(params);
         }
 
         if (result) {

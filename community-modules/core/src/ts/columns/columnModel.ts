@@ -2101,7 +2101,7 @@ export class ColumnModel extends BeanStub {
         let autoGroupInsertIndex = 0;
         this.gridColumns.forEach(col => {
             const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId]!=null;
+            const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
             const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
@@ -2625,6 +2625,7 @@ export class ColumnModel extends BeanStub {
                 providedColumnGroup: providedColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 

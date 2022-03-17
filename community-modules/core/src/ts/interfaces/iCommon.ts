@@ -13,5 +13,5 @@ export interface AgGridCommon {
     /** The column api. */
     columnApi: ColumnApi;
     /** Application context as set on `gridOptions.context`. */
-    context?: any;
+    context: any;
 }

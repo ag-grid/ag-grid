@@ -98,6 +98,7 @@ import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { NavigateToNextCellParams, TabToNextCellParams } from "./iGridCallbacks";
+import { AgGridCommon } from "../interfaces/iCommon";
 
 export interface GridOptions {
 
@@ -1173,7 +1174,7 @@ export interface RowClassRules {
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams {
+export interface RowClassParams extends AgGridCommon {
     /** The data associated with this row from rowData */
     data: any;
     /** The RowNode associated with this row */
@@ -1182,10 +1183,6 @@ export interface RowClassParams {
     rowIndex: number;
     /** If using AngularJs, is the row's child scope, otherwise null */
     $scope: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface RowHeightParams {
