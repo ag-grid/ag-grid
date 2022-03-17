@@ -22,9 +22,10 @@ import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowCtrl } from "./rendering/row/rowCtrl";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
-import { TabToNextHeaderParams, NavigateToNextHeaderParams } from "./entities/gridOptions";
 import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
 import { last } from "./utils/array";
+import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./entities/iGridCallbacks";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -205,7 +206,7 @@ export class FocusService extends BeanStub {
         return this.focusedHeaderPosition;
     }
 
-    private isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string):boolean {
+    private isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
@@ -300,27 +301,23 @@ export class FocusService extends BeanStub {
             if (fromTab) {
                 const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
                 if (userFunc) {
-                    const params: TabToNextHeaderParams = {
+                    const params: WithoutGridCommon<TabToNextHeaderParams> = {
                         backwards: direction === 'Before',
                         previousHeaderPosition: currentPosition,
                         nextHeaderPosition: headerPosition,
                         headerRowCount,
-                        api: gridOptionsWrapper.getApi()!,
-                        columnApi: gridOptionsWrapper.getColumnApi()!
                     };
                     headerPosition = userFunc(params);
                 }
             } else {
                 const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
                 if (userFunc && event) {
-                    const params: NavigateToNextHeaderParams = {
+                    const params: WithoutGridCommon<NavigateToNextHeaderParams> = {
                         key: event.key,
                         previousHeaderPosition: currentPosition,
                         nextHeaderPosition: headerPosition,
                         headerRowCount,
                         event,
-                        api: gridOptionsWrapper.getApi()!,
-                        columnApi: gridOptionsWrapper.getColumnApi()!
                     };
                     headerPosition = userFunc(params);
                 }

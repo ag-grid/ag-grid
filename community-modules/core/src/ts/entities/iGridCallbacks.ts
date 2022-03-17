@@ -1,3 +1,5 @@
+import { HeaderPosition } from "../headerRendering/common/headerPosition";
+import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon, WithoutGridCommon } from "../interfaces/iCommon";
 import { CellPosition } from "./cellPosition";
 import { Column } from "./column";
@@ -67,6 +69,36 @@ export interface ProcessDataFromClipboardParams extends AgGridCommon {
     /** 2D array of all cells from the clipboard */
     data: string[][];
 }
+
+export interface GetChartToolbarItemsParams extends AgGridCommon {
+    defaultItems?: ChartMenuOptions[];
+}
+
+export interface NavigateToNextHeaderParams extends AgGridCommon {
+    /** The key for the arrow key pressed,
+     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
+    key: string;
+    /** The header that currently has focus */
+    previousHeaderPosition: HeaderPosition | null;
+    /** The header the grid would normally pick as the next header for this navigation */
+    nextHeaderPosition: HeaderPosition | null;
+    /** The number of header rows present in the grid */
+    headerRowCount: number;
+    event: KeyboardEvent;
+}
+
+export interface TabToNextHeaderParams extends AgGridCommon {
+    /** True if the Shift key is also down */
+    backwards: boolean;
+    /** The header that currently has focus */
+    previousHeaderPosition: HeaderPosition | null;
+    /** The header the grid would normally pick as the next header for this navigation */
+    nextHeaderPosition: HeaderPosition | null;
+    /** The number of header rows present in the grid */
+    headerRowCount: number;
+}
+
+
 export interface TabToNextCellParams extends AgGridCommon {
     /** True if the Shift key is also down */
     backwards: boolean;
@@ -90,4 +122,8 @@ export interface NavigateToNextCellParams extends AgGridCommon {
     nextCellPosition: CellPosition | null;
 
     event: KeyboardEvent | null;
+}
+
+export interface PaginationNumberFormatterParams extends AgGridCommon {
+    value: number;
 }

@@ -36,13 +36,10 @@ import {
     AgChartTheme,
     ServerSideStoreType,
     RowGroupingDisplayType,
-    ICellRendererComp,
-    ICellRendererFunc,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
-    GetRowIdParams,
     NavigateToNextHeaderParams,
     HeaderPosition,
     TabToNextHeaderParams,
@@ -51,9 +48,6 @@ import {
     TabToNextCellParams,
     PostProcessPopupParams,
     GetDataPath,
-    ICellRenderer,
-    ILoadingOverlayComp,
-    INoRowsOverlayComp,
     RowNode,
     IsRowMaster,
     IsRowSelectable,
@@ -62,7 +56,6 @@ import {
     GetServerSideGroupKey,
     IsServerSideGroup,
     SuppressKeyboardEventParams,
-    ChartRef,
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,
@@ -95,6 +88,7 @@ import {
     ChartRangeSelectionChanged,
     ChartOptionsChanged,
     ChartDestroyed,
+    ChartRefParams,
     ToolPanelVisibleChangedEvent,
     ModelUpdatedEvent,
     PasteStartEvent,
@@ -870,7 +864,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
-    @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRefParams) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
     @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */

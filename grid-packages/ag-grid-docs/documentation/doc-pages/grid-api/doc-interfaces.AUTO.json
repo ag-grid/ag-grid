@@ -3283,7 +3283,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRef" },
+        "arguments": { "params": "ChartRefParams" },
         "returnType": "void",
         "optional": true
       }
@@ -4928,41 +4928,7 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "SendToClipboardParams": {
-    "data": { "type": { "returnType": "string", "optional": false } }
-  },
-  "GetContextMenuItemsParams": {
-    "defaultItems": {
-      "description": "/** Names of the items that would be provided by default. */",
-      "type": { "returnType": "string[] | undefined", "optional": false }
-    },
-    "column": {
-      "description": "/** The column, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "Column | null", "optional": false }
-    },
-    "node": {
-      "description": "/** The row node, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "RowNode | null", "optional": false }
-    },
-    "value": {
-      "description": "/** The value, if a cell was clicked, otherwise null. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "GetContextMenuItems": {},
-  "GetChartToolbarItemsParams": {
-    "defaultItems": {
-      "type": { "returnType": "ChartMenuOptions[]", "optional": true }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
-  },
   "GetChartToolbarItems": {},
   "MenuItemLeafDef": {
     "name": {
@@ -5036,22 +5002,6 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
-  "GetMainMenuItemsParams": {
-    "column": {
-      "description": "/** The column that was clicked */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "defaultItems": {
-      "description": "/** List of the items that would be displayed by default */",
-      "type": { "returnType": "string[]", "optional": false }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "GetMainMenuItems": {},
   "GetRowNodeIdFunc": {},
   "GetRowIdFunc": {},
@@ -5101,83 +5051,40 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "NavigateToNextHeaderParams": {
-    "key": {
-      "description": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "previousHeaderPosition": {
-      "description": "/** The header that currently has focus */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "nextHeaderPosition": {
-      "description": "/** The header the grid would normally pick as the next header for this navigation */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "headerRowCount": {
-      "description": "/** The number of header rows present in the grid */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
-  },
-  "TabToNextHeaderParams": {
-    "backwards": {
-      "description": "/** True if the Shift key is also down */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "previousHeaderPosition": {
-      "description": "/** The header that currently has focus */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "nextHeaderPosition": {
-      "description": "/** The header the grid would normally pick as the next header for this navigation */",
-      "type": { "returnType": "HeaderPosition | null", "optional": false }
-    },
-    "headerRowCount": {
-      "description": "/** The number of header rows present in the grid */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
-  },
-  "PostProcessPopupParams": {
-    "column": {
-      "description": "/** If popup is for a column, this gives the Column */",
-      "type": { "returnType": "Column | null", "optional": true }
-    },
-    "rowNode": {
-      "description": "/** If popup is for a row, this gives the RowNode */",
-      "type": { "returnType": "RowNode | null", "optional": true }
-    },
-    "ePopup": {
-      "description": "/** The popup we are showing */",
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "type": {
-      "description": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "eventSource": {
-      "description": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
-      "type": { "returnType": "HTMLElement | null", "optional": true }
-    },
-    "mouseEvent": {
-      "description": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */",
-      "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
-    }
-  },
   "PaginationNumberFormatterParams": {
     "value": { "type": { "returnType": "number", "optional": false } }
   },
-  "ProcessDataFromClipboardParams": {
-    "data": {
-      "description": "/** 2D array of all cells from the clipboard */",
-      "type": { "returnType": "string[][]", "optional": false }
+  "ChartRef": {
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "chart": {
+      "description": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "chartElement": {
+      "description": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "destroyChart": {
+      "description": "/** The application is responsible for calling this when the chart is no longer needed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "ChartRef": {
+  "ChartRefParams": {
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "chartId": {
       "description": "/** The id of the created chart. */",
       "type": { "returnType": "string", "optional": false }
@@ -5271,6 +5178,207 @@
     "params": {
       "description": "/** Equivalent of setting `loadingCellRendererParams` */",
       "type": { "returnType": "any", "optional": true }
+    }
+  },
+  "GetContextMenuItemsParams": {
+    "defaultItems": {
+      "description": "/** Names of the items that would be provided by default. */",
+      "type": { "returnType": "string[] | undefined", "optional": false }
+    },
+    "column": {
+      "description": "/** The column, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "RowNode | null", "optional": false }
+    },
+    "value": {
+      "description": "/** The value, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetMainMenuItemsParams": {
+    "column": {
+      "description": "/** The column that was clicked */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "defaultItems": {
+      "description": "/** List of the items that would be displayed by default */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PostProcessPopupParams": {
+    "column": {
+      "description": "/** If popup is for a column, this gives the Column */",
+      "type": { "returnType": "Column | null", "optional": true }
+    },
+    "rowNode": {
+      "description": "/** If popup is for a row, this gives the RowNode */",
+      "type": { "returnType": "RowNode | null", "optional": true }
+    },
+    "ePopup": {
+      "description": "/** The popup we are showing */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "type": {
+      "description": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "eventSource": {
+      "description": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
+    "mouseEvent": {
+      "description": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */",
+      "type": { "returnType": "MouseEvent | Touch | null", "optional": true }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "SendToClipboardParams": {
+    "data": { "type": { "returnType": "string", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "ProcessDataFromClipboardParams": {
+    "data": {
+      "description": "/** 2D array of all cells from the clipboard */",
+      "type": { "returnType": "string[][]", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetChartToolbarItemsParams": {
+    "defaultItems": {
+      "type": { "returnType": "ChartMenuOptions[]", "optional": true }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "NavigateToNextHeaderParams": {
+    "key": {
+      "description": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "previousHeaderPosition": {
+      "description": "/** The header that currently has focus */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "nextHeaderPosition": {
+      "description": "/** The header the grid would normally pick as the next header for this navigation */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "headerRowCount": {
+      "description": "/** The number of header rows present in the grid */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "TabToNextHeaderParams": {
+    "backwards": {
+      "description": "/** True if the Shift key is also down */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "previousHeaderPosition": {
+      "description": "/** The header that currently has focus */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "nextHeaderPosition": {
+      "description": "/** The header the grid would normally pick as the next header for this navigation */",
+      "type": { "returnType": "HeaderPosition | null", "optional": false }
+    },
+    "headerRowCount": {
+      "description": "/** The number of header rows present in the grid */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "TabToNextCellParams": {
@@ -9823,9 +9931,16 @@
   },
   "ShouldRowBeSkippedParams": {
     "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -9836,20 +9951,32 @@
     },
     "node": { "type": { "returnType": "RowNode | null", "optional": true } },
     "column": { "type": { "returnType": "Column", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
     },
-    "type": { "type": { "returnType": "string", "optional": false } }
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ProcessHeaderForExportParams": {
     "column": { "type": { "returnType": "Column", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -9857,19 +9984,31 @@
     "columnGroup": {
       "type": { "returnType": "ColumnGroup", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
   "ProcessRowGroupForExportParams": {
     "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -22004,7 +22143,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRef" },
+        "arguments": { "params": "ChartRefParams" },
         "returnType": "void",
         "optional": true
       }
@@ -24640,7 +24779,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRef" },
+        "arguments": { "params": "ChartRefParams" },
         "returnType": "void",
         "optional": true
       }
@@ -27286,7 +27425,7 @@
     "createChartContainer": {
       "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
-        "arguments": { "params": "ChartRef" },
+        "arguments": { "params": "ChartRefParams" },
         "returnType": "void",
         "optional": true
       }

@@ -1,31 +1,13 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { RowNode } from "./rowNode";
-import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
-import { Column } from "./column";
-import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { IDatasource } from "../interfaces/iDatasource";
-import { CellPosition } from "./cellPosition";
-import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import {
-    CsvExportParams,
-    ProcessCellForExportParams,
-    ProcessHeaderForExportParams,
-    ProcessGroupHeaderForExportParams
-} from "../interfaces/exportParams";
-import {
-    AsyncTransactionsFlushed,
-    BodyScrollEvent,
-    BodyScrollEndEvent,
-    CellClickedEvent,
+    AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEditingStoppedEvent,
-    CellFocusedEvent,
+    CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent,
     CellKeyDownEvent,
     CellKeyPressEvent,
     CellMouseDownEvent,
@@ -54,14 +36,9 @@ import {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent,
-    FilterOpenedEvent,
-    FilterChangedEvent,
-    FilterModifiedEvent,
-    FirstDataRenderedEvent,
-    GridColumnsChangedEvent,
-    GridReadyEvent,
-    ModelUpdatedEvent,
+    ExpandCollapseAllEvent, FilterChangedEvent,
+    FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent, GridColumnsChangedEvent,
+    GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     PasteEndEvent,
@@ -83,22 +60,30 @@ import {
     ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent,
-    GridSizeChangedEvent,
-    FullWidthCellKeyPressEvent,
-    FullWidthCellKeyDownEvent,
-    CellEditRequestEvent
+    VirtualRowRemovedEvent
 } from "../events";
-import { StatusPanelDef } from "../interfaces/iStatusPanel";
-import { SideBarDef } from "./sideBar";
-import { ChartMenuOptions } from "../interfaces/iChartOptions";
-import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
-import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
+import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
-import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
-import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams } from "./iGridCallbacks";
+import {
+    CsvExportParams,
+    ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams
+} from "../interfaces/exportParams";
+import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
+import { IDatasource } from "../interfaces/iDatasource";
+import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
+import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
+import { StatusPanelDef } from "../interfaces/iStatusPanel";
+import { IViewportDatasource } from "../interfaces/iViewportDatasource";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
+import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
+import { CellPosition } from "./cellPosition";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { Column } from "./column";
+import { GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { RowNode } from "./rowNode";
+import { SideBarDef } from "./sideBar";
 
 export interface GridOptions {
 
@@ -819,7 +804,7 @@ export interface GridOptions {
     /** Callback to be used to customise the chart toolbar items. */
     getChartToolbarItems?: GetChartToolbarItems;
     /** Callback to enable displaying the chart in an alternative chart container. */
-    createChartContainer?: (params: ChartRef) => void;
+    createChartContainer?: (params: ChartRefParams) => void;
 
     // *** Keyboard Navigation *** //
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
@@ -1196,17 +1181,9 @@ export interface RowHeightParams {
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
-
-export interface GetChartToolbarItemsParams {
-    defaultItems?: ChartMenuOptions[];
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
-
 export interface MenuItemLeafDef {
     /** Name of the menu item */
     name: string;
@@ -1268,38 +1245,6 @@ export interface ProcessRowParams {
     context: any;
 }
 
-export interface NavigateToNextHeaderParams {
-    /** The key for the arrow key pressed,
-     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
-    key: string;
-    /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
-    /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
-    /** The number of header rows present in the grid */
-    headerRowCount: number;
-    event: KeyboardEvent;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface TabToNextHeaderParams {
-    /** True if the Shift key is also down */
-    backwards: boolean;
-    /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
-    /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
-    /** The number of header rows present in the grid */
-    headerRowCount: number;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface PaginationNumberFormatterParams {
-    value: number;
-}
-
 export interface ChartRef {
     /** The id of the created chart. */
     chartId: string;
@@ -1310,6 +1255,8 @@ export interface ChartRef {
     /** The application is responsible for calling this when the chart is no longer needed. */
     destroyChart: () => void;
 }
+
+export interface ChartRefParams extends AgGridCommon, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 

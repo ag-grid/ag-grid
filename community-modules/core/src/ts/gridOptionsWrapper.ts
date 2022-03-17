@@ -5,18 +5,13 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import {
-    ChartRef,
-    FillOperationParams,
-    GetChartToolbarItems, GetRowIdFunc, GetServerSideStoreParamsParams,
+    FillOperationParams, GetRowIdFunc, GetServerSideStoreParamsParams,
     GridOptions,
     IsApplyServerSideTransaction,
     IsGroupOpenByDefaultParams,
     IsRowMaster,
     IsRowSelectable,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams, RowGroupingDisplayType, RowHeightParams, ServerSideStoreParams,
-    TabToNextHeaderParams, TreeDataDisplayType
+    IsServerSideGroupOpenByDefaultParams, RowGroupingDisplayType, RowHeightParams, ServerSideStoreParams, TreeDataDisplayType
 } from './entities/gridOptions';
 import { mergeGridCommonParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
@@ -26,7 +21,6 @@ import { Events } from './eventKeys';
 import { AgEvent } from './events';
 import { EventService } from './eventService';
 import { GridApi } from './gridApi';
-import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { IDatasource } from './interfaces/iDatasource';
@@ -731,8 +725,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.getServerSideStoreParams;
     }
 
-    public getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined {
-        return this.gridOptions.createChartContainer;
+    public getCreateChartContainerFunc() {
+        return mergeGridCommonParams(this.gridOptions.createChartContainer);
     }
 
     public getPopupParent() {
@@ -747,8 +741,8 @@ export class GridOptionsWrapper {
         return mergeGridCommonParams(this.gridOptions.postProcessPopup);
     }
 
-    public getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined {
-        return this.gridOptions.paginationNumberFormatter;
+    public getPaginationNumberFormatterFunc() {
+        return mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
     }
 
     public getChildCountFunc() {
@@ -1255,12 +1249,12 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {
-        return this.gridOptions.navigateToNextHeader;
+    public getNavigateToNextHeaderFunc() {
+        return mergeGridCommonParams(this.gridOptions.navigateToNextHeader);
     }
 
-    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined {
-        return this.gridOptions.tabToNextHeader;
+    public getTabToNextHeaderFunc() {
+        return mergeGridCommonParams(this.gridOptions.tabToNextHeader);
     }
 
     public getNavigateToNextCellFunc() {
@@ -1353,8 +1347,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
-        return this.gridOptions.getChartToolbarItems;
+    public getChartToolbarItemsFunc() {
+        return mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
     public getChartThemeOverrides(): AgChartThemeOverrides | undefined {

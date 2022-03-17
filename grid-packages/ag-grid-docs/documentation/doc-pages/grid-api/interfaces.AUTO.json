@@ -1705,7 +1705,7 @@
       "isExternalFilterPresent?": "() => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
@@ -2287,39 +2287,11 @@
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
-  "SendToClipboardParams": { "meta": {}, "type": { "data": "string" } },
-  "GetContextMenuItemsParams": {
-    "meta": {},
-    "type": {
-      "defaultItems": "string[] | undefined",
-      "column": "Column | null",
-      "node": "RowNode | null",
-      "value": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "defaultItems": "/** Names of the items that would be provided by default. */",
-      "column": "/** The column, if a cell was clicked, otherwise null. */",
-      "node": "/** The row node, if a cell was clicked, otherwise null. */",
-      "value": "/** The value, if a cell was clicked, otherwise null. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
   "GetContextMenuItems": {
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "GetContextMenuItemsParams" },
       "returnType": "(string | MenuItemDef)[]"
-    }
-  },
-  "GetChartToolbarItemsParams": {
-    "meta": {},
-    "type": {
-      "defaultItems?": "ChartMenuOptions[]",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
     }
   },
   "GetChartToolbarItems": {
@@ -2377,21 +2349,6 @@
       "tooltip?": "/** Tooltip for the menu item */"
     }
   },
-  "GetMainMenuItemsParams": {
-    "meta": {},
-    "type": {
-      "column": "Column",
-      "defaultItems": "string[]",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "column": "/** The column that was clicked */",
-      "defaultItems": "/** List of the items that would be displayed by default */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
   "GetMainMenuItems": {
     "meta": { "isCallSignature": true },
     "type": {
@@ -2444,68 +2401,9 @@
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
-  "NavigateToNextHeaderParams": {
-    "meta": {},
-    "type": {
-      "key": "string",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "event": "KeyboardEvent",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "key": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */"
-    }
-  },
-  "TabToNextHeaderParams": {
-    "meta": {},
-    "type": {
-      "backwards": "boolean",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */"
-    }
-  },
-  "PostProcessPopupParams": {
-    "meta": {},
-    "type": {
-      "column?": "Column | null",
-      "rowNode?": "RowNode | null",
-      "ePopup": "HTMLElement",
-      "type": "string",
-      "eventSource?": "HTMLElement | null",
-      "mouseEvent?": "MouseEvent | Touch | null"
-    },
-    "docs": {
-      "column?": "/** If popup is for a column, this gives the Column */",
-      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
-      "ePopup": "/** The popup we are showing */",
-      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
-      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
-      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */"
-    }
-  },
   "PaginationNumberFormatterParams": {
     "meta": {},
     "type": { "value": "number" }
-  },
-  "ProcessDataFromClipboardParams": {
-    "meta": {},
-    "type": { "data": "string[][]" },
-    "docs": { "data": "/** 2D array of all cells from the clipboard */" }
   },
   "ChartRef": {
     "meta": {},
@@ -2516,6 +2414,27 @@
       "destroyChart": "() => void"
     },
     "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "chart": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
+      "chartElement": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
+      "destroyChart": "/** The application is responsible for calling this when the chart is no longer needed. */"
+    }
+  },
+  "ChartRefParams": {
+    "meta": {},
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "chartId": "string",
+      "chart": "any",
+      "chartElement": "HTMLElement",
+      "destroyChart": "() => void"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "chartId": "/** The id of the created chart. */",
       "chart": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
       "chartElement": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
@@ -2595,6 +2514,155 @@
       "component?": "/** Equivalent of setting `loadingCellRenderer` */",
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
+    }
+  },
+  "GetContextMenuItemsParams": {
+    "meta": {},
+    "type": {
+      "defaultItems": "string[] | undefined",
+      "column": "Column | null",
+      "node": "RowNode | null",
+      "value": "any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "defaultItems": "/** Names of the items that would be provided by default. */",
+      "column": "/** The column, if a cell was clicked, otherwise null. */",
+      "node": "/** The row node, if a cell was clicked, otherwise null. */",
+      "value": "/** The value, if a cell was clicked, otherwise null. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetMainMenuItemsParams": {
+    "meta": {},
+    "type": {
+      "column": "Column",
+      "defaultItems": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column": "/** The column that was clicked */",
+      "defaultItems": "/** List of the items that would be displayed by default */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostProcessPopupParams": {
+    "meta": {},
+    "type": {
+      "column?": "Column | null",
+      "rowNode?": "RowNode | null",
+      "ePopup": "HTMLElement",
+      "type": "string",
+      "eventSource?": "HTMLElement | null",
+      "mouseEvent?": "MouseEvent | Touch | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column?": "/** If popup is for a column, this gives the Column */",
+      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
+      "ePopup": "/** The popup we are showing */",
+      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
+      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "SendToClipboardParams": {
+    "meta": {},
+    "type": {
+      "data": "string",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessDataFromClipboardParams": {
+    "meta": {},
+    "type": {
+      "data": "string[][]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** 2D array of all cells from the clipboard */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetChartToolbarItemsParams": {
+    "meta": {},
+    "type": {
+      "defaultItems?": "ChartMenuOptions[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NavigateToNextHeaderParams": {
+    "meta": {},
+    "type": {
+      "key": "string",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "event": "KeyboardEvent",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "key": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "TabToNextHeaderParams": {
+    "meta": {},
+    "type": {
+      "backwards": "boolean",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "TabToNextCellParams": {
@@ -5530,9 +5598,16 @@
   },
   "ShouldRowBeSkippedParams": {
     "meta": {},
-    "type": { "node": "RowNode", "api": "GridApi", "context": "any" },
+    "type": {
+      "node": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessCellForExportParams": {
@@ -5542,13 +5617,15 @@
       "accumulatedRowIndex?": "number",
       "node?": "RowNode | null",
       "column": "Column",
+      "type": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "type": "string"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessHeaderForExportParams": {
@@ -5560,7 +5637,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessGroupHeaderForExportParams": {
@@ -5572,7 +5651,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessRowGroupForExportParams": {
@@ -5584,7 +5665,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ContainerType": {
@@ -12198,7 +12281,7 @@
       "isExternalFilterPresent?": "() => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
@@ -12928,7 +13011,7 @@
       "isExternalFilterPresent?": "() => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
@@ -13662,7 +13745,7 @@
       "isExternalFilterPresent?": "() => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",

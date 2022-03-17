@@ -1024,7 +1024,10 @@
   },
   "createChartContainer": {
     "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
-    "type": { "arguments": { "params": "ChartRef" }, "returnType": "void" }
+    "type": {
+      "arguments": { "params": "ChartRefParams" },
+      "returnType": "void"
+    }
   },
   "navigateToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
