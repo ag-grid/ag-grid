@@ -6,6 +6,8 @@ import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
 import { Constants } from "../../constants/constants";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
+
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
     rowIsEven: boolean;
@@ -128,14 +130,11 @@ export class RowCssClassCalculator {
         const rowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
 
         if (rowClassFunc) {
-            const params: RowClassParams = {
+            const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,
                 rowIndex: rowNode.rowIndex!,
-                $scope: scope,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                $scope: scope
             };
             const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);

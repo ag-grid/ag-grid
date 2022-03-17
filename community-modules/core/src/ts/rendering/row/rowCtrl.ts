@@ -1120,14 +1120,11 @@ export class RowCtrl extends BeanStub {
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {
-            const params: RowClassParams = {
+            const params: WithoutGridCommon<RowClassParams> = {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope,
-                api: this.beans.gridOptionsWrapper.getApi()!,
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                context: this.beans.gridOptionsWrapper.getContext()
+                $scope: this.scope
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }

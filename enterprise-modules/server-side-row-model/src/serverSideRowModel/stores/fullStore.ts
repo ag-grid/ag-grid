@@ -25,7 +25,9 @@ import {
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    WithoutGridCommon,
+    IsApplyServerSideTransactionParams
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -497,7 +499,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
         if (applyCallback) {
-            const params = {
+            const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
                 storeInfo: this.info
