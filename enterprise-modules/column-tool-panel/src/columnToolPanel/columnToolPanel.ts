@@ -73,7 +73,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
 
         _.mergeDeep(defaultParams, params);

@@ -138,7 +138,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, {container: containerType }, params)),
+            afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             positionCallback: () => positionCallback(menu),
             anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
@@ -513,7 +513,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
             suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         }, 'columnMenu');
 
         const columnSelectPanelGui = this.columnSelectPanel.getGui();
