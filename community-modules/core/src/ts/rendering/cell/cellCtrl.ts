@@ -15,7 +15,7 @@ import {
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
-import { exists } from "../../utils/generic";
+import { exists, makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
@@ -1067,7 +1067,7 @@ export class CellCtrl extends BeanStub {
     private createCellPosition(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex!,
-            rowPinned: this.rowNode.rowPinned,
+            rowPinned: makeNull(this.rowNode.rowPinned),
             column: this.column
         };
     }

@@ -13,8 +13,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { doOnce, executeNextVMTurn } from "../../utils/function";
-import { exists } from "../../utils/generic";
-import { convertToMap } from "../../utils/map";
+import { exists, makeNull } from "../../utils/generic";
 import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
@@ -695,7 +694,7 @@ export class RowCtrl extends BeanStub {
 
     public getRowPosition(): RowPosition {
         return {
-            rowPinned: this.rowNode.rowPinned,
+            rowPinned: makeNull(this.rowNode.rowPinned),
             rowIndex: this.rowNode.rowIndex as number
         };
     }
