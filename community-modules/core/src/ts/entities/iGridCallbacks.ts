@@ -59,6 +59,14 @@ export interface PostProcessPopupParams extends AgGridCommon {
      *  this is the event - eg user showing context menu */
     mouseEvent?: MouseEvent | Touch | null;
 }
+
+export interface SendToClipboardParams extends AgGridCommon {
+    data: string;
+}
+export interface ProcessDataFromClipboardParams extends AgGridCommon {
+    /** 2D array of all cells from the clipboard */
+    data: string[][];
+}
 export interface TabToNextCellParams extends AgGridCommon {
     /** True if the Shift key is also down */
     backwards: boolean;

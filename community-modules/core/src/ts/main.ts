@@ -387,13 +387,11 @@ export {
     ProcessRowParams,
     NavigateToNextHeaderParams,
     TabToNextHeaderParams,
-    ProcessDataFromClipboardParams,
     ChartRef,
     RowClassRules,
     RowStyle,
     RowClassParams,
     RowHeightParams,
-    SendToClipboardParams,
     ServerSideStoreType,
     ServerSideStoreParams,
     GetServerSideStoreParamsParams,
@@ -409,6 +407,8 @@ export {
 } from "./entities/gridOptions";
 
 export {
+    ProcessDataFromClipboardParams,
+    SendToClipboardParams,
     NavigateToNextCellParams,
     TabToNextCellParams,
     GetContextMenuItemsParams,

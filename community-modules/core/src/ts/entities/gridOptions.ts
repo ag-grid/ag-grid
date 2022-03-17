@@ -97,7 +97,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
-import { GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, PostProcessPopupParams, TabToNextCellParams } from "./iGridCallbacks";
+import { GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams } from "./iGridCallbacks";
 import { AgGridCommon } from "../interfaces/iCommon";
 
 export interface GridOptions {
@@ -1193,9 +1193,6 @@ export interface RowHeightParams {
     context: any;
 }
 
-export interface SendToClipboardParams {
-    data: string;
-}
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
@@ -1301,11 +1298,6 @@ export interface TabToNextHeaderParams {
 
 export interface PaginationNumberFormatterParams {
     value: number;
-}
-
-export interface ProcessDataFromClipboardParams {
-    /** 2D array of all cells from the clipboard */
-    data: string[][];
 }
 
 export interface ChartRef {

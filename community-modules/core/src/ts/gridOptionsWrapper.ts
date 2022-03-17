@@ -1,9 +1,13 @@
-import { RowNode } from './entities/rowNode';
+import { ColumnApi } from './columns/columnApi';
+import { ColDefUtil } from './components/colDefUtil';
+import { ComponentUtil } from './components/componentUtil';
+import { Constants } from './constants/constants';
+import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import {
     ChartRef,
     FillOperationParams,
-    GetChartToolbarItems,
-    GetServerSideStoreParamsParams,
+    GetChartToolbarItems, GetRowIdFunc, GetServerSideStoreParamsParams,
     GridOptions,
     IsApplyServerSideTransaction,
     IsGroupOpenByDefaultParams,
@@ -11,45 +15,34 @@ import {
     IsRowSelectable,
     IsServerSideGroupOpenByDefaultParams,
     NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    ProcessDataFromClipboardParams,
-    ServerSideStoreParams,
-    TabToNextHeaderParams,
-    RowGroupingDisplayType,
-    TreeDataDisplayType,
-    RowHeightParams,
-    GetRowIdFunc
+    PaginationNumberFormatterParams, RowGroupingDisplayType, RowHeightParams, ServerSideStoreParams,
+    TabToNextHeaderParams, TreeDataDisplayType
 } from './entities/gridOptions';
-import { EventService } from './eventService';
-import { Constants } from './constants/constants';
-import { ComponentUtil } from './components/componentUtil';
-import { GridApi } from './gridApi';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColumnApi } from './columns/columnApi';
-import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { IDatasource } from './interfaces/iDatasource';
-import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams } from './interfaces/exportParams';
-import { AgEvent } from './events';
-import { Environment, SASS_PROPERTIES } from './environment';
-import { PropertyKeys } from './propertyKeys';
-import { ColDefUtil } from './components/colDefUtil';
-import { Events } from './eventKeys';
-import { SideBarDef, SideBarDefParser } from './entities/sideBar';
-import { ModuleNames } from './modules/moduleNames';
-import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { iterateObject } from './utils/object';
-import { ModuleRegistry } from './modules/moduleRegistry';
-import { isNumeric } from './utils/number';
-import { exists, missing, values } from './utils/generic';
-import { fuzzyCheckStrings } from './utils/fuzzyMatch';
-import { doOnce } from './utils/function';
-import { getScrollbarWidth } from './utils/browser';
-import { HeaderPosition } from './headerRendering/common/headerPosition';
-import { ExcelExportParams } from './interfaces/iExcelCreator';
-import { capitalise } from './utils/string';
 import { mergeGridCommonParams } from './entities/iGridCallbacks';
+import { RowNode } from './entities/rowNode';
+import { SideBarDef, SideBarDefParser } from './entities/sideBar';
+import { Environment, SASS_PROPERTIES } from './environment';
+import { Events } from './eventKeys';
+import { AgEvent } from './events';
+import { EventService } from './eventService';
+import { GridApi } from './gridApi';
+import { HeaderPosition } from './headerRendering/common/headerPosition';
+import { CsvExportParams } from './interfaces/exportParams';
+import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { IDatasource } from './interfaces/iDatasource';
+import { ExcelExportParams } from './interfaces/iExcelCreator';
+import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
+import { IViewportDatasource } from './interfaces/iViewportDatasource';
+import { ModuleNames } from './modules/moduleNames';
+import { ModuleRegistry } from './modules/moduleRegistry';
+import { PropertyKeys } from './propertyKeys';
+import { getScrollbarWidth } from './utils/browser';
+import { doOnce } from './utils/function';
+import { fuzzyCheckStrings } from './utils/fuzzyMatch';
+import { exists, missing, values } from './utils/generic';
+import { isNumeric } from './utils/number';
+import { iterateObject } from './utils/object';
+import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1004,8 +997,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns);
     }
 
-    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined {
-        return this.gridOptions.processDataFromClipboard;
+    public getProcessDataFromClipboardFunc() {
+        return mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
@@ -1317,27 +1310,27 @@ export class GridOptionsWrapper {
     }
 
     public getSendToClipboardFunc() {
-        return this.gridOptions.sendToClipboard;
+        return mergeGridCommonParams(this.gridOptions.sendToClipboard);
     }
 
     public getProcessRowPostCreateFunc(): any {
         return this.gridOptions.processRowPostCreate;
     }
 
-    public getProcessCellForClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined {
-        return this.gridOptions.processCellForClipboard;
+    public getProcessCellForClipboardFunc() {
+        return mergeGridCommonParams(this.gridOptions.processCellForClipboard);
     }
 
-    public getProcessHeaderForClipboardFunc(): ((params: ProcessHeaderForExportParams) => any) | undefined {
-        return this.gridOptions.processHeaderForClipboard;
+    public getProcessHeaderForClipboardFunc() {
+        return mergeGridCommonParams(this.gridOptions.processHeaderForClipboard);
     }
 
-    public getProcessGroupHeaderForClipboardFunc(): ((params: ProcessGroupHeaderForExportParams) => any) | undefined {
-        return this.gridOptions.processGroupHeaderForClipboard;
+    public getProcessGroupHeaderForClipboardFunc() {
+        return mergeGridCommonParams(this.gridOptions.processGroupHeaderForClipboard);
     }
 
-    public getProcessCellFromClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined {
-        return this.gridOptions.processCellFromClipboard;
+    public getProcessCellFromClipboardFunc() {
+        return mergeGridCommonParams(this.gridOptions.processCellFromClipboard);
     }
 
     public getViewportRowModelPageSize(): number | undefined {
