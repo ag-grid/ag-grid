@@ -3453,7 +3453,7 @@
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "getRowId": {
-      "description": "/** Allows you to set the ID for a particular row based on the data. */",
+      "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "type": { "returnType": "GetRowIdFunc", "optional": true }
     },
     "processRowPostCreate": {
@@ -4827,63 +4827,9 @@
   },
   "RowGroupingDisplayType": {},
   "TreeDataDisplayType": {},
-  "FillOperationParams": {
-    "event": {
-      "description": "/** The mouse event for the fill operation. */",
-      "type": { "returnType": "MouseEvent", "optional": false }
-    },
-    "values": {
-      "description": "/** The values that have been processed by the fill operation. */",
-      "type": { "returnType": "any[]", "optional": false }
-    },
-    "rowNode": {
-      "description": "/** The RowNode of the current cell being changed. */",
-      "type": { "returnType": "RowNode", "optional": false }
-    },
-    "column": {
-      "description": "/** The Column of the current cell being changed. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "initialValues": {
-      "description": "/** The values that were present before processing started. */",
-      "type": { "returnType": "any[]", "optional": false }
-    },
-    "currentIndex": {
-      "description": "/** The index of the current processed value. */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "currentCellValue": {
-      "description": "/** The value of the cell being currently processed by the Fill Operation. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "direction": {
-      "description": "/** The direction of the Fill Operation. */",
-      "type": {
-        "returnType": "'up' | 'down' | 'left' | 'right'",
-        "optional": false
-      }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "GetDataPath": {},
   "IsServerSideGroup": {},
   "IsApplyServerSideTransaction": {},
-  "IsApplyServerSideTransactionParams": {
-    "transaction": {
-      "description": "/** The transaction getting applied. */",
-      "type": { "returnType": "ServerSideTransaction", "optional": false }
-    },
-    "parentNode": {
-      "description": "/** The parent RowNode, if transaction is applied to a group. */",
-      "type": { "returnType": "RowNode", "optional": false }
-    },
-    "storeInfo": { "type": { "returnType": "any", "optional": false } }
-  },
   "GetServerSideGroupKey": {},
   "IsRowMaster": {},
   "IsRowSelectable": {},
@@ -4916,15 +4862,6 @@
     },
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "RowHeightParams": {
-    "data": { "type": { "returnType": "any", "optional": false } },
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
     }
   },
@@ -5005,55 +4942,6 @@
   "GetMainMenuItems": {},
   "GetRowNodeIdFunc": {},
   "GetRowIdFunc": {},
-  "GetRowIdParams": {
-    "api": {
-      "description": "/** Grid's API */",
-      "type": { "returnType": "GridApi", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** Grid's Column API */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "data": {
-      "description": "/** The data item provided to the grid for the row in question */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "level": {
-      "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "parentKeys": {
-      "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
-      "type": { "returnType": "string[]", "optional": true }
-    }
-  },
-  "ProcessRowParams": {
-    "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
-    "ePinnedLeftRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "ePinnedRightRow": {
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "rowIndex": { "type": { "returnType": "number", "optional": false } },
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "addRenderedRowListener": {
-      "type": {
-        "arguments": { "eventType": "string", "listener": "Function" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PaginationNumberFormatterParams": {
-    "value": { "type": { "returnType": "number", "optional": false } }
-  },
   "ChartRef": {
     "chartId": {
       "description": "/** The id of the created chart. */",
@@ -5115,54 +5003,6 @@
     "cacheBlockSize": {
       "description": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
       "type": { "returnType": "number", "optional": true }
-    }
-  },
-  "GetServerSideStoreParamsParams": {
-    "level": {
-      "description": "/** The level of the store. Top level is 0. */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "parentRowNode": {
-      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "type": { "returnType": "RowNode", "optional": true }
-    },
-    "rowGroupColumns": {
-      "description": "/** Active Row Group Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotColumns": {
-      "description": "/** Active Pivot Columns, if any. */",
-      "type": { "returnType": "Column[]", "optional": false }
-    },
-    "pivotMode": {
-      "description": "/** true if pivot mode is active. */",
-      "type": { "returnType": "boolean", "optional": false }
-    }
-  },
-  "IsServerSideGroupOpenByDefaultParams": {
-    "data": { "type": { "returnType": "any", "optional": false } },
-    "rowNode": { "type": { "returnType": "RowNode", "optional": false } }
-  },
-  "IsGroupOpenByDefaultParams": {
-    "rowNode": {
-      "description": "/** The row node being considered. */",
-      "type": { "returnType": "RowNode", "optional": false }
-    },
-    "rowGroupColumn": {
-      "description": "/** The Column for which this row is grouping. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "level": {
-      "description": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "field": {
-      "description": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "key": {
-      "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
-      "type": { "returnType": "string", "optional": false }
     }
   },
   "LoadingCellRendererSelectorFunc": {},
@@ -5427,6 +5267,249 @@
     "event": {
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
     },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PaginationNumberFormatterParams": {
+    "value": { "type": { "returnType": "number", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsGroupOpenByDefaultParams": {
+    "rowNode": {
+      "description": "/** The row node being considered. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "rowGroupColumn": {
+      "description": "/** The Column for which this row is grouping. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "level": {
+      "description": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "field": {
+      "description": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "key": {
+      "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
+    "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IsApplyServerSideTransactionParams": {
+    "transaction": {
+      "description": "/** The transaction getting applied. */",
+      "type": { "returnType": "ServerSideTransaction", "optional": false }
+    },
+    "parentNode": {
+      "description": "/** The parent RowNode, if transaction is applied to a group. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "storeInfo": { "type": { "returnType": "any", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetRowIdParams": {
+    "data": {
+      "description": "/** The data item provided to the grid for the row in question */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "level": {
+      "description": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentKeys": {
+      "description": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "ProcessRowParams": {
+    "eRow": { "type": { "returnType": "HTMLElement", "optional": false } },
+    "ePinnedLeftRow": {
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "ePinnedRightRow": {
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "rowIndex": { "type": { "returnType": "number", "optional": false } },
+    "node": { "type": { "returnType": "RowNode", "optional": false } },
+    "addRenderedRowListener": {
+      "type": {
+        "arguments": { "eventType": "string", "listener": "Function" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "FillOperationParams": {
+    "event": {
+      "description": "/** The mouse event for the fill operation. */",
+      "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "values": {
+      "description": "/** The values that have been processed by the fill operation. */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
+    "rowNode": {
+      "description": "/** The RowNode of the current cell being changed. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "column": {
+      "description": "/** The Column of the current cell being changed. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "initialValues": {
+      "description": "/** The values that were present before processing started. */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
+    "currentIndex": {
+      "description": "/** The index of the current processed value. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "currentCellValue": {
+      "description": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "direction": {
+      "description": "/** The direction of the Fill Operation. */",
+      "type": {
+        "returnType": "'up' | 'down' | 'left' | 'right'",
+        "optional": false
+      }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "RowHeightParams": {
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "node": { "type": { "returnType": "RowNode", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -19152,7 +19235,7 @@
   "CellCtrlListAndMap": {
     "list": { "type": { "returnType": "CellCtrl[]", "optional": false } },
     "map": {
-      "type": { "returnType": "{[key: string]: CellCtrl}", "optional": false }
+      "type": { "returnType": "{ [key: string]: CellCtrl }", "optional": false }
     }
   },
   "IRowDragItem": {
@@ -22313,7 +22396,7 @@
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "getRowId": {
-      "description": "/** Allows you to set the ID for a particular row based on the data. */",
+      "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "type": { "returnType": "GetRowIdFunc", "optional": true }
     },
     "processRowPostCreate": {
@@ -24949,7 +25032,7 @@
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "getRowId": {
-      "description": "/** Allows you to set the ID for a particular row based on the data. */",
+      "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "type": { "returnType": "GetRowIdFunc", "optional": true }
     },
     "processRowPostCreate": {
@@ -27595,7 +27678,7 @@
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "getRowId": {
-      "description": "/** Allows you to set the ID for a particular row based on the data. */",
+      "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "type": { "returnType": "GetRowIdFunc", "optional": true }
     },
     "processRowPostCreate": {

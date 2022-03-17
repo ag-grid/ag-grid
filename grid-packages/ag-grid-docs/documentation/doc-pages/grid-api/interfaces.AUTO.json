@@ -2088,7 +2088,7 @@
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
@@ -2178,33 +2178,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'auto' | 'custom'"
   },
-  "FillOperationParams": {
-    "meta": {},
-    "type": {
-      "event": "MouseEvent",
-      "values": "any[]",
-      "rowNode": "RowNode",
-      "column": "Column",
-      "initialValues": "any[]",
-      "currentIndex": "number",
-      "currentCellValue": "any",
-      "direction": "'up' | 'down' | 'left' | 'right'",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "event": "/** The mouse event for the fill operation. */",
-      "values": "/** The values that have been processed by the fill operation. */",
-      "rowNode": "/** The RowNode of the current cell being changed. */",
-      "column": "/** The Column of the current cell being changed. */",
-      "initialValues": "/** The values that were present before processing started. */",
-      "currentIndex": "/** The index of the current processed value. */",
-      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
-      "direction": "/** The direction of the Fill Operation. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
   "GetDataPath": {
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "data": "any" }, "returnType": "string[]" }
@@ -2218,18 +2191,6 @@
     "type": {
       "arguments": { "params": "IsApplyServerSideTransactionParams" },
       "returnType": "boolean"
-    }
-  },
-  "IsApplyServerSideTransactionParams": {
-    "meta": {},
-    "type": {
-      "transaction": "ServerSideTransaction",
-      "parentNode": "RowNode",
-      "storeInfo": "any"
-    },
-    "docs": {
-      "transaction": "/** The transaction getting applied. */",
-      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */"
     }
   },
   "GetServerSideGroupKey": {
@@ -2273,18 +2234,6 @@
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
-    }
-  },
-  "RowHeightParams": {
-    "meta": {},
-    "type": {
-      "data": "any",
-      "node": "RowNode",
-      "api": "GridApi",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetContextMenuItems": {
@@ -2367,44 +2316,6 @@
       "returnType": "string"
     }
   },
-  "GetRowIdParams": {
-    "meta": {},
-    "type": {
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "data": "any",
-      "level": "number",
-      "parentKeys?": "string[]"
-    },
-    "docs": {
-      "api": "/** Grid's API */",
-      "columnApi": "/** Grid's Column API */",
-      "data": "/** The data item provided to the grid for the row in question */",
-      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
-    }
-  },
-  "ProcessRowParams": {
-    "meta": {},
-    "type": {
-      "eRow": "HTMLElement",
-      "ePinnedLeftRow": "HTMLElement",
-      "ePinnedRightRow": "HTMLElement",
-      "rowIndex": "number",
-      "node": "RowNode",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
-  "PaginationNumberFormatterParams": {
-    "meta": {},
-    "type": { "value": "number" }
-  },
   "ChartRef": {
     "meta": {},
     "type": {
@@ -2456,44 +2367,6 @@
       "storeType?": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
       "maxBlocksInCache?": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
       "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
-    }
-  },
-  "GetServerSideStoreParamsParams": {
-    "meta": {},
-    "type": {
-      "level": "number",
-      "parentRowNode?": "RowNode",
-      "rowGroupColumns": "Column[]",
-      "pivotColumns": "Column[]",
-      "pivotMode": "boolean"
-    },
-    "docs": {
-      "level": "/** The level of the store. Top level is 0. */",
-      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
-      "pivotColumns": "/** Active Pivot Columns, if any. */",
-      "pivotMode": "/** true if pivot mode is active. */"
-    }
-  },
-  "IsServerSideGroupOpenByDefaultParams": {
-    "meta": {},
-    "type": { "data": "any", "rowNode": "RowNode" }
-  },
-  "IsGroupOpenByDefaultParams": {
-    "meta": {},
-    "type": {
-      "rowNode": "RowNode",
-      "rowGroupColumn": "Column",
-      "level": "number",
-      "field": "string",
-      "key": "string"
-    },
-    "docs": {
-      "rowNode": "/** The row node being considered. */",
-      "rowGroupColumn": "/** The Column for which this row is grouping. */",
-      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
-      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
-      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */"
     }
   },
   "LoadingCellRendererSelectorFunc": {
@@ -2701,6 +2574,181 @@
       "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
       "previousCellPosition": "/** The cell that currently has focus */",
       "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PaginationNumberFormatterParams": {
+    "meta": {},
+    "type": {
+      "value": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsGroupOpenByDefaultParams": {
+    "meta": {},
+    "type": {
+      "rowNode": "RowNode",
+      "rowGroupColumn": "Column",
+      "level": "number",
+      "field": "string",
+      "key": "string",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "rowNode": "/** The row node being considered. */",
+      "rowGroupColumn": "/** The Column for which this row is grouping. */",
+      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "meta": {},
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "rowNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsApplyServerSideTransactionParams": {
+    "meta": {},
+    "type": {
+      "transaction": "ServerSideTransaction",
+      "parentNode": "RowNode",
+      "storeInfo": "any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "transaction": "/** The transaction getting applied. */",
+      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetRowIdParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "level": "number",
+      "parentKeys?": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** The data item provided to the grid for the row in question */",
+      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessRowParams": {
+    "meta": {},
+    "type": {
+      "eRow": "HTMLElement",
+      "ePinnedLeftRow": "HTMLElement",
+      "ePinnedRightRow": "HTMLElement",
+      "rowIndex": "number",
+      "node": "RowNode",
+      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "FillOperationParams": {
+    "meta": {},
+    "type": {
+      "event": "MouseEvent",
+      "values": "any[]",
+      "rowNode": "RowNode",
+      "column": "Column",
+      "initialValues": "any[]",
+      "currentIndex": "number",
+      "currentCellValue": "any",
+      "direction": "'up' | 'down' | 'left' | 'right'",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "event": "/** The mouse event for the fill operation. */",
+      "values": "/** The values that have been processed by the fill operation. */",
+      "rowNode": "/** The RowNode of the current cell being changed. */",
+      "column": "/** The Column of the current cell being changed. */",
+      "initialValues": "/** The values that were present before processing started. */",
+      "currentIndex": "/** The index of the current processed value. */",
+      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "direction": "/** The direction of the Fill Operation. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "RowHeightParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "node": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -12664,7 +12712,7 @@
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
@@ -13394,7 +13442,7 @@
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
@@ -14128,7 +14176,7 @@
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",

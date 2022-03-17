@@ -1165,7 +1165,7 @@
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
-    "description": "/** Allows you to set the ID for a particular row based on the data. */",
+    "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
     "type": { "returnType": "GetRowIdFunc" }
   },
   "processRowPostCreate": {
