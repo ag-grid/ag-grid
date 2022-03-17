@@ -369,9 +369,6 @@ export {
 } from "./entities/colDef";
 export {
     GridOptions,
-    IsServerSideGroupOpenByDefaultParams,
-    IsGroupOpenByDefaultParams,
-    IsApplyServerSideTransactionParams,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,
@@ -392,7 +389,6 @@ export {
     RowHeightParams,
     ServerSideStoreType,
     ServerSideStoreParams,
-    GetServerSideStoreParamsParams,
     GetServerSideGroupKey,
     IsServerSideGroup,
     GetChartToolbarItems,
@@ -404,6 +400,10 @@ export {
 } from "./entities/gridOptions";
 
 export {
+    IsServerSideGroupOpenByDefaultParams,
+    IsApplyServerSideTransactionParams,
+    IsGroupOpenByDefaultParams,
+    GetServerSideStoreParamsParams,
     PaginationNumberFormatterParams,
     ProcessDataFromClipboardParams,
     SendToClipboardParams,

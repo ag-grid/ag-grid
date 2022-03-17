@@ -76,12 +76,11 @@ import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { Column } from "./column";
-import { GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -1131,16 +1130,6 @@ export interface IsServerSideGroup {
 export interface IsApplyServerSideTransaction {
     (params: IsApplyServerSideTransactionParams): boolean;
 }
-
-export interface IsApplyServerSideTransactionParams {
-    /** The transaction getting applied. */
-    transaction: ServerSideTransaction;
-    /** The parent RowNode, if transaction is applied to a group. */
-    parentNode: RowNode;
-    //** Store info, if any, as passed via the success() callback when loading data. */
-    storeInfo: any;
-}
-
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
 }
@@ -1278,37 +1267,6 @@ export interface ServerSideStoreParams {
      * If missing, defaults to grid options `cacheBlockSize`.
      */
     cacheBlockSize?: number;
-}
-
-export interface GetServerSideStoreParamsParams {
-    /** The level of the store. Top level is 0. */
-    level: number;
-    /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
-    parentRowNode?: RowNode;
-    /** Active Row Group Columns, if any. */
-    rowGroupColumns: Column[];
-    /** Active Pivot Columns, if any. */
-    pivotColumns: Column[];
-    /** true if pivot mode is active. */
-    pivotMode: boolean;
-}
-
-export interface IsServerSideGroupOpenByDefaultParams {
-    data: any;
-    rowNode: RowNode;
-}
-
-export interface IsGroupOpenByDefaultParams {
-    /** The row node being considered. */
-    rowNode: RowNode;
-    /** The Column for which this row is grouping. */
-    rowGroupColumn: Column;
-    /** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */
-    level: number;
-    /** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */
-    field: string;
-    /** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */
-    key: string;
 }
 
 export interface LoadingCellRendererSelectorFunc {

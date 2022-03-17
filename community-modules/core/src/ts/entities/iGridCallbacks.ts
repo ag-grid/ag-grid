@@ -1,6 +1,7 @@
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon, WithoutGridCommon } from "../interfaces/iCommon";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { CellPosition } from "./cellPosition";
 import { Column } from "./column";
 import { RowNode } from "./rowNode";
@@ -126,4 +127,45 @@ export interface NavigateToNextCellParams extends AgGridCommon {
 
 export interface PaginationNumberFormatterParams extends AgGridCommon {
     value: number;
+}
+
+
+export interface IsGroupOpenByDefaultParams extends AgGridCommon {
+    /** The row node being considered. */
+    rowNode: RowNode;
+    /** The Column for which this row is grouping. */
+    rowGroupColumn: Column;
+    /** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */
+    level: number;
+    /** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */
+    field: string;
+    /** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */
+    key: string;
+}
+
+export interface GetServerSideStoreParamsParams extends AgGridCommon {
+    /** The level of the store. Top level is 0. */
+    level: number;
+    /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
+    parentRowNode?: RowNode;
+    /** Active Row Group Columns, if any. */
+    rowGroupColumns: Column[];
+    /** Active Pivot Columns, if any. */
+    pivotColumns: Column[];
+    /** true if pivot mode is active. */
+    pivotMode: boolean;
+}
+
+export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon {
+    data: any;
+    rowNode: RowNode;
+}
+
+export interface IsApplyServerSideTransactionParams extends AgGridCommon {
+    /** The transaction getting applied. */
+    transaction: ServerSideTransaction;
+    /** The parent RowNode, if transaction is applied to a group. */
+    parentNode: RowNode;
+    //** Store info, if any, as passed via the success() callback when loading data. */
+    storeInfo: any;
 }

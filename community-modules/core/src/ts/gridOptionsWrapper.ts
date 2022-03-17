@@ -5,13 +5,8 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import {
-    FillOperationParams, GetRowIdFunc, GetServerSideStoreParamsParams,
-    GridOptions,
-    IsApplyServerSideTransaction,
-    IsGroupOpenByDefaultParams,
-    IsRowMaster,
-    IsRowSelectable,
-    IsServerSideGroupOpenByDefaultParams, RowGroupingDisplayType, RowHeightParams, ServerSideStoreParams, TreeDataDisplayType
+    FillOperationParams, GetRowIdFunc, GridOptions, IsRowMaster,
+    IsRowSelectable, RowGroupingDisplayType, RowHeightParams, TreeDataDisplayType
 } from './entities/gridOptions';
 import { mergeGridCommonParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
@@ -721,8 +716,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideStoreType;
     }
 
-    public getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined {
-        return this.gridOptions.getServerSideStoreParams;
+    public getServerSideStoreParamsFunc() {
+        return mergeGridCommonParams(this.gridOptions.getServerSideStoreParams);
     }
 
     public getCreateChartContainerFunc() {
@@ -749,8 +744,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.getChildCount;
     }
 
-    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction | undefined {
-        return this.gridOptions.isApplyServerSideTransaction;
+    public getIsApplyServerSideTransactionFunc() {
+        return mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
     }
 
     public getDefaultGroupOrderComparator() {
@@ -1214,12 +1209,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.isServerSideGroup;
     }
 
-    public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
-        return this.gridOptions.isServerSideGroupOpenByDefault;
+    public getIsServerSideGroupOpenByDefaultFunc() {
+        return mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
     }
 
-    public getIsGroupOpenByDefaultFunc(): ((params: IsGroupOpenByDefaultParams) => boolean) | undefined {
-        return this.gridOptions.isGroupOpenByDefault;
+    public getIsGroupOpenByDefaultFunc() {
+        return mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
