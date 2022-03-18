@@ -1956,126 +1956,132 @@ export class ColumnModel extends BeanStub {
             return false;
         }
 
-        this.columnAnimationService.start();
+        const applyStates = (states: ColumnState[]) => {
+            const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+            this.autoGroupsNeedBuilding = true;
 
-        const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+            // at the end below, this list will have all columns we got no state for
+            const columnsWithNoState = this.getPrimaryAndSecondaryColumns();
 
-        this.autoGroupsNeedBuilding = true;
+            const rowGroupIndexes: { [key: string]: number; } = {};
+            const pivotIndexes: { [key: string]: number; } = {};
+            const autoGroupColumnStates: ColumnState[] = [];
+            // If pivoting is modified, these are the states we try to reapply after
+            // the secondary columns are re-generated
+            const unmatchedAndAutoStates: ColumnState[] = []; 
+            let unmatchedCount = 0;
 
-        // at the end below, this list will have all columns we got no state for
-        const columnsWithNoState = this.getPrimaryAndSecondaryColumns();
+            const previousRowGroupCols = this.rowGroupColumns.slice();
+            const previousPivotCols = this.pivotColumns.slice();
 
-        let success = true;
-
-        const rowGroupIndexes: { [key: string]: number; } = {};
-        const pivotIndexes: { [key: string]: number; } = {};
-        const autoGroupColumnStates: ColumnState[] = [];
-
-        const previousRowGroupCols = this.rowGroupColumns.slice();
-        const previousPivotCols = this.pivotColumns.slice();
-
-        if (params.state) {
-            params.state.forEach((state: ColumnState) => {
+            states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
                 const isAutoGroupColumn = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
+                    unmatchedAndAutoStates.push(state);
                     return;
                 }
 
                 const column = this.getPrimaryColumn(colId) || this.getSecondaryColumn(colId);
 
                 if (!column) {
-                    // we don't log the failure, as it's possible the user is applying that has extra
-                    // cols in it. for example they could of save while row-grouping (so state includes
-                    // auto-group column) and then applied state when not grouping (so the auto-group
-                    // column would be in the state but no used).
-                    success = false;
+                    unmatchedAndAutoStates.push(state);
+                    unmatchedCount += 1;
                 } else {
                     this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
                     removeFromArray(columnsWithNoState, column);
                 }
             });
+
+            // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
+            const applyDefaultsFunc = (col: Column) =>
+                this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
+                    pivotIndexes, false, source);
+
+            columnsWithNoState.forEach(applyDefaultsFunc);
+
+            // sort the lists according to the indexes that were provided
+            const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
+
+                const indexA = indexes[colA.getId()];
+                const indexB = indexes[colB.getId()];
+
+                const aHasIndex = indexA != null;
+                const bHasIndex = indexB != null;
+
+                if (aHasIndex && bHasIndex) {
+                    // both a and b are new cols with index, so sort on index
+                    return indexA - indexB;
+                }
+
+                if (aHasIndex) {
+                    // a has an index, so it should be before a
+                    return -1;
+                }
+
+                if (bHasIndex) {
+                    // b has an index, so it should be before a
+                    return 1;
+                }
+
+                const oldIndexA = oldList.indexOf(colA);
+                const oldIndexB = oldList.indexOf(colB);
+
+                const aHasOldIndex = oldIndexA >= 0;
+                const bHasOldIndex = oldIndexB >= 0;
+
+                if (aHasOldIndex && bHasOldIndex) {
+                    // both a and b are old cols, so sort based on last order
+                    return oldIndexA - oldIndexB;
+                }
+
+                if (aHasOldIndex) {
+                    // a is old, b is new, so b is first
+                    return -1;
+                }
+
+                // this bit does matter, means both are new cols
+                // but without index or that b is old and a is new
+                return 1;
+            };
+
+            this.rowGroupColumns.sort(comparator.bind(this, rowGroupIndexes, previousRowGroupCols));
+            this.pivotColumns.sort(comparator.bind(this, pivotIndexes, previousPivotCols));
+
+            this.updateGridColumns();
+
+            // sync newly created auto group columns with ColumnState
+            const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
+            autoGroupColumnStates.forEach(stateItem => {
+                const autoCol = this.getAutoColumn(stateItem.colId!);
+                removeFromArray(autoGroupColsCopy, autoCol);
+                this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
+            });
+            // autogroup cols with nothing else, apply the default
+            autoGroupColsCopy.forEach(applyDefaultsFunc);
+
+            this.applyOrderAfterApplyState(params);
+            this.updateDisplayedColumns(source);
+            this.dispatchEverythingChanged(source);
+
+            raiseEventsFunc(); // Will trigger secondary column changes if pivoting modified
+            const pivotChanged = !areEqual(this.pivotColumns, previousPivotCols);
+            return { pivotChanged, unmatchedAndAutoStates, unmatchedCount };
         }
 
-        // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        const applyDefaultsFunc = (col: Column) =>
-            this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
-                pivotIndexes, false, source);
-
-        columnsWithNoState.forEach(applyDefaultsFunc);
-
-        // sort the lists according to the indexes that were provided
-        const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
-
-            const indexA = indexes[colA.getId()];
-            const indexB = indexes[colB.getId()];
-
-            const aHasIndex = indexA != null;
-            const bHasIndex = indexB != null;
-
-            if (aHasIndex && bHasIndex) {
-                // both a and b are new cols with index, so sort on index
-                return indexA - indexB;
-            }
-
-            if (aHasIndex) {
-                // a has an index, so it should be before a
-                return -1;
-            }
-
-            if (bHasIndex) {
-                // b has an index, so it should be before a
-                return 1;
-            }
-
-            const oldIndexA = oldList.indexOf(colA);
-            const oldIndexB = oldList.indexOf(colB);
-
-            const aHasOldIndex = oldIndexA >= 0;
-            const bHasOldIndex = oldIndexB >= 0;
-
-            if (aHasOldIndex && bHasOldIndex) {
-                // both a and b are old cols, so sort based on last order
-                return oldIndexA - oldIndexB;
-            }
-
-            if (aHasOldIndex) {
-                // a is old, b is new, so b is first
-                return -1;
-            }
-
-            // this bit does matter, means both are new cols
-            // but without index or that b is old and a is new
-            return 1;
-        };
-
-        this.rowGroupColumns.sort(comparator.bind(this, rowGroupIndexes, previousRowGroupCols));
-        this.pivotColumns.sort(comparator.bind(this, pivotIndexes, previousPivotCols));
-
-        this.updateGridColumns();
-
-        // sync newly created auto group columns with ColumnState
-        const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
-        autoGroupColumnStates.forEach(stateItem => {
-            const autoCol = this.getAutoColumn(stateItem.colId!);
-            removeFromArray(autoGroupColsCopy, autoCol);
-            this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
-        });
-        // autogroup cols with nothing else, apply the default
-        autoGroupColsCopy.forEach(applyDefaultsFunc);
-
-        this.applyOrderAfterApplyState(params);
-        this.updateDisplayedColumns(source);
-        this.dispatchEverythingChanged(source);
-
-        raiseEventsFunc();
+        this.columnAnimationService.start();
+        let { pivotChanged, unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || []);
+        if (pivotChanged && unmatchedAndAutoStates.length > 0) {
+            // Reapply states now that secondary cols are updated
+            unmatchedCount = applyStates(unmatchedAndAutoStates).unmatchedCount;
+        }
         this.columnAnimationService.finish();
 
-        return success;
+        return unmatchedCount === 0; // Successful if no states unaccounted for
     }
 
     private applyOrderAfterApplyState(params: ApplyColumnStateParams): void {
