@@ -151,6 +151,7 @@ export class ColumnModel extends BeanStub {
     private gridHeaderRowCount = 0;
 
     private lastPrimaryOrder: Column[];
+    private lastSecondaryOrder: Column[];
     private gridColsArePrimary: boolean;
 
     // primary columns -> what the user provides
@@ -3141,6 +3142,8 @@ export class ColumnModel extends BeanStub {
     private updateGridColumns(): void {
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
+        } else {
+            this.lastSecondaryOrder = this.gridColumns;
         }
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
@@ -3148,6 +3151,7 @@ export class ColumnModel extends BeanStub {
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
+            this.orderGridColsLike(this.lastSecondaryOrder);
         } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
@@ -3156,8 +3160,8 @@ export class ColumnModel extends BeanStub {
 
             // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
-            // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
-            this.orderGridColsLikeLastPrimary();
+            // likewise if changing in/out of pivot mode, we want to maintain the order of the cols
+            this.orderGridColsLike(this.lastPrimaryOrder);
         }
 
         this.addAutoGroupToGridColumns();
@@ -3197,16 +3201,16 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private orderGridColsLikeLastPrimary(): void {
-        if (missing(this.lastPrimaryOrder)) { return; }
+    private orderGridColsLike(colsOrder: Column[] | undefined): void {
+        if (missing(colsOrder)) { return; }
 
-        const lastPrimaryOrderMapped = convertToMap<Column, number>(this.lastPrimaryOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
         let noColsFound = true;
         this.gridColumns.forEach(col => {
-            if (lastPrimaryOrderMapped.has(col)) {
+            if (lastOrderMapped.has(col)) {
                 noColsFound = false;
             }
         });
@@ -3216,7 +3220,7 @@ export class ColumnModel extends BeanStub {
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
         const gridColsMap = convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
-        const oldColsOrdered = this.lastPrimaryOrder.filter(col => gridColsMap.has(col));
+        const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
         const oldColsMap = convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
         const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
 
