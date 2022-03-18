@@ -24,7 +24,7 @@ export class CellRangeFeature {
     private beans: Beans;
     private cellComp: ICellComp;
     private cellCtrl: CellCtrl;
-    private eGui: HTMLElement
+    private eGui: HTMLElement;
 
     private rangeCount: number;
     private hasChartRange: boolean;
