@@ -307,6 +307,7 @@ export class ColumnFactory extends BeanStub {
     private applyColumnState(column: Column, colDef: ColDef): void {
         // flex
         const flex = attrToNumber(colDef.flex);
+
         if (flex !== undefined) {
             column.setFlex(flex);
         }
@@ -314,42 +315,60 @@ export class ColumnFactory extends BeanStub {
         // width - we only set width if column is not flexing
         const noFlexThisCol = column.getFlex() <= 0;
         if (noFlexThisCol) {
-            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
             const width = attrToNumber(colDef.width);
-            if (width != null) {
+            const widthBeforeUpdate = column.getActualWidth();
+
+            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+            if (!widthBeforeUpdate && width != null) {
                 column.setActualWidth(width);
-            } else {
+            } else if (width != null) {
                 // otherwise set the width again, in case min or max width has changed,
                 // and width needs to be adjusted.
-                const widthBeforeUpdate = column.getActualWidth();
                 column.setActualWidth(widthBeforeUpdate);
             }
         }
 
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort !== undefined) {
-            if (colDef.sort == Constants.SORT_ASC || colDef.sort == Constants.SORT_DESC) {
-                column.setSort(colDef.sort);
+            const oldSort = column.getSort();
+            if (oldSort == null) {
+                if (colDef.sort == Constants.SORT_ASC || colDef.sort == Constants.SORT_DESC) {
+                    column.setSort(colDef.sort);
+                } else {
+                    column.setSort(undefined);
+                }
             } else {
-                column.setSort(undefined);
+                column.setSort(oldSort);
             }
         }
 
         // sorted at - anything but undefined, thus null will clear the sortIndex
         const sortIndex = attrToNumber(colDef.sortIndex);
-        if (sortIndex !== undefined) {
+        const oldSortIndex = column.getSortIndex();
+
+        if (!oldSortIndex && sortIndex !== undefined) {
             column.setSortIndex(sortIndex);
+        } else {
+            column.setSortIndex(oldSortIndex);
         }
 
         // hide - anything but undefined, thus null will clear the hide
         const hide = attrToBoolean(colDef.hide);
-        if (hide !== undefined) {
+        const oldVisible = attrToBoolean(column.isVisible());
+
+        if (oldVisible === undefined && hide !== undefined) {
             column.setVisible(!hide);
+        } else if (oldVisible !== undefined) {
+            column.setVisible(oldVisible);
         }
 
         // pinned - anything but undefined, thus null or empty string will remove pinned
-        if (colDef.pinned !== undefined) {
+        const oldPinned = column.getPinned();
+
+        if (oldPinned == null && colDef.pinned !== undefined) {
             column.setPinned(colDef.pinned);
+        } else if (oldPinned) {
+            column.setPinned(oldPinned);
         }
     }
 
