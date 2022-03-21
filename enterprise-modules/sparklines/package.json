@@ -6,6 +6,7 @@
   "module": "./dist/esm/es5/main.js",
   "types": "./dist/cjs/es5/main.d.ts",
   "scripts": {
+    "clean": "rimraf dist .hash",
     "jest": "jest",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
@@ -60,7 +61,8 @@
     "jest-canvas-mock": "2.3.1",
     "jest": "^25.4.0",
     "ts-jest": "^25.4.0",
-    "typescript": "~3.7.7"
+    "typescript": "~3.7.7",
+    "rimraf": "3.0.2"
   },
   "publishConfig": {
     "access": "public"

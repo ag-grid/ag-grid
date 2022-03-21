@@ -3,6 +3,7 @@
   "version": "27.1.0",
   "description": "Documentation for AG Grid",
   "scripts": {
+    "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
     "build": "npm run generate-examples",
     "clean-examples-dir": "cd documentation/doc-pages && git clean -fxd",
     "generate-examples": "node dev-server.js generate-examples",
@@ -184,6 +185,7 @@
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
-    "zone.js": "^0.10.3"
+    "zone.js": "^0.10.3",
+    "rimraf": "3.0.2"
   }
 }

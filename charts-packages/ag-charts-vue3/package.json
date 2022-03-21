@@ -23,6 +23,7 @@
     "vuejs"
   ],
   "scripts": {
+    "clean": "rimraf dist lib .hash",
     "bundle": "npx vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npm run npm && npm run bundle && npm run hash",
@@ -40,7 +41,8 @@
     "core-js": "^3.6.5",
     "vue-class-component": "^8.0.0-rc.1",
     "@vue/composition-api": "^1.0.0-beta.14",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.12",
+    "rimraf": "3.0.2"
   },
   "peerDependencies": {
     "ag-charts-community": "~5.1.0",
