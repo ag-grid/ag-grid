@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, PostSortRowsParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -17,7 +17,8 @@ const gridOptions: GridOptions = {
     width: 170,
     sortable: true,
   },
-  postSort: rowNodes => {
+  postSortRows: (params: PostSortRowsParams) => {
+    const rowNodes = params.nodes;
     // here we put Ireland rows on top while preserving the sort order
     let nextInsertPos = 0
     for (let i = 0; i < rowNodes.length; i++) {

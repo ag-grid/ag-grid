@@ -168,13 +168,13 @@ The following example is configured to use this feature.
 
 It is also possible to perform some post-sorting if you require additional control over the sorted rows.
 
-This is provided via the `postSort` grid callback function as shown below:
+This is provided via the `postSortRows` grid callback function as shown below:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='sort' names='["postSort"]' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='sort' names='["postSortRows"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {
-    postSort: rowNodes => {
+    postSortRows: rowNodes => {
         // here we put Ireland rows on top while preserving the sort order
         let nextInsertPos = 0;
         for (let i = 0; i < rowNodes.length; i++) {

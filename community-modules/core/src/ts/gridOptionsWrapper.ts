@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -122,6 +122,7 @@ export class GridOptionsWrapper {
     public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
     public static PROP_IS_ROW_MASTER = 'isRowMaster';
     public static PROP_POST_SORT = 'postSort';
+    public static PROP_POST_SORT_ROWS = 'postSortRows';
     public static PROP_GET_DOCUMENT = 'getDocument';
     public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
     public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR = 'defaultGroupOrderComparator';
@@ -771,7 +772,7 @@ export class GridOptionsWrapper {
     public getInitialGroupOrderComparator() {
         const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
         if (initialGroupOrderComparator) {
-            return this.mergeGridCommonParams(this.gridOptions.initialGroupOrderComparator);
+            return this.mergeGridCommonParams(initialGroupOrderComparator);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (defaultGroupOrderComparator) {
@@ -1386,7 +1387,16 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     }
 
-    public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {
+    public getPostSortFunc() {
+        const { postSortRows, postSort } = this.gridOptions;
+        if (postSortRows) {
+            return this.mergeGridCommonParams(postSortRows);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (postSort) {
+            return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
+        }
+
         return this.gridOptions.postSort;
     }
 

@@ -3524,6 +3524,13 @@
         "optional": true
       }
     },
+    "postSortRows": {
+      "type": {
+        "arguments": { "params": "PostSortRowsParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
@@ -5623,6 +5630,21 @@
     "colGroupDef": {
       "type": { "returnType": "ColGroupDef", "optional": false }
     },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "PostSortRowsParams": {
+    "nodes": { "type": { "returnType": "RowNode[]", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -22625,6 +22647,13 @@
         "optional": true
       }
     },
+    "postSortRows": {
+      "type": {
+        "arguments": { "params": "PostSortRowsParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "getRowStyle": {
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
@@ -25293,6 +25322,13 @@
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "postSortRows": {
+      "type": {
+        "arguments": { "params": "PostSortRowsParams" },
         "returnType": "void",
         "optional": true
       }
@@ -27975,6 +28011,13 @@
       "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "postSortRows": {
+      "type": {
+        "arguments": { "params": "PostSortRowsParams" },
         "returnType": "void",
         "optional": true
       }

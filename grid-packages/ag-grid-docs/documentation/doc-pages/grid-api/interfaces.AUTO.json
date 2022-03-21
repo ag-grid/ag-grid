@@ -1739,6 +1739,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
@@ -2818,6 +2819,20 @@
     "meta": {},
     "type": {
       "colGroupDef": "ColGroupDef",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostSortRowsParams": {
+    "meta": {},
+    "type": {
+      "nodes": "RowNode[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -12464,6 +12479,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
@@ -13202,6 +13218,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
@@ -13944,6 +13961,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",

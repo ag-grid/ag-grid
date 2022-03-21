@@ -1225,6 +1225,12 @@
     "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "void" }
   },
+  "postSortRows": {
+    "type": {
+      "arguments": { "params": "PostSortRowsParams" },
+      "returnType": "void"
+    }
+  },
   "getRowStyle": {
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
     "type": {

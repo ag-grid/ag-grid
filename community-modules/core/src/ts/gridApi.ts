@@ -23,7 +23,7 @@ import {
     RowClassParams,
     ServerSideStoreParams,
 } from "./entities/gridOptions";
-import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams } from "./entities/iGridCallbacks";
+import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams, PostSortRowsParams } from "./entities/iGridCallbacks";
 import { RowNode } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
@@ -1199,6 +1199,9 @@ export class GridApi {
 
     public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT, postSortFunc);
+    }
+    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT_ROWS, postSortRowsFunc);
     }
 
     public setGetDocument(getDocumentFunc: () => Document): void {

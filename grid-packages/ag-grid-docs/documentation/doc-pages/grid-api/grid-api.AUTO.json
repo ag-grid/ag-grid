@@ -728,6 +728,14 @@
       "returnType": "void"
     }
   },
+  "setPostSortRows": {
+    "type": {
+      "arguments": {
+        "postSortRowsFunc": "(params: PostSortRowsParams) => void"
+      },
+      "returnType": "void"
+    }
+  },
   "setGetDocument": {
     "type": {
       "arguments": { "getDocumentFunc": "() => Document" },
