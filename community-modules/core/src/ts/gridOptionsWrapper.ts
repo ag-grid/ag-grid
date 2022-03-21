@@ -1750,7 +1750,7 @@ export class GridOptionsWrapper {
         }
 
         if (options.defaultGroupOrderComparator) {
-            console.warn("AG Grid: since v27.2, the grid property `defaultGroupOrderComparator` is deprecated and has been replaced by `initialGroupOrderComparator`.");
+            console.warn("AG Grid: since v27.2, the grid property `defaultGroupOrderComparator` is deprecated and has been replaced by `initialGroupOrderComparator` and now receives a single params object.");
         }
         if (options.defaultGroupSortComparator) {
             console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `initialGroupOrderComparator`");
@@ -1758,16 +1758,22 @@ export class GridOptionsWrapper {
         }
 
         if (options.groupRowAggNodes) {
-            console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg`.");
+            console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg` and now receives a single params object.");
         }
         if (options.postSort) {
-            console.warn("AG Grid: since v27.2, the grid property `postSort` is deprecated and has been replaced by `postSortRows`.");
+            console.warn("AG Grid: since v27.2, the grid property `postSort` is deprecated and has been replaced by `postSortRows` and now receives a single params object.");
         }
         if (options.isFullWidthCell) {
-            console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow`.");
+            console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow` and now receives a single params object.");
         }
         if (options.localeTextFunc) {
-            console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText`.");
+            console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText` and now receives a single params object.");
+        }
+        if (options.processSecondaryColDef) {
+            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColDef` is deprecated and has been replaced by `postProcessSecondaryColDef` and now receives a single params object.");
+        }
+        if (options.processSecondaryColGroupDef) {
+            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColGroupDef` is deprecated and has been replaced by `postProcessSecondaryColGroupDef` and now receives a single params object.");
         }
 
         if (options.colWidth) {

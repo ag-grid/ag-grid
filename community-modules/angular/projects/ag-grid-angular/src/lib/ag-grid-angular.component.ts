@@ -152,7 +152,8 @@ import {
     PostProcessSecondaryColDefParams,
     PostProcessSecondaryColGroupDefParams,
     PostSortRowsParams,
-    IsFullWidthRowParams
+    IsFullWidthRowParams,
+    GetLocaleTextParams
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -882,8 +883,11 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
     /** Suppress the grid taking action for the relevant keyboard event when a cell is focused.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
-    /** A callback for localising text within the grid.     */
+    /** @deprecated - Use `getLocaleText` instead.
+     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
+    /** A callback for localising text within the grid.     */
+    @Input() public getLocaleText: ((params: GetLocaleTextParams) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
