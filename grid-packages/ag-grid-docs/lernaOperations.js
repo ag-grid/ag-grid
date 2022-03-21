@@ -356,9 +356,6 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
-    console.table(lernaPackagesToRebuild);
-    process.exit()
-
     if (cumulativeBuild) {
         console.log("Performing a cumulative build");
         let cumulativeBuilds = fsExtra.readJsonSync('./.cumulative.builds.json', {throws: false});
