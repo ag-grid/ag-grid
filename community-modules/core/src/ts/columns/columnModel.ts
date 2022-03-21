@@ -1957,12 +1957,12 @@ export class ColumnModel extends BeanStub {
             return false;
         }
 
-        const applyStates = (states: ColumnState[]) => {
+        const applyStates = (states: ColumnState[], existingColumns: Column[], getById: (id: string) => Column | null) => {
             const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
             this.autoGroupsNeedBuilding = true;
 
             // at the end below, this list will have all columns we got no state for
-            const columnsWithNoState = this.getPrimaryAndSecondaryColumns();
+            const columnsWithNoState = existingColumns.slice();
 
             const rowGroupIndexes: { [key: string]: number; } = {};
             const pivotIndexes: { [key: string]: number; } = {};
@@ -1986,7 +1986,7 @@ export class ColumnModel extends BeanStub {
                     return;
                 }
 
-                const column = this.getPrimaryColumn(colId) || this.getSecondaryColumn(colId);
+                const column = getById(colId);
 
                 if (!column) {
                     unmatchedAndAutoStates.push(state);
@@ -2070,15 +2070,24 @@ export class ColumnModel extends BeanStub {
             this.dispatchEverythingChanged(source);
 
             raiseEventsFunc(); // Will trigger secondary column changes if pivoting modified
-            const pivotChanged = !areEqual(this.pivotColumns, previousPivotCols);
-            return { pivotChanged, unmatchedAndAutoStates, unmatchedCount };
+            return { unmatchedAndAutoStates, unmatchedCount };
         }
 
         this.columnAnimationService.start();
-        let { pivotChanged, unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || []);
-        if (pivotChanged && unmatchedAndAutoStates.length > 0) {
-            // Reapply states now that secondary cols are updated
-            unmatchedCount = applyStates(unmatchedAndAutoStates).unmatchedCount;
+
+        let {
+            unmatchedAndAutoStates,
+            unmatchedCount,
+        } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
+
+        // If there are still states left over, see if we can apply them to newly generated
+        // secondary or auto columns
+        if (unmatchedAndAutoStates.length > 0) {
+            unmatchedCount = applyStates(
+                unmatchedAndAutoStates,
+                this.secondaryColumns || [],
+                (id) => this.getSecondaryColumn(id)
+            ).unmatchedCount;
         }
         this.columnAnimationService.finish();
 
