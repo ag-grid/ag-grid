@@ -59,13 +59,29 @@ type TestCase = {
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
 };
 const EXAMPLES: Record<string, TestCase> = {
-    AREA_MISSING_DATA_EXAMPLE: {
-        options: examples.AREA_MISSING_DATA_EXAMPLE,
+    AREA_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.AREA_MISSING_Y_DATA_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
     },
-    STACKED_AREA_MISSING_DATA_EXAMPLE: {
-        options: examples.STACKED_AREA_MISSING_DATA_EXAMPLE,
+    STACKED_AREA_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
+    },
+    AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
+    },
+    AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
+    },
+    STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
+    },
+    STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
     },
     LINE_TIME_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS,
