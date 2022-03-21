@@ -13,7 +13,7 @@
     "build-css": "npx gulp scss-no-clean",
     "test": "npx jest",
     "package": "node ../../module-build/rollup/build.js",
-    "clean": "npx rimraf dist typings",
+    "clean": "npx rimraf dist typings .hash",
     "check-scss-vars": "npx ts-node scripts/check-scss-vars.ts",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },

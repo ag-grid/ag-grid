@@ -2,6 +2,7 @@
   "name": "@ag-grid-community/angular",
   "version": "27.1.0",
   "scripts": {
+    "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "npm run update-properties && ./node_modules/.bin/ng build --prod && npm run verify-properties && npm run hash",
@@ -53,6 +54,7 @@
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "typescript": "~3.7.7",
-    "replace-in-file": "4.1.0"
+    "replace-in-file": "4.1.0",
+    "rimraf": "3.0.2"
   }
 }
