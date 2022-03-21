@@ -1,6 +1,6 @@
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ChartMenuOptions } from "../interfaces/iChartOptions";
-import { AgGridCommon, WithoutGridCommon } from "../interfaces/iCommon";
+import { AgGridCommon } from "../interfaces/iCommon";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { CellPosition } from "./cellPosition";
 import { Column } from "./column";
@@ -9,23 +9,6 @@ import { RowNode } from "./rowNode";
 // Callback interfaces in this file should remain internal to AG Grid. 
 // They are used to create the params without the need to have BaseGridParams properties 
 // repeatedly assigned throughout the code base.
-
-/**
- * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
- * @param callback User provided callback
- * @returns Wrapped callback where the params object not require api, columnApi and context
- */
-export function mergeGridCommonParams<P extends AgGridCommon, T>(callback: ((params: P) => T) | undefined):
-    ((params: WithoutGridCommon<P>) => T) | undefined {
-    if (callback) {
-        const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-            const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
-            return callback(mergedParams);
-        }
-        return wrapped;
-    }
-    return callback;
-}
 
 export interface GetContextMenuItemsParams extends AgGridCommon {
     /** Names of the items that would be provided by default. */

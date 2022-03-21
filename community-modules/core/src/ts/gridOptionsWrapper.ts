@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { mergeGridCommonParams, RowHeightParams } from './entities/iGridCallbacks';
+import { RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -15,6 +15,7 @@ import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { AgGridCommon } from './interfaces/iCommon';
 import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
@@ -305,6 +306,23 @@ export class GridOptionsWrapper {
         if (Object.keys(invalidProperties).length > 0) {
             console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
+    }
+
+    /**
+    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+    * @param callback User provided callback
+    * @returns Wrapped callback where the params object not require api, columnApi and context
+    */
+    private mergeGridCommonParams<P extends AgGridCommon, T>(callback: ((params: P) => T) | undefined):
+        ((params: WithoutGridCommon<P>) => T) | undefined {
+        if (callback) {
+            const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
+                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+                return callback(mergedParams);
+            }
+            return wrapped;
+        }
+        return callback;
     }
 
     public getDomDataKey(): string {
@@ -699,11 +717,11 @@ export class GridOptionsWrapper {
     }
 
     public getRowStyleFunc() {
-        return mergeGridCommonParams(this.gridOptions.getRowStyle);
+        return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
     }
 
     public getRowClassFunc() {
-        return mergeGridCommonParams(this.gridOptions.getRowClass);
+        return this.mergeGridCommonParams(this.gridOptions.getRowClass);
     }
 
     public rowClassRules() {
@@ -715,11 +733,11 @@ export class GridOptionsWrapper {
     }
 
     public getServerSideStoreParamsFunc() {
-        return mergeGridCommonParams(this.gridOptions.getServerSideStoreParams);
+        return this.mergeGridCommonParams(this.gridOptions.getServerSideStoreParams);
     }
 
     public getCreateChartContainerFunc() {
-        return mergeGridCommonParams(this.gridOptions.createChartContainer);
+        return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
     }
 
     public getPopupParent() {
@@ -731,11 +749,11 @@ export class GridOptionsWrapper {
     }
 
     public getPostProcessPopupFunc() {
-        return mergeGridCommonParams(this.gridOptions.postProcessPopup);
+        return this.mergeGridCommonParams(this.gridOptions.postProcessPopup);
     }
 
     public getPaginationNumberFormatterFunc() {
-        return mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
+        return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
     }
 
     public getChildCountFunc() {
@@ -743,7 +761,7 @@ export class GridOptionsWrapper {
     }
 
     public getIsApplyServerSideTransactionFunc() {
-        return mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
+        return this.mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
     }
 
     public getDefaultGroupOrderComparator() {
@@ -985,7 +1003,7 @@ export class GridOptionsWrapper {
     }
 
     public getProcessDataFromClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
@@ -1057,7 +1075,7 @@ export class GridOptionsWrapper {
     }
 
     public getFillOperation() {
-        return mergeGridCommonParams(this.gridOptions.fillOperation);
+        return this.mergeGridCommonParams(this.gridOptions.fillOperation);
     }
 
     public isSuppressMultiRangeSelection(): boolean {
@@ -1208,11 +1226,11 @@ export class GridOptionsWrapper {
     }
 
     public getIsServerSideGroupOpenByDefaultFunc() {
-        return mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
+        return this.mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
     }
 
     public getIsGroupOpenByDefaultFunc() {
-        return mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
+        return this.mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
@@ -1224,17 +1242,17 @@ export class GridOptionsWrapper {
     }
 
     public getContextMenuItemsFunc() {
-        return mergeGridCommonParams(this.gridOptions.getContextMenuItems);
+        return this.mergeGridCommonParams(this.gridOptions.getContextMenuItems);
     }
 
     public getMainMenuItemsFunc() {
-        return mergeGridCommonParams(this.gridOptions.getMainMenuItems);
+        return this.mergeGridCommonParams(this.gridOptions.getMainMenuItems);
     }
 
     public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return mergeGridCommonParams(getRowId);
+            return this.mergeGridCommonParams(getRowId);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
@@ -1243,19 +1261,19 @@ export class GridOptionsWrapper {
     }
 
     public getNavigateToNextHeaderFunc() {
-        return mergeGridCommonParams(this.gridOptions.navigateToNextHeader);
+        return this.mergeGridCommonParams(this.gridOptions.navigateToNextHeader);
     }
 
     public getTabToNextHeaderFunc() {
-        return mergeGridCommonParams(this.gridOptions.tabToNextHeader);
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextHeader);
     }
 
     public getNavigateToNextCellFunc() {
-        return mergeGridCommonParams(this.gridOptions.navigateToNextCell);
+        return this.mergeGridCommonParams(this.gridOptions.navigateToNextCell);
     }
 
     public getTabToNextCellFunc() {
-        return mergeGridCommonParams(this.gridOptions.tabToNextCell)
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell)
     }
 
     public getGridTabIndex(): string {
@@ -1297,27 +1315,27 @@ export class GridOptionsWrapper {
     }
 
     public getSendToClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.sendToClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.sendToClipboard);
     }
 
     public getProcessRowPostCreateFunc() {
-        return mergeGridCommonParams(this.gridOptions.processRowPostCreate);
+        return this.mergeGridCommonParams(this.gridOptions.processRowPostCreate);
     }
 
     public getProcessCellForClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.processCellForClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.processCellForClipboard);
     }
 
     public getProcessHeaderForClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.processHeaderForClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.processHeaderForClipboard);
     }
 
     public getProcessGroupHeaderForClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.processGroupHeaderForClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.processGroupHeaderForClipboard);
     }
 
     public getProcessCellFromClipboardFunc() {
-        return mergeGridCommonParams(this.gridOptions.processCellFromClipboard);
+        return this.mergeGridCommonParams(this.gridOptions.processCellFromClipboard);
     }
 
     public getViewportRowModelPageSize(): number | undefined {
@@ -1341,7 +1359,7 @@ export class GridOptionsWrapper {
     }
 
     public getChartToolbarItemsFunc() {
-        return mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
+        return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
     public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
@@ -1829,7 +1847,7 @@ export class GridOptionsWrapper {
                 data: rowNode.data
             };
 
-            const height = mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
+            const height = this.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
