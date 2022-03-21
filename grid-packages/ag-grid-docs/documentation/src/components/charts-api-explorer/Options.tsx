@@ -3,8 +3,8 @@ import classnames from 'classnames';
 import { formatJson } from './utils';
 import * as Config from './config';
 import styles from './Options.module.scss';
-import { doOnEnter } from 'components/key-handlers';
-import { inferType } from 'components/documentation-helpers';
+import { doOnEnter } from '../key-handlers';
+import { inferType } from '../documentation-helpers';
 import Code from '../Code';
 
 const FunctionDefinition = ({ definition }) => {
@@ -55,7 +55,7 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
         <div
             className={styles['option--expandable']}
             role="button"
-            tabIndex="0"
+            tabIndex={0}
             aria-expanded={isExpanded}
             onClick={() => setExpanded(!isExpanded)}
             onKeyDown={e => doOnEnter(e, () => setExpanded(!isExpanded))}>
@@ -70,10 +70,10 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
     </div>;
 };
 
-const Search = ({ text, onChange }) => {
+const Search = ({ value, onChange }) => {
     return <div className={styles['search']}>
         <div className={styles['search__title']}><h2>Options</h2></div>
-        <div className={styles['search__box']}>Search: <input className={styles['search__input']} type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
+        <div className={styles['search__box']}>Search: <input className={styles['search__input']} type="text" value={value} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
     </div>;
 };
 
@@ -157,7 +157,7 @@ export const Options = ({ chartType, updateOption }) => {
         return elements;
     };
 
-    const config = { ...Config.chart };
+    const config: any = { ...Config.chart };
 
     if (chartType !== 'pie') {
         config.axes = Config.axis;
