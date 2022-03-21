@@ -22,6 +22,7 @@
     "vuejs"
   ],
   "scripts": {
+    "clean": "rimraf lib dist .hash",
     "build": "npx gulp copy-from-module-source && vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "test:unit": "vue-cli-service test:unit",
@@ -43,7 +44,8 @@
     "vue-jest": "^5.0.0-0",
     "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.0",
-    "gulp-replace": "^1.0.0"
+    "gulp-replace": "^1.0.0",
+    "rimraf": "3.0.2"
   },
   "publishConfig": {
     "access": "public"

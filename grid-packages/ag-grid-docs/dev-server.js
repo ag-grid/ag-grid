@@ -381,7 +381,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 }
 
 const getLernaChainBuildInfo = async (skipFrameworks) => {
-    const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true);
 
     const frameworks = ['angular', 'react', 'vue', 'vue3'];
 
@@ -392,15 +392,16 @@ const getLernaChainBuildInfo = async (skipFrameworks) => {
     };
 
     if (skipFrameworks) {
-        // if we're skipping frameworks then only return "legacy" packages (ie ag-grid-community)
+        // if we're skipping frameworks then only return "legacy" packages (ie ag-grid-community), or the charts package
         const excludeFrameworksFilter = dependent => dependent === 'ag-grid-community' || dependent === 'ag-grid-enterprise' || dependent === 'ag-charts-community';
         filterBuildChain(excludeFrameworksFilter);
     } else {
         // we filter out all "core" modules as they'll be dealt with by TSC itself
+        // we also filter out ag-charts-community as it'll also be dealt with by TSC compilation
         // this will leave us with frameworks and "legacy" packages like ag-grid-community
         const includeFrameworksFilter = dependent => (
             (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) ||
-            (dependent.startsWith('ag-') && dependent !== 'ag-grid-documentation' && dependent !== 'ag-grid-docs')
+            (dependent.startsWith('ag-') && dependent !== 'ag-charts-community')
         );
         filterBuildChain(includeFrameworksFilter);
     }
