@@ -1068,13 +1068,20 @@
     }
   },
   "localeTextFunc": {
-    "description": "/** A callback for localising text within the grid. */",
+    "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
     "type": {
       "arguments": {
         "key": "string",
         "defaultValue": "string",
         "variableValues?": "string[]"
       },
+      "returnType": "string"
+    }
+  },
+  "getLocaleText": {
+    "description": "/** A callback for localising text within the grid. */",
+    "type": {
+      "arguments": { "params": "GetLocaleTextParams" },
       "returnType": "string"
     }
   },

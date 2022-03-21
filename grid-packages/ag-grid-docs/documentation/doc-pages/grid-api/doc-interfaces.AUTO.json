@@ -3333,13 +3333,21 @@
       }
     },
     "localeTextFunc": {
-      "description": "/** A callback for localising text within the grid. */",
+      "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
       "type": {
         "arguments": {
           "key": "string",
           "defaultValue": "string",
           "variableValues?": "string[]"
         },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "getLocaleText": {
+      "description": "/** A callback for localising text within the grid. */",
+      "type": {
+        "arguments": { "params": "GetLocaleTextParams" },
         "returnType": "string",
         "optional": true
       }
@@ -5669,6 +5677,25 @@
   },
   "IsFullWidthRowParams": {
     "rowNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetLocaleTextParams": {
+    "key": { "type": { "returnType": "string", "optional": false } },
+    "defaultValue": { "type": { "returnType": "string", "optional": false } },
+    "variableValues": {
+      "type": { "returnType": "string[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -22480,13 +22507,21 @@
       }
     },
     "localeTextFunc": {
-      "description": "/** A callback for localising text within the grid. */",
+      "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
       "type": {
         "arguments": {
           "key": "string",
           "defaultValue": "string",
           "variableValues?": "string[]"
         },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "getLocaleText": {
+      "description": "/** A callback for localising text within the grid. */",
+      "type": {
+        "arguments": { "params": "GetLocaleTextParams" },
         "returnType": "string",
         "optional": true
       }
@@ -25168,13 +25203,21 @@
       }
     },
     "localeTextFunc": {
-      "description": "/** A callback for localising text within the grid. */",
+      "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
       "type": {
         "arguments": {
           "key": "string",
           "defaultValue": "string",
           "variableValues?": "string[]"
         },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "getLocaleText": {
+      "description": "/** A callback for localising text within the grid. */",
+      "type": {
+        "arguments": { "params": "GetLocaleTextParams" },
         "returnType": "string",
         "optional": true
       }
@@ -27866,13 +27909,21 @@
       }
     },
     "localeTextFunc": {
-      "description": "/** A callback for localising text within the grid. */",
+      "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
       "type": {
         "arguments": {
           "key": "string",
           "defaultValue": "string",
           "variableValues?": "string[]"
         },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "getLocaleText": {
+      "description": "/** A callback for localising text within the grid. */",
+      "type": {
+        "arguments": { "params": "GetLocaleTextParams" },
         "returnType": "string",
         "optional": true
       }

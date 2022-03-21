@@ -29,7 +29,7 @@ The following example shows how the `rowGroupIndex` can be used to ensure rows a
 
 <grid-example title='Row Group Order' name='row-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Default Group Order
+## Initial Group Order
 
 The grid does not attempt to order the groups. The groups are presented on a 'first come, first served' basis. For example
 if grouping by country, and the first row is for country 'Ireland', then the first displayed group will be 'Ireland'.
@@ -47,12 +47,12 @@ in one of the following cases:
 To provide a group order, you should supply `initialGroupOrderComparator` callback to the grid. The callback is a standard
 JavaScript Array comparator that takes two values and compares them.
 
-The example below shows providing a default group order. From the example the following can be noted:
+The example below shows providing an initial group order. From the example the following can be noted:
 
 - Groups are displayed using the [Group Rows Display Type](/grouping-group-rows), i.e. there is no column to click to sort the groups.
 - Groups are ordered alphabetically using a `initialGroupOrderComparator`.
 
-<grid-example title='Default Group Order' name='default-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Initial Group Order' name='default-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 
