@@ -1188,6 +1188,9 @@ export class GridApi {
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_CELL, isFullWidthCellFunc);
     }
+    public setIsFullWidthRow(isFullWidthRowFunc: (rowNode: RowNode) => boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_ROW, isFullWidthRowFunc);
+    }
 
     public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_ROW_SELECTABLE, isRowSelectableFunc);

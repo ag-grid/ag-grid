@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -119,6 +119,7 @@ export class GridOptionsWrapper {
     public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
     public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
     public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
+    public static PROP_IS_FULL_WIDTH_ROW = 'isFullWidthRow';
     public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
     public static PROP_IS_ROW_MASTER = 'isRowMaster';
     public static PROP_POST_SORT = 'postSort';
@@ -780,8 +781,15 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined {
-        return this.gridOptions.isFullWidthCell;
+    public getIsFullWidthCellFunc() {
+        const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
+        if (isFullWidthRow) {
+            return this.mergeGridCommonParams(isFullWidthRow);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
     }
 
     public getFullWidthCellRendererParams() {
@@ -1396,8 +1404,6 @@ export class GridOptionsWrapper {
         if (postSort) {
             return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
         }
-
-        return this.gridOptions.postSort;
     }
 
     public getChartToolbarItemsFunc() {
@@ -1753,6 +1759,12 @@ export class GridOptionsWrapper {
 
         if (options.groupRowAggNodes) {
             console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg`.");
+        }
+        if (options.postSort) {
+            console.warn("AG Grid: since v27.2, the grid property `postSort` is deprecated and has been replaced by `postSortRows`.");
+        }
+        if (options.isFullWidthCell) {
+            console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow`.");
         }
 
         if (options.colWidth) {

@@ -1,26 +1,26 @@
-import {ColGroupDef, Grid, GridApi, GridOptions, ICellRendererParams, RowNode} from '@ag-grid-community/core'
+import { ColGroupDef, Grid, GridOptions, ICellRendererParams, IsFullWidthRowParams } from '@ag-grid-community/core';
 
 const columnDefs: ColGroupDef[] = [
     {
         headerName: 'Core',
         children: [
-            {headerName: 'ID', field: 'id'},
-            {headerName: 'Make', field: 'make'},
-            {headerName: 'Price', field: 'price', filter: 'number'},
+            { headerName: 'ID', field: 'id' },
+            { headerName: 'Make', field: 'make' },
+            { headerName: 'Price', field: 'price', filter: 'number' },
         ],
     },
     {
         headerName: 'Extra',
         children: [
-            {headerName: 'Val 1', field: 'val1', filter: 'number', pinned: 'left'},
-            {headerName: 'Val 2', field: 'val2', filter: 'number', pinned: 'left'},
-            {headerName: 'Val 3', field: 'val3', filter: 'number'},
-            {headerName: 'Val 4', field: 'val4', filter: 'number'},
-            {headerName: 'Val 5', field: 'val5', filter: 'number'},
-            {headerName: 'Val 6', field: 'val6', filter: 'number'},
-            {headerName: 'Val 7', field: 'val7', filter: 'number'},
-            {headerName: 'Val 8', field: 'val8', filter: 'number'},
-            {headerName: 'Val 9', field: 'val9', filter: 'number', pinned: 'right'},
+            { headerName: 'Val 1', field: 'val1', filter: 'number', pinned: 'left' },
+            { headerName: 'Val 2', field: 'val2', filter: 'number', pinned: 'left' },
+            { headerName: 'Val 3', field: 'val3', filter: 'number' },
+            { headerName: 'Val 4', field: 'val4', filter: 'number' },
+            { headerName: 'Val 5', field: 'val5', filter: 'number' },
+            { headerName: 'Val 6', field: 'val6', filter: 'number' },
+            { headerName: 'Val 7', field: 'val7', filter: 'number' },
+            { headerName: 'Val 8', field: 'val8', filter: 'number' },
+            { headerName: 'Val 9', field: 'val9', filter: 'number', pinned: 'right' },
             {
                 headerName: 'Val 10',
                 field: 'val10',
@@ -46,20 +46,20 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     rowData: createRowData(),
-    isFullWidthCell: isFullWidthCell,
+    isFullWidthRow: isFullWidthRow,
     fullWidthCellRenderer: fullWidthCellRenderer,
     pagination: true,
     paginationPageSize: 10,
     columnDefs: columnDefs,
     statusBar: {
-        statusPanels: [{statusPanel: 'agAggregationComponent'}],
+        statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
     enableRangeSelection: true,
     domLayout: 'autoHeight',
 }
 
-function isFullWidthCell(rowNode: RowNode) {
-    return rowNode.data.fullWidth
+function isFullWidthRow(params: IsFullWidthRowParams) {
+    return params.rowNode.data.fullWidth
 }
 
 function fullWidthCellRenderer(params: ICellRendererParams) {

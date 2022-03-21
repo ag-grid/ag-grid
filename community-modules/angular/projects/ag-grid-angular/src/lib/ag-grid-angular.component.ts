@@ -150,7 +150,9 @@ import {
     InitialGroupOrderComparatorParams,
     GetGroupRowAggParams,
     PostProcessSecondaryColDefParams,
-    PostProcessSecondaryColGroupDefParams
+    PostProcessSecondaryColGroupDefParams,
+    PostSortRowsParams,
+    IsFullWidthRowParams
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -928,7 +930,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
-    /** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true 
+    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
@@ -942,16 +944,22 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
-    /** Callback to perform additional sorting after the grid has sorted the rows.     */
+    /** @deprecated Use `postSortRows` instead
+     */
     @Input() public postSort: ((nodes: RowNode[]) => void) | undefined = undefined;
+    /** Callback to perform additional sorting after the grid has sorted the rows.     */
+    @Input() public postSortRows: ((params: PostSortRowsParams) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
     @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
-    /** Tells the grid if this row should be rendered as full width.     */
+    /** @deprecated Use `isFullWidthRow` instead.
+     */
     @Input() public isFullWidthCell: ((rowNode: RowNode) => boolean) | undefined = undefined;
+    /** Tells the grid if this row should be rendered as full width.     */
+    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();

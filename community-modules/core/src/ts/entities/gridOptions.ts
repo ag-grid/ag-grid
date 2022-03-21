@@ -79,7 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -900,8 +900,10 @@ export interface GridOptions {
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
-    /** Tells the grid if this row should be rendered as full width. */
+    /** @deprecated Use `isFullWidthRow` instead. */
     isFullWidthCell?: (rowNode: RowNode) => boolean;
+    /** Tells the grid if this row should be rendered as full width. */
+    isFullWidthRow?: (params: IsFullWidthRowParams) => boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *

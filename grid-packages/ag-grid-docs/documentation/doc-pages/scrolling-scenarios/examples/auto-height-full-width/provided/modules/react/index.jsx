@@ -1,13 +1,13 @@
 'use strict';
 
-import React, {Component, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
+import React, { Component, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule])
@@ -66,23 +66,23 @@ class GridExample extends Component {
                 {
                     headerName: 'Core',
                     children: [
-                        {headerName: 'ID', field: 'id'},
-                        {headerName: 'Make', field: 'make'},
-                        {headerName: 'Price', field: 'price', filter: 'number'},
+                        { headerName: 'ID', field: 'id' },
+                        { headerName: 'Make', field: 'make' },
+                        { headerName: 'Price', field: 'price', filter: 'number' },
                     ],
                 },
                 {
                     headerName: 'Extra',
                     children: [
-                        {headerName: 'Val 1', field: 'val1', filter: 'number', pinned: 'left'},
-                        {headerName: 'Val 2', field: 'val2', filter: 'number', pinned: 'left'},
-                        {headerName: 'Val 3', field: 'val3', filter: 'number'},
-                        {headerName: 'Val 4', field: 'val4', filter: 'number'},
-                        {headerName: 'Val 5', field: 'val5', filter: 'number'},
-                        {headerName: 'Val 6', field: 'val6', filter: 'number'},
-                        {headerName: 'Val 7', field: 'val7', filter: 'number'},
-                        {headerName: 'Val 8', field: 'val8', filter: 'number'},
-                        {headerName: 'Val 9', field: 'val9', filter: 'number', pinned: 'right'},
+                        { headerName: 'Val 1', field: 'val1', filter: 'number', pinned: 'left' },
+                        { headerName: 'Val 2', field: 'val2', filter: 'number', pinned: 'left' },
+                        { headerName: 'Val 3', field: 'val3', filter: 'number' },
+                        { headerName: 'Val 4', field: 'val4', filter: 'number' },
+                        { headerName: 'Val 5', field: 'val5', filter: 'number' },
+                        { headerName: 'Val 6', field: 'val6', filter: 'number' },
+                        { headerName: 'Val 7', field: 'val7', filter: 'number' },
+                        { headerName: 'Val 8', field: 'val8', filter: 'number' },
+                        { headerName: 'Val 9', field: 'val9', filter: 'number', pinned: 'right' },
                         {
                             headerName: 'Val 10',
                             field: 'val10',
@@ -106,7 +106,7 @@ class GridExample extends Component {
             rowData: createRowData(),
             paginationPageSize: 10,
             statusBar: {
-                statusPanels: [{statusPanel: 'agAggregationComponent'}],
+                statusPanels: [{ statusPanel: 'agAggregationComponent' }],
             },
             domLayout: 'autoHeight'
         };
@@ -117,8 +117,8 @@ class GridExample extends Component {
         this.gridColumnApi = params.columnApi;
     }
 
-    isFullWidthCell = (rowNode) => {
-        return rowNode.data.fullWidth;
+    isFullWidthRow = (params) => {
+        return params.rowNode.data.fullWidth;
     }
 
     render() {
@@ -140,7 +140,7 @@ class GridExample extends Component {
                         statusBar={this.state.statusBar}
                         enableRangeSelection={true}
                         domLayout={this.state.domLayout}
-                        isFullWidthCell={this.isFullWidthCell}
+                        isFullWidthRow={this.isFullWidthRow}
                         fullWidthCellRenderer={fullWidthCellRenderer}
                         onGridReady={this.onGridReady}
                     />

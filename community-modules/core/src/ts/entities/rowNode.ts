@@ -1088,7 +1088,7 @@ export class RowNode implements IEventEmitter {
 
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
-        return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
+        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 
     /**

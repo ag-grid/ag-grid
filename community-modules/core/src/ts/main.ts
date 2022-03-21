@@ -419,7 +419,9 @@ export {
     InitialGroupOrderComparatorParams,
     GetGroupRowAggParams,
     PostProcessSecondaryColDefParams,
-    PostProcessSecondaryColGroupDefParams
+    PostProcessSecondaryColGroupDefParams,
+    IsFullWidthRowParams,
+    PostSortRowsParams
 } from "./entities/iGridCallbacks"
 export {
     WithoutGridCommon

@@ -69,7 +69,7 @@ export class PropertyKeys {
         'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass',
         'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
+        'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'isFullWidthRow', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
         'processSecondaryColDef', 'processSecondaryColGroupDef', 'postProcessSecondaryColDef', 'postProcessSecondaryColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader',
         'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup',

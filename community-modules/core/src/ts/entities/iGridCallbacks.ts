@@ -217,3 +217,7 @@ export interface PostProcessSecondaryColGroupDefParams extends AgGridCommon {
 export interface PostSortRowsParams extends AgGridCommon {
     nodes: RowNode[];
 }
+
+export interface IsFullWidthRowParams extends AgGridCommon {
+    rowNode: RowNode;
+}

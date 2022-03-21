@@ -1192,7 +1192,7 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
@@ -1222,10 +1222,11 @@
     }
   },
   "postSort": {
-    "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+    "description": "/** @deprecated Use `postSortRows` instead\n */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "void" }
   },
   "postSortRows": {
+    "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
     "type": {
       "arguments": { "params": "PostSortRowsParams" },
       "returnType": "void"
@@ -1253,8 +1254,15 @@
     }
   },
   "isFullWidthCell": {
-    "description": "/** Tells the grid if this row should be rendered as full width. */",
+    "description": "/** @deprecated Use `isFullWidthRow` instead.\n */",
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+  },
+  "isFullWidthRow": {
+    "description": "/** Tells the grid if this row should be rendered as full width. */",
+    "type": {
+      "arguments": { "params": "IsFullWidthRowParams" },
+      "returnType": "boolean"
+    }
   },
   "onToolPanelVisibleChanged": {
     "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",

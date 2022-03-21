@@ -710,6 +710,12 @@
       "returnType": "void"
     }
   },
+  "setIsFullWidthRow": {
+    "type": {
+      "arguments": { "isFullWidthRowFunc": "(rowNode: RowNode) => boolean" },
+      "returnType": "void"
+    }
+  },
   "setIsRowSelectable": {
     "type": {
       "arguments": { "isRowSelectableFunc": "IsRowSelectable" },
