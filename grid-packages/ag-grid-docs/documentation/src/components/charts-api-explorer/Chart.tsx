@@ -1,20 +1,22 @@
 import React from 'react';
-import { data, series } from './templates.jsx';
-import { deepClone } from './utils.jsx';
+import { AgChartOptions } from 'ag-charts-community';
+import { data, series } from './templates';
+import { deepClone } from './utils';
 import styles from './Chart.module.scss';
 
 /**
  * This renders the chart inside the Standalone Charts API Explorer.
  */
-export class Chart extends React.Component {
-    constructor(props) {
-        super(props);
-        this.chart = React.createRef();
-    }
-
+export class Chart extends React.Component<{ options: AgChartOptions }> {
+    chart: React.RefObject<HTMLDivElement>;
     chartInstance = undefined;
     animationFrameId = 0;
     AgChart = undefined;
+
+    constructor(props) {
+        super(props);
+        this.chart = React.createRef();
+    }    
 
     componentDidMount() {
         import('ag-charts-community').then(({ AgChart }) => {

@@ -381,7 +381,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 }
 
 const getLernaChainBuildInfo = async (skipFrameworks) => {
-    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true);
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
 
     const frameworks = ['angular', 'react', 'vue', 'vue3'];
 

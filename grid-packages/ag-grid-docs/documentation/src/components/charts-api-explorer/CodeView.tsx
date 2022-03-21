@@ -1,6 +1,6 @@
 import React from 'react';
-import { formatJson } from './utils.jsx';
-import Code from '../Code.jsx';
+import { formatJson } from './utils';
+import Code from '../Code';
 import styles from './CodeView.module.scss';
 
 /**

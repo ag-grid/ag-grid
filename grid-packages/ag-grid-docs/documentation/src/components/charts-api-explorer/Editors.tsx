@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
-import { doOnEnter } from 'components/key-handlers';
+import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
@@ -18,7 +18,7 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
         onChange(newValue);
     };
 
-    const props = {
+    const props: Partial<React.InputHTMLAttributes<HTMLInputElement>> = {
         value: stateValue,
         onChange: inputOnChange,
     };
@@ -71,7 +71,7 @@ export const ArrayEditor = props =>
 
 export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
 
-export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange }) => {
+export const PresetEditor = ({ value, options, suggestions = undefined, breakIndex = Infinity, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = newValue => {
         setValueChange(newValue);
@@ -83,7 +83,7 @@ export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange
     const createOptionElement = o => <div
         key={o}
         role="button"
-        tabIndex="0"
+        tabIndex={0}
         className={classnames(styles['preset-editor__option'], { [styles['preset-editor__option--selected']]: stateValue === o })}
         onClick={() => inputOnChange(o)}
         onKeyDown={e => doOnEnter(e, () => inputOnChange(o))}>
