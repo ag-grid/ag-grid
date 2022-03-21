@@ -1012,7 +1012,10 @@
   },
   "isExternalFilterPresent": {
     "description": "/** Grid calls this method to know if an external filter is present. */",
-    "type": { "arguments": {}, "returnType": "boolean" }
+    "type": {
+      "arguments": { "params": "IsExternalFilterPresentParams" },
+      "returnType": "boolean"
+    }
   },
   "doesExternalFilterPass": {
     "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
@@ -1097,8 +1100,15 @@
       "returnType": "boolean"
     }
   },
-  "defaultGroupOrderComparator": {
+  "initialGroupOrderComparator": {
     "description": "/** Allows default sorting of groups. */",
+    "type": {
+      "arguments": { "params": "InitialGroupOrderComparatorParams" },
+      "returnType": "number"
+    }
+  },
+  "defaultGroupOrderComparator": {
+    "description": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
       "returnType": "number"
@@ -1120,7 +1130,7 @@
     "type": { "returnType": "GetDataPath" }
   },
   "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+    "description": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
       "returnType": "number"

@@ -145,7 +145,9 @@ import {
     TreeDataDisplayType,
     FullWidthCellKeyDownEvent,
     FullWidthCellKeyPressEvent,
-    LoadingCellRendererSelectorFunc
+    LoadingCellRendererSelectorFunc,
+    IsExternalFilterPresentParams,
+    InitialGroupOrderComparatorParams
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -858,7 +860,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
     @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: (() => boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: RowNode) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
@@ -886,6 +888,9 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
+    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
+    /** @deprecated - Use `initialGroupOrderComparator` instead
+     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
@@ -893,7 +898,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
-    /** @deprecated - Use defaultGroupOrderComparator instead
+    /** @deprecated - Use initialGroupOrderComparator instead
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */

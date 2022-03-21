@@ -79,8 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { Column } from "./column";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, IsApplyServerSideTransactionParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -795,7 +794,7 @@ export interface GridOptions {
 
     // *** Filtering *** //
     /** Grid calls this method to know if an external filter is present. */
-    isExternalFilterPresent?: () => boolean;
+    isExternalFilterPresent?: (params: IsExternalFilterPresentParams) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
     doesExternalFilterPass?: (node: RowNode) => boolean;
 
@@ -835,6 +834,8 @@ export interface GridOptions {
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
     /** Allows default sorting of groups. */
+    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
+    /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
     processSecondaryColDef?: (colDef: ColDef) => void;
@@ -842,7 +843,7 @@ export interface GridOptions {
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
-    /** @deprecated - Use defaultGroupOrderComparator instead */
+    /** @deprecated - Use initialGroupOrderComparator instead */
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     // *** Row Model: Server Side *** //

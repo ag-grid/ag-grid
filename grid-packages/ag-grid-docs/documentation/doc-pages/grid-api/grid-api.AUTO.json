@@ -792,6 +792,14 @@
       "returnType": "void"
     }
   },
+  "setInitialGroupOrderComparator": {
+    "type": {
+      "arguments": {
+        "initialGroupOrderComparatorFunc": "(params: InitialGroupOrderComparatorParams) => number"
+      },
+      "returnType": "void"
+    }
+  },
   "setGetChartToolbarItems": {
     "type": {
       "arguments": { "getChartToolbarItemsFunc": "GetChartToolbarItems" },

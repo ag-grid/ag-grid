@@ -467,7 +467,7 @@ var gridOptions = {
     getBusinessKeyForNode: function(node) {
         return node.data ? node.data.name : '';
     },
-    defaultGroupOrderComparator: function(nodeA, nodeB) {
+    initialGroupOrderComparatorParams: function({nodeA, nodeB}) {
         if (nodeA.key < nodeB.key) { return -1; }
         if (nodeA.key > nodeB.key) { return 1; }
 

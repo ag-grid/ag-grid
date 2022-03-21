@@ -194,3 +194,10 @@ export interface RowHeightParams extends AgGridCommon {
     data: any;
     node: RowNode;
 }
+
+export interface IsExternalFilterPresentParams extends AgGridCommon { }
+
+export interface InitialGroupOrderComparatorParams extends AgGridCommon {
+    nodeA: RowNode;
+    nodeB: RowNode
+}

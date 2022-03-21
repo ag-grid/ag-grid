@@ -415,6 +415,8 @@ export {
     GetContextMenuItemsParams,
     GetMainMenuItemsParams,
     PostProcessPopupParams,
+    IsExternalFilterPresentParams,
+    InitialGroupOrderComparatorParams
 } from "./entities/iGridCallbacks"
 export {
     WithoutGridCommon

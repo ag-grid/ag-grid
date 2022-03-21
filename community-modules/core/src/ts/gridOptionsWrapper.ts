@@ -124,6 +124,7 @@ export class GridOptionsWrapper {
     public static PROP_GET_DOCUMENT = 'getDocument';
     public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
     public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR = 'defaultGroupOrderComparator';
+    public static PROP_INITIAL_GROUP_ORDER_COMPARATOR = 'initialGroupOrderComparator';
     public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
 
     public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
@@ -764,8 +765,15 @@ export class GridOptionsWrapper {
         return this.mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
     }
 
-    public getDefaultGroupOrderComparator() {
-        return this.gridOptions.defaultGroupOrderComparator;
+    public getInitialGroupOrderComparator() {
+        const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
+        if (initialGroupOrderComparator) {
+            return this.mergeGridCommonParams(this.gridOptions.initialGroupOrderComparator);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (defaultGroupOrderComparator) {
+            return (params: any) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
+        }
     }
 
     public getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined {
@@ -1454,7 +1462,7 @@ export class GridOptionsWrapper {
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
-            return this.gridOptions.isExternalFilterPresent();
+            return this.gridOptions.isExternalFilterPresent({ api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() });
         }
 
         return false;
@@ -1603,7 +1611,7 @@ export class GridOptionsWrapper {
 
         const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
             if (options[oldProp] != null) {
-                console.warn(`ag-grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
+                console.warn(`AG Grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
                 if (options[newProp] == null) {
                     options[newProp] = options[oldProp];
                 }
@@ -1701,8 +1709,11 @@ export class GridOptionsWrapper {
             options.groupDisplayType = 'custom';
         }
 
+        if (options.defaultGroupOrderComparator) {
+            console.warn("AG Grid: since v27.2, the grid property `defaultGroupOrderComparator` is deprecated and has been replaced by `initialGroupOrderComparator`.");
+        }
         if (options.defaultGroupSortComparator) {
-            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `defaultGroupOrderComparator`");
+            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `initialGroupOrderComparator`");
             options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
         }
 
