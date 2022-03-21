@@ -5,6 +5,7 @@
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
+    "clean": "rimraf lib umd .hash",
     "build": "npx gulp && npm run hash",
     "umd": "npx rollup -c",
     "test": "npx jest --passWithNoTests",
@@ -59,7 +60,8 @@
     "serialize-javascript": "2.1.0",
     "tslib": "^1.10.0",
     "typescript": "3.6.3",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "rimraf": "3.0.2"
   },
   "peerDependencies": {
     "ag-charts-community": "~5.1.0",

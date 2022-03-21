@@ -1,5 +1,5 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -146,7 +146,7 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
     });
 }
 
-export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {
+export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
         data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
         axes: [
             { type: 'category', position: 'bottom' },
@@ -171,7 +171,7 @@ export const AREA_MISSING_DATA_EXAMPLE: AgChartOptions = {
         },
 }
 
-export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions =  {
+export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions =  {
         data: DATA_BROWSER_MARKET_SHARE,
         axes: [
             { type: 'category', position: 'bottom' },
@@ -194,6 +194,78 @@ export const STACKED_AREA_MISSING_DATA_EXAMPLE: AgChartOptions =  {
         subtitle: {
             text: '2009-2019',
         },
+}
+
+export const AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_MISSING_X,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'x',
+            yKeys: ['y1'],
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+}
+
+export const AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_TIME_MISSING_X,
+    axes: [
+        { type: 'time', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'x',
+            yKeys: ['y1'],
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+}
+
+export const STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_MISSING_X,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'x',
+            yKeys: ['y1', 'y2'],
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+}
+
+export const STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_TIME_MISSING_X,
+    axes: [
+        { type: 'time', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'x',
+            yKeys: ['y1', 'y2'],
+            marker: {
+                size: 5,
+            }
+        },
+    ],
 }
 
 export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS: AgChartOptions = {

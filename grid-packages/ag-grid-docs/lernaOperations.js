@@ -102,10 +102,15 @@ const exclude = [
     'ag-grid-dev'
 ];
 
-const excludePackage = (packageName, includeExamples) => {
-    if(includeExamples && (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation')) {
-        return false;
-    } else if(!includeExamples && (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation')) {
+const excludePackage = (packageName, includeExamples, skipPackageExamples) => {
+    if (includeExamples) {
+        if (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation') {
+            return false
+        }
+        if (skipPackageExamples && packageName.includes('-package-example')) {
+            return false;
+        }
+    } else if (packageName === 'ag-grid-docs' || packageName === 'ag-grid-documentation') {
         return true;
     }
 
@@ -114,9 +119,9 @@ const excludePackage = (packageName, includeExamples) => {
         !packageName.includes("seans");
 }
 
-const filterExcludedRoots = (dependencyTree, includeExamples) => {
+const filterExcludedRoots = (dependencyTree, includeExamples, skipPackageExamples) => {
     const prunedDependencyTree = {};
-    const agRoots = Object.keys(dependencyTree).filter(packageName => excludePackage(packageName, includeExamples));
+    const agRoots = Object.keys(dependencyTree).filter(packageName => excludePackage(packageName, includeExamples, skipPackageExamples));
 
     agRoots.forEach(root => {
         prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-") || dependency.includes("ag-charts-community")) : [];
@@ -125,11 +130,11 @@ const filterExcludedRoots = (dependencyTree, includeExamples) => {
     return prunedDependencyTree;
 };
 
-const getOrderedDependencies = async (packageName, includeExamples = false) => {
+const getOrderedDependencies = async (packageName, includeExamples = false, skipPackageExamples = true) => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
     const {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
     let dependenciesOrdered = JSON.parse(stdout);
-    dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name, includeExamples));
+    dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name, includeExamples, skipPackageExamples));
 
     const paths = dependenciesOrdered.map(dependency => dependency.location);
     const orderedPackageNames = dependenciesOrdered.map(dependency => dependency.name);
@@ -140,13 +145,13 @@ const getOrderedDependencies = async (packageName, includeExamples = false) => {
     };
 };
 
-const generateBuildChain = async (packageName, allPackagesOrdered, includeExamples = false) => {
+const generateBuildChain = async (packageName, allPackagesOrdered, includeExamples = false, skipPackageExamples = true) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
     let {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
     let dependencyTree = JSON.parse(stdout);
 
     dependencyTree = filterAgGridOnly(dependencyTree);
-    dependencyTree = filterExcludedRoots(dependencyTree, includeExamples);
+    dependencyTree = filterExcludedRoots(dependencyTree, includeExamples, skipPackageExamples);
 
     return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
@@ -200,18 +205,18 @@ const watchCss = () => {
     spawnCssWatcher(cssBuildChain);
 };
 
-const getBuildChainInfo = async (includeExamples) => {
+const getBuildChainInfo = async () => {
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
         const {
             paths: gridPaths,
             orderedPackageNames: orderedGridPackageNames
-        } = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
-        const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false);
+        } = await getOrderedDependencies("@ag-grid-community/core", true, false);
+        const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false, true);
 
         const buildChains = {};
         for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames)) {
-            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames, includeExamples);
+            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames, true, false);
         }
 
         buildChainInfo = {
@@ -226,16 +231,32 @@ const getBuildChainInfo = async (includeExamples) => {
     return buildChainInfo;
 };
 
-const getFlattenedBuildChainInfo = async (includeExamples) => {
-    const buildChainInfo = await getBuildChainInfo(includeExamples);
+const getFlattenedBuildChainInfo = async (includeExamples, skipPackageExamples, skipDocs) => {
+    const buildChainInfo = await getBuildChainInfo(includeExamples, skipPackageExamples);
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
-    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs" && packageName !== "ag-grid-documentation"))
+
+    const filterExclusions = packageName => {
+        if (skipDocs && (packageName === "ag-grid-docs" || packageName === "ag-grid-documentation")) {
+            return false;
+        }
+        if (includeExamples) {
+            if (skipPackageExamples && packageName.includes("-package-example")) {
+                return false;
+            }
+        } else if (packageName.includes("-example")) {
+            return false;
+        }
+        return true;
+    };
+
+    debugger
+    packageNames.filter(filterExclusions)
         .forEach(packageName => {
             flattenedBuildChainInfo[packageName] = flattenArray(
                 Object.values(buildChainInfo.buildChains[packageName])
-            ).filter(entry => includeExamples || (!includeExamples && entry !== "ag-grid-docs"));
+            ).filter(filterExclusions);
         });
     return flattenedBuildChainInfo;
 };
@@ -250,10 +271,11 @@ const buildPackages = async (packageNames, command = 'build', arguments) => {
     return await buildDependencies(packageNames, command, arguments);
 };
 
-const getAgBuildChain = async (includeExamples) => {
-    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(includeExamples);
+const getAgBuildChain = async (includeExamples, skipPackageExamples, skipDocs) => {
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(includeExamples, skipPackageExamples, skipDocs);
 
     Object.keys(lernaBuildChainInfo).forEach(packageName => {
+        // exclude any non ag dependencies
         lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
             .filter(dependent => dependent.startsWith('@ag-') || dependent.startsWith('ag-'));
     });
@@ -296,9 +318,9 @@ const readModulesState = (buildChain) => {
             .filter(d => !exclusions.includes(d.name) && !d.name.startsWith(".") && !d.name.startsWith("_") && !d.name.includes("node_modules"))
             .map(d => `../../${moduleRootName}/${d.name}`)
             .map(d => {
-                if(fs.existsSync(`${d}/package.json`)) {
+                if (fs.existsSync(`${d}/package.json`)) {
                     const packageName = require(`${d}/package.json`).name;
-                    if(agPackages.includes(packageName)) {
+                    if (agPackages.includes(packageName)) {
                         modulesState[packageName] = {moduleChanged: moduleChanged(d)};
                     }
                 }
@@ -316,15 +338,21 @@ const getLastBuild = function () {
     return null;
 };
 
-const rebuildPackagesBasedOnChangeState = async (runUnitTests = true, includeExamples = false, runPackage = false, runE2ETests = false, cumulativeBuild = false) => {
-    const buildChain = await getAgBuildChain(includeExamples);
-    debugger
+const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
+                                                 includeExamples = false,
+                                                 skipPackageExamples = true,
+                                                 runPackage = false,
+                                                 runE2ETests = false,
+                                                 cumulativeBuild = false,
+                                                 skipDocs = false) => {
+    const buildChain = await getAgBuildChain(includeExamples, skipPackageExamples, skipDocs);
     const modulesState = readModulesState(buildChain);
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
         .map(changedPackage => buildChain[changedPackage] ? buildChain[changedPackage] : changedPackage));
 
+    // remove duplicates
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
@@ -359,18 +387,33 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true, includeExa
             let result = await buildPackages(packagesToRun);
             buildFailed = result.exitCode !== 0 || result.failed === 1;
 
-            if (runPackage) {
-                console.log("Running 'package' on changed modules");
-                result = await buildPackages(packagesToRun, 'package', '--parallel');
-                buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+            if (runPackage && !buildFailed) {
+                // ag-grid-community & enterprise depend on community/all-modules and enterprise/all-modules so must be build AFTER these have run
+                // everything else can be run in parallel so do a build in two phases
+                const secondPhase = [];
+                packagesToRun.includes('ag-grid-community') ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-community'), 1)) : null;
+                packagesToRun.includes('ag-grid-enterprise') ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-enterprise'), 1)) : null;
+
+                if (packagesToRun.length > 0) {
+                    console.log("Running 'package' on changed modules in parallel");
+                    result = await buildPackages(packagesToRun, 'package', '--parallel');
+                    buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+                }
+
+                if (secondPhase.length > 0 && !buildFailed) {
+                    console.log("Running 'package' on changed modules in parallel");
+                    result = await buildPackages(secondPhase, 'package', '--parallel');
+                    buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+                }
             }
 
-            if (runUnitTests) {
+            if (runUnitTests && !buildFailed) {
                 console.log("Running 'test' on changed modules");
                 result = await buildPackages(packagesToRun, 'test');
                 buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
             }
-            if (runE2ETests) {
+
+            if (runE2ETests && !buildFailed) {
                 console.log("Running 'test:e2e' on changed modules");
                 result = await buildPackages(packagesToRun, 'test:e2e');
                 buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
@@ -401,31 +444,22 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true, includeExa
     }
 };
 
-const printState = async () => {
-    const buildChain = await getAgBuildChain();
-    const modulesState = readModulesState();
+// exports.rebuildPackagesBasedOnChangeState =     rebuildPackagesBasedOnChangeState;
+// exports.rebuildBasedOnState =                   rebuildPackagesBasedOnChangeState.bind(null, false, false, false, false, false, true);
+// exports.rebuildPackageBasedOnState =            rebuildPackagesBasedOnChangeState.bind(null, false, false, true,  false, false, true);
 
-    const changedPackages = flattenArray(Object.keys(modulesState)
-        .filter(key => modulesState[key].moduleChanged)
-        .map(changedPackage => buildChain[changedPackage] ? buildChain[changedPackage] : changedPackage));
+//                                                                  runUnitTests, includeExamples, skipPackageExamples, runPackage, runE2ETests, cumulativeBuild, skipDocs
 
-    const lernaPackagesToRebuild = new Set();
-    changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+// build (including examples & docs) and unit tests only - CI Build
+exports.rebuildAndUnitTestBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, true, false, false, false, false);
 
-    if (lernaPackagesToRebuild.size > 0) {
-        console.log("Rebuilding changed packages...");
-        console.log(lernaPackagesToRebuild);
-    } else {
-        console.log("No changed packages to process!");
-    }
-};
+// build, package and retest everything - Hourly CI Build
+exports.rebuildAndTestsEverythingBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, false, true, true, true, false);
 
-exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
-exports.rebuildBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, false, false, false, false, false);
-exports.rebuildAndUnitTestBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, false, false, false);
-exports.rebuildAndTestsEverythingBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, true, true, true, true, true);
-exports.printState = printState;
-// exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
+// build & package everything, excluding examples & docs  - CI Archive Deployments
+exports.rebuildPackageSkipDocsBasedOnState = rebuildPackagesBasedOnChangeState.bind(null, false, false, true, true, false, false, true);
+
+// used in doc builds - dev-server.js
 exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;
 exports.buildCss = buildCss;

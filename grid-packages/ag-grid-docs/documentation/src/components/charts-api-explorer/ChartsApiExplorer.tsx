@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getTemplates } from './templates.jsx';
-import { Chart } from './Chart.jsx';
-import { Options } from './Options.jsx';
-import { ChartTypeSelector } from './ChartTypeSelector.jsx';
-import { CodeView } from './CodeView.jsx';
+import { getTemplates } from './templates';
+import { Chart } from './Chart';
+import { Options } from './Options';
+import { ChartTypeSelector } from './ChartTypeSelector';
+import { CodeView } from './CodeView';
 import styles from './ChartsApiExplorer.module.scss';
 
 const createOptionsJson = (chartType, options) => {
@@ -195,9 +195,8 @@ export const ChartsApiExplorer = ({ framework }) => {
                     <div className={styles['explorer-container__options']}>
                         <Options
                             chartType={chartType}
-                            updateChartType={updateChartType}
-                            updateOptionDefault={updateOptionDefault}
-                            updateOption={updateOption} />
+                            updateOption={updateOption}
+                        />
                     </div>
                 </div>
                 <div className={styles['explorer-container__right']}>

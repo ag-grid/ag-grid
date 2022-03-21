@@ -21,7 +21,7 @@ export const DATA_SINGLE_DATUM_TIME_SENSOR = [
         time: new Date('01 Jan 2020 13:25:30 GMT'),
         sensor: 21,
     },
-]
+];
 
 export const DATA_INTERNET_EXPLORER_MARKET_SHARE = [
     {
@@ -44,6 +44,20 @@ export const DATA_INTERNET_EXPLORER_MARKET_SHARE = [
         year: '2013',
         ie: -26.55,
     },
+];
+
+export const DATA_MISSING_X = [
+    { x: 0, y1: -37.3, y2: 12 },
+    { x: undefined, y1: -7.3, y2: 40 },
+    { x: 2, y1: 37.3, y2: 10 },
+    { x: 3, y1: 7.3, y2: 5 },
+];
+
+export const DATA_TIME_MISSING_X = [
+    { x: new Date(1976, 6, 4, 12, 30, 0, 0), y1: -37.3, y2: 12 },
+    { x: null, y: -7.3, y2: 40 },
+    { x: new Date(1978, 6, 4, 12, 30, 0, 0), y1: 37.3, y2: 10 },
+    { x: new Date(1979, 6, 4, 12, 30, 0, 0), y1: 7.3, y2: 5 },
 ];
 
 export const DATA_BROWSER_MARKET_SHARE = [

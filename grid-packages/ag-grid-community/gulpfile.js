@@ -135,6 +135,5 @@ gulp.task('package', series('copy-umd-files',  'copy-and-concat-typings-main'));
 
 // default/release task
 gulp.task('build', series('tsc', 'copy-core-typings', 'copy-grid-core-styles'))
-gulp.task('default', series('package'));
 
 
