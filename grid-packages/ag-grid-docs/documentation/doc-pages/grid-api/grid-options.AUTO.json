@@ -1090,8 +1090,15 @@
     }
   },
   "groupRowAggNodes": {
-    "description": "/** Callback for grouping. */",
+    "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
+  },
+  "getGroupRowAgg": {
+    "description": "/** Callback for grouping. */",
+    "type": {
+      "arguments": { "params": "GetGroupRowAggParams" },
+      "returnType": "any"
+    }
   },
   "isGroupOpenByDefault": {
     "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",

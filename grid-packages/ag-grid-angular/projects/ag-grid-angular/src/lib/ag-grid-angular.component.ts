@@ -147,7 +147,8 @@ import {
     FullWidthCellKeyPressEvent,
     LoadingCellRendererSelectorFunc,
     IsExternalFilterPresentParams,
-    InitialGroupOrderComparatorParams
+    InitialGroupOrderComparatorParams,
+    GetGroupRowAggParams
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -883,8 +884,11 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
-    /** Callback for grouping.     */
+    /** @deprecated - Use `getGroupRowAgg` instead.
+     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
+    /** Callback for grouping.     */
+    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */

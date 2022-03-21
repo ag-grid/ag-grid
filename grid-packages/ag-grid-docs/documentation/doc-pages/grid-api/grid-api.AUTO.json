@@ -660,6 +660,14 @@
       "returnType": "void"
     }
   },
+  "setGetGroupRowAgg": {
+    "type": {
+      "arguments": {
+        "getGroupRowAggFunc": "(params: GetGroupRowAggParams) => any"
+      },
+      "returnType": "void"
+    }
+  },
   "setGetBusinessKeyForNode": {
     "type": {
       "arguments": {

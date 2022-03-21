@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -113,6 +113,7 @@ export class GridOptionsWrapper {
     public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
 
     public static PROP_GROUP_ROW_AGG_NODES = 'groupRowAggNodes';
+    public static PROP_GET_GROUP_ROW_AGG = 'getGroupRowAgg';
     public static PROP_GET_BUSINESS_KEY_FOR_NODE = 'getBusinessKeyForNode';
     public static PROP_GET_CHILD_COUNT = 'getChildCount';
     public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
@@ -1245,8 +1246,16 @@ export class GridOptionsWrapper {
         return this.gridOptions.getServerSideGroupKey;
     }
 
-    public getGroupRowAggNodesFunc() {
-        return this.gridOptions.groupRowAggNodes;
+    public getGroupRowAggFunc() {
+
+        const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
+        if (getGroupRowAgg) {
+            return this.mergeGridCommonParams(getGroupRowAgg);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (groupRowAggNodes) {
+            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes)
+        }
     }
 
     public getContextMenuItemsFunc() {
@@ -1715,6 +1724,10 @@ export class GridOptionsWrapper {
         if (options.defaultGroupSortComparator) {
             console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `initialGroupOrderComparator`");
             options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
+        }
+
+        if (options.groupRowAggNodes) {
+            console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg`.");
         }
 
         if (options.colWidth) {

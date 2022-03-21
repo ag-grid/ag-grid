@@ -3357,9 +3357,17 @@
       }
     },
     "groupRowAggNodes": {
-      "description": "/** Callback for grouping. */",
+      "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "getGroupRowAgg": {
+      "description": "/** Callback for grouping. */",
+      "type": {
+        "arguments": { "params": "GetGroupRowAggParams" },
         "returnType": "any",
         "optional": true
       }
@@ -5552,6 +5560,21 @@
   "InitialGroupOrderComparatorParams": {
     "nodeA": { "type": { "returnType": "RowNode", "optional": false } },
     "nodeB": { "type": { "returnType": "RowNode", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetGroupRowAggParams": {
+    "nodes": { "type": { "returnType": "RowNode[]", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -22387,9 +22410,17 @@
       }
     },
     "groupRowAggNodes": {
-      "description": "/** Callback for grouping. */",
+      "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "getGroupRowAgg": {
+      "description": "/** Callback for grouping. */",
+      "type": {
+        "arguments": { "params": "GetGroupRowAggParams" },
         "returnType": "any",
         "optional": true
       }
@@ -25035,9 +25066,17 @@
       }
     },
     "groupRowAggNodes": {
-      "description": "/** Callback for grouping. */",
+      "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "getGroupRowAgg": {
+      "description": "/** Callback for grouping. */",
+      "type": {
+        "arguments": { "params": "GetGroupRowAggParams" },
         "returnType": "any",
         "optional": true
       }
@@ -27693,9 +27732,17 @@
       }
     },
     "groupRowAggNodes": {
-      "description": "/** Callback for grouping. */",
+      "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "getGroupRowAgg": {
+      "description": "/** Callback for grouping. */",
+      "type": {
+        "arguments": { "params": "GetGroupRowAggParams" },
         "returnType": "any",
         "optional": true
       }

@@ -201,3 +201,7 @@ export interface InitialGroupOrderComparatorParams extends AgGridCommon {
     nodeA: RowNode;
     nodeB: RowNode
 }
+
+export interface GetGroupRowAggParams extends AgGridCommon {
+    nodes: RowNode[];
+}
