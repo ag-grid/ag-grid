@@ -91,6 +91,18 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.LINE_NUMBER_X_AXIS_TIME_Y_AXIS,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('line', 2) }),
     },
+    LINE_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.LINE_MISSING_Y_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
     LINE_NUMBER_AXES_0_X_DOMAIN: {
         options: examples.LINE_NUMBER_AXES_0_X_DOMAIN,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: repeat('line', 2) }),

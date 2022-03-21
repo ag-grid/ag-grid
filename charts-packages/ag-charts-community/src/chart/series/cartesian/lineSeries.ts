@@ -173,21 +173,16 @@ export class LineSeries extends CartesianSeries {
             const x = datum[xKey];
             const y = datum[yKey];
 
-            if (isContinuousX) {
-                if (!isContinuous(x)) {
-                    continue;
-                }
-                xData.push(x);
+            const xDatum = this.checkDatum(x, isContinuousX);
+
+            if (isContinuousX && !xDatum) {
+                continue;
             } else {
-                // i.e. category axis
-                xData.push(isDiscrete(x) ? x : String(x));
+                xData.push(xDatum);
             }
 
-            if (isContinuousY) {
-                yData.push(y);
-            } else {
-                yData.push(isDiscrete(y) ? y : String(y));
-            }
+            const yDatum = this.checkDatum(y, isContinuousY);
+            yData.push(yDatum);
         }
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x', xAxis) : xData;
@@ -235,11 +230,9 @@ export class LineSeries extends CartesianSeries {
             return;
         }
 
-        const { xData, yData, lineNode, label } = this;
+        const { xData, yData, lineNode, label, xKey, yKey } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const linePath = lineNode.path;
@@ -250,9 +243,9 @@ export class LineSeries extends CartesianSeries {
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
         let nextXYDatums: [number, number] | undefined = undefined;
         for (let i = 0; i < xData.length; i++) {
-            const xyDatums = nextXYDatums || this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
+            const xyDatums = nextXYDatums || [xData[i], yData[i]];
 
-            if (!xyDatums) {
+            if (!xyDatums[1]) {
                 prevXInRange = undefined;
                 moveTo = true;
             } else {
@@ -265,7 +258,7 @@ export class LineSeries extends CartesianSeries {
                 }
                 const tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
 
-                nextXYDatums = this.checkDomainXY(xData[i + 1], yData[i + 1], isContinuousX, isContinuousY);
+                nextXYDatums = yData[i + 1] === undefined ? undefined : [xData[i + 1], yData[i + 1]];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
                 const nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {
@@ -295,9 +288,11 @@ export class LineSeries extends CartesianSeries {
                     labelText = typeof yDatum === 'number' && isFinite(yDatum) ? yDatum.toFixed(2) : yDatum ? String(yDatum) : '';
                 }
 
+                const seriesDatum = { [xKey]: xDatum, [yKey]: yDatum };
+
                 nodeData.push({
                     series: this,
-                    datum: data[i],
+                    datum: seriesDatum,
                     point: { x, y },
                     label: labelText ? {
                         text: labelText,
@@ -341,7 +336,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLineNode() {
-        const { lineNode } =  this;
+        const { lineNode } = this;
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
