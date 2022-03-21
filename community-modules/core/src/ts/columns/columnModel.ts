@@ -52,6 +52,7 @@ import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, WithoutGridCommon } from '../main';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -3101,8 +3102,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
+        const columnCallback = this.gridOptionsWrapper.getPostProcessSecondaryColDefFunc();
+        const groupCallback = this.gridOptionsWrapper.getPostProcessSecondaryColGroupDefFunc();
 
         if (!columnCallback && !groupCallback) { return undefined; }
 
@@ -3112,13 +3113,15 @@ export class ColumnModel extends BeanStub {
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
                     if (groupCallback) {
-                        groupCallback(colGroupDef);
+                        const params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams> = { colGroupDef }
+                        groupCallback(params);
                     }
                     searchForColDefs(colGroupDef.children);
                 } else {
                     const colDef = abstractColDef as ColDef;
                     if (columnCallback) {
-                        columnCallback(colDef);
+                        const params: WithoutGridCommon<PostProcessSecondaryColDefParams> = { colDef };
+                        columnCallback(params);
                     }
                 }
             });

@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -137,6 +137,8 @@ export class GridOptionsWrapper {
 
     public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
     public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+    public static PROP_POST_PROCESS_TO_SECONDARY_COLDEF = 'postProcessSecondaryColDef';
+    public static PROP_POST_PROCESS_SECONDARY_COL_GROUP_DEF = 'postProcessSecondaryColGroupDef';
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
@@ -773,7 +775,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (defaultGroupOrderComparator) {
-            return (params: any) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
+            return (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
         }
     }
 
@@ -1273,7 +1275,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
-            return (params: any) => getRowNodeId(params.data)
+            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data)
         }
     }
 
@@ -1323,12 +1325,25 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
 
-    public getProcessSecondaryColDefFunc(): ((colDef: ColDef) => void) | undefined {
-        return this.gridOptions.processSecondaryColDef;
+    public getPostProcessSecondaryColDefFunc() {
+        const { postProcessSecondaryColDef, processSecondaryColDef } = this.gridOptions;
+        if (postProcessSecondaryColDef) {
+            return this.mergeGridCommonParams(postProcessSecondaryColDef);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (processSecondaryColDef) {
+            return (params: WithoutGridCommon<PostProcessSecondaryColDefParams>) => processSecondaryColDef(params.colDef);
+        }
     }
-
-    public getProcessSecondaryColGroupDefFunc(): ((colGroupDef: ColGroupDef) => void) | undefined {
-        return this.gridOptions.processSecondaryColGroupDef;
+    public getPostProcessSecondaryColGroupDefFunc() {
+        const { postProcessSecondaryColGroupDef, processSecondaryColGroupDef } = this.gridOptions;
+        if (postProcessSecondaryColGroupDef) {
+            return this.mergeGridCommonParams(postProcessSecondaryColGroupDef);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (processSecondaryColGroupDef) {
+            return (params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams>) => processSecondaryColGroupDef(params.colGroupDef);
+        }
     }
 
     public getSendToClipboardFunc() {

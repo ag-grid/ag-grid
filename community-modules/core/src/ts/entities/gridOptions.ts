@@ -79,7 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iGridCallbacks";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -839,10 +839,14 @@ export interface GridOptions {
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    /** @deprecated - Use `postProcessSecondaryColDef` instead */
     processSecondaryColDef?: (colDef: ColDef) => void;
-    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    /** @deprecated - Use `postProcessSecondaryColGroupDef` instead. */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    postProcessSecondaryColDef?: (params: PostProcessSecondaryColDefParams) => void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    postProcessSecondaryColGroupDef?: (params: PostProcessSecondaryColGroupDefParams) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use initialGroupOrderComparator instead */

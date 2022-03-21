@@ -23,7 +23,7 @@ import {
     RowClassParams,
     ServerSideStoreParams,
 } from "./entities/gridOptions";
-import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams } from "./entities/iGridCallbacks";
+import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams } from "./entities/iGridCallbacks";
 import { RowNode } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";
@@ -1231,6 +1231,12 @@ export class GridApi {
 
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_SECONDARY_COL_GROUP_DEF, processSecondaryColGroupDefFunc);
+    }
+    public setPostProcessSecondaryColDef(postProcessSecondaryColDefFunc: (params: PostProcessSecondaryColDefParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_TO_SECONDARY_COLDEF, postProcessSecondaryColDefFunc);
+    }
+    public setPostProcessSecondaryColGroupDef(postProcessSecondaryColGroupDefFunc: (params: PostProcessSecondaryColGroupDefParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_SECONDARY_COL_GROUP_DEF, postProcessSecondaryColGroupDefFunc);
     }
 
     public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {

@@ -784,6 +784,22 @@
       "returnType": "void"
     }
   },
+  "setPostProcessSecondaryColDef": {
+    "type": {
+      "arguments": {
+        "postProcessSecondaryColDefFunc": "(params: PostProcessSecondaryColDefParams) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setPostProcessSecondaryColGroupDef": {
+    "type": {
+      "arguments": {
+        "postProcessSecondaryColGroupDefFunc": "(params: PostProcessSecondaryColGroupDefParams) => void"
+      },
+      "returnType": "void"
+    }
+  },
   "setPostProcessPopup": {
     "type": {
       "arguments": {

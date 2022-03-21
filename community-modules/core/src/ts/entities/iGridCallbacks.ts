@@ -3,6 +3,7 @@ import { ChartMenuOptions } from "../interfaces/iChartOptions";
 import { AgGridCommon } from "../interfaces/iCommon";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { CellPosition } from "./cellPosition";
+import { ColDef, ColGroupDef } from "./colDef";
 import { Column } from "./column";
 import { RowNode } from "./rowNode";
 
@@ -204,4 +205,11 @@ export interface InitialGroupOrderComparatorParams extends AgGridCommon {
 
 export interface GetGroupRowAggParams extends AgGridCommon {
     nodes: RowNode[];
+}
+
+export interface PostProcessSecondaryColDefParams extends AgGridCommon {
+    colDef: ColDef;
+}
+export interface PostProcessSecondaryColGroupDefParams extends AgGridCommon {
+    colGroupDef: ColGroupDef;
 }

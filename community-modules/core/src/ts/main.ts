@@ -417,7 +417,9 @@ export {
     PostProcessPopupParams,
     IsExternalFilterPresentParams,
     InitialGroupOrderComparatorParams,
-    GetGroupRowAggParams
+    GetGroupRowAggParams,
+    PostProcessSecondaryColDefParams,
+    PostProcessSecondaryColGroupDefParams
 } from "./entities/iGridCallbacks"
 export {
     WithoutGridCommon
