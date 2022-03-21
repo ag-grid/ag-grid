@@ -5,8 +5,8 @@
  * this folder in order to generate it.
  */
 
-import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from './Editors.jsx';
-import isServerSideRendering from 'utils/is-server-side-rendering';
+import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from './Editors';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {
@@ -38,7 +38,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
 });
 
-const getCaptionOptions = (name, description, defaultText, fontSize = 10, fontWeight = 'normal') => ({
+const getCaptionOptions = (name, description, defaultText = undefined, fontSize = 10, fontWeight = 'normal') => ({
     meta: {
         description,
     },
@@ -125,7 +125,7 @@ const getPaddingOption = position => ({
     max: 40,
 });
 
-const getChartContainer = () => (!isServerSideRendering() && document.querySelector('#chart-container')) || { offsetWidth: 800, offsetHeight: 600 };
+const getChartContainer = () => (!isServerSideRendering() && document.querySelector('#chart-container') as HTMLDivElement) || { offsetWidth: 800, offsetHeight: 600 };
 
 export const chart = Object.freeze({
     meta: {
@@ -574,7 +574,7 @@ const getLineDashOffsetConfig = () => ({
     },
 });
 
-const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
+const getMarkerConfig = ({ enabledByDefault } = { enabledByDefault: true }) => ({
     marker: {
         meta: {
             description: 'Configuration for the markers used in the series.',
@@ -653,7 +653,7 @@ const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true 
 });
 
 const getCartesianKeyConfig = (mandatoryY = true) => {
-    const config = {
+    return {
         xKey: {
             type: 'string',
             isRequired: true,
@@ -663,20 +663,16 @@ const getCartesianKeyConfig = (mandatoryY = true) => {
             type: 'string',
             description: 'A human-readable description of the x-values.',
         },
+        yKey: {
+            type: 'string',
+            isRequired: mandatoryY,
+            description: 'The key to use to retrieve y-values from the data.',
+        },
+        yName: {
+            type: 'string',
+            description: 'A human-readable description of the y-values.',
+        }
     };
-
-    config.yKey = {
-        type: 'string',
-        isRequired: mandatoryY,
-        description: 'The key to use to retrieve y-values from the data.',
-    };
-
-    config.yName = {
-        type: 'string',
-        description: 'A human-readable description of the y-values.',
-    };
-
-    return config;
 };
 
 const fills = [
@@ -702,50 +698,46 @@ const strokes = [
 ];
 
 const getColourConfig = (name = 'markers', includeFill = true) => {
-    const config = {};
-
-    if (includeFill) {
-        config.fill = {
-            default: fills[0],
-            description: `The colour of the fill for the ${name}.`,
+    return {
+        stroke: {
+            default: strokes[0],
+            description: `The colour of the stroke for the ${name}.`,
             editor: ColourEditor,
-        };
-
-        config.fillOpacity = {
+        },
+        strokeOpacity: {
             default: 1,
-            description: `The opacity of the fill for the ${name}.`,
+            description: `The opacity of the stroke for the ${name}.`,
             editor: NumberEditor,
             min: 0,
             max: 1,
             step: 0.05,
-        };
-    }
-
-    config.stroke = {
-        default: strokes[0],
-        description: `The colour of the stroke for the ${name}.`,
-        editor: ColourEditor,
+        },
+        strokeWidth: {
+            default: 1,
+            description: `The width in pixels of the stroke for the ${name}.`,
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+            unit: 'px',
+        },
+        ...(
+            includeFill ? {
+                fill: {
+                    default: fills[0],
+                    description: `The colour of the fill for the ${name}.`,
+                    editor: ColourEditor,
+                },
+                fillOpacity: {
+                    default: 1,
+                    description: `The opacity of the fill for the ${name}.`,
+                    editor: NumberEditor,
+                    min: 0,
+                    max: 1,
+                    step: 0.05,
+                }
+            } : {}
+        ),
     };
-
-    config.strokeOpacity = {
-        default: 1,
-        description: `The opacity of the stroke for the ${name}.`,
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    };
-
-    config.strokeWidth = {
-        default: 1,
-        description: `The width in pixels of the stroke for the ${name}.`,
-        editor: NumberEditor,
-        min: 0,
-        max: 20,
-        unit: 'px',
-    };
-
-    return config;
 };
 
 const shadowConfig = {
@@ -862,7 +854,7 @@ export const bar = Object.freeze({
         max: 100,
     },
     ...getColourConfig('bars'),
-    ...getHighlightConfig('bars'),
+    ...getHighlightConfig(),
     ...shadowConfig,
     ...getLineDashConfig('Defines how the bar/column strokes are rendered.'),
     ...getLineDashOffsetConfig(),
@@ -1161,7 +1153,7 @@ export const pie = Object.freeze({
         ...getCaptionOptions('title', 'Configuration for the series title.'),
     },
     ...getColourConfig('segments'),
-    ...getHighlightConfig('segments'),
+    ...getHighlightConfig(),
     label: {
         meta: {
             description: 'Configuration for the labels used for the segments.',
@@ -1304,7 +1296,7 @@ export const histogram = Object.freeze({
             description: "Function used to create the content for tooltips."
         },
     },
-    ...getHighlightConfig('bars'),
+    ...getHighlightConfig(),
     ...getColourConfig('histogram bars', true),
     listeners: {
         meta: {

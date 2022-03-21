@@ -14,7 +14,7 @@ import styles from './Code.module.scss';
 /**
  * This uses Prism to highlight a provided code snippet.
  */
-const Code = ({ code, language = 'ts', className, keepMarkup, ...props }) => {
+const Code = ({ code, language = 'ts', className = undefined, keepMarkup = false, ...props }) => {
     if (Array.isArray(code)) {
         code = code.join('\n');
     }
