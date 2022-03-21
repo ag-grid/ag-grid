@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp, GetLocaleTextParams } from '@ag-grid-community/core'
 
 class NodeIdRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -75,14 +75,14 @@ const gridOptions: GridOptions = {
     paginationPageSize: 500,
     enableRangeSelection: true,
     enableCharts: true,
-    localeTextFunc: function (key, defaultValue) {
-        switch (key) {
+    getLocaleText: function (params: GetLocaleTextParams) {
+        switch (params.key) {
             case 'thousandSeparator':
                 return '.'
             case 'decimalSeparator':
                 return ','
             default:
-                return defaultValue ? defaultValue.toUpperCase() : ''
+                return params.defaultValue ? params.defaultValue.toUpperCase() : ''
         }
     },
 }

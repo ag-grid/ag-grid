@@ -66,7 +66,7 @@ export class PropertyKeys {
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTION_PROPERTIES = [
-        'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
+        'localeTextFunc', 'getLocaleText', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass',
         'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'isFullWidthRow', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',

@@ -221,3 +221,9 @@ export interface PostSortRowsParams extends AgGridCommon {
 export interface IsFullWidthRowParams extends AgGridCommon {
     rowNode: RowNode;
 }
+
+export interface GetLocaleTextParams extends AgGridCommon {
+    key: string;
+    defaultValue: string;
+    variableValues?: string[];
+}

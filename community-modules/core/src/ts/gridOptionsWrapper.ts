@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -1766,6 +1766,9 @@ export class GridOptionsWrapper {
         if (options.isFullWidthCell) {
             console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow`.");
         }
+        if (options.localeTextFunc) {
+            console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText`.");
+        }
 
         if (options.colWidth) {
             console.warn('AG Grid: since v26.1, the grid property `colWidth` is deprecated and should be set via `defaultColDef.width`.');
@@ -1833,11 +1836,25 @@ export class GridOptionsWrapper {
     }
 
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
-        if (this.gridOptions.localeTextFunc) {
-            return this.gridOptions.localeTextFunc;
+        const { localeText, getLocaleText, localeTextFunc } = this.gridOptions;
+        if (getLocaleText) {
+            //key: string, defaultValue: string, variableValues?: string[]
+            return (key: string, defaultValue: string, variableValues?: string[]) => {
+                const params: GetLocaleTextParams = {
+                    key,
+                    defaultValue,
+                    variableValues,
+                    api: this.getApi()!,
+                    columnApi: this.getColumnApi()!,
+                    context: this.getContext()
+                }
+                return getLocaleText(params);
+            }
         }
 
-        const { localeText } = this.gridOptions;
+        if (localeTextFunc) {
+            return localeTextFunc;
+        }
 
         return (key: string, defaultValue: string) => {
             const localisedText = localeText && localeText[key];

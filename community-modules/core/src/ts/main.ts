@@ -421,7 +421,8 @@ export {
     PostProcessSecondaryColDefParams,
     PostProcessSecondaryColGroupDefParams,
     IsFullWidthRowParams,
-    PostSortRowsParams
+    PostSortRowsParams,
+    GetLocaleTextParams
 } from "./entities/iGridCallbacks"
 export {
     WithoutGridCommon
