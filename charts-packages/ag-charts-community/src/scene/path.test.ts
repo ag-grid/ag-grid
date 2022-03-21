@@ -271,5 +271,22 @@ L8.382999999999997,9.807
 Z`;
 
     const path = Path2D.fromString(pathString);
-    expect(path.toPrettyString()).toBe(expectedPathString);
+    expectPathStringMatches(expectedPathString, path.toPrettyString());
 });
+
+function expectPathStringMatches(expected: string, actual: string) {
+    expect(parsePathString(actual)).toEqual(parsePathString(expected));
+}
+
+function parsePathString(path: string): [string, number[]][] {
+    const decimalPrecision = 6;
+
+    return path.split('\n')
+        .map((line) => {
+            const type = line.substring(0, 1);
+            const params = line.substring(1).split(',')
+                .map((v) => Number(v.substring(0, v.indexOf('.') + decimalPrecision)));
+
+            return [type, params];
+        });
+}

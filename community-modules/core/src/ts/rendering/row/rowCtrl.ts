@@ -17,7 +17,7 @@ import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from 
 import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { doOnce, executeNextVMTurn } from "../../utils/function";
-import { exists } from "../../utils/generic";
+import { exists, makeNull } from "../../utils/generic";
 import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
@@ -693,7 +693,7 @@ export class RowCtrl extends BeanStub {
 
     public getRowPosition(): RowPosition {
         return {
-            rowPinned: this.rowNode.rowPinned,
+            rowPinned: makeNull(this.rowNode.rowPinned),
             rowIndex: this.rowNode.rowIndex as number
         };
     }
@@ -998,11 +998,11 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.stopEditing(cancel));
+        const cellEdits = this.getAllCellCtrls().map(cellCtrl => cellCtrl.stopEditing(cancel));
 
         if (!this.editingRow) { return; }
 
-        if (!cancel) {
+        if (!cancel && cellEdits.some(edit => edit)) {
             const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
             this.beans.eventService.dispatchEvent(event);
         }

@@ -845,6 +845,11 @@
       "unit": "px"
     }
   },
+  "AgAreaSeriesMarker": {
+    "enabled": {
+      "default": false
+    }
+  },
   "AgPieSeriesOptions": {
     "angleKey": {
       "isRequired": true

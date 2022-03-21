@@ -670,18 +670,27 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    // we also allow editing the value via the editors. when it is done via
-    // the editors, no 'cell changed' event gets fired, as it's assumed that
-    // the cell knows about the change given it's in charge of the editing.
-    // this method is for the client to call, so the cell listens for the change
-    // event, and also flashes the cell when the change occurs.
-    /** Replaces the value on the `rowNode` for the specified column. When complete, the grid will refresh the rendered cell on the required row only. */
-    public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): void {
+    /**
+    /* Replaces the value on the `rowNode` for the specified column. When complete,
+     * the grid will refresh the rendered cell on the required row only.
+     *
+     * @param colKey The column where the value should be updated
+     * @param newValue The new value
+     * @param eventSource The source of the event
+     * @returns `True` if the value was changed, otherwise `False`.
+     */
+    public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean {
+        // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
+        // the cell knows about the change given it's in charge of the editing.
+        // this method is for the client to call, so the cell listens for the change
+        // event, and also flashes the cell when the change occurs.
         const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.beans.valueService.getValue(column, this);
 
-        this.beans.valueService.setValue(this, column, newValue, eventSource);
+        const valueChanged = this.beans.valueService.setValue(this, column, newValue, eventSource);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
+
+        return valueChanged;
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {

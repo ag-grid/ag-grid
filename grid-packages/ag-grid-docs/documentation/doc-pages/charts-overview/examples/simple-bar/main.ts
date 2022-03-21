@@ -5,6 +5,15 @@ const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
+  theme: {
+    overrides: {
+      bar: {
+        series: {
+          strokeWidth: 0,
+        },
+      },
+    },
+  },
   title: {
     text: 'Gross Weekly Earnings by Occupation (Q4 2019)',
     fontSize: 18,

@@ -1,10 +1,17 @@
-import { expect } from '@jest/globals';
+import { expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { Chart } from "../chart";
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
+import { Canvas, createCanvas, PngConfig } from 'canvas';
 
-export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 10, failureThresholdType: "percent" };
+export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0.5, failureThresholdType: "percent" };
+export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filters: (Canvas as any).PNG_NO_FILTERS };
+
+// process.env.FC_DEBUG = String(0xffff);
+process.env.PANGOCAIRO_BACKEND = 'fontconfig';
+process.env.FONTCONFIG_PATH = __dirname;
+process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -89,4 +96,42 @@ export function combineAssertions(...assertions: ((chart: Chart) => void)[]) {
             await assertion(chart);
         }
     }
+}
+
+export function setupMockCanvas(): { nodeCanvas?: Canvas } {
+    let realCreateElement: typeof document.createElement;
+    let ctx: { nodeCanvas?: Canvas } = {};
+
+    beforeEach(() => {
+        ctx.nodeCanvas = createCanvas(800, 600);
+
+        realCreateElement = document.createElement;
+        document.createElement = jest.fn(
+            (element, options) => {
+                if (element === 'canvas') {
+                    const mockedElement = realCreateElement.call(document, element, options);
+                    mockedElement.getContext = (p) => { 
+                        const context2d = ctx.nodeCanvas.getContext(p, { alpha: false });
+                        context2d.patternQuality = 'good';
+                        context2d.quality = 'good';
+                        context2d.textDrawingMode = 'path';
+                        context2d.antialias = 'subpixel';
+                
+                        return context2d as any;
+                    };
+
+                    return mockedElement;
+                }
+
+                return realCreateElement.call(document, element, options);
+            },
+        );
+    });
+
+    afterEach(() => {
+        document.createElement = realCreateElement;
+        ctx.nodeCanvas = null;
+    });
+
+    return ctx;
 }

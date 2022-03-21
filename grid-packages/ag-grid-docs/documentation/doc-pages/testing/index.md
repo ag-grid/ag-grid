@@ -909,7 +909,7 @@ title: "Testing AG Grid"
 | ### `SyntaxError: Cannot use import statement outside a module`
 |
 | If you experience the error above then depending on your build configuration you may need to exclude either
-| `ag-grid-vue` or `@ag-grid-community/vue` in your Jest configuration:
+| `ag-grid-vue` or `@ag-grid-community/vue` (or `ag-grid-vue3` / `@ag-grid-community/vue3` if using Vue 3) in your Jest configuration:
 |
 | ```js
 | module.exports = {

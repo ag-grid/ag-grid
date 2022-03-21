@@ -6,6 +6,7 @@
   "module": "./dist/esm/es5/main.js",
   "types": "./dist/cjs/es5/main.d.ts",
   "scripts": {
+    "clean": "rimraf dist .hash",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-css": "npx gulp copy-grid-core-styles",
@@ -75,7 +76,8 @@
     "terser-webpack-plugin": "^2.0.1",
     "typescript": "~3.7.7",
     "webpack": "^4.39.0",
-    "webpack-stream": "5.0.0"
+    "webpack-stream": "5.0.0",
+    "rimraf": "3.0.2"
   },
   "publishConfig": {
     "access": "public"

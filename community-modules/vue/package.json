@@ -22,6 +22,7 @@
     "vuejs"
   ],
   "scripts": {
+    "clean": "rimraf dist lib .hash",
     "bundle": "npx vue-cli-service build --target lib src/AgGridVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npm run npm && npm run bundle && rm ./dist/demo.html && npm run hash",
@@ -40,7 +41,8 @@
     "vue": "2.6.10",
     "vue-class-component": "^7.0.0",
     "vue-property-decorator": "^9.1.2",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "rimraf": "3.0.2"
   },
   "peerDependencies": {
     "@ag-grid-community/core": "~27.1.0",

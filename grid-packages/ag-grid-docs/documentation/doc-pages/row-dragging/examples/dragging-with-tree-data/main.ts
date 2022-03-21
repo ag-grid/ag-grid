@@ -103,12 +103,22 @@ function moveToPath(newParentPath: string[], node: RowNode, allUpdatedNodes: any
 }
 
 function isSelectionParentOfTarget(selectedNode: RowNode, targetNode: RowNode | null) {
-  var children = selectedNode.childrenAfterGroup!
-  for (var i = 0; i < children.length; i++) {
-    if (targetNode && children[i].key === targetNode.key) return true
-    isSelectionParentOfTarget(children[i], targetNode)
+  let children = [...(selectedNode.childrenAfterGroup || [])];
+
+  if (!targetNode) { return false; }
+
+  while (children.length) {
+    const node = children.shift();
+    if (!node) { continue; }
+
+    if (node.key === targetNode.key) { return true; }
+
+    if (node.childrenAfterGroup && node.childrenAfterGroup.length) {
+      children.push(...node.childrenAfterGroup);
+    }
   }
-  return false
+
+  return false;
 }
 
 function arePathsEqual(path1: string[], path2: string[]) {

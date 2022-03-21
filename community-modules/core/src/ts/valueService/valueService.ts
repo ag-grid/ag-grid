@@ -110,11 +110,19 @@ export class ValueService extends BeanStub {
         return undefined;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): void {
+    /**
+     * Sets the value of a GridCell
+     * @param rowNode The `RowNode` to be updated
+     * @param colKey The `Column` to be updated
+     * @param newValue The new value to be set
+     * @param eventSource The event source
+     * @returns `True` if the value has been updated, otherwise`False`.
+     */
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
         const column = this.columnModel.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
-            return;
+            return false;
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
@@ -129,7 +137,7 @@ export class ValueService extends BeanStub {
         if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
-            return;
+            return false;
         }
 
         const params: NewValueParams = {
@@ -167,7 +175,7 @@ export class ValueService extends BeanStub {
         // otherwise the user could be tabbing around the grid, and cellValueChange would get called
         // all the time.
         if (!valueWasDifferent) {
-            return;
+            return false;
         }
 
         // reset quick filter on this row
@@ -202,6 +210,8 @@ export class ValueService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(event);
+
+        return true;
     }
 
     private setValueUsingField(data: any, field: string | undefined, newValue: any, isFieldContainsDots: boolean): boolean {

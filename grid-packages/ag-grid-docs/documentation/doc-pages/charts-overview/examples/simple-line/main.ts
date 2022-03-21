@@ -5,6 +5,20 @@ const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
+  theme: {
+    overrides: {
+      line: {
+        series: {
+          highlightStyle: {
+            series: {
+              strokeWidth: 3,
+              dimOpacity: 0.2
+            }
+          }
+        },
+      },
+    },
+  },
   title: {
     text: 'Road fuel prices (2019)',
     fontSize: 18,

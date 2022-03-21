@@ -178,9 +178,11 @@ export function buildModel(
             deprecated,
             required,
             documentation,
-            default: def,
             desc: resolveType(declaredType, interfaceLookup, codeLookup, { typeStack }, config),
         };
+        if (metaProp && metaProp.hasOwnProperty('default')) {
+            result.properties[prop].default = def;
+        }
     });
 
     if (ordering) {

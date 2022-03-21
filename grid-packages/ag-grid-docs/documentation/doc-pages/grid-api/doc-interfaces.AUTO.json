@@ -11745,6 +11745,51 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
+  "AgAreaSeriesMarker": {
+    "formatter": {
+      "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "type": {
+        "returnType": "AgCartesianSeriesMarkerFormatter",
+        "optional": true
+      }
+    },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
+      "type": { "returnType": "string | (new () => any)", "optional": true }
+    },
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
   "AgSeriesTooltip": {
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
@@ -12074,7 +12119,7 @@
     "type": { "type": { "returnType": "'area'", "optional": true } },
     "marker": {
       "description": "/** Configuration for the markers used in the series. */",
-      "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
+      "type": { "returnType": "AgAreaSeriesMarker", "optional": true }
     },
     "normalizedTo": {
       "description": "/** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */",
