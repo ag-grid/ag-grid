@@ -19,7 +19,7 @@ import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isDiscrete, isNumber } from "../../../util/value";
+import { isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
@@ -384,7 +384,7 @@ export class BarSeries extends CartesianSeries {
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
 
-            return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
+            return this.checkDatum(datum[xKey], false);
         });
 
         this.yData = data.map(datum => yKeys.map(stack => {
@@ -393,9 +393,14 @@ export class BarSeries extends CartesianSeries {
                     keysFound = false;
                     console.warn(`The key '${yKey}' was not found in the data: `, datum);
                 }
-                const value = datum[yKey];
 
-                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+                const yDatum = this.checkDatum(datum[yKey], true);
+
+                if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
+                    return 0;
+                }
+
+                return yDatum;
             });
         }));
 
