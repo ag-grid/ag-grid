@@ -23,6 +23,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
   },
   sideBar: true,
+  pivotMode: true,
 }
 
 var savedState: ColumnState[];
@@ -41,8 +42,9 @@ function saveState() {
 
 function restoreState() {
   if (savedState) {
-    gridOptions.columnApi!.applyColumnState({ state: savedState })
+    // Pivot mode must be set first otherwise the columns we're trying to set state for won't exist yet
     gridOptions.columnApi!.setPivotMode(savedPivotMode)
+    gridOptions.columnApi!.applyColumnState({ state: savedState, applyOrder: true })
     console.log('column state restored')
   } else {
     console.log('no previous column state to restore!')
