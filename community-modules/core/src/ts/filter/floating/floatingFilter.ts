@@ -1,9 +1,8 @@
-import { IComponent } from '../../interfaces/iComponent';
 import { Column } from '../../entities/column';
-import { GridApi } from '../../gridApi';
-import { ProvidedFilterModel, IFilterParams, IFilter } from '../../interfaces/iFilter';
-import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { FilterChangedEvent } from '../../events';
+import { IComponent } from '../../interfaces/iComponent';
+import { IFilter, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { AgGridCommon } from '../../interfaces/iCommon';
 
 export interface IFloatingFilterParent {
     /**
@@ -17,7 +16,7 @@ export interface IFloatingFilterParent {
 type InbuiltParentType = IFloatingFilterParent & IFilter;
 export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
 
-export interface IFloatingFilterParams<P = InbuiltParentType> {
+export interface IFloatingFilterParams<P = InbuiltParentType> extends AgGridCommon {
     /** The column this filter is for. */
     column: Column;
     /**
@@ -30,7 +29,6 @@ export interface IFloatingFilterParams<P = InbuiltParentType> {
      * Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed.
      */
     suppressFilterButton: boolean;
-    api: GridApi;
 
     /**
      * This is a shortcut to invoke getModel on the parent filter.

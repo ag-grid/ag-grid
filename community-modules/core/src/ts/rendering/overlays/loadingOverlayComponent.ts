@@ -1,12 +1,10 @@
-import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
-import { GridApi } from "../../gridApi";
+import { AgGridCommon } from "../../interfaces/iCommon";
+import { Component } from "../../widgets/component";
 
-export interface ILoadingOverlayParams {
-    api: GridApi;
-}
+export interface ILoadingOverlayParams extends AgGridCommon { }
 
-export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> {}
+export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> { }
 
 export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
 

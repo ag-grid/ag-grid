@@ -1,4 +1,4 @@
-import {ColDef, Grid, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, IsFullWidthRowParams } from '@ag-grid-community/core'
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const rowData = createData(100, 'body')
@@ -29,12 +29,12 @@ const gridOptions: GridOptions = {
     rowData: rowData,
     pinnedTopRowData: pinnedTopRowData,
     pinnedBottomRowData: pinnedBottomRowData,
-    isFullWidthCell: function (rowNode) {
+    isFullWidthRow: function (params: IsFullWidthRowParams) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
         // want a row full width is up to you, as long as you return a boolean
         // for this method.
-        return rowNode.data.fullWidth
+        return params.rowNode.data.fullWidth
     },
     // see AG Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
@@ -59,7 +59,7 @@ function createData(count: number, prefix: string) {
         const item: any = {}
         // mark every third row as full width. how you mark the row is up to you,
         // in this example the example code (not the grid code) looks at the
-        // fullWidth attribute in the isFullWidthCell() callback. how you determine
+        // fullWidth attribute in the isFullWidthRow() callback. how you determine
         // if a row is full width or not is totally up to you.
         item.fullWidth = i % 3 === 2
         // put in a column for each letter of the alphabet

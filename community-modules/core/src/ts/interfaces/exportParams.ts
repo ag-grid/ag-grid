@@ -1,9 +1,8 @@
 import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
+import { RowNode } from "../entities/rowNode";
 import { RowPosition } from "../entities/rowPosition";
+import { AgGridCommon } from "./iCommon";
 
 export interface BaseExportParams {
     allColumns?: boolean;
@@ -14,7 +13,7 @@ export interface BaseExportParams {
     onlySelectedAllPages?: boolean;
 
     skipColumnGroupHeaders?: boolean;
-    skipColumnHeaders?:boolean;
+    skipColumnHeaders?: boolean;
     skipRowGroups?: boolean;
     skipPinnedTop?: boolean;
     skipPinnedBottom?: boolean;
@@ -67,45 +66,26 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     suppressQuotes?: boolean;
 }
 
-export interface ShouldRowBeSkippedParams {
+export interface ShouldRowBeSkippedParams extends AgGridCommon {
     node: RowNode;
-    api: GridApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
-export interface ProcessCellForExportParams {
+export interface ProcessCellForExportParams extends AgGridCommon {
     value: any;
     accumulatedRowIndex?: number;
     node?: RowNode | null;
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
 
-export interface ProcessHeaderForExportParams {
+export interface ProcessHeaderForExportParams extends AgGridCommon {
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
-export interface ProcessGroupHeaderForExportParams {
+export interface ProcessGroupHeaderForExportParams extends AgGridCommon {
     columnGroup: ColumnGroup;
-    api: GridApi;
-    columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
-export interface ProcessRowGroupForExportParams {
+export interface ProcessRowGroupForExportParams extends AgGridCommon {
     node: RowNode;
-    api: GridApi;
-    columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
 }

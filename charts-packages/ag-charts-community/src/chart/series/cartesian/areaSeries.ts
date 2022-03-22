@@ -277,16 +277,10 @@ export class AreaSeries extends CartesianSeries {
                 continue;
             }
 
-            if (isContinuousX) {
-                if (isContinuous(datum[xKey])) {
-                    xValues.push(datum[xKey]);
-                    xData.push({ xDatum: datum[xKey], seriesDatum: datum });
-                } else {
-                    continue;
-                }
+            const xDatum = this.checkDatum(datum[xKey], isContinuousX);
+            if (isContinuousX && xDatum === undefined) {
+                continue;
             } else {
-                // i.e. category axis
-                const xDatum = isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
                 xValues.push(xDatum);
                 xData.push({ xDatum, seriesDatum: datum });
             }
@@ -302,11 +296,8 @@ export class AreaSeries extends CartesianSeries {
 
                 if (!seriesItemEnabled.get(yKey)) {
                     seriesYs.push(0);
-                } else if (isContinuousY) {
-                    const yDatum = isContinuous(value) ? value : normalized ? 0 : undefined;
-                    seriesYs.push(yDatum);
                 } else {
-                    const yDatum = isDiscrete(value) ? value : String(value);
+                    const yDatum = this.checkDatum(value, isContinuousY);
                     seriesYs.push(yDatum);
                 }
             });

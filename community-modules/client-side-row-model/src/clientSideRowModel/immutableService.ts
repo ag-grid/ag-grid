@@ -1,28 +1,20 @@
 import {
-    _,
     Autowired,
-    Bean,
-    Constants,
+    Bean, BeanStub, Constants,
     IImmutableService,
     IRowModel,
     PostConstruct,
     RowDataTransaction,
-    RowNode,
-    BeanStub,
-    RowRenderer,
-    ColumnApi,
-    GridApi
+    RowNode, RowRenderer, _
 } from "@ag-grid-community/core";
-
 import { ClientSideRowModel } from "./clientSideRowModel";
+
 
 @Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -58,7 +50,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         }
 
         const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
-        if (getRowIdFunc==null) {
+        if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;
         }
@@ -81,7 +73,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             // if update, push to 'update'
             // if not changed, do not include in the transaction
             rowData.forEach((data: any, index: number) => {
-                const id: string = getRowIdFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
+                const id: string = getRowIdFunc({ data, level: 0 });
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 if (orderMap) {
@@ -110,7 +102,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             }
         });
 
-        return [ transaction, orderMap ];
+        return [transaction, orderMap];
     }
 
 }

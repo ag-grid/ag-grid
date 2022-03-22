@@ -282,11 +282,11 @@ When aggregating, the column headers will include the aggregation function for t
 
 ## Custom Full Row Aggregation
 
-Using `colDef.aggFunc` is the preferred way of doing aggregations. However you may find scenarios where you cannot define your aggregations with respect to individual column values. Maybe you are aggregating sales records in different currencies and you need to read the value from one column and the currency code from another column and then convert the record to a common currency for aggregation - the point being you need data from more than just one column, or you want to put the results into different columns to the inputs for the calculation. For that reason, you can take control of the row aggregation by providing a `groupRowAggNodes` function as a grid callback.
+Using `colDef.aggFunc` is the preferred way of doing aggregations. However you may find scenarios where you cannot define your aggregations with respect to individual column values. Maybe you are aggregating sales records in different currencies and you need to read the value from one column and the currency code from another column and then convert the record to a common currency for aggregation - the point being you need data from more than just one column, or you want to put the results into different columns to the inputs for the calculation. For that reason, you can take control of the row aggregation by providing a `getGroupRowAgg` function as a grid callback.
 
 [[note]]
-| Using `colDef.aggFunc` is the preferred way of doing aggregations, only use `groupRowAggNodes`
-| if you cannot achieve what you want as it will make your code more complex. Also note that `groupRowAggNodes`
+| Using `colDef.aggFunc` is the preferred way of doing aggregations, only use `getGroupRowAgg`
+| if you cannot achieve what you want as it will make your code more complex. Also note that `getGroupRowAgg`
 | will not work when pivoting.
 
 For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
@@ -305,7 +305,7 @@ const gridOptions = {
 
 Then the result of the aggregation will be stored in `data.aaa` and not in 'abby'. Most of the time this will not matter for you as the colId, if not provided, will default to the field. In order for the grid to display the aggregation result, it must be stored in the correct field name.
 
-Below shows an  example using `groupRowAggNodes`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
+Below shows an  example using `getGroupRowAgg`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
 
 <grid-example title='Custom Full Row Aggregation' name='custom-full-row-aggregation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 620 }'></grid-example>
 

@@ -13,7 +13,9 @@ import {
     ColumnApi,
     ChangedPath,
     IAggFuncParams,
-    _
+    _,
+    GetGroupRowAggParams,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { PivotStage } from "./pivotStage";
 import { AggFuncService } from "./aggFuncService";
@@ -45,7 +47,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
         const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
-        const noUserAgg = !this.gridOptionsWrapper.getGroupRowAggNodesFunc();
+        const noUserAgg = !this.gridOptionsWrapper.getGroupRowAggFunc();
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }
 
@@ -107,11 +109,12 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
         const measureColumnsMissing = aggDetails.valueColumns.length === 0;
         const pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        const userFunc = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
+        const userFunc = this.gridOptionsWrapper.getGroupRowAggFunc();
 
         let aggResult: any;
         if (userFunc) {
-            aggResult = userFunc(rowNode.childrenAfterFilter!);
+            const params: WithoutGridCommon<GetGroupRowAggParams> = { nodes: rowNode.childrenAfterFilter! }
+            aggResult = userFunc(params);
         } else if (measureColumnsMissing) {
             aggResult = null;
         } else if (pivotColumnsMissing) {

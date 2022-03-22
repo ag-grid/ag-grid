@@ -13,7 +13,8 @@ import {
     ITooltipParams,
     PreConstruct,
     RefSelector,
-    AgGroupComponentParams
+    AgGroupComponentParams,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
@@ -91,7 +92,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'filterToolPanelColumnGroup';
         return res;

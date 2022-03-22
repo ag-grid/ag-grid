@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, InitialGroupOrderComparatorParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -23,9 +23,9 @@ const gridOptions: GridOptions = {
     minWidth: 200,
   },
   groupDisplayType: 'groupRows',
-  defaultGroupOrderComparator: function (nodeA: RowNode, nodeB: RowNode) {
-    const a = nodeA.key || ''
-    const b = nodeB.key || ''
+  initialGroupOrderComparator: function (params: InitialGroupOrderComparatorParams) {
+    const a = params.nodeA.key || ''
+    const b = params.nodeB.key || ''
     return a < b ? -1 : a > b ? 1 : 0
   },
   animateRows: true,

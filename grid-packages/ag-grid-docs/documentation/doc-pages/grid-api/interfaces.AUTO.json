@@ -415,7 +415,9 @@
       "colDef": "/** ColDef of the aggregation column */",
       "rowNode": "/** The parent RowNode, where the aggregation result will be shown */",
       "data": "/** data (if any) of the parent RowNode */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "HeaderClassParams": {
@@ -425,10 +427,13 @@
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | null",
       "api": "GridApi",
-      "context?": "any"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
-      "context?": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "HeaderClass": {
@@ -442,10 +447,13 @@
       "column?": "Column | null",
       "columnGroup?": "ProvidedColumnGroup | null",
       "api": "GridApi",
-      "context?": "any"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
-      "context?": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ToolPanelClass": {
@@ -735,7 +743,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "CheckboxSelectionCallbackParams": {
@@ -754,7 +764,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "CheckboxSelectionCallback": {
@@ -780,7 +792,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowDragCallback": {
@@ -806,15 +820,26 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "DndSourceOnRowDragParams": {
     "meta": {},
-    "type": { "rowNode": "RowNode", "dragEvent": "DragEvent" },
+    "type": {
+      "rowNode": "RowNode",
+      "dragEvent": "DragEvent",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "rowNode": "/** Row node for the given row */",
-      "dragEvent": "/** The DOM event that represents a drag and drop interaction */"
+      "dragEvent": "/** The DOM event that represents a drag and drop interaction */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "DndSourceCallback": {
@@ -840,7 +865,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "EditableCallback": {
@@ -866,7 +893,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SuppressPasteCallback": {
@@ -892,7 +921,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SuppressNavigableCallback": {
@@ -908,7 +939,13 @@
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "HeaderCheckboxSelectionCallback": {
@@ -946,7 +983,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GetQuickFilterTextParams": {
@@ -957,10 +996,14 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ColumnsMenuParams": {
@@ -996,7 +1039,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "BaseWithValueColDefParams": {
@@ -1017,7 +1062,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueGetterParams": {
@@ -1038,7 +1085,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueGetterFunc": {
@@ -1057,14 +1106,17 @@
       "providedColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
       "api": "GridApi",
-      "context?": "any"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "column?": "/** Column for this callback if applicable */",
       "columnGroup?": "/** ColumnGroup for this callback if applicable */",
       "providedColumnGroup": "/** Original column group if applicable */",
       "location": "/** Where the column is going to appear */",
-      "context?": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "HeaderValueGetterFunc": {
@@ -1094,7 +1146,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueSetterParams": {
@@ -1117,7 +1171,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueSetterFunc": {
@@ -1147,7 +1203,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueParserFunc": {
@@ -1175,7 +1233,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ValueFormatterFunc": {
@@ -1203,7 +1263,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ColSpanParams": {
@@ -1222,7 +1284,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowSpanParams": {
@@ -1241,7 +1305,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SuppressKeyboardEventParams": {
@@ -1264,7 +1330,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SuppressHeaderKeyboardEventParams": {
@@ -1274,14 +1342,16 @@
       "colDef": "ColDef | ColGroupDef | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "headerRowIndex": "/** The index of the header row of the current focused header */",
       "event": "/** The keyboard event the grid received */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "CellClassParams": {
@@ -1304,7 +1374,9 @@
       "node": "/** The RowNode associated with this row */",
       "rowIndex": "/** The index of the row */",
       "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "CellClassFunc": {
@@ -1630,23 +1702,28 @@
       "processCellFromClipboard?": "(params: ProcessCellForExportParams) => any",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
-      "isExternalFilterPresent?": "() => boolean",
+      "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams) => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
       "tabToNextCell?": "(params: TabToNextCellParams) => (CellPosition | null)",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
       "localeTextFunc?": "(key: string, defaultValue: string, variableValues?: string[]) => string",
+      "getLocaleText?": "(params: GetLocaleTextParams) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "getGroupRowAgg?": "(params: GetGroupRowAggParams) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
+      "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams) => number",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "postProcessSecondaryColDef?": "(params: PostProcessSecondaryColDefParams) => void",
+      "postProcessSecondaryColGroupDef?": "(params: PostProcessSecondaryColGroupDefParams) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -1663,10 +1740,12 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?": "(rowNode: RowNode) => boolean",
+      "isFullWidthRow?": "(params: IsFullWidthRowParams) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onPasteStart?(event: PasteStartEvent)": "void",
       "onPasteEnd?(event: PasteEndEvent)": "void",
@@ -1998,16 +2077,21 @@
       "navigateToNextCell?": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "tabToNextCell?": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "suppressKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
-      "localeTextFunc?": "/** A callback for localising text within the grid. */",
+      "localeTextFunc?": "/** @deprecated - Use `getLocaleText` instead.\n */",
+      "getLocaleText?": "/** A callback for localising text within the grid. */",
       "getDocument?": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "paginationNumberFormatter?": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
-      "groupRowAggNodes?": "/** Callback for grouping. */",
+      "groupRowAggNodes?": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+      "getGroupRowAgg?": "/** Callback for grouping. */",
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
-      "defaultGroupOrderComparator?": "/** Allows default sorting of groups. */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
+      "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+      "processSecondaryColDef?": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
+      "postProcessSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "postProcessSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
-      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+      "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
       "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
@@ -2015,17 +2099,19 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "fillOperation?": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
-      "postSort?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+      "postSort?": "/** @deprecated Use `postSortRows` instead\n */",
+      "postSortRows?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "getRowStyle?": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "getRowClass?": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
-      "isFullWidthCell?": "/** Tells the grid if this row should be rendered as full width. */",
+      "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+      "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onPasteStart?(event: PasteStartEvent)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent)": "/** Paste operation has ended. */",
@@ -2106,33 +2192,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'auto' | 'custom'"
   },
-  "FillOperationParams": {
-    "meta": {},
-    "type": {
-      "event": "MouseEvent",
-      "values": "any[]",
-      "rowNode": "RowNode",
-      "column": "Column",
-      "initialValues": "any[]",
-      "currentIndex": "number",
-      "currentCellValue": "any",
-      "direction": "'up' | 'down' | 'left' | 'right'",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "event": "/** The mouse event for the fill operation. */",
-      "values": "/** The values that have been processed by the fill operation. */",
-      "rowNode": "/** The RowNode of the current cell being changed. */",
-      "column": "/** The Column of the current cell being changed. */",
-      "initialValues": "/** The values that were present before processing started. */",
-      "currentIndex": "/** The index of the current processed value. */",
-      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
-      "direction": "/** The direction of the Fill Operation. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
   "GetDataPath": {
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "data": "any" }, "returnType": "string[]" }
@@ -2146,18 +2205,6 @@
     "type": {
       "arguments": { "params": "IsApplyServerSideTransactionParams" },
       "returnType": "boolean"
-    }
-  },
-  "IsApplyServerSideTransactionParams": {
-    "meta": {},
-    "type": {
-      "transaction": "ServerSideTransaction",
-      "parentNode": "RowNode",
-      "storeInfo": "any"
-    },
-    "docs": {
-      "transaction": "/** The transaction getting applied. */",
-      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */"
     }
   },
   "GetServerSideGroupKey": {
@@ -2198,39 +2245,9 @@
       "node": "/** The RowNode associated with this row */",
       "rowIndex": "/** The index of the row */",
       "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
-  "RowHeightParams": {
-    "meta": {},
-    "type": {
-      "data": "any",
-      "node": "RowNode",
-      "api": "GridApi",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
-  "SendToClipboardParams": { "meta": {}, "type": { "data": "string" } },
-  "GetContextMenuItemsParams": {
-    "meta": {},
-    "type": {
-      "defaultItems": "string[] | undefined",
-      "column": "Column | null",
-      "node": "RowNode | null",
-      "value": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "defaultItems": "/** Names of the items that would be provided by default. */",
-      "column": "/** The column, if a cell was clicked, otherwise null. */",
-      "node": "/** The row node, if a cell was clicked, otherwise null. */",
-      "value": "/** The value, if a cell was clicked, otherwise null. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GetContextMenuItems": {
@@ -2238,14 +2255,6 @@
     "type": {
       "arguments": { "params": "GetContextMenuItemsParams" },
       "returnType": "(string | MenuItemDef)[]"
-    }
-  },
-  "GetChartToolbarItemsParams": {
-    "meta": {},
-    "type": {
-      "defaultItems?": "ChartMenuOptions[]",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
     }
   },
   "GetChartToolbarItems": {
@@ -2303,21 +2312,6 @@
       "tooltip?": "/** Tooltip for the menu item */"
     }
   },
-  "GetMainMenuItemsParams": {
-    "meta": {},
-    "type": {
-      "column": "Column",
-      "defaultItems": "string[]",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "column": "/** The column that was clicked */",
-      "defaultItems": "/** List of the items that would be displayed by default */",
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
   "GetMainMenuItems": {
     "meta": { "isCallSignature": true },
     "type": {
@@ -2336,136 +2330,6 @@
       "returnType": "string"
     }
   },
-  "GetRowIdParams": {
-    "meta": {},
-    "type": {
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "data": "any",
-      "level": "number",
-      "parentKeys?": "string[]"
-    },
-    "docs": {
-      "api": "/** Grid's API */",
-      "columnApi": "/** Grid's Column API */",
-      "data": "/** The data item provided to the grid for the row in question */",
-      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
-      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */"
-    }
-  },
-  "ProcessRowParams": {
-    "meta": {},
-    "type": {
-      "eRow": "HTMLElement",
-      "ePinnedLeftRow": "HTMLElement",
-      "ePinnedRightRow": "HTMLElement",
-      "rowIndex": "number",
-      "node": "RowNode",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
-  "NavigateToNextHeaderParams": {
-    "meta": {},
-    "type": {
-      "key": "string",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "event": "KeyboardEvent",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "key": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */"
-    }
-  },
-  "TabToNextHeaderParams": {
-    "meta": {},
-    "type": {
-      "backwards": "boolean",
-      "previousHeaderPosition": "HeaderPosition | null",
-      "nextHeaderPosition": "HeaderPosition | null",
-      "headerRowCount": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "previousHeaderPosition": "/** The header that currently has focus */",
-      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
-      "headerRowCount": "/** The number of header rows present in the grid */"
-    }
-  },
-  "NavigateToNextCellParams": {
-    "meta": {},
-    "type": {
-      "key": "string",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "event": "KeyboardEvent | null",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
-    }
-  },
-  "TabToNextCellParams": {
-    "meta": {},
-    "type": {
-      "backwards": "boolean",
-      "editing": "boolean",
-      "previousCellPosition": "CellPosition",
-      "nextCellPosition": "CellPosition | null",
-      "api": "GridApi",
-      "columnApi": "ColumnApi"
-    },
-    "docs": {
-      "backwards": "/** True if the Shift key is also down */",
-      "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
-      "previousCellPosition": "/** The cell that currently has focus */",
-      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */"
-    }
-  },
-  "PostProcessPopupParams": {
-    "meta": {},
-    "type": {
-      "column?": "Column | null",
-      "rowNode?": "RowNode | null",
-      "ePopup": "HTMLElement",
-      "type": "string",
-      "eventSource?": "HTMLElement | null",
-      "mouseEvent?": "MouseEvent | Touch | null"
-    },
-    "docs": {
-      "column?": "/** If popup is for a column, this gives the Column */",
-      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
-      "ePopup": "/** The popup we are showing */",
-      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
-      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
-      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */"
-    }
-  },
-  "PaginationNumberFormatterParams": {
-    "meta": {},
-    "type": { "value": "number" }
-  },
-  "ProcessDataFromClipboardParams": {
-    "meta": {},
-    "type": { "data": "string[][]" },
-    "docs": { "data": "/** 2D array of all cells from the clipboard */" }
-  },
   "ChartRef": {
     "meta": {},
     "type": {
@@ -2475,6 +2339,27 @@
       "destroyChart": "() => void"
     },
     "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "chart": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
+      "chartElement": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
+      "destroyChart": "/** The application is responsible for calling this when the chart is no longer needed. */"
+    }
+  },
+  "ChartRefParams": {
+    "meta": {},
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "chartId": "string",
+      "chart": "any",
+      "chartElement": "HTMLElement",
+      "destroyChart": "() => void"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
       "chartId": "/** The id of the created chart. */",
       "chart": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
       "chartElement": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
@@ -2498,44 +2383,6 @@
       "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
     }
   },
-  "GetServerSideStoreParamsParams": {
-    "meta": {},
-    "type": {
-      "level": "number",
-      "parentRowNode?": "RowNode",
-      "rowGroupColumns": "Column[]",
-      "pivotColumns": "Column[]",
-      "pivotMode": "boolean"
-    },
-    "docs": {
-      "level": "/** The level of the store. Top level is 0. */",
-      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
-      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
-      "pivotColumns": "/** Active Pivot Columns, if any. */",
-      "pivotMode": "/** true if pivot mode is active. */"
-    }
-  },
-  "IsServerSideGroupOpenByDefaultParams": {
-    "meta": {},
-    "type": { "data": "any", "rowNode": "RowNode" }
-  },
-  "IsGroupOpenByDefaultParams": {
-    "meta": {},
-    "type": {
-      "rowNode": "RowNode",
-      "rowGroupColumn": "Column",
-      "level": "number",
-      "field": "string",
-      "key": "string"
-    },
-    "docs": {
-      "rowNode": "/** The row node being considered. */",
-      "rowGroupColumn": "/** The Column for which this row is grouping. */",
-      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
-      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
-      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */"
-    }
-  },
   "LoadingCellRendererSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
@@ -2554,6 +2401,481 @@
       "component?": "/** Equivalent of setting `loadingCellRenderer` */",
       "frameworkComponent?": "/** @deprecated As of v27, use `component` for framework components too.\n */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
+    }
+  },
+  "GetContextMenuItemsParams": {
+    "meta": {},
+    "type": {
+      "defaultItems": "string[] | undefined",
+      "column": "Column | null",
+      "node": "RowNode | null",
+      "value": "any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "defaultItems": "/** Names of the items that would be provided by default. */",
+      "column": "/** The column, if a cell was clicked, otherwise null. */",
+      "node": "/** The row node, if a cell was clicked, otherwise null. */",
+      "value": "/** The value, if a cell was clicked, otherwise null. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetMainMenuItemsParams": {
+    "meta": {},
+    "type": {
+      "column": "Column",
+      "defaultItems": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column": "/** The column that was clicked */",
+      "defaultItems": "/** List of the items that would be displayed by default */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostProcessPopupParams": {
+    "meta": {},
+    "type": {
+      "column?": "Column | null",
+      "rowNode?": "RowNode | null",
+      "ePopup": "HTMLElement",
+      "type": "string",
+      "eventSource?": "HTMLElement | null",
+      "mouseEvent?": "MouseEvent | Touch | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "column?": "/** If popup is for a column, this gives the Column */",
+      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
+      "ePopup": "/** The popup we are showing */",
+      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
+      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "SendToClipboardParams": {
+    "meta": {},
+    "type": {
+      "data": "string",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessDataFromClipboardParams": {
+    "meta": {},
+    "type": {
+      "data": "string[][]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** 2D array of all cells from the clipboard */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetChartToolbarItemsParams": {
+    "meta": {},
+    "type": {
+      "defaultItems?": "ChartMenuOptions[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NavigateToNextHeaderParams": {
+    "meta": {},
+    "type": {
+      "key": "string",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "event": "KeyboardEvent",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "key": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "TabToNextHeaderParams": {
+    "meta": {},
+    "type": {
+      "backwards": "boolean",
+      "previousHeaderPosition": "HeaderPosition | null",
+      "nextHeaderPosition": "HeaderPosition | null",
+      "headerRowCount": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "TabToNextCellParams": {
+    "meta": {},
+    "type": {
+      "backwards": "boolean",
+      "editing": "boolean",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NavigateToNextCellParams": {
+    "meta": {},
+    "type": {
+      "key": "string",
+      "previousCellPosition": "CellPosition",
+      "nextCellPosition": "CellPosition | null",
+      "event": "KeyboardEvent | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PaginationNumberFormatterParams": {
+    "meta": {},
+    "type": {
+      "value": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsGroupOpenByDefaultParams": {
+    "meta": {},
+    "type": {
+      "rowNode": "RowNode",
+      "rowGroupColumn": "Column",
+      "level": "number",
+      "field": "string",
+      "key": "string",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "rowNode": "/** The row node being considered. */",
+      "rowGroupColumn": "/** The Column for which this row is grouping. */",
+      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "meta": {},
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "rowNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsApplyServerSideTransactionParams": {
+    "meta": {},
+    "type": {
+      "transaction": "ServerSideTransaction",
+      "parentNode": "RowNode",
+      "storeInfo": "any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "transaction": "/** The transaction getting applied. */",
+      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetRowIdParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "level": "number",
+      "parentKeys?": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "data": "/** The data item provided to the grid for the row in question */",
+      "level": "/** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */",
+      "parentKeys?": "/** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ProcessRowParams": {
+    "meta": {},
+    "type": {
+      "eRow": "HTMLElement",
+      "ePinnedLeftRow": "HTMLElement",
+      "ePinnedRightRow": "HTMLElement",
+      "rowIndex": "number",
+      "node": "RowNode",
+      "addRenderedRowListener": "(eventType: string, listener: Function) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "FillOperationParams": {
+    "meta": {},
+    "type": {
+      "event": "MouseEvent",
+      "values": "any[]",
+      "rowNode": "RowNode",
+      "column": "Column",
+      "initialValues": "any[]",
+      "currentIndex": "number",
+      "currentCellValue": "any",
+      "direction": "'up' | 'down' | 'left' | 'right'",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "event": "/** The mouse event for the fill operation. */",
+      "values": "/** The values that have been processed by the fill operation. */",
+      "rowNode": "/** The RowNode of the current cell being changed. */",
+      "column": "/** The Column of the current cell being changed. */",
+      "initialValues": "/** The values that were present before processing started. */",
+      "currentIndex": "/** The index of the current processed value. */",
+      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "direction": "/** The direction of the Fill Operation. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "RowHeightParams": {
+    "meta": {},
+    "type": {
+      "data": "any",
+      "node": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsExternalFilterPresentParams": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "InitialGroupOrderComparatorParams": {
+    "meta": {},
+    "type": {
+      "nodeA": "RowNode",
+      "nodeB": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetGroupRowAggParams": {
+    "meta": {},
+    "type": {
+      "nodes": "RowNode[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostProcessSecondaryColDefParams": {
+    "meta": {},
+    "type": {
+      "colDef": "ColDef",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostProcessSecondaryColGroupDefParams": {
+    "meta": {},
+    "type": {
+      "colGroupDef": "ColGroupDef",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "PostSortRowsParams": {
+    "meta": {},
+    "type": {
+      "nodes": "RowNode[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IsFullWidthRowParams": {
+    "meta": {},
+    "type": {
+      "rowNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetLocaleTextParams": {
+    "meta": {},
+    "type": {
+      "key": "string",
+      "defaultValue": "string",
+      "variableValues?": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeaderColumn": {
@@ -4227,10 +4549,12 @@
       "column": "Column",
       "filterParams": "IFilterParams",
       "suppressFilterButton": "boolean",
-      "api": "GridApi",
       "currentParentModel": "() => any",
       "parentFilterInstance": "(callback: IFloatingFilterParentCallback<P>) => void",
-      "showParentFilter": "() => void"
+      "showParentFilter": "() => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -4238,7 +4562,10 @@
       "suppressFilterButton": "/** Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed. */",
       "currentParentModel": "/** This is a shortcut to invoke getModel on the parent filter.\n * If the parent filter doesn't exist (filters are lazily created as needed)\n * then it returns null rather than calling getModel() on the parent filter. */",
       "parentFilterInstance": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
-      "showParentFilter": "/** Shows the parent filter popup. */"
+      "showParentFilter": "/** Shows the parent filter popup. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IFloatingFilter": {
@@ -4350,7 +4677,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IDateComparatorFunc": {
@@ -4429,7 +4758,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "FilterButtonType": {
@@ -4466,7 +4797,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IProvidedFilter": {
@@ -4548,7 +4881,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "Comparator": {
@@ -4630,7 +4965,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISimpleFilterModelType": {
@@ -4698,7 +5035,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "TextMatcher": {
@@ -4763,7 +5102,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GridParams": {
@@ -5152,7 +5493,9 @@
       "progressSort": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
       "setSort": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
       "eGridHeader": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeader": {
@@ -5207,7 +5550,9 @@
       "columnGroup": "/** The column group the header is for. */",
       "displayName": "/** The text label to render.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
       "setExpanded": "/** Opens / closes the column group */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IHeaderGroup": { "meta": {}, "type": {} },
@@ -5425,9 +5770,16 @@
   },
   "ShouldRowBeSkippedParams": {
     "meta": {},
-    "type": { "node": "RowNode", "api": "GridApi", "context": "any" },
+    "type": {
+      "node": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessCellForExportParams": {
@@ -5437,13 +5789,15 @@
       "accumulatedRowIndex?": "number",
       "node?": "RowNode | null",
       "column": "Column",
+      "type": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "type": "string"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessHeaderForExportParams": {
@@ -5455,7 +5809,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessGroupHeaderForExportParams": {
@@ -5467,7 +5823,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ProcessRowGroupForExportParams": {
@@ -5479,7 +5837,9 @@
       "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ContainerType": {
@@ -7566,16 +7926,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -7588,13 +7948,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellEditorComp": {
@@ -7814,6 +8176,19 @@
       "displayName": "string",
       "field?": "string",
       "aggFunc?": "string"
+    }
+  },
+  "WithoutGridCommon": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends AgGridCommon"] },
+    "type": "Omit<T, keyof AgGridCommon>"
+  },
+  "AgGridCommon": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IComponent": {
@@ -8321,7 +8696,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IFiltersToolPanel": {
@@ -8497,7 +8874,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IMultiFilterModel": {
@@ -8671,16 +9050,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -8693,13 +9072,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "RowBounds": {
@@ -9084,7 +9465,9 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISideBar": {
@@ -9115,16 +9498,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -9137,14 +9520,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "SparklineOptions": {
@@ -9669,7 +10054,9 @@
     "meta": {},
     "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IStatusPanel": { "meta": {}, "type": {} },
@@ -9688,7 +10075,12 @@
   },
   "IToolPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi" }
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
   },
   "IToolPanel": { "meta": {}, "type": { "refresh()": "void" } },
   "IToolPanelComp": {
@@ -9719,7 +10111,8 @@
       "contractColumnSelection": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "suppressColumnMove": "/** Suppress Column Move section */",
@@ -9731,7 +10124,10 @@
       "suppressColumnSelectAll": "/** Suppress Select / Un-select all widget */",
       "suppressColumnExpandAll": "/** Suppress Expand / Collapse all widget */",
       "contractColumnSelection": "/** By default, column groups start expanded. Pass `true` to default to contracted groups */",
-      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IPrimaryColsPanel": {
@@ -9834,16 +10230,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "detailGridOptions": "/** Provide Grid Options to use for the Detail Grid. */",
@@ -9862,14 +10258,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "GetDetailRowData": {
@@ -10120,16 +10518,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10142,13 +10540,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISelectCellEditorParams": {
@@ -10164,16 +10564,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10186,13 +10586,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ITextCellEditorParams": {
@@ -10210,16 +10612,16 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "cellStartedEdit": "boolean",
-      "context": "any",
       "$scope": "any",
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any"
+      "formatValue": "(value: any) => any",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -10232,13 +10634,15 @@
       "data": "/** Row data */",
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
-      "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
-      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IGroupCellRenderer": {
@@ -10287,16 +10691,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "pinned": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
@@ -10322,14 +10726,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellRendererParams": {
@@ -10345,16 +10751,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10367,14 +10773,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ISetFilterCellRendererParams": {
@@ -10382,16 +10790,18 @@
     "type": {
       "value": "any",
       "valueFormatted": "any",
-      "api": "GridApi",
       "colDef?": "ColDef",
       "column?": "Column",
+      "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ICellRenderer": {
@@ -10436,16 +10846,16 @@
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
       "getValue?": "() => any",
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "value": "/** Value to be rendered. */",
@@ -10458,14 +10868,16 @@
       "colDef?": "/** The cell's column definition. */",
       "column?": "/** The cell's column. */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "context": "/** The context as provided on `gridOptions.context`. */",
       "eGridCell": "/** The grid's cell, a DOM div element. */",
       "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
       "getValue?": "/** Convenience function to get most recent up to date value. */",
       "setValue?": "/** Convenience function to set the value. */",
       "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
       "refreshCell?": "/** Convenience function to refresh the cell. */",
-      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ILoadingCellRenderer": { "meta": {}, "type": {} },
@@ -10505,10 +10917,16 @@
     "meta": {},
     "type": {
       "onDateChanged": "() => void",
-      "filterParams": "IDateFilterParams"
+      "filterParams": "IDateFilterParams",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
-      "onDateChanged": "/** Method for component to tell AG Grid that the date has changed. */"
+      "onDateChanged": "/** Method for component to tell AG Grid that the date has changed. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IDateComp": {
@@ -10566,7 +10984,15 @@
     "meta": {},
     "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
   },
-  "ILoadingOverlayParams": { "meta": {}, "type": { "api": "GridApi" } },
+  "ILoadingOverlayParams": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
   "ILoadingOverlayComp": {
     "meta": {},
     "type": {
@@ -10580,7 +11006,15 @@
       "init?(params: ILoadingOverlayParams)": "/** The init(params) method is called on the component once. */"
     }
   },
-  "INoRowsOverlayParams": { "meta": {}, "type": { "api": "GridApi" } },
+  "INoRowsOverlayParams": {
+    "meta": {},
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
   "INoRowsOverlayComp": {
     "meta": {},
     "type": {
@@ -10699,9 +11133,9 @@
       "rowIndex?": "number",
       "node?": "RowNode",
       "data?": "any",
-      "context?": "any",
-      "api?": "GridApi",
-      "columnApi?": "ColumnApi"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "location": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
@@ -10712,7 +11146,9 @@
       "rowIndex?": "/** The index of the row containing the cell rendering the tooltip. */",
       "node?": "/** The row node. */",
       "data?": "/** Data for the row node in question. */",
-      "context?": "/** Context as set on gridOptions.context. */"
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "ITooltipComp": {
@@ -11051,7 +11487,7 @@
   "TooltipParentComp": {
     "meta": {},
     "type": {
-      "getTooltipParams()": "ITooltipParams",
+      "getTooltipParams()": "WithoutGridCommon<ITooltipParams>",
       "getGui()": "HTMLElement"
     }
   },
@@ -11197,12 +11633,16 @@
       "suppressFilterSearch": "boolean",
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "suppressExpandAll": "/** To suppress Expand / Collapse All */",
       "suppressFilterSearch": "/** To suppress the Filter Search */",
-      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "EXPAND_STATE": {
@@ -12037,23 +12477,28 @@
       "processCellFromClipboard?": "(params: ProcessCellForExportParams) => any",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
-      "isExternalFilterPresent?": "() => boolean",
+      "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams) => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
       "tabToNextCell?": "(params: TabToNextCellParams) => (CellPosition | null)",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
       "localeTextFunc?": "(key: string, defaultValue: string, variableValues?: string[]) => string",
+      "getLocaleText?": "(params: GetLocaleTextParams) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "getGroupRowAgg?": "(params: GetGroupRowAggParams) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
+      "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams) => number",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "postProcessSecondaryColDef?": "(params: PostProcessSecondaryColDefParams) => void",
+      "postProcessSecondaryColGroupDef?": "(params: PostProcessSecondaryColGroupDefParams) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -12070,10 +12515,12 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?": "(rowNode: RowNode) => boolean",
+      "isFullWidthRow?": "(params: IsFullWidthRowParams) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onPasteStart?(event: PasteStartEvent)": "void",
       "onPasteEnd?(event: PasteEndEvent)": "void",
@@ -12405,16 +12852,21 @@
       "navigateToNextCell?": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "tabToNextCell?": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "suppressKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
-      "localeTextFunc?": "/** A callback for localising text within the grid. */",
+      "localeTextFunc?": "/** @deprecated - Use `getLocaleText` instead.\n */",
+      "getLocaleText?": "/** A callback for localising text within the grid. */",
       "getDocument?": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "paginationNumberFormatter?": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
-      "groupRowAggNodes?": "/** Callback for grouping. */",
+      "groupRowAggNodes?": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+      "getGroupRowAgg?": "/** Callback for grouping. */",
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
-      "defaultGroupOrderComparator?": "/** Allows default sorting of groups. */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
+      "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+      "processSecondaryColDef?": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
+      "postProcessSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "postProcessSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
-      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+      "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
       "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
@@ -12422,17 +12874,19 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "fillOperation?": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
-      "postSort?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+      "postSort?": "/** @deprecated Use `postSortRows` instead\n */",
+      "postSortRows?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "getRowStyle?": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "getRowClass?": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
-      "isFullWidthCell?": "/** Tells the grid if this row should be rendered as full width. */",
+      "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+      "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onPasteStart?(event: PasteStartEvent)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent)": "/** Paste operation has ended. */",
@@ -12767,23 +13221,28 @@
       "processCellFromClipboard?": "(params: ProcessCellForExportParams) => any",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
-      "isExternalFilterPresent?": "() => boolean",
+      "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams) => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
       "tabToNextCell?": "(params: TabToNextCellParams) => (CellPosition | null)",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
       "localeTextFunc?": "(key: string, defaultValue: string, variableValues?: string[]) => string",
+      "getLocaleText?": "(params: GetLocaleTextParams) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "getGroupRowAgg?": "(params: GetGroupRowAggParams) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
+      "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams) => number",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "postProcessSecondaryColDef?": "(params: PostProcessSecondaryColDefParams) => void",
+      "postProcessSecondaryColGroupDef?": "(params: PostProcessSecondaryColGroupDefParams) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -12800,10 +13259,12 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?": "(rowNode: RowNode) => boolean",
+      "isFullWidthRow?": "(params: IsFullWidthRowParams) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onPasteStart?(event: PasteStartEvent)": "void",
       "onPasteEnd?(event: PasteEndEvent)": "void",
@@ -13135,16 +13596,21 @@
       "navigateToNextCell?": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "tabToNextCell?": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "suppressKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
-      "localeTextFunc?": "/** A callback for localising text within the grid. */",
+      "localeTextFunc?": "/** @deprecated - Use `getLocaleText` instead.\n */",
+      "getLocaleText?": "/** A callback for localising text within the grid. */",
       "getDocument?": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "paginationNumberFormatter?": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
-      "groupRowAggNodes?": "/** Callback for grouping. */",
+      "groupRowAggNodes?": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+      "getGroupRowAgg?": "/** Callback for grouping. */",
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
-      "defaultGroupOrderComparator?": "/** Allows default sorting of groups. */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
+      "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+      "processSecondaryColDef?": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
+      "postProcessSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "postProcessSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
-      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+      "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
       "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
@@ -13152,17 +13618,19 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "fillOperation?": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
-      "postSort?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+      "postSort?": "/** @deprecated Use `postSortRows` instead\n */",
+      "postSortRows?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "getRowStyle?": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "getRowClass?": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
-      "isFullWidthCell?": "/** Tells the grid if this row should be rendered as full width. */",
+      "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+      "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onPasteStart?(event: PasteStartEvent)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent)": "/** Paste operation has ended. */",
@@ -13501,23 +13969,28 @@
       "processCellFromClipboard?": "(params: ProcessCellForExportParams) => any",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
-      "isExternalFilterPresent?": "() => boolean",
+      "isExternalFilterPresent?": "(params: IsExternalFilterPresentParams) => boolean",
       "doesExternalFilterPass?": "(node: RowNode) => boolean",
       "getChartToolbarItems?": "GetChartToolbarItems",
-      "createChartContainer?": "(params: ChartRef) => void",
+      "createChartContainer?": "(params: ChartRefParams) => void",
       "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)",
       "tabToNextHeader?": "(params: TabToNextHeaderParams) => (HeaderPosition | null)",
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => (CellPosition | null)",
       "tabToNextCell?": "(params: TabToNextCellParams) => (CellPosition | null)",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
       "localeTextFunc?": "(key: string, defaultValue: string, variableValues?: string[]) => string",
+      "getLocaleText?": "(params: GetLocaleTextParams) => string",
       "getDocument?": "() => Document",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "groupRowAggNodes?": "(nodes: RowNode[]) => any",
+      "getGroupRowAgg?": "(params: GetGroupRowAggParams) => any",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
+      "initialGroupOrderComparator?": "(params: InitialGroupOrderComparatorParams) => number",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "postProcessSecondaryColDef?": "(params: PostProcessSecondaryColDefParams) => void",
+      "postProcessSecondaryColGroupDef?": "(params: PostProcessSecondaryColGroupDefParams) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -13534,10 +14007,12 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?": "(nodes: RowNode[]) => void",
+      "postSortRows?": "(params: PostSortRowsParams) => void",
       "getRowStyle?": "(params: RowClassParams) => RowStyle | undefined",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?": "(rowNode: RowNode) => boolean",
+      "isFullWidthRow?": "(params: IsFullWidthRowParams) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onPasteStart?(event: PasteStartEvent)": "void",
       "onPasteEnd?(event: PasteEndEvent)": "void",
@@ -13869,16 +14344,21 @@
       "navigateToNextCell?": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "tabToNextCell?": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "suppressKeyboardEvent?": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
-      "localeTextFunc?": "/** A callback for localising text within the grid. */",
+      "localeTextFunc?": "/** @deprecated - Use `getLocaleText` instead.\n */",
+      "getLocaleText?": "/** A callback for localising text within the grid. */",
       "getDocument?": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "paginationNumberFormatter?": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
-      "groupRowAggNodes?": "/** Callback for grouping. */",
+      "groupRowAggNodes?": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
+      "getGroupRowAgg?": "/** Callback for grouping. */",
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
-      "defaultGroupOrderComparator?": "/** Allows default sorting of groups. */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
+      "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
+      "processSecondaryColDef?": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
+      "postProcessSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "postProcessSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
-      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+      "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
       "getServerSideStoreParams?": "/** Allows providing different params for different levels of grouping. */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
@@ -13886,17 +14366,19 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
-      "getRowId?": "/** Allows you to set the ID for a particular row based on the data. */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowId?": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "fillOperation?": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
-      "postSort?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+      "postSort?": "/** @deprecated Use `postSortRows` instead\n */",
+      "postSortRows?": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "getRowStyle?": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "getRowClass?": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
-      "isFullWidthCell?": "/** Tells the grid if this row should be rendered as full width. */",
+      "isFullWidthCell?": "/** @deprecated Use `isFullWidthRow` instead.\n */",
+      "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onPasteStart?(event: PasteStartEvent)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent)": "/** Paste operation has ended. */",

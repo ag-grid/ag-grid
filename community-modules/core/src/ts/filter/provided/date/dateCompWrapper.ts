@@ -3,6 +3,7 @@ import { UserComponentFactory } from '../../../components/framework/userComponen
 import { Context } from '../../../context/context';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { setDisplayed } from '../../../utils/dom';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -15,7 +16,7 @@ export class DateCompWrapper {
     private context: Context;
     private eParent: HTMLElement;
 
-    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
+    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: WithoutGridCommon<IDateParams>, eParent: HTMLElement) {
         this.context = context;
         this.eParent = eParent;
 

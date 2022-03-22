@@ -10,7 +10,8 @@ import {
     GridApi,
     ITooltipParams,
     LoggerFactory,
-    PostConstruct
+    PostConstruct,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -57,7 +58,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return label;
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'rowGroupColumnsList';
 

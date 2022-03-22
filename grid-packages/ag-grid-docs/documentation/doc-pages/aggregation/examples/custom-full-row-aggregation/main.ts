@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
+import { GetGroupRowAggParams, Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -24,10 +24,10 @@ const gridOptions: GridOptions = {
   },
   sideBar: true,
   enableRangeSelection: true,
-  groupRowAggNodes: groupRowAggNodes,
+  getGroupRowAgg: getGroupRowAgg,
 }
 
-function groupRowAggNodes(nodes: RowNode[]) {
+function getGroupRowAgg(params: GetGroupRowAggParams) {
   const result = {
     gold: 0,
     silver: 0,
@@ -37,7 +37,7 @@ function groupRowAggNodes(nodes: RowNode[]) {
     bronzePi: 0,
   }
 
-  nodes.forEach(node => {
+  params.nodes.forEach(node => {
     const data = node.group ? node.aggData : node.data
 
     if (typeof data.gold === 'number') {

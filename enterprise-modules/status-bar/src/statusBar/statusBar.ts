@@ -6,7 +6,9 @@ import {
     PostConstruct,
     AgPromise,
     RefSelector,
-    IStatusPanelComp
+    IStatusPanelComp,
+    IStatusPanelParams,
+    WithoutGridCommon
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
@@ -54,11 +56,7 @@ export class StatusBar extends Component {
         const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp>; }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
-            const params = {
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
-            };
+            const params: WithoutGridCommon<IStatusPanelParams> = {};
 
             const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
             const promise = compDetails.newAgStackInstance();

@@ -14,6 +14,7 @@ import {
 import { getFunctionName } from '../utils/function';
 import { CustomTooltipFeature } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 const compIdSequence = new NumberSequence();
 
@@ -27,7 +28,7 @@ export class CssClassManager {
 
     // to minimise DOM hits, we only apply CSS classes if they have changed. as adding a CSS class that is already
     // there, or removing one that wasn't present, all takes CPU.
-    private cssClassStates: {[cssClass: string]: boolean } = {};
+    private cssClassStates: { [cssClass: string]: boolean } = {};
 
     constructor(getGui: () => HTMLElement) {
         this.getGui = getGui;
@@ -93,7 +94,7 @@ export class Component extends BeanStub {
     constructor(template?: string) {
         super();
 
-        this.cssClassManager = new CssClassManager( ()=>this.eGui );
+        this.cssClassManager = new CssClassManager(() => this.eGui);
 
         if (template) {
             this.setTemplate(template);
@@ -109,7 +110,7 @@ export class Component extends BeanStub {
         return this.compId;
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         return {
             value: this.tooltipText,
             location: 'UNKNOWN'

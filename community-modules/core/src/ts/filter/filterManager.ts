@@ -251,7 +251,7 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[]} = {}): void {
+    public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
         const { filterInstance, additionalEventAttributes, columns } = params;
 
         this.updateActiveFilters();
@@ -365,6 +365,8 @@ export class FilterManager extends BeanStub {
                 data: node.data,
                 column,
                 colDef,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
@@ -403,7 +405,7 @@ export class FilterManager extends BeanStub {
     }
 
     private createValueGetter(column: Column): IFilterParams['valueGetter'] {
-        return ({node}) => this.valueService.getValue(column, node, true);
+        return ({ node }) => this.valueService.getValue(column, node, true);
     }
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
@@ -465,7 +467,7 @@ export class FilterManager extends BeanStub {
                 this.eventService.dispatchEvent(event);
             },
             filterChangedCallback: (additionalEventAttributes?: any) =>
-                this.onFilterChanged({filterInstance, additionalEventAttributes, columns: [column]}),
+                this.onFilterChanged({ filterInstance, additionalEventAttributes, columns: [column] }),
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
@@ -586,7 +588,7 @@ export class FilterManager extends BeanStub {
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
-            this.onFilterChanged({columns: [column]});
+            this.onFilterChanged({ columns: [column] });
         }
     }
 

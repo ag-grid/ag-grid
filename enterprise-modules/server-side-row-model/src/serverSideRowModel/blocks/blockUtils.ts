@@ -11,7 +11,8 @@ import {
     RowNode,
     ValueService,
     NumberSequence,
-    Beans
+    Beans,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 
@@ -34,12 +35,14 @@ export class BlockUtils extends BeanStub {
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 
-    public createRowNode(params: {group: boolean, leafGroup: boolean, level: number,
-        parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number}): RowNode {
+    public createRowNode(params: {
+        group: boolean, leafGroup: boolean, level: number,
+        parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number
+    }): RowNode {
 
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight!=null ? params.rowHeight : this.rowHeight;
+        const rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
@@ -91,7 +94,7 @@ export class BlockUtils extends BeanStub {
             }
         }
 
-        if (!rowNode.group && rowNode.childStore!=null) {
+        if (!rowNode.group && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
@@ -135,7 +138,7 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string, cachedRowHeight: number | undefined): void {
+    public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
 
         if (_.exists(data)) {
@@ -333,7 +336,7 @@ export class BlockUtils extends BeanStub {
 
     public createNodeIdPrefix(parentRowNode: RowNode): string | undefined {
         const parts: string[] = [];
-        let rowNode : RowNode | null = parentRowNode;
+        let rowNode: RowNode | null = parentRowNode;
 
         // pull keys from all parent nodes, but do not include the root node
         while (rowNode && rowNode.level >= 0) {
@@ -354,7 +357,7 @@ export class BlockUtils extends BeanStub {
         const userFunc = this.gridOptionsWrapper.getIsServerSideGroupOpenByDefaultFunc();
         if (!userFunc) { return; }
 
-        const params: IsServerSideGroupOpenByDefaultParams = {
+        const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
             data: rowNode.data,
             rowNode
         };

@@ -1,31 +1,13 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { RowNode } from "./rowNode";
-import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
-import { Column } from "./column";
-import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { IDatasource } from "../interfaces/iDatasource";
-import { CellPosition } from "./cellPosition";
-import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import {
-    CsvExportParams,
-    ProcessCellForExportParams,
-    ProcessHeaderForExportParams,
-    ProcessGroupHeaderForExportParams
-} from "../interfaces/exportParams";
-import {
-    AsyncTransactionsFlushed,
-    BodyScrollEvent,
-    BodyScrollEndEvent,
-    CellClickedEvent,
+    AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEditingStoppedEvent,
-    CellFocusedEvent,
+    CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent,
     CellKeyDownEvent,
     CellKeyPressEvent,
     CellMouseDownEvent,
@@ -54,14 +36,9 @@ import {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent,
-    FilterOpenedEvent,
-    FilterChangedEvent,
-    FilterModifiedEvent,
-    FirstDataRenderedEvent,
-    GridColumnsChangedEvent,
-    GridReadyEvent,
-    ModelUpdatedEvent,
+    ExpandCollapseAllEvent, FilterChangedEvent,
+    FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent, GridColumnsChangedEvent,
+    GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     PasteEndEvent,
@@ -83,20 +60,28 @@ import {
     ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent,
-    GridSizeChangedEvent,
-    FullWidthCellKeyPressEvent,
-    FullWidthCellKeyDownEvent,
-    CellEditRequestEvent
+    VirtualRowRemovedEvent
 } from "../events";
-import { StatusPanelDef } from "../interfaces/iStatusPanel";
-import { SideBarDef } from "./sideBar";
-import { ChartMenuOptions } from "../interfaces/iChartOptions";
-import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
-import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
+import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
+import {
+    CsvExportParams,
+    ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams
+} from "../interfaces/exportParams";
+import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { ChartMenuOptions } from "../interfaces/iChartOptions";
+import { AgGridCommon } from "../interfaces/iCommon";
+import { IDatasource } from "../interfaces/iDatasource";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
+import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
+import { StatusPanelDef } from "../interfaces/iStatusPanel";
+import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
+import { CellPosition } from "./cellPosition";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from "./iCallbackParams";
+import { RowNode } from "./rowNode";
+import { SideBarDef } from "./sideBar";
 
 export interface GridOptions {
 
@@ -809,7 +794,7 @@ export interface GridOptions {
 
     // *** Filtering *** //
     /** Grid calls this method to know if an external filter is present. */
-    isExternalFilterPresent?: () => boolean;
+    isExternalFilterPresent?: (params: IsExternalFilterPresentParams) => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
     doesExternalFilterPass?: (node: RowNode) => boolean;
 
@@ -817,7 +802,7 @@ export interface GridOptions {
     /** Callback to be used to customise the chart toolbar items. */
     getChartToolbarItems?: GetChartToolbarItems;
     /** Callback to enable displaying the chart in an alternative chart container. */
-    createChartContainer?: (params: ChartRef) => void;
+    createChartContainer?: (params: ChartRefParams) => void;
 
     // *** Keyboard Navigation *** //
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
@@ -832,8 +817,10 @@ export interface GridOptions {
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     // *** Localisation *** //
-    /** A callback for localising text within the grid. */
+    /** @deprecated - Use `getLocaleText` instead. */
     localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
+    /** A callback for localising text within the grid. */
+    getLocaleText?: (params: GetLocaleTextParams) => string;
 
     // *** Miscellaneous *** //
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
@@ -844,19 +831,27 @@ export interface GridOptions {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
 
     // *** Row Grouping and Pivoting *** //
-    /** Callback for grouping. */
+    /** @deprecated - Use `getGroupRowAgg` instead. */
     groupRowAggNodes?: (nodes: RowNode[]) => any;
+    /** Callback for grouping. */
+    getGroupRowAgg?: (params: GetGroupRowAggParams) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
     /** Allows default sorting of groups. */
+    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
+    /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    /** @deprecated - Use `postProcessSecondaryColDef` instead */
     processSecondaryColDef?: (colDef: ColDef) => void;
-    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    /** @deprecated - Use `postProcessSecondaryColGroupDef` instead. */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    postProcessSecondaryColDef?: (params: PostProcessSecondaryColDefParams) => void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    postProcessSecondaryColGroupDef?: (params: PostProcessSecondaryColGroupDefParams) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
-    /** @deprecated - Use defaultGroupOrderComparator instead */
+    /** @deprecated - Use initialGroupOrderComparator instead */
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     // *** Row Model: Server Side *** //
@@ -880,10 +875,10 @@ export interface GridOptions {
      */
     getBusinessKeyForNode?: (node: RowNode) => string;
     /**
-     * @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true 
+     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
-    /** Allows you to set the ID for a particular row based on the data. */
+    /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
     getRowId?: GetRowIdFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
@@ -895,8 +890,10 @@ export interface GridOptions {
     fillOperation?: (params: FillOperationParams) => any;
 
     // *** Sorting *** //
-    /** Callback to perform additional sorting after the grid has sorted the rows. */
+    /** @deprecated Use `postSortRows` instead */
     postSort?: (nodes: RowNode[]) => void;
+    /** Callback to perform additional sorting after the grid has sorted the rows. */
+    postSortRows?: (params: PostSortRowsParams) => void;
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
@@ -905,8 +902,10 @@ export interface GridOptions {
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
-    /** Tells the grid if this row should be rendered as full width. */
+    /** @deprecated Use `isFullWidthRow` instead. */
     isFullWidthCell?: (rowNode: RowNode) => boolean;
+    /** Tells the grid if this row should be rendered as full width. */
+    isFullWidthRow?: (params: IsFullWidthRowParams) => boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -1110,29 +1109,6 @@ export interface GridOptions {
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface FillOperationParams {
-    /** The mouse event for the fill operation. */
-    event: MouseEvent;
-    /** The values that have been processed by the fill operation. */
-    values: any[];
-    /** The RowNode of the current cell being changed. */
-    rowNode: RowNode;
-    /** The Column of the current cell being changed. */
-    column: Column;
-    /** The values that were present before processing started. */
-    initialValues: any[];
-    /** The index of the current processed value. */
-    currentIndex: number;
-    /** The value of the cell being currently processed by the Fill Operation. */
-    currentCellValue: any;
-    /** The direction of the Fill Operation. */
-    direction: 'up' | 'down' | 'left' | 'right';
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
 export interface GetDataPath {
     (data: any): string[];
 }
@@ -1144,16 +1120,6 @@ export interface IsServerSideGroup {
 export interface IsApplyServerSideTransaction {
     (params: IsApplyServerSideTransactionParams): boolean;
 }
-
-export interface IsApplyServerSideTransactionParams {
-    /** The transaction getting applied. */
-    transaction: ServerSideTransaction;
-    /** The parent RowNode, if transaction is applied to a group. */
-    parentNode: RowNode;
-    //** Store info, if any, as passed via the success() callback when loading data. */
-    storeInfo: any;
-}
-
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
 }
@@ -1172,7 +1138,7 @@ export interface RowClassRules {
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams {
+export interface RowClassParams extends AgGridCommon {
     /** The data associated with this row from rowData */
     data: any;
     /** The RowNode associated with this row */
@@ -1181,53 +1147,15 @@ export interface RowClassParams {
     rowIndex: number;
     /** If using AngularJs, is the row's child scope, otherwise null */
     $scope: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
-export interface RowHeightParams {
-    data: any;
-    node: RowNode;
-    api: GridApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
-export interface SendToClipboardParams {
-    data: string;
-}
-
-export interface GetContextMenuItemsParams {
-    /** Names of the items that would be provided by default. */
-    defaultItems: string[] | undefined;
-    /** The column, if a cell was clicked, otherwise null. */
-    column: Column | null;
-    /** The row node, if a cell was clicked, otherwise null. */
-    node: RowNode | null;
-    /** The value, if a cell was clicked, otherwise null.  */
-    value: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
-
-export interface GetChartToolbarItemsParams {
-    defaultItems?: ChartMenuOptions[];
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
-
 export interface MenuItemLeafDef {
     /** Name of the menu item */
     name: string;
@@ -1251,18 +1179,6 @@ export interface MenuItemDef extends MenuItemLeafDef {
     /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[];
 }
-
-export interface GetMainMenuItemsParams {
-    /** The column that was clicked */
-    column: Column;
-    /** List of the items that would be displayed by default */
-    defaultItems: string[];
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
 }
@@ -1275,115 +1191,6 @@ export interface GetRowIdFunc {
     (params: GetRowIdParams): string;
 }
 
-export interface GetRowIdParams {
-    /** Grid's API */
-    api: GridApi;
-    /** Grid's Column API */
-    columnApi: ColumnApi;
-    /** The data item provided to the grid for the row in question */
-    data: any;
-    /** If grouping, the level, ie how many levels from the top. Used by ServerSide Row Model only */
-    level: number;
-    /** If grouping, provides the keys of the parent groups. Used by ServerSide Row Model only */
-    parentKeys?: string[];
-}
-
-export interface ProcessRowParams {
-    eRow: HTMLElement;
-    ePinnedLeftRow: HTMLElement;
-    ePinnedRightRow: HTMLElement;
-    rowIndex: number;
-    node: RowNode;
-    api: GridApi;
-    columnApi: ColumnApi;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-}
-
-export interface NavigateToNextHeaderParams {
-    /** The key for the arrow key pressed,
-     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
-    key: string;
-    /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
-    /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
-    /** The number of header rows present in the grid */
-    headerRowCount: number;
-    event: KeyboardEvent;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface TabToNextHeaderParams {
-    /** True if the Shift key is also down */
-    backwards: boolean;
-    /** The header that currently has focus */
-    previousHeaderPosition: HeaderPosition | null;
-    /** The header the grid would normally pick as the next header for this navigation */
-    nextHeaderPosition: HeaderPosition | null;
-    /** The number of header rows present in the grid */
-    headerRowCount: number;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface NavigateToNextCellParams {
-    /** The keycode for the arrow key pressed:
-     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
-    key: string;
-    /** The cell that currently has focus */
-    previousCellPosition: CellPosition;
-    /** The cell the grid would normally pick as the next cell for navigation */
-    nextCellPosition: CellPosition | null;
-
-    event: KeyboardEvent | null;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface TabToNextCellParams {
-    /** True if the Shift key is also down */
-    backwards: boolean;
-    /** True if the current cell is editing
-     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */
-    editing: boolean;
-    /** The cell that currently has focus */
-    previousCellPosition: CellPosition;
-    /** The cell the grid would normally pick as the next cell for navigation.  */
-    nextCellPosition: CellPosition | null;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-export interface PostProcessPopupParams {
-    /** If popup is for a column, this gives the Column */
-    column?: Column | null;
-    /** If popup is for a row, this gives the RowNode */
-    rowNode?: RowNode | null;
-    /** The popup we are showing */
-    ePopup: HTMLElement;
-    /** The different types are:
-     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
-    type: string;
-    /** If the popup is as a result of a button click (eg menu button),
-     *  this is the component that the user clicked */
-    eventSource?: HTMLElement | null;
-    /** If the popup is as a result of a click or touch,
-     *  this is the event - eg user showing context menu */
-    mouseEvent?: MouseEvent | Touch | null;
-}
-
-export interface PaginationNumberFormatterParams {
-    value: number;
-}
-
-export interface ProcessDataFromClipboardParams {
-    /** 2D array of all cells from the clipboard */
-    data: string[][];
-}
-
 export interface ChartRef {
     /** The id of the created chart. */
     chartId: string;
@@ -1394,6 +1201,8 @@ export interface ChartRef {
     /** The application is responsible for calling this when the chart is no longer needed. */
     destroyChart: () => void;
 }
+
+export interface ChartRefParams extends AgGridCommon, ChartRef { }
 
 export type ServerSideStoreType = 'full' | 'partial';
 
@@ -1415,37 +1224,6 @@ export interface ServerSideStoreParams {
      * If missing, defaults to grid options `cacheBlockSize`.
      */
     cacheBlockSize?: number;
-}
-
-export interface GetServerSideStoreParamsParams {
-    /** The level of the store. Top level is 0. */
-    level: number;
-    /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
-    parentRowNode?: RowNode;
-    /** Active Row Group Columns, if any. */
-    rowGroupColumns: Column[];
-    /** Active Pivot Columns, if any. */
-    pivotColumns: Column[];
-    /** true if pivot mode is active. */
-    pivotMode: boolean;
-}
-
-export interface IsServerSideGroupOpenByDefaultParams {
-    data: any;
-    rowNode: RowNode;
-}
-
-export interface IsGroupOpenByDefaultParams {
-    /** The row node being considered. */
-    rowNode: RowNode;
-    /** The Column for which this row is grouping. */
-    rowGroupColumn: Column;
-    /** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */
-    level: number;
-    /** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */
-    field: string;
-    /** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */
-    key: string;
 }
 
 export interface LoadingCellRendererSelectorFunc {

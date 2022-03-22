@@ -1,21 +1,20 @@
-import { Component } from "../../../widgets/component";
-import { IComponent } from "../../../interfaces/iComponent";
-import { ColumnGroup } from "../../../entities/columnGroup";
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Autowired } from "../../../context/context";
-import { TouchListener } from "../../../widgets/touchListener";
-import { RefSelector } from "../../../widgets/componentAnnotations";
+import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { GridApi } from "../../../gridApi";
-import { escapeString } from "../../../utils/string";
-import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
+import { IComponent } from "../../../interfaces/iComponent";
+import { AgGridCommon } from "../../../interfaces/iCommon";
 import { setDisplayed } from "../../../utils/dom";
-import { createIconNoSpan } from "../../../utils/icon";
-import { exists } from "../../../utils/generic";
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
 import { doOnce } from "../../../utils/function";
+import { exists } from "../../../utils/generic";
+import { createIconNoSpan } from "../../../utils/icon";
+import { escapeString } from "../../../utils/string";
+import { Component } from "../../../widgets/component";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { TouchListener } from "../../../widgets/touchListener";
 
-export interface IHeaderGroupParams {
+export interface IHeaderGroupParams extends AgGridCommon {
     /** The column group the header is for. */
     columnGroup: ColumnGroup;
     /**
@@ -25,10 +24,6 @@ export interface IHeaderGroupParams {
     displayName: string;
     /** Opens / closes the column group */
     setExpanded: (expanded: boolean) => void;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface IHeaderGroup { }

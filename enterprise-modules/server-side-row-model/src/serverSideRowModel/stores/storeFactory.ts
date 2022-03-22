@@ -8,7 +8,8 @@ import {
     ServerSideStoreParams,
     GetServerSideStoreParamsParams,
     ServerSideStoreType,
-    ColumnModel
+    ColumnModel,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { PartialStore } from "./partialStore";
 import { SSRMParams } from "../serverSideRowModel";
@@ -97,7 +98,7 @@ export class StoreFactory {
         const callback = this.gridOptionsWrapper.getServerSideStoreParamsFunc();
         if (!callback) { return undefined; }
 
-        const params: GetServerSideStoreParamsParams = {
+        const params: WithoutGridCommon<GetServerSideStoreParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
             rowGroupColumns: this.columnModel.getRowGroupColumns(),

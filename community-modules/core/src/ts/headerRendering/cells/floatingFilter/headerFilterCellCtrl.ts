@@ -21,6 +21,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { FilterComponent } from "../../../components/framework/componentTypes";
+import { WithoutGridCommon } from "src/ts/main";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -143,8 +144,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         do {
             nextCol = backwards
-            ? columModel.getDisplayedColBefore(nextCol)
-            : columModel.getDisplayedColAfter(nextCol);
+                ? columModel.getDisplayedColBefore(nextCol)
+                : columModel.getDisplayedColAfter(nextCol);
 
             if (!nextCol) { break; }
 
@@ -201,7 +202,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
                 this.focusService.focusInto(this.eGui, shouldFocusLast);
             }
-         }
+        }
 
         const rowIndex = this.getRowIndex();
         this.beans.focusService.setFocusedHeader(rowIndex, this.column);
@@ -238,8 +239,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
         }
 
-        const params: IFloatingFilterParams = {
-            api: this.gridApi,
+        const params: WithoutGridCommon<IFloatingFilterParams> = {
             column: this.column,
             filterParams: finalFilterParams,
             currentParentModel: () => this.currentParentModel(),

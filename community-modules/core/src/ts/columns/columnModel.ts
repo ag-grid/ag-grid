@@ -52,6 +52,7 @@ import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, WithoutGridCommon } from '../main';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -134,6 +135,7 @@ export class ColumnModel extends BeanStub {
     // if pivoting, these are the generated columns as a result of the pivot
     private secondaryBalancedTree: IProvidedColumn[] | null;
     private secondaryColumns: Column[] | null;
+    private secondaryColumnsMap: { [id: string]: Column };
     private secondaryHeaderRowCount = 0;
     private secondaryColumnsPresent = false;
 
@@ -150,6 +152,7 @@ export class ColumnModel extends BeanStub {
     private gridHeaderRowCount = 0;
 
     private lastPrimaryOrder: Column[];
+    private lastSecondaryOrder: Column[];
     private gridColsArePrimary: boolean;
 
     // primary columns -> what the user provides
@@ -644,6 +647,7 @@ export class ColumnModel extends BeanStub {
         this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
 
+    // Possible candidate for reuse (alot of recursive traversal duplication)
     private getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
         const result: Column[] = [];
 
@@ -1791,17 +1795,25 @@ export class ColumnModel extends BeanStub {
     }
 
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
-        const result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
+        return ([] as Column[]).concat(...[
+            this.primaryColumns || [],
+            this.groupAutoColumns || [],
+            this.secondaryColumns || [],
+        ]);
+    }
 
-        if (this.groupAutoColumns && exists(this.groupAutoColumns)) {
-            this.groupAutoColumns.forEach(col => result.push(col));
-        }
-
-        if (this.secondaryColumnsPresent && this.secondaryColumns) {
-            this.secondaryColumns.forEach(column => result.push(column));
-        }
-
-        return result;
+    private getPrimaryAndAutoGroupCols(): Column[] {
+        return ([] as Column[]).concat(...[
+            this.primaryColumns || [],
+            this.groupAutoColumns || [],
+        ]);
+    }
+    
+    private getPrimaryAndSecondaryColumns(): Column[] {
+        return ([] as Column[]).concat(...[
+            this.primaryColumns || [],
+            this.secondaryColumns || [],
+        ]);
     }
 
     private createStateItemFromColumn(column: Column): ColumnState {
@@ -1836,28 +1848,18 @@ export class ColumnModel extends BeanStub {
         const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
         const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
-        if (!this.pivotMode) {
-            this.orderColumnStateList(res);
-        }
+        this.orderColumnStateList(res);
 
         return res;
     }
 
-    private getPrimaryAndAutoGroupCols(): Column[] | undefined {
-        if (!this.groupAutoColumns) {
-            return this.primaryColumns;
-        }
-
-        return [...(this.primaryColumns || []), ...this.groupAutoColumns];
-    }
-
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const gridColumnIdMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
+        const colIdToGridIndexMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
-            const posA = gridColumnIdMap.has(itemA.colId) ? gridColumnIdMap.get(itemA.colId) : -1;
-            const posB = gridColumnIdMap.has(itemB.colId) ? gridColumnIdMap.get(itemB.colId) : -1;
+            const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
+            const posB = colIdToGridIndexMap.has(itemB.colId) ? colIdToGridIndexMap.get(itemB.colId) : -1;
             return posA! - posB!;
         });
     }
@@ -1956,141 +1958,152 @@ export class ColumnModel extends BeanStub {
             return false;
         }
 
-        this.columnAnimationService.start();
+        const applyStates = (states: ColumnState[], existingColumns: Column[], getById: (id: string) => Column | null) => {
+            const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+            this.autoGroupsNeedBuilding = true;
 
-        const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+            // at the end below, this list will have all columns we got no state for
+            const columnsWithNoState = existingColumns.slice();
 
-        this.autoGroupsNeedBuilding = true;
+            const rowGroupIndexes: { [key: string]: number; } = {};
+            const pivotIndexes: { [key: string]: number; } = {};
+            const autoGroupColumnStates: ColumnState[] = [];
+            // If pivoting is modified, these are the states we try to reapply after
+            // the secondary columns are re-generated
+            const unmatchedAndAutoStates: ColumnState[] = []; 
+            let unmatchedCount = 0;
 
-        // at the end below, this list will have all columns we got no state for
-        const columnsWithNoState = this.primaryColumns!.slice();
+            const previousRowGroupCols = this.rowGroupColumns.slice();
+            const previousPivotCols = this.pivotColumns.slice();
 
-        let success = true;
-
-        const rowGroupIndexes: { [key: string]: number; } = {};
-        const pivotIndexes: { [key: string]: number; } = {};
-        const autoGroupColumnStates: ColumnState[] = [];
-
-        const previousRowGroupCols = this.rowGroupColumns.slice();
-        const previousPivotCols = this.pivotColumns.slice();
-
-        if (params.state) {
-            params.state.forEach((state: ColumnState) => {
-                const groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
+            states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = colId.startsWith(groupAutoColumnId);
+                const isAutoGroupColumn = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
+                    unmatchedAndAutoStates.push(state);
                     return;
                 }
 
-                const column = this.getPrimaryColumn(colId);
+                const column = getById(colId);
 
                 if (!column) {
-                    // we don't log the failure, as it's possible the user is applying that has extra
-                    // cols in it. for example they could of save while row-grouping (so state includes
-                    // auto-group column) and then applied state when not grouping (so the auto-group
-                    // column would be in the state but no used).
-                    success = false;
+                    unmatchedAndAutoStates.push(state);
+                    unmatchedCount += 1;
                 } else {
                     this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
                     removeFromArray(columnsWithNoState, column);
                 }
             });
+
+            // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
+            const applyDefaultsFunc = (col: Column) =>
+                this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
+                    pivotIndexes, false, source);
+
+            columnsWithNoState.forEach(applyDefaultsFunc);
+
+            // sort the lists according to the indexes that were provided
+            const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
+
+                const indexA = indexes[colA.getId()];
+                const indexB = indexes[colB.getId()];
+
+                const aHasIndex = indexA != null;
+                const bHasIndex = indexB != null;
+
+                if (aHasIndex && bHasIndex) {
+                    // both a and b are new cols with index, so sort on index
+                    return indexA - indexB;
+                }
+
+                if (aHasIndex) {
+                    // a has an index, so it should be before a
+                    return -1;
+                }
+
+                if (bHasIndex) {
+                    // b has an index, so it should be before a
+                    return 1;
+                }
+
+                const oldIndexA = oldList.indexOf(colA);
+                const oldIndexB = oldList.indexOf(colB);
+
+                const aHasOldIndex = oldIndexA >= 0;
+                const bHasOldIndex = oldIndexB >= 0;
+
+                if (aHasOldIndex && bHasOldIndex) {
+                    // both a and b are old cols, so sort based on last order
+                    return oldIndexA - oldIndexB;
+                }
+
+                if (aHasOldIndex) {
+                    // a is old, b is new, so b is first
+                    return -1;
+                }
+
+                // this bit does matter, means both are new cols
+                // but without index or that b is old and a is new
+                return 1;
+            };
+
+            this.rowGroupColumns.sort(comparator.bind(this, rowGroupIndexes, previousRowGroupCols));
+            this.pivotColumns.sort(comparator.bind(this, pivotIndexes, previousPivotCols));
+
+            this.updateGridColumns();
+
+            // sync newly created auto group columns with ColumnState
+            const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
+            autoGroupColumnStates.forEach(stateItem => {
+                const autoCol = this.getAutoColumn(stateItem.colId!);
+                removeFromArray(autoGroupColsCopy, autoCol);
+                this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
+            });
+            // autogroup cols with nothing else, apply the default
+            autoGroupColsCopy.forEach(applyDefaultsFunc);
+
+            this.applyOrderAfterApplyState(params);
+            this.updateDisplayedColumns(source);
+            this.dispatchEverythingChanged(source);
+
+            raiseEventsFunc(); // Will trigger secondary column changes if pivoting modified
+            return { unmatchedAndAutoStates, unmatchedCount };
         }
 
-        // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        const applyDefaultsFunc = (col: Column) =>
-            this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
-                pivotIndexes, false, source);
+        this.columnAnimationService.start();
 
-        columnsWithNoState.forEach(applyDefaultsFunc);
+        let {
+            unmatchedAndAutoStates,
+            unmatchedCount,
+        } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
 
-        // sort the lists according to the indexes that were provided
-        const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
-
-            const indexA = indexes[colA.getId()];
-            const indexB = indexes[colB.getId()];
-
-            const aHasIndex = indexA != null;
-            const bHasIndex = indexB != null;
-
-            if (aHasIndex && bHasIndex) {
-                // both a and b are new cols with index, so sort on index
-                return indexA - indexB;
-            }
-
-            if (aHasIndex) {
-                // a has an index, so it should be before a
-                return -1;
-            }
-
-            if (bHasIndex) {
-                // b has an index, so it should be before a
-                return 1;
-            }
-
-            const oldIndexA = oldList.indexOf(colA);
-            const oldIndexB = oldList.indexOf(colB);
-
-            const aHasOldIndex = oldIndexA >= 0;
-            const bHasOldIndex = oldIndexB >= 0;
-
-            if (aHasOldIndex && bHasOldIndex) {
-                // both a and b are old cols, so sort based on last order
-                return oldIndexA - oldIndexB;
-            }
-
-            if (aHasOldIndex) {
-                // a is old, b is new, so b is first
-                return -1;
-            }
-
-            // this bit does matter, means both are new cols
-            // but without index or that b is old and a is new
-            return 1;
-        };
-
-        this.rowGroupColumns.sort(comparator.bind(this, rowGroupIndexes, previousRowGroupCols));
-        this.pivotColumns.sort(comparator.bind(this, pivotIndexes, previousPivotCols));
-
-        this.updateGridColumns();
-
-        // sync newly created auto group columns with ColumnState
-        const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
-        autoGroupColumnStates.forEach(stateItem => {
-            const autoCol = this.getAutoColumn(stateItem.colId!);
-            removeFromArray(autoGroupColsCopy, autoCol);
-            this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
-        });
-        // autogroup cols with nothing else, apply the default
-        autoGroupColsCopy.forEach(applyDefaultsFunc);
-
-        this.applyOrderAfterApplyState(params);
-        this.updateDisplayedColumns(source);
-        this.dispatchEverythingChanged(source);
-
-        raiseEventsFunc();
+        // If there are still states left over, see if we can apply them to newly generated
+        // secondary or auto columns
+        if (unmatchedAndAutoStates.length > 0) {
+            unmatchedCount = applyStates(
+                unmatchedAndAutoStates,
+                this.secondaryColumns || [],
+                (id) => this.getSecondaryColumn(id)
+            ).unmatchedCount;
+        }
         this.columnAnimationService.finish();
 
-        return success;
+        return unmatchedCount === 0; // Successful if no states unaccounted for
     }
 
     private applyOrderAfterApplyState(params: ApplyColumnStateParams): void {
-        if (!this.gridColsArePrimary || !params.applyOrder || !params.state) { return; }
+        if (!params.applyOrder || !params.state) { return; }
 
         let newOrder: Column[] = [];
         const processedColIds: { [id: string]: boolean } = {};
 
-        const gridColumnsMap: { [id: string]: Column } = {};
-        this.gridColumns.forEach(col => gridColumnsMap[col.getId()] = col);
-
         params.state.forEach(item => {
             if (!item.colId || processedColIds[item.colId]) { return; }
-            const col = gridColumnsMap[item.colId];
+            const col = this.gridColumnsMap[item.colId];
             if (col) {
                 newOrder.push(col);
                 processedColIds[item.colId] = true;
@@ -2101,7 +2114,7 @@ export class ColumnModel extends BeanStub {
         let autoGroupInsertIndex = 0;
         this.gridColumns.forEach(col => {
             const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId]!=null;
+            const alreadyProcessed = processedColIds[colId] != null;
             if (alreadyProcessed) { return; }
 
             const isAutoGroupCol = colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
@@ -2149,7 +2162,7 @@ export class ColumnModel extends BeanStub {
         return () => {
             if (this.gridOptionsWrapper.isSuppressColumnStateEvents()) { return; }
 
-            const colsForState = this.getPrimaryAndAutoGroupCols();
+            const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
 
             // raises generic ColumnEvents where all columns are returned rather than what has changed
             const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
@@ -2176,7 +2189,7 @@ export class ColumnModel extends BeanStub {
             const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
                 const changedColumns: Column[] = [];
 
-                (colsForState || []).forEach(column => {
+                colsForState.forEach(column => {
                     const colStateBefore = columnStateBeforeMap[column.getColId()];
                     if (colStateBefore && changedPredicate(colStateBefore, column)) {
                         changedColumns.push(column);
@@ -2432,8 +2445,8 @@ export class ColumnModel extends BeanStub {
             column.setSortIndex(sortIndex);
         }
 
-        // we do not do aggFunc, rowGroup or pivot for auto cols, as you can't do these with auto col
-        if (autoCol) {
+        // we do not do aggFunc, rowGroup or pivot for auto cols or secondary cols
+        if (autoCol || !column.isPrimary()) {
             return;
         }
 
@@ -2541,6 +2554,11 @@ export class ColumnModel extends BeanStub {
         return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
+    private getSecondaryColumn(key: string | Column): Column | null {
+        if (!this.secondaryColumns) { return null; }
+        return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
+    }
+
     private getColumn(key: string | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
         if (!key) { return null; }
 
@@ -2625,6 +2643,7 @@ export class ColumnModel extends BeanStub {
                 providedColumnGroup: providedColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
@@ -2919,10 +2938,9 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const providedColumnGroup = node;
                 columnGroupState.push({
-                    groupId: providedColumnGroup.getGroupId(),
-                    open: providedColumnGroup.isExpanded()
+                    groupId: node.getGroupId(),
+                    open: node.isExpanded()
                 });
             }
         });
@@ -2988,9 +3006,8 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const providedColumnGroup = node;
-                if (providedColumnGroup.getId() === key) {
-                    res = providedColumnGroup;
+                if (node.getId() === key) {
+                    res = node;
                 }
             }
         });
@@ -3086,11 +3103,15 @@ export class ColumnModel extends BeanStub {
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
 
+            this.secondaryColumnsMap = {};
+            this.secondaryColumns.forEach(col => this.secondaryColumnsMap[col.getId()] = col);
+
             this.secondaryColumnsPresent = true;
         } else {
             this.secondaryBalancedTree = null;
             this.secondaryHeaderRowCount = -1;
             this.secondaryColumns = null;
+            this.secondaryColumnsMap = {};
             this.secondaryColumnsPresent = false;
         }
 
@@ -3100,8 +3121,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
+        const columnCallback = this.gridOptionsWrapper.getPostProcessSecondaryColDefFunc();
+        const groupCallback = this.gridOptionsWrapper.getPostProcessSecondaryColGroupDefFunc();
 
         if (!columnCallback && !groupCallback) { return undefined; }
 
@@ -3111,13 +3132,15 @@ export class ColumnModel extends BeanStub {
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
                     if (groupCallback) {
-                        groupCallback(colGroupDef);
+                        const params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams> = { colGroupDef }
+                        groupCallback(params);
                     }
                     searchForColDefs(colGroupDef.children);
                 } else {
                     const colDef = abstractColDef as ColDef;
                     if (columnCallback) {
-                        columnCallback(colDef);
+                        const params: WithoutGridCommon<PostProcessSecondaryColDefParams> = { colDef };
+                        columnCallback(params);
                     }
                 }
             });
@@ -3132,6 +3155,8 @@ export class ColumnModel extends BeanStub {
     private updateGridColumns(): void {
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
+        } else {
+            this.lastSecondaryOrder = this.gridColumns;
         }
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
@@ -3139,6 +3164,7 @@ export class ColumnModel extends BeanStub {
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
+            this.orderGridColsLike(this.lastSecondaryOrder);
         } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
@@ -3147,8 +3173,8 @@ export class ColumnModel extends BeanStub {
 
             // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
             // when this happens (eg if user moved a column) rather than revert back to the original column order.
-            // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
-            this.orderGridColsLikeLastPrimary();
+            // likewise if changing in/out of pivot mode, we want to maintain the order of the cols
+            this.orderGridColsLike(this.lastPrimaryOrder);
         }
 
         this.addAutoGroupToGridColumns();
@@ -3188,16 +3214,16 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private orderGridColsLikeLastPrimary(): void {
-        if (missing(this.lastPrimaryOrder)) { return; }
+    private orderGridColsLike(colsOrder: Column[] | undefined): void {
+        if (missing(colsOrder)) { return; }
 
-        const lastPrimaryOrderMapped = convertToMap<Column, number>(this.lastPrimaryOrder.map((col, index) => [col, index]));
+        const lastOrderMapped = convertToMap<Column, number>(colsOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
         let noColsFound = true;
         this.gridColumns.forEach(col => {
-            if (lastPrimaryOrderMapped.has(col)) {
+            if (lastOrderMapped.has(col)) {
                 noColsFound = false;
             }
         });
@@ -3207,7 +3233,7 @@ export class ColumnModel extends BeanStub {
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
         const gridColsMap = convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
-        const oldColsOrdered = this.lastPrimaryOrder.filter(col => gridColsMap.has(col));
+        const oldColsOrdered = colsOrder.filter(col => gridColsMap.has(col));
         const oldColsMap = convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
         const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
 
