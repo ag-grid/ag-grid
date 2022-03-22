@@ -125,8 +125,8 @@ class GridComponent extends Component {
         };
     }
 
-    getRowNodeId(row) {
-        return row.id;
+    getRowId(params) {
+        return params.data.id;
     }
 
     onGridReady(params) {

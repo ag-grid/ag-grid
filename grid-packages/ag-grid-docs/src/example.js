@@ -327,8 +327,8 @@ var gridOptions = {
     //     console.log(params);
     // },
     // need to be careful here inside the normal demo, as names are not unique if big data sets
-    // getRowNodeId: function(data) {
-    //     return data.name;
+    // getRowId: function(params) {
+    //     return params.data.name;
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
