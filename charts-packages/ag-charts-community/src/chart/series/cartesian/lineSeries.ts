@@ -175,7 +175,7 @@ export class LineSeries extends CartesianSeries {
 
             const xDatum = this.checkDatum(x, isContinuousX);
 
-            if (isContinuousX && !xDatum) {
+            if (isContinuousX && xDatum === undefined) {
                 continue;
             } else {
                 xData.push(xDatum);
@@ -245,7 +245,7 @@ export class LineSeries extends CartesianSeries {
         for (let i = 0; i < xData.length; i++) {
             const xyDatums = nextXYDatums || [xData[i], yData[i]];
 
-            if (!xyDatums[1]) {
+            if (xyDatums[1] === undefined) {
                 prevXInRange = undefined;
                 moveTo = true;
             } else {

@@ -41,6 +41,7 @@ export abstract class CartesianSeries extends Series {
             }
             return value;
         }
+        return undefined;
     }
 
     /**
