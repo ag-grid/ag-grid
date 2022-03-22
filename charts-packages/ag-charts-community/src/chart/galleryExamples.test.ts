@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+
 import { AgChartOptions } from './agChartOptions';
 import { AgChartV2 } from './agChartV2';
 import { Chart } from './chart';
@@ -11,6 +12,8 @@ import {
     polarChartAssertions,
     hierarchyChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
+    setupMockCanvas,
+    CANVAS_TO_BUFFER_DEFAULTS,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -129,6 +132,8 @@ const EXAMPLES: Record<string, TestCase> = {
 
 describe('Gallery Examples', () => {
     describe('AgChartV2#create', () => {
+        let ctx = setupMockCanvas();
+
         beforeEach(() => {
             console.warn = jest.fn();
         });
@@ -148,10 +153,7 @@ describe('Gallery Examples', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const canvas = chart.scene.canvas;
-                    const imageDataUrl = canvas.getDataURL('image/png');
-                    const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
-
+                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 

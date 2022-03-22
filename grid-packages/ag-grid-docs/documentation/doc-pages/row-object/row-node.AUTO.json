@@ -302,14 +302,14 @@
     "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
   },
   "setDataValue": {
-    "description": "/** Replaces the value on the `rowNode` for the specified column. When complete, the grid will refresh the rendered cell on the required row only. */",
+    "description": "/** /* Replaces the value on the `rowNode` for the specified column. When complete,\n *    the grid will refresh the rendered cell on the required row only.\n * @param colKey The column where the value should be updated\n * @param newValue The new value\n * @param eventSource The source of the event\n * @returns `True` if the value was changed, otherwise `False`.\n */",
     "type": {
       "arguments": {
         "colKey": "string | Column",
         "newValue": "any",
         "eventSource?": "string"
       },
-      "returnType": "void"
+      "returnType": "boolean"
     }
   },
   "setGroupValue": {

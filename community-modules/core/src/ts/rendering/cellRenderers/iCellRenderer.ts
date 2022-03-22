@@ -1,11 +1,10 @@
-import { IComponent } from "../../interfaces/iComponent";
-import { RowNode } from "../../entities/rowNode";
 import { ColDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columns/columnApi";
+import { RowNode } from "../../entities/rowNode";
+import { AgGridCommon } from "../../interfaces/iCommon";
+import { IComponent } from "../../interfaces/iComponent";
 
-export interface ICellRendererParams {
+export interface ICellRendererParams extends AgGridCommon {
     /** Value to be rendered. */
     value: any;
     /** Formatted value to be rendered. */
@@ -26,10 +25,6 @@ export interface ICellRendererParams {
     column?: Column;
     /** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */
     $scope: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context`. */
-    context: any;
     /** The grid's cell, a DOM div element. */
     eGridCell: HTMLElement;
     /** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */
@@ -52,19 +47,14 @@ export interface ICellRendererParams {
     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
 }
 
-export interface ISetFilterCellRendererParams {
+export interface ISetFilterCellRendererParams extends AgGridCommon {
     value: any;
     valueFormatted: any;
 
-    api: GridApi;
     /** The cell's column definition. */
     colDef?: ColDef;
     /** The cell's column. */
     column?: Column;
-    columnApi: ColumnApi;
-
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface ICellRenderer {

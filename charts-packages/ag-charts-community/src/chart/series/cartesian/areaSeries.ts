@@ -24,6 +24,7 @@ import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
+import { doOnce } from "../../../util/function";
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -78,6 +79,11 @@ export { AreaTooltipRendererParams };
 
 type Coordinate = { x: number; y: number };
 type CumulativeValue = { left: number; right: number };
+type ProcessedXDatum = {
+    xDatum: any;
+    seriesDatum: any;
+}
+
 class AreaSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: any }) => string;
 }
@@ -110,7 +116,7 @@ export class AreaSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
-    private xData: string[] = [];
+    private xData: ProcessedXDatum[] = [];
     private yData: number[][] = [];
     private fillSelectionData: FillSelectionDatum[] = [];
     private strokeSelectionData: StrokeSelectionDatum[] = [];
@@ -244,7 +250,7 @@ export class AreaSeries extends CartesianSeries {
         // If the data is an array of rows like so:
         //
         // [{
-        //   xKy: 'Jan',
+        //   xKey: 'Jan',
         //   yKey1: 5,
         //   yKey2: 7,
         //   yKey3: -9,
@@ -260,61 +266,67 @@ export class AreaSeries extends CartesianSeries {
         const isContinuousY = yAxis.scale instanceof ContinuousScale;
         const normalized = normalizedTo && isFinite(normalizedTo);
 
-        let keysFound = true; // only warn once
-        this.xData = data.map(datum => {
-            if (keysFound && !(xKey in datum)) {
-                keysFound = false;
-                console.warn(`The key '${xKey}' was not found in the data: `, datum);
+        const yData: number[][] = [];
+        const xData = [];
+        const xValues = [];
+
+        for (let datum of data) {
+            // X datum
+            if (!(xKey in datum)) {
+                doOnce(() => console.warn(`The key '${xKey}' was not found in the data: `, datum), `${xKey} not found in data`);
+                continue;
             }
 
-            if (isContinuousX) {
-                return isContinuous(datum[xKey]) ? datum[xKey] : undefined;
+            const xDatum = this.checkDatum(datum[xKey], isContinuousX);
+            if (isContinuousX && xDatum === undefined) {
+                continue;
             } else {
-                // i.e. category axis
-                return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
-            }
-        });
-
-        this.yData = data.map(datum => yKeys.map(yKey => {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn(`The key '${yKey}' was not found in the data: `, datum);
-            }
-            const value = datum[yKey];
-
-            if (!seriesItemEnabled.get(yKey)) {
-                return 0;
+                xValues.push(xDatum);
+                xData.push({ xDatum, seriesDatum: datum });
             }
 
-            if (isContinuousY) {
-                return isContinuous(value) ? value : normalized ? 0 : undefined;
-            } else {
-                return isDiscrete(value) ? value : String(value);
-            }
-        }));
+            // Y datum
+            yKeys.forEach((yKey, i) => {
+                if (!(yKey in datum)) {
+                    doOnce(() => console.warn(`The key '${yKey}' was not found in the data: `, datum), `${yKey} not found in data`);
+                    return;
+                }
+                const value = datum[yKey];
+                const seriesYs = yData[i] || (yData[i] = []);
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis) : this.xData;
+                if (!seriesItemEnabled.get(yKey)) {
+                    seriesYs.push(0);
+                } else {
+                    const yDatum = this.checkDatum(value, isContinuousY);
+                    seriesYs.push(yDatum);
+                }
+            });
+        }
 
-        // xData: ['Jan', 'Feb']
+        this.yData = yData;
+        this.xData = xData;
+
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xValues, isContinuous), 'x', xAxis) : xValues;
+
+        // xData: ['Jan', 'Feb', undefined]
         //
         // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
+        //   [5, 10], <- series 1 (yKey1)
+        //   [7, -15], <- series 2 (yKey2)
+        //   [-9, 20] <- series 3 (yKey3)
         // ]
-
-        const { yData } = this;
-
-        const processedYData: any[] = [];
 
         let yMin = 0;
         let yMax = 0;
 
-        for (let stack of yData) {
-
-            // find the sum of y values in the stack, used for normalization of stacked areas and determining yDomain of data
+        for (let i = 0; i < xData.length; i++) {
             const total = { sum: 0, absSum: 0 };
-            for (let i = 0; i < stack.length; i++) {
-                const y = +stack[i]; // convert to number as the value could be a Date object
+            for (let seriesYs of yData) {
+                if (seriesYs[i] === undefined) {
+                    continue;
+                }
+
+                const y = +seriesYs[i]; // convert to number as the value could be a Date object
 
                 total.absSum += Math.abs(y);
                 total.sum += y;
@@ -324,42 +336,38 @@ export class AreaSeries extends CartesianSeries {
                 } else if (total.sum < yMin) {
                     yMin = total.sum;
                 }
+
+            }
+
+            if (!(normalized && normalizedTo)) {
+                continue;
             }
 
             let normalizedTotal = 0;
+            // normalize y values using the absolute sum of y values in the stack
+            for (let seriesYs of yData) {
+                const normalizedY = +seriesYs[i] / total.absSum * normalizedTo;
+                seriesYs[i] = normalizedY;
 
-            for (let i = 0; i < stack.length; i++) {
-                if (normalized && normalizedTo) {
-                    // normalize y values using the absolute sum of y values in the stack
-                    const normalizedY = +stack[i] / total.absSum * normalizedTo;
-                    stack[i] = normalizedY;
+                // sum normalized values to get updated yMin and yMax of normalized area
+                normalizedTotal += normalizedY;
 
-                    // sum normalized values to get updated yMin and yMax of normalized area
-                    normalizedTotal += normalizedY;
-
-                    if (normalizedTotal > yMax) {
-                        yMax = normalizedTotal;
-                    } else if (normalizedTotal < yMin) {
-                        yMin = normalizedTotal;
-                    }
+                if (normalizedTotal > yMax) {
+                    yMax = normalizedTotal;
+                } else if (normalizedTotal < yMin) {
+                    yMin = normalizedTotal;
                 }
-
-                // TODO: test performance to see impact of this
-                // process data to be in the format required for creating node data and rendering area paths
-                (processedYData[i] || (processedYData[i] = [])).push(stack[i]);
             }
         }
 
         if (normalized && normalizedTo) {
-            // Multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
+            // multiplier to control the unused whitespace in the y domain, value selected by subjective visual 'niceness'.
             const domainWhitespaceAdjustment = 0.5;
 
             // set the yMin and yMax based on cumulative sum of normalized values
             yMin = yMin < (-normalizedTo * domainWhitespaceAdjustment) ? -normalizedTo : yMin;
             yMax = yMax > (normalizedTo * domainWhitespaceAdjustment) ? normalizedTo : yMax;
         }
-
-        this.yData = processedYData;
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', yAxis);
 
@@ -487,7 +495,9 @@ export class AreaSeries extends CartesianSeries {
             const normalized = this.normalizedTo && isFinite(this.normalizedTo);
             const normalizedAndValid = normalized && continuousY && isContinuous(rawYDatum);
 
-            if (!normalized || normalizedAndValid) {
+            const valid = (!normalized && !isNaN(yDatum)) || normalizedAndValid;
+
+            if (valid) {
                 currY = cumulativeMarkerValues[idx] += yDatum;
             }
 
@@ -509,12 +519,11 @@ export class AreaSeries extends CartesianSeries {
             const yValues = strokeDatum.yValues;
 
             seriesYs.forEach((yDatum, datumIdx) => {
-                const xDatum = xData[datumIdx];
-                const nextXDatum = xData[datumIdx + 1];
+                const { xDatum, seriesDatum } = xData[datumIdx];
+                const nextXDatum = xData[datumIdx + 1]?.xDatum;
                 const nextYDatum = seriesYs[datumIdx + 1];
 
                 // marker data
-                const seriesDatum = data[datumIdx];
                 const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {

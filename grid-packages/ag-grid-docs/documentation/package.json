@@ -18,7 +18,7 @@
     "start": "npm run clean && npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "hash": "sh ../../../scripts/hashDirectory.sh > .hash",
-    "clean": "npx gatsby clean",
+    "clean": "npx gatsby clean && rimraf _gen .hash",
     "test": "npx jest",
     "gulp": "gulp"
   },
@@ -129,6 +129,7 @@
     "puppeteer-core": "7.1.0",
     "react-test-renderer": "16.14.0",
     "ts-jest": "^26.5.6",
-    "yargs": "^16.2.0"
+    "yargs": "^16.2.0",
+    "rimraf": "3.0.2"
   }
 }

@@ -7,9 +7,10 @@ import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface TooltipParentComp {
-    getTooltipParams(): ITooltipParams;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
     getGui(): HTMLElement;
 }
 
@@ -170,10 +171,7 @@ export class CustomTooltipFeature extends BeanStub {
     }
 
     private showTooltip(): void {
-        const params: ITooltipParams = {
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext(),
+        const params: WithoutGridCommon<ITooltipParams> = {
             ...this.parentComp.getTooltipParams()
         };
 

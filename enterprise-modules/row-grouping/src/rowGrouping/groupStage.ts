@@ -17,7 +17,8 @@ import {
     StageExecuteParams,
     ValueService,
     Beans,
-    SelectionService
+    SelectionService,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -163,7 +164,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // we don't do group sorting for tree data
         if (this.usingTreeData) { return; }
 
-        const comparator = this.gridOptionsWrapper.getDefaultGroupOrderComparator();
+        const comparator = this.gridOptionsWrapper.getInitialGroupOrderComparator();
         if (_.exists(comparator)) { recursiveSort(rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {
@@ -172,7 +173,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 !rowNode.leafGroup;
 
             if (doSort) {
-                rowNode.childrenAfterGroup!.sort(comparator);
+                rowNode.childrenAfterGroup!.sort((nodeA, nodeB) => comparator!({ nodeA, nodeB }));
                 rowNode.childrenAfterGroup!.forEach((childNode: RowNode) => recursiveSort(childNode));
             }
         }
@@ -423,7 +424,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.removeGroupsFromSelection();
 
-        const {rootNode, groupedCols} = details;
+        const { rootNode, groupedCols } = details;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
@@ -623,7 +624,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // use callback if exists
         const userCallback = this.gridOptionsWrapper.getIsGroupOpenByDefaultFunc();
         if (userCallback) {
-            const params: IsGroupOpenByDefaultParams = {
+            const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
                 rowNode: groupNode,
                 field: groupNode.field!,
                 key: groupNode.key!,
@@ -635,7 +636,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // use expandByDefault if exists
-        const {expandByDefault} = details;
+        const { expandByDefault } = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
             return;

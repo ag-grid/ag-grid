@@ -18,7 +18,8 @@ import {
     ProvidedColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener
+    TouchListener,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -131,7 +132,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'columnToolPanelColumnGroup';
         return res;

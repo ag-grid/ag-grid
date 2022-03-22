@@ -11,6 +11,32 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
     <code
       className="language-ts"
     >
+      <svg
+        style={
+          Object {
+            "display": "none",
+          }
+        }
+      >
+        <symbol
+          aria-hidden="true"
+          className="svg-inline--fa fa-chevron-right fa-w-10 node-expander"
+          data-icon="chevron-right"
+          data-prefix="fas"
+          focusable="false"
+          id="node-expander"
+          role="img"
+          style={Object {}}
+          viewBox="0 0 320 512"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"
+            fill="currentColor"
+            style={Object {}}
+          />
+        </symbol>
+      </svg>
       <div
         className="json-object"
         role="presentation"
@@ -205,24 +231,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             objectArray
@@ -291,24 +311,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                 onClick={[Function]}
                 role="presentation"
               >
+                <div
+                  className="expander-bar"
+                />
                 <span
                   className="token name property-name"
                 >
                   <svg
-                    aria-hidden="true"
-                    className="svg-inline--fa fa-minus fa-w-14 expander"
-                    data-icon="minus"
-                    data-prefix="fas"
-                    focusable="false"
-                    role="button"
-                    style={Object {}}
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="expander fa-rotate-90"
                   >
-                    <path
-                      d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                      fill="currentColor"
-                      style={Object {}}
+                    <use
+                      href="#node-expander"
+                      role="button"
                     />
                   </svg>
                   resultObject
@@ -443,24 +457,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             typeUnion
@@ -495,24 +503,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -587,24 +589,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -667,24 +663,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -865,24 +855,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -957,24 +941,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -1037,24 +1015,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -1235,24 +1207,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -1327,24 +1293,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -1407,24 +1367,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -1605,24 +1559,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             typeUnionArray
@@ -1658,24 +1606,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -1750,24 +1692,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -1830,24 +1766,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -2028,24 +1958,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -2120,24 +2044,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -2200,24 +2118,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -2398,24 +2310,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                   className="expandable"
                   onClick={[Function]}
                 >
+                  <div
+                    className="expander-bar"
+                  />
                   <span
                     className="token punctuation union-type-object"
                   >
                     <svg
-                      aria-hidden="true"
-                      className="svg-inline--fa fa-minus fa-w-14 expander"
-                      data-icon="minus"
-                      data-prefix="fas"
-                      focusable="false"
-                      role="button"
-                      style={Object {}}
-                      viewBox="0 0 448 512"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="expander fa-rotate-90"
                     >
-                      <path
-                        d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                        fill="currentColor"
-                        style={Object {}}
+                      <use
+                        href="#node-expander"
+                        role="button"
                       />
                     </svg>
                      { 
@@ -2490,24 +2396,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         nestedProperty
@@ -2570,24 +2470,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                             onClick={[Function]}
                             role="presentation"
                           >
+                            <div
+                              className="expander-bar"
+                            />
                             <span
                               className="token name property-name"
                             >
                               <svg
-                                aria-hidden="true"
-                                className="svg-inline--fa fa-minus fa-w-14 expander"
-                                data-icon="minus"
-                                data-prefix="fas"
-                                focusable="false"
-                                role="button"
-                                style={Object {}}
-                                viewBox="0 0 448 512"
-                                xmlns="http://www.w3.org/2000/svg"
+                                className="expander fa-rotate-90"
                               >
-                                <path
-                                  d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                                  fill="currentColor"
-                                  style={Object {}}
+                                <use
+                                  href="#node-expander"
+                                  role="button"
                                 />
                               </svg>
                               resultObject
@@ -2804,24 +2698,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             complexFn
@@ -2849,24 +2737,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                 onClick={[Function]}
                 role="presentation"
               >
+                <div
+                  className="expander-bar"
+                />
                 <span
                   className="token name property-name"
                 >
                   <svg
-                    aria-hidden="true"
-                    className="svg-inline--fa fa-minus fa-w-14 expander"
-                    data-icon="minus"
-                    data-prefix="fas"
-                    focusable="false"
-                    role="button"
-                    style={Object {}}
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="expander fa-rotate-90"
                   >
-                    <path
-                      d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                      fill="currentColor"
-                      style={Object {}}
+                    <use
+                      href="#node-expander"
+                      role="button"
                     />
                   </svg>
                   test
@@ -2899,24 +2781,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                       onClick={[Function]}
                       role="presentation"
                     >
+                      <div
+                        className="expander-bar"
+                      />
                       <span
                         className="token name property-name"
                       >
                         <svg
-                          aria-hidden="true"
-                          className="svg-inline--fa fa-minus fa-w-14 expander"
-                          data-icon="minus"
-                          data-prefix="fas"
-                          focusable="false"
-                          role="button"
-                          style={Object {}}
-                          viewBox="0 0 448 512"
-                          xmlns="http://www.w3.org/2000/svg"
+                          className="expander fa-rotate-90"
                         >
-                          <path
-                            d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                            fill="currentColor"
-                            style={Object {}}
+                          <use
+                            href="#node-expander"
+                            role="button"
                           />
                         </svg>
                         param4
@@ -3143,24 +3019,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             simpleOmit
@@ -3198,24 +3068,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                 onClick={[Function]}
                 role="presentation"
               >
+                <div
+                  className="expander-bar"
+                />
                 <span
                   className="token name property-name"
                 >
                   <svg
-                    aria-hidden="true"
-                    className="svg-inline--fa fa-minus fa-w-14 expander"
-                    data-icon="minus"
-                    data-prefix="fas"
-                    focusable="false"
-                    role="button"
-                    style={Object {}}
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="expander fa-rotate-90"
                   >
-                    <path
-                      d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                      fill="currentColor"
-                      style={Object {}}
+                    <use
+                      href="#node-expander"
+                      role="button"
                     />
                   </svg>
                   resultObject
@@ -3345,24 +3209,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
           onClick={[Function]}
           role="presentation"
         >
+          <div
+            className="expander-bar"
+          />
           <span
             className="token name property-name"
           >
             <svg
-              aria-hidden="true"
-              className="svg-inline--fa fa-minus fa-w-14 expander"
-              data-icon="minus"
-              data-prefix="fas"
-              focusable="false"
-              role="button"
-              style={Object {}}
-              viewBox="0 0 448 512"
-              xmlns="http://www.w3.org/2000/svg"
+              className="expander fa-rotate-90"
             >
-              <path
-                d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                fill="currentColor"
-                style={Object {}}
+              <use
+                href="#node-expander"
+                role="button"
               />
             </svg>
             complexOmit
@@ -3430,24 +3288,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                 onClick={[Function]}
                 role="presentation"
               >
+                <div
+                  className="expander-bar"
+                />
                 <span
                   className="token name property-name"
                 >
                   <svg
-                    aria-hidden="true"
-                    className="svg-inline--fa fa-minus fa-w-14 expander"
-                    data-icon="minus"
-                    data-prefix="fas"
-                    focusable="false"
-                    role="button"
-                    style={Object {}}
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="expander fa-rotate-90"
                   >
-                    <path
-                      d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                      fill="currentColor"
-                      style={Object {}}
+                    <use
+                      href="#node-expander"
+                      role="button"
                     />
                   </svg>
                   param4
@@ -3643,24 +3495,18 @@ exports[`ExpandableSnippet renders HTML as expected 1`] = `
                 onClick={[Function]}
                 role="presentation"
               >
+                <div
+                  className="expander-bar"
+                />
                 <span
                   className="token name property-name"
                 >
                   <svg
-                    aria-hidden="true"
-                    className="svg-inline--fa fa-minus fa-w-14 expander"
-                    data-icon="minus"
-                    data-prefix="fas"
-                    focusable="false"
-                    role="button"
-                    style={Object {}}
-                    viewBox="0 0 448 512"
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="expander fa-rotate-90"
                   >
-                    <path
-                      d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-                      fill="currentColor"
-                      style={Object {}}
+                    <use
+                      href="#node-expander"
+                      role="button"
                     />
                   </svg>
                   resultObject

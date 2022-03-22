@@ -1,12 +1,10 @@
-import { Component } from "../../widgets/component";
+import { AgGridCommon } from "../../interfaces/iCommon";
 import { IComponent } from "../../interfaces/iComponent";
-import { GridApi } from "../../gridApi";
+import { Component } from "../../widgets/component";
 
-export interface INoRowsOverlayParams {
-    api: GridApi;
-}
+export interface INoRowsOverlayParams extends AgGridCommon { }
 
-export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}
+export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> { }
 
 export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
     private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';

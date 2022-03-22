@@ -33,10 +33,10 @@ A `fullWidth` (full width) component takes up the entire width of the grid. A fu
 
 To use `fullWidth`, you must:
 
-1. Implement the `isFullWidthCell(rowNode)` callback, to tell the grid which rows should be treated as `fullWidth`.
+1. Implement the `isFullWidthRow(rowNode)` callback, to tell the grid which rows should be treated as `fullWidth`.
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["isFullWidthCell"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["isFullWidthRow"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 <api-documentation source='grid-properties/properties.json' section='fullWidth' names='["fullWidthCellRenderer"]' ></api-documentation>
 
 The cell renderer can be any AG Grid cell renderer. Refer to
@@ -45,7 +45,7 @@ The cell renderer for `fullWidth` has one difference to normal cell renderers: t
 are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular
 column. Instead you should work off the data parameter, which represents the value for the entire row.
 
-The `isFullWidthCell(rowNode)` callback takes a `rowNode` as input and should return a boolean
+The `isFullWidthRow(rowNode)` callback takes a `rowNode` as input and should return a boolean
 `true` (use `fullWidth`) or `false` (do not use `fullWidth` and render as normal).
 
 

@@ -1,13 +1,12 @@
-import { Column } from '../entities/column';
 import { ColDef, ValueGetterFunc } from '../entities/colDef';
-import { IRowModel } from './iRowModel';
+import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
-import { IComponent } from './iComponent';
-import { GridApi } from '../gridApi';
-import { AgPromise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
-import { ColumnApi } from '../columns/columnApi';
+import { AgPromise } from '../utils';
 import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
+import { IComponent } from './iComponent';
+import { AgGridCommon } from './iCommon';
+import { IRowModel } from './iRowModel';
 
 export type IFilterType = string | { new(): IFilterComp; } | boolean;
 export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
@@ -118,7 +117,7 @@ export interface IFilterOptionDef {
     hideFilterInput?: boolean;
 }
 
-export interface IFilterParams {
+export interface IFilterParams extends AgGridCommon {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */
@@ -165,8 +164,4 @@ export interface IFilterParams {
      * items that are no longer available due to the state of other filters (like Excel type filtering).
      */
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }

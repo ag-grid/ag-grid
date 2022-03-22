@@ -1,6 +1,8 @@
 import { IComponent } from "../interfaces/iComponent";
 import { IDateFilterParams } from "../filter/provided/date/dateFilter";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
+import { AgGridCommon } from "../interfaces/iCommon";
+
 export interface IDate {
     /** Returns the current date represented by this component */
     getDate(): Date | null;
@@ -25,7 +27,7 @@ export interface IDate {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
-export interface IDateParams {
+export interface IDateParams extends AgGridCommon {
     /** Method for component to tell AG Grid that the date has changed. */
     onDateChanged: () => void;
     filterParams: IDateFilterParams;

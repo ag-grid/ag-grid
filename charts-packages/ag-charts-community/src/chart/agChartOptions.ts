@@ -128,15 +128,15 @@ export interface AgTimeAxisThemeOptions
         AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
 
 export interface AgCartesianAxesTheme {
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     number?: AgNumberAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes. */
+    /** This extends the common axis configuration with options specific to number axes. */
     log?: AgLogAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes. */
+    /** This extends the common axis configuration with options specific to category axes. */
     category?: AgCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
+    /** This extends the common axis configuration with options specific to grouped category axes. Currently there are no additional options beyond the common configuration. */
     groupedCategory?: AgGroupedCategoryAxisThemeOptions;
-    /** This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes. */
+    /** This extends the common axis configuration with options specific to time axes. */
     time?: AgTimeAxisThemeOptions;
 }
 
@@ -657,6 +657,8 @@ export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
+export interface AgAreaSeriesMarker extends AgCartesianSeriesMarker {}
+
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
@@ -764,7 +766,7 @@ export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     /** Configuration for the markers used in the series. */
-    marker?: AgCartesianSeriesMarker;
+    marker?: AgAreaSeriesMarker;
     /** The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100. */
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */

@@ -15,7 +15,8 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 import { ToolPanelContextMenu } from "./toolPanelContextMenu";
@@ -112,7 +113,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const res = super.getTooltipParams();
         res.location = 'columnToolPanelColumn';
         res.colDef = this.column.getColDef();
@@ -242,7 +243,7 @@ export class ToolPanelColumnComp extends Component {
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
             canBeDragged = canBeToggled;
         } else {
-            const { enableRowGroup, enableValue, lockPosition, suppressMovable, lockVisible } = 
+            const { enableRowGroup, enableValue, lockPosition, suppressMovable, lockVisible } =
                 this.column.getColDef();
             const forceDraggable = !!enableRowGroup || !!enableValue;
             const disableDraggable = !!lockPosition || !!suppressMovable;

@@ -42,7 +42,7 @@
                 "url": "/row-height/"
             }
         },
-        "isFullWidthCell": {
+        "isFullWidthRow": {
             "more": {
                 "name": "Full Width Rows",
                 "url": "/full-width-rows/"
@@ -75,21 +75,21 @@
             "displayName": "Row Grouping and Pivoting",
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
-        "groupRowAggNodes": {
+        "getGroupRowAgg": {
             "more": {
                 "name": "Row Grouping",
                 "url": "/grouping/#reference-callbacks"
             }
         },
         "isGroupOpenByDefault": {},
-        "defaultGroupOrderComparator": {
+        "initialGroupOrderComparator": {
             "more": {
-                "name": "Default Group Order",
+                "name": "Initial Group Order",
                 "url": "/grouping-group-order/#default-group-order"
             }
         },
-        "processSecondaryColDef": {},
-        "processSecondaryColGroupDef": {},
+        "postProcessSecondaryColDef": {},
+        "postProcessSecondaryColGroupDef": {},
         "getDataPath": {
             "more": {
                 "name": "Tree Data",
@@ -105,7 +105,7 @@
                 "url": "/localisation/"
             }
         },
-        "localeTextFunc": {
+        "getLocaleText": {
             "description": "A callback for localising text within the grid."
         }
     },
@@ -235,7 +235,7 @@
                 "url": "/row-sorting/"
             }
         },
-        "postSort": {
+        "postSortRows": {
             "more": {
                 "name": "Post Sort",
                 "url": "/row-sorting/#post-sort"

@@ -11,7 +11,8 @@ import {
     FillStartEvent,
     SelectionHandleType,
     _, CellCtrl,
-    FillOperationParams
+    FillOperationParams,
+    WithoutGridCommon
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
@@ -294,20 +295,17 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const userResult = userFillOperation({
+            const params: WithoutGridCommon<FillOperationParams> = {
                 event,
                 values,
                 initialValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext(),
                 direction,
                 column: col,
                 rowNode: rowNode
-            } as FillOperationParams);
-
+            };
+            const userResult = userFillOperation(params)
             if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };
             }

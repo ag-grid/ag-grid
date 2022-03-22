@@ -4,6 +4,7 @@ import { RowNode } from "../entities/rowNode";
 import { Beans } from "./beans";
 import { Column } from "../entities/column";
 import { createIconNoSpan } from "../utils/icon";
+import { DndSourceOnRowDragParams } from "../entities/colDef";
 
 export class DndSourceComp extends Component {
 
@@ -57,7 +58,13 @@ export class DndSourceComp extends Component {
         };
 
         if (providedOnRowDrag) {
-            providedOnRowDrag({rowNode: this.rowNode, dragEvent: dragEvent});
+            const params: DndSourceOnRowDragParams = {
+                rowNode: this.rowNode, dragEvent: dragEvent,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                context: this.gridOptionsWrapper.getContext()
+            }
+            providedOnRowDrag(params);
         } else {
             defaultOnRowDrag();
         }

@@ -6,7 +6,8 @@ import {
     IToolPanelParams,
     AgPromise,
     ToolPanelDef,
-    PostConstruct
+    PostConstruct,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { HorizontalResizeComp } from "./horizontalResizeComp";
 
@@ -46,10 +47,7 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelId = id;
         this.width = width;
 
-        const params: IToolPanelParams = {
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
-        };
+        const params: WithoutGridCommon<IToolPanelParams> = {};
 
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();

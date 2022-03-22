@@ -2,8 +2,8 @@ import { Autowired, PostConstruct } from '../../context/context';
 import { Component } from '../../widgets/component';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { ILoadingOverlayComp } from './loadingOverlayComponent';
-import { INoRowsOverlayComp } from './noRowsOverlayComponent';
+import { ILoadingOverlayComp, ILoadingOverlayParams } from './loadingOverlayComponent';
+import { INoRowsOverlayComp, INoRowsOverlayParams } from './noRowsOverlayComponent';
 import { AgPromise } from '../../utils';
 import { clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
@@ -11,6 +11,7 @@ import { PaginationProxy } from "../../pagination/paginationProxy";
 import { Events } from "../../eventKeys";
 import { GridApi } from "../../gridApi";
 import { ColumnModel } from "../../columns/columnModel";
+import { WithoutGridCommon } from '../../interfaces/iCommon';
 
 enum LoadingType { Loading, NoRows }
 
@@ -72,9 +73,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public showLoadingOverlay(): void {
         if (this.gridOptionsWrapper.isSuppressLoadingOverlay()) { return; }
 
-        const params = {
-            api: this.gridOptionsWrapper.getApi()!
-        };
+        const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
         const promise = compDetails.newAgStackInstance();
@@ -85,9 +84,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public showNoRowsOverlay(): void {
         if (this.gridOptionsWrapper.isSuppressNoRowsOverlay()) { return; }
 
-        const params = {
-            api: this.gridOptionsWrapper.getApi()!
-        };
+        const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
         const promise = compDetails.newAgStackInstance();

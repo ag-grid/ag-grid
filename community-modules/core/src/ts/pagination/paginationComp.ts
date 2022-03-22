@@ -8,6 +8,8 @@ import { formatNumberCommas } from "../utils/number";
 import { setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
+import { PaginationNumberFormatterParams } from "../entities/iCallbackParams";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export class PaginationComp extends Component {
 
@@ -95,7 +97,10 @@ export class PaginationComp extends Component {
     private formatNumber(value: number): string {
         const userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
 
-        if (userFunc) { return userFunc({ value: value }); }
+        if (userFunc) {
+            const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value }
+            return userFunc(params);
+        }
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');

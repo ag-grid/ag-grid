@@ -14,6 +14,7 @@ import { setDisplayed } from '../../../utils/dom';
 import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
 import { IFilterOptionDef } from '../../../interfaces/iFilter';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -114,7 +115,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private createDateComponent(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const dateComponentParams: IDateParams = {
+        const dateComponentParams: WithoutGridCommon<IDateParams> = {
             onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };

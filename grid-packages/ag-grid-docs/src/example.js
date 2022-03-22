@@ -327,8 +327,8 @@ var gridOptions = {
     //     console.log(params);
     // },
     // need to be careful here inside the normal demo, as names are not unique if big data sets
-    // getRowNodeId: function(data) {
-    //     return data.name;
+    // getRowId: function(params) {
+    //     return params.data.name;
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
@@ -467,7 +467,7 @@ var gridOptions = {
     getBusinessKeyForNode: function(node) {
         return node.data ? node.data.name : '';
     },
-    defaultGroupOrderComparator: function(nodeA, nodeB) {
+    initialGroupOrderComparatorParams: function({nodeA, nodeB}) {
         if (nodeA.key < nodeB.key) { return -1; }
         if (nodeA.key > nodeB.key) { return 1; }
 

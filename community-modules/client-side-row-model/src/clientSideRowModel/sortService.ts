@@ -9,7 +9,9 @@ import {
     ColumnModel,
     PostConstruct,
     RowNode,
-    BeanStub
+    BeanStub,
+    WithoutGridCommon,
+    PostSortRowsParams
 } from "@ag-grid-community/core";
 
 import { RowNodeMap } from "./clientSideRowModel";
@@ -20,7 +22,7 @@ export class SortService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
-    private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;
+    private postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined;
 
     @PostConstruct
     public init(): void {
@@ -68,7 +70,8 @@ export class SortService extends BeanStub {
             this.updateChildIndexes(rowNode);
 
             if (this.postSortFunc) {
-                this.postSortFunc(rowNode.childrenAfterSort);
+                const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
+                this.postSortFunc(params);
             }
         };
 
@@ -80,7 +83,7 @@ export class SortService extends BeanStub {
     }
 
     private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
-        return {currentPos: pos, rowNode: rowNode};
+        return { currentPos: pos, rowNode: rowNode };
     }
 
     private doDeltaSort(
@@ -117,7 +120,7 @@ export class SortService extends BeanStub {
 
         // these are all nodes that need to be placed
         const changedNodes: SortedRowNode[] = rowNode.childrenAfterFilter!
-        // ignore nodes in the clean list
+            // ignore nodes in the clean list
             .filter(node => !cleanNodesMapped[node.id!])
             .map(this.mapNodeToSortedNode.bind(this));
 

@@ -1,9 +1,6 @@
 import {
-    _,
-    ColumnApi,
-    ColumnModel,
-    Context,
-    Events,
+    Beans, ColumnApi,
+    ColumnModel, Events,
     EventService,
     GridApi,
     GridOptionsWrapper,
@@ -12,8 +9,7 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionService,
-    Beans
+    SelectionService, _
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -41,11 +37,11 @@ export class ClientSideNodeManager {
     private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private allNodesMap: {[id:string]: RowNode} = {};
+    private allNodesMap: { [id: string]: RowNode } = {};
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
-                columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
-                selectionService: SelectionService, beans: Beans) {
+        columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
+        selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.eventService = eventService;
@@ -76,7 +72,7 @@ export class ClientSideNodeManager {
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 
-    public getCopyOfNodesMap(): {[id:string]: RowNode} {
+    public getCopyOfNodesMap(): { [id: string]: RowNode } {
         return _.cloneObject(this.allNodesMap);
     }
 
@@ -106,7 +102,7 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map( dataItem => this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
+            rootNode.allLeafChildren = rowData.map(dataItem => this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -121,7 +117,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
@@ -168,7 +164,7 @@ export class ClientSideNodeManager {
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
-        const {add, addIndex} = rowDataTran;
+        const { add, addIndex } = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
         // create new row nodes for each data item
@@ -196,11 +192,11 @@ export class ClientSideNodeManager {
     }
 
     private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
-        const {remove} = rowDataTran;
+        const { remove } = rowDataTran;
 
         if (_.missingOrEmpty(remove)) { return; }
 
-        const rowIdsRemoved: {[key: string]: boolean} = {};
+        const rowIdsRemoved: { [key: string]: boolean } = {};
 
         remove!.forEach(item => {
             const rowNode = this.lookupRowNode(item);
@@ -232,7 +228,7 @@ export class ClientSideNodeManager {
     }
 
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
-        const {update} = rowDataTran;
+        const { update } = rowDataTran;
         if (_.missingOrEmpty(update)) { return; }
 
         update!.forEach(item => {
@@ -257,7 +253,7 @@ export class ClientSideNodeManager {
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
-            const id: string = getRowIdFunc({data, level: 0, api: this.gridApi, columnApi: this.columnApi});
+            const id: string = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
@@ -289,7 +285,7 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            console.warn(`AG Grid: duplicate node id '${node.id}' detected from getRowNodeId callback, this could cause issues in your grid.`);
+            console.warn(`AG Grid: duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`);
         }
         this.allNodesMap[node.id!] = node;
 

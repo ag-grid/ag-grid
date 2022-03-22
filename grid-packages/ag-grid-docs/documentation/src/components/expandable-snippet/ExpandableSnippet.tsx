@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from "react";
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus, faChevronCircleDown, faChevronCircleUp } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 import { formatJsDocString, convertMarkdown } from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
 import codeStyles from '../Code.module.scss';
 
-import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups, JsonModelProperty, JsonObjectProperty, JsonPrimitiveProperty, JsonArray, JsonFunction } from "./model";
+import { buildModel, JsonModel, JsonProperty, JsonUnionType, loadLookups, JsonObjectProperty, JsonPrimitiveProperty, JsonArray, JsonFunction } from "./model";
 
 const DEFAULT_JSON_NODES_EXPANDED = false;
 
@@ -62,6 +62,7 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
     config = {},
 }) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
+        <FontAwesomeIcon icon={faChevronRight} className={styles['node-expander']} symbol="node-expander" />
         <div className={styles['json-object']} role="presentation">
             <ModelSnippet model={model} config={config} path={[]}></ModelSnippet>
         </div>
@@ -172,6 +173,7 @@ function renderUnionNestedObject(
         return (
             <Fragment key={discriminatorType}>
                 <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                    {isExpanded && <div className={classnames(styles['expander-bar'])}></div>}
                     <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                         {isExpanded && renderJsonNodeExpander(isExpanded)}
                         {' { '}
@@ -197,6 +199,7 @@ function renderUnionNestedObject(
     return (
         <Fragment key={index}>
             <span onClick={() => setExpanded(!isExpanded)} className={styles["expandable"]}>
+                {isExpanded && <div className={classnames(styles['expander-bar'])}></div>}
                 <span className={classnames('token', 'punctuation', styles['union-type-object'])}>
                     {renderJsonNodeExpander(isExpanded)}
                     {' {'}
@@ -358,13 +361,9 @@ function maybeRenderModelDocumentation(
 
 function renderJsonNodeExpander(isExpanded: boolean) {
     return (
-        <FontAwesomeIcon
-            icon={isExpanded ? faMinus : faPlus}
-            className={classnames(
-                styles['expander'],
-            )}
-            role="button"
-        />
+        <Fragment>
+            <svg className={classnames(styles['expander'], { 'fa-rotate-90': isExpanded })}><use href="#node-expander" role="button"/></svg>
+        </Fragment>
     );
 }
 
@@ -379,6 +378,7 @@ function renderPropertyDeclaration(
     const { required } = propDesc;
     return (
         <Fragment>
+            {expandable && <div className={classnames(styles['expander-bar'])}></div>}
             <span className={classnames('token', 'name', styles[style])}>
                 {expandable && renderJsonNodeExpander(isExpanded)}
                 {propName}
@@ -564,7 +564,7 @@ function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number],
         [ formatJsDocString(documentation.trim()) ] :
         [];
 
-    if (defaultValue) {
+    if (meta.hasOwnProperty('default')) {
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
     

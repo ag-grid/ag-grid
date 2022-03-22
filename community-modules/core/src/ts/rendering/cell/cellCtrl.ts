@@ -15,7 +15,7 @@ import {
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
-import { exists } from "../../utils/generic";
+import { exists, makeNull } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
@@ -430,21 +430,26 @@ export class CellCtrl extends BeanStub {
         };
     }
 
-    private saveNewValue(oldValue: any, newValue: any): void {
-        if (newValue===oldValue) { return; }
+    /**
+     * @returns `True` if the value changes, otherwise `False`.
+     */
+    private saveNewValue(oldValue: any, newValue: any): boolean {
+        if (newValue === oldValue) { return false; }
 
         if (this.beans.gridOptionsWrapper.isReadOnlyEdit()) {
             this.dispatchEventForSaveValueReadOnly(oldValue, newValue);
-            return;
+            return false;
         }
-        
+
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
         // getting triggered, which results in all cells getting refreshed. we do not want this refresh
         // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
         // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
         this.suppressRefreshCell = true;
-        this.rowNode.setDataValue(this.column, newValue);
+        const valueChanged = this.rowNode.setDataValue(this.column, newValue);
         this.suppressRefreshCell = false;
+
+        return valueChanged;
     }
 
     private dispatchEventForSaveValueReadOnly(oldValue: any, newValue: any): void {
@@ -469,14 +474,20 @@ export class CellCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public stopEditing(cancel = false): void {
-        if (!this.editing) { return; }
+    /**
+     * Ends the Cell Editing
+     * @param cancel `True` if the edit process is being canceled.
+     * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
+     */
+    public stopEditing(cancel = false): boolean {
+        if (!this.editing) { return false; }
 
         const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel);
         const oldValue = this.getValueFromValueService();
+        let valueChanged = false;
 
         if (newValueExists) {
-            this.saveNewValue(oldValue, newValue);
+            valueChanged = this.saveNewValue(oldValue, newValue);
         }
 
         this.setEditing(false);
@@ -484,6 +495,8 @@ export class CellCtrl extends BeanStub {
         this.updateAndFormatValue();
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
         this.dispatchEditingStoppedEvent(oldValue, newValue);
+
+        return valueChanged;
     }
 
     private dispatchEditingStoppedEvent(oldValue: any, newValue: any): void {
@@ -1054,7 +1067,7 @@ export class CellCtrl extends BeanStub {
     private createCellPosition(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex!,
-            rowPinned: this.rowNode.rowPinned,
+            rowPinned: makeNull(this.rowNode.rowPinned),
             column: this.column
         };
     }

@@ -6,7 +6,6 @@ import {
     ColGroupDef,
     Column,
     ColumnModel,
-    NumberSequence,
     _
 } from "@ag-grid-community/core";
 
@@ -32,18 +31,17 @@ export class PivotColDefService extends BeanStub {
         const pivotColumns = this.columnModel.getPivotColumns();
         const valueColumns = this.columnModel.getValueColumns();
         const levelsDeep = pivotColumns.length;
-        const columnIdSequence = new NumberSequence();
 
-        this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
+        this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], levelsDeep, pivotColumns);
 
         // additional columns that contain the aggregated total for each value column per row
-        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, columnIdSequence);
+        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns);
 
         // additional group columns that contain child totals for each collapsed child column / group
-        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
+        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs);
 
         // additional group columns that contain an aggregated total across all child columns
-        this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
+        this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs);
 
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
@@ -66,7 +64,6 @@ export class PivotColDefService extends BeanStub {
         index: number,
         uniqueValues: any,
         pivotKeys: string[],
-        columnIdSequence: NumberSequence,
         levelsDeep: number,
         primaryPivotColumns: Column[]
     ): void {
@@ -80,11 +77,11 @@ export class PivotColDefService extends BeanStub {
                     headerName: key,
                     pivotKeys: newPivotKeys,
                     columnGroupShow: 'open',
-                    groupId: 'pivot' + columnIdSequence.next()
+                    groupId: this.generateColumnGroupId(newPivotKeys),
                 };
 
                 parentChildren.push(groupDef);
-                this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index + 1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
+                this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index + 1, value, newPivotKeys, levelsDeep, primaryPivotColumns);
             } else {
                 const measureColumns = this.columnModel.getValueColumns();
                 const valueGroup: ColGroupDef = {
@@ -92,20 +89,20 @@ export class PivotColDefService extends BeanStub {
                     headerName: key,
                     pivotKeys: newPivotKeys,
                     columnGroupShow: 'open',
-                    groupId: 'pivot' + columnIdSequence.next()
+                    groupId: this.generateColumnGroupId(newPivotKeys),
                 };
                 // if no value columns selected, then we insert one blank column, so the user at least sees columns
                 // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
                 // impression that the grid is broken
                 if (measureColumns.length === 0) {
                     // this is the blank column, for when no value columns enabled.
-                    const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+                    const colDef = this.createColDef(null, '-', newPivotKeys);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach(measureColumn => {
                         const columnName: string | null = this.columnModel.getDisplayNameForColumn(measureColumn, 'header');
-                        const colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
+                        const colDef = this.createColDef(measureColumn, columnName, newPivotKeys);
                         colDef.columnGroupShow = 'open';
                         valueGroup.children.push(colDef);
                         pivotColumnDefs.push(colDef);
@@ -125,7 +122,6 @@ export class PivotColDefService extends BeanStub {
     private addExpandablePivotGroups(
         pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
         pivotColumnDefs: ColDef[],
-        columnIdSequence: NumberSequence
     ) {
         if (
             this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
@@ -137,7 +133,6 @@ export class PivotColDefService extends BeanStub {
         const recursivelyAddSubTotals = (
             groupDef: (ColGroupDef | ColDef),
             currentPivotColumnDefs: ColDef[],
-            currentColumnIdSequence: NumberSequence,
             acc: Map<string, string[]>
         ) => {
             const group = groupDef as ColGroupDef;
@@ -146,14 +141,14 @@ export class PivotColDefService extends BeanStub {
                 const childAcc = new Map();
 
                 group.children.forEach((grp: ColDef | ColGroupDef) => {
-                    recursivelyAddSubTotals(grp, currentPivotColumnDefs, currentColumnIdSequence, childAcc);
+                    recursivelyAddSubTotals(grp, currentPivotColumnDefs, childAcc);
                 });
 
                 const firstGroup = !group.children.some(child => (child as ColGroupDef).children);
 
                 this.columnModel.getValueColumns().forEach(valueColumn => {
                     const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
-                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys, currentColumnIdSequence);
+                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
                     totalColDef.columnGroupShow = 'closed';
@@ -185,13 +180,11 @@ export class PivotColDefService extends BeanStub {
         };
 
         pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
-            recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
+            recursivelyAddSubTotals(groupDef, pivotColumnDefs, new Map());
         });
     }
 
-    private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
-                                   pivotColumnDefs: ColDef[],
-                                   columnIdSequence: NumberSequence) {
+    private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
 
         if (!this.gridOptionsWrapper.getPivotColumnGroupTotals()) { return; }
 
@@ -210,13 +203,12 @@ export class PivotColDefService extends BeanStub {
         const valueColumn = valueCols[0];
 
         pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
-            this.recursivelyAddPivotTotal(groupDef, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
+            this.recursivelyAddPivotTotal(groupDef, pivotColumnDefs, valueColumn, insertAfter);
         });
     }
 
     private recursivelyAddPivotTotal(groupDef: (ColGroupDef | ColDef),
                                      pivotColumnDefs: ColDef[],
-                                     columnIdSequence: NumberSequence,
                                      valueColumn: Column,
                                      insertAfter: boolean): string[] | null {
         const group = groupDef as ColGroupDef;
@@ -230,7 +222,7 @@ export class PivotColDefService extends BeanStub {
         // need to recurse children first to obtain colIds used in the aggregation stage
         group.children
             .forEach((grp: ColDef | ColGroupDef) => {
-                const childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
+                const childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, valueColumn, insertAfter);
                 if (childColIds) {
                     colIds = colIds.concat(childColIds);
                 }
@@ -243,7 +235,7 @@ export class PivotColDefService extends BeanStub {
             const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template
-            const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, columnIdSequence);
+            const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys);
             totalColDef.pivotTotalColumnIds = colIds;
             totalColDef.aggFunc = valueColumn.getAggFunc();
 
@@ -258,8 +250,7 @@ export class PivotColDefService extends BeanStub {
 
     private addRowGroupTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                               pivotColumnDefs: ColDef[],
-                              valueColumns: Column[],
-                              columnIdSequence: NumberSequence) {
+                              valueColumns: Column[]) {
         if (!this.gridOptionsWrapper.getPivotRowTotals()) { return; }
 
         const insertAfter = this.gridOptionsWrapper.getPivotRowTotals() === 'after';
@@ -275,7 +266,7 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], columnIdSequence, valueCol, colIds, insertAfter);
+            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], valueCol, colIds, insertAfter);
         }
     }
 
@@ -300,7 +291,6 @@ export class PivotColDefService extends BeanStub {
     private createRowGroupTotal(parentChildren: (ColGroupDef | ColDef)[],
                                 pivotColumnDefs: ColDef[],
                                 pivotKeys: string[],
-                                columnIdSequence: NumberSequence,
                                 valueColumn: Column,
                                 colIds: string[],
                                 insertAfter: boolean): void {
@@ -311,16 +301,16 @@ export class PivotColDefService extends BeanStub {
         const valueGroup: ColGroupDef = {
             children: [],
             pivotKeys: newPivotKeys,
-            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + '_' + this.generateColumnGroupId(newPivotKeys),
         };
 
         if (measureColumns.length === 0) {
-            const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+            const colDef = this.createColDef(null, '-', newPivotKeys);
             valueGroup.children.push(colDef);
             pivotColumnDefs.push(colDef);
         } else {
             const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
-            const colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
+            const colDef = this.createColDef(valueColumn, columnName, newPivotKeys);
             colDef.pivotTotalColumnIds = colIds;
             valueGroup.children.push(colDef);
             pivotColumnDefs.push(colDef);
@@ -329,10 +319,11 @@ export class PivotColDefService extends BeanStub {
         insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
 
-    private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, columnIdSequence: NumberSequence): ColDef {
+    private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined): ColDef {
 
         const colDef: ColDef = {};
 
+        // This is null when there are no measure columns and we're creating placeholder columns
         if (valueColumn) {
             const colDefToCopy = valueColumn.getColDef();
             Object.assign(colDef, colDefToCopy);
@@ -342,7 +333,7 @@ export class PivotColDefService extends BeanStub {
         }
 
         colDef.headerName = headerName;
-        colDef.colId = 'pivot_' + columnIdSequence.next();
+        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn ? valueColumn.getColId() : '');
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
@@ -400,5 +391,15 @@ export class PivotColDefService extends BeanStub {
             const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
         });
+    }
+
+    private generateColumnGroupId(pivotKeys: string[]): string {
+        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}}`;
+    }
+
+    private generateColumnId(pivotKeys: string[], measureColumnId: string) {
+        const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
+        return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 }

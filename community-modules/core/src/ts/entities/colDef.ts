@@ -1,7 +1,6 @@
-import { ColumnApi } from "../columns/columnApi";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
-import { GridApi } from "../gridApi";
 import { ICellEditorParams } from "../interfaces/iCellEditor";
+import { AgGridCommon } from "../interfaces/iCommon";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
@@ -78,7 +77,7 @@ export interface IAggFunc {
     (params: IAggFuncParams): any;
 }
 
-export interface IAggFuncParams {
+export interface IAggFuncParams extends AgGridCommon {
     /** Values to aggregate */
     values: any[];
     /** Column the aggregation function is working on */
@@ -89,28 +88,18 @@ export interface IAggFuncParams {
     rowNode: RowNode;
     /** data (if any) of the parent RowNode */
     data: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
-export interface HeaderClassParams {
+export interface HeaderClassParams extends AgGridCommon {
     colDef: AbstractColDef;
     column?: Column | null;
     columnGroup?: ColumnGroup | null;
-    api: GridApi;
-    /** The context as provided on `gridOptions.context` */
-    context?: any;
 }
 export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[] | undefined);
-export interface ToolPanelClassParams {
+export interface ToolPanelClassParams extends AgGridCommon {
     colDef: AbstractColDef;
     column?: Column | null;
     columnGroup?: ProvidedColumnGroup | null;
-    api: GridApi;
-    /** The context as provided on `gridOptions.context` */
-    context?: any;
 }
 export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined);
 
@@ -466,7 +455,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pivotTotalColumnIds?: string[];
 }
 
-export interface ColumnFunctionCallbackParams {
+export interface ColumnFunctionCallbackParams extends AgGridCommon {
     /** Row node for the given row */
     node: RowNode;
     /** Data associated with the node */
@@ -475,10 +464,6 @@ export interface ColumnFunctionCallbackParams {
     column: Column;
     /** ColDef provided for this column */
     colDef: ColDef;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams { }
@@ -491,7 +476,7 @@ export interface RowDragCallback {
 }
 export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams { }
 
-export interface DndSourceOnRowDragParams {
+export interface DndSourceOnRowDragParams extends AgGridCommon {
     /** Row node for the given row */
     rowNode: RowNode;
     /** The DOM event that represents a drag and drop interaction */
@@ -512,11 +497,9 @@ export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackP
 export interface SuppressNavigableCallback {
     (params: SuppressNavigableCallbackParams): boolean;
 }
-export interface HeaderCheckboxSelectionCallbackParams {
+export interface HeaderCheckboxSelectionCallbackParams extends AgGridCommon {
     column: Column;
     colDef: ColDef;
-    api: GridApi;
-    columnApi: ColumnApi;
 }
 export interface HeaderCheckboxSelectionCallback {
     (params: HeaderCheckboxSelectionCallbackParams): boolean;
@@ -536,14 +519,12 @@ export interface IsColumnFunc {
  */
 export interface IsColumnFuncParams extends ColumnFunctionCallbackParams { }
 
-export interface GetQuickFilterTextParams {
+export interface GetQuickFilterTextParams extends AgGridCommon {
     value: any;
     node: RowNode;
     data: any;
     column: Column;
     colDef: ColDef;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface ColumnsMenuParams {
@@ -560,7 +541,7 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
 }
 
-export interface BaseColDefParams {
+export interface BaseColDefParams extends AgGridCommon {
     /** Row node for the given row */
     node: RowNode | null;
     /** Data associated with the node */
@@ -569,10 +550,6 @@ export interface BaseColDefParams {
     column: Column;
     /** ColDef provided for this column */
     colDef: ColDef;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface BaseWithValueColDefParams extends BaseColDefParams {
@@ -587,7 +564,7 @@ export interface ValueGetterParams extends BaseColDefParams {
 export interface ValueGetterFunc {
     (params: ValueGetterParams): any;
 }
-export interface HeaderValueGetterParams {
+export interface HeaderValueGetterParams extends AgGridCommon {
     colDef: AbstractColDef;
     /** Column for this callback if applicable*/
     column?: Column | null;
@@ -597,9 +574,6 @@ export interface HeaderValueGetterParams {
     providedColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
     location: string | null;
-    api: GridApi;
-    /** The context as provided on `gridOptions.context` */
-    context?: any;
 }
 export interface HeaderValueGetterFunc {
     (params: HeaderValueGetterParams): any;
@@ -645,17 +619,13 @@ export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParam
     editing: boolean;
 }
 
-export interface SuppressHeaderKeyboardEventParams {
+export interface SuppressHeaderKeyboardEventParams extends AgGridCommon {
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
     /** The index of the header row of the current focused header */
     headerRowIndex: number;
     /** The keyboard event the grid received */
     event: KeyboardEvent;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
 }
 
 export interface CellClassParams extends RowClassParams {

@@ -52,8 +52,9 @@ export class CssClassApplier {
             colDef: abstractColDef,
             column: column,
             columnGroup: columnGroup,
-            context: gridOptionsWrapper.getContext(),
-            api: gridOptionsWrapper.getApi()!
+            api: gridOptionsWrapper.getApi()!,
+            columnApi: gridOptionsWrapper.getColumnApi()!,
+            context: gridOptionsWrapper.getContext()
         } as T;
     }
 
@@ -76,7 +77,7 @@ export class CssClassApplier {
         }
 
         if (typeof classToUse === 'string') { return [classToUse]; }
-        if (Array.isArray(classToUse)) { return classToUse; }
+        if (Array.isArray(classToUse)) { return [...classToUse]; }
 
         return [];
     }

@@ -1,105 +1,97 @@
-import { RowRenderer } from "./rendering/rowRenderer";
-import { FilterManager } from "./filter/filterManager";
-import { ColumnModel } from "./columns/columnModel";
+import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
-import { SelectionService } from "./selectionService";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { ValueService } from "./valueService/valueService";
-import { EventService } from "./eventService";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
-import { RowNode } from "./entities/rowNode";
+import { ColumnModel } from "./columns/columnModel";
+import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 import { Constants } from "./constants/constants";
-import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
-import { IRowModel } from "./interfaces/iRowModel";
-import { SortController } from "./sortController";
-import { FocusService } from "./focusService";
-import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
+import { CtrlsService } from "./ctrlsService";
+import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPosition";
-import { IClipboardService, IClipboardCopyRowsParams, IClipboardCopyParams } from "./interfaces/iClipboardService";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IMenuFactory } from "./interfaces/iMenuFactory";
-import { IAggFuncService } from "./interfaces/iAggFuncService";
-import { IFilter, IFilterComp } from "./interfaces/iFilter";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import { Column } from "./entities/column";
+import {
+    ChartRef,
+    GetChartToolbarItems,
+    GetContextMenuItems,
+    GetMainMenuItems,
+    GetRowIdFunc,
+    GetRowNodeIdFunc,
+    GetServerSideGroupKey,
+    IsApplyServerSideTransaction,
+    IsRowMaster,
+    IsRowSelectable,
+    IsServerSideGroup,
+    RowClassParams,
+    ServerSideStoreParams,
+} from "./entities/gridOptions";
+import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams, PostSortRowsParams } from "./entities/iCallbackParams";
+import { RowNode } from "./entities/rowNode";
+import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
+import { AgEvent, ColumnEventType } from "./events";
+import { EventService } from "./eventService";
+import { FilterManager } from "./filter/filterManager";
+import { FocusService } from "./focusService";
+import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+import { NavigationService } from "./gridBodyComp/navigationService";
+import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { IAggFuncService } from "./interfaces/iAggFuncService";
+import { ICellEditor } from "./interfaces/iCellEditor";
+import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
+import { ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
+import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
+import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
+import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
+import { ICsvCreator } from "./interfaces/iCsvCreator";
+import { IDatasource } from "./interfaces/iDatasource";
 import {
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
     IExcelCreator
 } from "./interfaces/iExcelCreator";
-import { IDatasource } from "./interfaces/iDatasource";
+import { IFilter, IFilterComp } from "./interfaces/iFilter";
+import { IImmutableService } from "./interfaces/iImmutableService";
+import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
+import { IMenuFactory } from "./interfaces/iMenuFactory";
+import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
+import { IRowModel } from "./interfaces/iRowModel";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { PaginationProxy } from "./pagination/paginationProxy";
-import { ValueCache } from "./valueService/valueCache";
-import { AlignedGridsService } from "./alignedGridsService";
-import { AgEvent, ColumnEventType } from "./events";
-import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditor } from "./interfaces/iCellEditor";
-import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { AnimationFrameService } from "./misc/animationFrameService";
 import {
     IServerSideRowModel,
     IServerSideTransactionManager,
     RefreshStoreParams
 } from "./interfaces/iServerSideRowModel";
-import { IStatusBarService } from "./interfaces/iStatusBarService";
-import { IStatusPanel } from "./interfaces/iStatusPanel";
-import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
-import { ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
-import { ModuleNames } from "./modules/moduleNames";
-import {
-    ChartRef,
-    GetChartToolbarItems,
-    GetContextMenuItems,
-    GetMainMenuItems,
-    GetRowNodeIdFunc,
-    GetServerSideGroupKey,
-    GetServerSideStoreParamsParams,
-    IsApplyServerSideTransaction,
-    IsRowMaster,
-    IsRowSelectable,
-    IsServerSideGroup,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    ProcessRowParams,
-    ServerSideStoreParams,
-    TabToNextCellParams,
-    TabToNextHeaderParams,
-    RowClassParams,
-    RowHeightParams
-} from "./entities/gridOptions";
-import { ChartType, CrossFilterChartType, SeriesChartType } from "./interfaces/iChartOptions";
-import { IToolPanel } from "./interfaces/iToolPanel";
-import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
-import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
-import { RowDataTransaction } from "./interfaces/rowDataTransaction";
-import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-import { IImmutableService } from "./interfaces/iImmutableService";
-import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
-import { ICsvCreator } from "./interfaces/iCsvCreator";
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-import { iterateObject, removeAllReferences } from "./utils/object";
-import { exists, missing } from "./utils/generic";
-import { camelCaseToHumanText } from "./utils/string";
-import { doOnce } from "./utils/function";
-import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
-import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 import { ISideBar } from "./interfaces/iSideBar";
-import { CtrlsService } from "./ctrlsService";
-import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+import { IStatusBarService } from "./interfaces/iStatusBarService";
+import { IStatusPanel } from "./interfaces/iStatusPanel";
+import { IToolPanel } from "./interfaces/iToolPanel";
+import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+import { RowDataTransaction } from "./interfaces/rowDataTransaction";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { AnimationFrameService } from "./misc/animationFrameService";
+import { ModuleNames } from "./modules/moduleNames";
+import { ModuleRegistry } from "./modules/moduleRegistry";
+import { PaginationProxy } from "./pagination/paginationProxy";
+import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { HeaderPosition } from "./headerRendering/common/headerPosition";
-import { NavigationService } from "./gridBodyComp/navigationService";
-import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
+import { SelectionService } from "./selectionService";
+import { SortController } from "./sortController";
+import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { doOnce } from "./utils/function";
+import { exists, missing } from "./utils/generic";
+import { iterateObject, removeAllReferences } from "./utils/object";
+import { camelCaseToHumanText } from "./utils/string";
+import { ValueCache } from "./valueService/valueCache";
+import { ValueService } from "./valueService/valueService";
 
 export interface StartEditingCellParams {
     /** The row index of the row to start editing */
@@ -697,7 +689,7 @@ export class GridApi {
 
     /**
      * Returns the row node with the given ID.
-     * The row node ID is the one you provide from the callback `getRowNodeId(data)`,
+     * The row node ID is the one you provide from the callback `getRowId(params)`,
      * otherwise the ID is a number (cast as string) auto-generated by the grid when
      * the row data is set.
      */
@@ -1170,6 +1162,9 @@ export class GridApi {
     public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_ROW_AGG_NODES, groupRowAggNodesFunc);
     }
+    public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_GROUP_ROW_AGG, getGroupRowAggFunc);
+    }
 
     public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: RowNode) => string): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_BUSINESS_KEY_FOR_NODE, getBusinessKeyForNodeFunc);
@@ -1186,6 +1181,9 @@ export class GridApi {
     public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_NODE_ID, getRowNodeIdFunc);
     }
+    public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_ID, getRowIdFunc);
+    }
 
     public setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_CLASS, rowClassFunc);
@@ -1193,6 +1191,9 @@ export class GridApi {
 
     public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_CELL, isFullWidthCellFunc);
+    }
+    public setIsFullWidthRow(isFullWidthRowFunc: (rowNode: RowNode) => boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_ROW, isFullWidthRowFunc);
     }
 
     public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
@@ -1205,6 +1206,9 @@ export class GridApi {
 
     public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT, postSortFunc);
+    }
+    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT_ROWS, postSortRowsFunc);
     }
 
     public setGetDocument(getDocumentFunc: () => Document): void {
@@ -1238,6 +1242,12 @@ export class GridApi {
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_SECONDARY_COL_GROUP_DEF, processSecondaryColGroupDefFunc);
     }
+    public setPostProcessSecondaryColDef(postProcessSecondaryColDefFunc: (params: PostProcessSecondaryColDefParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_TO_SECONDARY_COLDEF, postProcessSecondaryColDefFunc);
+    }
+    public setPostProcessSecondaryColGroupDef(postProcessSecondaryColGroupDefFunc: (params: PostProcessSecondaryColGroupDefParams) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_SECONDARY_COL_GROUP_DEF, postProcessSecondaryColGroupDefFunc);
+    }
 
     public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_POPUP, postProcessPopupFunc);
@@ -1245,6 +1255,9 @@ export class GridApi {
 
     public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_ORDER_COMPARATOR, defaultGroupOrderComparatorFunc);
+    }
+    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_INITIAL_GROUP_ORDER_COMPARATOR, initialGroupOrderComparatorFunc);
     }
 
     public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {

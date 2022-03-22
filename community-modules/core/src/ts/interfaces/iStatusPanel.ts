@@ -1,6 +1,5 @@
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
 import { IComponent } from "./iComponent";
+import { AgGridCommon } from "./iCommon";
 
 export interface StatusPanelDef {
     statusPanel?: any;
@@ -11,14 +10,8 @@ export interface StatusPanelDef {
     statusPanelParams?: any;
 }
 
-export interface IStatusPanelParams {
-    api: GridApi;
-    columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
-    context: any;
-}
+export interface IStatusPanelParams extends AgGridCommon { }
 
-export interface IStatusPanel {
-}
+export interface IStatusPanel { }
 
 export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> { }

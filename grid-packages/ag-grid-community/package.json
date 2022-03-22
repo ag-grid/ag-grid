@@ -4,7 +4,9 @@
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/ag-grid-community.cjs.js",
   "scripts": {
-    "build": "npx gulp build && npx gulp && npm run rollup && npm run hash",
+    "clean": "rimraf dist main.d.ts src/styles .hash",
+    "build": "npx gulp build && npm run rollup && npm run hash",
+    "package": "npx gulp package",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
@@ -70,6 +72,7 @@
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-replace": "2.2.0",
     "rollup-plugin-typescript2": "0.24.3",
-    "typescript": "3.7.7"
+    "typescript": "3.7.7",
+    "rimraf": "3.0.2"
   }
 }

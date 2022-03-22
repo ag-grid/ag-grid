@@ -245,10 +245,21 @@ export class DragService extends BeanStub {
     private onMouseMove(mouseEvent: MouseEvent, el: HTMLElement): void {
         // The event type can be `mousedown` when `dragStartPixels=0`
         // we should only preventDefault on `mousemove`.
-        if (mouseEvent.type === 'mousemove' && mouseEvent.cancelable) {
+        if (
+            mouseEvent.type === 'mousemove' &&
+            mouseEvent.cancelable &&
+            !this.isOverFormFieldElement(mouseEvent)
+         ) {
             mouseEvent.preventDefault();
         }
         this.onCommonMove(mouseEvent, this.mouseStartEvent!, el);
+    }
+
+    private isOverFormFieldElement(mouseEvent: MouseEvent): boolean {
+        const el = mouseEvent.target as HTMLElement | null;
+        const tagName = el?.tagName.toLocaleLowerCase();
+
+        return !!tagName?.match('^a$|textarea|input|select|button');
     }
 
     public onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void {

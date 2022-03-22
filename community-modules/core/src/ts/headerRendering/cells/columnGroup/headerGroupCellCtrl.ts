@@ -183,7 +183,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private addClasses(): void {
-
         const colGroupDef = this.columnGroup.getColGroupDef();
         const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsWrapper, null, this.columnGroup);
 

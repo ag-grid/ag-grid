@@ -67,9 +67,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsWrapper.getDefaultGroupOrderComparator() != null) {
-            const message = `AG Grid: defaultGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
-            _.doOnce(() => console.warn(message), 'IRM.DefaultGroupOrderComparator');
+        if (this.gridOptionsWrapper.getInitialGroupOrderComparator() != null) {
+            const message = `AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
+            _.doOnce(() => console.warn(message), 'IRM.InitialGroupOrderComparator');
         }
     }
 
@@ -158,7 +158,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
-        const userGeneratingIds = getRowIdFunc!=null;
+        const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
             this.selectionService.reset();

@@ -1012,7 +1012,10 @@
   },
   "isExternalFilterPresent": {
     "description": "/** Grid calls this method to know if an external filter is present. */",
-    "type": { "arguments": {}, "returnType": "boolean" }
+    "type": {
+      "arguments": { "params": "IsExternalFilterPresentParams" },
+      "returnType": "boolean"
+    }
   },
   "doesExternalFilterPass": {
     "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
@@ -1024,7 +1027,10 @@
   },
   "createChartContainer": {
     "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
-    "type": { "arguments": { "params": "ChartRef" }, "returnType": "void" }
+    "type": {
+      "arguments": { "params": "ChartRefParams" },
+      "returnType": "void"
+    }
   },
   "navigateToNextHeader": {
     "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
@@ -1062,13 +1068,20 @@
     }
   },
   "localeTextFunc": {
-    "description": "/** A callback for localising text within the grid. */",
+    "description": "/** @deprecated - Use `getLocaleText` instead.\n */",
     "type": {
       "arguments": {
         "key": "string",
         "defaultValue": "string",
         "variableValues?": "string[]"
       },
+      "returnType": "string"
+    }
+  },
+  "getLocaleText": {
+    "description": "/** A callback for localising text within the grid. */",
+    "type": {
+      "arguments": { "params": "GetLocaleTextParams" },
       "returnType": "string"
     }
   },
@@ -1084,8 +1097,15 @@
     }
   },
   "groupRowAggNodes": {
-    "description": "/** Callback for grouping. */",
+    "description": "/** @deprecated - Use `getGroupRowAgg` instead.\n */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
+  },
+  "getGroupRowAgg": {
+    "description": "/** Callback for grouping. */",
+    "type": {
+      "arguments": { "params": "GetGroupRowAggParams" },
+      "returnType": "any"
+    }
   },
   "isGroupOpenByDefault": {
     "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
@@ -1094,21 +1114,42 @@
       "returnType": "boolean"
     }
   },
-  "defaultGroupOrderComparator": {
+  "initialGroupOrderComparator": {
     "description": "/** Allows default sorting of groups. */",
+    "type": {
+      "arguments": { "params": "InitialGroupOrderComparatorParams" },
+      "returnType": "number"
+    }
+  },
+  "defaultGroupOrderComparator": {
+    "description": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
       "returnType": "number"
     }
   },
   "processSecondaryColDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
     "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+    "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef" },
+      "returnType": "void"
+    }
+  },
+  "postProcessSecondaryColDef": {
+    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "type": {
+      "arguments": { "params": "PostProcessSecondaryColDefParams" },
+      "returnType": "void"
+    }
+  },
+  "postProcessSecondaryColGroupDef": {
+    "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+    "type": {
+      "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
       "returnType": "void"
     }
   },
@@ -1117,7 +1158,7 @@
     "type": { "returnType": "GetDataPath" }
   },
   "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+    "description": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
       "returnType": "number"
@@ -1158,11 +1199,11 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true \nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
-    "description": "/** Allows you to set the ID for a particular row based on the data. */",
+    "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
     "type": { "returnType": "GetRowIdFunc" }
   },
   "processRowPostCreate": {
@@ -1188,8 +1229,15 @@
     }
   },
   "postSort": {
-    "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+    "description": "/** @deprecated Use `postSortRows` instead\n */",
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "void" }
+  },
+  "postSortRows": {
+    "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
+    "type": {
+      "arguments": { "params": "PostSortRowsParams" },
+      "returnType": "void"
+    }
   },
   "getRowStyle": {
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
@@ -1213,8 +1261,15 @@
     }
   },
   "isFullWidthCell": {
-    "description": "/** Tells the grid if this row should be rendered as full width. */",
+    "description": "/** @deprecated Use `isFullWidthRow` instead.\n */",
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+  },
+  "isFullWidthRow": {
+    "description": "/** Tells the grid if this row should be rendered as full width. */",
+    "type": {
+      "arguments": { "params": "IsFullWidthRowParams" },
+      "returnType": "boolean"
+    }
   },
   "onToolPanelVisibleChanged": {
     "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",

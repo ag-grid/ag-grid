@@ -11,6 +11,8 @@ import {
     combineAssertions,
     hoverAction,
     IMAGE_SNAPSHOT_DEFAULTS,
+    setupMockCanvas,
+    CANVAS_TO_BUFFER_DEFAULTS,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -57,13 +59,29 @@ type TestCase = {
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
 };
 const EXAMPLES: Record<string, TestCase> = {
-    AREA_MISSING_DATA_EXAMPLE: {
-        options: examples.AREA_MISSING_DATA_EXAMPLE,
+    AREA_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.AREA_MISSING_Y_DATA_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
     },
-    STACKED_AREA_MISSING_DATA_EXAMPLE: {
-        options: examples.STACKED_AREA_MISSING_DATA_EXAMPLE,
+    STACKED_AREA_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_MISSING_Y_DATA_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['area'] }),
+    },
+    AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
+    },
+    AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
+    },
+    STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['area'] }),
+    },
+    STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.STACKED_AREA_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['area'] }),
     },
     LINE_TIME_X_AXIS_NUMBER_Y_AXIS: {
         options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS,
@@ -72,6 +90,18 @@ const EXAMPLES: Record<string, TestCase> = {
     LINE_NUMBER_X_AXIS_TIME_Y_AXIS: {
         options: examples.LINE_NUMBER_X_AXIS_TIME_Y_AXIS,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'time'], seriesTypes: repeat('line', 2) }),
+    },
+    LINE_MISSING_Y_DATA_EXAMPLE: {
+        options: examples.LINE_MISSING_Y_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: {
+        options: examples.LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
     },
     LINE_NUMBER_AXES_0_X_DOMAIN: {
         options: examples.LINE_NUMBER_AXES_0_X_DOMAIN,
@@ -106,7 +136,9 @@ const EXAMPLES: Record<string, TestCase> = {
     },
 };
 
-describe.skip('AgChartV2', () => {
+describe('AgChartV2', () => {
+    let ctx = setupMockCanvas();
+
     describe('#create', () => {
         beforeEach(() => {
             console.warn = jest.fn();
@@ -127,10 +159,7 @@ describe.skip('AgChartV2', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const canvas = chart.scene.canvas;
-                    const imageDataUrl = canvas.getDataURL('image/png');
-                    const imageData = Buffer.from(imageDataUrl.split(',')[1], 'base64');
-
+                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 

@@ -2,7 +2,7 @@
  * These templates are used to generate the code to render the charts in the Standalone Charts API Explorer.
  */
 
-import { deepClone, formatJson } from "./utils.jsx"
+import { deepClone, formatJson } from "./utils";
 
 export const data = [
   {

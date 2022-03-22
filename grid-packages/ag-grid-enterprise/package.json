@@ -5,9 +5,10 @@
   "main": "./dist/ag-grid-enterprise.cjs.js",
   "types": "main.d.ts",
   "scripts": {
+    "clean": "rimraf dist main.d.ts .hash",
     "build": "npx gulp && npm run rollup && npm run hash",
     "package": "npx gulp copy-umd-files",
-    "rollup": "node build.js",
+    "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -85,6 +86,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.24.3",
-    "typescript": "~3.7.7"
+    "typescript": "~3.7.7",
+    "rimraf": "3.0.2"
   }
 }

@@ -1,5 +1,4 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
@@ -15,6 +14,8 @@ import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
+import { PostProcessPopupParams } from "../entities/iCallbackParams";
+import { WithoutGridCommon } from "../main";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -67,7 +68,7 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
- 
+
     // an aria label should be added to provided context to screen readers
     ariaLabel: string;
 }
@@ -258,7 +259,7 @@ export class PopupService extends BeanStub {
     ): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
-            const params: PostProcessPopupParams = {
+            const params: WithoutGridCommon<PostProcessPopupParams> = {
                 column: column,
                 rowNode: rowNode,
                 ePopup: ePopup,
@@ -434,11 +435,11 @@ export class PopupService extends BeanStub {
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
-        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => {}));
+        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => { }));
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return { hideFunc: () => {}, stopAnchoringPromise: destroyPositionTracker };
+            return { hideFunc: () => { }, stopAnchoringPromise: destroyPositionTracker };
         }
 
         const pos = this.popupList.findIndex(popup => popup.element === eChild);

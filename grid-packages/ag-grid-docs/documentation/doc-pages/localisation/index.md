@@ -2,7 +2,7 @@
 title: "Localisation"
 ---
 
-All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language. Either provide an object  of key/value pairs via the `localeText` property, or provide a `localeTextFunc` callback to hook the grid up to your application's localisation.
+All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language. Either provide an object  of key/value pairs via the `localeText` property, or provide a `getLocaleText` callback to hook the grid up to your application's localisation.
 
 <api-documentation source='grid-properties/properties.json' section='localisation' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
@@ -40,7 +40,7 @@ The grid uses the locale as it is needed. It does not refresh as the locale chan
 
 ## Locale Callback
 
-Providing a locale for the grid does not fit in with localisation libraries or localisation for a broader application. If you want the grid to take from an application wide locale, then implement the `localeTextFunc` to act as a bridge between the grid and the applications localisation.
+Providing a locale for the grid does not fit in with localisation libraries or localisation for a broader application. If you want the grid to take from an application wide locale, then implement the `getLocaleText` to act as a bridge between the grid and the applications localisation.
 
 The example below shows providing a callback for the grid's localisation. The example for simplicity just returns the default value in upper case. In a real world application, the callback would use the applications localisation.
 
@@ -49,9 +49,9 @@ The example below shows providing a callback for the grid's localisation. The ex
 In a real world application, the callback would look something like this:
 
 ```js
-const localeTextFunc = (key, defaultValue) => {
+const getLocaleText = (params) => {
     // to avoid key clash with external keys, we add 'grid' to the start of each key.
-    const gridKey = 'grid.' + key;
+    const gridKey = 'grid.' + params.key;
 
     // look the value up using an application wide service
     return applicationLocaleService(gridKey);
