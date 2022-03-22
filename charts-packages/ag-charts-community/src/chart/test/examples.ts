@@ -330,6 +330,67 @@ export const LINE_NUMBER_X_AXIS_TIME_Y_AXIS: AgChartOptions = {
     },
 }
 
+export const LINE_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
+    axes: [
+        { type: 'category', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'ie',
+            yName: 'IE',
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+    title: {
+        text: 'Internet Explorer Market Share',
+    },
+    subtitle: {
+        text: '2009-2019 (aka "good times")',
+    },
+}
+
+export const LINE_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_MISSING_X,
+    axes: [
+        { type: 'number', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'x',
+            yKey: 'y1',
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+}
+
+export const LINE_TIME_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_TIME_MISSING_X,
+    axes: [
+        { type: 'time', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'x',
+            yKey: 'y1',
+            marker: {
+                size: 5,
+            }
+        },
+    ],
+}
+
 export const LINE_NUMBER_AXES_0_X_DOMAIN: AgChartOptions = {
     axes: [
         {
