@@ -88,14 +88,7 @@ export class ColumnFactory extends BeanStub {
     }
 
     public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: IProvidedColumn[]): IProvidedColumn[] {
-        const autoColBalancedTree: IProvidedColumn[] = [];
-
-        autoGroupCols.forEach(col => {
-            const fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
-            autoColBalancedTree.push(fakeTreeItem);
-        });
-
-        return autoColBalancedTree;
+        return autoGroupCols.map((col) => this.createAutoGroupTreeItem(gridBalancedTree, col));
     }
 
     private createAutoGroupTreeItem(balancedColumnTree: IProvidedColumn[], column: Column): IProvidedColumn {
@@ -222,24 +215,14 @@ export class ColumnFactory extends BeanStub {
         columnKeyCreator: ColumnKeyCreator,
         existingGroups: ProvidedColumnGroup[]
     ): IProvidedColumn[] {
-        const result: IProvidedColumn[] = [];
-
-        if (!defs) { return result; }
-
-        defs.forEach((def: ColDef | ColGroupDef) => {
-            let newGroupOrColumn: IProvidedColumn;
-
+        return (defs || []).map((def) => {
             if (this.isColumnGroup(def)) {
-                newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
+                return this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
                     columnKeyCreator, existingGroups);
             } else {
-                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
+                return this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
             }
-
-            result.push(newGroupOrColumn);
         });
-
-        return result;
     }
 
     private createColumnGroup(
@@ -252,21 +235,27 @@ export class ColumnFactory extends BeanStub {
     ): ProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
-        const originalGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
+        const providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
 
-        this.context.createBean(originalGroup);
+        this.context.createBean(providedGroup);
 
         const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef with common id
+        if (existingGroup) {
+            removeFromArray(existingGroups, existingGroup);
+        }
+
         if (existingGroup && existingGroup.isExpanded()) {
-            originalGroup.setExpanded(true);
+            providedGroup.setExpanded(true);
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
 
-        originalGroup.setChildren(children);
+        providedGroup.setChildren(children);
 
-        return originalGroup;
+        return providedGroup;
     }
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
@@ -290,6 +279,12 @@ export class ColumnFactory extends BeanStub {
 
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
+
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef with common id
+        if (existingColsCopy && column) {
+            removeFromArray(existingColsCopy, column);
+        }
 
         if (!column) {
             // no existing column, need to create one
@@ -353,8 +348,8 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    public findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | null {
-        const res: Column | undefined = (existingColsCopy || []).find(existingCol => {
+    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | undefined {
+        return (existingColsCopy || []).find(existingCol => {
 
             const existingColDef = existingCol.getUserProvidedColDef();
             if (!existingColDef) { return false; }
@@ -375,18 +370,10 @@ export class ColumnFactory extends BeanStub {
 
             return false;
         });
-
-        // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef with common id
-        if (existingColsCopy && res) {
-            removeFromArray(existingColsCopy, res);
-        }
-
-        return res || null;
     }
 
-    public findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | null {
-        const res: ProvidedColumnGroup | undefined = existingGroups.find(existingGroup => {
+    private findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | undefined {
+        return existingGroups.find(existingGroup => {
 
             const existingDef = existingGroup.getColGroupDef();
             if (!existingDef) { return false; }
@@ -399,17 +386,9 @@ export class ColumnFactory extends BeanStub {
 
             return false;
         });
-
-        // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef with common id
-        if (res) {
-            removeFromArray(existingGroups, res);
-        }
-
-        return res || null;
     }
 
-    public mergeColDefs(colDef: ColDef) {
+    public mergeColDefs(colDef: ColDef): ColDef {
         // start with empty merged definition
         const colDefMerged: ColDef = {} as ColDef;
 
