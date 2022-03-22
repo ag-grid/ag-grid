@@ -285,7 +285,7 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            console.warn(`AG Grid: duplicate node id '${node.id}' detected from getRowNodeId callback, this could cause issues in your grid.`);
+            console.warn(`AG Grid: duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`);
         }
         this.allNodesMap[node.id!] = node;
 

@@ -118,6 +118,7 @@ export class GridOptionsWrapper {
     public static PROP_GET_CHILD_COUNT = 'getChildCount';
     public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
     public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
+    public static PROP_GET_ROW_ID = 'getRowId';
     public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
     public static PROP_IS_FULL_WIDTH_ROW = 'isFullWidthRow';
     public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
