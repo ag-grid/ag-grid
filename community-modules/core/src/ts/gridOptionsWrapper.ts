@@ -1,59 +1,35 @@
-import { RowNode } from './entities/rowNode';
-import {
-    ChartRef,
-    FillOperationParams,
-    GetChartToolbarItems,
-    GetContextMenuItems,
-    GetMainMenuItems,
-    GetServerSideStoreParamsParams,
-    GridOptions,
-    IsApplyServerSideTransaction,
-    IsGroupOpenByDefaultParams,
-    IsRowMaster,
-    IsRowSelectable,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    ProcessDataFromClipboardParams,
-    ServerSideStoreParams,
-    TabToNextCellParams,
-    TabToNextHeaderParams,
-    RowGroupingDisplayType,
-    TreeDataDisplayType,
-    RowHeightParams,
-    GetRowIdFunc
-} from './entities/gridOptions';
-import { EventService } from './eventService';
-import { Constants } from './constants/constants';
-import { ComponentUtil } from './components/componentUtil';
-import { GridApi } from './gridApi';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColumnApi } from './columns/columnApi';
-import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { IDatasource } from './interfaces/iDatasource';
-import { CellPosition } from './entities/cellPosition';
-import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams } from './interfaces/exportParams';
-import { AgEvent } from './events';
-import { Environment, SASS_PROPERTIES } from './environment';
-import { PropertyKeys } from './propertyKeys';
 import { ColDefUtil } from './components/colDefUtil';
-import { Events } from './eventKeys';
+import { ComponentUtil } from './components/componentUtil';
+import { Constants } from './constants/constants';
+import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
+import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
+import { GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
+import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
-import { ModuleNames } from './modules/moduleNames';
+import { Environment, SASS_PROPERTIES } from './environment';
+import { Events } from './eventKeys';
+import { AgEvent } from './events';
+import { EventService } from './eventService';
+import { GridApi } from './gridApi';
+import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { iterateObject } from './utils/object';
-import { ModuleRegistry } from './modules/moduleRegistry';
-import { isNumeric } from './utils/number';
-import { exists, missing, values } from './utils/generic';
-import { fuzzyCheckStrings } from './utils/fuzzyMatch';
-import { doOnce } from './utils/function';
-import { getScrollbarWidth } from './utils/browser';
-import { HeaderPosition } from './headerRendering/common/headerPosition';
+import { AgGridCommon } from './interfaces/iCommon';
+import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
+import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
+import { IViewportDatasource } from './interfaces/iViewportDatasource';
+import { WithoutGridCommon } from './main';
+import { ModuleNames } from './modules/moduleNames';
+import { ModuleRegistry } from './modules/moduleRegistry';
+import { PropertyKeys } from './propertyKeys';
+import { getScrollbarWidth } from './utils/browser';
+import { doOnce } from './utils/function';
+import { fuzzyCheckStrings } from './utils/fuzzyMatch';
+import { exists, missing, values } from './utils/generic';
+import { isNumeric } from './utils/number';
+import { iterateObject } from './utils/object';
 import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
@@ -137,17 +113,21 @@ export class GridOptionsWrapper {
     public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
 
     public static PROP_GROUP_ROW_AGG_NODES = 'groupRowAggNodes';
+    public static PROP_GET_GROUP_ROW_AGG = 'getGroupRowAgg';
     public static PROP_GET_BUSINESS_KEY_FOR_NODE = 'getBusinessKeyForNode';
     public static PROP_GET_CHILD_COUNT = 'getChildCount';
     public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
     public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
     public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
+    public static PROP_IS_FULL_WIDTH_ROW = 'isFullWidthRow';
     public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
     public static PROP_IS_ROW_MASTER = 'isRowMaster';
     public static PROP_POST_SORT = 'postSort';
+    public static PROP_POST_SORT_ROWS = 'postSortRows';
     public static PROP_GET_DOCUMENT = 'getDocument';
     public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
     public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR = 'defaultGroupOrderComparator';
+    public static PROP_INITIAL_GROUP_ORDER_COMPARATOR = 'initialGroupOrderComparator';
     public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
 
     public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
@@ -159,6 +139,8 @@ export class GridOptionsWrapper {
 
     public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
     public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+    public static PROP_POST_PROCESS_TO_SECONDARY_COLDEF = 'postProcessSecondaryColDef';
+    public static PROP_POST_PROCESS_SECONDARY_COL_GROUP_DEF = 'postProcessSecondaryColGroupDef';
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
@@ -330,6 +312,23 @@ export class GridOptionsWrapper {
         if (Object.keys(invalidProperties).length > 0) {
             console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
+    }
+
+    /**
+    * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
+    * @param callback User provided callback
+    * @returns Wrapped callback where the params object not require api, columnApi and context
+    */
+    private mergeGridCommonParams<P extends AgGridCommon, T>(callback: ((params: P) => T) | undefined):
+        ((params: WithoutGridCommon<P>) => T) | undefined {
+        if (callback) {
+            const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
+                const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
+                return callback(mergedParams);
+            }
+            return wrapped;
+        }
+        return callback;
     }
 
     public getDomDataKey(): string {
@@ -724,11 +723,11 @@ export class GridOptionsWrapper {
     }
 
     public getRowStyleFunc() {
-        return this.gridOptions.getRowStyle;
+        return this.mergeGridCommonParams(this.gridOptions.getRowStyle);
     }
 
     public getRowClassFunc() {
-        return this.gridOptions.getRowClass;
+        return this.mergeGridCommonParams(this.gridOptions.getRowClass);
     }
 
     public rowClassRules() {
@@ -739,12 +738,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideStoreType;
     }
 
-    public getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined {
-        return this.gridOptions.getServerSideStoreParams;
+    public getServerSideStoreParamsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getServerSideStoreParams);
     }
 
-    public getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined {
-        return this.gridOptions.createChartContainer;
+    public getCreateChartContainerFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.createChartContainer);
     }
 
     public getPopupParent() {
@@ -755,28 +754,42 @@ export class GridOptionsWrapper {
         return this.gridOptions.blockLoadDebounceMillis;
     }
 
-    public getPostProcessPopupFunc(): ((params: PostProcessPopupParams) => void) | undefined {
-        return this.gridOptions.postProcessPopup;
+    public getPostProcessPopupFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.postProcessPopup);
     }
 
-    public getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined {
-        return this.gridOptions.paginationNumberFormatter;
+    public getPaginationNumberFormatterFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.paginationNumberFormatter);
     }
 
     public getChildCountFunc() {
         return this.gridOptions.getChildCount;
     }
 
-    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction | undefined {
-        return this.gridOptions.isApplyServerSideTransaction;
+    public getIsApplyServerSideTransactionFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.isApplyServerSideTransaction);
     }
 
-    public getDefaultGroupOrderComparator() {
-        return this.gridOptions.defaultGroupOrderComparator;
+    public getInitialGroupOrderComparator() {
+        const { initialGroupOrderComparator, defaultGroupOrderComparator } = this.gridOptions;
+        if (initialGroupOrderComparator) {
+            return this.mergeGridCommonParams(initialGroupOrderComparator);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (defaultGroupOrderComparator) {
+            return (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => defaultGroupOrderComparator(params.nodeA, params.nodeB);
+        }
     }
 
-    public getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined {
-        return this.gridOptions.isFullWidthCell;
+    public getIsFullWidthCellFunc() {
+        const { isFullWidthRow, isFullWidthCell } = this.gridOptions;
+        if (isFullWidthRow) {
+            return this.mergeGridCommonParams(isFullWidthRow);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (isFullWidthCell) {
+            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
+        }
     }
 
     public getFullWidthCellRendererParams() {
@@ -1009,8 +1022,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns);
     }
 
-    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined {
-        return this.gridOptions.processDataFromClipboard;
+    public getProcessDataFromClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processDataFromClipboard);
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
@@ -1081,8 +1094,8 @@ export class GridOptionsWrapper {
         return direction;
     }
 
-    public getFillOperation(): ((params: FillOperationParams) => any) | undefined {
-        return this.gridOptions.fillOperation;
+    public getFillOperation() {
+        return this.mergeGridCommonParams(this.gridOptions.fillOperation);
     }
 
     public isSuppressMultiRangeSelection(): boolean {
@@ -1136,11 +1149,11 @@ export class GridOptionsWrapper {
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
-    public getIsRowMasterFunc(): IsRowMaster | undefined {
+    public getIsRowMasterFunc() {
         return this.gridOptions.isRowMaster;
     }
 
-    public getIsRowSelectableFunc(): IsRowSelectable | undefined {
+    public getIsRowSelectableFunc() {
         return this.gridOptions.isRowSelectable;
     }
 
@@ -1232,55 +1245,63 @@ export class GridOptionsWrapper {
         return this.gridOptions.isServerSideGroup;
     }
 
-    public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
-        return this.gridOptions.isServerSideGroupOpenByDefault;
+    public getIsServerSideGroupOpenByDefaultFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.isServerSideGroupOpenByDefault);
     }
 
-    public getIsGroupOpenByDefaultFunc(): ((params: IsGroupOpenByDefaultParams) => boolean) | undefined {
-        return this.gridOptions.isGroupOpenByDefault;
+    public getIsGroupOpenByDefaultFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.isGroupOpenByDefault);
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
         return this.gridOptions.getServerSideGroupKey;
     }
 
-    public getGroupRowAggNodesFunc() {
-        return this.gridOptions.groupRowAggNodes;
+    public getGroupRowAggFunc() {
+
+        const { getGroupRowAgg, groupRowAggNodes } = this.gridOptions;
+        if (getGroupRowAgg) {
+            return this.mergeGridCommonParams(getGroupRowAgg);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (groupRowAggNodes) {
+            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes)
+        }
     }
 
-    public getContextMenuItemsFunc(): GetContextMenuItems | undefined {
-        return this.gridOptions.getContextMenuItems;
+    public getContextMenuItemsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getContextMenuItems);
     }
 
-    public getMainMenuItemsFunc(): GetMainMenuItems | undefined {
-        return this.gridOptions.getMainMenuItems;
+    public getMainMenuItemsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getMainMenuItems);
     }
 
-    public getRowIdFunc(): GetRowIdFunc | undefined {
+    public getRowIdFunc() {
         const { getRowId, getRowNodeId } = this.gridOptions;
         if (getRowId) {
-            return getRowId;
+            return this.mergeGridCommonParams(getRowId);
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
-            return params => getRowNodeId(params.data)
+            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data)
         }
     }
 
-    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {
-        return this.gridOptions.navigateToNextHeader;
+    public getNavigateToNextHeaderFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.navigateToNextHeader);
     }
 
-    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined {
-        return this.gridOptions.tabToNextHeader;
+    public getTabToNextHeaderFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextHeader);
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined {
-        return this.gridOptions.navigateToNextCell;
+    public getNavigateToNextCellFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.navigateToNextCell);
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => (CellPosition | null)) | undefined {
-        return this.gridOptions.tabToNextCell;
+    public getTabToNextCellFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell)
     }
 
     public getGridTabIndex(): string {
@@ -1313,36 +1334,49 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
 
-    public getProcessSecondaryColDefFunc(): ((colDef: ColDef) => void) | undefined {
-        return this.gridOptions.processSecondaryColDef;
+    public getPostProcessSecondaryColDefFunc() {
+        const { postProcessSecondaryColDef, processSecondaryColDef } = this.gridOptions;
+        if (postProcessSecondaryColDef) {
+            return this.mergeGridCommonParams(postProcessSecondaryColDef);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (processSecondaryColDef) {
+            return (params: WithoutGridCommon<PostProcessSecondaryColDefParams>) => processSecondaryColDef(params.colDef);
+        }
     }
-
-    public getProcessSecondaryColGroupDefFunc(): ((colGroupDef: ColGroupDef) => void) | undefined {
-        return this.gridOptions.processSecondaryColGroupDef;
+    public getPostProcessSecondaryColGroupDefFunc() {
+        const { postProcessSecondaryColGroupDef, processSecondaryColGroupDef } = this.gridOptions;
+        if (postProcessSecondaryColGroupDef) {
+            return this.mergeGridCommonParams(postProcessSecondaryColGroupDef);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (processSecondaryColGroupDef) {
+            return (params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams>) => processSecondaryColGroupDef(params.colGroupDef);
+        }
     }
 
     public getSendToClipboardFunc() {
-        return this.gridOptions.sendToClipboard;
+        return this.mergeGridCommonParams(this.gridOptions.sendToClipboard);
     }
 
-    public getProcessRowPostCreateFunc(): any {
-        return this.gridOptions.processRowPostCreate;
+    public getProcessRowPostCreateFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processRowPostCreate);
     }
 
-    public getProcessCellForClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined {
-        return this.gridOptions.processCellForClipboard;
+    public getProcessCellForClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processCellForClipboard);
     }
 
-    public getProcessHeaderForClipboardFunc(): ((params: ProcessHeaderForExportParams) => any) | undefined {
-        return this.gridOptions.processHeaderForClipboard;
+    public getProcessHeaderForClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processHeaderForClipboard);
     }
 
-    public getProcessGroupHeaderForClipboardFunc(): ((params: ProcessGroupHeaderForExportParams) => any) | undefined {
-        return this.gridOptions.processGroupHeaderForClipboard;
+    public getProcessGroupHeaderForClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processGroupHeaderForClipboard);
     }
 
-    public getProcessCellFromClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined {
-        return this.gridOptions.processCellFromClipboard;
+    public getProcessCellFromClipboardFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.processCellFromClipboard);
     }
 
     public getViewportRowModelPageSize(): number | undefined {
@@ -1361,12 +1395,19 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     }
 
-    public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {
-        return this.gridOptions.postSort;
+    public getPostSortFunc() {
+        const { postSortRows, postSort } = this.gridOptions;
+        if (postSortRows) {
+            return this.mergeGridCommonParams(postSortRows);
+        }
+        // this is the deprecated way, so provide a proxy to make it compatible
+        if (postSort) {
+            return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
+        }
     }
 
-    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
-        return this.gridOptions.getChartToolbarItems;
+    public getChartToolbarItemsFunc() {
+        return this.mergeGridCommonParams(this.gridOptions.getChartToolbarItems);
     }
 
     public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
@@ -1461,7 +1502,7 @@ export class GridOptionsWrapper {
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
-            return this.gridOptions.isExternalFilterPresent();
+            return this.gridOptions.isExternalFilterPresent({ api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() });
         }
 
         return false;
@@ -1610,7 +1651,7 @@ export class GridOptionsWrapper {
 
         const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
             if (options[oldProp] != null) {
-                console.warn(`ag-grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
+                console.warn(`AG Grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
                 if (options[newProp] == null) {
                     options[newProp] = options[oldProp];
                 }
@@ -1708,9 +1749,31 @@ export class GridOptionsWrapper {
             options.groupDisplayType = 'custom';
         }
 
+        if (options.defaultGroupOrderComparator) {
+            console.warn("AG Grid: since v27.2, the grid property `defaultGroupOrderComparator` is deprecated and has been replaced by `initialGroupOrderComparator` and now receives a single params object.");
+        }
         if (options.defaultGroupSortComparator) {
-            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `defaultGroupOrderComparator`");
+            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `initialGroupOrderComparator`");
             options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
+        }
+
+        if (options.groupRowAggNodes) {
+            console.warn("AG Grid: since v27.2, the grid property `groupRowAggNodes` is deprecated and has been replaced by `getGroupRowAgg` and now receives a single params object.");
+        }
+        if (options.postSort) {
+            console.warn("AG Grid: since v27.2, the grid property `postSort` is deprecated and has been replaced by `postSortRows` and now receives a single params object.");
+        }
+        if (options.isFullWidthCell) {
+            console.warn("AG Grid: since v27.2, the grid property `isFullWidthCell` is deprecated and has been replaced by `isFullWidthRow` and now receives a single params object.");
+        }
+        if (options.localeTextFunc) {
+            console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText` and now receives a single params object.");
+        }
+        if (options.processSecondaryColDef) {
+            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColDef` is deprecated and has been replaced by `postProcessSecondaryColDef` and now receives a single params object.");
+        }
+        if (options.processSecondaryColGroupDef) {
+            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColGroupDef` is deprecated and has been replaced by `postProcessSecondaryColGroupDef` and now receives a single params object.");
         }
 
         if (options.colWidth) {
@@ -1779,11 +1842,25 @@ export class GridOptionsWrapper {
     }
 
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
-        if (this.gridOptions.localeTextFunc) {
-            return this.gridOptions.localeTextFunc;
+        const { localeText, getLocaleText, localeTextFunc } = this.gridOptions;
+        if (getLocaleText) {
+            //key: string, defaultValue: string, variableValues?: string[]
+            return (key: string, defaultValue: string, variableValues?: string[]) => {
+                const params: GetLocaleTextParams = {
+                    key,
+                    defaultValue,
+                    variableValues,
+                    api: this.getApi()!,
+                    columnApi: this.getColumnApi()!,
+                    context: this.getContext()
+                }
+                return getLocaleText(params);
+            }
         }
 
-        const { localeText } = this.gridOptions;
+        if (localeTextFunc) {
+            return localeTextFunc;
+        }
 
         return (key: string, defaultValue: string) => {
             const localisedText = localeText && localeText[key];
@@ -1849,14 +1926,12 @@ export class GridOptionsWrapper {
                 return { height: defaultRowHeight, estimated: true };
             }
 
-            const params: RowHeightParams = {
+            const params: WithoutGridCommon<RowHeightParams> = {
                 node: rowNode,
-                data: rowNode.data,
-                api: this.gridOptions.api!,
-                context: this.gridOptions.context
+                data: rowNode.data
             };
 
-            const height = this.gridOptions.getRowHeight!(params);
+            const height = this.mergeGridCommonParams(this.gridOptions.getRowHeight)!(params);
 
             if (this.isNumeric(height)) {
                 if (height === 0) {

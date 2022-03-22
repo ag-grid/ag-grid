@@ -60,7 +60,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;

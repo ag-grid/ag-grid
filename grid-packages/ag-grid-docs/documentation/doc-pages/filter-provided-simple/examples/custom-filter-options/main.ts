@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IFilterOptionDef } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IFilterOptionDef, GetLocaleTextParams } from '@ag-grid-community/core'
 declare var window: any;
 
 var filterParams = {
@@ -200,11 +200,11 @@ const gridOptions: GridOptions = {
     sortable: true,
     filter: true,
   },
-  localeTextFunc: (key, defaultValue) => {
-    if (key === 'notEqualNoNulls') {
+  getLocaleText: (params: GetLocaleTextParams) => {
+    if (params.key === 'notEqualNoNulls') {
       return '* Not Equals (No Nulls) *'
     }
-    return defaultValue
+    return params.defaultValue
   },
 }
 

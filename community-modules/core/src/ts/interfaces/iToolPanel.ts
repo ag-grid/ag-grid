@@ -1,13 +1,9 @@
-import { IComponent } from "./iComponent";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columns/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnEventType } from "../events";
+import { IComponent } from "./iComponent";
+import { AgGridCommon } from "./iCommon";
 
-export interface IToolPanelParams {
-    api: GridApi;
-    columnApi: ColumnApi;
-}
+export interface IToolPanelParams extends AgGridCommon { }
 
 export interface IToolPanel {
     refresh(): void;

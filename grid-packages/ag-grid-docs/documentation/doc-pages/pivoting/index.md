@@ -198,7 +198,7 @@ Pivot value columns are the lowest level column and correspond to the values sel
 
 ## Manipulating Secondary Columns
 
-If you are not happy with the secondary columns provided by the grid, you have the opportunity to change any detail inside them. This is done by providing callbacks `processSecondaryColDef` and `processSecondaryColGroupDef`. The example below shows using these callbacks to modify the labels for the headers. You are free to change any of the items you can define on a column except `field` as the field attribute is needed by the grid to pull out the value.
+If you are not happy with the secondary columns provided by the grid, you have the opportunity to change any detail inside them. This is done by providing callbacks `postProcessSecondaryColDef` and `postProcessSecondaryColGroupDef`. The example below shows using these callbacks to modify the labels for the headers. You are free to change any of the items you can define on a column except `field` as the field attribute is needed by the grid to pull out the value.
 
 <grid-example title='Secondary Columns' name='secondary-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 

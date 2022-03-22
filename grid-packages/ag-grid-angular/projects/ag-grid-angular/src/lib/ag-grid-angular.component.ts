@@ -56,7 +56,6 @@ import {
     GetServerSideGroupKey,
     IsServerSideGroup,
     SuppressKeyboardEventParams,
-    ChartRef,
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,
@@ -89,6 +88,7 @@ import {
     ChartRangeSelectionChanged,
     ChartOptionsChanged,
     ChartDestroyed,
+    ChartRefParams,
     ToolPanelVisibleChangedEvent,
     ModelUpdatedEvent,
     PasteStartEvent,
@@ -145,7 +145,15 @@ import {
     TreeDataDisplayType,
     FullWidthCellKeyDownEvent,
     FullWidthCellKeyPressEvent,
-    LoadingCellRendererSelectorFunc
+    LoadingCellRendererSelectorFunc,
+    IsExternalFilterPresentParams,
+    InitialGroupOrderComparatorParams,
+    GetGroupRowAggParams,
+    PostProcessSecondaryColDefParams,
+    PostProcessSecondaryColGroupDefParams,
+    PostSortRowsParams,
+    IsFullWidthRowParams,
+    GetLocaleTextParams
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -858,13 +866,13 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
     @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: (() => boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams) => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: RowNode) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
-    @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRefParams) => void) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
     @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
@@ -875,25 +883,40 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
     /** Suppress the grid taking action for the relevant keyboard event when a cell is focused.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
-    /** A callback for localising text within the grid.     */
+    /** @deprecated - Use `getLocaleText` instead.
+     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
+    /** A callback for localising text within the grid.     */
+    @Input() public getLocaleText: ((params: GetLocaleTextParams) => string) | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
-    /** Callback for grouping.     */
+    /** @deprecated - Use `getGroupRowAgg` instead.
+     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
+    /** Callback for grouping.     */
+    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
+    @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
+    /** @deprecated - Use `initialGroupOrderComparator` instead
+     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column definition.     */
+    /** @deprecated - Use `postProcessSecondaryColDef` instead
+     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
+    /** @deprecated - Use `postProcessSecondaryColGroupDef` instead.
+     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column definition.     */
+    @Input() public postProcessSecondaryColDef: ((params: PostProcessSecondaryColDefParams) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
+    @Input() public postProcessSecondaryColGroupDef: ((params: PostProcessSecondaryColGroupDefParams) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
-    /** @deprecated - Use defaultGroupOrderComparator instead
+    /** @deprecated - Use initialGroupOrderComparator instead
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
@@ -911,11 +934,11 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
-    /** @deprecated Use getRowId instead - however be aware, getRowId() will also set grid option immutableData=true 
+    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    /** Allows you to set the ID for a particular row based on the data.     */
+    /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
@@ -925,16 +948,22 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
-    /** Callback to perform additional sorting after the grid has sorted the rows.     */
+    /** @deprecated Use `postSortRows` instead
+     */
     @Input() public postSort: ((nodes: RowNode[]) => void) | undefined = undefined;
+    /** Callback to perform additional sorting after the grid has sorted the rows.     */
+    @Input() public postSortRows: ((params: PostSortRowsParams) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
     @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
-    /** Tells the grid if this row should be rendered as full width.     */
+    /** @deprecated Use `isFullWidthRow` instead.
+     */
     @Input() public isFullWidthCell: ((rowNode: RowNode) => boolean) | undefined = undefined;
+    /** Tells the grid if this row should be rendered as full width.     */
+    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();

@@ -90,7 +90,7 @@ export class GridSerializer extends BeanStub {
 
         if (nodeIsRootNode && !node.leafGroup) { return; }
 
-        const shouldRowBeSkipped: boolean = rowSkipper({ node, api, context });
+        const shouldRowBeSkipped: boolean = rowSkipper({ node, api, columnApi, context });
 
         if (shouldRowBeSkipped) { return; }
 
@@ -163,8 +163,8 @@ export class GridSerializer extends BeanStub {
             if (!params.skipHeader && !params.skipColumnHeaders) {
                 const gridRowIterator = gridSerializingSession.onNewHeaderRow();
                 columnsToExport.forEach((column, index) => {
-                gridRowIterator.onColumn(column, index, undefined);
-            });
+                    gridRowIterator.onColumn(column, index, undefined);
+                });
             } else if (params.skipHeader) {
                 _.doOnce(() => console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.'), 'gridSerializer-skipHeader');
             }
@@ -240,7 +240,7 @@ export class GridSerializer extends BeanStub {
 
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
-           const columns = this.gridOptionsWrapper.isTreeData()
+            const columns = this.gridOptionsWrapper.isTreeData()
                 ? this.columnModel.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID])
                 : [];
 

@@ -15,6 +15,7 @@ import { isNodeOrElement, loadTemplate } from '../utils/dom';
 import { CustomTooltipFeature } from './customTooltipFeature';
 import { getAriaLevel, setAriaDisabled, setAriaExpanded } from '../utils/aria';
 import { IComponent } from '../interfaces/iComponent';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 interface MenuItemComponentParams extends MenuItemLeafDef {
     isCompact?: boolean;
@@ -260,7 +261,7 @@ export class AgMenuItemComponent extends Component {
         }
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         return {
             location: 'menu',
             value: this.tooltip

@@ -208,7 +208,7 @@ Custom filter options are supplied to the grid via `filterParams.filterOptions` 
 
 <interface-documentation interfaceName='IFilterOptionDef' ></interface-documentation>
 
-The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [localeTextFunc](/localisation/#locale-callback).
+The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [getLocaleText](/localisation/#locale-callback).
 
 The custom filter logic is implemented through the `predicate` function, which receives the `filterValues` typed by the user along with the `cellValue` from the grid, and returns `true` or `false`.
 
@@ -271,7 +271,7 @@ The following example demonstrates several custom filter options:
   - NOTE: a custom `comparator` is still required for the built-in date filter options, i.e. `equals`.
 - The **Country** column includes:
     - a custom `* Not Equals (No Nulls) *` filter which also removes null values.
-    - it also demonstrates how localisation can be achieved via the `gridOptions.localeTextFunc()` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
+    - it also demonstrates how localisation can be achieved via the `gridOptions.getLocaleText(params)` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
 - Saving and restoring custom filter options via `api.getFilterModel()` and `api.setFilterModel()` can be tested using the provided buttons.
 
 <grid-example title='Custom Filter Options' name='custom-filter-options' type='generated'></grid-example>

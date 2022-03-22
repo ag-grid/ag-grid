@@ -24,7 +24,8 @@ import {
     PopupService,
     PostConstruct,
     RowNode,
-    CtrlsService
+    CtrlsService,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
 
@@ -81,15 +82,12 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         }
 
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            const userFunc: GetContextMenuItems | undefined = this.gridOptionsWrapper.getContextMenuItemsFunc();
-            const params: GetContextMenuItemsParams = {
+            const userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            const params: WithoutGridCommon<GetContextMenuItemsParams> = {
                 node: node,
                 column: column,
                 value: value,
                 defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
             };
 
             return userFunc ? userFunc(params) : undefined;
@@ -233,7 +231,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e:AgEvent) => this.dispatchEvent(e));
+        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e: AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

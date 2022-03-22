@@ -6,6 +6,7 @@ import { Beans } from "../rendering/beans";
 import { CustomTooltipFeature, TooltipParentComp } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { ColDef, ColGroupDef } from "../entities/colDef";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
@@ -83,7 +84,7 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
-    public getTooltipParams(): ITooltipParams {
+    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
         const ctrl = this.ctrl;
         const column = ctrl.getColumn ? ctrl.getColumn() : undefined;
         const colDef = ctrl.getColDef ? ctrl.getColDef() : undefined;
@@ -97,8 +98,9 @@ export class TooltipFeature extends BeanStub {
             node: rowNode,
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
-            valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined
+            valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
         };
+
     }
 
     private getTooltipText() {

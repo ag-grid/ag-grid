@@ -4,12 +4,11 @@ import {
     AgPanel,
     AgPromise,
     Autowired,
-    ChartCreated,
     ChartMenuOptions,
     Component,
-    Events,
     GetChartToolbarItemsParams,
-    PostConstruct
+    PostConstruct,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -82,9 +81,7 @@ export class ChartMenu extends Component {
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
-            const params: GetChartToolbarItemsParams = {
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                 defaultItems: tabOptions
             };
 

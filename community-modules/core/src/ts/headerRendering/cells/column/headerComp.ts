@@ -1,10 +1,9 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { Autowired } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../events";
-import { GridApi } from "../../../gridApi";
 import { IComponent } from "../../../interfaces/iComponent";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
+import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
 import { isIOSUserAgent } from "../../../utils/browser";
@@ -16,7 +15,7 @@ import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
 
-export interface IHeaderParams {
+export interface IHeaderParams extends AgGridCommon {
     /** The column the header is for. */
     column: Column;
     /**
@@ -61,10 +60,6 @@ export interface IHeaderParams {
      * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header).
      */
     eGridHeader: HTMLElement;
-    api: GridApi;
-    columnApi: ColumnApi;
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }
 
 export interface IHeader {

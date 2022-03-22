@@ -1,14 +1,13 @@
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
 import { escapeString } from '../utils/string';
-import { GridApi } from '../gridApi';
-import { ColumnApi } from '../columns/columnApi';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
+import { AgGridCommon } from '../interfaces/iCommon';
 
-export interface ITooltipParams {
+export interface ITooltipParams extends AgGridCommon {
     /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
     /** The value to be rendered by the tooltip. */
@@ -25,10 +24,6 @@ export interface ITooltipParams {
     node?: RowNode;
     /** Data for the row node in question. */
     data?: any;
-    /** Context as set on gridOptions.context. */
-    context?: any;
-    api?: GridApi;
-    columnApi?: ColumnApi;
 }
 
 export interface ITooltipComp extends IComponent<ITooltipParams> { }

@@ -40,6 +40,7 @@ import {
     IRangeService,
     Optional,
     CtrlsService,
+    WithoutGridCommon,
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -606,7 +607,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private buildDataFromRanges(params: IClipboardCopyParams): DataForCellRangesType {
         const ranges = this.rangeService.getCellRanges();
-        const data: string [] = [];
+        const data: string[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
         ranges.forEach(range => {
@@ -683,7 +684,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         includeHeaders?: boolean,
         includeGroupHeaders?: boolean
     }): string {
-        const { columns, rowPositions, includeHeaders = false, includeGroupHeaders = false } = params; 
+        const { columns, rowPositions, includeHeaders = false, includeGroupHeaders = false } = params;
 
         const exportParams: CsvExportParams = {
             columnKeys: columns,
@@ -720,15 +721,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         column: Column,
         value: T,
         type: string,
-        func?: ((params: ProcessCellForExportParams) => T)): T {
+        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T)): T {
         if (func) {
-            const params = {
+            const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
                 node: rowNode,
                 value,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext(),
                 type,
             };
 

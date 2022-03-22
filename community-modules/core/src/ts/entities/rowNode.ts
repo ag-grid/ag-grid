@@ -370,12 +370,10 @@ export class RowNode implements IEventEmitter {
                 // RowNode, don't have the RowNode yet, thus no way to get the current key)
                 const parentKeys = this.getGroupKeys(true);
                 this.id = getRowIdFunc({
-                                api: this.beans.gridApi,
-                                columnApi: this.beans.columnApi,
-                                data: this.data,
-                                parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
-                                level: this.level
-                            });
+                    data: this.data,
+                    parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                    level: this.level
+                });
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id !== null && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
@@ -1090,7 +1088,7 @@ export class RowNode implements IEventEmitter {
 
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
-        return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
+        return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
 
     /**

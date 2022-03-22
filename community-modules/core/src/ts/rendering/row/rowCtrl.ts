@@ -1,15 +1,19 @@
+import { ProcessRowParams } from "../../entities/iCallbackParams";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { CellPosition } from "../../entities/cellPosition";
 import { Column } from "../../entities/column";
-import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
+import { RowClassParams } from "../../entities/gridOptions";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPosition";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
+import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { doOnce, executeNextVMTurn } from "../../utils/function";
@@ -21,8 +25,6 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { AngularRowUtils } from "./angularRowUtils";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
-import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
-import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../../utils/aria";
 
 export enum RowType {
     Normal = 'Normal',
@@ -58,7 +60,7 @@ interface RowGui {
 
 interface CellCtrlListAndMap {
     list: CellCtrl[];
-    map: {[key: string]: CellCtrl};
+    map: { [key: string]: CellCtrl };
 }
 
 export class RowCtrl extends BeanStub {
@@ -88,9 +90,9 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private centerCellCtrls: CellCtrlListAndMap = {list: [], map: {}};
-    private leftCellCtrls: CellCtrlListAndMap = {list: [], map: {}};
-    private rightCellCtrls: CellCtrlListAndMap = {list: [], map: {}};
+    private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
+    private leftCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
+    private rightCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
@@ -159,7 +161,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
-        const gui: RowGui = {rowComp, element, containerType};
+        const gui: RowGui = { rowComp, element, containerType };
         this.allRowGuis.push(gui);
 
         if (containerType === RowContainerType.LEFT) {
@@ -181,7 +183,7 @@ export class RowCtrl extends BeanStub {
 
     public isCacheable(): boolean {
         return this.rowType === RowType.FullWidthDetail
-                && this.beans.gridOptionsWrapper.isKeepDetailRows();
+            && this.beans.gridOptionsWrapper.isKeepDetailRows();
     }
 
     public setCached(cached: boolean): void {
@@ -302,7 +304,7 @@ export class RowCtrl extends BeanStub {
         const params = this.createFullWidthParams(gui.element, pinned);
 
         const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-        if (this.rowType==RowType.FullWidthDetail && !masterDetailModuleLoaded) {
+        if (this.rowType == RowType.FullWidthDetail && !masterDetailModuleLoaded) {
             if (ModuleRegistry.isPackageBased()) {
                 console.warn(`AG Grid: cell renderer 'agDetailCellRenderer' (for master detail) not found. Can only be used with ag-grid-enterprise package.`);
             } else {
@@ -312,7 +314,7 @@ export class RowCtrl extends BeanStub {
         }
 
         let compDetails: UserCompDetails;
-        switch(this.rowType) {
+        switch (this.rowType) {
             case RowType.FullWidthDetail:
                 compDetails = this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
                 break;
@@ -321,7 +323,7 @@ export class RowCtrl extends BeanStub {
                 break;
             case RowType.FullWidthLoading:
                 compDetails = this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
-                break;                
+                break;
             default:
                 compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
                 break;
@@ -356,16 +358,13 @@ export class RowCtrl extends BeanStub {
         const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
         if (!func) { return; }
 
-        const params: ProcessRowParams = {
+        const params: WithoutGridCommon<ProcessRowParams> = {
             eRow: this.centerGui ? this.centerGui.element : undefined!,
             ePinnedLeftRow: this.leftGui ? this.leftGui.element : undefined!,
             ePinnedRightRow: this.rightGui ? this.rightGui.element : undefined!,
             node: this.rowNode,
-            api: this.beans.gridOptionsWrapper.getApi()!,
             rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            context: this.beans.gridOptionsWrapper.getContext()
         };
         func(params);
     }
@@ -464,8 +463,8 @@ export class RowCtrl extends BeanStub {
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
-            this.leftCellCtrls = {list: [], map: {}};
-            this.rightCellCtrls = {list: [], map: {}};
+            this.leftCellCtrls = { list: [], map: {} };
+            this.rightCellCtrls = { list: [], map: {} };
         } else {
             const centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
@@ -479,7 +478,7 @@ export class RowCtrl extends BeanStub {
 
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
-                                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
+                item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
             item.rowComp.setCellCtrls(cellControls.list);
         });
     }
@@ -745,7 +744,7 @@ export class RowCtrl extends BeanStub {
         if (isFocused) {
             // we don't scroll normal rows into view when we focus them, so we don't want
             // to scroll Full Width rows either.
-            element.focus({preventScroll: true});
+            element.focus({ preventScroll: true });
         }
     }
 
@@ -1083,7 +1082,7 @@ export class RowCtrl extends BeanStub {
 
     private getPinnedForContainer(rowContainerType: RowContainerType): string | null {
         const pinned = rowContainerType === RowContainerType.LEFT ? Constants.PINNED_LEFT :
-                        rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
+            rowContainerType === RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
         return pinned;
     }
 
@@ -1121,14 +1120,11 @@ export class RowCtrl extends BeanStub {
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {
-            const params: RowClassParams = {
+            const params: WithoutGridCommon<RowClassParams> = {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope,
-                api: this.beans.gridOptionsWrapper.getApi()!,
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                context: this.beans.gridOptionsWrapper.getContext()
+                $scope: this.scope
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
@@ -1283,7 +1279,7 @@ export class RowCtrl extends BeanStub {
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());
-            return {list: [], map: {}};
+            return { list: [], map: {} };
         };
 
         this.centerCellCtrls = destroyCellCtrls(this.centerCellCtrls);
