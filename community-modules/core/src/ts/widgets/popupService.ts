@@ -14,7 +14,7 @@ import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
-import { PostProcessPopupParams } from "../entities/iGridCallbacks";
+import { PostProcessPopupParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../main";
 
 export interface PopupEventParams {

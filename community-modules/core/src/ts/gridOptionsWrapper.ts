@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iGridCallbacks';
+import { GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';

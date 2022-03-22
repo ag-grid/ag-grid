@@ -1,4 +1,4 @@
-import { ProcessRowParams } from "../../entities/iGridCallbacks";
+import { ProcessRowParams } from "../../entities/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { Constants } from "../../constants/constants";

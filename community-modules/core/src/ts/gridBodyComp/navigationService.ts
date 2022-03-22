@@ -22,7 +22,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iGridCallbacks";
+import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 interface NavigateParams {

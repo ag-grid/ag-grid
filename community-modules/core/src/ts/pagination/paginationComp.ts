@@ -8,7 +8,7 @@ import { formatNumberCommas } from "../utils/number";
 import { setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
-import { PaginationNumberFormatterParams } from "../entities/iGridCallbacks";
+import { PaginationNumberFormatterParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export class PaginationComp extends Component {

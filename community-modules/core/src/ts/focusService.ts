@@ -24,7 +24,7 @@ import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
 import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
 import { last } from "./utils/array";
-import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./entities/iGridCallbacks";
+import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./entities/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 
 @Bean('focusService')

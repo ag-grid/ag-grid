@@ -7,10 +7,6 @@ import { ColDef, ColGroupDef } from "./colDef";
 import { Column } from "./column";
 import { RowNode } from "./rowNode";
 
-// Callback interfaces in this file should remain internal to AG Grid. 
-// They are used to create the params without the need to have BaseGridParams properties 
-// repeatedly assigned throughout the code base.
-
 export interface GetContextMenuItemsParams extends AgGridCommon {
     /** Names of the items that would be provided by default. */
     defaultItems: string[] | undefined;

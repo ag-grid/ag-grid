@@ -23,7 +23,7 @@ import {
     RowClassParams,
     ServerSideStoreParams,
 } from "./entities/gridOptions";
-import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams, PostSortRowsParams } from "./entities/iGridCallbacks";
+import { InitialGroupOrderComparatorParams, RowHeightParams, ProcessRowParams, IsServerSideGroupOpenByDefaultParams, GetServerSideStoreParamsParams, PaginationNumberFormatterParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PostProcessPopupParams, TabToNextCellParams, TabToNextHeaderParams, PostProcessSecondaryColGroupDefParams, PostProcessSecondaryColDefParams, GetGroupRowAggParams, PostSortRowsParams } from "./entities/iCallbackParams";
 import { RowNode } from "./entities/rowNode";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { AgEvent, ColumnEventType } from "./events";

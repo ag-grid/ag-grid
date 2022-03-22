@@ -395,35 +395,7 @@ export {
     LoadingCellRendererSelectorResult,
 } from "./entities/gridOptions";
 
-export {
-    FillOperationParams,
-    RowHeightParams,
-    GetRowIdParams,
-    ProcessRowParams,
-    IsServerSideGroupOpenByDefaultParams,
-    IsApplyServerSideTransactionParams,
-    IsGroupOpenByDefaultParams,
-    GetServerSideStoreParamsParams,
-    PaginationNumberFormatterParams,
-    ProcessDataFromClipboardParams,
-    SendToClipboardParams,
-    GetChartToolbarItemsParams,
-    NavigateToNextHeaderParams,
-    TabToNextHeaderParams,
-    NavigateToNextCellParams,
-    TabToNextCellParams,
-    GetContextMenuItemsParams,
-    GetMainMenuItemsParams,
-    PostProcessPopupParams,
-    IsExternalFilterPresentParams,
-    InitialGroupOrderComparatorParams,
-    GetGroupRowAggParams,
-    PostProcessSecondaryColDefParams,
-    PostProcessSecondaryColGroupDefParams,
-    IsFullWidthRowParams,
-    PostSortRowsParams,
-    GetLocaleTextParams
-} from "./entities/iGridCallbacks"
+export * from "./entities/iCallbackParams"
 export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
