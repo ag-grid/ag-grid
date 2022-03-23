@@ -14,15 +14,22 @@ export class BarSparkline extends BarColumnSparkline {
     }
 
     protected updateXScaleRange() {
-        const { xScale, seriesRect, paddingOuter, paddingInner, xData } = this;
+        const { xScale, seriesRect, paddingOuter, paddingInner } = this;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
             xScale.paddingOuter = paddingOuter;
         } else {
             // last node will be clipped if the scale is not a band scale
-            // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - seriesRect.height / xData!.length];
+            // subtract last band width from the range so that the last band is not clipped
+
+            const step = this.calculateStep(seriesRect.height);
+
+            // PaddingOuter and paddingInner are fractions of the step with values between 0 and 1
+            const padding = step * paddingOuter; // left and right outer padding
+            this.bandWidth = step * (1 - paddingInner);
+
+            xScale.range = [padding, seriesRect.height - padding - this.bandWidth];
         }
     }
 
@@ -80,7 +87,7 @@ export class BarSparkline extends BarColumnSparkline {
             const height =
                 xScale instanceof BandScale
                     ? xScale.bandwidth
-                    : Math.abs(yScale.range[1] - yScale.range[0]) / data.length;
+                    : this.bandWidth;
 
             const width = bottom - x;
 
