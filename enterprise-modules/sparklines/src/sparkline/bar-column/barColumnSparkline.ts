@@ -61,6 +61,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
 
     protected axisLine: Line = new Line();
+    protected bandWidth: number = 0;
 
     private sparklineGroup: Group = new Group();
     private rectGroup: Group = new Group();

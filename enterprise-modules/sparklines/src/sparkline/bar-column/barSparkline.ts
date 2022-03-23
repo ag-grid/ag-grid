@@ -14,15 +14,36 @@ export class BarSparkline extends BarColumnSparkline {
     }
 
     protected updateXScaleRange() {
-        const { xScale, seriesRect, paddingOuter, paddingInner, xData } = this;
+        const { xScale, seriesRect, paddingOuter, paddingInner } = this;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
             xScale.paddingOuter = paddingOuter;
         } else {
             // last node will be clipped if the scale is not a band scale
-            // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - seriesRect.height / xData!.length];
+            // subtract last band width from the range so that the last band is not clipped
+
+            // calculate step
+            let domainLength = xScale.domain[1] - xScale.domain[0];
+            const order = Math.floor(Math.log10(domainLength));
+            let magnitude = Math.pow(10, order);
+            domainLength += 1 * magnitude;
+
+            // Make order 0 or 1
+            if (magnitude >= 10) {
+                magnitude /= 10;
+            }
+
+            const bands = Math.ceil(domainLength / magnitude); // number of bands
+            const gaps = bands - 1; // number of gaps (padding between bands)
+
+            const step = seriesRect.height / Math.max(1, ((2 * paddingOuter) + (gaps * paddingInner) + bands)); // step width is a combination of band width and gap width
+
+            // PaddingOuter and paddingInner are fractions of the step with values between 0 and 1
+            const padding = step * paddingOuter; // left and right outer padding
+            this.bandWidth = step * (1 - paddingInner);
+
+            xScale.range = [padding, seriesRect.height - padding - this.bandWidth];
         }
     }
 
@@ -80,7 +101,7 @@ export class BarSparkline extends BarColumnSparkline {
             const height =
                 xScale instanceof BandScale
                     ? xScale.bandwidth
-                    : Math.abs(yScale.range[1] - yScale.range[0]) / data.length;
+                    : this.bandWidth;
 
             const width = bottom - x;
 
