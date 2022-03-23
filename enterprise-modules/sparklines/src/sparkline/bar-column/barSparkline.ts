@@ -23,21 +23,7 @@ export class BarSparkline extends BarColumnSparkline {
             // last node will be clipped if the scale is not a band scale
             // subtract last band width from the range so that the last band is not clipped
 
-            // calculate step
-            let domainLength = xScale.domain[1] - xScale.domain[0];
-            const order = Math.floor(Math.log10(domainLength));
-            let magnitude = Math.pow(10, order);
-            domainLength += 1 * magnitude;
-
-            // Make order 0 or 1
-            if (magnitude >= 10) {
-                magnitude /= 10;
-            }
-
-            const bands = Math.ceil(domainLength / magnitude); // number of bands
-            const gaps = bands - 1; // number of gaps (padding between bands)
-
-            const step = seriesRect.height / Math.max(1, ((2 * paddingOuter) + (gaps * paddingInner) + bands)); // step width is a combination of band width and gap width
+            const step = this.calculateStep(seriesRect.height);
 
             // PaddingOuter and paddingInner are fractions of the step with values between 0 and 1
             const padding = step * paddingOuter; // left and right outer padding

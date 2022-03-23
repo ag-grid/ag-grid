@@ -119,6 +119,27 @@ export abstract class BarColumnSparkline extends Sparkline {
         this.updateLabelNodes();
     }
 
+    protected calculateStep(range: number): number {
+            const { xScale, paddingInner, paddingOuter } = this;
+            // calculate step
+            let domainLength = xScale.domain[1] - xScale.domain[0];
+            const order = Math.floor(Math.log10(domainLength));
+            let magnitude = Math.pow(10, order);
+            domainLength += 1 * magnitude;
+
+            // Make order 0 or 1
+            if (magnitude >= 10) {
+                magnitude /= 10;
+            }
+
+            const bands = Math.ceil(domainLength / magnitude); // number of bands
+            const gaps = bands - 1; // number of gaps (padding between bands)
+
+            const step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+
+            return step;
+    }
+
     protected updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
