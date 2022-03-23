@@ -39,8 +39,13 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
         setValueChange(props.max);
     }
 
+    const rangeClassName = classnames({
+        [styles['number-editor__slider']]: true,
+        [styles['number-editor__slider_hidden']]: min == null || max == null,
+    });
+
     return <span className={styles['number-editor']}>
-        {min != null && max != null && <input type="range" className={styles['number-editor__slider']} {...props} />}
+        <input type="range" className={rangeClassName} {...props} />
         <input type="number" className={styles['number-editor__input']} {...props} />
         {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
     </span>;
@@ -64,7 +69,7 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
 
 export const ArrayEditor = props =>
     <StringEditor
-        toStringValue={array => array.join(', ')}
+        toStringValue={array => array ? array.join(', ') : ''}
         fromStringValue={value => value.split(',').filter(x => x != null && x.trim().length).map(x => JSON.parse(x))}
         {...props}
     />;

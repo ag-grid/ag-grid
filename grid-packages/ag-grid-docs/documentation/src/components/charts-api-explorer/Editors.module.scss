@@ -24,6 +24,10 @@
     &__slider {
         flex-grow: 1;
         vertical-align: middle;
+
+        &_hidden {
+            visibility: hidden;
+        }
     }
 
     &__input {
