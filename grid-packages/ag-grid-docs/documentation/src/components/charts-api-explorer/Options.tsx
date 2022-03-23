@@ -128,7 +128,7 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
 };
 
 const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching, children }) => {
-    const [isExpanded, setExpanded] = useState(true);
+    const [isExpanded, setExpanded] = useState(false);
     const contentIsExpanded = isExpanded || isSearching;
     const descriptionHTML = description && convertMarkdown(formatJsDocString(description));
 
