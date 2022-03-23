@@ -57,6 +57,7 @@ export class ClientSideNodeManager {
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
+        this.rootNode.childrenAfterAggregateFilter = [];
         this.rootNode.childrenAfterFilter = [];
 
         // if we make this class a bean, then can annotate postConstruct
@@ -91,6 +92,7 @@ export class ClientSideNodeManager {
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
+        rootNode.childrenAfterAggregateFilter = null;
         rootNode.childrenAfterSort = null;
         rootNode.childrenMapped = null;
         rootNode.updateHasChildren();
@@ -111,6 +113,7 @@ export class ClientSideNodeManager {
         if (sibling) {
             sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenAfterAggregateFilter = rootNode.childrenAfterAggregateFilter;
             sibling.childrenAfterSort = rootNode.childrenAfterSort;
             sibling.childrenMapped = rootNode.childrenMapped;
             sibling.allLeafChildren = rootNode.allLeafChildren;

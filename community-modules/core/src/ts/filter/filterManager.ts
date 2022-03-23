@@ -19,6 +19,7 @@ import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 import { RowRenderer } from '../main';
+import { doOnce } from '../utils/function';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -38,6 +39,7 @@ export class FilterManager extends BeanStub {
     public static QUICK_FILTER_SEPARATOR = '\n';
 
     private allAdvancedFilters = new Map<string, FilterWrapper>();
+    private activeAdvancedAggregateFilters: IFilterComp[] = [];
     private activeAdvancedFilters: IFilterComp[] = [];
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
@@ -54,6 +56,9 @@ export class FilterManager extends BeanStub {
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
@@ -169,11 +174,20 @@ export class FilterManager extends BeanStub {
         return this.activeAdvancedFilters.length > 0;
     }
 
+    public isAdvancedAggregateFilterPresent(): boolean {
+        return !!this.activeAdvancedAggregateFilters.length;
+    }
+
+    public doAdvancedAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
+        return this.doAdvancedFiltersPass(node, filterToSkip, true);
+    }
+
     // called by:
     // 1) onFilterChanged()
     // 2) onNewRowsLoaded()
     private updateActiveFilters(): void {
         this.activeAdvancedFilters.length = 0;
+        this.activeAdvancedAggregateFilters.length = 0;
 
         const isFilterActive = (filter: IFilter | null) => {
             if (!filter) { return false; } // this never happens, including to avoid compile error
@@ -184,10 +198,19 @@ export class FilterManager extends BeanStub {
             return filter.isFilterActive();
         };
 
+        const groupFilterEnabled = !!this.gridOptionsWrapper.getGroupAggFiltering();
+
         this.allAdvancedFilters.forEach(filterWrapper => {
             if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
-                this.activeAdvancedFilters.push(resolvedPromise!);
+
+                const isValueColumn = filterWrapper.column.isValueActive();
+                const filterAfterAggregations = isValueColumn && (!filterWrapper.column.isPrimary() || !this.columnApi.isPivotMode());
+                if(groupFilterEnabled && filterAfterAggregations) {
+                    this.activeAdvancedAggregateFilters.push(resolvedPromise!);
+                } else {
+                    this.activeAdvancedFilters.push(resolvedPromise!);
+                }
             }
         });
     }
@@ -204,11 +227,13 @@ export class FilterManager extends BeanStub {
         return this.isQuickFilterPresent() || this.isAdvancedFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
-    private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp): boolean {
-        const { data } = node;
+    private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp, targetAggregates?: boolean): boolean {
+        const { data, aggData } = node;
 
-        for (let i = 0; i < this.activeAdvancedFilters.length; i++) {
-            const filter = this.activeAdvancedFilters[i];
+        const targetedFilters = targetAggregates ? this.activeAdvancedAggregateFilters : this.activeAdvancedFilters;
+        const targetedData = targetAggregates ? aggData : data;
+        for (let i = 0; i < targetedFilters.length; i++) {
+            const filter = targetedFilters[i];
 
             if (filter == null || filter === filterToSkip) { continue; }
 
@@ -217,7 +242,7 @@ export class FilterManager extends BeanStub {
                 throw new Error('Filter is missing method doesFilterPass');
             }
 
-            if (!filter.doesFilterPass({ node, data })) {
+            if (!filter.doesFilterPass({ node, data: targetedData })) {
                 return false;
             }
         }
@@ -249,6 +274,13 @@ export class FilterManager extends BeanStub {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
+            this.onFilterChanged();
+        }
+    }
+
+    public refreshFiltersForAggregations() {
+        const isAggFiltering = this.gridOptionsWrapper.getGroupAggFiltering();
+        if (isAggFiltering) {
             this.onFilterChanged();
         }
     }
@@ -342,6 +374,19 @@ export class FilterManager extends BeanStub {
         return this.quickFilterParts!.every(part =>
             usingCache ? this.doesRowPassQuickFilterCache(node, part) : this.doesRowPassQuickFilterNoCache(node, part)
         );
+    }
+
+    public doesRowPassAggregateFilters(params: {
+        rowNode: RowNode;
+        filterInstanceToSkip?: IFilterComp;
+    }): boolean {
+        // check our internal advanced filter
+        if (this.isAdvancedAggregateFilterPresent() && !this.doAdvancedAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+            return false;
+        }
+
+        // got this far, all filters pass
+        return true;
     }
 
     public doesRowPassFilter(params: {
