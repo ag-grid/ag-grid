@@ -24,7 +24,10 @@
       "default": true
     },
     "delay": {
-      "default": 0
+      "default": 0,
+      "min": 0,
+      "max": 1000,
+      "unit": "ms"
     }
   },
   "AgChartPaddingOptions": {
@@ -144,6 +147,7 @@
       "unit": "px"
     },
     "shape": {
+      "default": "square",
       "options": ["circle", "cross", "diamond", "plus", "square", "triangle"]
     },
     "size": {
@@ -300,6 +304,22 @@
         "theme": "low"
       }
     },
+    "data": {
+      "isRequired": true
+    },
+    "autoSize": {
+      "default": true
+    },
+    "width": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
+    },
+    "height": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
+    },
     "axes": {
       "type": "AgCartesianAxisOptions[]"
     },
@@ -318,6 +338,22 @@
         "theme": "low"
       }
     },
+    "data": {
+      "isRequired": true
+    },
+    "autoSize": {
+      "default": true
+    },
+    "width": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
+    },
+    "height": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
+    },
     "series": {
       "type": "AgPolarSeriesOptions[]"
     }
@@ -330,6 +366,22 @@
       "axes": "high",
       "series": "high",
       "theme": "low"
+    },
+    "data": {
+      "isRequired": true
+    },
+    "autoSize": {
+      "default": true
+    },
+    "width": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
+    },
+    "height": {
+      "min": 1,
+      "max": 1024,
+      "unit": "px"
     },
     "series": {
       "type": "AgHierarchySeriesOptions[]"

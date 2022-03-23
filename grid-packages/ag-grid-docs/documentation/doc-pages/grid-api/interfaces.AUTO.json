@@ -5867,10 +5867,14 @@
     "meta": { "isTypeAlias": true },
     "type": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'"
   },
+  "FontFamily": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "FontSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "AgChartThemeName": {
     "meta": { "isTypeAlias": true },
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
+  "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "AgChartThemePalette": {
     "meta": {},
     "type": { "fills": "string[]", "strokes": "string[]" },
@@ -5962,8 +5966,8 @@
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -5998,8 +6002,8 @@
       "series?": "S",
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -6032,8 +6036,8 @@
       "series?": "S",
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -6077,7 +6081,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6114,7 +6118,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6150,7 +6154,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -6180,7 +6184,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -6211,7 +6215,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6267,10 +6271,10 @@
   "AgChartPaddingOptions": {
     "meta": {},
     "type": {
-      "top?": "number",
-      "right?": "number",
-      "bottom?": "number",
-      "left?": "number"
+      "top?": "PixelSize",
+      "right?": "PixelSize",
+      "bottom?": "PixelSize",
+      "left?": "PixelSize"
     },
     "docs": {
       "top?": "/** The number of pixels of padding at the top of the chart area. */",
@@ -6285,9 +6289,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "enabled?": "/** Whether or not the labels should be shown. */",
@@ -6302,10 +6306,10 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "color?": "string",
-      "xOffset?": "number",
-      "yOffset?": "number",
-      "blur?": "number"
+      "color?": "CssColor",
+      "xOffset?": "PixelSize",
+      "yOffset?": "PixelSize",
+      "blur?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the shadow is visible. */",
@@ -6323,9 +6327,9 @@
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "enabled?": "/** Whether or not the title should be shown. */",
@@ -6340,9 +6344,9 @@
   "AgNavigatorMaskOptions": {
     "meta": {},
     "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number"
     },
     "docs": {
@@ -6355,13 +6359,13 @@
   "AgNavigatorHandleOptions": {
     "meta": {},
     "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "width?": "number",
-      "height?": "number",
-      "gripLineGap?": "number",
-      "gripLineLength?": "number"
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
+      "gripLineGap?": "PixelSize",
+      "gripLineLength?": "PixelSize"
     },
     "docs": {
       "fill?": "/** The fill colour used by the handle. */",
@@ -6377,8 +6381,8 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "height?": "number",
-      "margin?": "number",
+      "height?": "PixelSize",
+      "margin?": "PixelSize",
       "min?": "number",
       "max?": "number",
       "mask?": "AgNavigatorMaskOptions",
@@ -6403,10 +6407,10 @@
   "AgChartLegendMarkerOptions": {
     "meta": {},
     "type": {
-      "size?": "number",
+      "size?": "PixelSize",
       "shape?": "string | (new () => any)",
-      "padding?": "number",
-      "strokeWidth?": "number"
+      "padding?": "PixelSize",
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "size?": "/** The size in pixels of the markers in the legend. */",
@@ -6418,11 +6422,11 @@
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
-      "color?": "string",
+      "color?": "CssColor",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
       "formatter?": "(id: string, itemId: any, value: string) => string"
     },
     "docs": {
@@ -6439,8 +6443,8 @@
     "type": {
       "marker?": "AgChartLegendMarkerOptions",
       "label?": "AgChartLegendLabelOptions",
-      "paddingX?": "number",
-      "paddingY?": "number"
+      "paddingX?": "PixelSize",
+      "paddingY?": "PixelSize"
     },
     "docs": {
       "marker?": "/** Configuration for the legend markers. */",
@@ -6454,7 +6458,7 @@
     "type": {
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
-      "spacing?": "number",
+      "spacing?": "PixelSize",
       "item?": "AgChartLegendItemOptions"
     },
     "docs": {
@@ -6481,7 +6485,7 @@
   },
   "AgChartBackground": {
     "meta": {},
-    "type": { "visible?": "boolean", "fill?": "string" },
+    "type": { "visible?": "boolean", "fill?": "CssColor" },
     "docs": {
       "visible?": "/** Whether or not the background should be visible. */",
       "fill?": "/** Colour of the chart background. */"
@@ -6503,8 +6507,8 @@
     "type": {
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -6532,7 +6536,7 @@
   },
   "AgBaseAxisOptions": {
     "meta": {},
-    "type": { "keys?": "string[]", "thickness?": "number" },
+    "type": { "keys?": "string[]", "thickness?": "PixelSize" },
     "docs": {
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
@@ -6543,7 +6547,7 @@
   },
   "AgAxisLineOptions": {
     "meta": {},
-    "type": { "width?": "number", "color?": "string" },
+    "type": { "width?": "PixelSize", "color?": "CssColor" },
     "docs": {
       "width?": "/** The width in pixels of the axis line. */",
       "color?": "/** The colour of the axis line. */"
@@ -6552,9 +6556,9 @@
   "AgAxisTickOptions": {
     "meta": {},
     "type": {
-      "width?": "number",
-      "size?": "number",
-      "color?": "string",
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor",
       "count?": "any"
     },
     "docs": {
@@ -6578,10 +6582,10 @@
     "type": {
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "padding?": "number",
-      "color?": "string",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "padding?": "PixelSize",
+      "color?": "CssColor",
       "rotation?": "number",
       "format?": "string",
       "formatter?": "(params: AgAxisLabelFormatterParams) => string"
@@ -6600,7 +6604,7 @@
   },
   "AgAxisGridStyle": {
     "meta": {},
-    "type": { "stroke?": "string", "lineDash?": "number[]" },
+    "type": { "stroke?": "CssColor", "lineDash?": "PixelSize[]" },
     "docs": {
       "stroke?": "/** The colour of the grid line. */",
       "lineDash?": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */"
@@ -6620,7 +6624,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -6646,7 +6650,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6676,7 +6680,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6705,7 +6709,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -6728,7 +6732,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "position?": "/** The position on the chart where the axis should be rendered. */",
@@ -6752,7 +6756,7 @@
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
-      "thickness?": "number"
+      "thickness?": "PixelSize"
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
@@ -6772,9 +6776,9 @@
   "AgSeriesHighlightMarkerStyle": {
     "meta": {},
     "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number"
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "fill?": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
@@ -6787,7 +6791,7 @@
     "type": {
       "enabled?": "boolean",
       "dimOpacity?": "number",
-      "strokeWidth?": "number"
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "dimOpacity?": "/** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */",
@@ -6797,9 +6801,9 @@
   "AgSeriesHighlightStyle": {
     "meta": {},
     "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "item?": "AgSeriesHighlightMarkerStyle",
       "series?": "AgSeriesHighlightSeriesStyle"
     },
@@ -6845,7 +6849,7 @@
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "string" }
+    "type": { "datum": "any", "title?": "string", "color?": "CssColor" }
   },
   "AgCartesianSeriesTooltipRendererParams": {
     "meta": {},
@@ -6858,7 +6862,7 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "CssColor"
     }
   },
   "AgPolarSeriesTooltipRendererParams": {
@@ -6872,7 +6876,7 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "CssColor"
     }
   },
   "AgScatterSeriesTooltipRendererParams": {
@@ -6890,7 +6894,7 @@
       "yName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "CssColor"
     }
   },
   "AgSeriesMarker": {
@@ -6898,11 +6902,11 @@
     "type": {
       "enabled?": "boolean",
       "shape?": "string | (new () => any)",
-      "size?": "number",
-      "maxSize?": "number",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "size?": "PixelSize",
+      "maxSize?": "PixelSize",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number"
     },
@@ -6922,8 +6926,8 @@
     "meta": {},
     "type": {
       "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
       "strokeWidth": "number",
       "size": "number",
       "highlighted": "boolean"
@@ -6935,8 +6939,8 @@
       "xKey": "string",
       "yKey": "string",
       "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
       "strokeWidth": "number",
       "size": "number",
       "highlighted": "boolean"
@@ -6945,10 +6949,10 @@
   "AgCartesianSeriesMarkerFormat": {
     "meta": {},
     "type": {
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "size?": "number"
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
+      "size?": "PixelSize"
     }
   },
   "AgCartesianSeriesMarkerFormatter": {
@@ -6961,11 +6965,11 @@
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
       "shape?": "string | (new () => any)",
-      "size?": "number",
-      "maxSize?": "number",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "size?": "PixelSize",
+      "maxSize?": "PixelSize",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number"
     },
@@ -6988,11 +6992,11 @@
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
       "shape?": "string | (new () => any)",
-      "size?": "number",
-      "maxSize?": "number",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "size?": "PixelSize",
+      "maxSize?": "PixelSize",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number"
     },
@@ -7023,9 +7027,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
@@ -7059,11 +7063,11 @@
       "xName?": "string",
       "yName?": "string",
       "title?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "strokeOpacity?": "number",
-      "lineDash?": "number[]",
-      "lineDashOffset?": "number",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
       "label?": "AgLineSeriesLabelOptions",
       "tooltip?": "AgLineSeriesTooltip",
       "data?": "any[]",
@@ -7111,9 +7115,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "enabled?": "/** Whether or not the labels should be shown. */",
@@ -7139,9 +7143,9 @@
       "labelKey?": "string",
       "labelName?": "string",
       "title?": "string",
-      "fill?": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
       "tooltip?": "AgScatterSeriesTooltip",
@@ -7197,9 +7201,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
@@ -7224,14 +7228,14 @@
       "yNames?": "string[]",
       "yName?": "string",
       "fills?": "string[]",
-      "fill?": "string",
+      "fill?": "CssColor",
       "strokes?": "string[]",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
-      "lineDash?": "number[]",
-      "lineDashOffset?": "number",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
       "label?": "AgAreaSeriesLabelOptions",
       "tooltip?": "AgAreaSeriesTooltip",
@@ -7279,9 +7283,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
@@ -7298,8 +7302,8 @@
     "meta": {},
     "type": {
       "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
       "strokeWidth": "number",
       "highlighted": "boolean",
       "xKey": "string",
@@ -7308,7 +7312,11 @@
   },
   "AgBarSeriesFormat": {
     "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize"
+    }
   },
   "AgBarSeriesTooltip": {
     "meta": {},
@@ -7336,14 +7344,14 @@
       "yNames?": "string[] | { [key in string]: string; }",
       "flipXY?": "boolean",
       "fills?": "string[]",
-      "fill?": "string",
+      "fill?": "CssColor",
       "strokes?": "string[]",
-      "stroke?": "string",
-      "strokeWidth?": "number",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
-      "lineDash?": "number[]",
-      "lineDashOffset?": "number",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
@@ -7392,9 +7400,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
@@ -7421,13 +7429,13 @@
     "meta": { "doc": "/** Configuration for histogram series. */" },
     "type": {
       "type?": "'histogram'",
-      "fill?": "string",
-      "stroke?": "string",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
-      "strokeWidth?": "number",
-      "lineDash?": "number[]",
-      "lineDashOffset?": "number",
+      "strokeWidth?": "PixelSize",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
       "xKey?": "string",
       "xName?": "string",
       "yKey?": "string",
@@ -7476,14 +7484,14 @@
   "AgPieSeriesLabelOptions": {
     "meta": {},
     "type": {
-      "offset?": "number",
+      "offset?": "PixelSize",
       "minAngle?": "number",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "offset?": "/** Distance in pixels between the callout line and the label text. */",
@@ -7500,8 +7508,8 @@
     "meta": {},
     "type": {
       "datum": "any",
-      "fill?": "string",
-      "stroke?": "string",
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
       "strokeWidth": "number",
       "highlighted": "boolean",
       "angleKey": "string",
@@ -7510,7 +7518,11 @@
   },
   "AgPieSeriesFormat": {
     "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "fill?": "CssColor",
+      "stroke?": "CssColor",
+      "strokeWidth?": "PixelSize"
+    }
   },
   "AgPieSeriesTooltip": {
     "meta": {},
@@ -7532,9 +7544,9 @@
       "text?": "string",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "enabled?": "/** Whether or not the title should be shown. */",
@@ -7549,9 +7561,9 @@
   "AgPieSeriesCalloutOptions": {
     "meta": {},
     "type": {
-      "colors?": "string[]",
-      "length?": "number",
-      "strokeWidth?": "number"
+      "colors?": "CssColor[]",
+      "length?": "PixelSize",
+      "strokeWidth?": "PixelSize"
     },
     "docs": {
       "colors?": "/** The colours to cycle through for the strokes of the callouts. */",
@@ -7572,16 +7584,16 @@
       "radiusName?": "string",
       "labelKey?": "string",
       "labelName?": "string",
-      "fills?": "string[]",
-      "strokes?": "string[]",
+      "fills?": "CssColor[]",
+      "strokes?": "CssColor[]",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
-      "strokeWidth?": "number",
-      "lineDash?": "number[]",
-      "lineDashOffset?": "number",
+      "strokeWidth?": "PixelSize",
+      "lineDash?": "PixelSize[]",
+      "lineDashOffset?": "PixelSize",
       "rotation?": "number",
-      "outerRadiusOffset?": "number",
-      "innerRadiusOffset?": "number",
+      "outerRadiusOffset?": "PixelSize",
+      "innerRadiusOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
       "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
@@ -7635,7 +7647,7 @@
       "radiusName?": "string",
       "datum": "any",
       "title?": "string",
-      "color?": "string"
+      "color?": "CssColor"
     }
   },
   "AgTreemapSeriesLabelOptions": {
@@ -7645,9 +7657,9 @@
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string"
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
     },
     "docs": {
       "padding?": "/** The amount of the tile's vertical space to reserve for the label. */",
@@ -7667,7 +7679,7 @@
       "children?": "AgTreemapNodeDatum[]",
       "depth": "number",
       "colorValue": "number",
-      "fill": "string",
+      "fill": "CssColor",
       "label": "string",
       "hasTitle": "boolean"
     }
@@ -7722,7 +7734,7 @@
       "colorRange?": "string[]",
       "colorParents?": "boolean",
       "tooltip?": "AgTreemapSeriesTooltip",
-      "nodePadding?": "number",
+      "nodePadding?": "PixelSize",
       "gradient?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
@@ -7773,8 +7785,8 @@
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -7810,8 +7822,8 @@
       "series?": "AgPolarSeriesOptions[]",
       "data?": "any[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
@@ -7844,8 +7856,8 @@
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
       "container?": "HTMLElement | null",
-      "width?": "number",
-      "height?": "number",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
