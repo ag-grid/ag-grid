@@ -4183,7 +4183,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "onGridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -4192,7 +4192,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "gridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -4201,7 +4201,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "onFirstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -4210,7 +4210,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "firstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -23357,7 +23357,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "onGridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -23366,7 +23366,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "gridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -23375,7 +23375,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "onFirstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -23384,7 +23384,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "firstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -26053,7 +26053,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "onGridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -26062,7 +26062,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "gridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -26071,7 +26071,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "onFirstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -26080,7 +26080,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "firstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -28759,7 +28759,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "onGridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -28768,7 +28768,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "gridReady": {
-      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
+      "description": "/** The grid has initialised and is ready for most api calls, but may not be fully rendered yet */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -28777,7 +28777,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "onFirstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -28786,7 +28786,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "firstDataRendered": {
-      "description": "/** Fired the first time data is rendered into the grid. */",
+      "description": "/** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",

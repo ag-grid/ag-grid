@@ -1032,9 +1032,9 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent> = new EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent>();
     /** DOM event `keyPress` happened on a cell.     */
     @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent> = new EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent>();
-    /** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size.     */
+    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet     */
     @Output() public gridReady: EventEmitter<GridReadyEvent> = new EventEmitter<GridReadyEvent>();
-    /** Fired the first time data is rendered into the grid.     */
+    /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
     @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent> = new EventEmitter<FirstDataRenderedEvent>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.     */
     @Output() public gridSizeChanged: EventEmitter<GridSizeChangedEvent> = new EventEmitter<GridSizeChangedEvent>();

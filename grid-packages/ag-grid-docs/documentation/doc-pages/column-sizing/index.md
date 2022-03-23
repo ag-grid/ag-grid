@@ -161,11 +161,6 @@ When you resize a group, it will distribute the extra room to all columns in the
 
 ## Resizing Columns When Data Is Rendered
 
-There are two main scenarios where you might want to resize columns based on grid data:
+When auto sizing columns, the grid uses the rendered cells to work out the appropriate width. This means that the result of calling `autoSizeColumns` is dependent on the browser's rendering and may also change depending on asynchronous rendering in your framework.
 
-- Row Data is available at grid initialisation
-- Row Data is available after grid initialisation, typically after data has been set asynchronously via a server call
-
-In the first case you can fire `autoSizeColumns()` in either the `gridReady` or the `firstDataRendered` event as the row data will have been rendered by the time the grid is ready.
-
-In the second case however you can only reliably use `firstDataRendered` as the row data will be made available, and hence rendered, after the grid is ready.
+If you intend to call `autoSizeColumns` after creating the grid, in most cases it should be sufficient to wait for the `firstDataRendered` event before resizing. A notable exception to this is when data is loaded asynchronously using the [Server Side Row Model](/server-side-model/#top), in this case you should ensure the data is present before auto sizing.
