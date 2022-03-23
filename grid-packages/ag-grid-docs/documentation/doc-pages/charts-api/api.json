@@ -443,41 +443,16 @@
   },
   "AgAxisLabelOptions": {
     "fontStyle": {
-      "default": "normal",
-      "options": ["normal", "italic", "oblique"]
+      "default": "normal"
     },
     "fontWeight": {
-      "default": "normal",
-      "options": [
-        "normal",
-        "bold",
-        "bolder",
-        "lighter",
-        "100",
-        "200",
-        "300",
-        "400",
-        "500",
-        "600",
-        "700",
-        "800",
-        "900"
-      ],
-      "breakIndex": 4
+      "default": "normal"
     },
     "fontSize": {
-      "default": 12,
-      "min": 1,
-      "max": 30,
-      "unit": "px"
+      "default": 12
     },
     "fontFamily": {
-      "default": "Verdana, sans-serif",
-      "suggestions": [
-        "Verdana, sans-serif",
-        "Arial, sans-serif",
-        "Times New Roman, serif"
-      ]
+      "default": "Verdana, sans-serif"
     },
     "color": {
       "default": "#000000"
@@ -608,41 +583,16 @@
         "default": "rgba(70, 70, 70, 1)"
       },
       "fontStyle": {
-        "default": "normal",
-        "options": ["normal", "italic", "oblique"]
+        "default": "normal"
       },
       "fontWeight": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "bold",
-          "bolder",
-          "lighter",
-          "100",
-          "200",
-          "300",
-          "400",
-          "500",
-          "600",
-          "700",
-          "800",
-          "900"
-        ],
-        "breakIndex": 4
+        "default": "normal"
       },
       "fontSize": {
-        "default": 12,
-        "min": 1,
-        "max": 30,
-        "unit": "px"
+        "default": 12
       },
       "fontFamily": {
-        "default": "Verdana, sans-serif",
-        "suggestions": [
-          "Verdana, sans-serif",
-          "Arial, sans-serif",
-          "Times New Roman, serif"
-        ]
+        "default": "Verdana, sans-serif"
       }
     },
     "lineDashOffset": {
@@ -752,41 +702,16 @@
         "default": "rgba(70, 70, 70, 1)"
       },
       "fontStyle": {
-        "default": "normal",
-        "options": ["normal", "italic", "oblique"]
+        "default": "normal"
       },
       "fontWeight": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "bold",
-          "bolder",
-          "lighter",
-          "100",
-          "200",
-          "300",
-          "400",
-          "500",
-          "600",
-          "700",
-          "800",
-          "900"
-        ],
-        "breakIndex": 4
+        "default": "normal"
       },
       "fontSize": {
-        "default": 12,
-        "min": 1,
-        "max": 30,
-        "unit": "px"
+        "default": 12
       },
       "fontFamily": {
-        "default": "Verdana, sans-serif",
-        "suggestions": [
-          "Verdana, sans-serif",
-          "Arial, sans-serif",
-          "Times New Roman, serif"
-        ]
+        "default": "Verdana, sans-serif"
       }
     }
   },

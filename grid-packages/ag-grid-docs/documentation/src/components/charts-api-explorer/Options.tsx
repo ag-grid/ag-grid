@@ -1,28 +1,76 @@
-import React, { useState } from 'react';
 import classnames from 'classnames';
-import { formatJson } from './utils';
-import * as Config from './config';
-import styles from './Options.module.scss';
-import { doOnEnter } from '../key-handlers';
-import { inferType } from '../documentation-helpers';
+import React, { useState } from 'react';
 import Code from '../Code';
+import { convertMarkdown, formatJsDocString, inferType } from '../documentation-helpers';
+import {
+    buildModel,
+    JsonModel,
+    JsonModelProperty,
+    JsonProperty,
+    JsonUnionType,
+    loadLookups,
+    JsonFunction,
+    JsonObjectProperty,
+} from '../expandable-snippet/model';
+import { doOnEnter } from '../key-handlers';
+import { ArrayEditor, BooleanEditor, ColourEditor, NumberEditor, PresetEditor, StringEditor } from './Editors';
+import styles from './Options.module.scss';
+import { formatJson } from './utils';
 
-const FunctionDefinition = ({ definition }) => {
-    const { parameters, returnType } = definition;
-    const returnTypeIsObject = typeof returnType === 'object';
+const FONT_WEIGHT_EDITOR_PROPS = {
+    default: 'normal',
+    breakIndex: 4,
+    options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
+};
 
-    const lines = [`function (params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
-        '',
-        'interface ParamsType {',
-    ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
-        '}',
+const FONT_STYLE_EDITOR_PROS = {
+    default: 'normal',
+    options: ['normal', 'italic', 'oblique'],
+};
+
+const FONT_FAMILY_EDITOR_PROPS = {
+    default: 'Verdana, sans-serif',
+    suggestions: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
+};
+
+const FONT_SIZE_EDITOR_PROPS = {
+    default: 12,
+    min: 1,
+    max: 30,
+    unit: 'px',
+};
+
+const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
+    const lines = [
+        `function ${definition.tsType};`,
     ];
 
-    if (returnTypeIsObject) {
+    let typesToDisplay: JsonObjectProperty[] = [];
+    const addTypeToDisplay = (property: JsonProperty) => {
+        if (property.type === 'nested-object') {
+            typesToDisplay.push(property);
+            Object.values(property.model.properties)
+                .forEach((prop) => addTypeToDisplay(prop.desc));
+        } else if (property.type === 'array') {
+            addTypeToDisplay(property.elements);
+        }
+    }
+
+    Object.values(definition.parameters)
+        .forEach((prop) => addTypeToDisplay(prop.desc));
+    addTypeToDisplay(definition.returnType);
+
+    let typesDisplayed = [];
+    while (typesToDisplay.length > 0) {
+        const desc = typesToDisplay.pop();
+
+        if (typesDisplayed.includes(desc.tsType)) { return; }
+        typesDisplayed.push(desc.tsType);
+
         lines.push(
             '',
-            'interface ReturnType {',
-            ...Object.keys(returnType).map(key => `  ${key}: ${returnType[key]};`),
+            `interface ${desc.tsType} {`,
+            ...Object.entries(desc.model.properties).map(([key, value]) => `  ${key}: ${value.desc.tsType};`),
             '}'
         );
     }
@@ -33,143 +81,540 @@ const FunctionDefinition = ({ definition }) => {
 const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || inferType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
-    const configureLinksForParent = value =>
+    const descriptionHTML = description && convertMarkdown(formatJsDocString(description));
+    const configureLinksForParent = (value) =>
         value.replace(/<a (.*?)href="([^"]+)"(.*?)>/g, '<a $1href="#" onclick="window.parent.location=\'../$2\'"$3>');
 
-    return <div className={classnames(styles['option'], { [styles['option--hidden']]: !isVisible, [styles['option--alternate']]: isAlternate })}>
-        <span className={styles['option__name']}>{name}</span>
-        {derivedType && <span className={styles['option__type']}>{isFunction ? 'Function' : derivedType}</span>}
-        {isRequired ? <div className={styles['option__required']}>Required</div> : <div className={styles['option__default']}>Default: {defaultValue != null ? <code className={styles['option__code']}>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
-        {isFunction && <FunctionDefinition definition={derivedType} />}
-        <span className={styles['option__description']} dangerouslySetInnerHTML={{ __html: configureLinksForParent(description) }}></span><br />
-        {Editor && <Editor value={defaultValue} {...editorProps} />}
-        {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code></span>}
-    </div>;
+    return (
+        <div
+            className={classnames(styles['option'], {
+                [styles['option--hidden']]: !isVisible,
+                [styles['option--alternate']]: isAlternate,
+            })}>
+            <span className={styles['option__name']}>{name}</span>
+            {derivedType && <span className={styles['option__type']}>{isFunction ? 'Function' : derivedType}</span>}
+            {isRequired ? (
+                <div className={styles['option__required']}>Required</div>
+            ) : (
+                <div className={styles['option__default']}>
+                    Default:{' '}
+                    {defaultValue != null ? (
+                        <code className={styles['option__code']}>{formatJson(defaultValue)}</code>
+                    ) : (
+                        'N/A'
+                    )}
+                </div>
+            )}
+            <br />
+            {isFunction && <FunctionDefinition definition={derivedType} />}
+            {descriptionHTML ? (
+                <>
+                    <span
+                        className={styles['option__description']}
+                        dangerouslySetInnerHTML={{ __html: configureLinksForParent(descriptionHTML) }}></span>
+                    <br />
+                </>
+            ) : (
+                <></>
+            )}
+            {Editor && <Editor value={defaultValue} {...editorProps} />}
+            {!Editor && editorProps.options && (
+                <span>
+                    Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code>
+                </span>
+            )}
+        </div>
+    );
 };
 
 const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching, children }) => {
-    const [isExpanded, setExpanded] = useState(false);
+    const [isExpanded, setExpanded] = useState(true);
     const contentIsExpanded = isExpanded || isSearching;
+    const descriptionHTML = description && convertMarkdown(formatJsDocString(description));
 
-    return <div className={classnames(styles['option'], { [styles['option--hidden']]: !isVisible, [styles['option--alternate']]: isAlternate })}>
+    return (
         <div
-            className={styles['option--expandable']}
-            role="button"
-            tabIndex={0}
-            aria-expanded={isExpanded}
-            onClick={() => setExpanded(!isExpanded)}
-            onKeyDown={e => doOnEnter(e, () => setExpanded(!isExpanded))}>
-            <span className={styles['option__name']}>{name}</span>
-            <span className={styles['option__type']}>Object</span>
-            <span className={classnames(styles['option__expander'], { [styles['option__expander--expanded']]: contentIsExpanded })}>❯</span><br />
-            {description && <span className={styles['option__description']} dangerouslySetInnerHTML={{ __html: description }}></span>}
+            className={classnames(styles['option'], {
+                [styles['option--hidden']]: !isVisible,
+                [styles['option--alternate']]: isAlternate,
+            })}>
+            <div
+                className={styles['option--expandable']}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                onClick={() => setExpanded(!isExpanded)}
+                onKeyDown={(e) => doOnEnter(e, () => setExpanded(!isExpanded))}>
+                <span className={styles['option__name']}>{name}</span>
+                <span className={styles['option__type']}>Object</span>
+                <span
+                    className={classnames(styles['option__expander'], {
+                        [styles['option__expander--expanded']]: contentIsExpanded,
+                    })}>
+                    ❯
+                </span>
+                <br />
+                {descriptionHTML && (
+                    <span
+                        className={styles['option__description']}
+                        dangerouslySetInnerHTML={{ __html: descriptionHTML }}></span>
+                )}
+            </div>
+            <div
+                className={classnames(styles['option__content'], {
+                    [styles['option__content--hidden']]: !contentIsExpanded,
+                })}>
+                {children}
+            </div>
         </div>
-        <div className={classnames(styles['option__content'], { [styles['option__content--hidden']]: !contentIsExpanded })}>
-            {children}
-        </div>
-    </div>;
+    );
+};
+
+interface UnionOptionParameters {
+    name: string;
+    desc: JsonUnionType;
+    componentKey: string;
+    parentMatchesSearch: boolean;
+    requiresWholeObject: boolean;
+    isAlternate: boolean;
+    isVisible: boolean;
+    documentation: string;
+    context: GenerateOptionParameters['context'];
+}
+
+const UnionOption = ({
+    componentKey,
+    name,
+    documentation,
+    isAlternate,
+    isVisible,
+    desc,
+    context,
+    parentMatchesSearch,
+    requiresWholeObject,
+}: UnionOptionParameters) => {
+    const commonProps = {
+        key: componentKey,
+        name: name,
+        description: documentation || '',
+        isAlternate: isAlternate,
+        isVisible: isVisible,
+    };
+    const { isSearching, matchesSearch, isRequiresWholeObject, updateOption } = context;
+
+    const [unionIndex, setUnionIndex] = useState(0);
+    const { options } = desc;
+    const optionTypes = options.map((d) =>
+        d.type === 'nested-object' ? d.model.properties['type']?.desc?.tsType : d.tsType
+    );
+    const currentOption = options[unionIndex];
+
+    return (
+        <>
+            {optionTypes.length > 1 && (
+                <PresetEditor
+                    value={optionTypes[unionIndex]}
+                    onChange={(v) => setUnionIndex(optionTypes.indexOf(v))}
+                    options={optionTypes}
+                />
+            )}
+            {currentOption.type === 'nested-object' &&
+                generateOptions({
+                    model: currentOption.model,
+                    prefix: `${componentKey}.`,
+                    parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
+                    requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
+                    isAlternate: !isAlternate,
+                    context,
+                })}
+            {currentOption.type === 'primitive' && (
+                <Option
+                    {...commonProps}
+                    type={desc.tsType}
+                    isRequired={false}
+                    defaultValue={undefined}
+                    Editor={getPrimitivePropertyEditor(currentOption)}
+                    editorProps={{
+                        onChange: (newValue) => updateOption(componentKey, newValue, requiresWholeObject),
+                    }}
+                />
+            )}
+        </>
+    );
 };
 
 const Search = ({ value, onChange }) => {
-    return <div className={styles['search']}>
-        <div className={styles['search__title']}><h2>Options</h2></div>
-        <div className={styles['search__box']}>Search: <input className={styles['search__input']} type="text" value={value} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
-    </div>;
+    return (
+        <div className={styles['search']}>
+            <div className={styles['search__title']}>
+                <h2>Options</h2>
+            </div>
+            <div className={styles['search__box']}>
+                Search:{' '}
+                <input
+                    className={styles['search__input']}
+                    type="text"
+                    value={value}
+                    maxLength={20}
+                    onChange={(event) => onChange(event.target.value)}
+                />
+            </div>
+        </div>
+    );
+};
+
+const setStepEditorProp = (editorProps: Record<string, any>, { min, max }: JsonModelProperty['meta']) => {
+    if (min == null || max == null) {
+        return;
+    }
+    if (max - min <= 1) {
+        editorProps.step = 0.05;
+    } else if (max - min <= 10) {
+        editorProps.step = 0.1;
+    }
+};
+
+const getPrimitivePropertyEditor = (desc: JsonProperty) => {
+    if (desc.type === 'array') {
+        return ArrayEditor;
+    }
+
+    if (desc.type === 'primitive' && desc.aliasType != null) {
+        switch (desc.aliasType) {
+            case 'CssColor':
+                return ColourEditor;
+            case 'PixelSize':
+                return NumberEditor;
+            case 'FontFamily':
+            case 'FontStyle':
+            case 'FontWeight':
+                return PresetEditor;
+        }
+    }
+
+    switch (desc.tsType) {
+        case 'string':
+            return StringEditor;
+        case 'number':
+            return NumberEditor;
+        case 'boolean':
+            return BooleanEditor;
+    }
+
+    return null;
+};
+
+const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty) => {
+    let editor: any;
+    let editorProps: Record<string, any> = {};
+
+    if (desc.type === 'primitive' && desc.aliasType != null) {
+        switch (desc.aliasType) {
+            case 'CssColor':
+                return { editor: ColourEditor, editorProps: { ...meta } };
+                case 'PixelSize':
+                    return { editor: NumberEditor, editorProps: { ...meta, unit: 'px' } };;
+                case 'FontFamily':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...meta,
+                        ...FONT_FAMILY_EDITOR_PROPS,
+                    },
+                };
+            case 'FontSize':
+                return {
+                    editor: NumberEditor,
+                    editorProps: {
+                        ...meta,
+                        ...FONT_SIZE_EDITOR_PROPS,
+                    },
+                };
+            case 'FontStyle':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...meta,
+                        ...FONT_STYLE_EDITOR_PROS,
+                    },
+                };
+            case 'FontWeight':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...meta,
+                        ...FONT_WEIGHT_EDITOR_PROPS,
+                    },
+                };
+        }
+    }
+
+    if (desc.tsType.indexOf(' | ') >= 0) {
+        const options = desc.tsType.split(' | ').map((v) => v.substring(1, v.length - 1));
+
+        if (options.every((v) => /^[a-z-]*$/.test(v))) {
+            return { editor: PresetEditor, editorProps: { ...meta, options } };
+        }
+    }
+
+    if (meta?.options != null || meta?.suggestions != null) {
+        editor = PresetEditor;
+    } else {
+        editor = getPrimitivePropertyEditor(desc);
+    }
+
+    if (editor === NumberEditor && meta != null) {
+        setStepEditorProp(editorProps, meta);
+    }
+
+    return { editor, editorProps: { ...meta, ...editorProps } };
 };
 
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
-export const Options = ({ chartType, updateOption }) => {
+export const Options = ({ chartType, axisType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();
-    const matchesSearch = name => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
-    const childMatchesSearch = config => typeof config === 'object' && !config.description && Object.keys(config).some(key => matchesSearch(key) || childMatchesSearch(config[key]));
+    const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
+    const childMatchesSearch = (config: JsonProperty) => {
+        if (config.type === 'array') {
+            return childMatchesSearch(config.elements);
+        }
+        if (config.type === 'union') {
+            return config.options.some((o) => childMatchesSearch(o));
+        }
+        if (config.type === 'primitive' || config.type === 'function') {
+            return false;
+        }
+        return (
+            Object.keys(config.model.properties).some((key) => matchesSearch(key)) ||
+            Object.entries(config.model.properties).some(([_, value]) => childMatchesSearch(value.desc))
+        );
+    };
+    const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
+    const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle'].includes(prop);
+    const isEditable = (prop: string) => !['data'].includes(prop);
 
-    let hasResults = false;
     const isSearching = getTrimmedSearchText() !== '';
 
-    const generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false, isAlternate = false) => {
-        let elements = [];
+    const { interfaceLookup, codeLookup } = loadLookups('charts-api/api.json');
+    const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
+    const model = buildModel(optionsType, interfaceLookup, codeLookup);
 
-        Object.keys(options).filter(name => name !== 'meta').forEach(name => {
-            const key = `${prefix}${name}`;
-            const componentKey = `${chartType}_${key}`;
-            const config = options[name];
-            const {
-                meta,
-                type,
-                isRequired,
-                description,
-                default: defaultValue,
-                editor,
-                ...editorProps
-            } = config;
+    const seriesModelDesc = model.properties['series']?.desc;
+    if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {
+        seriesModelDesc.elements.options = seriesModelDesc.elements.options.filter(
+            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(chartType) >= 0
+        );
+    }
 
-            const isComplexOption = !config.description;
+    const axesModelDesc = model.properties['axes']?.desc;
+    if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
+        axesModelDesc.elements.options = axesModelDesc.elements.options.filter(
+            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(axisType) >= 0
+        );
+    }
 
-            const isVisible = !isSearching ||
-                parentMatchesSearch ||
-                matchesSearch(name) ||
-                (isComplexOption && childMatchesSearch(config));
+    console.log(model);
 
-            if (isVisible) {
-                hasResults = true;
-            }
+    const context = {
+        chartType,
+        childMatchesSearch,
+        hasResults: false,
+        isArraySkipped,
+        isEditable,
+        isRequiresWholeObject,
+        isSearching,
+        matchesSearch,
+        updateOption,
+    };
+    const options = generateOptions({
+        model,
+        prefix: '',
+        parentMatchesSearch: false,
+        requiresWholeObject: false,
+        isAlternate: false,
+        context,
+    });
 
-            if (isComplexOption) {
-                elements.push(<ComplexOption
-                    key={componentKey}
-                    name={name}
-                    description={meta && meta.description}
-                    isVisible={isVisible || childMatchesSearch(config)} isSearching={isSearching}
-                    isAlternate={isAlternate}>
-                    {generateOptions(
-                        config,
-                        `${key}.`,
-                        parentMatchesSearch || (isSearching && matchesSearch(name)),
-                        requiresWholeObject || (meta && meta.requiresWholeObject),
-                        !isAlternate)}
-                </ComplexOption>);
-            } else {
-                elements.push(<Option
-                    key={componentKey}
-                    name={name}
-                    isVisible={isVisible}
-                    isAlternate={isAlternate}
-                    type={type}
-                    isRequired={isRequired}
-                    description={description}
+    return (
+        <div className={styles['options']}>
+            <Search value={searchText} onChange={(value) => setSearchText(value)} />
+            {isSearching && !context.hasResults && (
+                <div className={styles['options__no-content']}>
+                    No properties match your search: '{getTrimmedSearchText()}'
+                </div>
+            )}
+            <div className={styles['options__content']}>{options}</div>
+        </div>
+    );
+};
+
+interface GenerateOptionParameters {
+    model: JsonModel;
+    prefix: string;
+    parentMatchesSearch: boolean;
+    requiresWholeObject: boolean;
+    isAlternate: boolean;
+    context: {
+        chartType: string;
+        isSearching: boolean;
+        hasResults: boolean;
+        matchesSearch(name: string): boolean;
+        childMatchesSearch(prop: JsonProperty): boolean;
+        updateOption(key: string, newValue: any, requiresWholeObject: boolean): void;
+        isRequiresWholeObject(name: string): boolean;
+        isArraySkipped(name: string): boolean;
+        isEditable(name: string): boolean;
+    };
+}
+
+const generateOptions = ({
+    model,
+    prefix = '',
+    parentMatchesSearch = false,
+    requiresWholeObject = false,
+    isAlternate = false,
+    context,
+}: GenerateOptionParameters): any[] => {
+    const {
+        chartType,
+        isSearching,
+        matchesSearch,
+        childMatchesSearch,
+        updateOption,
+        isRequiresWholeObject,
+        isArraySkipped,
+        isEditable,
+    } = context;
+    let elements = [];
+
+    Object.entries(model.properties).forEach(([name, prop]) => {
+        const key = `${prefix}${name}`;
+        const componentKey = `${chartType}_${key}`;
+        const {
+            required,
+            meta,
+            meta: { options = null, suggestions = null } = {},
+            default: defaultValue,
+            documentation,
+            desc,
+            desc: { type },
+        } = prop;
+
+        const isVisible =
+            !isSearching ||
+            parentMatchesSearch ||
+            matchesSearch(name) ||
+            (type !== 'primitive' && childMatchesSearch(desc));
+
+        if (isVisible) {
+            context.hasResults = true;
+        }
+
+        let commonProps = {
+            key: componentKey,
+            name: name,
+            description: documentation || '',
+            isAlternate: isAlternate,
+            isVisible: isVisible,
+        };
+
+        if (desc.type === 'primitive' || (desc.type === 'array' && desc.elements.type === 'primitive')) {
+            const { editor, editorProps } = isEditable(name) && getPrimitiveEditor(prop);
+
+            elements.push(
+                <Option
+                    {...commonProps}
+                    type={desc.tsType}
+                    isRequired={required}
                     defaultValue={defaultValue}
                     Editor={editor}
                     editorProps={{
                         ...editorProps,
-                        onChange: newValue => updateOption(key, newValue, requiresWholeObject)
+                        onChange: (newValue) => updateOption(key, newValue, requiresWholeObject),
                     }}
-                />);
-            }
+                />
+            );
+        } else if (desc.type === 'nested-object') {
+            elements.push(
+                <ComplexOption
+                    {...commonProps}
+                    isVisible={isVisible || childMatchesSearch(desc)}
+                    isSearching={isSearching}>
+                    {generateOptions({
+                        model: desc.model,
+                        prefix: `${key}.`,
+                        parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
+                        requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
+                        isAlternate: !isAlternate,
+                        context,
+                    })}
+                </ComplexOption>
+            );
+        } else if (desc.type === 'array' && desc.elements.type === 'union' && isArraySkipped(name)) {
+            elements.push(
+                <ComplexOption
+                    {...commonProps}
+                    isVisible={isVisible || childMatchesSearch(desc)}
+                    isSearching={isSearching}>
+                    <UnionOption
+                        componentKey={key}
+                        desc={desc.elements}
+                        documentation={documentation}
+                        isAlternate={isAlternate}
+                        isVisible={isVisible}
+                        name={name}
+                        parentMatchesSearch={parentMatchesSearch}
+                        requiresWholeObject={requiresWholeObject}
+                        context={context}
+                    />
+                </ComplexOption>
+            );
+        } else if (desc.type === 'function') {
+            elements.push(
+                <Option
+                    {...commonProps}
+                    type={desc}
+                    isRequired={required}
+                    defaultValue={defaultValue}
+                    Editor={null}
+                    editorProps={{}}
+                />
+            );
+        } else if (options || suggestions) {
+            elements.push(
+                <Option
+                    {...commonProps}
+                    type={desc.tsType}
+                    isRequired={required}
+                    defaultValue={defaultValue}
+                    Editor={PresetEditor}
+                    editorProps={{
+                        ...meta,
+                        options: options || suggestions,
+                        onChange: (newValue) => updateOption(key, newValue, requiresWholeObject),
+                    }}
+                />
+            );
+        } else {
+            elements.push(
+                <Option
+                    {...commonProps}
+                    type={desc.tsType}
+                    isRequired={required}
+                    defaultValue={defaultValue}
+                    Editor={null}
+                    editorProps={{}}
+                />
+            );
+        }
 
-            if (isVisible) {
-                isAlternate = !isAlternate;
-            }
-        });
+        if (isVisible) {
+            isAlternate = !isAlternate;
+        }
+    });
 
-        return elements;
-    };
-
-    const config: any = { ...Config.chart };
-
-    if (chartType !== 'pie') {
-        config.axes = Config.axis;
-    }
-
-    config.series = Config[chartType];
-
-    const options = generateOptions(Object.freeze(config));
-
-    return <div className={styles['options']}>
-        <Search value={searchText} onChange={value => setSearchText(value)} />
-        {isSearching && !hasResults && <div className={styles['options__no-content']}>No properties match your search: '{getTrimmedSearchText()}'</div>}
-        <div className={styles['options__content']}>{options}</div>
-    </div>;
+    return elements;
 };
