@@ -121,24 +121,6 @@ export const ChartsApiExplorer = ({ framework }) => {
         return value;
     };
 
-    const updateOptionDefault = (expression, defaultValue) => {
-        const keys = getKeys(expression);
-        const newDefaults = { ...defaults };
-        let objectToUpdate = newDefaults;
-
-        while (keys.length > 1) {
-            const key = keys.shift();
-            const parent = objectToUpdate;
-
-            objectToUpdate = { ...parent[key] };
-            parent[key] = objectToUpdate;
-        }
-
-        objectToUpdate[keys.shift()] = defaultValue;
-
-        setDefaults(newDefaults);
-    };
-
     const updateOption = (expression, value, requiresWholeObject = false) => {
         const keys = getKeys(expression);
         const parentKeys = [...keys];
@@ -195,6 +177,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                     <div className={styles['explorer-container__options']}>
                         <Options
                             chartType={chartType}
+                            axisType={'number'}
                             updateOption={updateOption}
                         />
                     </div>

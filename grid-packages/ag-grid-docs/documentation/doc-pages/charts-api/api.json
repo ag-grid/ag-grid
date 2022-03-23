@@ -1,21 +1,5 @@
 {
   "_config_": {},
-  "AgBaseChartOptions": {
-    "data": {
-      "isRequired": true
-    },
-    "autoSize": {
-      "default": true
-    },
-    "width": {
-      "min": 1,
-      "unit": "px"
-    },
-    "height": {
-      "min": 1,
-      "unit": "px"
-    }
-  },
   "AgChartTooltipOptions": {
     "enabled": {
       "default": true
