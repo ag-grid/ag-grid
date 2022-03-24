@@ -161,6 +161,13 @@ When you resize a group, it will distribute the extra room to all columns in the
 
 ## Resizing Columns When Data Is Rendered
 
-When auto sizing columns, the grid uses the rendered cells to work out the appropriate width. This means that the result of calling `autoSizeColumns` is dependent on the browser's rendering and may also change depending on asynchronous rendering in your framework.
+When auto sizing columns, the grid uses the rendered cells to work out the appropriate widths. This means that the result 
+of calling `columnApi.autoSizeColumns()` is dependent on the browser's rendering and may also change depending on 
+asynchronous rendering in your framework.
 
-If you intend to call `autoSizeColumns` after creating the grid, in most cases it should be sufficient to wait for the `firstDataRendered` event before resizing. A notable exception to this is when data is loaded asynchronously using the [Server Side Row Model](/server-side-model/#top), in this case you should ensure the data is present before auto sizing.
+If you intend to call `columnApi.autoSizeColumns()` after creating the grid, in most cases it should be sufficient to wait 
+for the `firstDataRendered` event before resizing. 
+
+[[note]]
+| The [Server Side Row Model](/server-side-model/#top) inserts a dummy row with a loading spinner before the actual row
+| data is returned from the server, which means the `firstDataRendered` event cannot be relied on when resizing columns.
