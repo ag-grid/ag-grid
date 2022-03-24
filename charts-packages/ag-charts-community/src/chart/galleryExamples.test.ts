@@ -174,7 +174,7 @@ describe('Gallery Examples', () => {
         }
     });
 
-    describe('AgChartV2#update', () => {
+    describe.skip('AgChartV2#update', () => {
         let ctx = setupMockCanvas();
 
         beforeEach(() => {
