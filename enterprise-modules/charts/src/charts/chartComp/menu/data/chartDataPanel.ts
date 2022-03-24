@@ -218,6 +218,7 @@ export class ChartDataPanel extends Component {
             onDragging: (params) => this.onDragging(params),
             onDragLeave: () => this.onDragLeave(),
             isInterestedIn: this.isInterestedIn.bind(this),
+            targetContainsSource: true
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);

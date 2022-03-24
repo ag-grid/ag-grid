@@ -88,7 +88,14 @@ export interface DropTarget {
     /** Icon to show when drag is over */
     getIconName?(): string | null;
 
-    isInterestedIn(type: DragSourceType): boolean;
+    isInterestedIn(type: DragSourceType, el: HTMLElement): boolean;
+
+    /**
+     * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.
+     * This is useful for changing order of items within a container, and not moving items across containers.
+     * Default: `false`
+     */
+    targetContainsSource?: boolean;
 
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
@@ -345,7 +352,9 @@ export class DragAndDropService extends BeanStub {
             }
         }
 
-        return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type);
+        if (dropTarget.targetContainsSource && !dropTarget.getContainer().contains(this.dragSource.eElement)) { return false; }
+
+        return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type, this.dragSource.eElement);
     }
 
     public addDropTarget(dropTarget: DropTarget) {
