@@ -11,9 +11,9 @@ import { RowClassParams } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { RowNode } from "./rowNode";
 
-/***********************************************************************
- * Don't forget to update ColDefUtil if changing this class. PLEASE! *
- ***********************************************************************/
+// ***********************************************************************
+// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
+// ***********************************************************************/
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -52,6 +52,7 @@ export interface AbstractColDef {
     pivotKeys?: string[];
 }
 
+/** Configuration options for column groups in AG Grid.  */
 export interface ColGroupDef extends AbstractColDef {
     /** A list containing a mix of columns and column groups. */
     children: (ColDef | ColGroupDef)[];
@@ -103,9 +104,11 @@ export interface ToolPanelClassParams extends AgGridCommon {
 }
 export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined);
 
-/***********************************************************************
- * Don't forget to update ColDefUtil if changing this class. PLEASE! *
- ***********************************************************************/
+// ***********************************************************************
+// * Don't forget to update ColDefUtil if changing this class. PLEASE! *
+// ***********************************************************************/
+
+/** Configuration options for columns in AG Grid. */
 export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Columns *** //
