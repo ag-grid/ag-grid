@@ -674,6 +674,11 @@ export class CellCtrl extends BeanStub {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell || this.editing) { return; }
 
+        // In React, due to async, it's possible a refresh was asked for before the CellComp
+        // has been set. If this happens, we skip the refresh, as the cell is going to be
+        // initialised anyway once the CellComp is set.
+        if (!this.cellComp) { return; }
+
         const colDef = this.column.getColDef();
         const newData = params != null && !!params.newData;
         const suppressFlash = (params != null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
