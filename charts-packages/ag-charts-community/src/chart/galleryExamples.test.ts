@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions } from './agChartOptions';
-import { AgChartV2 } from './agChartV2';
+import { AgChartV2, AgChart } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
 import {
@@ -14,9 +14,10 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     CANVAS_TO_BUFFER_DEFAULTS,
+    toMatchImage,
 } from './test/utils';
 
-expect.extend({ toMatchImageSnapshot });
+expect.extend({ toMatchImageSnapshot, toMatchImage });
 
 type TestCase = {
     options: AgChartOptions;
@@ -169,6 +170,62 @@ describe('Gallery Examples', () => {
                     await example.extraScreenshotActions(chart);
                     await compare();
                 }
+            });
+        }
+    });
+
+    describe('AgChartV2#update', () => {
+        let ctx = setupMockCanvas();
+
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        afterEach(() => {
+            expect(console.warn).not.toBeCalled();
+        });
+
+        for (const [exampleName, example] of Object.entries(EXAMPLES)) {
+
+            describe(`for ${exampleName}`, () => {
+                let chart: Chart;
+                let options: AgChartOptions;
+
+                beforeEach(() => {
+                    options = { ...example.options };
+                    options.autoSize = false;
+                    options.width = 800;
+                    options.height = 600;
+    
+                    chart = AgChartV2.create<any>(options);
+                });
+
+                afterEach(() => {
+                    chart.destroy();
+                    chart = null;
+                    options = null;
+                });
+    
+                it(`it should update chart instance as expected`, async () => {
+                    AgChartV2.update<any>(chart, options);
+                    await example.assertions(chart);
+                });
+    
+                it(`it should render the same after update`, async () => {
+                    const snapshot = async () => {
+                        await waitForChartStability(chart);
+    
+                        return ctx.nodeCanvas.toBuffer('raw');
+                    };
+    
+                    const before = await snapshot();
+    
+                    AgChartV2.update<any>(chart, options);
+    
+                    const after = await snapshot();
+    
+                    (expect(after) as any).toMatchImage(before);
+                })
             });
         }
     });

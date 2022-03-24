@@ -1,9 +1,13 @@
 import { expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { Canvas, createCanvas, PngConfig } from 'canvas';
+import * as pixelmatch from 'pixelmatch';
+import { PNG } from 'pngjs';
+import * as fs from 'fs';
+
 import { Chart } from "../chart";
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
-import { Canvas, createCanvas, PngConfig } from 'canvas';
 
 export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0.5, failureThresholdType: "percent" };
 export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filters: (Canvas as any).PNG_NO_FILTERS };
@@ -12,6 +16,9 @@ export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filte
 process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
+
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -103,7 +110,7 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     let ctx: { nodeCanvas?: Canvas } = {};
 
     beforeEach(() => {
-        ctx.nodeCanvas = createCanvas(800, 600);
+        ctx.nodeCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
         realCreateElement = document.createElement;
         document.createElement = jest.fn(
@@ -134,4 +141,33 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     });
 
     return ctx;
+}
+
+export function toMatchImage(actual, expected) {
+    const {
+        testPath, currentTestName, isNot, snapshotState,
+    } = this;
+
+    const width = CANVAS_WIDTH;
+    const height = CANVAS_HEIGHT;
+    const diff = new PNG({width, height});
+    const result = pixelmatch(
+        actual,
+        expected,
+        diff.data,
+        width,
+        height,
+    );
+
+    const diffOutputFilename = `${testPath.substring(0, testPath.lastIndexOf('/'))}/__image_snapshots__/${currentTestName}-diff.png`;
+    const diffPercentage = (result * 100) / (width * height);
+    const pass = diffPercentage <= 0.05;
+
+    if (!pass) {
+        fs.writeFileSync(diffOutputFilename, (PNG as any).sync.write(diff));
+    } else if (fs.existsSync(diffOutputFilename)) {
+        fs.unlinkSync(diffOutputFilename);
+    }
+
+    return { message: () => `Images were ${result} (${diffPercentage.toFixed(2)}%) pixels different`, pass };
 }
