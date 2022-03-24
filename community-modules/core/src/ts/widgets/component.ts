@@ -35,6 +35,13 @@ export class CssClassManager {
     }
 
     public addCssClass(className: string): void {
+        const list = (className || '').split(' ');
+
+        if (list.length > 1) {
+            list.forEach(cls => this.addCssClass(cls));
+            return;
+        }
+
         const updateNeeded = this.cssClassStates[className] !== true;
         if (updateNeeded && className.length) {
             this.getGui().classList.add(className);
@@ -43,6 +50,13 @@ export class CssClassManager {
     }
 
     public removeCssClass(className: string): void {
+        const list = (className || '').split(' ');
+
+        if (list.length > 1) {
+            list.forEach(cls => this.removeCssClass(cls));
+            return;
+        }
+
         const updateNeeded = this.cssClassStates[className] !== false;
         if (updateNeeded && className.length) {
             this.getGui().classList.remove(className);
@@ -55,6 +69,13 @@ export class CssClassManager {
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
+        const list = (className || '').split(' ');
+
+        if (list.length > 1) {
+            list.forEach(cls => this.addOrRemoveCssClass(cls, addOrRemove));
+            return;
+        }
+
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded && className.length) {
             this.getGui().classList.toggle(className, addOrRemove);

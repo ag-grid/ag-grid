@@ -514,17 +514,22 @@ export abstract class Sparkline extends Observable {
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
         const hitPoint = this.rootGroup.transformPoint(x, y);
+        const nodeData = this.getNodeData();
 
-        this.getNodeData().forEach((datum) => {
+        for (let i = 0; i < nodeData.length; i++) {
+            const datum = nodeData[i];
+
             if (!datum.point) {
                 return;
             }
             const distance = this.getDistance(hitPoint, datum.point);
-            if (distance < minDistance) {
+            if (distance <= minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
+            } else {
+                return closestDatum;
             }
-        });
+        }
 
         return closestDatum;
     }
