@@ -639,7 +639,7 @@ export interface AgSeriesMarkerFormatterParams {
     datum: any;
     fill?: CssColor;
     stroke?: CssColor;
-    strokeWidth: number;
+    strokeWidth: PixelSize;
     size: number;
     highlighted: boolean;
 }
@@ -801,7 +801,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
      *
      * @deprecated use fill and multiple series instead
      */
-    fills?: string[];
+    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
     /**
@@ -842,7 +842,7 @@ export interface AgBarSeriesFormatterParams {
     readonly datum: any;
     readonly fill?: CssColor;
     readonly stroke?: CssColor;
-    readonly strokeWidth: number;
+    readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly xKey: string;
     readonly yKey: string;
@@ -893,7 +893,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
      *
      * @deprecated use fill and multiple series instead
      */
-    fills?: string[];
+    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
     fill?: CssColor;
     /**
@@ -986,7 +986,7 @@ export interface AgPieSeriesFormatterParams {
     readonly datum: any;
     readonly fill?: CssColor;
     readonly stroke?: CssColor;
-    readonly strokeWidth: number;
+    readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly angleKey: string;
     readonly radiusKey?: string;

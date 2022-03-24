@@ -11869,7 +11869,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
@@ -11879,7 +11879,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
@@ -12338,7 +12338,7 @@
     "yName": { "type": { "returnType": "string", "optional": true } },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the areas.\n * @deprecated use fill and multiple series instead\n */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
@@ -12455,7 +12455,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } }
@@ -12520,7 +12520,7 @@
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the bars.\n * @deprecated use fill and multiple series instead\n */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
@@ -12793,7 +12793,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "fill": { "type": { "returnType": "CssColor", "optional": true } },
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } }

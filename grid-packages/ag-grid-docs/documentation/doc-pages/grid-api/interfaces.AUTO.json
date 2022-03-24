@@ -6928,7 +6928,7 @@
       "datum": "any",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth": "number",
+      "strokeWidth": "PixelSize",
       "size": "number",
       "highlighted": "boolean"
     }
@@ -6941,7 +6941,7 @@
       "datum": "any",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth": "number",
+      "strokeWidth": "PixelSize",
       "size": "number",
       "highlighted": "boolean"
     }
@@ -7227,7 +7227,7 @@
       "xName?": "string",
       "yNames?": "string[]",
       "yName?": "string",
-      "fills?": "string[]",
+      "fills?": "CssColor[]",
       "fill?": "CssColor",
       "strokes?": "string[]",
       "stroke?": "CssColor",
@@ -7304,7 +7304,7 @@
       "datum": "any",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth": "number",
+      "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "xKey": "string",
       "yKey": "string"
@@ -7343,7 +7343,7 @@
       "yName?": "string",
       "yNames?": "string[] | { [key in string]: string; }",
       "flipXY?": "boolean",
-      "fills?": "string[]",
+      "fills?": "CssColor[]",
       "fill?": "CssColor",
       "strokes?": "string[]",
       "stroke?": "CssColor",
@@ -7510,7 +7510,7 @@
       "datum": "any",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "strokeWidth": "number",
+      "strokeWidth": "PixelSize",
       "highlighted": "boolean",
       "angleKey": "string",
       "radiusKey?": "string"
