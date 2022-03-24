@@ -998,9 +998,9 @@ export interface GridOptions {
     onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
 
     // *** Miscellaneous *** //
-    /** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */
+    /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
     onGridReady?(event: GridReadyEvent): void;
-    /** Fired the first time data is rendered into the grid. */
+    /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
     /** The size of the grid `div` has changed. In other words, the grid was resized. */
     onGridSizeChanged?(event: GridSizeChangedEvent): void;
