@@ -13,6 +13,8 @@ export type FontWeight =
     | '700'
     | '800'
     | '900';
+export type FontFamily = string;
+export type FontSize = number;
 
 export type AgChartThemeName =
     | 'ag-default'
@@ -25,6 +27,15 @@ export type AgChartThemeName =
     | 'ag-solar-dark'
     | 'ag-vivid'
     | 'ag-vivid-dark';
+
+/** Alias to denote that a value should be a CSS-compliant color string, such as `#FFFFFF` or `rgb(255, 255, 255)` or `white`. */
+export type CssColor = string;
+
+/** Alias to denote that a value reflects an alpha opacity in the range [0, 1]. */
+export type Opacity = number;
+
+/** Alias to denote that a value is a measurement in pixels. */
+export type PixelSize = number;
 
 export interface AgChartThemePalette {
     /** The array of fills to be used. */
@@ -159,13 +170,13 @@ export interface AgHierarchySeriesTheme {
 
 export interface AgChartPaddingOptions {
     /** The number of pixels of padding at the top of the chart area. */
-    top?: number;
+    top?: PixelSize;
     /** The number of pixels of padding at the right of the chart area. */
-    right?: number;
+    right?: PixelSize;
     /** The number of pixels of padding at the bottom of the chart area. */
-    bottom?: number;
+    bottom?: PixelSize;
     /** The number of pixels of padding at the left of the chart area. */
-    left?: number;
+    left?: PixelSize;
 }
 
 export interface AgChartLabelOptions {
@@ -176,24 +187,24 @@ export interface AgChartLabelOptions {
     /** The font weight to use for the labels. */
     fontWeight?: FontWeight;
     /** The font size in pixels to use for the labels. */
-    fontSize?: number;
+    fontSize?: FontSize;
     /** The font family to use for the labels. */
-    fontFamily?: string;
+    fontFamily?: FontFamily;
     /** The colour to use for the labels. */
-    color?: string;
+    color?: CssColor;
 }
 
 export interface AgDropShadowOptions {
     /** Whether or not the shadow is visible. */
     enabled?: boolean;
     /** The colour of the shadow. */
-    color?: string;
+    color?: CssColor;
     /** The horizontal offset in pixels for the shadow. */
-    xOffset?: number;
+    xOffset?: PixelSize;
     /** The vertical offset in pixels for the shadow. */
-    yOffset?: number;
+    yOffset?: PixelSize;
     /** The radius of the shadow's blur, given in pixels. */
-    blur?: number;
+    blur?: PixelSize;
 }
 
 export interface AgChartCaptionOptions {
@@ -207,48 +218,48 @@ export interface AgChartCaptionOptions {
     /** The font weight to use for the title. */
     fontWeight?: FontWeight;
     /** The font size in pixels to use for the title. */
-    fontSize?: number;
+    fontSize?: FontSize;
     /** The font family to use for the title. */
-    fontFamily?: string;
+    fontFamily?: FontFamily;
     /** The colour to use for the title. */
-    color?: string;
+    color?: CssColor;
 }
 
 export interface AgNavigatorMaskOptions {
     /** The fill colour used by the mask. */
-    fill?: string;
+    fill?: CssColor;
     /** The stroke colour used by the mask. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The stroke width used by the mask. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** The opacity of the mask's fill in the `[0, 1]` interval, where `0` is effectively no masking. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
 }
 
 export interface AgNavigatorHandleOptions {
     /** The fill colour used by the handle. */
-    fill?: string;
+    fill?: CssColor;
     /** The stroke colour used by the handle. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The stroke width used by the handle. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** The width of the handle. */
-    width?: number;
+    width?: PixelSize;
     /** The height of the handle. */
-    height?: number;
+    height?: PixelSize;
     /** The distance between the handle's grip lines. */
-    gripLineGap?: number;
+    gripLineGap?: PixelSize;
     /** The length of the handle's grip lines. */
-    gripLineLength?: number;
+    gripLineLength?: PixelSize;
 }
 
 export interface AgNavigatorOptions {
     /** Whether or not to show the navigator. */
     enabled?: boolean;
     /** The height of the navigator. */
-    height?: number;
+    height?: PixelSize;
     /** The distance between the navigator and the bottom axis. */
-    margin?: number;
+    margin?: PixelSize;
     /** The start of the visible range in the `[0, 1]` interval. */
     min?: number;
     /** The end of the visible range in the `[0, 1]` interval. */
@@ -265,26 +276,26 @@ export type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AgChartLegendMarkerOptions {
     /** The size in pixels of the markers in the legend. */
-    size?: number;
+    size?: PixelSize;
     /** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to `'square'` if there is none. */
     shape?: string | (new () => any); // Remove the (new () => any) eventually.
     /** The padding in pixels between a legend marker and the corresponding label. */
-    padding?: number;
+    padding?: PixelSize;
     /** The width in pixels of the stroke for markers in the legend. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
 }
 
 export interface AgChartLegendLabelOptions {
     /** The colour of the text. */
-    color?: string;
+    color?: CssColor;
     /** The font style to use for the legend. */
     fontStyle?: FontStyle;
     /** The font weight to use for the legend. */
     fontWeight?: FontWeight;
     /** The font size in pixels to use for the legend. */
-    fontSize?: number;
+    fontSize?: FontSize;
     /** The font family to use for the legend. */
-    fontFamily?: string;
+    fontFamily?: FontFamily;
     /** Function used to render legend labels. Where `id` is a series ID, `itemId` is component ID within a series, such as a field name or an item index. */
     formatter?: (id: string, itemId: any, value: string) => string;
 }
@@ -295,9 +306,9 @@ export interface AgChartLegendItemOptions {
     /** Configuration for the legend labels. */
     label?: AgChartLegendLabelOptions;
     /** The horizontal spacing in pixels to use between legend items. */
-    paddingX?: number;
+    paddingX?: PixelSize;
     /** The vertical spacing in pixels to use between legend items. */
-    paddingY?: number;
+    paddingY?: PixelSize;
 }
 
 export interface AgChartLegendOptions {
@@ -306,7 +317,7 @@ export interface AgChartLegendOptions {
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
     /** The spacing in pixels to use outside the legend. */
-    spacing?: number;
+    spacing?: PixelSize;
     /** Configuration for the legend items that consist of a marker and a label. */
     item?: AgChartLegendItemOptions;
 }
@@ -326,7 +337,7 @@ export interface AgChartBackground {
     /** Whether or not the background should be visible. */
     visible?: boolean;
     /** Colour of the chart background. */
-    fill?: string;
+    fill?: CssColor;
 }
 
 export interface AgBaseChartListeners {
@@ -349,9 +360,9 @@ export interface AgBaseChartOptions {
     /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */
     container?: HTMLElement | null;
     /** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
-    width?: number;
+    width?: PixelSize;
     /** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
-    height?: number;
+    height?: PixelSize;
     /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
@@ -374,25 +385,25 @@ export interface AgBaseChartOptions {
 export interface AgBaseAxisOptions {
     keys?: string[];
     /** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */
-    thickness?: number;
+    thickness?: PixelSize;
 }
 
 export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AgAxisLineOptions {
     /** The width in pixels of the axis line. */
-    width?: number;
+    width?: PixelSize;
     /** The colour of the axis line. */
-    color?: string;
+    color?: CssColor;
 }
 
 export interface AgAxisTickOptions {
     /** The width in pixels of the axis ticks (and corresponding grid line). */
-    width?: number;
+    width?: PixelSize;
     /** The length in pixels of the axis ticks. */
-    size?: number;
+    size?: PixelSize;
     /** The colour of the axis ticks. */
-    color?: string;
+    color?: CssColor;
     /** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */
     count?: any;
 }
@@ -410,13 +421,13 @@ export interface AgAxisLabelOptions {
     /** The font weight to use for the labels. */
     fontWeight?: FontWeight;
     /** The font size in pixels to use for the labels. */
-    fontSize?: number;
+    fontSize?: FontSize;
     /** The font family to use for the labels */
-    fontFamily?: string;
+    fontFamily?: FontFamily;
     /** Padding in pixels between the axis label and the tick. */
-    padding?: number;
+    padding?: PixelSize;
     /** The colour to use for the labels */
-    color?: string;
+    color?: CssColor;
     /** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */
     rotation?: number;
     // mirrored?: boolean;
@@ -429,9 +440,9 @@ export interface AgAxisLabelOptions {
 
 export interface AgAxisGridStyle {
     /** The colour of the grid line. */
-    stroke?: string;
+    stroke?: CssColor;
     /** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
 }
 
 export type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'log' | 'time';
@@ -499,19 +510,19 @@ export type AgCartesianAxisOptions =
 
 export interface AgSeriesHighlightMarkerStyle {
     /** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-    fill?: string;
+    fill?: CssColor;
     /** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
 };
 
 export interface AgSeriesHighlightSeriesStyle {
     enabled?: boolean;
     /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */
-    dimOpacity?: number;
+    dimOpacity?: Opacity;
     /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
 };
 
 export interface AgSeriesHighlightStyle {
@@ -520,19 +531,19 @@ export interface AgSeriesHighlightStyle {
      *
      * @deprecated Use item.fill instead.
      */
-    fill?: string;
+    fill?: CssColor;
     /**
      * The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.
      *
      * @deprecated Use item.stroke instead.
      */
-    stroke?: string;
+    stroke?: CssColor;
     /**
      * The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.
      *
      * @deprecated Use item.strokeWidth instead.
      */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** Highlight style used for an individual marker when tapped or hovered over. */
     item?: AgSeriesHighlightMarkerStyle;
     /** Highlight style used for whole series when one of its markers is tapped or hovered over. */
@@ -575,7 +586,7 @@ export interface AgTooltipRendererResult {
 export interface AgSeriesTooltipRendererParams {
     readonly datum: any;
     readonly title?: string;
-    readonly color?: string;
+    readonly color?: CssColor;
 }
 
 export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
@@ -612,26 +623,26 @@ export interface AgSeriesMarker {
     /** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */
     shape?: string | (new () => any);
     /** The size in pixels of the markers. */
-    size?: number;
+    size?: PixelSize;
     /** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */
-    maxSize?: number;
+    maxSize?: PixelSize;
     /** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */
-    fill?: string;
+    fill?: CssColor;
     /** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /**  */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /**  */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
 }
 
 export interface AgSeriesMarkerFormatterParams {
     datum: any;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth: PixelSize;
     size: number;
     highlighted: boolean;
 }
@@ -642,10 +653,10 @@ export interface AgCartesianSeriesMarkerFormatterParams extends AgSeriesMarkerFo
 }
 
 export interface AgCartesianSeriesMarkerFormat {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-    size?: number;
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth?: PixelSize;
+    size?: PixelSize;
 }
 
 export type AgCartesianSeriesMarkerFormatter = (
@@ -690,15 +701,15 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */
     title?: string;
     /** The colour of the stroke for the lines. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The width in pixels of the stroke for the lines. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** The opacity of the stroke for the lines. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
-    lineDashOffset?: number;
+    lineDashOffset?: PixelSize;
     /** Configuration for the labels shown on top of data points. */
     label?: AgLineSeriesLabelOptions;
     /** Series-specific tooltip configuration. */
@@ -739,15 +750,15 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not.  */
     title?: string;
     /** @deprecated Use {@link marker.fill} instead. */
-    fill?: string;
+    fill?: CssColor;
     /** @deprecated Use {@link marker.stroke} instead. */
-    stroke?: string;
+    stroke?: CssColor;
     /** @deprecated Use {@link marker.strokeWidth} instead. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** @deprecated Use {@link marker.fillOpacity} instead. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** @deprecated Use {@link marker.strokeOpacity} instead. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
 }
@@ -793,9 +804,9 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
      *
      * @deprecated use fill and multiple series instead
      */
-    fills?: string[];
+    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
-    fill?: string;
+    fill?: CssColor;
     /**
      * The colours to cycle through for the strokes of the areas.
      *
@@ -803,17 +814,17 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
      */
     strokes?: string[];
     /** The colours to use for the stroke of the areas. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The width in pixels of the stroke for the areas. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** The opacity of the fill for the area. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the areas. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
-    lineDashOffset?: number;
+    lineDashOffset?: PixelSize;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on top of data points. */
@@ -832,18 +843,18 @@ export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
 
 export interface AgBarSeriesFormatterParams {
     readonly datum: any;
-    readonly fill?: string;
-    readonly stroke?: string;
-    readonly strokeWidth: number;
+    readonly fill?: CssColor;
+    readonly stroke?: CssColor;
+    readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly xKey: string;
     readonly yKey: string;
 }
 
 export interface AgBarSeriesFormat {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth?: PixelSize;
 }
 
 export interface AgBarSeriesTooltip extends AgSeriesTooltip {
@@ -885,9 +896,9 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
      *
      * @deprecated use fill and multiple series instead
      */
-    fills?: string[];
+    fills?: CssColor[];
     /** The colour to use for the fill of the area. */
-    fill?: string;
+    fill?: CssColor;
     /**
      * The colours to cycle through for the strokes of the bars.
      *
@@ -895,17 +906,17 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
      */
     strokes?: string[];
     /** The colours to use for the stroke of the bars. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The width in pixels of the stroke for the bars. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** The opacity of the fill for the bars. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the bars. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
-    lineDashOffset?: number;
+    lineDashOffset?: PixelSize;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Configuration for the labels shown on bars. */
@@ -930,19 +941,19 @@ export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     type?: 'histogram';
     /** The colour of the fill for the histogram bars. */
-    fill?: string;
+    fill?: CssColor;
     /** The colour of the stroke for the histogram bars. */
-    stroke?: string;
+    stroke?: CssColor;
     /** The opacity of the fill for the histogram bars. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the histogram bars. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the histogram bars. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
-    lineDashOffset?: number;
+    lineDashOffset?: PixelSize;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
@@ -969,25 +980,25 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
 
 export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     /** Distance in pixels between the callout line and the label text. */
-    offset?: number;
+    offset?: PixelSize;
     /** Minimum angle in degrees required for a segment to show a label. */
     minAngle?: number;
 }
 
 export interface AgPieSeriesFormatterParams {
     readonly datum: any;
-    readonly fill?: string;
-    readonly stroke?: string;
-    readonly strokeWidth: number;
+    readonly fill?: CssColor;
+    readonly stroke?: CssColor;
+    readonly strokeWidth: PixelSize;
     readonly highlighted: boolean;
     readonly angleKey: string;
     readonly radiusKey?: string;
 }
 
 export interface AgPieSeriesFormat {
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth?: PixelSize;
 }
 
 export interface AgPieSeriesTooltip extends AgSeriesTooltip {
@@ -1001,11 +1012,11 @@ export interface AgPieTitleOptions extends AgChartCaptionOptions {
 
 export interface AgPieSeriesCalloutOptions {
     /** The colours to cycle through for the strokes of the callouts. */
-    colors?: string[];
+    colors?: CssColor[];
     /** The length in pixels of the callout lines. */
-    length?: number;
+    length?: PixelSize;
     /** The width in pixels of the stroke for callout lines. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
 }
 
 /** Configuration for pie/doughnut series. */
@@ -1030,25 +1041,25 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     labelName?: string;
     /** The colours to cycle through for the fills of the segments. */
-    fills?: string[];
+    fills?: CssColor[];
     /** The colours to cycle through for the strokes of the segments. */
-    strokes?: string[];
+    strokes?: CssColor[];
     /** The opacity of the fill for the segments. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the segments. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the segments. */
-    strokeWidth?: number;
+    strokeWidth?: PixelSize;
     /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
-    lineDash?: number[];
+    lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
-    lineDashOffset?: number;
+    lineDashOffset?: PixelSize;
     /** The rotation of the pie series in degrees. */
     rotation?: number;
     /** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */
-    outerRadiusOffset?: number;
+    outerRadiusOffset?: PixelSize;
     /** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */
-    innerRadiusOffset?: number;
+    innerRadiusOffset?: PixelSize;
     /** Configuration for the shadow used behind the chart series. */
     shadow?: AgDropShadowOptions;
     /** Series-specific tooltip configuration. */
@@ -1072,7 +1083,7 @@ export interface AgTreemapNodeDatum {
     children?: AgTreemapNodeDatum[];
     depth: number;
     colorValue: number;
-    fill: string;
+    fill: CssColor;
     label: string;
     hasTitle: boolean;
 }
@@ -1125,7 +1136,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip;
     /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
-    nodePadding?: number;
+    nodePadding?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;
 }

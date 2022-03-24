@@ -10298,7 +10298,12 @@
   },
   "FontStyle": {},
   "FontWeight": {},
+  "FontFamily": {},
+  "FontSize": {},
   "AgChartThemeName": {},
+  "CssColor": {},
+  "Opacity": {},
+  "PixelSize": {},
   "AgChartThemePalette": {
     "fills": {
       "description": "/** The array of fills to be used. */",
@@ -10459,11 +10464,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -10517,11 +10522,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -10575,11 +10580,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -10685,7 +10690,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgLogAxisThemeOptions": {
@@ -10760,7 +10765,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgCategoryAxisThemeOptions": {
@@ -10821,7 +10826,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
@@ -10880,7 +10885,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgTimeAxisThemeOptions": {
@@ -10943,7 +10948,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgCartesianAxesTheme": {
@@ -11000,19 +11005,19 @@
   "AgChartPaddingOptions": {
     "top": {
       "description": "/** The number of pixels of padding at the top of the chart area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "right": {
       "description": "/** The number of pixels of padding at the right of the chart area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "bottom": {
       "description": "/** The number of pixels of padding at the bottom of the chart area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "left": {
       "description": "/** The number of pixels of padding at the left of the chart area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartLabelOptions": {
@@ -11030,15 +11035,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgDropShadowOptions": {
@@ -11048,19 +11053,19 @@
     },
     "color": {
       "description": "/** The colour of the shadow. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "xOffset": {
       "description": "/** The horizontal offset in pixels for the shadow. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "yOffset": {
       "description": "/** The vertical offset in pixels for the shadow. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "blur": {
       "description": "/** The radius of the shadow's blur, given in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartCaptionOptions": {
@@ -11085,63 +11090,63 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the title. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the title. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the title. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgNavigatorMaskOptions": {
     "fill": {
       "description": "/** The fill colour used by the mask. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The stroke colour used by the mask. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width used by the mask. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the mask's fill in the `[0, 1]` interval, where `0` is effectively no masking. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgNavigatorHandleOptions": {
     "fill": {
       "description": "/** The fill colour used by the handle. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The stroke colour used by the handle. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width used by the handle. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "width": {
       "description": "/** The width of the handle. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the handle. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gripLineGap": {
       "description": "/** The distance between the handle's grip lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gripLineLength": {
       "description": "/** The length of the handle's grip lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgNavigatorOptions": {
@@ -11151,11 +11156,11 @@
     },
     "height": {
       "description": "/** The height of the navigator. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "margin": {
       "description": "/** The distance between the navigator and the bottom axis. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "min": {
       "description": "/** The start of the visible range in the `[0, 1]` interval. */",
@@ -11182,7 +11187,7 @@
   "AgChartLegendMarkerOptions": {
     "size": {
       "description": "/** The size in pixels of the markers in the legend. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "shape": {
       "description": "/** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to `'square'` if there is none. */",
@@ -11190,17 +11195,17 @@
     },
     "padding": {
       "description": "/** The padding in pixels between a legend marker and the corresponding label. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for markers in the legend. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartLegendLabelOptions": {
     "color": {
       "description": "/** The colour of the text. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fontStyle": {
       "description": "/** The font style to use for the legend. */",
@@ -11212,11 +11217,11 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the legend. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the legend. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "formatter": {
       "description": "/** Function used to render legend labels. Where `id` is a series ID, `itemId` is component ID within a series, such as a field name or an item index. */",
@@ -11238,11 +11243,11 @@
     },
     "paddingX": {
       "description": "/** The horizontal spacing in pixels to use between legend items. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "paddingY": {
       "description": "/** The vertical spacing in pixels to use between legend items. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartLegendOptions": {
@@ -11256,7 +11261,7 @@
     },
     "spacing": {
       "description": "/** The spacing in pixels to use outside the legend. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "item": {
       "description": "/** Configuration for the legend items that consist of a marker and a label. */",
@@ -11288,7 +11293,7 @@
     },
     "fill": {
       "description": "/** Colour of the chart background. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgBaseChartListeners": {
@@ -11318,11 +11323,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -11364,32 +11369,32 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgCartesianAxisPosition": {},
   "AgAxisLineOptions": {
     "width": {
       "description": "/** The width in pixels of the axis line. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "color": {
       "description": "/** The colour of the axis line. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgAxisTickOptions": {
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "size": {
       "description": "/** The length in pixels of the axis ticks. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "color": {
       "description": "/** The colour of the axis ticks. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "count": {
       "description": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
@@ -11419,19 +11424,19 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "padding": {
       "description": "/** Padding in pixels between the axis label and the tick. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "rotation": {
       "description": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
@@ -11453,11 +11458,11 @@
   "AgAxisGridStyle": {
     "stroke": {
       "description": "/** The colour of the grid line. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     }
   },
   "AgCartesianAxisType": {},
@@ -11489,7 +11494,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgNumberAxisOptions": {
@@ -11533,7 +11538,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgLogAxisOptions": {
@@ -11581,7 +11586,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgCategoryAxisOptions": {
@@ -11615,7 +11620,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgGroupedCategoryAxisOptions": {
@@ -11649,7 +11654,7 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgTimeAxisOptions": {
@@ -11685,47 +11690,47 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } },
     "thickness": {
       "description": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgCartesianAxisOptions": {},
   "AgSeriesHighlightMarkerStyle": {
     "fill": {
       "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgSeriesHighlightSeriesStyle": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "dimOpacity": {
       "description": "/** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgSeriesHighlightStyle": {
     "fill": {
       "description": "/** The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.fill instead.\n */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.stroke instead.\n */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight.\n * @deprecated Use item.strokeWidth instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "item": {
       "description": "/** Highlight style used for an individual marker when tapped or hovered over. */",
@@ -11784,7 +11789,7 @@
   "AgSeriesTooltipRendererParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "color": { "type": { "returnType": "CssColor", "optional": true } }
   },
   "AgCartesianSeriesTooltipRendererParams": {
     "xKey": { "type": { "returnType": "string", "optional": false } },
@@ -11795,7 +11800,7 @@
     "yName": { "type": { "returnType": "string", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "color": { "type": { "returnType": "CssColor", "optional": true } }
   },
   "AgPolarSeriesTooltipRendererParams": {
     "angleKey": { "type": { "returnType": "string", "optional": false } },
@@ -11806,7 +11811,7 @@
     "radiusName": { "type": { "returnType": "string", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "color": { "type": { "returnType": "CssColor", "optional": true } }
   },
   "AgScatterSeriesTooltipRendererParams": {
     "sizeKey": { "type": { "returnType": "string", "optional": true } },
@@ -11821,7 +11826,7 @@
     "yName": { "type": { "returnType": "string", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "color": { "type": { "returnType": "CssColor", "optional": true } }
   },
   "AgSeriesMarker": {
     "enabled": {
@@ -11834,38 +11839,38 @@
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "maxSize": {
       "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
@@ -11873,17 +11878,17 @@
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "size": { "type": { "returnType": "number", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
   "AgCartesianSeriesMarkerFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } }
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } },
+    "size": { "type": { "returnType": "PixelSize", "optional": true } }
   },
   "AgCartesianSeriesMarkerFormatter": {},
   "AgCartesianSeriesMarker": {
@@ -11904,31 +11909,31 @@
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "maxSize": {
       "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -11949,31 +11954,31 @@
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "maxSize": {
       "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -12005,15 +12010,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgLineSeriesTooltip": {
@@ -12058,23 +12063,23 @@
     },
     "stroke": {
       "description": "/** The colour of the stroke for the lines. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     },
     "lineDashOffset": {
       "description": "/** The initial offset of the dashed line in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points. */",
@@ -12141,15 +12146,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgScatterSeriesOptions": {
@@ -12203,23 +12208,23 @@
     },
     "fill": {
       "description": "/** @deprecated Use {@link marker.fill} instead.\n */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** @deprecated Use {@link marker.stroke} instead.\n */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
@@ -12290,15 +12295,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgAreaSeriesOptions": {
@@ -12334,11 +12339,11 @@
     "yName": { "type": { "returnType": "string", "optional": true } },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the areas.\n * @deprecated use fill and multiple series instead\n */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
       "description": "/** The colours to cycle through for the strokes of the areas.\n * @deprecated use stroke and multiple series instead\n */",
@@ -12346,27 +12351,27 @@
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the areas. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the areas. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the areas. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     },
     "lineDashOffset": {
       "description": "/** The initial offset of the dashed line in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "shadow": {
       "description": "/** Configuration for the shadow used behind the chart series. */",
@@ -12436,30 +12441,30 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgBarSeriesFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } }
   },
   "AgBarSeriesFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
   "AgBarSeriesTooltip": {
     "renderer": {
@@ -12516,11 +12521,11 @@
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the bars.\n * @deprecated use fill and multiple series instead\n */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fill": {
       "description": "/** The colour to use for the fill of the area. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokes": {
       "description": "/** The colours to cycle through for the strokes of the bars.\n * @deprecated use stroke and multiple series instead\n */",
@@ -12528,27 +12533,27 @@
     },
     "stroke": {
       "description": "/** The colours to use for the stroke of the bars. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     },
     "lineDashOffset": {
       "description": "/** The initial offset of the dashed line in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "shadow": {
       "description": "/** Configuration for the shadow used behind the chart series. */",
@@ -12621,15 +12626,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgHistogramSeriesTooltip": {
@@ -12650,31 +12655,31 @@
     "type": { "type": { "returnType": "'histogram'", "optional": true } },
     "fill": {
       "description": "/** The colour of the fill for the histogram bars. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
       "description": "/** The colour of the stroke for the histogram bars. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the histogram bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the histogram bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the histogram bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     },
     "lineDashOffset": {
       "description": "/** The initial offset of the dashed line in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve x-values from the data. */",
@@ -12754,7 +12759,7 @@
   "AgPieSeriesLabelOptions": {
     "offset": {
       "description": "/** Distance in pixels between the callout line and the label text. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "minAngle": {
       "description": "/** Minimum angle in degrees required for a segment to show a label. */",
@@ -12774,30 +12779,30 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgPieSeriesFormatterParams": {
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
     "highlighted": { "type": { "returnType": "boolean", "optional": false } },
     "angleKey": { "type": { "returnType": "string", "optional": false } },
     "radiusKey": { "type": { "returnType": "string", "optional": true } }
   },
   "AgPieSeriesFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
   "AgPieSeriesTooltip": {
     "renderer": {
@@ -12836,29 +12841,29 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the title. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the title. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the title. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgPieSeriesCalloutOptions": {
     "colors": {
       "description": "/** The colours to cycle through for the strokes of the callouts. */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "length": {
       "description": "/** The length in pixels of the callout lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for callout lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgPieSeriesOptions": {
@@ -12901,31 +12906,31 @@
     },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the segments. */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "strokes": {
       "description": "/** The colours to cycle through for the strokes of the segments. */",
-      "type": { "returnType": "string[]", "optional": true }
+      "type": { "returnType": "CssColor[]", "optional": true }
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the segments. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the segments. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the segments. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
-      "type": { "returnType": "number[]", "optional": true }
+      "type": { "returnType": "PixelSize[]", "optional": true }
     },
     "lineDashOffset": {
       "description": "/** The initial offset of the dashed line in pixels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "rotation": {
       "description": "/** The rotation of the pie series in degrees. */",
@@ -12933,11 +12938,11 @@
     },
     "outerRadiusOffset": {
       "description": "/** The offset in pixels of the outer radius of the series. Used to construct doughnut charts. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "innerRadiusOffset": {
       "description": "/** The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "shadow": {
       "description": "/** Configuration for the shadow used behind the chart series. */",
@@ -12993,7 +12998,7 @@
     "radiusName": { "type": { "returnType": "string", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } }
+    "color": { "type": { "returnType": "CssColor", "optional": true } }
   },
   "AgTreemapSeriesLabelOptions": {
     "padding": {
@@ -13014,15 +13019,15 @@
     },
     "fontSize": {
       "description": "/** The font size in pixels to use for the labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
       "description": "/** The font family to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
       "description": "/** The colour to use for the labels. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgTreemapNodeDatum": {
@@ -13035,7 +13040,7 @@
     },
     "depth": { "type": { "returnType": "number", "optional": false } },
     "colorValue": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "string", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": false } },
     "label": { "type": { "returnType": "string", "optional": false } },
     "hasTitle": { "type": { "returnType": "boolean", "optional": false } }
   },
@@ -13124,7 +13129,7 @@
     },
     "nodePadding": {
       "description": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
       "description": "/** Whether or not to use gradients for treemap tiles. */",
@@ -13190,11 +13195,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -13247,11 +13252,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
@@ -13303,11 +13308,11 @@
     },
     "width": {
       "description": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "height": {
       "description": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",

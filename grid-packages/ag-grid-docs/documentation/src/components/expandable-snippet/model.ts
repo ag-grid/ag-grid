@@ -16,6 +16,7 @@ type MetaRecord = {
     unit?: string;
     options?: string[];
     suggestions?: string[];
+    breakIndex?: number;
     ordering?: {[prop: string]: OrderingPriority},
 };
 
@@ -56,6 +57,7 @@ export type JsonPrimitiveProperty = {
     type: "primitive";
     tsType: string;
     aliasType?: string;
+    options?: string;
 };
 
 export type JsonObjectProperty = {
@@ -92,6 +94,13 @@ export type JsonModelProperty = {
     required: boolean;
     documentation?: string;
     default?: any;
+    meta?: {
+        min?: number;
+        max?: number;
+        unit?: string;
+        options?: any[];
+        suggestions?: any[];
+    };
     desc: JsonProperty;
 };
 
@@ -180,8 +189,11 @@ export function buildModel(
             documentation,
             desc: resolveType(declaredType, interfaceLookup, codeLookup, { typeStack }, config),
         };
-        if (metaProp && metaProp.hasOwnProperty('default')) {
-            result.properties[prop].default = def;
+        if (metaProp) {
+            result.properties[prop].meta = buildJsonPropertyMeta(metaProp);
+            if (metaProp.hasOwnProperty('default')) {
+                result.properties[prop].default = def;
+            }
         }
     });
 
@@ -198,6 +210,29 @@ export function buildModel(
     }
 
     return result;
+}
+
+function buildJsonPropertyMeta(meta: MetaRecord): JsonModelProperty['meta'] | undefined {
+    return Object.entries({
+            // Define super-set of key/values.
+            min: meta.min,
+            max: meta.max,
+            options: meta.options,
+            suggestions: meta.suggestions,
+            breakIndex: meta.breakIndex,
+            unit: meta.unit,
+        })
+        // Filter out undefined values.
+        .filter(([_, v]) => v != null)
+        .reduce(
+            (result, [key, value]) => {
+                result = result ?? {};
+                result[key] = value;
+                return result;
+            },
+            // If no remaining properties, result should be undefined.
+            undefined as {} | undefined,
+        );
 }
 
 const ORDERING_PRIORITY: OrderingPriority[] = ['high', 'natural', 'low'];
@@ -284,10 +319,19 @@ function resolveType(
     switch (resolvedClass) {
         case "primitive":
         case "unknown":
-            return { type: "primitive", tsType: resolvedType };
+            return {
+                type: "primitive",
+                tsType: resolvedType,
+                ...(resolvedType !== cleanedType ? {aliasType: cleanedType} : {})
+            };
         case "function":
-        case "alias":
             return resolveType(resolvedType, interfaceLookup, codeLookup, context, config);
+        case "alias":
+            const result = resolveType(resolvedType, interfaceLookup, codeLookup, context, config);
+            if (result.type === 'primitive') {
+                result.aliasType = resolvedType;
+            }
+            return result;
         case "union-nested-object":
         case "union-mixed":
             return {
