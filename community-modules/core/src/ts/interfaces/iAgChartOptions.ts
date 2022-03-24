@@ -31,6 +31,8 @@ export type AgChartThemeName =
 /** Alias to denote that a value should be a CSS-compliant color string, such as `#FFFFFF` or `rgb(255, 255, 255)` or `white`. */
 export type CssColor = string;
 
+export type Opacity = number;
+
 /** Alias to denote that a value is a measurement in pixels. */
 export type PixelSize = number;
 
@@ -230,7 +232,7 @@ export interface AgNavigatorMaskOptions {
     /** The stroke width used by the mask. */
     strokeWidth?: PixelSize;
     /** The opacity of the mask's fill in the `[0, 1]` interval, where `0` is effectively no masking. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
 }
 
 export interface AgNavigatorHandleOptions {
@@ -517,7 +519,7 @@ export interface AgSeriesHighlightMarkerStyle {
 export interface AgSeriesHighlightSeriesStyle {
     enabled?: boolean;
     /** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */
-    dimOpacity?: number;
+    dimOpacity?: Opacity;
     /** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */
     strokeWidth?: PixelSize;
 };
@@ -630,9 +632,9 @@ export interface AgSeriesMarker {
     /** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */
     strokeWidth?: PixelSize;
     /**  */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /**  */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
 }
 
 export interface AgSeriesMarkerFormatterParams {
@@ -702,7 +704,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     /** The width in pixels of the stroke for the lines. */
     strokeWidth?: PixelSize;
     /** The opacity of the stroke for the lines. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
@@ -753,9 +755,9 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     /** @deprecated Use {@link marker.strokeWidth} instead. */
     strokeWidth?: PixelSize;
     /** @deprecated Use {@link marker.fillOpacity} instead. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** @deprecated Use {@link marker.strokeOpacity} instead. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Series-specific tooltip configuration.  */
     tooltip?: AgScatterSeriesTooltip;
 }
@@ -815,9 +817,9 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     /** The width in pixels of the stroke for the areas. */
     strokeWidth?: PixelSize;
     /** The opacity of the fill for the area. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the areas. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
@@ -907,9 +909,9 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     /** The width in pixels of the stroke for the bars. */
     strokeWidth?: PixelSize;
     /** The opacity of the fill for the bars. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the bars. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
     /** The initial offset of the dashed line in pixels. */
@@ -942,9 +944,9 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     /** The colour of the stroke for the histogram bars. */
     stroke?: CssColor;
     /** The opacity of the fill for the histogram bars. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the histogram bars. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the histogram bars. */
     strokeWidth?: PixelSize;
     /** Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
@@ -1042,9 +1044,9 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     /** The colours to cycle through for the strokes of the segments. */
     strokes?: CssColor[];
     /** The opacity of the fill for the segments. */
-    fillOpacity?: number;
+    fillOpacity?: Opacity;
     /** The opacity of the stroke for the segments. */
-    strokeOpacity?: number;
+    strokeOpacity?: Opacity;
     /** The width in pixels of the stroke for the segments. */
     strokeWidth?: PixelSize;
     /** Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */

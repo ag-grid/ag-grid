@@ -4,13 +4,13 @@ import Code from '../Code';
 import { convertMarkdown, formatJsDocString, inferType } from '../documentation-helpers';
 import {
     buildModel,
+    JsonFunction,
     JsonModel,
     JsonModelProperty,
+    JsonObjectProperty,
     JsonProperty,
     JsonUnionType,
     loadLookups,
-    JsonFunction,
-    JsonObjectProperty,
 } from '../expandable-snippet/model';
 import { doOnEnter } from '../key-handlers';
 import { ArrayEditor, BooleanEditor, ColourEditor, NumberEditor, PresetEditor, StringEditor } from './Editors';
@@ -23,7 +23,7 @@ const FONT_WEIGHT_EDITOR_PROPS = {
     options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
 };
 
-const FONT_STYLE_EDITOR_PROS = {
+const FONT_STYLE_EDITOR_PROPS = {
     default: 'normal',
     options: ['normal', 'italic', 'oblique'],
 };
@@ -40,31 +40,34 @@ const FONT_SIZE_EDITOR_PROPS = {
     unit: 'px',
 };
 
+const OPACITY_PROPS = {
+    min: 0,
+    max: 1,
+};
+
 const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
-    const lines = [
-        `function ${definition.tsType};`,
-    ];
+    const lines = [`function ${definition.tsType};`];
 
     let typesToDisplay: JsonObjectProperty[] = [];
     const addTypeToDisplay = (property: JsonProperty) => {
         if (property.type === 'nested-object') {
             typesToDisplay.push(property);
-            Object.values(property.model.properties)
-                .forEach((prop) => addTypeToDisplay(prop.desc));
+            Object.values(property.model.properties).forEach((prop) => addTypeToDisplay(prop.desc));
         } else if (property.type === 'array') {
             addTypeToDisplay(property.elements);
         }
-    }
+    };
 
-    Object.values(definition.parameters)
-        .forEach((prop) => addTypeToDisplay(prop.desc));
+    Object.values(definition.parameters).forEach((prop) => addTypeToDisplay(prop.desc));
     addTypeToDisplay(definition.returnType);
 
     let typesDisplayed = [];
     while (typesToDisplay.length > 0) {
         const desc = typesToDisplay.pop();
 
-        if (typesDisplayed.includes(desc.tsType)) { return; }
+        if (typesDisplayed.includes(desc.tsType)) {
+            return;
+        }
         typesDisplayed.push(desc.tsType);
 
         lines.push(
@@ -284,6 +287,7 @@ const getPrimitivePropertyEditor = (desc: JsonProperty) => {
             case 'CssColor':
                 return ColourEditor;
             case 'PixelSize':
+            case 'Opacity':
                 return NumberEditor;
             case 'FontFamily':
             case 'FontStyle':
@@ -312,38 +316,40 @@ const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty) => {
         switch (desc.aliasType) {
             case 'CssColor':
                 return { editor: ColourEditor, editorProps: { ...meta } };
-                case 'PixelSize':
-                    return { editor: NumberEditor, editorProps: { ...meta, unit: 'px' } };;
-                case 'FontFamily':
+            case 'PixelSize':
+                return { editor: NumberEditor, editorProps: { ...meta, unit: 'px' } };
+            case 'Opacity':
+                return { editor: NumberEditor, editorProps: { ...OPACITY_PROPS, ...meta } };
+            case 'FontFamily':
                 return {
                     editor: PresetEditor,
                     editorProps: {
-                        ...meta,
                         ...FONT_FAMILY_EDITOR_PROPS,
+                        ...meta,
                     },
                 };
             case 'FontSize':
                 return {
                     editor: NumberEditor,
                     editorProps: {
-                        ...meta,
                         ...FONT_SIZE_EDITOR_PROPS,
+                        ...meta,
                     },
                 };
             case 'FontStyle':
                 return {
                     editor: PresetEditor,
                     editorProps: {
+                        ...FONT_STYLE_EDITOR_PROPS,
                         ...meta,
-                        ...FONT_STYLE_EDITOR_PROS,
                     },
                 };
             case 'FontWeight':
                 return {
                     editor: PresetEditor,
                     editorProps: {
-                        ...meta,
                         ...FONT_WEIGHT_EDITOR_PROPS,
+                        ...meta,
                     },
                 };
         }
