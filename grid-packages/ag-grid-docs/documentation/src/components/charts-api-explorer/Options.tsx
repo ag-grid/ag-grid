@@ -422,8 +422,6 @@ export const Options = ({ chartType, axisType, updateOption }) => {
         );
     }
 
-    console.log(model);
-
     const context = {
         chartType,
         childMatchesSearch,
