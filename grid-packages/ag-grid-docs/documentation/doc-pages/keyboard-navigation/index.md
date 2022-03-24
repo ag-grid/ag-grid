@@ -188,7 +188,7 @@ The example below shows processing grid cell keyboard events. The following can 
 
 ## Suppress Keyboard Events
 
-It is possible to stop the grid acting on particular events. To do this implement `suppressHeaderKeyboardEvent` and/or `suppressKeyboardEvent` callback. The callback should return `true` if the grid should suppress the events, or `false` to continue as normal.
+It is possible to stop the grid acting on particular events. To do this implement `colDef.suppressHeaderKeyboardEvent` and/or `colDef.suppressKeyboardEvent` callback. The callback should return `true` if the grid should suppress the events, or `false` to continue as normal.
 
 ### suppressHeaderKeyboardEvent
 
@@ -198,7 +198,7 @@ It is possible to stop the grid acting on particular events. To do this implemen
 
 <api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]'></api-documentation>
 
-The callback is available as a [column callback](/column-properties/#reference-columns-suppressKeyboardEvent) (set on the column definition) and as a [grid callback](/grid-callbacks/#reference-nav-suppressKeyboardEvent). If you provide the callback on both the grid and column definition, then if either return `true` the event will be suppressed.
+The callback is available as a [column callback](/column-properties/#reference-columns-suppressKeyboardEvent) (set on the column definition). If you want it to apply to all columns then apply to the `defaultColDef` property. 
 
 ### Example: Suppress Keyboard Navigation
 

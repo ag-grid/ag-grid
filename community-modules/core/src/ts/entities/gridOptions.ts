@@ -813,7 +813,7 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams) => (CellPosition | null);
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
     tabToNextCell?: (params: TabToNextCellParams) => (CellPosition | null);
-    /** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */
+    /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property. */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     // *** Localisation *** //

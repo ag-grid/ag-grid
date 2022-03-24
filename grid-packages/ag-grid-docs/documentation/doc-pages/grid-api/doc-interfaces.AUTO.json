@@ -3325,7 +3325,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
+      "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -22499,7 +22499,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
+      "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -25195,7 +25195,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
+      "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -27901,7 +27901,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
+      "description": "/** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.\n */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
