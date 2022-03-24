@@ -18,6 +18,7 @@ import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
+import { RowRenderer } from '../main';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -32,6 +33,7 @@ export class FilterManager extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -251,6 +253,21 @@ export class FilterManager extends BeanStub {
         }
     }
 
+    // sometimes (especially in React) the filter can call onFilterChanged when we are in the middle
+    // of a render cycle. this would be bad, so we wait for render cycle to complete when this happens.
+    // this happens in react when we change React State in the grid (eg setting RowCtrl's in RowContainer)
+    // which results in React State getting applied in the main application, triggering a useEffect() to
+    // be kicked off adn then the application calling the grid's API. in AG-6554, the custom filter was
+    // getting it's useEffect() triggered in this way.
+    public callOnFilterChangedOutsideRenderCycle(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
+        const action = ()=> this.onFilterChanged(params);
+        if (this.rowRenderer.isRefreshInProgress()) {
+            setTimeout(action, 0);
+        } else {
+            action();
+        }
+    }
+
     public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
         const { filterInstance, additionalEventAttributes, columns } = params;
 
@@ -466,8 +483,10 @@ export class FilterManager extends BeanStub {
 
                 this.eventService.dispatchEvent(event);
             },
-            filterChangedCallback: (additionalEventAttributes?: any) =>
-                this.onFilterChanged({ filterInstance, additionalEventAttributes, columns: [column] }),
+            filterChangedCallback: (additionalEventAttributes?: any) => {
+                const params = { filterInstance, additionalEventAttributes, columns: [column] };
+                this.callOnFilterChangedOutsideRenderCycle(params);
+            },
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 

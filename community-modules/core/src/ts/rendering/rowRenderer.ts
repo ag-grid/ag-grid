@@ -514,6 +514,10 @@ export class RowRenderer extends BeanStub {
         this.refreshInProgress = false;
     }
 
+    public isRefreshInProgress(): boolean {
+        return this.refreshInProgress;
+    }
+
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
     // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
