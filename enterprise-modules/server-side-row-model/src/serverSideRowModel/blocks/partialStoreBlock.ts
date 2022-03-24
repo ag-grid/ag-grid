@@ -273,10 +273,10 @@ export class PartialStoreBlock extends RowNodeBlock {
     public removeDuplicateNode(id: string): void {
 
         // we don't remove duplicates if this block is loaded, as that's a duplicate ID.
-        // we are only interested in removing rows in blocks are in the middle of a refresh,
+        // we are only interested in removing rows in blocks that are in the middle of a refresh,
         // ie two blocks, A and B, both are refreshed (as in the same cache) but A comes back
         // first and some rows have moved from B to A, we must remove the old rows from B.
-        // however if B is not also getting refreshed (ie it's loaded) this this is a bug
+        // however if B is not also getting refreshed (ie it's loaded) this is a bug
         // we need to tell the application about, as they provided duplicate ID's (done in Node Manager)
         if (this.getState()==RowNodeBlock.STATE_LOADED) { return; }
 
