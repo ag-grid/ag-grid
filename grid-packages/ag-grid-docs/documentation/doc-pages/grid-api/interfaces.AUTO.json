@@ -5874,6 +5874,7 @@
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
   "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "AgChartThemePalette": {
     "meta": {},
@@ -6347,7 +6348,7 @@
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number"
+      "fillOpacity?": "Opacity"
     },
     "docs": {
       "fill?": "/** The fill colour used by the mask. */",
@@ -6790,7 +6791,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "dimOpacity?": "number",
+      "dimOpacity?": "Opacity",
       "strokeWidth?": "PixelSize"
     },
     "docs": {
@@ -6907,8 +6908,8 @@
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number"
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "enabled?": "/** Whether or not to show markers. */",
@@ -6970,8 +6971,8 @@
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number"
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -6997,8 +6998,8 @@
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number"
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity"
     },
     "docs": {
       "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
@@ -7065,7 +7066,7 @@
       "title?": "string",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "strokeOpacity?": "number",
+      "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "label?": "AgLineSeriesLabelOptions",
@@ -7146,8 +7147,8 @@
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
       "tooltip?": "AgScatterSeriesTooltip",
       "data?": "any[]",
       "visible?": "boolean",
@@ -7232,8 +7233,8 @@
       "strokes?": "string[]",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
@@ -7348,8 +7349,8 @@
       "strokes?": "string[]",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
       "shadow?": "AgDropShadowOptions",
@@ -7431,8 +7432,8 @@
       "type?": "'histogram'",
       "fill?": "CssColor",
       "stroke?": "CssColor",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
       "strokeWidth?": "PixelSize",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",
@@ -7586,8 +7587,8 @@
       "labelName?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
-      "fillOpacity?": "number",
-      "strokeOpacity?": "number",
+      "fillOpacity?": "Opacity",
+      "strokeOpacity?": "Opacity",
       "strokeWidth?": "PixelSize",
       "lineDash?": "PixelSize[]",
       "lineDashOffset?": "PixelSize",

@@ -10302,6 +10302,7 @@
   "FontSize": {},
   "AgChartThemeName": {},
   "CssColor": {},
+  "Opacity": {},
   "PixelSize": {},
   "AgChartThemePalette": {
     "fills": {
@@ -11115,7 +11116,7 @@
     },
     "fillOpacity": {
       "description": "/** The opacity of the mask's fill in the `[0, 1]` interval, where `0` is effectively no masking. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgNavigatorHandleOptions": {
@@ -11711,7 +11712,7 @@
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "dimOpacity": {
       "description": "/** The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight. */",
@@ -11858,11 +11859,11 @@
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesMarkerFormatterParams": {
@@ -11928,11 +11929,11 @@
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgAreaSeriesMarker": {
@@ -11973,11 +11974,11 @@
     },
     "fillOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgSeriesTooltip": {
@@ -12070,7 +12071,7 @@
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the lines. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
@@ -12219,11 +12220,11 @@
     },
     "fillOpacity": {
       "description": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "tooltip": {
       "description": "/** Series-specific tooltip configuration. */",
@@ -12358,11 +12359,11 @@
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the area. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the areas. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
@@ -12540,11 +12541,11 @@
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "lineDash": {
       "description": "/** Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */",
@@ -12662,11 +12663,11 @@
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the histogram bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the histogram bars. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the histogram bars. */",
@@ -12913,11 +12914,11 @@
     },
     "fillOpacity": {
       "description": "/** The opacity of the fill for the segments. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeOpacity": {
       "description": "/** The opacity of the stroke for the segments. */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "Opacity", "optional": true }
     },
     "strokeWidth": {
       "description": "/** The width in pixels of the stroke for the segments. */",

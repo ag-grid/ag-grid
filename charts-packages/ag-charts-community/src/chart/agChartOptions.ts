@@ -31,6 +31,7 @@ export type AgChartThemeName =
 /** Alias to denote that a value should be a CSS-compliant color string, such as `#FFFFFF` or `rgb(255, 255, 255)` or `white`. */
 export type CssColor = string;
 
+/** Alias to denote that a value reflects an alpha opacity in the range [0, 1]. */
 export type Opacity = number;
 
 /** Alias to denote that a value is a measurement in pixels. */
