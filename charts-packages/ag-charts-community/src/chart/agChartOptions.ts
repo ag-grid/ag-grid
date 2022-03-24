@@ -397,17 +397,24 @@ export interface AgAxisLineOptions {
     color?: CssColor;
 }
 
-export interface AgAxisTickOptions {
+export interface AgAxisBaseTickOptions {
     /** The width in pixels of the axis ticks (and corresponding grid line). */
     width?: PixelSize;
     /** The length in pixels of the axis ticks. */
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
-    /** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */
-    count?: any;
 }
 
+export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
+    /** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */
+    count?: number;
+}
+
+export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
+    /** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>The following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */
+    count?: any;
+}
 export interface AgAxisLabelFormatterParams {
     readonly value: any;
     readonly index: number;
@@ -455,8 +462,6 @@ export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     title?: AgChartCaptionOptions;
     /** Configuration for the axis line. */
     line?: AgAxisLineOptions;
-    /** Configuration for the axis ticks. */
-    tick?: AgAxisTickOptions;
     /** Configuration for the axis labels, shown next to the ticks. */
     label?: AgAxisLabelOptions;
     /** Configuration of the lines used to form the grid in the chart area. */
@@ -471,6 +476,8 @@ export interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
     min?: number;
     /** User override for the automatically determined max value (based on series data). */
     max?: number;
+    /** Configuration for the axis ticks. */
+    tick?: AgAxisNumberTickOptions;
 }
 
 export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
@@ -483,22 +490,30 @@ export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
     max?: number;
     /** The base of the logarithm used. */
     base?: number;
+    /** Configuration for the axis ticks. */
+    tick?: AgAxisNumberTickOptions;
 }
 
 export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
     paddingInner?: number;
     paddingOuter?: number;
+    /** Configuration for the axis ticks. */
+    tick?: AgAxisNumberTickOptions;
 }
 
 export interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'groupedCategory';
+    /** Configuration for the axis ticks. */
+    tick?: AgAxisNumberTickOptions;
 }
 
 export interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'time';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
+    /** Configuration for the axis ticks. */
+    tick?: AgAxisTimeTickOptions;
 }
 
 export type AgCartesianAxisOptions =

@@ -6071,6 +6071,7 @@
       "nice?": "boolean",
       "min?": "number",
       "max?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgNumberAxisOptions, 'position' | 'type'>",
@@ -6078,7 +6079,6 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6088,6 +6088,7 @@
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "min?": "/** User override for the automatically determined min value (based on series data). */",
       "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -6095,7 +6096,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6108,6 +6108,7 @@
       "min?": "number",
       "max?": "number",
       "base?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgLogAxisOptions, 'position' | 'type'>",
@@ -6115,7 +6116,6 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6126,6 +6126,7 @@
       "min?": "/** User override for the automatically determined min value (based on series data). */",
       "max?": "/** User override for the automatically determined max value (based on series data). */",
       "base?": "/** The base of the logarithm used. */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -6133,7 +6134,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6144,6 +6144,7 @@
     "type": {
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgCategoryAxisOptions, 'position' | 'type'>",
@@ -6151,13 +6152,13 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
       "thickness?": "PixelSize"
     },
     "docs": {
+      "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -6165,7 +6166,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6174,6 +6174,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
+      "tick?": "AgAxisNumberTickOptions",
       "top?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'position' | 'type'>",
@@ -6181,13 +6182,13 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
       "thickness?": "PixelSize"
     },
     "docs": {
+      "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -6195,7 +6196,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6205,6 +6205,7 @@
     "meta": {},
     "type": {
       "nice?": "boolean",
+      "tick?": "AgAxisTimeTickOptions",
       "top?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
       "right?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
       "bottom?": "Omit<AgTimeAxisOptions, 'position' | 'type'>",
@@ -6212,7 +6213,6 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6220,6 +6220,7 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "top?": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "right?": "/** An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above. */",
       "bottom?": "/** An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above. */",
@@ -6227,7 +6228,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6554,19 +6554,47 @@
       "color?": "/** The colour of the axis line. */"
     }
   },
-  "AgAxisTickOptions": {
+  "AgAxisBaseTickOptions": {
     "meta": {},
     "type": {
       "width?": "PixelSize",
       "size?": "PixelSize",
-      "color?": "CssColor",
-      "count?": "any"
+      "color?": "CssColor"
     },
     "docs": {
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
-      "color?": "/** The colour of the axis ticks. */",
-      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */"
+      "color?": "/** The colour of the axis ticks. */"
+    }
+  },
+  "AgAxisNumberTickOptions": {
+    "meta": {},
+    "type": {
+      "count?": "number",
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */",
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */"
+    }
+  },
+  "AgAxisTimeTickOptions": {
+    "meta": {},
+    "type": {
+      "count?": "any",
+      "width?": "PixelSize",
+      "size?": "PixelSize",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "count?": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>The following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
+      "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "size?": "/** The length in pixels of the axis ticks. */",
+      "color?": "/** The colour of the axis ticks. */"
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -6621,7 +6649,6 @@
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6631,7 +6658,6 @@
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6644,10 +6670,10 @@
       "nice?": "boolean",
       "min?": "number",
       "max?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6657,10 +6683,10 @@
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "min?": "/** User override for the automatically determined min value (based on series data). */",
       "max?": "/** User override for the automatically determined max value (based on series data). */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6674,10 +6700,10 @@
       "min?": "number",
       "max?": "number",
       "base?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6688,10 +6714,10 @@
       "min?": "/** User override for the automatically determined min value (based on series data). */",
       "max?": "/** User override for the automatically determined max value (based on series data). */",
       "base?": "/** The base of the logarithm used. */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6703,20 +6729,20 @@
       "type": "'category'",
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
       "thickness?": "PixelSize"
     },
     "docs": {
+      "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6726,20 +6752,20 @@
     "meta": {},
     "type": {
       "type": "'groupedCategory'",
+      "tick?": "AgAxisNumberTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
       "thickness?": "PixelSize"
     },
     "docs": {
+      "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
@@ -6750,10 +6776,10 @@
     "type": {
       "type": "'time'",
       "nice?": "boolean",
+      "tick?": "AgAxisTimeTickOptions",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
-      "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
       "keys?": "string[]",
@@ -6761,10 +6787,10 @@
     },
     "docs": {
       "nice?": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
+      "tick?": "/** Configuration for the axis ticks. */",
       "position?": "/** The position on the chart where the axis should be rendered. */",
       "title?": "/** Configuration for the title shown next to the axis. */",
       "line?": "/** Configuration for the axis line. */",
-      "tick?": "/** Configuration for the axis ticks. */",
       "label?": "/** Configuration for the axis labels, shown next to the ticks. */",
       "gridStyle?": "/** Configuration of the lines used to form the grid in the chart area. */",
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"

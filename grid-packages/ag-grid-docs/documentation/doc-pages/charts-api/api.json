@@ -403,7 +403,7 @@
       "default": "rgba(195, 195, 195, 1)"
     }
   },
-  "AgAxisTickOptions": {
+  "AgAxisNumberTickOptions": {
     "width": {
       "default": 1,
       "min": 0,
@@ -423,6 +423,23 @@
       "default": 10,
       "min": 0,
       "max": 50
+    }
+  },
+  "AgAxisTimeTickOptions": {
+    "width": {
+      "default": 1,
+      "min": 0,
+      "max": 10,
+      "unit": "px"
+    },
+    "size": {
+      "default": 6,
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "color": {
+      "default": "rgba(195, 195, 195, 1)"
     }
   },
   "AgAxisLabelOptions": {

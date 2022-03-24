@@ -10635,6 +10635,10 @@
       "description": "/** User override for the automatically determined max value (based on series data). */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -10674,10 +10678,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -10710,6 +10710,10 @@
       "description": "/** The base of the logarithm used. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -10749,10 +10753,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -10771,6 +10771,10 @@
   "AgCategoryAxisThemeOptions": {
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -10810,10 +10814,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -10830,6 +10830,10 @@
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -10869,10 +10873,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -10893,6 +10893,10 @@
       "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTimeTickOptions", "optional": true }
+    },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
       "type": {
@@ -10932,10 +10936,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -11383,7 +11383,7 @@
       "type": { "returnType": "CssColor", "optional": true }
     }
   },
-  "AgAxisTickOptions": {
+  "AgAxisBaseTickOptions": {
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -11395,10 +11395,42 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
-    },
+    }
+  },
+  "AgAxisNumberTickOptions": {
     "count": {
-      "description": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>If the axis is a `time` axis, the following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
+      "description": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "width": {
+      "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "size": {
+      "description": "/** The length in pixels of the axis ticks. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis ticks. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgAxisTimeTickOptions": {
+    "count": {
+      "description": "/** A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.<br/><br/>The following intervals from the `agCharts.time` namespace can be used: `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`. And derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month.<br/><br/> */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "width": {
+      "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "size": {
+      "description": "/** The length in pixels of the axis ticks. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis ticks. */",
+      "type": { "returnType": "CssColor", "optional": true }
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -11479,10 +11511,6 @@
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
     },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
-    },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
       "type": { "returnType": "AgAxisLabelOptions", "optional": true }
@@ -11511,6 +11539,10 @@
       "description": "/** User override for the automatically determined max value (based on series data). */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -11522,10 +11554,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -11559,6 +11587,10 @@
       "description": "/** The base of the logarithm used. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -11570,10 +11602,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -11593,6 +11621,10 @@
     "type": { "type": { "returnType": "'category'", "optional": false } },
     "paddingInner": { "type": { "returnType": "number", "optional": true } },
     "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -11604,10 +11636,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -11627,6 +11655,10 @@
     "type": {
       "type": { "returnType": "'groupedCategory'", "optional": false }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+    },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -11638,10 +11670,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
@@ -11663,6 +11691,10 @@
       "description": "/** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "tick": {
+      "description": "/** Configuration for the axis ticks. */",
+      "type": { "returnType": "AgAxisTimeTickOptions", "optional": true }
+    },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -11674,10 +11706,6 @@
     "line": {
       "description": "/** Configuration for the axis line. */",
       "type": { "returnType": "AgAxisLineOptions", "optional": true }
-    },
-    "tick": {
-      "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisTickOptions", "optional": true }
     },
     "label": {
       "description": "/** Configuration for the axis labels, shown next to the ticks. */",
