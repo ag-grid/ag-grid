@@ -313,7 +313,7 @@
   },
   "AbstractColDef": {
     "meta": {
-      "doc": "/** *********************************************************************\n * Don't forget to update ColDefUtil if changing this class. PLEASE! *\n * ********************************************************************* */\n/** AbstractColDef can be a group or a column definition */"
+      "doc": "/** AbstractColDef can be a group or a column definition */"
     },
     "type": {
       "headerName?": "string",
@@ -347,7 +347,9 @@
     }
   },
   "ColGroupDef": {
-    "meta": {},
+    "meta": {
+      "doc": "/** Configuration options for column groups in AG Grid. */"
+    },
     "type": {
       "children": "(ColDef | ColGroupDef)[]",
       "groupId?": "string",
@@ -461,9 +463,7 @@
     "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined)"
   },
   "ColDef": {
-    "meta": {
-      "doc": "/** *********************************************************************\n * Don't forget to update ColDefUtil if changing this class. PLEASE! *\n * ********************************************************************* */"
-    },
+    "meta": { "doc": "/** Configuration options for columns in AG Grid. */" },
     "type": {
       "colId?": "string",
       "field?": "string",
