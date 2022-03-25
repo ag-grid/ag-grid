@@ -387,7 +387,7 @@ const generateOptions = ({
         };
 
         if (desc.type === 'primitive' || (desc.type === 'array' && desc.elements.type === 'primitive')) {
-            const { editor, editorProps } = isEditable(name) && getPrimitiveEditor(prop);
+            const { editor, editorProps } = isEditable(name) && getPrimitiveEditor(prop, key);
 
             elements.push(
                 <Option

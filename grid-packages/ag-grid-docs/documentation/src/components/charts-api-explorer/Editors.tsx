@@ -38,6 +38,33 @@ const OPACITY_PROPS = {
     max: 1,
 };
 
+const getMaxSize = () => {
+    const DEFAULT_WIDTH = 800;
+    const DEFAULT_HEIGHT = 600;
+    const ELEMENT_PADDING = 10;
+    const element = typeof window !== 'undefined' && document.querySelector('#chart-container') as HTMLDivElement;
+    const {
+        offsetWidth = DEFAULT_WIDTH,
+        offsetHeight = DEFAULT_HEIGHT,
+    } = element || {};
+
+    return {
+        // Width and height accounting for CSS padding on container element.
+        width: (offsetWidth - (ELEMENT_PADDING * 2)),
+        height: (offsetHeight - ELEMENT_PADDING),
+    };
+};
+
+type Primitive = number | string | boolean
+const SPECIAL_OVERRIDE_PROPS: Record<string, Record<string, (() => Primitive) | Primitive>> = {
+    'width': {
+        max: () => getMaxSize().width,
+    },
+    'height': {
+        max: () => getMaxSize().height,
+    },
+};
+
 export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
     if (desc.type === 'array') {
         return ArrayEditor;
@@ -69,10 +96,21 @@ export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
     return null;
 };
 
-export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty) => {
+export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: string) => {
     let editor: any;
     let editorProps: Record<string, any> = {};
     
+    let specialOverride = SPECIAL_OVERRIDE_PROPS[key];
+    if (specialOverride != null) {
+        // Apply special overrides to a copy of meta before application below.
+        meta = { ...meta };
+        Object.entries(specialOverride)
+            .forEach(([prop, valueOrFn]) => {
+                let value = typeof valueOrFn === 'function' ? valueOrFn() : valueOrFn;
+                meta[prop] = value;
+            });
+    }
+
     if (desc.type === 'primitive' && desc.aliasType != null) {
         switch (desc.aliasType) {
             case 'CssColor':
