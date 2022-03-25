@@ -3169,8 +3169,16 @@
   },
   "SortChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "source": "string",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "source": "/** Source of the sort change. */",
+      "type": "/** Event identifier */"
+    }
   },
   "GridReadyEvent": {
     "meta": {},

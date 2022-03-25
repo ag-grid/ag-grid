@@ -48,7 +48,7 @@ export class SortController extends BeanStub {
         // sortIndex used for knowing order of cols when multi-col sort
         this.updateSortIndex(column);
 
-        this.dispatchSortChangedEvents();
+        this.dispatchSortChangedEvents(source);
     }
 
     private updateSortIndex(lastColToChange: Column) {
@@ -73,8 +73,8 @@ export class SortController extends BeanStub {
 
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
-    public onSortChanged(): void {
-        this.dispatchSortChangedEvents();
+    public onSortChanged(source: string): void {
+        this.dispatchSortChangedEvents(source);
     }
 
     public isSortActive(): boolean {
@@ -84,11 +84,12 @@ export class SortController extends BeanStub {
         return sortedCols && sortedCols.length > 0;
     }
 
-    public dispatchSortChangedEvents(): void {
+    public dispatchSortChangedEvents(source: string): void {
         const event: SortChangedEvent = {
             type: Events.EVENT_SORT_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source
         };
         this.eventService.dispatchEvent(event);
     }

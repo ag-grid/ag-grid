@@ -1030,7 +1030,7 @@ export class GridApi {
      * Useful if you update some values and want to get the grid to reorder them according to the new values.
      */
     public onSortChanged() {
-        this.sortController.onSortChanged();
+        this.sortController.onSortChanged('api');
     }
 
     /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */

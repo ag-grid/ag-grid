@@ -6153,6 +6153,10 @@
     }
   },
   "SortChangedEvent": {
+    "source": {
+      "description": "/** Source of the sort change. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {

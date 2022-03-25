@@ -2243,7 +2243,7 @@ export class ColumnModel extends BeanStub {
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             if (getChangedColumns(sortChangePredicate).length > 0) {
-                this.sortController.dispatchSortChangedEvents();
+                this.sortController.dispatchSortChangedEvents(source);
             }
 
             // special handling for moved column events
@@ -2434,9 +2434,9 @@ export class ColumnModel extends BeanStub {
         const sort = getValue('sort').value1;
         if (sort !== undefined) {
             if (sort === Constants.SORT_DESC || sort === Constants.SORT_ASC) {
-                column.setSort(sort);
+                column.setSort(sort, source);
             } else {
-                column.setSort(undefined);
+                column.setSort(undefined, source);
             }
         }
 
