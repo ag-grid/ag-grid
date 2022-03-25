@@ -157,6 +157,7 @@ export function toMatchImage(actual, expected) {
         diff.data,
         width,
         height,
+        { threshold: 0.01 },
     );
 
     const diffOutputFilename = `${testPath.substring(0, testPath.lastIndexOf('/'))}/__image_snapshots__/${currentTestName}-diff.png`;
