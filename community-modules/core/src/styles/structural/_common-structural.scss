@@ -632,13 +632,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     height: 100%;
 }
 
-// this is used when using a Cell Wrapper (eg row drag, selection, or auto-height)
-// if not using wrapper, ag-cell-value is on a div, which is 100% anyway, however when
-// in a wrapper, it's a span, so we put 100% width to cover both, so it's consistent
+// This is used when using a Cell Wrapper (eg row drag, selection, or auto-height).
+// If not using wrapper, ag-cell-value is on a div, which is 100% width. However when
+// in a wrapper, it's a span (not a div), so we need 100% width to provide consistent
 // behaviour regardless of wrapper used or not. If we did not do this, Cell Renderer's
 // with 100% width wouldn't get the full width when using a wrapper.
+// Instead of just 100% width we use flex, as it's not the only item on the line, so it
+// fills the remaining space.
 .ag-cell-value {
-    width: 100%;
+    flex: 1 1 auto;
 }
 
 .ag-cell-value, .ag-group-value {
