@@ -1216,14 +1216,29 @@ export class RowCtrl extends BeanStub {
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
         if (this.rowNode.rowHeight == null) { return; }
-        const fromFunction = this.beans.gridOptionsWrapper.isGetRowHeightFunction();
+
         const rowHeight = this.rowNode.rowHeight;
+
         const defaultRowHeight = this.beans.gridOptionsWrapper.getDefaultRowHeight();
+        const isHeightFromFunc = this.beans.gridOptionsWrapper.isGetRowHeightFunction();
+        const heightFromFunc = isHeightFromFunc ? this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height : undefined;
+        const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.allRowGuis.forEach(gui => {
             gui.element.style.height = `${rowHeight}px`;
-            if (fromFunction) {
-                gui.element.style.setProperty('--ag-row-height', `${Math.min(defaultRowHeight, rowHeight) - 2}px`);
+
+            // If the row height is coming from a function, this means some rows can
+            // be smaller than the theme had intended. so we set --ag-line-height on
+            // the row, which is picked up by the theme CSS and is used in a calc
+            // for the CSS line-height property, which makes sure the line-height is
+            // not bigger than the row height, otherwise the row text would not fit.
+            // We do not use rowNode.rowHeight here, as this could be the result of autoHeight,
+            // and we found using the autoHeight result causes a loop, where changing the
+            // line-height them impacts the cell height, resulting in a new autoHeight,
+            // resulting in a new line-height and so on loop. 
+            // const heightFromFunc = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
+            if (lineHeight) {
+                gui.element.style.setProperty('--ag-line-height', lineHeight);
             }
         });
     }

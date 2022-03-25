@@ -260,7 +260,9 @@ export class CellCtrl extends BeanStub {
 
         const eAutoHeightContainer = this.eCellWrapper!;
         const eParentCell = eAutoHeightContainer.parentElement!;
-        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
+        // thus allowing different min heights for different rows.
+        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }

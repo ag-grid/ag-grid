@@ -215,7 +215,7 @@
 
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // Needed to capitalize min, because it clashes with old versions of Sass
-        height: Min(var(--ag-row-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
+        height: Min(var(--ag-line-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
         display: flex;
         align-items: center;
         flex: none;

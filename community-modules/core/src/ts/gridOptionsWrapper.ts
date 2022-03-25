@@ -1884,11 +1884,11 @@ export class GridOptionsWrapper {
     }
 
     private setRowHeightVariable(height: number): void {
-        const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-row-height').trim();
+        const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
         const newRowHeight = `${height}px`;
 
         if (oldRowHeight != newRowHeight) {
-            this.eGridDiv.style.setProperty('--ag-row-height', newRowHeight);
+            this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
         }
     }
 

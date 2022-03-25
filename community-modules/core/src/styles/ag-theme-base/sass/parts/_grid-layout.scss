@@ -144,7 +144,7 @@
         border: 1px solid transparent;
         // adjust for transparent border
         // Needed to capitalize min, because it clashes with old versions of Sass
-        line-height: Min(var(--ag-row-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
+        line-height: Min(var(--ag-line-height, ag-param(row-height) - 2px), ag-param(row-height) - 2px);
         padding-left: ag-param(cell-horizontal-padding) - 1px;
         padding-right: ag-param(cell-horizontal-padding) - 1px;
         -webkit-font-smoothing: subpixel-antialiased;
