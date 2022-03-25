@@ -165,13 +165,17 @@ export const getExampleFiles = exampleInfo => {
 };
 
 export const openPlunker = exampleInfo => {
-    const { title } = exampleInfo;
+    const { title, framework, internalFramework } = exampleInfo;
 
     getExampleFiles(exampleInfo).then(files => {
+
+        // Let's open the grid configuration file by default
+        const fileToOpen = getEntryFile(framework, internalFramework)
+
         const form = document.createElement('form');
         form.method = 'post';
         form.style.display = 'none';
-        form.action = '//plnkr.co/edit/?p=preview';
+        form.action = `//plnkr.co/edit/?preview&open=${fileToOpen}`;
         form.target = '_blank';
 
         const addHiddenInput = (name, value) => {
