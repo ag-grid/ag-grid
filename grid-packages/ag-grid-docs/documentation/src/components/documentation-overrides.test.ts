@@ -15,6 +15,7 @@ jest.mock('./use-json-file-nodes');
  *          sort |
  *          uniq
  * )
+ * ```
  */
 const OVERRIDES_TO_TEST = [
     'charts-api/api.json',
