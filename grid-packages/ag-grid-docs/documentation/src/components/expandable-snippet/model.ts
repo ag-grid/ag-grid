@@ -513,8 +513,17 @@ export function loadLookups(overridesrc?: string): { interfaceLookup; codeLookup
     if (overridesrc) {
         const overrides: Overrides = getJsonFromFile(useJsonFileNodes(), undefined, overridesrc);
 
-        Object.entries(overrides).forEach(([type, override]) => {
+        Object.entries(overrides)
+            .filter(([type]) => type !== '_config_')
+            .forEach(([type, override]) => {
+
             const def = interfaceLookup[type];
+            const codeDef = codeLookup[type];
+
+            if (def == null) {
+                console.warn(`AG Grid - documentation overrides file ${overridesrc} has override for unknown type: ${type}`);
+                return;
+            }
 
             if (override.meta) {
                 Object.assign(def.meta, override.meta);
@@ -523,6 +532,15 @@ export function loadLookups(overridesrc?: string): { interfaceLookup; codeLookup
             Object.entries(override)
                 .filter(([prop]) => prop !== 'meta')
                 .forEach(([prop, propOverride]) => {
+                    if (def.type[prop] == null && def.type[prop + '?'] != null) {
+                        prop = prop + '?';
+                    }
+
+                    if (def.type[prop] == null && codeDef[prop] == null) {
+                        console.warn(`AG Grid - documentation overrides file ${overridesrc} has override for unknown field: ${type}.${prop}`);
+                        return;
+                    }
+
                     def.meta[prop] = {
                         ...def.meta[prop],
                         ...propOverride,
