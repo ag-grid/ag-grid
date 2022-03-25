@@ -42,6 +42,7 @@ const BASE_PATH = './doc-pages';
 describe('Documentation Overrides Sanity Check', () => {
     let interfaces: {};
     let docInterfaces: {};
+    let originalConsoleWarn;
 
     beforeAll(() => {
         interfaces = JSON.parse(fs.readFileSync(`${BASE_PATH}/grid-api/interfaces.AUTO.json`).toString());
@@ -49,11 +50,12 @@ describe('Documentation Overrides Sanity Check', () => {
     });
 
     beforeEach(() => {
+        originalConsoleWarn = console.warn;
         console.warn = jest.fn();
     });
 
     afterEach(() => {
-        expect(console.warn).not.toBeCalled();
+        console.warn = originalConsoleWarn;
     });
 
     describe.each(OVERRIDES_TO_TEST)('Verify %s', (override) => {
