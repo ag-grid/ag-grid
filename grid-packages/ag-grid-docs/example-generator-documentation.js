@@ -252,6 +252,28 @@ function createExampleGenerator(prefix, importTypes) {
                 writeFile(path.join(basePath, 'styles.css'), inlineStyles);
             }
 
+            writeFile(path.join(basePath, 'mypackage.json'), `{
+                "name": "ag-grid-angular-example",
+                "version": "",
+                "description": "My writting filwdules",
+                "dependencies": {
+                    "@angular/animations": "^10",
+                    "@angular/common": "^10",
+                    "@angular/compiler": "^10",
+                    "@angular/core": "^10",
+                    "@angular/forms": "^10",
+                    "@angular/platform-browser": "^10",
+                    "@angular/platform-browser-dynamic": "^10",
+                    "@angular/router": "^10",
+                    "@ag-grid-community/angular": "^27.1.0",
+                    "@ag-grid-community/core": "^27.1.0",
+                    "@ag-grid-community/client-side-row-model": "^27.1.0",
+                    "rxjs": "~7.4.0",
+                    "tslib": "^2.3.0",
+                    "zone.js": "~0.11.4"
+                }
+            }`);
+
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
             copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);

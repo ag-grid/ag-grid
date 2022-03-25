@@ -110,10 +110,12 @@ export const getExampleInfo = (
     };
 };
 
-const getFrameworkFiles = (framework, internalFramework) => {
-    if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
+const getFrameworkFiles = (framework, internalFramework, importType) => {
+    let files = [`package_${importType}.json`];
 
-    let files = ['systemjs.config.js'];
+    if (framework === 'javascript' && internalFramework !== 'typescript') { return files; }
+
+    files.push('systemjs.config.js');
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
@@ -127,18 +129,18 @@ const getFrameworkFiles = (framework, internalFramework) => {
 };
 
 export const getExampleFiles = exampleInfo => {
-    const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
+    const { sourcePath, framework, internalFramework, boilerplatePath, importType } = exampleInfo;
 
     const filesForExample = exampleInfo
         .getFiles()
         .map(node => ({
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
-            isFramework: false
+            isFramework: node.relativePath.replace(sourcePath, '') === 'package.json'
         }));
 
-    getFrameworkFiles(framework, internalFramework).forEach(file => filesForExample.push({
-        path: file,
+    getFrameworkFiles(framework, internalFramework, importType).forEach(file => filesForExample.push({
+        path: file === `package_${importType}.json` ? 'package.json' : file,
         publicURL: withPrefix(boilerplatePath + file),
         isFramework: true,
     }));
