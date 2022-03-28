@@ -2082,8 +2082,8 @@ export class ColumnModel extends BeanStub {
         } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
 
         // If there are still states left over, see if we can apply them to newly generated
-        // secondary or auto columns
-        if (unmatchedAndAutoStates.length > 0) {
+        // secondary or auto columns. Also if defaults exist, ensure they are applied to secondary cols
+        if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
                 this.secondaryColumns || [],
