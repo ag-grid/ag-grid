@@ -6,6 +6,7 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 
     &__body {
         display: flex;
@@ -19,10 +20,11 @@
     }
 
     &__right {
-        flex: 1 1 auto;
+        width: 60%;
     }
 
     &__options {
+        margin: 0 0 10px 10px;
         position: relative;
         overflow: hidden;
         height: 100%;
@@ -35,15 +37,33 @@
     }
 
     &__code {
-        padding-top: 1rem;
         overflow: auto;
         height: 50%;
     }
 
     &__launcher {
+        position: relative;
+        top: -5px;
         height: 40px;
-        background: lightgray;
-        margin: 0px 10px 5px 10px;
+        background: #d0d4d6;
         text-align: right;
+    }
+
+    &.fullscreen {
+        background: white;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100vw;
+        height: 100vh;
+        z-index: 100;
+
+        &__left {
+            width: 500px;
+        }
+
+        &__right {
+            width: calc(100vw - 500px);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt, faChartLine, faCompress, faExpand, faWindowRestore } from "@fortawesome/free-solid-svg-icons";
 
 import { AgChartOptions } from "ag-charts-community";
 
@@ -12,12 +12,44 @@ import { useExampleFileNodes } from '../example-runner/use-example-file-nodes';
 interface LauncherProps {
     framework: string;
     options: AgChartOptions;
+
+    fullScreen: boolean;
+    setFullScreen(fullScreen: boolean): void;
+
+    fullScreenGraph: boolean;
+    setFullScreenGraph(fullScreenGraph: boolean): void;
 }
 
-export const Launcher = ({ framework, options }: LauncherProps) => {
+export const Launcher = ({ framework, options, fullScreen, setFullScreen, fullScreenGraph, setFullScreenGraph }: LauncherProps) => {
     const exampleInfo = buildExampleInfo(framework, options);
 
     return <>
+        <div
+            className={styles['menu-item']}
+            onClick={() => setFullScreenGraph(!fullScreenGraph)}
+            onKeyDown={e => doOnEnter(e, () => setFullScreenGraph(!fullScreenGraph))}
+            role="button"
+            tabIndex={0}
+        >
+            <FontAwesomeIcon
+                icon={fullScreenGraph ? faCompress : faChartLine }
+                fixedWidth
+                title="Open chart preview fullscreen"
+            />
+        </div>
+        <div
+            className={styles['menu-item']}
+            onClick={() => setFullScreen(!fullScreen)}
+            onKeyDown={e => doOnEnter(e, () => setFullScreen(!fullScreen))}
+            role="button"
+            tabIndex={0}
+        >
+            <FontAwesomeIcon
+                icon={fullScreen ? faCompress : faWindowRestore }
+                fixedWidth
+                title={fullScreen ? "Exit fullscreen" : "Open fullscreen" }
+            />
+        </div>
         <div
             className={styles['menu-item']}
             onClick={() => openPlunker(exampleInfo)}
@@ -25,7 +57,7 @@ export const Launcher = ({ framework, options }: LauncherProps) => {
             role="button"
             tabIndex={0}
         >
-            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth title="Open in Plunker" />
         </div>
     </>
 };

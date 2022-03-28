@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getTemplates } from './templates';
+import React, { useState } from 'react';
+import classnames from 'classnames';
 import { Chart } from './Chart';
 import { Options } from './Options';
 import { ChartTypeSelector } from './ChartTypeSelector';
@@ -95,8 +95,6 @@ const createOptionsJson = (chartType, options) => {
     return json;
 };
 
-const isFullScreen = () => window.self === window.top;
-
 /**
  * The Standalone Charts API Explorer is an interactive tool for exploring the charts API. The user can change different
  * settings and see how they affect the appearance of the chart, and it will generate the code they would need to use in
@@ -106,8 +104,8 @@ export const ChartsApiExplorer = ({ framework }) => {
     const [chartType, setChartType] = useState('bar');
     const [options, setOptions] = useState({});
     const [defaults, setDefaults] = useState({});
-    const [boilerplateCode] = useState(null);
-    const setFilesJson = useState(null)[1];
+    const [fullScreen, setFullScreen] = useState(false);
+    const [fullScreenGraph, setFullScreenGraph] = useState(false);
 
     const getKeys = expression => expression.split('.');
 
@@ -157,19 +155,16 @@ export const ChartsApiExplorer = ({ framework }) => {
         setOptions({});
     };
 
-    useEffect(() => {
-        if (isFullScreen()) { return; }
-
-        const optionsJson = createOptionsJson(chartType, options);
-        const files = getTemplates(framework, boilerplateCode, optionsJson);
-        setFilesJson(JSON.stringify({ files }));
-        // eslint-disable-next-line
-    }, []);
-
     const optionsJson = createOptionsJson(chartType, options);
 
     return (
-        <div className={styles['explorer-container']}>
+        <div className={classnames(styles['explorer-container'], {[styles['fullscreen']]: fullScreen})}>
+            <div className={styles['explorer-container__launcher']}>
+                <Launcher
+                    options={optionsJson}
+                    {...{framework, fullScreen, fullScreenGraph, setFullScreen, setFullScreenGraph}}
+                />
+            </div>
             <div>
                 <ChartTypeSelector type={chartType} onChange={updateChartType} />
             </div>
@@ -184,8 +179,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                     </div>
                 </div>
                 <div className={styles['explorer-container__right']}>
-                    <div className={styles['explorer-container__launcher']}><Launcher framework={framework} options={optionsJson} /></div>
-                    <div className={styles['explorer-container__chart']}><Chart options={optionsJson} /></div>
+                    <div className={styles['explorer-container__chart']}><Chart options={optionsJson} fullScreen={fullScreenGraph} setFullScreen={setFullScreenGraph} /></div>
                     <div className={styles['explorer-container__code']}><CodeView framework={framework} options={optionsJson} /></div>
                 </div>
             </div>

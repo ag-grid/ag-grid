@@ -1,13 +1,18 @@
 import React from 'react';
 import { AgChartOptions } from 'ag-charts-community';
+import classnames from 'classnames';
+
 import { data, series } from './templates';
 import { deepClone } from './utils';
 import styles from './Chart.module.scss';
+import { doOnEnter, doOnEscape } from '../key-handlers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompress } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * This renders the chart inside the Standalone Charts API Explorer.
  */
-export class Chart extends React.Component<{ options: AgChartOptions }> {
+export class Chart extends React.Component<{ options: AgChartOptions, fullScreen: boolean, setFullScreen(o: boolean) }> {
     chart: React.RefObject<HTMLDivElement>;
     chartInstance = undefined;
     animationFrameId = 0;
@@ -56,6 +61,25 @@ export class Chart extends React.Component<{ options: AgChartOptions }> {
     }
 
     render() {
-        return <div id="chart-container" className={styles['chart']} ref={this.chart}></div>;
+        const cssClasses = classnames(styles['chart'], {[styles['fullscreen']]: this.props.fullScreen});
+        return <>
+            <div
+                id="chart-container"
+                className={cssClasses}
+                ref={this.chart}
+                onKeyDown={e => doOnEscape(e, () => this.props.setFullScreen(false))}
+            >
+            </div>
+            {this.props.fullScreen && <div
+                className={styles['close']}
+                onClick={() => this.props.setFullScreen(false)}
+                onKeyDown={e => doOnEnter(e, () => this.props.setFullScreen(false))}
+                role="button"
+                tabIndex={0}
+            >
+                <FontAwesomeIcon icon={faCompress} fixedWidth title="Exit chart fullscreen" />
+            </div>
+        }
+        </>;
     }
 }
