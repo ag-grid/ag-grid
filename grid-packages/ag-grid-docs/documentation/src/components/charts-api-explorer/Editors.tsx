@@ -6,34 +6,47 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
+
+import { FontFamily, FontWeight, FontStyle, FontSize, Opacity } from 'ag-charts-community';
+
 import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
 import { JsonProperty, JsonModelProperty } from '../expandable-snippet/model';
 
-const FONT_WEIGHT_EDITOR_PROPS = {
+type AliasTypePops<T> = {
+    default?: T,
+    options?: T[],
+    suggestions?: T[],
+    breakIndex?: number,
+    min?: T,
+    max?: T,
+    unit?: string,
+};
+
+const FONT_WEIGHT_EDITOR_PROPS: AliasTypePops<FontWeight> = {
     default: 'normal',
     breakIndex: 4,
     options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
 };
 
-const FONT_STYLE_EDITOR_PROPS = {
+const FONT_STYLE_EDITOR_PROPS: AliasTypePops<FontStyle> = {
     default: 'normal',
     options: ['normal', 'italic', 'oblique'],
 };
 
-const FONT_FAMILY_EDITOR_PROPS = {
+const FONT_FAMILY_EDITOR_PROPS: AliasTypePops<FontFamily> = {
     default: 'Verdana, sans-serif',
     suggestions: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
 };
 
-const FONT_SIZE_EDITOR_PROPS = {
+const FONT_SIZE_EDITOR_PROPS: AliasTypePops<FontSize> = {
     default: 12,
     min: 1,
     max: 30,
     unit: 'px',
 };
 
-const OPACITY_PROPS = {
+const OPACITY_PROPS: AliasTypePops<Opacity> = {
     min: 0,
     max: 1,
 };
