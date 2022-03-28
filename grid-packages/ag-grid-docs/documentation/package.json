@@ -99,6 +99,7 @@
     "react-helmet": "6.1.0",
     "react-instantsearch-dom": "6.10.3",
     "react-loading-overlay": "^1.0.1",
+    "react-player": "2.10.0",
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.2.0",
     "sass": "1.32.8",
