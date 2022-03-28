@@ -92,7 +92,7 @@
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Grid Properties",
+                "title": "Grid Options",
                 "url": "/grid-properties/",
                 "showInCollapsed": true
               },
@@ -105,11 +105,6 @@
                 "title": "Grid Events",
                 "box-title": "Events",
                 "url": "/grid-events/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid Callbacks",
-                "url": "/grid-callbacks/",
                 "showInCollapsed": true
               },
               {

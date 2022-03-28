@@ -58,7 +58,6 @@ const [cmd, script, execFunc] = process.argv;
 validateDocFile('GridOptions', './documentation/doc-pages/grid-api/grid-options.AUTO.json',
     [
         './documentation/doc-pages/grid-api/api.json',
-        './documentation/doc-pages/grid-callbacks/callbacks.json',
         './documentation/doc-pages/grid-properties/properties.json',
     ], [
     'onColumnRowGroupChangeRequest',

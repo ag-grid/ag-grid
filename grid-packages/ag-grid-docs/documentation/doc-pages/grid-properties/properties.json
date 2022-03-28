@@ -30,6 +30,12 @@
                 "include": []
             }
         },
+        "getContextMenuItems": {
+            "more": {
+                "name": "Context Menu",
+                "url": "/context-menu/"
+            }
+        },
         "suppressContextMenu": {
             "more": {
                 "name": "Context Menu",
@@ -39,6 +45,12 @@
         "preventDefaultOnContextMenu": {},
         "allowContextMenuWithControlKey": {
             "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down. Default: `false`"
+        },
+        "getMainMenuItems": {
+            "more": {
+                "name": "Column Menu",
+                "url": "/column-menu/#customising-the-general-menu-tab"
+            }
         },
         "suppressMenuHide": {
             "more": {
@@ -51,7 +63,8 @@
                 "name": "Popup Parent",
                 "url": "/context-menu/#popup-parent"
             }
-        }
+        },
+        "postProcessPopup": {}
     },
     "clipboard": {
         "meta": {
@@ -71,7 +84,13 @@
         "suppressCopyRowsToClipboard": {},
         "suppressLastEmptyLineOnPaste": {},
         "suppressClipboardPaste": {},
-        "suppressClipboardApi": {}
+        "suppressClipboardApi": {},
+        "processCellForClipboard": {},
+        "processHeaderForClipboard": {},
+        "processGroupHeaderForClipboard": {},
+        "processCellFromClipboard": {},
+        "sendToClipboard": {},
+        "processDataFromClipboard": {}
     },
     "columns": {
         "meta": {
@@ -286,6 +305,18 @@
                 "url": "/filter-quick/#quick-filter-cache"
             }
         },
+        "isExternalFilterPresent": {
+            "more": {
+                "name": "External Filter",
+                "url": "/filter-external/"
+            }
+        },
+        "doesExternalFilterPass": {
+            "more": {
+                "name": "External Filter",
+                "url": "/filter-external/"
+            }
+        },
         "excludeChildrenWhenTreeDataFiltering": {
             "more": {
                 "name": "Tree Data Filtering",
@@ -305,6 +336,18 @@
             "more": {
                 "name": "Enabling User Created Charts",
                 "url": "/integrated-charts-user-created/#enabling-user-created-charts"
+            }
+        },
+        "getChartToolbarItems": {
+            "more": {
+                "name": "Configuring Toolbar Items",
+                "url": "/integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
+            }
+        },
+        "createChartContainer": {
+            "more": {
+                "name": "Configuring Toolbar Items",
+                "url": "/integrated-charts-container/"
             }
         },
         "chartThemes": {
@@ -365,7 +408,7 @@
             }
         },
         "localeText": {},
-        "localeTextFunc": {}
+        "getLocaleText": {}
     },
     "masterDetail": {
         "meta": {
@@ -376,6 +419,9 @@
             }
         },
         "masterDetail": {},
+        "isRowMaster": {
+            "description": "Callback to be used with [Master Detail](/master-detail/) to determine if a row should be a master row. If `false` is returned no detail row will exist for this row."
+        },
         "detailCellRenderer": {
             "description": "Provide a custom `detailCellRenderer` to use when a master row is expanded.",
             "more": {
@@ -459,6 +505,7 @@
                 "url": "/cell-expressions/#cell-expressions"
             }
         },
+        "getDocument": {},
         "suppressParentsInRowNodes": {},
         "suppressTouch": {
             "more": {
@@ -502,6 +549,23 @@
         "noRowsOverlayComponentParams": {},
         "suppressNoRowsOverlay": {}
     },
+    "nav": {
+        "meta": {
+            "displayName": "Keyboard Navigation",
+            "page": {
+                "name": "Keyboard Navigation",
+                "url": "/keyboard-navigation/"
+            }
+        },
+        "navigateToNextHeader": {},
+        "tabToNextHeader": {
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused."
+        },
+        "navigateToNextCell": {},
+        "tabToNextCell": {
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
+        }
+    },
     "pagination": {
         "meta": {
             "displayName": "Pagination",
@@ -517,6 +581,7 @@
                 "url": "/row-pagination/#example-customising-pagination"
             }
         },
+        "paginationNumberFormatter": {},
         "paginationAutoPageSize": {
             "more": {
                 "name": "Auto Page Size",
@@ -572,6 +637,8 @@
         "pivotSuppressAutoColumn": {
             "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
         },
+        "postProcessSecondaryColDef": {},
+        "postProcessSecondaryColGroupDef": {},
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Fixed Pivot Column Groups",
@@ -588,6 +655,12 @@
             "more": {
                 "name": "Custom Aggregation Functions",
                 "url": "/aggregation/#custom-aggregation-functions"
+            }
+        },
+        "getGroupRowAgg": {
+            "more": {
+                "name": "Custom Full Row Aggregation",
+                "url": "/aggregation/#custom-full-row-aggregation"
             }
         },
         "suppressAggFuncInHeader": {},
@@ -648,6 +721,8 @@
                 "url": "/accessibility/#ensure-dom-element-order"
             }
         },
+        "getBusinessKeyForNode": {},
+        "processRowPostCreate": {},
         "enableRtl": {
             "more": {
                 "name": "RTL (Right to Left)",
@@ -772,6 +847,13 @@
                 "url": "/grouping-single-group-column/#showing-open-groups"
             }
         },
+        "isGroupOpenByDefault": {},
+        "initialGroupOrderComparator": {
+            "more": {
+                "name": "Initial Group Order",
+                "url": "/grouping-group-order/#default-group-order"
+            }
+        },
         "groupRemoveSingleChildren": {
             "more": {
                 "name": "Remove Single Children",
@@ -828,6 +910,12 @@
                 "name": "Tree Data",
                 "url": "/tree-data/"
             }
+        },
+        "getDataPath": {
+            "more": {
+                "name": "Tree Data",
+                "url": "/tree-data/"
+            }
         }
     },
     "rowPinning": {
@@ -856,7 +944,8 @@
                 "viewport",
                 "serverSide"
             ]
-        }
+        },
+        "getRowId": {}
     },
     "clientRowModel": {
         "meta": {
@@ -915,7 +1004,23 @@
         "serverSideSortingAlwaysResets": {
             "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
-        "serverSideFilteringAlwaysResets": {}
+        "serverSideFilteringAlwaysResets": {},
+        "getChildCount": {},
+        "getServerSideStoreParams": {},
+        "isServerSideGroupOpenByDefault": {},
+        "isApplyServerSideTransaction": {},
+        "isServerSideGroup": {
+            "more": {
+                "name": "SSRM Tree Data",
+                "url": "/server-side-model-tree-data/"
+            }
+        },
+        "getServerSideGroupKey": {
+            "more": {
+                "name": "SSRM Tree Data",
+                "url": "/server-side-model-tree-data/"
+            }
+        }
     },
     "infiniteRowModel": {
         "meta": {
@@ -1010,6 +1115,12 @@
                 "url": "/row-selection/#example-multi-select-with-click"
             }
         },
+        "isRowSelectable": {
+            "more": {
+                "name": "Specify Selectable Rows",
+                "url": "/row-selection/#specify-selectable-rows"
+            }
+        },
         "suppressRowDeselection": {
             "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>. Default: `false`"
         },
@@ -1047,6 +1158,7 @@
                 "xy"
             ]
         },
+        "fillOperation": {},
         "suppressClearOnFillReduction": {}
     },
     "sort": {
@@ -1091,6 +1203,12 @@
                 "name": "Big Data Small Transactions",
                 "url": "/immutable-data/"
             }
+        },
+        "postSortRows": {
+            "more": {
+                "name": "Post Sort",
+                "url": "/row-sorting/#post-sort"
+            }
         }
     },
     "styling": {
@@ -1109,7 +1227,19 @@
                 "url": "/row-height/"
             }
         },
+        "getRowHeight": {
+            "more": {
+                "name": "Row Height",
+                "url": "/row-height/"
+            }
+        },
         "rowStyle": {
+            "more": {
+                "name": "Row Style",
+                "url": "/row-styles/#row-style"
+            }
+        },
+        "getRowStyle": {
             "more": {
                 "name": "Row Style",
                 "url": "/row-styles/#row-style"
@@ -1121,10 +1251,22 @@
                 "url": "/row-styles/#row-class"
             }
         },
+        "getRowClass": {
+            "more": {
+                "name": "Row Class",
+                "url": "/row-styles/#row-class"
+            }
+        },
         "rowClassRules": {
             "more": {
                 "name": "Row Class Rules",
                 "url": "/row-styles/#row-class-rules"
+            }
+        },
+        "isFullWidthRow": {
+            "more": {
+                "name": "Full Width Rows",
+                "url": "/full-width-rows/"
             }
         },
         "suppressRowHoverHighlight": {},
