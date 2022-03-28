@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
+import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -1055,7 +1055,8 @@ export class GridOptionsWrapper {
     }
 
     public isSuppressAggFilteredOnly() {
-        return isTrue(this.gridOptions.suppressAggFilteredOnly);
+        const isGroupAggFiltering = this.getGroupAggFiltering() !== undefined;
+        return isGroupAggFiltering || isTrue(this.gridOptions.suppressAggFilteredOnly);
     }
 
     public isShowOpenedGroup() {
@@ -1113,6 +1114,20 @@ export class GridOptionsWrapper {
 
     public getIcons() {
         return this.gridOptions.icons;
+    }
+
+    public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
+        const userValue = this.gridOptions.groupAggFiltering;
+
+        if (typeof userValue === 'function') {
+            return this.mergeGridCommonParams(userValue);
+        }
+
+        if (isTrue(userValue)) {
+            return () => true;
+        }
+    
+        return undefined;
     }
 
     public getAggFuncs(): { [key: string]: IAggFunc; } | undefined {

@@ -1606,6 +1606,7 @@
       "autoGroupColumnDef?": "ColDef",
       "groupMaintainOrder?": "boolean",
       "groupSelectsChildren?": "boolean",
+      "groupAggFiltering?": "boolean | IsRowFilterable",
       "groupIncludeFooter?": "boolean",
       "groupIncludeTotalFooter?": "boolean",
       "groupSuppressBlankHeader?": "boolean",
@@ -1978,6 +1979,7 @@
       "autoGroupColumnDef?": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "groupMaintainOrder?": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
       "groupSelectsChildren?": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
+      "groupAggFiltering?": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
       "groupIncludeFooter?": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "groupIncludeTotalFooter?": "/** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */",
       "groupSuppressBlankHeader?": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */",
@@ -2201,6 +2203,13 @@
   "IsServerSideGroup": {
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "dataItem": "any" }, "returnType": "boolean" }
+  },
+  "IsRowFilterable": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "GetGroupAggFilteringParams" },
+      "returnType": "boolean"
+    }
   },
   "IsApplyServerSideTransaction": {
     "meta": { "isCallSignature": true },
@@ -2870,6 +2879,20 @@
       "key": "string",
       "defaultValue": "string",
       "variableValues?": "string[]",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetGroupAggFilteringParams": {
+    "meta": {},
+    "type": {
+      "node": "RowNode",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -8106,10 +8129,11 @@
       "SORT = 'sort'",
       "MAP = 'map'",
       "AGGREGATE = 'aggregate'",
+      "FILTER_AGGREGATES = 'filter_aggregates'",
       "PIVOT = 'pivot'",
       "NOTHING = 'nothing'"
     ],
-    "docs": [null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null, null]
   },
   "IClientSideRowModel": {
     "meta": {},
@@ -12428,6 +12452,7 @@
       "autoGroupColumnDef?": "ColDef",
       "groupMaintainOrder?": "boolean",
       "groupSelectsChildren?": "boolean",
+      "groupAggFiltering?": "boolean | IsRowFilterable",
       "groupIncludeFooter?": "boolean",
       "groupIncludeTotalFooter?": "boolean",
       "groupSuppressBlankHeader?": "boolean",
@@ -12800,6 +12825,7 @@
       "autoGroupColumnDef?": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "groupMaintainOrder?": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
       "groupSelectsChildren?": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
+      "groupAggFiltering?": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
       "groupIncludeFooter?": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "groupIncludeTotalFooter?": "/** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */",
       "groupSuppressBlankHeader?": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */",
@@ -13172,6 +13198,7 @@
       "autoGroupColumnDef?": "ColDef",
       "groupMaintainOrder?": "boolean",
       "groupSelectsChildren?": "boolean",
+      "groupAggFiltering?": "boolean | IsRowFilterable",
       "groupIncludeFooter?": "boolean",
       "groupIncludeTotalFooter?": "boolean",
       "groupSuppressBlankHeader?": "boolean",
@@ -13544,6 +13571,7 @@
       "autoGroupColumnDef?": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "groupMaintainOrder?": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
       "groupSelectsChildren?": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
+      "groupAggFiltering?": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
       "groupIncludeFooter?": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "groupIncludeTotalFooter?": "/** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */",
       "groupSuppressBlankHeader?": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */",
@@ -13920,6 +13948,7 @@
       "autoGroupColumnDef?": "ColDef",
       "groupMaintainOrder?": "boolean",
       "groupSelectsChildren?": "boolean",
+      "groupAggFiltering?": "boolean | IsRowFilterable",
       "groupIncludeFooter?": "boolean",
       "groupIncludeTotalFooter?": "boolean",
       "groupSuppressBlankHeader?": "boolean",
@@ -14292,6 +14321,7 @@
       "autoGroupColumnDef?": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "groupMaintainOrder?": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
       "groupSelectsChildren?": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
+      "groupAggFiltering?": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
       "groupIncludeFooter?": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "groupIncludeTotalFooter?": "/** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */",
       "groupSuppressBlankHeader?": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */",

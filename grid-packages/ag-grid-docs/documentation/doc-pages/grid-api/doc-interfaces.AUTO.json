@@ -2853,6 +2853,10 @@
       "description": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupAggFiltering": {
+      "description": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
+      "type": { "returnType": "boolean | IsRowFilterable", "optional": true }
+    },
     "groupIncludeFooter": {
       "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -4893,6 +4897,7 @@
   "TreeDataDisplayType": {},
   "GetDataPath": {},
   "IsServerSideGroup": {},
+  "IsRowFilterable": {},
   "IsApplyServerSideTransaction": {},
   "GetServerSideGroupKey": {},
   "IsRowMaster": {},
@@ -5700,6 +5705,21 @@
     "variableValues": {
       "type": { "returnType": "string[]", "optional": true }
     },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "GetGroupAggFilteringParams": {
+    "node": { "type": { "returnType": "RowNode", "optional": false } },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -22064,6 +22084,10 @@
       "description": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupAggFiltering": {
+      "description": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
+      "type": { "returnType": "boolean | IsRowFilterable", "optional": true }
+    },
     "groupIncludeFooter": {
       "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -24759,6 +24783,10 @@
     "groupSelectsChildren": {
       "description": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupAggFiltering": {
+      "description": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
+      "type": { "returnType": "boolean | IsRowFilterable", "optional": true }
     },
     "groupIncludeFooter": {
       "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
@@ -27465,6 +27493,10 @@
     "groupSelectsChildren": {
       "description": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupAggFiltering": {
+      "description": "/** Set to determine whether filters should be applied on aggregated group values. Default: `false` */",
+      "type": { "returnType": "boolean | IsRowFilterable", "optional": true }
     },
     "groupIncludeFooter": {
       "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",

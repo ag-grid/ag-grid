@@ -374,6 +374,7 @@ export {
     GetDataPath,
     IsRowMaster,
     IsRowSelectable,
+    IsRowFilterable,
     MenuItemLeafDef,
     MenuItemDef,
     GetMainMenuItems,
@@ -422,7 +423,8 @@ export {
     PostProcessSecondaryColGroupDefParams,
     IsFullWidthRowParams,
     PostSortRowsParams,
-    GetLocaleTextParams
+    GetLocaleTextParams,
+    GetGroupAggFilteringParams,
 } from "./entities/iCallbackParams"
 export {
     WithoutGridCommon

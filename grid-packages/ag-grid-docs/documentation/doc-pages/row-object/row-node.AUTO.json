@@ -143,6 +143,10 @@
     "description": "/** Filtered children of this group. */",
     "type": { "returnType": "RowNode[] | null" }
   },
+  "childrenAfterAggregateFilter": {
+    "description": "/** Filtered children of this group. */",
+    "type": { "returnType": "RowNode[] | null" }
+  },
   "childrenAfterSort": {
     "description": "/** Sorted children of this group. */",
     "type": { "returnType": "RowNode[] | null" }

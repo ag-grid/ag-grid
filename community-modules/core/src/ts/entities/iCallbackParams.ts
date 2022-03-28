@@ -223,3 +223,7 @@ export interface GetLocaleTextParams extends AgGridCommon {
     defaultValue: string;
     variableValues?: string[];
 }
+
+export interface GetGroupAggFilteringParams extends AgGridCommon {
+    node: RowNode;
+}
