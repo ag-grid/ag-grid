@@ -6,7 +6,12 @@
 
 const fs = require('fs-extra');
 
-const applyCustomisation = (packageName, expectedVersion, customisation) => {
+const applyCustomisation = (packageName, expectedVersion, customisation, optional = false) => {
+    if (!fs.existsSync(`./node_modules/${packageName}/package.json`) && optional) {
+        console.log(`./node_modules/${packageName}/package.json doesn't exist but is optional - skipping`);
+        return;
+    }
+
     const version = require(`./node_modules/${packageName}/package.json`).version;
     const versionMatches = version === expectedVersion;
 
@@ -128,20 +133,21 @@ const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
     return applyCustomisation('gatsby-cli', '3.14.2', {
-        name: 'JSX Error Processing Issue',
-        apply: () => updateFileContents(
-            './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',
-            `
+            name: 'JSX Error Processing Issue',
+            apply: () => updateFileContents(
+                './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',
+                `
   if (error) {
     console.log(\`Failed to validate error\`, error);
     process.exit(1);
   }`,
-            `
+                `
   if (error) {
     console.log(\`Failed to validate error\`, error);
   }`,
-        )
-    });
+            )
+        },
+        true);
 };
 
 const restrictSearchForPageQueries = () => {
