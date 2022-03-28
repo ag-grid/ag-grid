@@ -124,6 +124,26 @@ const fixFileLoadingIssue = () => {
     });
 };
 
+const jsxErrorProcessingIssue = () => {
+    // Prevents Gatsby from dying when an JSX error is introduced
+
+    return applyCustomisation('gatsby-cli', '3.14.2', {
+        name: 'JSX Error Processing Issue',
+        apply: () => updateFileContents(
+            './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',
+            `
+  if (error) {
+    console.log(\`Failed to validate error\`, error);
+    process.exit(1);
+  }`,
+            `
+  if (error) {
+    console.log(\`Failed to validate error\`, error);
+  }`,
+        )
+    });
+};
+
 const restrictSearchForPageQueries = () => {
     // restricts the files that Gatsby searches for queries, which improves performance
 
@@ -146,6 +166,7 @@ const success = [
     fixFileLoadingIssue(),
     restrictSearchForPageQueries(),
     ignoreFsUsages(),
+    jsxErrorProcessingIssue()
 ].every(x => x);
 
 if (success) {
