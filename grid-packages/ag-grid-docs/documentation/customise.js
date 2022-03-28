@@ -9,7 +9,7 @@ const fs = require('fs-extra');
 const applyCustomisation = (packageName, expectedVersion, customisation, optional = false) => {
     if (!fs.existsSync(`./node_modules/${packageName}/package.json`) && optional) {
         console.log(`./node_modules/${packageName}/package.json doesn't exist but is optional - skipping`);
-        return;
+        return true;
     }
 
     const version = require(`./node_modules/${packageName}/package.json`).version;
