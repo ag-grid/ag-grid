@@ -45,8 +45,9 @@
         position: relative;
         top: -5px;
         height: 40px;
-        background: #d0d4d6;
+        background: linear-gradient(to bottom right, #0084e7, #0067b4);
         text-align: right;
+        color: white;
     }
 
     &.fullscreen {
