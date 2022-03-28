@@ -608,7 +608,8 @@
                 "name": "Custom Aggregation Functions",
                 "url": "/aggregation/#filtering"
             }
-        }
+        },
+        "groupAggFiltering": {}
     },
     "rendering": {
         "meta": {
