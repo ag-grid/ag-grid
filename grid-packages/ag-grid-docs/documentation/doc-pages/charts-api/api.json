@@ -343,13 +343,15 @@
     }
   },
   "AgHierarchyChartOptions": {
-    "ordering": {
-      "type": "high",
-      "data": "high",
-      "container": "high",
-      "axes": "high",
-      "series": "high",
-      "theme": "low"
+    "meta": {
+      "ordering": {
+        "type": "high",
+        "data": "high",
+        "container": "high",
+        "axes": "high",
+        "series": "high",
+        "theme": "low"
+      }
     },
     "data": {
       "isRequired": true

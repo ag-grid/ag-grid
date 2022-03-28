@@ -332,6 +332,7 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
+    // suppressAggFilteredOnly: true,
     // suppressScrollWhenPopupsAreOpen: true,
     // debug: true,
     // editType: 'fullRow',
@@ -392,6 +393,7 @@ var gridOptions = {
     // suppressRowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
+    // groupAggFiltering: true,
     // pagination: true,
     // paginateChildRows: true,
     // paginationPageSize: 10,

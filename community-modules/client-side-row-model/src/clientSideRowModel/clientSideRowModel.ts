@@ -66,6 +66,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Optional('groupStage') private groupStage: IRowNodeStage;
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
+    @Optional('filterAggregatesStage') private filterAggregatesStage: IRowNodeStage;
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
@@ -311,7 +312,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             return 1;
         }
 
-        return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
+        const filteredChildren = this.rootNode.childrenAfterAggregateFilter;
+        return filteredChildren ? filteredChildren.length : 0;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
@@ -442,6 +444,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.doPivot(changedPath);
             case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
                 this.doAggregate(changedPath);
+            case ClientSideRowModelSteps.FILTER_AGGREGATES:
+                this.doFilterAggregates(changedPath);
             case ClientSideRowModelSteps.SORT:
                 this.doSort(params.rowNodeTransactions, changedPath);
             case ClientSideRowModelSteps.MAP:
@@ -630,7 +634,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                         nodeChildren = node.childrenAfterGroup;
                         break;
                     case RecursionType.AfterFilter:
-                        nodeChildren = node.childrenAfterFilter;
+                        nodeChildren = node.childrenAfterAggregateFilter;
                         break;
                     case RecursionType.AfterFilterAndSort:
                         nodeChildren = node.childrenAfterSort;
@@ -653,6 +657,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public doAggregate(changedPath?: ChangedPath): void {
         if (this.aggregationStage) {
             this.aggregationStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
+        }
+    }
+
+    public doFilterAggregates(changedPath?: ChangedPath): void {
+        if (this.filterAggregatesStage) {
+            this.filterAggregatesStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
+        } else {
+            changedPath?.forEachChangedNodeDepthFirst((node: RowNode) => node.childrenAfterAggregateFilter = node.childrenAfterFilter, false);
         }
     }
 
