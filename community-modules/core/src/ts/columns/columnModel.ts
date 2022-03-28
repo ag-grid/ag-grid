@@ -137,6 +137,8 @@ export class ColumnModel extends BeanStub {
     private secondaryColumns: Column[] | null;
     private secondaryColumnsMap: { [id: string]: Column };
     private secondaryHeaderRowCount = 0;
+    // Saved when pivot is disabled, available to re-use when pivot is restored
+    private previousSecondaryColumns: Column[] | null;
 
     // the columns the quick filter should use. this will be all primary columns
     // plus the autoGroupColumns if any exist
@@ -1807,7 +1809,7 @@ export class ColumnModel extends BeanStub {
             this.groupAutoColumns || [],
         ]);
     }
-    
+
     private getPrimaryAndSecondaryColumns(): Column[] {
         return ([] as Column[]).concat(...[
             this.primaryColumns || [],
@@ -3097,14 +3099,20 @@ export class ColumnModel extends BeanStub {
 
         if (newColsPresent) {
             this.processSecondaryColumnDefinitions(colDefs);
-            const balancedTreeResult = this.columnFactory.createColumnTree(colDefs, false);
+            const balancedTreeResult = this.columnFactory.createColumnTree(
+                colDefs,
+                false,
+                this.secondaryColumns || this.previousSecondaryColumns || undefined,
+            );
             this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
 
             this.secondaryColumnsMap = {};
             this.secondaryColumns.forEach(col => this.secondaryColumnsMap[col.getId()] = col);
+            this.previousSecondaryColumns = null;
         } else {
+            this.previousSecondaryColumns = this.secondaryColumns;
             this.secondaryBalancedTree = null;
             this.secondaryHeaderRowCount = -1;
             this.secondaryColumns = null;
