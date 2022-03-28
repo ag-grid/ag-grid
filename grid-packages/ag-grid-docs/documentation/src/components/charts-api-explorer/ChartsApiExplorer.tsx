@@ -5,6 +5,7 @@ import { Options } from './Options';
 import { ChartTypeSelector } from './ChartTypeSelector';
 import { CodeView } from './CodeView';
 import styles from './ChartsApiExplorer.module.scss';
+import { Launcher } from './Launcher';
 
 const createOptionsJson = (chartType, options) => {
     const optionsHasAxes = (options.axes && Object.keys(options.axes).length > 0);
@@ -183,6 +184,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                     </div>
                 </div>
                 <div className={styles['explorer-container__right']}>
+                    <div className={styles['explorer-container__launcher']}><Launcher framework={framework} options={optionsJson} /></div>
                     <div className={styles['explorer-container__chart']}><Chart options={optionsJson} /></div>
                     <div className={styles['explorer-container__code']}><CodeView framework={framework} options={optionsJson} /></div>
                 </div>
