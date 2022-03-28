@@ -13,5 +13,5 @@ export const agChartsAngularVersion = require('../../../../../charts-packages/ag
 export const agChartsVueVersion = require('../../../../../charts-packages/ag-charts-vue/package.json').version;
 
 export const localPrefix = `//${isDevelopment() && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}/dev`;
-export const phpPrefix = `https://${isDevelopment() && window.location ? `https://${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
+export const phpPrefix = `https://${isDevelopment() && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 
