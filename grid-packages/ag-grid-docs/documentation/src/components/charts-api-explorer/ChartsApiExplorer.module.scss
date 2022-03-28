@@ -39,4 +39,11 @@
         overflow: auto;
         height: 50%;
     }
+
+    &__launcher {
+        height: 40px;
+        background: lightgray;
+        margin: 0px 10px 5px 10px;
+        text-align: right;
+    }
 }
