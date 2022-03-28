@@ -896,7 +896,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** @deprecated - Use `getGroupRowAgg` instead.
      */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
-    /** Callback for grouping.     */
+    /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;

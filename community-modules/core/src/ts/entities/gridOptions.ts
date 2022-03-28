@@ -833,7 +833,7 @@ export interface GridOptions {
     // *** Row Grouping and Pivoting *** //
     /** @deprecated - Use `getGroupRowAgg` instead. */
     groupRowAggNodes?: (nodes: RowNode[]) => any;
-    /** Callback for grouping. */
+    /** Callback to use when you need access to more then the current column for aggregation. */
     getGroupRowAgg?: (params: GetGroupRowAggParams) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;

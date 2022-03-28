@@ -1101,7 +1101,7 @@
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
   },
   "getGroupRowAgg": {
-    "description": "/** Callback for grouping. */",
+    "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
     "type": {
       "arguments": { "params": "GetGroupRowAggParams" },
       "returnType": "any"
