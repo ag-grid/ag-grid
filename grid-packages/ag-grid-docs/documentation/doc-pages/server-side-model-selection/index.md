@@ -30,7 +30,7 @@ This is for comparison in the example only. Normal applications generally have t
 - Checkbox selection on the group column allowing selection of any row.
 - Checkbox selection on the group sport column. Selection is restricted to leaf-level rows only via `gridOptions.isRowSelectable(rowNode)` callback.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]' ></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='selection' names='["isRowSelectable"]' ></api-documentation>
 
 <grid-example title='Checkbox Example' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
@@ -42,7 +42,7 @@ selected rows.
 
 Row IDs are provided by the application using the `getRowId()` callback:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowId"]' ></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='rowModels' names='["getRowId"]' ></api-documentation>
 
 When implementing `getRowId()` you must ensure the rows have unique Row IDs across the entire data set. Using an ID that
 is provided in the data such as a database Primary Key would be ideal.

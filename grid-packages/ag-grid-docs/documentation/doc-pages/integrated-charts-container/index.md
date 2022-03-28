@@ -14,7 +14,7 @@ to use the same library for consistency.
 
 To provide an alternative container for popup windows use the grid callback `createChartContainer(chartRef)`.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='charts' names='["createChartContainer"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='charts' names='["createChartContainer"]'></api-documentation>
 
 The callback is called each time the user elects to create a chart via the grid UI. The callback is provided with a `ChartRef` implementation:
 

@@ -31,7 +31,7 @@ When the Application assigns Row IDs, this provides a common Row ID across the g
 
 Setting Row IDs is done using the `getRowId()` grid callback:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowId"]' ></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='rowModels' names='["getRowId"]' ></api-documentation>
 
 When the row data contains a unique row identifier, such as a Database Primary Key, `getRowId()` can be implemented as follows: 
 

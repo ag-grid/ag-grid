@@ -114,7 +114,7 @@ The following methods compose the pagination API are all available from `gridOpt
 
 ## Pagination Callbacks
 
-<api-documentation source='grid-callbacks/callbacks.json' section='pagination' names='["paginationNumberFormatter"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='pagination' names='["paginationNumberFormatter"]'></api-documentation>
 
 ## Pagination Events
 

@@ -24,7 +24,7 @@ Dynamic Master Rows allows specifically deciding what rows in the Master Grid ca
 
 In specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowMaster"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='masterDetail' names='["isRowMaster"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 |const gridOptions = {

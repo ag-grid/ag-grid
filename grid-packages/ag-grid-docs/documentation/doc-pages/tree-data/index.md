@@ -22,7 +22,7 @@ const gridOptions = {
 
 When providing tree data to the grid you implement the `gridOptions.getDataPath(data)` callback to tell the grid the hierarchy for each row. The callback returns back a `string[]` with each element specifying a level of the tree. Below follows two examples presenting the hierarchy in different ways.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='groupPivot' names='["getDataPath"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='rowGrouping' names='["getDataPath"]'></api-documentation>
 
 ```js
 // sample hierarchy, Malcolm is child or Erica

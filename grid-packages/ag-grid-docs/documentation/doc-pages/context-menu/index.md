@@ -20,7 +20,7 @@ You can customise the context menu by providing a `getContextMenuItems()` callba
 
 The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use MenuItem descriptions for your own menu items.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='menus' names='["getContextMenuItems"]' ></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
 
 
 If you want to access your underlying data item, you access that through the rowNode as `var dataItem = node.data`.

@@ -81,7 +81,7 @@ const gridOptions = {
 
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. In these scenarios, the `fillOperation` callback should be used.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["fillOperation"]'  ></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='selection' names='["fillOperation"]'  ></api-documentation>
 
 <snippet>
 const gridOptions = {
