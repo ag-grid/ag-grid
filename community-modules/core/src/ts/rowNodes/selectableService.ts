@@ -32,8 +32,8 @@ export class SelectableService extends BeanStub {
 
     public updateSelectableAfterAggregateFiltering(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (node: RowNode) => node.childrenAfterAggregateFilter;
-            this.recurseDown(rowNode.childrenAfterAggregateFilter, nextChildrenFunc);
+            const nextChildrenFunc = (node: RowNode) => node.childrenAfterAggFilter;
+            this.recurseDown(rowNode.childrenAfterAggFilter, nextChildrenFunc);
         }
     }
 

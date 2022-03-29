@@ -1,0 +1,13 @@
+{
+    "_config_": {
+        "codeSrc": "row-object/row-node.AUTO.json"
+    },
+    "rowNodeAttributes": {
+        "meta": {
+            "displayName": "RowNode attributes"
+        },
+        "level": {},
+        "group": {},
+        "leafGroup": {}
+    }
+}

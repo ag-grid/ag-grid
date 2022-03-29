@@ -166,8 +166,8 @@ export class RowNode implements IEventEmitter {
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode[] | null;
 
-    /** Filtered children of this group. */
-    public childrenAfterAggregateFilter: RowNode[] | null;
+    /** Aggregated and re-filtered children of this group. */
+    public childrenAfterAggFilter: RowNode[] | null;
 
     /** Sorted children of this group. */
     public childrenAfterSort: RowNode[] | null;
@@ -1018,7 +1018,7 @@ export class RowNode implements IEventEmitter {
     }
 
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
-        const children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        const children = groupSelectsFiltered ? this.childrenAfterAggFilter : this.childrenAfterGroup;
 
         if (missing(children)) { return 0; }
 

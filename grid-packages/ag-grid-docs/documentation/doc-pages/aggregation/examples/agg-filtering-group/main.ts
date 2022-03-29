@@ -3,10 +3,10 @@ import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 const columnDefs: ColDef[] = [
   { field: 'country', rowGroup: true, hide: true },
   { field: 'year', filter: 'agNumberColumnFilter' },
-  { field: 'gold', aggFunc: 'sum' },
-  { field: 'silver', aggFunc: 'sum' },
-  { field: 'bronze', aggFunc: 'sum' },
-  { field: 'total', aggFunc: 'sum' },
+  { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+  { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+  { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+  { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {
@@ -16,11 +16,11 @@ const gridOptions: GridOptions = {
     resizable: true,
     floatingFilter: true,
   },
-  suppressAggFilteredOnly: true,
   autoGroupColumnDef: {
     headerName: 'Country',
     field: 'athlete',
   },
+  groupAggFiltering: (params) => !!params.node.group,
 }
 
 // setup the grid after the page has finished loading

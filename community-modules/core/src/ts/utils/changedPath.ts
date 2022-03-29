@@ -74,18 +74,12 @@ export class ChangedPath {
         callback(pathItem.rowNode);
     }
 
-    private depthFirstSearchEverything(
-        rowNode: RowNode,
-        callback: (rowNode: RowNode) => void,
-        traverseEverything: boolean,
-        getChildren: (rowNode: RowNode) => RowNode[] | null = node => node.childrenAfterGroup,
-    ): void {
-        const children = getChildren(rowNode);
-        if (children) {
-            for (let i = 0; i < children.length; i++) {
-                const childNode = children[i];
+    private depthFirstSearchEverything(rowNode: RowNode, callback: (rowNode: RowNode) => void, traverseEverything: boolean): void {
+        if (rowNode.childrenAfterGroup) {
+            for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                const childNode = rowNode.childrenAfterGroup[i];
                 if (childNode.childrenAfterGroup) {
-                    this.depthFirstSearchEverything(children[i], callback, traverseEverything);
+                    this.depthFirstSearchEverything(rowNode.childrenAfterGroup[i], callback, traverseEverything);
                 } else if (traverseEverything) {
                     callback(childNode);
                 }
@@ -99,7 +93,6 @@ export class ChangedPath {
     public forEachChangedNodeDepthFirst(
         callback: (rowNode: RowNode) => void,
         traverseLeafNodes = false,
-        getChildren: (rowNode: RowNode) => RowNode[] | null = node => node.childrenAfterGroup,
     ): void {
         if (this.active) {
             // if we are active, then use the change path to callback
@@ -107,7 +100,7 @@ export class ChangedPath {
             this.depthFirstSearchChangedPath(this.pathRoot, callback);
         } else {
             // we are not active, so callback for everything, walk the entire path
-            this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes, getChildren);
+            this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes);
         }
     }
 
