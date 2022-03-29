@@ -1405,18 +1405,25 @@ export class ColumnModel extends BeanStub {
     }
 
     public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
-        let foundNonLocked = false;
+         // Placement is a number indicating 'left' 'center' or 'right' as 0 1 2
+        let lastPlacement = 0;
         let rulePassed = true;
-
-        // go though the cols, see if any non-locked appear before any locked
-        proposedColumnOrder.forEach(col => {
-            if (col.getColDef().lockPosition) {
-                if (foundNonLocked) {
-                    rulePassed = false;
-                }
-            } else {
-                foundNonLocked = true;
+        const lockPositionToPlacement = (position: ColDef['lockPosition']) => {
+            if (!position) { // false or undefined
+                return 1;
             }
+            if (position === true) {
+                return 0;
+            }
+            return position === 'left' ? 0 : 2; // Otherwise 'right'
+        };
+
+        proposedColumnOrder.forEach(col => {
+            const placement = lockPositionToPlacement(col.getColDef().lockPosition);
+            if (placement < lastPlacement) { // If placement goes down, we're not in the correct order
+                rulePassed = false;
+            }
+            lastPlacement = placement;
         });
 
         return rulePassed;
@@ -2135,7 +2142,7 @@ export class ColumnModel extends BeanStub {
         // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
-        newOrder = this.putFixedColumnsFirst(newOrder);
+        newOrder = this.placeLockedColumns(newOrder);
 
         if (!this.doesMovePassMarryChildren(newOrder)) {
             console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
@@ -3183,7 +3190,7 @@ export class ColumnModel extends BeanStub {
 
         this.addAutoGroupToGridColumns();
 
-        this.gridColumns = this.putFixedColumnsFirst(this.gridColumns);
+        this.gridColumns = this.placeLockedColumns(this.gridColumns);
         this.setupQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
@@ -3301,10 +3308,21 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private putFixedColumnsFirst(cols: Column[]): Column[] {
-        const locked = cols.filter(c => c.getColDef().lockPosition);
-        const unlocked = cols.filter(c => !c.getColDef().lockPosition);
-        return locked.concat(unlocked);
+    private placeLockedColumns(cols: Column[]): Column[] {
+        const left: Column[] = [];
+        const normal: Column[] = [];
+        const right: Column[] = [];
+        cols.forEach((col) => {
+            const position = col.getColDef().lockPosition;
+            if (position === 'right') {
+                right.push(col);
+            } else if (position === 'left' || position === true) {
+                left.push(col);
+            } else {
+                normal.push(col);
+            }
+        });
+        return [...left, ...normal, ...right];
     }
 
     private addAutoGroupToGridColumns(): void {
