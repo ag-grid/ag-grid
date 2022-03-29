@@ -111,11 +111,9 @@ export const getExampleInfo = (
 };
 
 const getFrameworkFiles = (framework, internalFramework) => {
-    let files = [];
+    if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
 
-    if (framework === 'javascript' && internalFramework !== 'typescript') { return files; }
-
-    files.push('systemjs.config.js');
+    let files = ['systemjs.config.js'];
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
@@ -136,7 +134,7 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
         .map(node => ({
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
-            isFramework: node.relativePath.replace(sourcePath, '') === 'package.json',
+            isFramework: false,
             content: node.content
         }));
 
