@@ -135,7 +135,7 @@ export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
             isFramework: false,
-            content: node.content
+            content: node.content,
         }));
 
     getFrameworkFiles(framework, internalFramework).forEach(file => filesForExample.push({
