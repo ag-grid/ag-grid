@@ -28,6 +28,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
         super(props);
         this.state = {context: undefined};
         this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
+        this.destroyFuncs.push(() => this.portalManager.destroy());
     }
 
     public render() {
@@ -74,7 +75,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
             ctrlsService.whenReady( ()=> {
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
-                this.props.setGridApi(this.api, this.columnApi);    
+                this.props.setGridApi(this.api, this.columnApi);
                 this.destroyFuncs.push(() => this.api.destroy());
             });
         };
