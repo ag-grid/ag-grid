@@ -312,7 +312,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             return 1;
         }
 
-        const filteredChildren = this.rootNode.childrenAfterAggregateFilter;
+        const filteredChildren = this.rootNode.childrenAfterAggFilter;
         return filteredChildren ? filteredChildren.length : 0;
     }
 
@@ -603,7 +603,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void {
-        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterFilter, callback, RecursionType.AfterFilter, 0);
+        this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterAggFilter, callback, RecursionType.AfterFilter, 0);
     }
 
     public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void {
@@ -634,7 +634,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                         nodeChildren = node.childrenAfterGroup;
                         break;
                     case RecursionType.AfterFilter:
-                        nodeChildren = node.childrenAfterAggregateFilter;
+                        nodeChildren = node.childrenAfterAggFilter;
                         break;
                     case RecursionType.AfterFilterAndSort:
                         nodeChildren = node.childrenAfterSort;
@@ -660,11 +660,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    public doFilterAggregates(changedPath?: ChangedPath): void {
+    private doFilterAggregates(changedPath: ChangedPath): void {
         if (this.filterAggregatesStage) {
             this.filterAggregatesStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         } else {
-            changedPath?.forEachChangedNodeDepthFirst((node: RowNode) => node.childrenAfterAggregateFilter = node.childrenAfterFilter, false);
+            // If filterAggregatesStage is undefined, then so is the grouping stage, so all children should be on the rootNode.
+            this.rootNode.childrenAfterAggFilter = this.rootNode.childrenAfterFilter;
         }
     }
 

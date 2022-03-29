@@ -43,7 +43,7 @@ export class SortService extends BeanStub {
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggregateFilter, true);
+            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
 
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
@@ -53,14 +53,14 @@ export class SortService extends BeanStub {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
                 if (skipSortingGroups) {
-                    rowNode.childrenAfterSort = rowNode.childrenAfterAggregateFilter!.slice(0);
+                    rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
                 } else {
                     rowNode.childrenAfterSort = deltaSort ?
                         this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                        : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggregateFilter!, sortOptions);
+                        : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
                 }
             } else {
-                rowNode.childrenAfterSort = rowNode.childrenAfterAggregateFilter!.slice(0);
+                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             }
 
             if (rowNode.sibling) {
@@ -119,7 +119,7 @@ export class SortService extends BeanStub {
         cleanNodes.forEach(sortedRowNode => cleanNodesMapped[sortedRowNode.rowNode.id!] = sortedRowNode.rowNode);
 
         // these are all nodes that need to be placed
-        const changedNodes: SortedRowNode[] = rowNode.childrenAfterAggregateFilter!
+        const changedNodes: SortedRowNode[] = rowNode.childrenAfterAggFilter!
             // ignore nodes in the clean list
             .filter(node => !cleanNodesMapped[node.id!])
             .map(this.mapNodeToSortedNode.bind(this));

@@ -24,17 +24,17 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
         const { rowNode, changedPath } = params;
 
         const preserveFilterStageConfig = (node: RowNode) => {
-            node.childrenAfterAggregateFilter = node.childrenAfterFilter;
+            node.childrenAfterAggFilter = node.childrenAfterFilter;
 
             if(node.sibling) {
-                node.sibling.childrenAfterAggregateFilter = node.childrenAfterAggregateFilter;
+                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
             }
         }
 
         const preserveChildren = (node: RowNode) => {
             if (node.childrenAfterFilter) {
-                node.childrenAfterAggregateFilter = node.childrenAfterFilter;
-                const childCount = node.childrenAfterAggregateFilter.reduce((acc: number, child: RowNode) => {
+                node.childrenAfterAggFilter = node.childrenAfterFilter;
+                const childCount = node.childrenAfterAggFilter.reduce((acc: number, child: RowNode) => {
                     preserveChildren(child);
                     return acc + (child.allChildrenCount || 1);
                 }, 0);
@@ -42,13 +42,13 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             }
 
             if (node.sibling) {
-                node.sibling.childrenAfterAggregateFilter = node.childrenAfterAggregateFilter;
+                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
             }
         }
 
         const filterChildren = (node: RowNode) => {
             let childCount = 0;
-            node.childrenAfterAggregateFilter = node.childrenAfterFilter?.filter((child: RowNode) => {
+            node.childrenAfterAggFilter = node.childrenAfterFilter?.filter((child: RowNode) => {
                 const shouldFilterRow = applyFilterToNode({ node: child });
                 if (shouldFilterRow) {
                     const doesNodePassFilter = this.filterManager.doesRowPassAggregateFilters({ rowNode: child });
@@ -59,7 +59,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
                         return true;
                     }
                 }
-                const hasChildPassed = child.childrenAfterAggregateFilter?.length;
+                const hasChildPassed = child.childrenAfterAggFilter?.length;
                 if (hasChildPassed) {
                     childCount += child.allChildrenCount || 1;
                     return true;
@@ -69,14 +69,13 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
             node.setAllChildrenCount(childCount);
             if (node.sibling) {
-                node.sibling.childrenAfterAggregateFilter = node.childrenAfterAggregateFilter;
+                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
             }
         };
 
         changedPath!.forEachChangedNodeDepthFirst(
             filterActive ? filterChildren : preserveFilterStageConfig,
             false,
-            (node: RowNode) => node.childrenAfterFilter
         );
         this.selectableService.updateSelectableAfterAggregateFiltering(rowNode);
     }
