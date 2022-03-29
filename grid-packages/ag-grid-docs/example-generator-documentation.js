@@ -465,24 +465,26 @@ const modules = moduleMapping
 function addPackageJson(framework, importType, basePath) {
     if (framework === 'angular' || framework === 'typescript') {
         if (importType === 'modules') {
-            writeFile(path.join(basePath, 'package.json'), `{
-                    "name": "ag-grid-modules",
-                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
-                    "dependencies": {
-                        ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
-                        ${modules.map(m => `"${m}": "*"`).join(",\n")}
-                    }
-                }`);
+            writeFile(path.join(basePath, 'package.json'),
+                `{
+    "name": "ag-grid-modules",
+    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+    "dependencies": {
+        ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
+        ${modules.map(m => `"${m}": "*"`).join(",\n")}
+    }
+}`);
         } else {
-            writeFile(path.join(basePath, 'package.json'), `{
-                    "name": "ag-grid-packages",
-                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
-                    "dependencies": {
-                        ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
-                      "ag-grid-community": "*",
-                      "ag-grid-enterprise": "*"
-                    }
-                  }`);
+            writeFile(path.join(basePath, 'package.json'),
+                `{
+    "name": "ag-grid-packages",
+    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+    "dependencies": {
+        ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
+        "ag-grid-community": "*",
+        "ag-grid-enterprise": "*"
+    }
+}`);
         }
     }
 }
