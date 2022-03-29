@@ -252,27 +252,9 @@ function createExampleGenerator(prefix, importTypes) {
                 writeFile(path.join(basePath, 'styles.css'), inlineStyles);
             }
 
-            writeFile(path.join(basePath, 'mypackage.json'), `{
-                "name": "ag-grid-angular-example",
-                "version": "",
-                "description": "My writting filwdules",
-                "dependencies": {
-                    "@angular/animations": "^10",
-                    "@angular/common": "^10",
-                    "@angular/compiler": "^10",
-                    "@angular/core": "^10",
-                    "@angular/forms": "^10",
-                    "@angular/platform-browser": "^10",
-                    "@angular/platform-browser-dynamic": "^10",
-                    "@angular/router": "^10",
-                    "@ag-grid-community/angular": "^27.1.0",
-                    "@ag-grid-community/core": "^27.1.0",
-                    "@ag-grid-community/client-side-row-model": "^27.1.0",
-                    "rxjs": "~7.4.0",
-                    "tslib": "^2.3.0",
-                    "zone.js": "~0.11.4"
-                }
-            }`);
+            // Add if it is needed for the give framework, i.e Angular / Typescript
+            // as used to power type checking in plunker.
+            addPackageJson(framework, importType, basePath);
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
@@ -472,6 +454,51 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
         }
     };
+}
+
+/** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
+function addPackageJson(framework, importType, basePath) {
+    if (framework === 'angular' || framework === 'typescript') {
+        if (importType === 'modules') {
+            writeFile(path.join(basePath, 'package.json'), `{
+                    "name": "AG Grid Modules",
+                    "description": "This package.json file is solely used by Plunker to look up type definitions.",
+                    "dependencies": {
+                        ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
+                        "@ag-grid-community/core": "*",
+                        "@ag-grid-community/infinite-row-model": "*",
+                        "@ag-grid-enterprise/charts": "*",
+                        "@ag-grid-enterprise/clipboard": "*",
+                        "@ag-grid-enterprise/column-tool-panel": "*",
+                        "@ag-grid-enterprise/core": "*",
+                        "@ag-grid-enterprise/excel-export": "*",
+                        "@ag-grid-enterprise/filter-tool-panel": "*",
+                        "@ag-grid-enterprise/master-detail": "*",
+                        "@ag-grid-enterprise/menu": "*",
+                        "@ag-grid-enterprise/multi-filter": "*",
+                        "@ag-grid-enterprise/range-selection": "*",
+                        "@ag-grid-enterprise/rich-select": "*",
+                        "@ag-grid-enterprise/row-grouping": "*",
+                        "@ag-grid-enterprise/server-side-row-model": "*",
+                        "@ag-grid-enterprise/set-filter": "*",
+                        "@ag-grid-enterprise/side-bar": "*",
+                        "@ag-grid-enterprise/sparklines": "*",
+                        "@ag-grid-enterprise/status-bar": "*",
+                        "@ag-grid-enterprise/viewport-row-model": "*",
+                    }
+                }`);
+        } else {
+            writeFile(path.join(basePath, 'package.json'), `{
+                    "name": "AG Grid Packages",
+                    "description": "This package.json file is solely used by Plunker to look up type definitions.",
+                    "dependencies": {
+                        ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
+                      "ag-grid-community": "*",
+                      "ag-grid-enterprise": "*"
+                    }
+                  }`);
+        }
+    }
 }
 
 function getGeneratorCode(prefix) {

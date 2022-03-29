@@ -110,8 +110,8 @@ export const getExampleInfo = (
     };
 };
 
-const getFrameworkFiles = (framework, internalFramework, importType) => {
-    let files = [`package_${importType}.json`];
+const getFrameworkFiles = (framework, internalFramework) => {
+    let files = [];
 
     if (framework === 'javascript' && internalFramework !== 'typescript') { return files; }
 
@@ -128,8 +128,8 @@ const getFrameworkFiles = (framework, internalFramework, importType) => {
     return files;
 };
 
-export const getExampleFiles = exampleInfo => {
-    const { sourcePath, framework, internalFramework, boilerplatePath, importType } = exampleInfo;
+export const getExampleFiles = (exampleInfo, includePackageFile = false) => {
+    const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
 
     const filesForExample = exampleInfo
         .getFiles()
@@ -140,8 +140,8 @@ export const getExampleFiles = exampleInfo => {
             content: node.content
         }));
 
-    getFrameworkFiles(framework, internalFramework, importType).forEach(file => filesForExample.push({
-        path: file === `package_${importType}.json` ? 'package.json' : file,
+    getFrameworkFiles(framework, internalFramework).forEach(file => filesForExample.push({
+        path: file,
         publicURL: withPrefix(boilerplatePath + file),
         isFramework: true,
     }));
@@ -149,7 +149,17 @@ export const getExampleFiles = exampleInfo => {
     const files = {};
     const promises = [];
 
-    filesForExample.filter(f => f.path !== 'index.html').forEach(f => {
+    filesForExample.filter(f => {
+
+        const isIndexFile = f.path === 'index.html';
+        if (includePackageFile) {
+            return !isIndexFile;
+        } else {
+            const isPackageFile = f.path === 'package.json';
+            return !isIndexFile && !isPackageFile;
+        }
+
+    }).forEach(f => {
         files[f.path] = null; // preserve ordering
 
         const sourcePromise = (f.content ?? fetch(f.publicURL).then(response => response.text()));
@@ -172,7 +182,7 @@ export const getExampleFiles = exampleInfo => {
 export const openPlunker = exampleInfo => {
     const { title, framework, internalFramework } = exampleInfo;
 
-    getExampleFiles(exampleInfo).then(files => {
+    getExampleFiles(exampleInfo, true).then(files => {
 
         // Let's open the grid configuration file by default
         const fileToOpen = getEntryFile(framework, internalFramework)
