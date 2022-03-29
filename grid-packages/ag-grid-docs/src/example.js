@@ -504,6 +504,10 @@ var gridOptions = {
     // callback when row clicked
     // stopEditingWhenCellsLoseFocus: true,
     // allowShowChangeAfterFilter: true,
+    processSecondaryColDef: (def) => {
+        def.filter = 'agNumberColumnFilter';
+        def.floatingFilter = true;
+    },
     onRowClicked: function(params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },

@@ -360,7 +360,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: ClientSideRowModelSteps.FILTER, keepRenderedRows: true, animate: animate });
+
+        const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some(col => col.isPrimary());
+        const eventType: ClientSideRowModelSteps = primaryOrQuickFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
+        this.refreshModel({ step: eventType, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {
