@@ -252,6 +252,10 @@ function createExampleGenerator(prefix, importTypes) {
                 writeFile(path.join(basePath, 'styles.css'), inlineStyles);
             }
 
+            // Add if it is needed for the give framework, i.e Angular / Typescript
+            // as used to power type checking in plunker.
+            addPackageJson(framework, importType, basePath);
+
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
             copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);
@@ -450,6 +454,37 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
         }
     };
+}
+
+const moduleMapping = require('./documentation/doc-pages/modules/modules.json');
+const modules = moduleMapping
+    .filter(moduleConfig => !moduleConfig.framework)
+    .map(moduleConfig => moduleConfig.module);
+
+/** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
+function addPackageJson(framework, importType, basePath) {
+    if (framework === 'angular' || framework === 'typescript') {
+        if (importType === 'modules') {
+            writeFile(path.join(basePath, 'package.json'), `{
+                    "name": "ag-grid-modules",
+                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+                    "dependencies": {
+                        ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
+                        ${modules.map(m => `"${m}": "*"`).join(",\n")}
+                    }
+                }`);
+        } else {
+            writeFile(path.join(basePath, 'package.json'), `{
+                    "name": "ag-grid-packages",
+                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+                    "dependencies": {
+                        ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
+                      "ag-grid-community": "*",
+                      "ag-grid-enterprise": "*"
+                    }
+                  }`);
+        }
+    }
 }
 
 function getGeneratorCode(prefix) {
