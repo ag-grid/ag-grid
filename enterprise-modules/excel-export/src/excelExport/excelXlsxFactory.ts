@@ -115,10 +115,10 @@ export class ExcelXlsxFactory {
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
-        const name = worksheet.name;
+        const name = _.escapeString(worksheet.name) || '';
         let append = '';
 
-        while (this.sheetNames.indexOf(name + append) !== -1) {
+        while (this.sheetNames.indexOf(`${name}${append}`) !== -1) {
             if (append === '') {
                 append = '_1';
             } else {
@@ -127,7 +127,7 @@ export class ExcelXlsxFactory {
             }
         }
 
-        worksheet.name += append;
+        worksheet.name = `${name}${append}`;
         this.sheetNames.push(worksheet.name);
     }
 

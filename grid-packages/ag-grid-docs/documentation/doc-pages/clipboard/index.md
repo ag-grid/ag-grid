@@ -107,7 +107,7 @@ It is possible to process clipboard data before pasting it into the grid. This c
 
 The interfaces and parameters for processing individual cells are as follows:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processCellForClipboard", "processHeaderForClipboard", "processGroupHeaderForClipboard", "processCellFromClipboard"]'  ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["processCellForClipboard", "processHeaderForClipboard", "processGroupHeaderForClipboard", "processCellFromClipboard"]'  ></api-documentation>
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
@@ -122,7 +122,7 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 The interface and parameters for processing the whole paste operation is as follows:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
 
 In summary the `processDataFromClipboard` takes a 2d array of data that was taken from the clipboard and the method returns a 2d array of data to be used. For the method to have no impact, it should return the 2d array it was provided. The method is free to return back anything it wants, as long as it is a 2d array of strings.
 

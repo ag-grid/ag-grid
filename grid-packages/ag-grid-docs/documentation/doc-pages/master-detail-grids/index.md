@@ -103,7 +103,7 @@ When a Master Row is expanded a Detail Row is created. When the Master Row is co
 
 To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shows. The properties are as follows:
 
-<api-documentation source='grid-properties/properties.json' section='masterDetail' names='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='masterDetail' names='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
 
 The example below demonstrates keeping Detail Rows. Note the following:
 

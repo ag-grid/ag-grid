@@ -182,7 +182,7 @@ The next example is similar to the one above with the following changes:
 
 It is possible to specify which rows can be selected via the `gridOptions.isRowSelectable(rowNode)` callback function.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='selection' names='["isRowSelectable"]'></api-documentation>
 
 For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
 
@@ -275,7 +275,7 @@ By default, you can select a row on mouse click, and navigate up and down the ro
 
 We need to provide a callback to the `navigateToNextCell` grid option to override the default arrow key navigation:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextCell"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='nav' names='["navigateToNextCell"]'></api-documentation>
 
 <snippet>
 |const gridOptions = {

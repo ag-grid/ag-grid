@@ -70,7 +70,7 @@ The Detail Grid on the other hand can use any Row Model.
 
 Top level Master Detail properties available on the Grid Options:
 
-<api-documentation source='grid-properties/properties.json' section="masterDetail"></api-documentation>
+<api-documentation source='grid-options/properties.json' section="masterDetail"></api-documentation>
 
 ### Detail Cell Renderer Params
 

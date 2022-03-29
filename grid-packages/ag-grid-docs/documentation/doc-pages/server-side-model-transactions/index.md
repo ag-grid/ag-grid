@@ -60,7 +60,7 @@ If the grid callback `getRowId` is provided, the grid will match on row ID.
 
 If the grid callback `getRowId` is not provided, the grid will match on object reference.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowId"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowModels' names='["getRowId"]' ></api-documentation>
 
 ## Targeting Stores
 

@@ -256,7 +256,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 [[note]]
 | It's important to note that when a module is added via the `modules` property, this module will be available to all other instances of the Grid created afterwards. This will produce the same behaviour as registering modules globally by calling `ModuleRegistry.registerModules()`.
 | This means that you can't limit the functionality of specific grid instances based on whether you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
-| To control features per grid use the relevant [Grid Property](/grid-properties/).
+| To control features per grid use the relevant [Grid Property](/grid-options/).
 
 ## Core Modules
 

@@ -100,7 +100,7 @@ scrolling (using the Partial Store) could be turned off at the top level but tur
 
 This is done by implementing the grid callback `getServerSideStoreParams(params)`.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["getServerSideStoreParams"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getServerSideStoreParams"]' ></api-documentation>
 
 The example below demonstrates the `getServerSideStoreParams(params)` callback. Note the following:
 
@@ -169,7 +169,7 @@ The example below shows Store Info in action.
 
 It is possible to have rows open as soon as they are loaded. To do this implement the grid callback `isServerSideGroupOpenByDefault`.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["isServerSideGroupOpenByDefault"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["isServerSideGroupOpenByDefault"]' ></api-documentation>
 
 ```js
 // Example implementation
@@ -236,7 +236,7 @@ The example below demonstrates these techniques. Note the following:
 
 By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["getChildCount"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getChildCount"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {

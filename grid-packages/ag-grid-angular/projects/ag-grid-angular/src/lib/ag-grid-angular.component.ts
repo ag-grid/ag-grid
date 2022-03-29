@@ -153,7 +153,8 @@ import {
     PostProcessSecondaryColGroupDefParams,
     PostSortRowsParams,
     IsFullWidthRowParams,
-    GetLocaleTextParams
+    GetLocaleTextParams,
+    IsRowFilterable,
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -653,6 +654,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
+    /** Set to determine whether filters should be applied on aggregated group values. Default: `false`     */
+    @Input() public groupAggFiltering: boolean | IsRowFilterable | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
@@ -896,7 +899,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** @deprecated - Use `getGroupRowAgg` instead.
      */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
-    /** Callback for grouping.     */
+    /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
@@ -1252,6 +1255,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
+    static ngAcceptInputType_groupAggFiltering: boolean | null | '';
     // @END@
 }
 

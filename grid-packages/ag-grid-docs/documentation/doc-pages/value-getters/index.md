@@ -104,7 +104,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 
 The following are the grid properties related to the value cache.
 
-<api-documentation source='grid-properties/properties.json' section="miscellaneous" names='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section="miscellaneous" names='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
 
 ### Expiring the Value Cache
 

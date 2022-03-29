@@ -28,7 +28,7 @@ Aggregation functions are provided with an array of values that it should aggreg
 The following code snippets show the three ways of defining aggregations for columns as explained above.
 
 <api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
-<api-documentation source='grid-properties/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
 
 Option 1 - use the built-in 'sum' function:
 
@@ -128,7 +128,7 @@ The example below shows simple aggregation using the built in functions. The fol
 It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to
 the column or registered to the grid and reference by name (similar to grid provided functions).
 
-<api-documentation source='grid-properties/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
 
 A custom aggregation function takes values to aggregate and aggregates them.
 

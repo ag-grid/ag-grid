@@ -176,7 +176,7 @@ When a row is selected, the selection will remain inside the grid, even if the g
 
 It is also possible to specify which rows can be selected via the `gridOptions.isRowSelectable(node)` callback function.
 
-<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='selection' names='["isRowSelectable"]' ></api-documentation>
 
 For instance if we only wanted to allow rows where the `data.country` property is the 'United States' we could implement the following:
 
@@ -227,7 +227,7 @@ Infinite scrolling has a cache working behind the scenes. The following properti
 
 ### Properties
 
-<api-documentation source='grid-properties/properties.json' section='infiniteRowModel' names='["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='infiniteRowModel' names='["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]'></api-documentation>
 
 
 ### API

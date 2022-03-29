@@ -50,7 +50,7 @@ deal with server-side data. The following is a summary of each:
 
 Which row model you use is set by the grid property `rowModelType`. 
 
-<api-documentation source='grid-properties/properties.json' section='rowModels' names='["rowModelType"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowModels' names='["rowModelType"]'></api-documentation>
 
 ## When to Use
 

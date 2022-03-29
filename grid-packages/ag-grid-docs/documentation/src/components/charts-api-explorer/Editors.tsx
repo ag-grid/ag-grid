@@ -6,8 +6,198 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
+
+import { FontFamily, FontWeight, FontStyle, FontSize, Opacity } from 'ag-charts-community';
+
 import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
+import { JsonProperty, JsonModelProperty } from '../expandable-snippet/model';
+
+type AliasTypeProps<T> = {
+    default?: T,
+    options?: T[],
+    suggestions?: T[],
+    breakIndex?: number,
+    min?: T,
+    max?: T,
+    unit?: string,
+};
+
+const FONT_WEIGHT_EDITOR_PROPS: AliasTypeProps<FontWeight> = {
+    default: 'normal',
+    breakIndex: 4,
+    options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
+};
+
+const FONT_STYLE_EDITOR_PROPS: AliasTypeProps<FontStyle> = {
+    default: 'normal',
+    options: ['normal', 'italic', 'oblique'],
+};
+
+const FONT_FAMILY_EDITOR_PROPS: AliasTypeProps<FontFamily> = {
+    default: 'Verdana, sans-serif',
+    suggestions: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
+};
+
+const FONT_SIZE_EDITOR_PROPS: AliasTypeProps<FontSize> = {
+    default: 12,
+    min: 1,
+    max: 30,
+    unit: 'px',
+};
+
+const OPACITY_PROPS: AliasTypeProps<Opacity> = {
+    min: 0,
+    max: 1,
+};
+
+const getMaxSize = () => {
+    const DEFAULT_WIDTH = 800;
+    const DEFAULT_HEIGHT = 600;
+    const ELEMENT_PADDING = 10;
+    const element = typeof window !== 'undefined' && document.querySelector('#chart-container') as HTMLDivElement;
+    const {
+        offsetWidth = DEFAULT_WIDTH,
+        offsetHeight = DEFAULT_HEIGHT,
+    } = element || {};
+
+    return {
+        // Width and height accounting for CSS padding on container element.
+        width: (offsetWidth - (ELEMENT_PADDING * 2)),
+        height: (offsetHeight - ELEMENT_PADDING),
+    };
+};
+
+type Primitive = number | string | boolean
+const SPECIAL_OVERRIDE_PROPS: Record<string, Record<string, (() => Primitive) | Primitive>> = {
+    'width': {
+        max: () => getMaxSize().width,
+    },
+    'height': {
+        max: () => getMaxSize().height,
+    },
+};
+
+export const getPrimitivePropertyEditor = (desc: JsonProperty) => {
+    if (desc.type === 'array') {
+        return ArrayEditor;
+    }
+
+    if (desc.type === 'primitive' && desc.aliasType != null) {
+        switch (desc.aliasType) {
+            case 'CssColor':
+                return ColourEditor;
+            case 'PixelSize':
+            case 'Opacity':
+                return NumberEditor;
+            case 'FontFamily':
+            case 'FontStyle':
+            case 'FontWeight':
+                return PresetEditor;
+        }
+    }
+
+    switch (desc.tsType) {
+        case 'string':
+            return StringEditor;
+        case 'number':
+            return NumberEditor;
+        case 'boolean':
+            return BooleanEditor;
+    }
+
+    return null;
+};
+
+export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: string) => {
+    let editor: any;
+    let editorProps: Record<string, any> = {};
+    
+    let specialOverride = SPECIAL_OVERRIDE_PROPS[key];
+    if (specialOverride != null) {
+        // Apply special overrides to a copy of meta before application below.
+        meta = { ...meta };
+        Object.entries(specialOverride)
+            .forEach(([prop, valueOrFn]) => {
+                let value = typeof valueOrFn === 'function' ? valueOrFn() : valueOrFn;
+                meta[prop] = value;
+            });
+    }
+
+    if (desc.type === 'primitive' && desc.aliasType != null) {
+        switch (desc.aliasType) {
+            case 'CssColor':
+                return { editor: ColourEditor, editorProps: { ...meta } };
+            case 'PixelSize':
+                return { editor: NumberEditor, editorProps: { ...meta, unit: 'px' } };
+            case 'Opacity':
+                return { editor: NumberEditor, editorProps: { ...OPACITY_PROPS, ...meta } };
+            case 'FontFamily':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...FONT_FAMILY_EDITOR_PROPS,
+                        ...meta,
+                    },
+                };
+            case 'FontSize':
+                return {
+                    editor: NumberEditor,
+                    editorProps: {
+                        ...FONT_SIZE_EDITOR_PROPS,
+                        ...meta,
+                    },
+                };
+            case 'FontStyle':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...FONT_STYLE_EDITOR_PROPS,
+                        ...meta,
+                    },
+                };
+            case 'FontWeight':
+                return {
+                    editor: PresetEditor,
+                    editorProps: {
+                        ...FONT_WEIGHT_EDITOR_PROPS,
+                        ...meta,
+                    },
+                };
+        }
+    }
+
+    if (desc.tsType.indexOf(' | ') >= 0) {
+        const options = desc.tsType.split(' | ').map((v) => v.substring(1, v.length - 1));
+
+        if (options.every((v) => /^[a-z-]*$/.test(v))) {
+            return { editor: PresetEditor, editorProps: { ...meta, options } };
+        }
+    }
+
+    if (meta?.options != null || meta?.suggestions != null) {
+        editor = PresetEditor;
+    } else {
+        editor = getPrimitivePropertyEditor(desc);
+    }
+
+    if (editor === NumberEditor && meta != null) {
+        setStepEditorProp(editorProps, meta);
+    }
+
+    return { editor, editorProps: { ...meta, ...editorProps } };
+};
+
+const setStepEditorProp = (editorProps: Record<string, any>, { min, max }: JsonModelProperty['meta']) => {
+    if (min == null || max == null) {
+        return;
+    }
+    if (max - min <= 1) {
+        editorProps.step = 0.05;
+    } else if (max - min <= 10) {
+        editorProps.step = 0.1;
+    }
+};
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
     const [stateValue, setValueChange] = useState(value || '');

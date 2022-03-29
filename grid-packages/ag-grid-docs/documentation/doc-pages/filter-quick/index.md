@@ -8,7 +8,7 @@ The quick filter text will check all words provided against the full row. For ex
 
 If you are using a framework, you can bind the quick filter text to the `quickFilterText` attribute.
 
-<api-documentation source='grid-properties/properties.json' section='filter' names='["quickFilterText"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='filter' names='["quickFilterText"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 <api-documentation source='grid-api/api.json' section='filter' names='["setQuickFilter"]'></api-documentation>
 
 <snippet>
@@ -46,7 +46,7 @@ const gridOptions = {
 
 By default, the quick filter checks each column's value, including running value getters if present, every time the quick filter is executed. If your data set is large, you may wish to enable the quick filter cache by setting `cacheQuickFilter = true`.
 
-<api-documentation source='grid-properties/properties.json' section='filter' names='["cacheQuickFilter"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='filter' names='["cacheQuickFilter"]'></api-documentation>
 
 When the cache is enabled, a 'quick filter text' is generated for each node by concatenating all the values for each column. For example, a table with columns of "Employee Name" and "Job" could have a row with quick filter text of `'NIALL CROSBY\nCOFFEE MAKER'`. The grid then performs a simple string search, so if you search for `'Niall'`, it will find our example text. Joining all the column's values into one string gives a performance boost. The values are joined after the quick filter is requested for the first time and stored in the `rowNode` - the original data that you provide is not changed.
 

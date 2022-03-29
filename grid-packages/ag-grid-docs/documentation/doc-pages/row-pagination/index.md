@@ -103,7 +103,7 @@ This is because both of these features remove top level rows (group rows and mas
 
 ## Pagination Properties
 
-<api-documentation source='grid-properties/properties.json' section='pagination'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='pagination'></api-documentation>
 
 The following methods compose the pagination API are all available from `gridOptions.api`
 
@@ -114,7 +114,7 @@ The following methods compose the pagination API are all available from `gridOpt
 
 ## Pagination Callbacks
 
-<api-documentation source='grid-callbacks/callbacks.json' section='pagination' names='["paginationNumberFormatter"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='pagination' names='["paginationNumberFormatter"]'></api-documentation>
 
 ## Pagination Events
 

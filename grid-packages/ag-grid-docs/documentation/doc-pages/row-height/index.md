@@ -24,7 +24,7 @@ Changing the property will set a new row height for all rows, including pinned r
 
 ## getRowHeight Callback
 
-<api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["getRowHeight"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='styling' names='["getRowHeight"]' ></api-documentation>
 
 To change the row height so that each row can have a different height,
 implement the `getRowHeight(params)` callback. For example, to set the height

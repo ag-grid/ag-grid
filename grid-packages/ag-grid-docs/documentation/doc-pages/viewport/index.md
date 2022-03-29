@@ -38,7 +38,7 @@ The diagram below shows how the viewport maps to a connection to your dataset. T
 
 To use the viewportRowModel you provide the grid with an implementation of `IViewportDatasource` to the property `viewportDatasource`:
 
-<api-documentation source='grid-properties/properties.json' section='viewportRowModel' names='["viewportDatasource"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='viewportRowModel' names='["viewportDatasource"]'></api-documentation>
 
 The grid will call the `init` method once, passing you a params object with the following methods. 
 

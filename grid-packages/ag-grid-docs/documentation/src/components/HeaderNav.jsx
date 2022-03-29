@@ -20,6 +20,10 @@ const links = [
     {
         name: 'Blog',
         url: 'https://blog.ag-grid.com/?_ga=2.240961155.106872681.1607518091-965402545.1605286673'
+    },
+    {
+        name: 'Videos',
+        url: '/videos.php'
     }
 ];
 

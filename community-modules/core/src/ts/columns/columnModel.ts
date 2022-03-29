@@ -137,7 +137,8 @@ export class ColumnModel extends BeanStub {
     private secondaryColumns: Column[] | null;
     private secondaryColumnsMap: { [id: string]: Column };
     private secondaryHeaderRowCount = 0;
-    private secondaryColumnsPresent = false;
+    // Saved when pivot is disabled, available to re-use when pivot is restored
+    private previousSecondaryColumns: Column[] | null;
 
     // the columns the quick filter should use. this will be all primary columns
     // plus the autoGroupColumns if any exist
@@ -490,7 +491,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null {
-        if (!this.secondaryColumnsPresent || !this.secondaryColumns) { return null; }
+        if (missing(this.secondaryColumns)) { return null; }
 
         const valueColumnToFind = this.getPrimaryColumn(valueColKey);
 
@@ -1808,7 +1809,7 @@ export class ColumnModel extends BeanStub {
             this.groupAutoColumns || [],
         ]);
     }
-    
+
     private getPrimaryAndSecondaryColumns(): Column[] {
         return ([] as Column[]).concat(...[
             this.primaryColumns || [],
@@ -2082,8 +2083,8 @@ export class ColumnModel extends BeanStub {
         } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
 
         // If there are still states left over, see if we can apply them to newly generated
-        // secondary or auto columns
-        if (unmatchedAndAutoStates.length > 0) {
+        // secondary or auto columns. Also if defaults exist, ensure they are applied to secondary cols
+        if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
                 this.secondaryColumns || [],
@@ -2243,7 +2244,7 @@ export class ColumnModel extends BeanStub {
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             if (getChangedColumns(sortChangePredicate).length > 0) {
-                this.sortController.dispatchSortChangedEvents();
+                this.sortController.dispatchSortChangedEvents(source);
             }
 
             // special handling for moved column events
@@ -2434,9 +2435,9 @@ export class ColumnModel extends BeanStub {
         const sort = getValue('sort').value1;
         if (sort !== undefined) {
             if (sort === Constants.SORT_DESC || sort === Constants.SORT_ASC) {
-                column.setSort(sort);
+                column.setSort(sort, source);
             } else {
-                column.setSort(undefined);
+                column.setSort(undefined, source);
             }
         }
 
@@ -3018,7 +3019,7 @@ export class ColumnModel extends BeanStub {
     private calculateColumnsForDisplay(): Column[] {
         let columnsForDisplay: Column[];
 
-        if (this.pivotMode && !this.secondaryColumnsPresent) {
+        if (this.pivotMode && missing(this.secondaryColumns)) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.gridColumns.filter(column => {
@@ -3087,32 +3088,35 @@ export class ColumnModel extends BeanStub {
     }
 
     public isSecondaryColumnsPresent(): boolean {
-        return this.secondaryColumnsPresent;
+        return exists(this.secondaryColumns);
     }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType = "api"): void {
         const newColsPresent = colDefs && colDefs.length > 0;
 
-        // if not cols passed, and we had to cols anyway, then do nothing
-        if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
+        // if not cols passed, and we had no cols anyway, then do nothing
+        if (!newColsPresent && missing(this.secondaryColumns)) { return; }
 
         if (newColsPresent) {
             this.processSecondaryColumnDefinitions(colDefs);
-            const balancedTreeResult = this.columnFactory.createColumnTree(colDefs, false);
+            const balancedTreeResult = this.columnFactory.createColumnTree(
+                colDefs,
+                false,
+                this.secondaryColumns || this.previousSecondaryColumns || undefined,
+            );
             this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
 
             this.secondaryColumnsMap = {};
             this.secondaryColumns.forEach(col => this.secondaryColumnsMap[col.getId()] = col);
-
-            this.secondaryColumnsPresent = true;
+            this.previousSecondaryColumns = null;
         } else {
+            this.previousSecondaryColumns = this.secondaryColumns;
             this.secondaryBalancedTree = null;
             this.secondaryHeaderRowCount = -1;
             this.secondaryColumns = null;
             this.secondaryColumnsMap = {};
-            this.secondaryColumnsPresent = false;
         }
 
         this.updateGridColumns();

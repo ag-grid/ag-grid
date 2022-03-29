@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "26.1.0",
+  "version": "27.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -39,7 +39,6 @@
     "testCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testCommunityModules()'",
     "testEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testEnterpriseModules()'",
     "testModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testModules()'",
-    "buildFrameworkExamples": "npx lerna run build --scope '{ag-grid-angular-cli-example,ag-grid-react-example,ag-grid-vue-example}'",
     "cleanLegacy": "npx lerna clean --scope '{ag-grid-community,ag-grid-enterprise}'",
     "bootstrapLegacy": "npx lerna bootstrap --scope '{ag-grid-community,ag-grid-enterprise}'",
     "buildLegacy": "npx lerna run build --scope '{ag-grid-community,ag-grid-enterprise}'",
@@ -57,9 +56,7 @@
     "buildPackageNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackageSkipDocsBasedOnState()'",
     "ciUpdateBuildAndUnitTest": "npm i && npm run bootstrap && npm run buildAndUnitTest",
     "ciUpdateBuildPackageAndFullyTest": "npm i && npm run bootstrap && npm run buildPackageAndFullyTest",
-    "ciUpdateRebuildAndPackage": "npm i && npm run bootstrap && npm run buildPackageNoTest",
-    "xbuildNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildBasedOnState()'",
-    "xciUpdateRebuild": "npm i && npm run bootstrap && npm run buildNoTest"
+    "ciUpdateRebuildAndPackage": "npm i && npm run bootstrap && npm run buildPackageNoTest"
   },
   "devDependencies": {
     "@types/node": "12.20.20",

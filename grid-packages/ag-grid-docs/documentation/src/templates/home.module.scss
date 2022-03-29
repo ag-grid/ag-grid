@@ -13,6 +13,14 @@
         font-weight: 500;
     }
 
+    h4 {
+        color: #6a7576;
+        font-size: 1rem;
+        font-weight: normal;
+        margin-top: 0;
+    }
+
+
     @include media-breakpoint-down(md) {
         h2 {
             font-size: 1.5rem;

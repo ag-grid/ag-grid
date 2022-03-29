@@ -136,7 +136,8 @@ export const getExampleFiles = exampleInfo => {
         .map(node => ({
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
-            isFramework: node.relativePath.replace(sourcePath, '') === 'package.json'
+            isFramework: node.relativePath.replace(sourcePath, '') === 'package.json',
+            content: node.content
         }));
 
     getFrameworkFiles(framework, internalFramework, importType).forEach(file => filesForExample.push({
@@ -151,9 +152,11 @@ export const getExampleFiles = exampleInfo => {
     filesForExample.filter(f => f.path !== 'index.html').forEach(f => {
         files[f.path] = null; // preserve ordering
 
-        const promise = fetch(f.publicURL)
-            .then(response => response.text())
-            .then(source => files[f.path] = { source, isFramework: f.isFramework });
+        const sourcePromise = (f.content ?? fetch(f.publicURL).then(response => response.text()));
+        const promise = sourcePromise
+            .then(source => {
+                files[f.path] = { source, isFramework: f.isFramework }
+            });
 
         promises.push(promise);
     });

@@ -55,7 +55,7 @@ export const TYPE_LINKS = {
     ExcelSheetPageSetup: '/excel-export-api/#excelsheetpagesetup',
     ExcelSheetMargin: '/excel-export-api/#excelsheetmargin',
     GridApi: '/grid-api/',
-    GridOptions: '/grid-properties/',
+    GridOptions: '/grid-options/',
     HeaderPosition: '/keyboard-navigation/#headerposition',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
     IAggFunc: '/aggregation/#custom-aggregation-functions',

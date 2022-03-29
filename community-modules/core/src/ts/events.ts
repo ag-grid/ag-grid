@@ -104,7 +104,10 @@ export interface FilterOpenedEvent extends AgGridEvent {
     eGui: HTMLElement;
 }
 
-export interface SortChangedEvent extends AgGridEvent { }
+export interface SortChangedEvent extends AgGridEvent {
+    /** Source of the sort change. */
+    source: string;
+}
 
 export interface GridReadyEvent extends AgGridEvent { }
 
