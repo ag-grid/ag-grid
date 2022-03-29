@@ -289,7 +289,7 @@ export class GridOptionsWrapper {
             validPropertiesAndExceptions,
             validProperties,
             'gridOptions',
-            'https://www.ag-grid.com/javascript-grid-properties/'
+            'https://www.ag-grid.com/javascript-data-grid/grid-options/'
         );
     }
 
@@ -1126,7 +1126,7 @@ export class GridOptionsWrapper {
         if (isTrue(userValue)) {
             return () => true;
         }
-    
+
         return undefined;
     }
 

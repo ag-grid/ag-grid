@@ -199,6 +199,16 @@ AddType text/javascript ts jsx
     Redirect 301 /best-react-grid/ /react-data-grid/getting-started/
     Redirect 301 /best-vuejs-data-grid/ /vue-data-grid/getting-started/
     Redirect 301 /best-vuejs-grid/ /vue-data-grid/getting-started/
+
+    Redirect 301 /angular-data-grid/grid-properties/ /angular-data-grid/grid-options/
+    Redirect 301 /javascript-data-grid/grid-properties/ /javascript-data-grid/grid-options/
+    Redirect 301 /react-data-grid/grid-properties/ /react-data-grid/grid-options/
+    Redirect 301 /vue-data-grid/grid-properties/ /vue-data-grid/grid-options/
+    Redirect 301 /angular-data-grid/grid-callbacks/ /angular-data-grid/grid-options/
+    Redirect 301 /javascript-data-grid/grid-callbacks/ /javascript-data-grid/grid-options/
+    Redirect 301 /react-data-grid/grid-callbacks/ /react-data-grid/grid-options/
+    Redirect 301 /vue-data-grid/grid-callbacks/ /vue-data-grid/grid-options/
+
     Redirect 301 /documentation-main/documentation.php /documentation/
     Redirect 301 /documentation/angular/accessibility/ /angular-data-grid/accessibility/
     Redirect 301 /documentation/angular/accessing-data/ /angular-data-grid/accessing-data/

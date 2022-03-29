@@ -11,7 +11,7 @@ External filtering allows you to mix your own filtering logic with the grid's in
 
 The example below shows external filters in action. There are two methods on `gridOptions` you need to implement: `isExternalFilterPresent` and `doesExternalFilterPass`.
 
-<api-documentation source='grid-properties/properties.json' section='filter' names='["isExternalFilterPresent", "doesExternalFilterPass"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='filter' names='["isExternalFilterPresent", "doesExternalFilterPass"]'></api-documentation>
 
 ### isExternalFilterPresent
 

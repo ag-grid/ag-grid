@@ -81,7 +81,7 @@ So make sure the CSS on the top most element is set so that its height is correc
 Use the callback `getRowHeight(params)` to set height for each row individually. This is a specific use of the callback that is explained in more detail in
 [Get Row Height](/row-height/#getrowheight-callback)
 
-<api-documentation source='grid-properties/properties.json' section='styling' names='["getRowHeight"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='styling' names='["getRowHeight"]'></api-documentation>
 
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 

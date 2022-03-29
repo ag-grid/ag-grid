@@ -131,7 +131,7 @@ const App = () => {
 
 ## Callbacks
 
-For callbacks (both [Event Listeners](/grid-events/) and [Grid Options](/grid-properties/) that are functions), you can use `useCallback()` if you wish, or you can also just set the callback into the grid.
+For callbacks (both [Event Listeners](/grid-events/) and [Grid Options](/grid-options/) that are functions), you can use `useCallback()` if you wish, or you can also just set the callback into the grid.
 
 Not using `useCallback()` has no adverse effect on the grid, as changing such does not have any impact on the grid state (unlike Row Data and Column Definitions, which when changed, have immediate impact on the grid). Changing a callback means the new callback will be used next time it is needed.
 

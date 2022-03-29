@@ -170,7 +170,7 @@ It is also possible to perform some post-sorting if you require additional contr
 
 This is provided via the `postSortRows` grid callback function as shown below:
 
-<api-documentation source='grid-properties/properties.json' section='sort' names='["postSortRows"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='sort' names='["postSortRows"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {

@@ -20,7 +20,7 @@ You can customise the context menu by providing a `getContextMenuItems()` callba
 
 The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use MenuItem descriptions for your own menu items.
 
-<api-documentation source='grid-properties/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
 
 
 If you want to access your underlying data item, you access that through the rowNode as `var dataItem = node.data`.
@@ -79,7 +79,7 @@ This will lead to a bad user experience which is demonstrated in the following e
 
 The solution is to set the `popupParent` element which can be set in the following ways:
 
-<api-documentation source='grid-properties/properties.json' section='accessories' names='["popupParent"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='accessories' names='["popupParent"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
 <api-documentation source='grid-api/api.json' section='accessories' names='["setPopupParent"]'></api-documentation>
 
 Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:

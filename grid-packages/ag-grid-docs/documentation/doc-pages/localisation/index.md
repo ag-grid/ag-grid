@@ -4,7 +4,7 @@ title: "Localisation"
 
 All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language. Either provide an object  of key/value pairs via the `localeText` property, or provide a `getLocaleText` callback to hook the grid up to your application's localisation.
 
-<api-documentation source='grid-properties/properties.json' section='localisation' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='localisation' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 The default language of the grid is American English. The grid does not come with other locales. If you want to provide the grid in another language, you must provide to the grid the relevant  locale information.
 

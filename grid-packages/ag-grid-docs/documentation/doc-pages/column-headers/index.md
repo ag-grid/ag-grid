@@ -8,7 +8,7 @@ Each column has a header at the top that typically displays the column name and 
 
 These properties can be used to change the different heights used in the headers.
 
-<api-documentation source="grid-properties/properties.json" section="headers"></api-documentation>
+<api-documentation source="grid-options/properties.json" section="headers"></api-documentation>
 
 All these properties also have setter methods that can be called from the API and will change the header heights dynamically.
 

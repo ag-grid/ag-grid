@@ -78,7 +78,7 @@ Duplicate records occur when data read from the server includes a new record (it
 
 Before a transaction is applied, the grid calls the `isApplyServerSideTransaction(params)` callback to give the application one last chance to cancel the transaction.
 
-<api-documentation source='grid-properties/properties.json' section='serverSideRowModel' names='["isApplyServerSideTransaction"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["isApplyServerSideTransaction"]' ></api-documentation>
 
 If the callback returns `true`, the transaction is applied as normal and the Transaction Status `Applied` is returned. If the callback returns `false`, the transaction is discarded and the Transaction Status `Cancelled` is returned.
 

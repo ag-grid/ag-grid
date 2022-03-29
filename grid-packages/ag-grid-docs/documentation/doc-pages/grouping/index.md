@@ -64,7 +64,7 @@ however extensive Row Grouping customisations are also possible as summarised be
 
 Row Grouping can be configured using the following grid properties:
 
-<api-documentation source='grid-properties/properties.json' section="rowGrouping"></api-documentation>
+<api-documentation source='grid-options/properties.json' section="rowGrouping"></api-documentation>
 
 ## Next Up
 
