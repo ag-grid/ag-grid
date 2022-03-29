@@ -456,41 +456,27 @@ function createExampleGenerator(prefix, importTypes) {
     };
 }
 
+const moduleMapping = require('./documentation/doc-pages/modules/modules.json');
+const modules = moduleMapping
+    .filter(moduleConfig => !moduleConfig.framework)
+    .map(moduleConfig => moduleConfig.module);
+
 /** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
 function addPackageJson(framework, importType, basePath) {
     if (framework === 'angular' || framework === 'typescript') {
         if (importType === 'modules') {
             writeFile(path.join(basePath, 'package.json'), `{
-                    "name": "AG Grid Modules",
-                    "description": "This package.json file is solely used by Plunker to look up type definitions.",
+                    "name": "ag-grid-modules",
+                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
                     "dependencies": {
                         ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
-                        "@ag-grid-community/core": "*",
-                        "@ag-grid-community/infinite-row-model": "*",
-                        "@ag-grid-enterprise/charts": "*",
-                        "@ag-grid-enterprise/clipboard": "*",
-                        "@ag-grid-enterprise/column-tool-panel": "*",
-                        "@ag-grid-enterprise/core": "*",
-                        "@ag-grid-enterprise/excel-export": "*",
-                        "@ag-grid-enterprise/filter-tool-panel": "*",
-                        "@ag-grid-enterprise/master-detail": "*",
-                        "@ag-grid-enterprise/menu": "*",
-                        "@ag-grid-enterprise/multi-filter": "*",
-                        "@ag-grid-enterprise/range-selection": "*",
-                        "@ag-grid-enterprise/rich-select": "*",
-                        "@ag-grid-enterprise/row-grouping": "*",
-                        "@ag-grid-enterprise/server-side-row-model": "*",
-                        "@ag-grid-enterprise/set-filter": "*",
-                        "@ag-grid-enterprise/side-bar": "*",
-                        "@ag-grid-enterprise/sparklines": "*",
-                        "@ag-grid-enterprise/status-bar": "*",
-                        "@ag-grid-enterprise/viewport-row-model": "*",
+                        ${modules.map(m => `"${m}": "*"`).join(",\n")}
                     }
                 }`);
         } else {
             writeFile(path.join(basePath, 'package.json'), `{
-                    "name": "AG Grid Packages",
-                    "description": "This package.json file is solely used by Plunker to look up type definitions.",
+                    "name": "ag-grid-packages",
+                    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
                     "dependencies": {
                         ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
                       "ag-grid-community": "*",
