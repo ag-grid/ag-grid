@@ -344,7 +344,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/full-width-rows/ /angular-data-grid/full-width-rows/
     Redirect 301 /documentation/angular/getting-started/ /angular-data-grid/getting-started/
     Redirect 301 /documentation/angular/grid-api/ /angular-data-grid/grid-api/
-    Redirect 301 /documentation/angular/grid-callbacks/ /angular-data-grid/grid-callbacks/
+    Redirect 301 /documentation/angular/grid-callbacks/ /angular-data-grid/grid-options/
     Redirect 301 /documentation/angular/grid-events/ /angular-data-grid/grid-events/
     Redirect 301 /documentation/angular/grid-features/ /angular-data-grid/grid-features/
     Redirect 301 /documentation/angular/grid-interface/ /angular-data-grid/grid-interface/
@@ -598,7 +598,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/full-width-rows/ /javascript-data-grid/full-width-rows/
     Redirect 301 /documentation/javascript/getting-started/ /javascript-data-grid/getting-started/
     Redirect 301 /documentation/javascript/grid-api/ /javascript-data-grid/grid-api/
-    Redirect 301 /documentation/javascript/grid-callbacks/ /javascript-data-grid/grid-callbacks/
+    Redirect 301 /documentation/javascript/grid-callbacks/ /javascript-data-grid/grid-options/
     Redirect 301 /documentation/javascript/grid-events/ /javascript-data-grid/grid-events/
     Redirect 301 /documentation/javascript/grid-features/ /javascript-data-grid/grid-features/
     Redirect 301 /documentation/javascript/grid-interface/ /javascript-data-grid/grid-interface/
@@ -843,7 +843,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/full-width-rows/ /react-data-grid/full-width-rows/
     Redirect 301 /documentation/react/getting-started/ /react-data-grid/getting-started/
     Redirect 301 /documentation/react/grid-api/ /react-data-grid/grid-api/
-    Redirect 301 /documentation/react/grid-callbacks/ /react-data-grid/grid-callbacks/
+    Redirect 301 /documentation/react/grid-callbacks/ /react-data-grid/grid-options/
     Redirect 301 /documentation/react/grid-events/ /react-data-grid/grid-events/
     Redirect 301 /documentation/react/grid-features/ /react-data-grid/grid-features/
     Redirect 301 /documentation/react/grid-interface/ /react-data-grid/grid-interface/
@@ -1088,7 +1088,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/full-width-rows/ /vue-data-grid/full-width-rows/
     Redirect 301 /documentation/vue/getting-started/ /vue-data-grid/getting-started/
     Redirect 301 /documentation/vue/grid-api/ /vue-data-grid/grid-api/
-    Redirect 301 /documentation/vue/grid-callbacks/ /vue-data-grid/grid-callbacks/
+    Redirect 301 /documentation/vue/grid-callbacks/ /vue-data-grid/grid-options/
     Redirect 301 /documentation/vue/grid-events/ /vue-data-grid/grid-events/
     Redirect 301 /documentation/vue/grid-features/ /vue-data-grid/grid-features/
     Redirect 301 /documentation/vue/grid-interface/ /vue-data-grid/grid-interface/
@@ -1232,7 +1232,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-aligned-grids/ /javascript-data-grid/aligned-grids/
     Redirect 301 /javascript-grid-animation/ /javascript-data-grid/row-animation/
     Redirect 301 /javascript-grid-api/ /javascript-data-grid/grid-api/
-    Redirect 301 /javascript-grid-callbacks/ /javascript-data-grid/grid-callbacks/
+    Redirect 301 /javascript-grid-callbacks/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid-cell-editing/ /javascript-data-grid/cell-editing/
     Redirect 301 /javascript-grid-cell-editor/ /javascript-data-grid/component-cell-editor/
     Redirect 301 /javascript-grid-cell-expressions/ /javascript-data-grid/cell-expressions/
@@ -1525,7 +1525,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/full-width-rows/ /javascript-data-grid/full-width-rows/
     Redirect 301 /javascript-grid/getting-started/ /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid/grid-api/ /javascript-data-grid/grid-api/
-    Redirect 301 /javascript-grid/grid-callbacks/ /javascript-data-grid/grid-callbacks/
+    Redirect 301 /javascript-grid/grid-callbacks/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid/grid-events/ /javascript-data-grid/grid-events/
     Redirect 301 /javascript-grid/grid-features/ /javascript-data-grid/grid-features/
     Redirect 301 /javascript-grid/grid-interface/ /javascript-data-grid/grid-interface/
@@ -1721,7 +1721,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/full-width-rows/ /angular-data-grid/full-width-rows/
     Redirect 301 /angular-grid/getting-started/ /angular-data-grid/getting-started/
     Redirect 301 /angular-grid/grid-api/ /angular-data-grid/grid-api/
-    Redirect 301 /angular-grid/grid-callbacks/ /angular-data-grid/grid-callbacks/
+    Redirect 301 /angular-grid/grid-callbacks/ /angular-data-grid/grid-options/
     Redirect 301 /angular-grid/grid-events/ /angular-data-grid/grid-events/
     Redirect 301 /angular-grid/grid-features/ /angular-data-grid/grid-features/
     Redirect 301 /angular-grid/grid-interface/ /angular-data-grid/grid-interface/
@@ -1921,7 +1921,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/full-width-rows/ /react-data-grid/full-width-rows/
     Redirect 301 /react-grid/getting-started/ /react-data-grid/getting-started/
     Redirect 301 /react-grid/grid-api/ /react-data-grid/grid-api/
-    Redirect 301 /react-grid/grid-callbacks/ /react-data-grid/grid-callbacks/
+    Redirect 301 /react-grid/grid-callbacks/ /react-data-grid/grid-options/
     Redirect 301 /react-grid/grid-events/ /react-data-grid/grid-events/
     Redirect 301 /react-grid/grid-features/ /react-data-grid/grid-features/
     Redirect 301 /react-grid/grid-interface/ /react-data-grid/grid-interface/
@@ -2121,7 +2121,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/full-width-rows/ /vue-data-grid/full-width-rows/
     Redirect 301 /vue-grid/getting-started/ /vue-data-grid/getting-started/
     Redirect 301 /vue-grid/grid-api/ /vue-data-grid/grid-api/
-    Redirect 301 /vue-grid/grid-callbacks/ /vue-data-grid/grid-callbacks/
+    Redirect 301 /vue-grid/grid-callbacks/ /vue-data-grid/grid-options/
     Redirect 301 /vue-grid/grid-events/ /vue-data-grid/grid-events/
     Redirect 301 /vue-grid/grid-features/ /vue-data-grid/grid-features/
     Redirect 301 /vue-grid/grid-interface/ /vue-data-grid/grid-interface/
