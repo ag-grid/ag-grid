@@ -51,13 +51,13 @@
     }
 
     &.fullscreen {
-        background: white;
         position: fixed;
         top: 0px;
         left: 0px;
         width: 100vw;
         height: 100vh;
         z-index: 100;
+        background: white;
 
         &__left {
             width: 500px;
