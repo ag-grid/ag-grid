@@ -3,7 +3,7 @@ import { AgChartThemeOptions } from "../agChartOptions";
 
 export class DarkTheme extends ChartTheme {
 
-    getDefaults(): any {
+    protected getDefaults(): typeof ChartTheme['defaults'] {
         const fontColor = 'rgb(200, 200, 200)';
         const mutedFontColor = 'rgb(150, 150, 150)';
 
@@ -26,16 +26,7 @@ export class DarkTheme extends ChartTheme {
             }
         };
 
-        const chartDefaults = {
-            background: {
-                fill: 'rgb(34, 38, 41)'
-            },
-            title: {
-                color: fontColor
-            },
-            subtitle: {
-                color: mutedFontColor
-            },
+        const chartAxesDefaults = {
             axes: {
                 number: {
                     ...axisDefaults
@@ -47,6 +38,18 @@ export class DarkTheme extends ChartTheme {
                     ...axisDefaults
                 }
             },
+        };
+
+        const chartDefaults = {
+            background: {
+                fill: 'rgb(34, 38, 41)'
+            },
+            title: {
+                color: fontColor
+            },
+            subtitle: {
+                color: mutedFontColor
+            },
             legend: {
                 item: {
                     label: {
@@ -56,33 +59,79 @@ export class DarkTheme extends ChartTheme {
             }
         };
 
-        return this.mergeWithParentDefaults({
-            cartesian: {
-                ...chartDefaults,
-                series: {
-                    bar: {
-                        ...seriesLabelDefaults
-                    },
-                    column: {
-                        ...seriesLabelDefaults
-                    },
-                    histogram: {
-                        ...seriesLabelDefaults
-                    }
-                }
-            },
-            polar: {
-                ...chartDefaults,
-                series: {
-                    pie: {
-                        ...seriesLabelDefaults,
-                        title: {
-                            color: fontColor
+        return this.mergeWithParentDefaults(
+            super.getDefaults(),
+            {
+                cartesian: {
+                    ...chartDefaults,
+                    ...chartAxesDefaults,
+                    series: {
+                        bar: {
+                            ...seriesLabelDefaults
+                        },
+                        column: {
+                            ...seriesLabelDefaults
+                        },
+                        histogram: {
+                            ...seriesLabelDefaults
                         }
                     }
-                }
+                },
+                groupedCategory: {
+                    ...chartDefaults,
+                    ...chartAxesDefaults,
+                    series: {
+                        bar: {
+                            ...seriesLabelDefaults
+                        },
+                        column: {
+                            ...seriesLabelDefaults
+                        },
+                        histogram: {
+                            ...seriesLabelDefaults
+                        }
+                    }
+                },
+                polar: {
+                    ...chartDefaults,
+                    series: {
+                        pie: {
+                            ...seriesLabelDefaults,
+                            title: {
+                                color: fontColor
+                            }
+                        }
+                    }
+                },
+                hierarchy: {
+                    ...chartDefaults,
+                    series: {
+                        treemap: {
+                            title: {
+                                color: fontColor,
+                            },
+                            subtitle: {
+                                color: mutedFontColor,
+                            },
+                            labels: {
+                                large: {
+                                    color: fontColor,
+                                },
+                                medium: {
+                                    color: fontColor,
+                                },
+                                small: {
+                                    color: fontColor,
+                                },
+                                color: {
+                                    color: fontColor,
+                                },
+                            },
+                        },
+                    },
+                },
             }
-        });
+        );
     }
 
     constructor(options?: AgChartThemeOptions) {
