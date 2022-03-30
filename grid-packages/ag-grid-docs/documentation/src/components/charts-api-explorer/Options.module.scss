@@ -10,11 +10,13 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 0 5px 0 5px;
+    border-radius: 5px;
 
     &__content {
         overflow-y: auto;
-        border-right: 1px solid rgba(0, 0, 0, 0.125);
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-top: 0;
+        border-bottom: 0;
         height: 100%;
     }
 
