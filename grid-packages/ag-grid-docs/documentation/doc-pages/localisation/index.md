@@ -34,6 +34,9 @@ This to try in the example are as follows:
 
 <grid-example title='Localisation' name='localisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar"], "exampleHeight": 650 }'></grid-example>
 
+[[note]]
+| Some localisation variables have `${variable}` in them. When this occurs, it means that part of the string will be replaced by a variable value.
+
 ## Changing Locale
 
 The grid uses the locale as it is needed. It does not refresh as the locale changes. If your application allows changing the locale for the application, you must destroy and recreate the grid for it to use the new locale.

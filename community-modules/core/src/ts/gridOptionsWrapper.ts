@@ -1855,8 +1855,20 @@ export class GridOptionsWrapper {
             return localeTextFunc;
         }
 
-        return (key: string, defaultValue: string) => {
-            const localisedText = localeText && localeText[key];
+        return (key: string, defaultValue: string, variableValues?: string[]) => {
+            let localisedText = localeText && localeText[key];
+
+
+            if (localisedText && variableValues && variableValues.length) {
+                let found = 0;
+                while (true) {
+                    if (found >= variableValues.length) { break; }
+                    const idx = localisedText.indexOf('${variable}');
+                    if (idx === -1) { break; }
+
+                    localisedText = localisedText.replace('${variable}', variableValues[found++]);
+                }
+            }
 
             return localisedText ?? defaultValue;
         };
