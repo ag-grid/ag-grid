@@ -5,7 +5,6 @@ import {SEO} from 'components/SEO';
 import {convertUrl} from 'components/documentation-helpers';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
-import videoStyles from '../components/VideoSection.module.scss';
 import ReactPlayer from 'react-player'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
@@ -114,51 +113,34 @@ const GettingStarted = ({framework, data}) => {
 };
 
 const VideoPanel = ({framework}) => {
-    const PlayerPanel = props => (
-        <div style={{marginLeft: "1rem", width: 320}}>
-            <ReactPlayer url={`https://www.youtube.com/watch?v=${props.id}`}
-                         height={180}
-                         width={320}
-                         light={`https://i.ytimg.com/vi/${props.id}/mqdefault.jpg`}
-                         title={props.title}>
-
-            </ReactPlayer>
-            <span style={{fontSize: "smaller"}}>{props.title}</span>
-        </div>
-    );
     return (
-        <div className={styles['docs-home__getting-started']} style={{marginTop: "-2rem"}}>
-            <h2 className={styles['docs-home__getting-started__title']}>
+        <div className={styles['docs-home__video-panel']}>
+            <h2 className={styles['docs-home__video-panel__title']}>
                 {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Featured Videos
             </h2>
-            <h4 className={styles['docs-home__getting-started__title']} style={{marginTop: "-0.5rem"}}>
+            <h4 className={styles['docs-home__video-panel__title__subtitle']}>
                 Some text Some text Some text Some text Some text Some text Some text Some text
             </h4>
-            <div style={{
-                display: "flex",
-                flexGrow: 1,
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                marginLeft: "1rem",
-                paddingTop: "1rem",
-                paddingBottom: "1rem",
-                paddingRight: "1rem",
-                border: "1px solid #d0d4d6",
-                borderRadius: "5px"
-            }}>
+            <div className={styles['docs-home__video-panel__videos']}>
                 {featuredVideos.map(featuredVideo => (
-                    <PlayerPanel id={featuredVideo.id} key={featuredVideo.id} title={featuredVideo.title}/>
-                ))}
-                <div>
-                    <div className={videoStyles['video-section']}
-                         style={{marginLeft: "1rem", border: "1px solid #d0d4d6", borderRadius: "5px", height: 180, width: 320}}>
-                        <a href={`${phpPrefix}/videos.php`} style={{margin: "auto"}}>
-                            <div style={{flexDirection: "column"}}>
-                                <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
-                                <div style={{width: "80%", margin: "0 auto"}}>All Videos</div>
-                            </div>
-                        </a>
+                    <div className={styles['docs-home__video-panel__videos__video-player']}>
+                        <ReactPlayer url={`https://www.youtube.com/watch?v=${featuredVideo.id}`}
+                                     height={180}
+                                     width={320}
+                                     light={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}
+                                     title={featuredVideo.title}>
+
+                        </ReactPlayer>
+                        <span className={styles['docs-home__video-panel__video-player__title']}>{featuredVideo.title}</span>
                     </div>
+                ))}
+                <div className={styles['docs-home__video-panel__videos__all-videos']}>
+                    <a href={`${phpPrefix}/videos.php`} style={{margin: "auto"}}>
+                        <div style={{flexDirection: "column"}}>
+                            <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
+                            <div className={styles['docs-home__video-panel__videos__all-videos__title']}>All Videos</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
