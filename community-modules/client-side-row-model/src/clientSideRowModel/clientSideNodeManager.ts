@@ -175,6 +175,10 @@ export class ClientSideNodeManager {
 
         // add new row nodes to the root nodes 'allLeafChildren'
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
+
+        let nodesBeforeIndex: RowNode[] = [];
+        let nodesAfterIndex: RowNode[] = [];
+
         if (useIndex) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
@@ -188,12 +192,13 @@ export class ClientSideNodeManager {
                 }
                 return prevValue;
             }, 0) + 1;
-            const nodesBeforeIndex = existingLeafChildren.slice(0, normalizedAddIndex);
-            const nodesAfterIndex = existingLeafChildren.slice(normalizedAddIndex, existingLeafChildren.length);
-            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
+            nodesBeforeIndex = existingLeafChildren.slice(0, normalizedAddIndex);
+            nodesAfterIndex = existingLeafChildren.slice(normalizedAddIndex, existingLeafChildren.length);
         } else {
-            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
+            nodesBeforeIndex = this.rootNode.allLeafChildren;
         }
+
+        this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
