@@ -51,7 +51,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 
 
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions'];
+    const skippableProperties = ['gridOptions', 'reactUi', 'suppressReactUi'];
 
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);

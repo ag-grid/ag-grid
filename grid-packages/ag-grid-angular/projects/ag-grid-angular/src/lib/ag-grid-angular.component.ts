@@ -400,14 +400,6 @@ export class AgGridAngular implements AfterViewInit {
     /** @deprecated As of v27, use `components` for framework components too.
      */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
-     */
-    @Input() public reactUi: boolean | undefined = undefined;
-    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
-It is planned the next major release of the grid will drop support of the legacy React engine,
-hence this property is deprecated as will be removed in the next major release.
-     */
-    @Input() public suppressReactUi: boolean | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: string | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
