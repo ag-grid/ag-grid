@@ -54,7 +54,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected getAriaLabel(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = translate('ariaPivotDropZonePanelLabel', 'Values');
+        const label = translate('ariaValuesDropZonePanelLabel', 'Values');
 
         return label;
     }
