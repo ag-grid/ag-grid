@@ -1,1 +1,1693 @@
-[{"id":"D28UOl0z11M","publishedAt":"2022-03-28T12:45:44Z","title":"viqas footballstatsdirect","description":"Viqas Hussain created the Football Stats Direct application which renders various soccer statistics, pulling them from official APIs and showing them in an AG Grid for Analysis. The Integrated Charts are enabled to allow users to create custom graphs from rendered data and Standalone charts are used for pre-coded charts. Viqas has released the source on Github so anyone can study the code to learn how to create a full stack app using AG Grid, RapidAPI and Firebase.\n\n00:00 Viqas Hussain Introduction\n01:06 FootballStatsDirect.com\n02:28 Demo of Football Stats Direct\n04:55 Open Sourced Code\n05:14 Architecture\n06:30 AG Grid Features Used\n07:20 Filtering with Value Getters\n08:38 Backend using RapidAPI\n10:12 Integrated Charting\n12:00 Standalone charts\n14:45 Custom Cell Renderers\n17:53 Code on Github\n20:24 Online Resources\n20:50 Outros\n\nLinks:\n\n- https://footballstatsdirect.com\n- http://viqas.co.uk/\n- https://github.com/viqashussain?tab=repositories&q=football&type=&language=&sort=\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","football statistics","football stats analysis","football stats","soccer statistics","soccer stats","premier league","football daily","premier league all goals"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/D28UOl0z11M/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/D28UOl0z11M/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/D28UOl0z11M/hqdefault.jpg","width":480,"height":360}}},{"id":"oAQ5vavDupU","publishedAt":"2022-03-28T12:29:11Z","title":"100% React Rendering, Avoiding Wasted Renders","description":"AG Grid and React play well together because the rendering engine for React is 100% React. Niall Crosby, CEO of AG Grid, demonstrates this in the video by looking in the React developer tools and you'll see how to use memoization effectively to avoid wasted renders.\n\n00:00 AG Grid is 100% React\n00:10 Starting Code Explained\n00:25 Custom React Component\n00:54 Developer Tools Rendering View\n01:56 Wasted Renders Demonstration\n03:00 Avoiding Waster Renders with memo\n03:28 Summary\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","react data grid","angular data grid","ag grid","javascript datagrid","optimizing react","react memoization","react memo","react wasted renders","avoiding wasted renders in react"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/oAQ5vavDupU/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/oAQ5vavDupU/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/oAQ5vavDupU/hqdefault.jpg","width":480,"height":360}}},{"id":"pebXUHUdlos","publishedAt":"2022-03-24T14:21:08Z","title":"Built-in column filters overview for the React Data Grid from AG Grid","description":"In this video Niall Crosby, CEO of AG Grid, provides an overview of the built-in column filters for AG Grid. This video uses the React Data Grid. Columns can be filtered to allow the user to configure the data shown in the grid. Three filters are supplied with AG Grid community edition: text, number and date. An additional set and multi filter are available to the enterprise edition. The filters can also be configured through the API.\n\n00:00 about filters\n00:20 default filters\n00:55 text, number and date filters\n02:38 filter parameters\n03:55 filter buttons\n05:45 filtering by dates\n06:30 filter state models\n09:18 floating filters\n10:10 Enterprise filters\n12:43 Filter Menu Container\n13:35 Summary\n\nLearn more about Column Filtering for AG Grid's React Data Grid:\n\nhttps://www.ag-grid.com/react-data-grid/filtering/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","react data grid","ag grid","filtering columns","filtering data grid","filtering data table","filtering react data table","javascript data grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/pebXUHUdlos/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/pebXUHUdlos/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/pebXUHUdlos/hqdefault.jpg","width":480,"height":360}}},{"id":"10elxyyiQ7M","publishedAt":"2022-03-22T11:28:39Z","title":"AdaptableTools Extension Add-On Library For AG Grid Demo and Interview with Jonny Wolfson","description":"In this video Jonny Wolfson, CTO of Adaptable Tools, provides a demo of the AdapTable  AG Grid extension library that adds a massive amount of extra features focussed on the end user of applications written with AG Grid. For example, if you want user to be able to write complex queries to filter data or create their own calculated cells then check out Adaptable Tools. The demo application shows what it is possible to achieve in a single day of coding.\n\nhttps://www.adaptabletools.com/\n\n00:00 What is Adaptable Tools?\n03:10 Version 11 Updates\n04:08 Demo Application Overview\n07:00 Action, Free Text and Calculated Columns\n10:45 Settings Panel\n14:40 Building on AG Grid\n15:40 The Dashboard\n16:30 Custom Queries\n17:41 Audit History\n18:25 Custom Reports\n18:49 Excel Report Scheduling and Synchronisation\n20:05 Alerts for Data Change\n24:38 User Configured Cell Rendering\n27:50 No Code Grid Configuration\n29:30 Features Overview\n30:30 Consultancy\n31:20 Client Side and Server Side Row Model Support\n32:30 Custom Query Functions\n34:20 visit adaptabletools.com\n34:45 End Notes\n\n\nIn the video we discover:\n\n- What is Adaptable?\n- What does it add on top of AG Grid?\n     - making it easier for end users to access some of the customisations that are via the API with the raw AG Grid\n- What's new in version 11\n    - setting panel\n    - react ui\n- Show in action with the Github Issues example\n    - https://issuelog-demo.adaptabletools.com/\n- Cover some major features\n    - settings panel\n         - add custom settings \n    - dashboard\n    - Toolpanel - extended version of AG Grid's\n    - Column menus - extended version of AG Grid's\n    - Context menu - extended version of AG Grid's\n    - Editing Extensions\n        - bulk editing, smart editing \n    - Calculated Columns\n    - Expression editor\n    - Excel Synchronisation and custom exports\n    - Custom column formatting\n    - Query Language\n    - Alerts\n    - No Code configuration to allow end users to create their own grids\n    - Easy integration with OpenFin and ipushpull\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","adaptabletools","adaptable tools","adaptable","react data grid query language","react data grid calculated cells","react data grid alerts"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/10elxyyiQ7M/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/10elxyyiQ7M/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/10elxyyiQ7M/hqdefault.jpg","width":480,"height":360}}},{"id":"9IbhW4z--mg","publishedAt":"2022-03-21T14:18:58Z","title":"Customising Cells with React Components as Cell Renderers","description":"Customising cells using React Cell Renderers, these are simple functions that return JSX to add your own React component to format and add interactivity to the cells in a data grid. These can be created as functional components, anonymous inline functions or class components.\n\n00:00 React Components in Cells\n00:27 Create a Cell Renderer Component\n01:40 Adding interactivity\n02:32 Reusing Components\n03:03 Cell Renderer Params\n04:04 Inline Components\n04:42 Class Components\n05:38 Cell Renderer Selector\n07:00 Summary\n\nFull details of the cell renderer parameters can be found in the documentation:\n\nhttps://www.ag-grid.com/react-data-grid/component-cell-renderer/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","react data grid","ag grid","javascript datagrid","react components","react components and props","cell renderers","cell renderer"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/9IbhW4z--mg/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/9IbhW4z--mg/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/9IbhW4z--mg/hqdefault.jpg","width":480,"height":360}}},{"id":"RHTJCwYfxSk","publishedAt":"2022-03-18T15:18:03Z","title":"Pablo Fonseca Interview - Streamlit AG Grid Component","description":"Pablo Fonseca has created a Streamlit Component to make it easy to add AG Grid to Python Streamlit applications. This provides an advanced and easy to use data exploration grid which can be populated from Pandas data frames.\n\n00:00 Pablo Introduction\n00:45 What is the component?\n02:08 Pandas Support\n03:25 Python JavaScript Integration\n04:20 First React Project?\n05:28 Prototyping\n06:00 Demo of Component\n10:30 Using Themes\n11:20 Nested Grids\n12:22 Jupyter and Streamlit\n12:30 Easy to use\n14:45 Future Plans\n16:30 Python Experience\n18:15 Streamlit tables and grids\n19:55 Contact Pablo\n20:28 Thanks Pablo\n\nBlog post for this interview:\n\nhttps://blog.ag-grid.com/pablo-fonseca-streamlit/\n\nPablo Fonseca:\n\n- Pablo Fonseca's Github\n    - https://github.com/PablocFonseca\n- Buy Pablo a Beer\n    - https://www.paypal.com/donate/?hosted_button_id=8HGLA4JZBYFPQ\n- Contact Pablog\n    - https://www.linkedin.com/in/pablocfonseca/\n\n- Streamlit https://streamlit.io/\n- Python Package\n    - https://pypi.org/project/streamlit-aggrid/\n- Discussion forum on Streamlit\n    - https://discuss.streamlit.io/t/ag-grid-component-with-input-support/8108\n- Documentation\n    - https://streamlit-aggrid.readthedocs.io/en/docs/\n- Live examples\n    - https://share.streamlit.io/pablocfonseca/streamlit-aggrid/main/examples/example.py\n- Streamlit Componenent Code on Github\n    - https://github.com/PablocFonseca/streamlit-aggrid\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","streamlit python","streamlit.io","python data grid","python data analysis","interview","pablo fonseca"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/RHTJCwYfxSk/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/RHTJCwYfxSk/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/RHTJCwYfxSk/hqdefault.jpg","width":480,"height":360}}},{"id":"pKUhYE1VTP4","publishedAt":"2022-03-16T15:34:18Z","title":"Quickstart Tutorial for  AG Grid Enterprise","description":"In this video you will learn how to enable the enterprise features of AG Grid. These are free to trial and require a license to use in production. All enterprise features are listed in the documentation. Niall also demonstrates Row Grouping.\n\n00:00 Setting up Enterprise\n02:08 Row Grouping\n02:30 User Controlled Grouping\n03:13 Enterprise Features Listed\n03:33 Enterprise License\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/\n\nYou can find details of the enterprise features in the documentation:\n\nhttps://www.ag-grid.com/vue-data-grid/licensing/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","react grid","ag-grid enterprise","enterprise data grid","commercial data grid","commercial javascript data table","react data table","react datagrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/pKUhYE1VTP4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/pKUhYE1VTP4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/pKUhYE1VTP4/hqdefault.jpg","width":480,"height":360}}},{"id":"PyGnASnJgGo","publishedAt":"2022-03-15T11:00:37Z","title":"Quickstart Tutorial for the React Data Grid from AG Grid","description":"This video is a quick start tutorial to getting started with AG Grid in a React project. Niall Crosby, the CEO and creator of AG Grid walks you through the basic knowledge needed to work with AG Grid using React. You'll see how to create a project, add AG Grid. You'll understand what CSS is used to style and structure the grid. How to use state and effect to manage data in the grid while loading data from the server. Sorting and Filtering is demonstrated through specific and default column properties. Grid Properties are used to animate rows and support selection. Adding functionality to the grid can be implemented by hooking into the grid events and using the API.\n\n\n00:00 Create a Project\n00:18 Add AG Grid\n00:30 Get Started\n00:46 Create an AG Grid\n02:00 CSS Includes Explained\n02:33 Adding data to the grid\n03:20 Using React State for data\n03:52 Loading data from server with useEffect\n04:32 Sorting and Filtering Columns\n05:00 Default Column Definitions\n05:50 Grid properties to animate and select rows\n06:28 hooking into Grid Events\n07:15 using the Grid API\n08:18 Summary\n08:38 Outro\n\nhttps://www.ag-grid.com/react-data-grid/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","react data table","javascript data table","ag grid tutorial","getting started react","react datagrid","reactjs data grid","reactjs datagrid","react table","react grid component","react tutorial","react datatable","react and aggrid","aggrid table react"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/PyGnASnJgGo/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/PyGnASnJgGo/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/PyGnASnJgGo/hqdefault.jpg","width":480,"height":360}}},{"id":"-fga3zbZ6V4","publishedAt":"2022-03-07T15:35:58Z","title":"React Data Grid - 100% React Rendering Engine Overview [new version]","description":"Discover the React Data Grid rendering engine for AG Grid. The React UI is a full 100% React  implementation. This video provides an overview of the rendering engine capabilities and how to enable the new React UI.\n\nThe new React UI benefits developers by integrating more tightly into the React ecosystem and developer tooling\n\n00:00 Introduction\n00:33 Overview of Demo Application\n01:09 Rendering Efficiency\n01:34 Benefits to Developer - DOM\n02:18 React Component View Improvements\n03:20 React Profiler Improvements\n04:41 Outro and Links\n\nLearn more about the React UI:\n- https://www.ag-grid.com/react-data-grid/reactui/\n\nSupporting blog post:\n- https://blog.ag-grid.com/react-ui-overview/\n\nExample code:\n- https://react-data-grid-aggrid-reactui.stackblitz.io/\n- https://github.com/ag-grid/react-data-grid/tree/main/reactui-demo\n\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","react datagrid","react profiler demo","react dev tools demo","react components demo"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/-fga3zbZ6V4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/-fga3zbZ6V4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/-fga3zbZ6V4/hqdefault.jpg","width":480,"height":360}}},{"id":"WkPamGHtWv4","publishedAt":"2022-02-11T09:33:47Z","title":"New Release Overview for AG Grid version 27 - 100% React Data Grid, and more...","description":"The new version of AG Grid makes the 100% React Rendering Engine the default for React Projects. Vue, Angular and JavaScript projects are still supported as those frameworks have their own dedicated rendering engines.\n\nThe documentation has been updated to have react best practices and fully typed examples in TypeScript as well as JavaScript.\n\n00:00 version 27 introduction\n00:05 100% React Data Grid Rendering by Default\n00:44 React Best Practices\n01:05 One API for all frameworks\n01:39 Custom Components are Easier\n02:10 Fully Typed Examples\n02:33 Examples for React, Vue, Angular\n03:05 Column APIs and Accessibility\n03:28 Sparklines and Progress Bars\n03:49 Version 26 long term support\n04:55 Change Log\n05:05 Open Source Free Data Grid\n\nBlog post describing release: https://blog.ag-grid.com/whats-new-in-ag-grid-27/\n\nChange Log https://www.ag-grid.com/changelog/?fixVersion=27.0.0\n\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/WkPamGHtWv4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/WkPamGHtWv4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/WkPamGHtWv4/hqdefault.jpg","width":480,"height":360}}},{"id":"GTu79aWJT1E","publishedAt":"2022-02-04T10:45:09Z","title":"Get started with React Data Grid - Free Community and Enterprise Editions","description":"This getting started video follows the React Data Grid tutorial in our documentation:\n\nhttps://www.ag-grid.com/react-data-grid/getting-started/\n\nThe video walks you through the process of installing the free open source community edition of AG Grid and using it with React to create a basic grid. To this grid we add sorting, filtering, and row selection. We use the API to access content in the grid and load content from an HTTP API GET request. Using the enterprise edition we enable more grid features like improved filtering and context menu and then add row grouping.\n\nIn this video you'll learn:\n\n00:00 an overview of AG Grid\n00:24 installing free community edition for React JS\n01:19 create a simple react data grid\n02:34 adding Sortable Columns\n03:00 Filter and Search Columns\n03:14 Loading Data From HTTP or API call\n04:00 Selectable Rows and Grid API\n05:28 installing enterprise edition\n05:50 improved filters and context menu\n06:20 row grouping\n07:23 overview of basic features\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","vue data grid","ag grid","react datagrid","data grid","ag grid tutorial","reactjs datagrid","reactjs data grid","react data table","react grid table"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/GTu79aWJT1E/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/GTu79aWJT1E/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/GTu79aWJT1E/hqdefault.jpg","width":480,"height":360}}},{"id":"7q6RPuv4uXc","publishedAt":"2022-01-27T16:11:52Z","title":"A JavaScript Data Grid that Gives you Programming Super Powers #shorts","description":"We've always said that AG Grid is the Best JavaScript Data Grid in the world. No other JavaScript Data Grid has integrated charts and support for React, Angular, Vue and Vanilla JavaScript.\n\n#shorts\n\nCan your data grid do this?\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","javascript","react","reactjs","angular"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/7q6RPuv4uXc/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/7q6RPuv4uXc/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/7q6RPuv4uXc/hqdefault.jpg","width":480,"height":360}}},{"id":"lL3e0wRBluM","publishedAt":"2021-12-08T11:30:53Z","title":"Custom Cypress Plugin Test Automation Demo for AG Grid with Kerry McKeever","description":"Kerry McKeever explains and demonstrates an open source Cypress Plugin for the Test Automation of AG Grid.\n\nYou'll learn:\n\n- What is Cypress?\n- How Cypress works\n- How to record video of test execution\n- How to debug Cypress Tests\n- How to run Cypress Headless\n- How to create custom commands for Cypress\n- How to automate AG Grid with Cypress\n- How to Synchronise Test Automation with Cypress\n- and more...\n\n00:00 Introduction\n00:30 What is a Cypress Plugin?\n02:10 Open Source on Github\n03:00 Scope of Plugin and Automating\n05:25 Running in Cypress\n07:50 Sizing Grid for Automating\n10:39 Execution Review\n13:41 How do the tests work?\n14:38 Synchronising Execution\n17:30 Interactions Available\n23:15 Validations and Assertion Code\n25:08 Creating Cypress Functions\n27:10 Running Headless, Creating videos\n29:10 NPM Release\n29:54 Simple Install, Easy to Use\n32:35 Summary\n32:55 Kerry McKeever\n33:33 Outro\n\nKerry's blog post explaining the plugin:\n\nhttps://kerrymckeever.com/how-to-test-ag-grid-with-cypress/\n\nSource Code for the plugin:\n\nhttps://github.com/kpmck/cypress-ag-grid\n\n\n---\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","cypress automation","cypress test automation","cypress gui automation","test automation ag grid","aggrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/lL3e0wRBluM/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/lL3e0wRBluM/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/lL3e0wRBluM/hqdefault.jpg","width":480,"height":360}}},{"id":"4f-3vJ6PFC0","publishedAt":"2021-11-24T16:22:09Z","title":"Data Grid Cell Sparklines using AG Grid Integrated Charts","description":"AG Grid supports a cell renderer for sparklines. This uses the enterprise integrated charts. Currently supporting line, column, area and bar sparklines.\n\n00:00 Introduction\n00:31 Grid Configuration\n00:57 Bar Sparklines\n01:12 Area Sparklines\n01:23 Column Sparklines\n01:30 Line Sparklines\n01:40 Animated or Static\n01:52 Outro\n\nLearn more about Sparklines in this blog post:\n\nhttps://blog.ag-grid.com/introducing-ag-grid-sparklines/\n\nOr the documentation:\n\nhttps://www.ag-grid.com/javascript-data-grid/sparklines-overview/\n\nThis is an enterprise feature.\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","data visualization","sparklines"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/4f-3vJ6PFC0/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/4f-3vJ6PFC0/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/4f-3vJ6PFC0/hqdefault.jpg","width":480,"height":360}}},{"id":"Wj_LIVmUwYQ","publishedAt":"2021-11-19T15:59:04Z","title":"Dynamically Creating Columns from JSON API call in AG Grid","description":"Columns can be updated, amended and even created dynamically in AG Grid. In this example we read JSON from an API call and dynamically configure the grid to display the data.\n\n00:00 Introduction\n00:20 AG Grid Overview\n00:35 Using Fetch to add data\n01:19 A minimum column definition\n01:43 Dynamically creating columns from JSON\n03:05 An extra JSON Example\n03:33 Outro\n\nThe associated blog post for this video:\n\nhttps://blog.ag-grid.com/dynamically-setting-ag-grid-columns-from-json/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/Wj_LIVmUwYQ/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/Wj_LIVmUwYQ/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/Wj_LIVmUwYQ/hqdefault.jpg","width":480,"height":360}}},{"id":"oZaXyAmnLpM","publishedAt":"2021-11-19T13:43:34Z","title":"AG Grid Column Header Configuration Tips","description":"Six tips to make working with Column Headers in AG Grid easy.\n\n00:00 Introduction\n00:25 Tip 1: Add a headerName\n00:42 Tip 2: Use field name as header\n00:56 Tip 3: Use Camel Case field names\n01:16 Tip 4: Use a value getter function\n01:52 Tip 5: Use a value getter expression\n02:15 Tip 6: Use a Custom Header\n02:24 Outro\n\n\nRead the blog post:\n\nhttps://blog.ag-grid.com/automatic-header-names/\n\nAnd the documentation:\n\n- https://ag-grid.com/angular-data-grid/column-properties/#reference-header\n- https://ag-grid.com/javascript-data-grid/column-headers/\n- https://ag-grid.com/javascript-data-grid/component-header/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","column headers","grid column headers","dynamic column headers","ag-grid column headers"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/oZaXyAmnLpM/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/oZaXyAmnLpM/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/oZaXyAmnLpM/hqdefault.jpg","width":480,"height":360}}},{"id":"rsamoG6bD4Y","publishedAt":"2021-10-11T14:23:52Z","title":"Code a Podcast Player App in React with AG Grid - How to Build Application Tutorial Part 2","description":"In the second part of this build a React app tutorial we will code a Podcast Player, using the AG Grid community edition. The podcast player will be enhanced to support filtering, searching, pagination and a list of podcasts to choose from. We will also cover the difference between managed and unmanaged components in React.\n\nPart 1 of this tutorial is here: \nhttps://youtu.be/2TDIWOubvp0\n\nBlog post describing this tutorial here:\n\nhttps://blog.ag-grid.com/how-to-write-a-podcast-app-using-react/\n\nCode for this tutorial is available on Github:\n\nhttps://github.com/ag-grid/react-data-grid\n\nIn the podcast-player folder.\n\nhttps://github.com/ag-grid/react-data-grid/tree/main/podcast-player\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","javascript datagrid","create custom react control","custom react controller","managed components react","unmanaged components react","create a select in react","defaultvalue react"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/rsamoG6bD4Y/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/rsamoG6bD4Y/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/rsamoG6bD4Y/hqdefault.jpg","width":480,"height":360}}},{"id":"2TDIWOubvp0","publishedAt":"2021-10-11T14:19:52Z","title":"Code a Podcast Player App in React with AG Grid - How to Build Application Tutorial Part 1","description":"In this tutorial we will build a Podcast Player App, using React and AG Grid community edition. Learn to code a functioning podcast application with this coding example. The podcast player will fetch a feed URL and parse the XML RSS feed, load the episode data in the grid and use an embedded audio player to play the episode.\n\nPart 2 of this tutorial is here: https://youtu.be/rsamoG6bD4Y\n\nThis tutorial was written using Version 26 of AG Grid. If you want to follow along with the tutorial video then install AG Grid as\n\nnpm install --save ag-grid-community@26.0.0 ag-grid-react@26.0.0\n\nThe blog post below has a section explaining the changes I made to the cellRenderer code to use the cellRenderer changes in version 27 of AG Grid. (I returned JSX instead of an HTML string)\n\nBlog post describing this tutorial here:\n\nhttps://blog.ag-grid.com/how-to-write-a-podcast-app-using-react/\n\nCode for this tutorial is available on Github:\n\nhttps://github.com/ag-grid/react-data-grid\n\nIn the podcast-player folder.\n\nhttps://github.com/ag-grid/react-data-grid/tree/main/podcast-player\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","ag grid","javascript datagrid","parse xml with javascript","read rss feed with javascript","fetch html with react","create custom react control","custom react controller","ag grid react","ag grid react tutorial","ag grid cell renderer","react data grid tutorial","ag grid pagination"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/2TDIWOubvp0/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/2TDIWOubvp0/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/2TDIWOubvp0/hqdefault.jpg","width":480,"height":360}}},{"id":"PH5hzPTsvsM","publishedAt":"2021-10-01T08:11:22Z","title":"Angular Component Types in IDE with AG Grid","description":"Version 26 of AG Grid introduces Angular Typing to improve developer experience in the IDE. This video demonstrates the AG Grid Angular typing in Visual Studio Code.\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","angular data grid","ag grid","angular data typing","angular type checking","angular typing","Angular Code Auto Complete"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/PH5hzPTsvsM/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/PH5hzPTsvsM/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/PH5hzPTsvsM/hqdefault.jpg","width":480,"height":360}}},{"id":"9B8ghYR0XBw","publishedAt":"2021-08-19T10:44:11Z","title":"Add Charts to a JavaScript Data Grid in less than 20 seconds","description":"AG Grid has many 1 line configuration options. One of the most powerful is the option to enable Charts in the Enterprise version.\n\nThis video shows How to enable integrated charts on JavaScript Data Grid in less than 20 Seconds using AG Grid\n\nenableCharts: true\n\nThis demo shows what can be achieved when the charts are enabled.\n\nFor more information about integrated charts visit:\n\nhttps://www.ag-grid.com/javascript-data-grid/integrated-charts/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","chart data visualization","javascript charting library","react charting library"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/9B8ghYR0XBw/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/9B8ghYR0XBw/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/9B8ghYR0XBw/hqdefault.jpg","width":480,"height":360}}},{"id":"KT7kJ1V6stI","publishedAt":"2021-08-19T09:53:50Z","title":"Optimize React Data Grid for Hooks from AG Grid","description":"Learn how to optimise the React Data Grid with React Hooks. When we create components on top of AG Grid we may introduce code that increases the number of renders. AG Grid itself is optimised, we need to make sure the we use around AG Grid is optimised. This video explains optimizations using react memoization, arrays to define basis for re-rendering.\n\nRecommended Practices:\n\n- Memoize Constant Data\n- Add 2nd Parameter to useEffect to define a state, or prop, or [] to run once\n- Use objects instead of declarative JSX\n\n00:00 Introduction\n00:30 useEffect Parameters\n00:50 objects instead of declarative JSX\n02:54 Memoization\n03:55 Summary\n04:09 Outro\n\nAssociated blog post for this video:\n\nhttps://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes\n\nLearn more about AG Grid's React Grid\n\nhttps://ag-grid.com/react-data-grid\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","ag grid","react hooks","react rendering optimization","optimizing react","react datagrid","reactjs data grid","react datatable","react and aggrid","aggrid table react","aggrid in react","react grid component"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/KT7kJ1V6stI/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/KT7kJ1V6stI/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/KT7kJ1V6stI/hqdefault.jpg","width":480,"height":360}}},{"id":"VIieyjYQ1KE","publishedAt":"2021-08-19T09:30:20Z","title":"Getting started with React Data Grid Using Hooks from AG Grid","description":"Learn how to get started with React Data Grid with Hooks. A short introduction and setup guide to using AG Grid to create a simple React Data Grid with data fetched from a server, and using Sorting, Filter, In Cell Editing.\n\n00:00 Introduction\n00:15 Creating React Project\n01:21 Creating a Basic Grid\n03:53 Adding Data To Grid\n06:00 In Cell Editing\n06:20 Enabling Sorting\n06:49 Enabling Filtering\n07:18 Default Column Definitions\n07:53 Adding Pagination\n08:10 Loading JSON Data from Server\n09:30 Loading... Message\n10:00 Outro\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nThis video supports the blog post:\n\nhttps://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\nDownload the example code for this video:\n\nhttps://github.com/ag-grid/react-data-grid\n\nFor the longer tutorial in our documentation visit:\n\nhttps://www.ag-grid.com/react-data-grid/getting-started/\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["ag-grid","javascript data grid","react data grid","ag grid","react data grid hooks","reactjs datagrid","react data table","react grid","react datagrid","reactjs data grid","reactjs datagrid example","react data table component","react data table tutorial","react table json data"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/VIieyjYQ1KE/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/VIieyjYQ1KE/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/VIieyjYQ1KE/hqdefault.jpg","width":480,"height":360}}},{"id":"ObXdeXE9oBU","publishedAt":"2021-07-06T10:21:29Z","title":"AG Grid Integrated Charts Overview","description":"AG Grid Enterprise has Integrated Charts which allows any application using AG Grid to have interactive data exploration and business intelligence functionality with a single line of configuration code to switch on charts. `enableCharts: true`\n\n00:00 Introduction\n00:20 Create a chart\n00:30 Configure Chart Type\n00:58 Styling with Themes\n01:12 Selecting Data From Chart Config\n01:23 Update Chart from Grid Data\n01:56 Grid Styling Settings\n03:15 Navigator to Zoom and Pan\n03:35 Exporting Charts\n03:50 Working With Multiple Charts\n04:04 One line of configuration\n04:35 Outro\n\nLearn more about Integrated Charts\n- https://www.ag-grid.com/javascript-grid/integrated-charts/\n\nStandalone charts are available in Enterprise and Community Edition\n- https://www.ag-grid.com/javascript-charts/overview/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/","tags":["ag-grid","javascript data grid","react data grid","angular data grid","vue data grid","ag grid","javascript datagrid","ag-grid features","aggrid","datagrid charting","business intelligence charting","data visualisation charts","business data visualisation charts"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/ObXdeXE9oBU/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/ObXdeXE9oBU/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/ObXdeXE9oBU/hqdefault.jpg","width":480,"height":360}}},{"id":"n_lypNK0n_k","publishedAt":"2020-08-11T15:17:59Z","title":"Formatting Data Grid Cells using valueFormatters for JavaScript AG Grid","description":"We can apply custom formatting to data grid cells. This way the table of data matches what the user expects. AG Grid uses Value Formatters to do this.\n\n00:00 Intro\n00:28 What is a Value Formatter?\n00:50 Example Explained\n01:24 Number Formatting\n01:52 String Formatting\n02:34 Formatting Filters\n02:52 Currency Formatting\n04:19 Date Formatting\n05:00 Filtering and Sorting\n05:25 Sorting Comparators\n05:46 Filtering Comparators\n06:42 Outro\n\nThis video is an accompaniment to the valueFormatter blog.\n\nhttps://blog.ag-grid.com/formatting-numbers-strings-currency-in-ag-grid/ \n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["javascript data grid","javascript datagrid","ag grid","data table","javascript grid","javascript table","javascript data table","ag-grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/n_lypNK0n_k/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/n_lypNK0n_k/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/n_lypNK0n_k/hqdefault.jpg","width":480,"height":360}}},{"id":"6wpITiH8npM","publishedAt":"2020-05-07T09:04:37Z","title":"AG Grid Features Overview","description":"Ag-Grid offers a feature set, performance and quality not seen before in a JavaScript datagrid.\nOver 1,200,000 monthly downloads and used by more than 50% of the Fortune 500. Ag-Grid has become *the* datagrid for JavaScript developers. Fully supported and available for JavaScript, Angular, React and Vue. https://ag-grid.com Subscribe to our channel to quickly learn how to use ag-Grid!\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\n00:00 Intro\n00:04 Scrolling\n00:12 Column Moving\n00:24 Pinning Columns\n00:37 Sorting\n00:49 Grouping Data\n01:06 Filtering\n01:46 Themes Style the Grid\n02:02 Pivoting\n02:17 Editing Data\n02:34 Range Selection\n02:43 Embedded Charts\n03:18 Standalone Charts\n03:25 Outro\n\nTo find out more about the Grid, documentation, examples and tutorials, go to: \nhttps://www.ag-grid.com/\n\nFollow us on Twitter for the latest news and updates: \nhttps://twitter.com/ag_grid","tags":["ag grid","ag grid features","ag-grid features","ag grid overview","javascript data grid widget","javascript data table control","angular data grid","javascript data grid","react data table","react data grid","javascript grid control","javascript grid widget"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/6wpITiH8npM/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/6wpITiH8npM/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/6wpITiH8npM/hqdefault.jpg","width":480,"height":360}}},{"id":"gzqjP_kF4NI","publishedAt":"2020-03-19T11:44:48Z","title":"Row and Column Grouping for JavaScript Data Grid using AG Grid","description":"This video provides an overview of how to use the row and column grouping features in AG Grid.\n\n00:00 - Specifying Group Columns / Auto Column Group \n01:08 - Multi Auto Column Group  \n02:30 - Configuring the Auto Group Column\n03:50 - Adding Values To Leaf Nodes / Filtering on Group Columns\n04:55 - Specifying Row Group Order\n05:48 - Hide Open Parents\n06:57 - Keeping Columns Visible\n08:20 - Full Width Group Rows\n10:14 - Default Group Order\n11:31 - Unbalanced Groups\n12:30 - Grouping API\n13:37 - Grouping Complex Objects with Keys\n15:29 - Grouping Footers\n17:09 - Removing Single Children\n18:56 - Creating Your Own Group Display Columns\n\nFor more information on these features, have a look at the official documentation:\n\nhttps://www.ag-grid.com/javascript-grid-grouping/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid visit: https://ag-grid.com","tags":["data table","data grid","javascript grid","javascript table","react","angular","vue","row grouping","grid component","javascript","react grid","react table","angular table","angular grid","vue grid","vue table"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/gzqjP_kF4NI/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/gzqjP_kF4NI/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/gzqjP_kF4NI/hqdefault.jpg","width":480,"height":360}}},{"id":"8OeJn75or2w","publishedAt":"2020-03-19T11:44:44Z","title":"Embed JavaScript Data Grid - Master / Detail with ag-Grid","description":"AG Grid Enterprise has the ability to render grids within grids. This allows you to expand parent rows to show child tables of data, these can be fully customised with different formatting based on the parent row data.\n\nThe ability to embed or nest grids within grids makes complex data layout simple without having to create complex HTML table layouts.\n\n00:00 Intro\n00:07 Enabling Master/Detail\n02:12 Accessing Detail Grid API\n04:09 Syncing Detail Scrolling with Master\n04:33 Overriding the Default Detail Cell Renderer\n05:58 Providing a Custom Detail Cell Renderer\n09:20 Providing a Custom Detail Cell Renderer - Form\n10:26 Configure Grid per Row\n11:42 Dynamically Specify Master Nodes\n12:50 Nesting Master Detail\n14:00 Detail Row Height\n15:41 Filtering and Sorting \n16:10 Lazy Load Detail Rows\n16:57 Keeping Detail Rows\n18:38 Changing Data & Refresh\n19:43 Exporting Master / Detail Data\n23:34 Outro\n\nFull documentation for this feature set: https://www.ag-grid.com/javascript-grid-master-detail/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["data table","data grid","javascript grid","javascript table","grid component","javascript","react grid","react table","angular table","angular grid","vue grid","vue table","ag-grid","ag grid","embedded data table","embedded data grid","react data table"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/8OeJn75or2w/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/8OeJn75or2w/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/8OeJn75or2w/hqdefault.jpg","width":480,"height":360}}},{"id":"6PA45adHun8","publishedAt":"2020-01-30T16:53:49Z","title":"Getting Started with React Data Grid using ag-Grid","description":"The React Data Grid from AG Grid is easy to get started with and in this video you will see step by step how to make a grid with ag-Grid & ReactJS. You'll see features present in both the free community edition and the enterprise edition. \n\nThe new Getting Started Tutorial to match the documentation is here https://www.youtube.com/watch?v=GTu79aWJT1E\n\nAn updated version of getting started with Hooks with community edition is here https://www.youtube.com/watch?v=VIieyjYQ1KE\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\nIf you want to follow this video then the only change required is the url to the data we load. This is no longer on myjson.com and has changed to \"https://www.ag-grid.com/example-assets/row-data.json\"\n\n\nRelated Blog Posts:\n\n- getting started with React Classes\n    - https://blog.ag-grid.com/react-get-started-with-react-grid-in-5-minutes/#video-tutorial-for-react-classes-with-ag-grid\n- getting started with React Hooks and Functions\n    - https://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\nFor more information about ag-Grid & React, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/react-grid/\n\nIn this video Ahmed will be walking us through how easy it is to make a grid with ag-Grid & React. \n\n00:00 Intro\n00:04 Create a react application\n00:29 Running a react development server with npm\n01:00 How to install ag-Grid community edition for React\n01:30 Create a basic React app\n02:10 Import stylesheets and ag-Grid\n02:50 Create the grid definitions\n03:30 Create the grid container\n04:30 How to add Sorting and Filtering to ag-Grid\n05:00 Fetching datagrid row data from a remote server\n06:00 Adding row selection to ag-Grid\n06:25 Adding checkbox selection to ag-Grid\n08:08 Use enterprise features of ag-Grid\n08:56 Add grouping to the grid\n10:42 Outro\n\nFor more information about Ag-Grid please visit: \nhttps://www.ag-grid.com/","tags":["ag-grid","aggrid","react javascript datagrid","react javascript grid","react datagrid","reactjs datagrid","react grid","reactjs table","reactjs datable","use react and ag-grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/6PA45adHun8/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/6PA45adHun8/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/6PA45adHun8/hqdefault.jpg","width":480,"height":360}}},{"id":"eW3qCti1lsA","publishedAt":"2020-01-29T14:00:05Z","title":"Getting Started with Vue using AG Grid","description":"In this video Ahmed demonstrates how easy it is to get started with Vue and use a grid with ag-Grid. \n\n00:00 Introduction\n00:05 Install Vue\n00:23 Create project\n00:58 run project for development\n01:14 edit the source\n01:46 add AG grid to the project\n02:15 CSS Imports\n02:40 adding a grid\n04:53 adding sorting and filtering\n05:32 fetching row data dynamically\n06:00 adding row selection\n06:25 adding checkboxes for rows\n06:36 pulling data out of the grid\n08:45 adding enterprise functionality\n09:34 grouping data\n11:19 outro\n\nFor more information about Ag-Grid please visit: \nhttps://www.ag-grid.com/\n\nFor more information about ag-Grid & Vue, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/vue-grid/getting-started/","tags":["javascript datagrid","javascript data grid","ag-grid","ag grid","vue js tutorial","vue js datagrid","vue datagrid","vue data grid","vue data table","vue fetch data from api"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/eW3qCti1lsA/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/eW3qCti1lsA/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/eW3qCti1lsA/hqdefault.jpg","width":480,"height":360}}},{"id":"KS-wg5zfCXc","publishedAt":"2020-01-29T14:00:03Z","title":"Getting Started with JavaScript Data Grid using ag-Grid","description":"In this video Ahmed will demonstrate how easy it is to make a grid with ag-Grid & JavaScript to render and interact with data without creating an HTML table.\n\n00:00 Intro\n00:04 Install Instructions\n00:24 Start coding\n01:10 Add AG Grid\n01:50 Configure the Grid\n03:08 Enable Sorting and Filtering\n03:33 Dynamic data loading\n04:13 Enable Row Selection\n04:30 Get Selected Rows\n05:28 Enable Enterprise functionality\n06:20 Enable Grouping\n07:38 Outro\n\nFor more information about ag-Grid & JavaScript, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/javascript-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["ag-grid","ag grid","javascript data grid","javascript data table","javascript datagrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/KS-wg5zfCXc/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/KS-wg5zfCXc/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/KS-wg5zfCXc/hqdefault.jpg","width":480,"height":360}}},{"id":"AeEfiWAGyLc","publishedAt":"2020-01-29T14:00:02Z","title":"Getting Started with Angular Data Grid using ag-Grid","description":"In this video you will learn how easy it is to get started and make a grid with ag-Grid & AngularJS. You'll see features present in both the free community edition and the enterprise edition.\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\nFor more information about ag-Grid & Angular, the code snippets and a running Stackblitz which you can use to follow along, visit our documentation: \n- https://www.ag-grid.com/angular-grid/\n\nBam's demonstration of ag-Grid and AngularJS:\n\n00:00 Introduction\n00:05 How to install Angular using npm\n00:17 How to create a new Angular application using ng\n00:40 How to run angular app in development web server mode\n00:54 How to install ag-Grid open source community edition for Angular\n01:16 Adding ag-Grid angular module to source\n01:37 Add ag-Grid stylesheet and theme\n01:52 Declaring initial grid configurations\n02:34 Add component definition to template\n03:06 Rendering our first grid\n03:17 How to enable sorting and filtering in ag-Grid\n04:13 How to Load datagrid data dynamically (from https://www.ag-grid.com/example-assets/small-row-data.json)\n05:28 How to add checkboxes to grid to select rows\n07:19 How to add grouping to an ag-Grid datagrid (enterprise)\n09:19 Outro\n\nFor more information about Ag-Grid visit: \nhttps://www.ag-grid.com/","tags":["ag-grid","aggrid","angular javascript datagrid","angular datagrid","angularjs datagrid","angular grid","angularjs table","angularjs datable","use angular and ag-grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/AeEfiWAGyLc/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/AeEfiWAGyLc/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/AeEfiWAGyLc/hqdefault.jpg","width":480,"height":360}}},{"id":"29ja0liMuv4","publishedAt":"2019-08-29T13:58:44Z","title":"ag-Grid - The Best JavaScript Grid in the World!","description":"Niall Crosby, the creator of ag-Grid, gives a short tour of ag-Grid's advanced features.\n\n00:00 Intro\n00:12 AG Grid Public Demo Application\n00:30 Sorting, Column Ordering and Grouping\n00:49 Filtering of data\n01:10 Range Selection with Copy and Paste\n01:38 High Performance with 100,000 Rows\n02:08 Themes for AG Grid\n02:25 Grouping and Aggregation of Data\n03:50 Pivoting support\n05:28 Integrated Charting\n07:00 Pivot Charts\n07:40 Configure Cell Display with Components\n08:26 Framework Support\n09:00 Streaming Data into a Grid\n09:50 Huge Data Set Support\n10:40 Infinite Scroll with Grouping\n11:18 Pivoting with Huge Data Sets\n12:07 Pricing - free community\n12:25 Paid Enterprise edition\n12:38 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["javascript datagrid","reactjs datagrid","angularjs datagrid","vue datagrid","ag-grid","ag grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/29ja0liMuv4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/29ja0liMuv4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/29ja0liMuv4/hqdefault.jpg","width":480,"height":360}}},{"id":"bjvhSrfEwsw","publishedAt":"2019-06-12T13:08:35Z","title":"ag-Grid Integrated Charts","description":"","tags":["#hangoutsonair","Hangouts On Air","#hoa"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/bjvhSrfEwsw/default_live.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/bjvhSrfEwsw/mqdefault_live.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/bjvhSrfEwsw/hqdefault_live.jpg","width":480,"height":360}}},{"id":"QYorksRV8wM","publishedAt":"2019-06-10T11:28:18Z","title":"Javascript Charting for Data Grid","description":"AG Grid has integrated charting built in. The grid comes with charting integration allowing users to chart data directly from the grid without requiring additional developer coding.\n\nThe charting functionality is deeply integrated with the grid. This integration gives users a seamless charting experience while keeping the coding required by developers to a minimum.\n\nA seamless charting experience while keeping the coding required by developers to a minimum.\n\nStandalone charts are available as well as integrated charting.\n\nIntegrated Charts demonstrated in this video: https://www.ag-grid.com/react-grid/integrated-charts/\n\nStandalone charts: https://www.ag-grid.com/react-charts/overview/\n\n00:00 Intro\n00:10 Chart any Cell Ranges\n00:28 Different Chart Types - Bar, Line, Pie\n00:49 Customize Appearance\n00:58 Multiple charts\n01:30 Interactive Chart Legends\n01:40 Categories and Series Plots\n\n---\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["javascript charts","javascript data grid charts"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/QYorksRV8wM/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/QYorksRV8wM/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/QYorksRV8wM/hqdefault.jpg","width":480,"height":360}}},{"id":"rT0vQejPcrs","publishedAt":"2018-12-10T13:54:44Z","title":"Building a Complex High Performance JavaScript Project","description":"How do you build a complex JavaScript project? And make it High Performance? In this video Niall Crosby gives away the secrets to creating a high performance JavaScript Data Grid that supports multiple JavaScript Frameworks. Presented at AG Grid Conf in 2018.\n\nDesign decisions and insights into how the architecture of AG Grid was created. The challenges of building a component like ag-Grid, the internal framework ag-Grid now uses, and how to best squeeze ag-Grid for performance.\n\n- What makes writing your own data table and grid hard?\n- How to write your own IoC engine\n- Avoid external framework dependencies\n- How to make rendering fast and harness GPU\n- Auto Generating Examples for Documentation in Multiple JavaScript Frameworks\n- Use of a Mono Repo with Lerna\n- Role of a Developer and Development Approach\n\n00:00 Intro\n00:59 Writing a Grid is Hard\n01:49 Talk overview\n02:37 AG Grid Written in Typescript\n03:54 Managing Dependencies without a Dependency Manager\n08:50 Writing your own Component Library\n12:10 Component Library retrospective\n12:56 How to be Framework Agnostic\n14:44 Overview of the Custom Stack\n15:28 Q: What makes AG Grid Fast? A: Dom Virtualisation\n16:54 Q: How Row Animations Work? A: style.transform to use GPU\n20:00 Q: How to perform fast DOM Manipulation? A: innerHTML\n21:18 A: Animation Frames\n25:19 For Speed only update what has changed. How?\n26:08 Aggregation Tree Walking\n28:04 Batch Updates to a Grid\n30:00 Demo of High Performance with 10000 records\n31:08 AG Grid Build Process\n31:12 AG Grid Automated Example Generation\n32:24 Example Runner\n34:24 Git Project Management via Mono Repo and Lerna\n38:42 What does the Developer Do?\n40:00 Team Location - Co-location\n41:22 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["high performance javascript","using GPU from CSS","JavaScript Architecture","Complex JavaScript Design","MonoRepo Lerna","AngularJS Data Grid","React JS Data Grid","JavaScript Data Grid","CSS style.transform speed","VueJS Data Grid","JavaScript Data Table"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/rT0vQejPcrs/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/rT0vQejPcrs/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/rT0vQejPcrs/hqdefault.jpg","width":480,"height":360}}},{"id":"Tk46rwEg9pI","publishedAt":"2018-12-10T13:54:44Z","title":"JavaScript Data Grid With Server Side Data - 1,000,000 rows","description":"AG Grid can handle millions of data records by using the Server Side Row Model. This deep dive into the Server Side Row Model \"Big Reporting in a Small Browser\" was Presented at the AG Grid conference in 2018 by Robert Clarke.\n\n00:00 Intro\n00:20 Server Side Row Model\n01:00 Why Use Server Side Row Model\n02:53 Supported Row Models\n04:12 Server Side Row Model Explained\n04:53 Demo Java Backend and 1,000,000 Records\n06:50 Demo of Sorting\n07:50 Grouping Data\n09:10 Data Aggregation\n09:24 Data Pivoting\n12:00 Code Explanation\n13:30 Coding Demo\n23:00 Caching Explained\n30:00 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["vuejs","javascript","web development","big data","javascript data grid","javascript data table","reactjs","angularjs"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/Tk46rwEg9pI/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/Tk46rwEg9pI/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/Tk46rwEg9pI/hqdefault.jpg","width":480,"height":360}}},{"id":"RAJSfmBwa5g","publishedAt":"2018-12-10T13:54:44Z","title":"How can a JavaScript Data Grid Support Any Framework?","description":"Sean Landsman, ag-Grid's frameworks guru looks in-depth at ag-Grid's continued support for all the popular JavaScript frameworks.\n\n00:00 Intro\n00:28 History of AG Grid Framework Support\n01:30 Framework Adoption Rates\n02:30 Trends\n04:00 React Support\n07:00 Polymer Support\n09:00 Framework Agnostic\n\nag-Grid has zero dependencies such as Angular or React, we don’t even use JQuery, Underscore or LoDash. The foundations of ag-Grid is a custom made framework designed specifically for ag-Grid. Having no dependency means ag-Grid will work with any framework — we call this framework agnostic.\n\nBeing framework agnostic allows you to choose your framework and data grid separately. It also reduces the work required when you move frameworks (e.g. moving from Angular 1 to Angular, VueJS or React to Aurelia etc.).\n\nIf you choose a data grid that is not framework agnostic (e.g. written using Angular) then you have locked into that framework. If you select a data grid you should not be locked into a framework.\n\nWe are not aware of any other data grid that is agnostic like ag-Grid.\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["angular","react","vuejs","angularjs","aurelia","javascript","polymer","javascript data grid","datagrid","javascript data table","javascript datagrid","display tabular data using react.js"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/RAJSfmBwa5g/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/RAJSfmBwa5g/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/RAJSfmBwa5g/hqdefault.jpg","width":480,"height":360}}},{"id":"9R2V9OMetb4","publishedAt":"2018-12-10T13:54:44Z","title":"ag-Grid Conf | Roadmap 2018/19 | Niall Crosby","description":"Niall presents the 2018/2019 plans of ag-Grid. The roadmap our plans to stay the industry leader, what's under development at the moment, what's scheduled for development, and extra additions which are being considered.\n\nThe team have now implemented- more frameworks, Excel Export, improved performance, Master Detail Grids, Charting and more.\n\n00:00 Intro\n00:07 Why AG Grid?\n01:30 Continued JavaScript Framework Support\n02:00 Excel Export\n03:00 Improved Performance\n05:40 Embedded Grid Server Side Data\n08:00 Improved Documentation\n11:00 Charting\n14:00 Components\n16:00 iOC\n18:30 Value Getters and Cell Expressions\n20:45 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["angular","react","vuejs","javascript","web development"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/9R2V9OMetb4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/9R2V9OMetb4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/9R2V9OMetb4/hqdefault.jpg","width":480,"height":360}}},{"id":"1RNsKFqBySc","publishedAt":"2018-12-10T13:54:44Z","title":"History and Mission of AG Grid","description":"Niall Crosby, CEO of ag-Grid delivering his keynote for ag-Grid Conf London 2018. \n\nNiall covers the birth and growth of ag-Grid from 2015. Starting as a side-project, to the defacto Angular Grid and then moving to become the defacto grid for all frameworks. \n\n\n00:00 Intro\n00:20 History of AG Grid\n01:16 npm downloads increase\n02:00 Company Growth\n03:20 Framework Support\n04:30 \"The Best\" Grid\n05:10 Enterprise and Big Data\n06:50 The Team\n07:15 Outro\n\nThree years have seen quite the growth all across ag-Grid. The grid now gets over 150,000 downloads a month, developing a strong presence within the community and the Enterprise version(paid) is now used by over 1,500 companies, over 25% of the Fortune 500 and by many of the top investment banks in the world. \n\nThe customer base isn't the only section of the company that has seen growth. The company has grown from 1 to 15 within three years and is ever growing. \n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["angular","react","javascript","web development","vuejs","web components","webpack","aurelia","polymer","javascript data grid","javascript datagrid","best javascript data grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/1RNsKFqBySc/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/1RNsKFqBySc/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/1RNsKFqBySc/hqdefault.jpg","width":480,"height":360}}},{"id":"6ihhAuHzJhs","publishedAt":"2018-05-09T10:13:28Z","title":"4 Simple Steps to Create a Ticket | ag-Grid x Zendesk","description":"This video details how to create a ticket on AG Grid Zendesk from start to finish.  Enterprise support for AG Grid is provided using ZenDesk, if you are an enterprise customer, contact us for access to ZenDesk.\n\nTranscript.\n\nAfter signing up you will receive a ‘Welcome’ email from ag-Grid Enterprise support\n\n1. Set your ‘Password’ using the link in the email\n2. ‘Sign In’ to the support forum\n3. Click ’Submit a Request’ to create a ticket\n4. Fill the ticket form with:\n- Subject\n- Description\n- Framework\n- Version\nFollowing these steps, you will receive an email confirming your ticket reached the support team\n5. You have successfully submitted your ticket!\n\nSubscribe to stay up to date with all our video content.\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["javascript","angular","react","datagrid","aggrid","support","zendesk","how-to","tutorial","developer","technology","dev"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/6ihhAuHzJhs/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/6ihhAuHzJhs/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/6ihhAuHzJhs/hqdefault.jpg","width":480,"height":360}}},{"id":"CN_OPTMD1Fw","publishedAt":"2018-03-12T11:55:50Z","title":"Visualising Enterprise Data with Angular &amp; d3","description":"Sean Landsman from ag-Grid delivers a talk on Visualising Enterprise Data with Angular & d3 at ngVikings 2018.\n\n00:00 Intro\n01:00 Why Visualise Data?\n02:40 Data Grid Demo\n03:56 What is Visualisation?\n05:00 Visualisation App Design\n05:35 Visualisation App Demo\n08:30 D3\n09:00 D3 Data Selection\n11:00 D3 Chaining\n13:07 D3 Enter Selection\n17:00 D3 Ordinal Scales\n18:42 D3 Band Scales\n19:42 D3 Linear Scales\n21:00 Summary\n21:54 Outro\n\nCredits:\nngVikings\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["Angular","Vuejs","javascript","big data","ngvikings","ag grid","data visualisation","d3 data visualization","data visualization","d3 graphs","big data visualisation","big data visualization d3","big data d3"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/CN_OPTMD1Fw/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/CN_OPTMD1Fw/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/CN_OPTMD1Fw/hqdefault.jpg","width":480,"height":360}}},{"id":"E_il3WippbA","publishedAt":"2018-02-28T16:58:20Z","title":"A sneak peek at our new tool panel coming  in Version 17.","description":"We've updated the UI in line with our new Balham theme, you can now view by column groups or filter for a particular column. Finally, you can now also toggle the tool panel to be on/off.\n\nTake our latest version for a spin: \nhttps://www.ag-grid.com/javascript-data-grid/getting-started/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["aggrid","datagrid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/E_il3WippbA/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/E_il3WippbA/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/E_il3WippbA/hqdefault.jpg","width":480,"height":360}}},{"id":"qKk1gA0Wtt4","publishedAt":"2017-11-20T11:15:25Z","title":"ag-Grid at Angular Connect 2017","description":"Sophia Lazarova from ag-Grid talks about our JavaScript Datagrid at AngularConnect 2017\n\n00:00 Intro\n01:00 Feature Overview\n01:10 Framework support\n01:20 Themes\n01:40 Built for developer by developers\n02:10 Enterprise Support\n\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["ag-grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/qKk1gA0Wtt4/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/qKk1gA0Wtt4/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/qKk1gA0Wtt4/hqdefault.jpg","width":480,"height":360}}},{"id":"2cdHmSxxpIY","publishedAt":"2017-09-29T14:36:12Z","title":"Getting Started with a React Grid in 5 Minutes using ag-Grid","description":"An overview of AG Grid with React JS, the fast quick start guide.\n\nA more up to date getting started guide is available here:\n\n- for classes https://youtu.be/6PA45adHun8\n- for functions https://youtu.be/VIieyjYQ1KE\n\n\nRelated Blog Posts:\n\n- getting started with React Classes\n    - https://blog.ag-grid.com/react-get-started-with-react-grid-in-5-minutes/#video-tutorial-for-react-classes-with-ag-grid\n- getting started with React Hooks and Functions\n    - https://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\n00:00 Intro\n00:20 Prerequisites\n00:36 Install Sample Project\n01:22 Install Dependencies & Start\n01:43 Source Explanation\n02:10 Grid Configuration\n03:00 Rendering Configuration\n03:38 Adding Sorting\n04:30 Adding Filtering\n05:35 Summary\n\nsource:\nclone https://github.com/ag-grid/ag-grid-react-seed\n\nLearn more https://www.ag-grid.com/react-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["reactjs data table","reactjs data grid","javascript data grid","reactjs datagrid","react data table","javascript data table","ag-grid","ag grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/2cdHmSxxpIY/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/2cdHmSxxpIY/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/2cdHmSxxpIY/hqdefault.jpg","width":480,"height":360}}},{"id":"OWaBzKC4xPI","publishedAt":"2017-09-29T11:04:46Z","title":"Copy and Paste in ag-Grid","description":"https://www.ag-grid.com/javascript-grid-clipboard/\n\nThis shows how to copy and paste into and from Excel from ag-Grid JavaScript Data Grid.","tags":["iMovie"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/OWaBzKC4xPI/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/OWaBzKC4xPI/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/OWaBzKC4xPI/hqdefault.jpg","width":480,"height":360}}},{"id":"dRQtpULw6Hw","publishedAt":"2017-03-30T11:01:11Z","title":"Server Side Row Model for JavaScript Data Grid","description":"When our Server Side row model was originally introduced it was called the Enterprise Row Model. The current Server Side Model is an improved version of the implementation explained in this video and you can find more detail in the documentation. https://www.ag-grid.com/react-grid/server-side-model/\n\nThe server side model allows all data to be loaded from the server, with full support for dynamic grouping, aggregation and charting.\n\n00:00 Intro\n00:30 Lazy Loading Data from Server\n01:00 Examples using Mocked Server\n02:20 Grouping Support on Server Side\n04:15 Predefined Grouping\n05:00 Dynamic Grouping\n\n---\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["Javascript Grid","Angular Grid","React Grid","react data grid server side data","angular data grid server side data","javascript data grid server side data","vue data grid server side data","ag-grid","ag grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/dRQtpULw6Hw/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/dRQtpULw6Hw/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/dRQtpULw6Hw/hqdefault.jpg","width":480,"height":360}}},{"id":"tsuhoLiSWmU","publishedAt":"2017-01-26T17:42:23Z","title":"Javascript Datagrid Features - demo of ag-Grid","description":"ag-Grid Demonstration video. This a demo of some of the key features of ag-Grid. We show how sorting, set filtering, grouping & aggregation and pivoting works in our grid.\n\n00:00 Introduction for AG Grid Enterprise\n00:07 Demonstration of Column Sorting\n00:21 Data Filtering\n00:55 Grouping Data\n01:05 Aggregating Data\n01:48 Pivot Mode - Pivoting Data\n02:44 Outro\n\nhttps://www.ag-grid.com/javascript-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["javascript datagrid","angular datagrid","react grid","react datagrid","angular grids","angular 2 grid","javascript grid","javascript pivot table","aggrid","ag grid","ag-grid"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/tsuhoLiSWmU/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/tsuhoLiSWmU/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/tsuhoLiSWmU/hqdefault.jpg","width":480,"height":360}}},{"id":"YJuKhVatomY","publishedAt":"2016-11-24T13:16:32Z","title":"ag-Grid New Features for v7 - Animated Rows!!!","description":"AG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["ag grid","ag-grid","javascript data grid","javascript datagrid","javascript data table"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/YJuKhVatomY/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/YJuKhVatomY/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/YJuKhVatomY/hqdefault.jpg","width":480,"height":360}}},{"id":"jamr2jmEzh8","publishedAt":"2016-09-30T16:15:03Z","title":"How to Use Angular 2 with ag-Grid -  Angular Connect 2016","description":"A short overview of ag-Grid with Angular 2 - Presented at Angular Connect 2016.\n\n00:00 Intro\n00:14 What is a Data Grid?\n00:23 How to Configure AG Grid for Angular\n00:52 Add Angular Component in a Grid\n02:31 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com","tags":["iMovie"],"thumbnails":{"default":{"url":"https://i.ytimg.com/vi/jamr2jmEzh8/default.jpg","width":120,"height":90},"medium":{"url":"https://i.ytimg.com/vi/jamr2jmEzh8/mqdefault.jpg","width":320,"height":180},"high":{"url":"https://i.ytimg.com/vi/jamr2jmEzh8/hqdefault.jpg","width":480,"height":360}}}]
+[
+  {
+    "id": "D28UOl0z11M",
+    "publishedAt": "2022-03-28T12:45:44Z",
+    "title": "viqas footballstatsdirect",
+    "description": "Viqas Hussain created the Football Stats Direct application which renders various soccer statistics, pulling them from official APIs and showing them in an AG Grid for Analysis. The Integrated Charts are enabled to allow users to create custom graphs from rendered data and Standalone charts are used for pre-coded charts. Viqas has released the source on Github so anyone can study the code to learn how to create a full stack app using AG Grid, RapidAPI and Firebase.\n\n00:00 Viqas Hussain Introduction\n01:06 FootballStatsDirect.com\n02:28 Demo of Football Stats Direct\n04:55 Open Sourced Code\n05:14 Architecture\n06:30 AG Grid Features Used\n07:20 Filtering with Value Getters\n08:38 Backend using RapidAPI\n10:12 Integrated Charting\n12:00 Standalone charts\n14:45 Custom Cell Renderers\n17:53 Code on Github\n20:24 Online Resources\n20:50 Outros\n\nLinks:\n\n- https://footballstatsdirect.com\n- http://viqas.co.uk/\n- https://github.com/viqashussain?tab=repositories&q=football&type=&language=&sort=\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "football statistics",
+      "football stats analysis",
+      "football stats",
+      "soccer statistics",
+      "soccer stats",
+      "premier league",
+      "football daily",
+      "premier league all goals"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/D28UOl0z11M/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/D28UOl0z11M/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/D28UOl0z11M/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "oAQ5vavDupU",
+    "publishedAt": "2022-03-28T12:29:11Z",
+    "title": "100% React Rendering, Avoiding Wasted Renders",
+    "description": "AG Grid and React play well together because the rendering engine for React is 100% React. Niall Crosby, CEO of AG Grid, demonstrates this in the video by looking in the React developer tools and you'll see how to use memoization effectively to avoid wasted renders.\n\n00:00 AG Grid is 100% React\n00:10 Starting Code Explained\n00:25 Custom React Component\n00:54 Developer Tools Rendering View\n01:56 Wasted Renders Demonstration\n03:00 Avoiding Waster Renders with memo\n03:28 Summary\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "react data grid",
+      "angular data grid",
+      "ag grid",
+      "javascript datagrid",
+      "optimizing react",
+      "react memoization",
+      "react memo",
+      "react wasted renders",
+      "avoiding wasted renders in react"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/oAQ5vavDupU/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/oAQ5vavDupU/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/oAQ5vavDupU/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "pebXUHUdlos",
+    "publishedAt": "2022-03-24T14:21:08Z",
+    "title": "Built-in column filters overview for the React Data Grid from AG Grid",
+    "description": "In this video Niall Crosby, CEO of AG Grid, provides an overview of the built-in column filters for AG Grid. This video uses the React Data Grid. Columns can be filtered to allow the user to configure the data shown in the grid. Three filters are supplied with AG Grid community edition: text, number and date. An additional set and multi filter are available to the enterprise edition. The filters can also be configured through the API.\n\n00:00 about filters\n00:20 default filters\n00:55 text, number and date filters\n02:38 filter parameters\n03:55 filter buttons\n05:45 filtering by dates\n06:30 filter state models\n09:18 floating filters\n10:10 Enterprise filters\n12:43 Filter Menu Container\n13:35 Summary\n\nLearn more about Column Filtering for AG Grid's React Data Grid:\n\nhttps://www.ag-grid.com/react-data-grid/filtering/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "react data grid",
+      "ag grid",
+      "filtering columns",
+      "filtering data grid",
+      "filtering data table",
+      "filtering react data table",
+      "javascript data grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/pebXUHUdlos/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/pebXUHUdlos/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/pebXUHUdlos/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "10elxyyiQ7M",
+    "publishedAt": "2022-03-22T11:28:39Z",
+    "title": "AdaptableTools Extension Add-On Library For AG Grid Demo and Interview with Jonny Wolfson",
+    "description": "In this video Jonny Wolfson, CTO of Adaptable Tools, provides a demo of the AdapTable  AG Grid extension library that adds a massive amount of extra features focussed on the end user of applications written with AG Grid. For example, if you want user to be able to write complex queries to filter data or create their own calculated cells then check out Adaptable Tools. The demo application shows what it is possible to achieve in a single day of coding.\n\nhttps://www.adaptabletools.com/\n\n00:00 What is Adaptable Tools?\n03:10 Version 11 Updates\n04:08 Demo Application Overview\n07:00 Action, Free Text and Calculated Columns\n10:45 Settings Panel\n14:40 Building on AG Grid\n15:40 The Dashboard\n16:30 Custom Queries\n17:41 Audit History\n18:25 Custom Reports\n18:49 Excel Report Scheduling and Synchronisation\n20:05 Alerts for Data Change\n24:38 User Configured Cell Rendering\n27:50 No Code Grid Configuration\n29:30 Features Overview\n30:30 Consultancy\n31:20 Client Side and Server Side Row Model Support\n32:30 Custom Query Functions\n34:20 visit adaptabletools.com\n34:45 End Notes\n\n\nIn the video we discover:\n\n- What is Adaptable?\n- What does it add on top of AG Grid?\n     - making it easier for end users to access some of the customisations that are via the API with the raw AG Grid\n- What's new in version 11\n    - setting panel\n    - react ui\n- Show in action with the Github Issues example\n    - https://issuelog-demo.adaptabletools.com/\n- Cover some major features\n    - settings panel\n         - add custom settings \n    - dashboard\n    - Toolpanel - extended version of AG Grid's\n    - Column menus - extended version of AG Grid's\n    - Context menu - extended version of AG Grid's\n    - Editing Extensions\n        - bulk editing, smart editing \n    - Calculated Columns\n    - Expression editor\n    - Excel Synchronisation and custom exports\n    - Custom column formatting\n    - Query Language\n    - Alerts\n    - No Code configuration to allow end users to create their own grids\n    - Easy integration with OpenFin and ipushpull\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "adaptabletools",
+      "adaptable tools",
+      "adaptable",
+      "react data grid query language",
+      "react data grid calculated cells",
+      "react data grid alerts"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/10elxyyiQ7M/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/10elxyyiQ7M/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/10elxyyiQ7M/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "9IbhW4z--mg",
+    "publishedAt": "2022-03-21T14:18:58Z",
+    "title": "Customising Cells with React Components as Cell Renderers",
+    "description": "Customising cells using React Cell Renderers, these are simple functions that return JSX to add your own React component to format and add interactivity to the cells in a data grid. These can be created as functional components, anonymous inline functions or class components.\n\n00:00 React Components in Cells\n00:27 Create a Cell Renderer Component\n01:40 Adding interactivity\n02:32 Reusing Components\n03:03 Cell Renderer Params\n04:04 Inline Components\n04:42 Class Components\n05:38 Cell Renderer Selector\n07:00 Summary\n\nFull details of the cell renderer parameters can be found in the documentation:\n\nhttps://www.ag-grid.com/react-data-grid/component-cell-renderer/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "react components",
+      "react components and props",
+      "cell renderers",
+      "cell renderer"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/9IbhW4z--mg/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/9IbhW4z--mg/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/9IbhW4z--mg/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "RHTJCwYfxSk",
+    "publishedAt": "2022-03-18T15:18:03Z",
+    "title": "Pablo Fonseca Interview - Streamlit AG Grid Component",
+    "description": "Pablo Fonseca has created a Streamlit Component to make it easy to add AG Grid to Python Streamlit applications. This provides an advanced and easy to use data exploration grid which can be populated from Pandas data frames.\n\n00:00 Pablo Introduction\n00:45 What is the component?\n02:08 Pandas Support\n03:25 Python JavaScript Integration\n04:20 First React Project?\n05:28 Prototyping\n06:00 Demo of Component\n10:30 Using Themes\n11:20 Nested Grids\n12:22 Jupyter and Streamlit\n12:30 Easy to use\n14:45 Future Plans\n16:30 Python Experience\n18:15 Streamlit tables and grids\n19:55 Contact Pablo\n20:28 Thanks Pablo\n\nBlog post for this interview:\n\nhttps://blog.ag-grid.com/pablo-fonseca-streamlit/\n\nPablo Fonseca:\n\n- Pablo Fonseca's Github\n    - https://github.com/PablocFonseca\n- Buy Pablo a Beer\n    - https://www.paypal.com/donate/?hosted_button_id=8HGLA4JZBYFPQ\n- Contact Pablog\n    - https://www.linkedin.com/in/pablocfonseca/\n\n- Streamlit https://streamlit.io/\n- Python Package\n    - https://pypi.org/project/streamlit-aggrid/\n- Discussion forum on Streamlit\n    - https://discuss.streamlit.io/t/ag-grid-component-with-input-support/8108\n- Documentation\n    - https://streamlit-aggrid.readthedocs.io/en/docs/\n- Live examples\n    - https://share.streamlit.io/pablocfonseca/streamlit-aggrid/main/examples/example.py\n- Streamlit Componenent Code on Github\n    - https://github.com/PablocFonseca/streamlit-aggrid\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "streamlit python",
+      "streamlit.io",
+      "python data grid",
+      "python data analysis",
+      "interview",
+      "pablo fonseca"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/RHTJCwYfxSk/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/RHTJCwYfxSk/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/RHTJCwYfxSk/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "pKUhYE1VTP4",
+    "publishedAt": "2022-03-16T15:34:18Z",
+    "title": "Quickstart Tutorial for  AG Grid Enterprise",
+    "description": "In this video you will learn how to enable the enterprise features of AG Grid. These are free to trial and require a license to use in production. All enterprise features are listed in the documentation. Niall also demonstrates Row Grouping.\n\n00:00 Setting up Enterprise\n02:08 Row Grouping\n02:30 User Controlled Grouping\n03:13 Enterprise Features Listed\n03:33 Enterprise License\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/\n\nYou can find details of the enterprise features in the documentation:\n\nhttps://www.ag-grid.com/vue-data-grid/licensing/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "react grid",
+      "ag-grid enterprise",
+      "enterprise data grid",
+      "commercial data grid",
+      "commercial javascript data table",
+      "react data table",
+      "react datagrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/pKUhYE1VTP4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/pKUhYE1VTP4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/pKUhYE1VTP4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "PyGnASnJgGo",
+    "publishedAt": "2022-03-15T11:00:37Z",
+    "title": "Quickstart Tutorial for the React Data Grid from AG Grid",
+    "description": "This video is a quick start tutorial to getting started with AG Grid in a React project. Niall Crosby, the CEO and creator of AG Grid walks you through the basic knowledge needed to work with AG Grid using React. You'll see how to create a project, add AG Grid. You'll understand what CSS is used to style and structure the grid. How to use state and effect to manage data in the grid while loading data from the server. Sorting and Filtering is demonstrated through specific and default column properties. Grid Properties are used to animate rows and support selection. Adding functionality to the grid can be implemented by hooking into the grid events and using the API.\n\n\n00:00 Create a Project\n00:18 Add AG Grid\n00:30 Get Started\n00:46 Create an AG Grid\n02:00 CSS Includes Explained\n02:33 Adding data to the grid\n03:20 Using React State for data\n03:52 Loading data from server with useEffect\n04:32 Sorting and Filtering Columns\n05:00 Default Column Definitions\n05:50 Grid properties to animate and select rows\n06:28 hooking into Grid Events\n07:15 using the Grid API\n08:18 Summary\n08:38 Outro\n\nhttps://www.ag-grid.com/react-data-grid/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "react data table",
+      "javascript data table",
+      "ag grid tutorial",
+      "getting started react",
+      "react datagrid",
+      "reactjs data grid",
+      "reactjs datagrid",
+      "react table",
+      "react grid component",
+      "react tutorial",
+      "react datatable",
+      "react and aggrid",
+      "aggrid table react"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/PyGnASnJgGo/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/PyGnASnJgGo/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/PyGnASnJgGo/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "-fga3zbZ6V4",
+    "publishedAt": "2022-03-07T15:35:58Z",
+    "title": "React Data Grid - 100% React Rendering Engine Overview [new version]",
+    "description": "Discover the React Data Grid rendering engine for AG Grid. The React UI is a full 100% React  implementation. This video provides an overview of the rendering engine capabilities and how to enable the new React UI.\n\nThe new React UI benefits developers by integrating more tightly into the React ecosystem and developer tooling\n\n00:00 Introduction\n00:33 Overview of Demo Application\n01:09 Rendering Efficiency\n01:34 Benefits to Developer - DOM\n02:18 React Component View Improvements\n03:20 React Profiler Improvements\n04:41 Outro and Links\n\nLearn more about the React UI:\n- https://www.ag-grid.com/react-data-grid/reactui/\n\nSupporting blog post:\n- https://blog.ag-grid.com/react-ui-overview/\n\nExample code:\n- https://react-data-grid-aggrid-reactui.stackblitz.io/\n- https://github.com/ag-grid/react-data-grid/tree/main/reactui-demo\n\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "react datagrid",
+      "react profiler demo",
+      "react dev tools demo",
+      "react components demo"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/-fga3zbZ6V4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/-fga3zbZ6V4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/-fga3zbZ6V4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "WkPamGHtWv4",
+    "publishedAt": "2022-02-11T09:33:47Z",
+    "title": "New Release Overview for AG Grid version 27 - 100% React Data Grid, and more...",
+    "description": "The new version of AG Grid makes the 100% React Rendering Engine the default for React Projects. Vue, Angular and JavaScript projects are still supported as those frameworks have their own dedicated rendering engines.\n\nThe documentation has been updated to have react best practices and fully typed examples in TypeScript as well as JavaScript.\n\n00:00 version 27 introduction\n00:05 100% React Data Grid Rendering by Default\n00:44 React Best Practices\n01:05 One API for all frameworks\n01:39 Custom Components are Easier\n02:10 Fully Typed Examples\n02:33 Examples for React, Vue, Angular\n03:05 Column APIs and Accessibility\n03:28 Sparklines and Progress Bars\n03:49 Version 26 long term support\n04:55 Change Log\n05:05 Open Source Free Data Grid\n\nBlog post describing release: https://blog.ag-grid.com/whats-new-in-ag-grid-27/\n\nChange Log https://www.ag-grid.com/changelog/?fixVersion=27.0.0\n\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/WkPamGHtWv4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/WkPamGHtWv4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/WkPamGHtWv4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "GTu79aWJT1E",
+    "publishedAt": "2022-02-04T10:45:09Z",
+    "title": "Get started with React Data Grid - Free Community and Enterprise Editions",
+    "description": "This getting started video follows the React Data Grid tutorial in our documentation:\n\nhttps://www.ag-grid.com/react-data-grid/getting-started/\n\nThe video walks you through the process of installing the free open source community edition of AG Grid and using it with React to create a basic grid. To this grid we add sorting, filtering, and row selection. We use the API to access content in the grid and load content from an HTTP API GET request. Using the enterprise edition we enable more grid features like improved filtering and context menu and then add row grouping.\n\nIn this video you'll learn:\n\n00:00 an overview of AG Grid\n00:24 installing free community edition for React JS\n01:19 create a simple react data grid\n02:34 adding Sortable Columns\n03:00 Filter and Search Columns\n03:14 Loading Data From HTTP or API call\n04:00 Selectable Rows and Grid API\n05:28 installing enterprise edition\n05:50 improved filters and context menu\n06:20 row grouping\n07:23 overview of basic features\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "vue data grid",
+      "ag grid",
+      "react datagrid",
+      "data grid",
+      "ag grid tutorial",
+      "reactjs datagrid",
+      "reactjs data grid",
+      "react data table",
+      "react grid table"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/GTu79aWJT1E/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/GTu79aWJT1E/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/GTu79aWJT1E/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "7q6RPuv4uXc",
+    "publishedAt": "2022-01-27T16:11:52Z",
+    "title": "A JavaScript Data Grid that Gives you Programming Super Powers #shorts",
+    "description": "We've always said that AG Grid is the Best JavaScript Data Grid in the world. No other JavaScript Data Grid has integrated charts and support for React, Angular, Vue and Vanilla JavaScript.\n\n#shorts\n\nCan your data grid do this?\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "javascript",
+      "react",
+      "reactjs",
+      "angular"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/7q6RPuv4uXc/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/7q6RPuv4uXc/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/7q6RPuv4uXc/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "lL3e0wRBluM",
+    "publishedAt": "2021-12-08T11:30:53Z",
+    "title": "Custom Cypress Plugin Test Automation Demo for AG Grid with Kerry McKeever",
+    "description": "Kerry McKeever explains and demonstrates an open source Cypress Plugin for the Test Automation of AG Grid.\n\nYou'll learn:\n\n- What is Cypress?\n- How Cypress works\n- How to record video of test execution\n- How to debug Cypress Tests\n- How to run Cypress Headless\n- How to create custom commands for Cypress\n- How to automate AG Grid with Cypress\n- How to Synchronise Test Automation with Cypress\n- and more...\n\n00:00 Introduction\n00:30 What is a Cypress Plugin?\n02:10 Open Source on Github\n03:00 Scope of Plugin and Automating\n05:25 Running in Cypress\n07:50 Sizing Grid for Automating\n10:39 Execution Review\n13:41 How do the tests work?\n14:38 Synchronising Execution\n17:30 Interactions Available\n23:15 Validations and Assertion Code\n25:08 Creating Cypress Functions\n27:10 Running Headless, Creating videos\n29:10 NPM Release\n29:54 Simple Install, Easy to Use\n32:35 Summary\n32:55 Kerry McKeever\n33:33 Outro\n\nKerry's blog post explaining the plugin:\n\nhttps://kerrymckeever.com/how-to-test-ag-grid-with-cypress/\n\nSource Code for the plugin:\n\nhttps://github.com/kpmck/cypress-ag-grid\n\n\n---\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "cypress automation",
+      "cypress test automation",
+      "cypress gui automation",
+      "test automation ag grid",
+      "aggrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/lL3e0wRBluM/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/lL3e0wRBluM/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/lL3e0wRBluM/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "4f-3vJ6PFC0",
+    "publishedAt": "2021-11-24T16:22:09Z",
+    "title": "Data Grid Cell Sparklines using AG Grid Integrated Charts",
+    "description": "AG Grid supports a cell renderer for sparklines. This uses the enterprise integrated charts. Currently supporting line, column, area and bar sparklines.\n\n00:00 Introduction\n00:31 Grid Configuration\n00:57 Bar Sparklines\n01:12 Area Sparklines\n01:23 Column Sparklines\n01:30 Line Sparklines\n01:40 Animated or Static\n01:52 Outro\n\nLearn more about Sparklines in this blog post:\n\nhttps://blog.ag-grid.com/introducing-ag-grid-sparklines/\n\nOr the documentation:\n\nhttps://www.ag-grid.com/javascript-data-grid/sparklines-overview/\n\nThis is an enterprise feature.\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "data visualization",
+      "sparklines"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/4f-3vJ6PFC0/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/4f-3vJ6PFC0/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/4f-3vJ6PFC0/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "Wj_LIVmUwYQ",
+    "publishedAt": "2021-11-19T15:59:04Z",
+    "title": "Dynamically Creating Columns from JSON API call in AG Grid",
+    "description": "Columns can be updated, amended and even created dynamically in AG Grid. In this example we read JSON from an API call and dynamically configure the grid to display the data.\n\n00:00 Introduction\n00:20 AG Grid Overview\n00:35 Using Fetch to add data\n01:19 A minimum column definition\n01:43 Dynamically creating columns from JSON\n03:05 An extra JSON Example\n03:33 Outro\n\nThe associated blog post for this video:\n\nhttps://blog.ag-grid.com/dynamically-setting-ag-grid-columns-from-json/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/Wj_LIVmUwYQ/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/Wj_LIVmUwYQ/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/Wj_LIVmUwYQ/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "oZaXyAmnLpM",
+    "publishedAt": "2021-11-19T13:43:34Z",
+    "title": "AG Grid Column Header Configuration Tips",
+    "description": "Six tips to make working with Column Headers in AG Grid easy.\n\n00:00 Introduction\n00:25 Tip 1: Add a headerName\n00:42 Tip 2: Use field name as header\n00:56 Tip 3: Use Camel Case field names\n01:16 Tip 4: Use a value getter function\n01:52 Tip 5: Use a value getter expression\n02:15 Tip 6: Use a Custom Header\n02:24 Outro\n\n\nRead the blog post:\n\nhttps://blog.ag-grid.com/automatic-header-names/\n\nAnd the documentation:\n\n- https://ag-grid.com/angular-data-grid/column-properties/#reference-header\n- https://ag-grid.com/javascript-data-grid/column-headers/\n- https://ag-grid.com/javascript-data-grid/component-header/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "column headers",
+      "grid column headers",
+      "dynamic column headers",
+      "ag-grid column headers"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/oZaXyAmnLpM/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/oZaXyAmnLpM/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/oZaXyAmnLpM/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "rsamoG6bD4Y",
+    "publishedAt": "2021-10-11T14:23:52Z",
+    "title": "Code a Podcast Player App in React with AG Grid - How to Build Application Tutorial Part 2",
+    "description": "In the second part of this build a React app tutorial we will code a Podcast Player, using the AG Grid community edition. The podcast player will be enhanced to support filtering, searching, pagination and a list of podcasts to choose from. We will also cover the difference between managed and unmanaged components in React.\n\nPart 1 of this tutorial is here: \nhttps://youtu.be/2TDIWOubvp0\n\nBlog post describing this tutorial here:\n\nhttps://blog.ag-grid.com/how-to-write-a-podcast-app-using-react/\n\nCode for this tutorial is available on Github:\n\nhttps://github.com/ag-grid/react-data-grid\n\nIn the podcast-player folder.\n\nhttps://github.com/ag-grid/react-data-grid/tree/main/podcast-player\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "javascript datagrid",
+      "create custom react control",
+      "custom react controller",
+      "managed components react",
+      "unmanaged components react",
+      "create a select in react",
+      "defaultvalue react"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/rsamoG6bD4Y/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/rsamoG6bD4Y/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/rsamoG6bD4Y/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "2TDIWOubvp0",
+    "publishedAt": "2021-10-11T14:19:52Z",
+    "title": "Code a Podcast Player App in React with AG Grid - How to Build Application Tutorial Part 1",
+    "description": "In this tutorial we will build a Podcast Player App, using React and AG Grid community edition. Learn to code a functioning podcast application with this coding example. The podcast player will fetch a feed URL and parse the XML RSS feed, load the episode data in the grid and use an embedded audio player to play the episode.\n\nPart 2 of this tutorial is here: https://youtu.be/rsamoG6bD4Y\n\nThis tutorial was written using Version 26 of AG Grid. If you want to follow along with the tutorial video then install AG Grid as\n\nnpm install --save ag-grid-community@26.0.0 ag-grid-react@26.0.0\n\nThe blog post below has a section explaining the changes I made to the cellRenderer code to use the cellRenderer changes in version 27 of AG Grid. (I returned JSX instead of an HTML string)\n\nBlog post describing this tutorial here:\n\nhttps://blog.ag-grid.com/how-to-write-a-podcast-app-using-react/\n\nCode for this tutorial is available on Github:\n\nhttps://github.com/ag-grid/react-data-grid\n\nIn the podcast-player folder.\n\nhttps://github.com/ag-grid/react-data-grid/tree/main/podcast-player\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "ag grid",
+      "javascript datagrid",
+      "parse xml with javascript",
+      "read rss feed with javascript",
+      "fetch html with react",
+      "create custom react control",
+      "custom react controller",
+      "ag grid react",
+      "ag grid react tutorial",
+      "ag grid cell renderer",
+      "react data grid tutorial",
+      "ag grid pagination"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/2TDIWOubvp0/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/2TDIWOubvp0/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/2TDIWOubvp0/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "PH5hzPTsvsM",
+    "publishedAt": "2021-10-01T08:11:22Z",
+    "title": "Angular Component Types in IDE with AG Grid",
+    "description": "Version 26 of AG Grid introduces Angular Typing to improve developer experience in the IDE. This video demonstrates the AG Grid Angular typing in Visual Studio Code.\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "angular data grid",
+      "ag grid",
+      "angular data typing",
+      "angular type checking",
+      "angular typing",
+      "Angular Code Auto Complete"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/PH5hzPTsvsM/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/PH5hzPTsvsM/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/PH5hzPTsvsM/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "9B8ghYR0XBw",
+    "publishedAt": "2021-08-19T10:44:11Z",
+    "title": "Add Charts to a JavaScript Data Grid in less than 20 seconds",
+    "description": "AG Grid has many 1 line configuration options. One of the most powerful is the option to enable Charts in the Enterprise version.\n\nThis video shows How to enable integrated charts on JavaScript Data Grid in less than 20 Seconds using AG Grid\n\nenableCharts: true\n\nThis demo shows what can be achieved when the charts are enabled.\n\nFor more information about integrated charts visit:\n\nhttps://www.ag-grid.com/javascript-data-grid/integrated-charts/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "chart data visualization",
+      "javascript charting library",
+      "react charting library"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/9B8ghYR0XBw/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/9B8ghYR0XBw/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/9B8ghYR0XBw/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "KT7kJ1V6stI",
+    "publishedAt": "2021-08-19T09:53:50Z",
+    "title": "Optimize React Data Grid for Hooks from AG Grid",
+    "description": "Learn how to optimise the React Data Grid with React Hooks. When we create components on top of AG Grid we may introduce code that increases the number of renders. AG Grid itself is optimised, we need to make sure the we use around AG Grid is optimised. This video explains optimizations using react memoization, arrays to define basis for re-rendering.\n\nRecommended Practices:\n\n- Memoize Constant Data\n- Add 2nd Parameter to useEffect to define a state, or prop, or [] to run once\n- Use objects instead of declarative JSX\n\n00:00 Introduction\n00:30 useEffect Parameters\n00:50 objects instead of declarative JSX\n02:54 Memoization\n03:55 Summary\n04:09 Outro\n\nAssociated blog post for this video:\n\nhttps://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes\n\nLearn more about AG Grid's React Grid\n\nhttps://ag-grid.com/react-data-grid\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "react hooks",
+      "react rendering optimization",
+      "optimizing react",
+      "react datagrid",
+      "reactjs data grid",
+      "react datatable",
+      "react and aggrid",
+      "aggrid table react",
+      "aggrid in react",
+      "react grid component"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/KT7kJ1V6stI/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/KT7kJ1V6stI/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/KT7kJ1V6stI/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "VIieyjYQ1KE",
+    "publishedAt": "2021-08-19T09:30:20Z",
+    "title": "Getting started with React Data Grid Using Hooks from AG Grid",
+    "description": "Learn how to get started with React Data Grid with Hooks. A short introduction and setup guide to using AG Grid to create a simple React Data Grid with data fetched from a server, and using Sorting, Filter, In Cell Editing.\n\n00:00 Introduction\n00:15 Creating React Project\n01:21 Creating a Basic Grid\n03:53 Adding Data To Grid\n06:00 In Cell Editing\n06:20 Enabling Sorting\n06:49 Enabling Filtering\n07:18 Default Column Definitions\n07:53 Adding Pagination\n08:10 Loading JSON Data from Server\n09:30 Loading... Message\n10:00 Outro\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nThis video supports the blog post:\n\nhttps://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\nDownload the example code for this video:\n\nhttps://github.com/ag-grid/react-data-grid\n\nFor the longer tutorial in our documentation visit:\n\nhttps://www.ag-grid.com/react-data-grid/getting-started/\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "ag grid",
+      "react data grid hooks",
+      "reactjs datagrid",
+      "react data table",
+      "react grid",
+      "react datagrid",
+      "reactjs data grid",
+      "reactjs datagrid example",
+      "react data table component",
+      "react data table tutorial",
+      "react table json data"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/VIieyjYQ1KE/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/VIieyjYQ1KE/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/VIieyjYQ1KE/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "ObXdeXE9oBU",
+    "publishedAt": "2021-07-06T10:21:29Z",
+    "title": "AG Grid Integrated Charts Overview",
+    "description": "AG Grid Enterprise has Integrated Charts which allows any application using AG Grid to have interactive data exploration and business intelligence functionality with a single line of configuration code to switch on charts. `enableCharts: true`\n\n00:00 Introduction\n00:20 Create a chart\n00:30 Configure Chart Type\n00:58 Styling with Themes\n01:12 Selecting Data From Chart Config\n01:23 Update Chart from Grid Data\n01:56 Grid Styling Settings\n03:15 Navigator to Zoom and Pan\n03:35 Exporting Charts\n03:50 Working With Multiple Charts\n04:04 One line of configuration\n04:35 Outro\n\nLearn more about Integrated Charts\n- https://www.ag-grid.com/javascript-grid/integrated-charts/\n\nStandalone charts are available in Enterprise and Community Edition\n- https://www.ag-grid.com/javascript-charts/overview/\n\nAG Grid works with React, Angular, Vue, and JavaScript. Available as a free community edition and commercially as an Enterprise product (full support and more features). \n\nFor more information about AG Grid please visit: https://ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "javascript data grid",
+      "react data grid",
+      "angular data grid",
+      "vue data grid",
+      "ag grid",
+      "javascript datagrid",
+      "ag-grid features",
+      "aggrid",
+      "datagrid charting",
+      "business intelligence charting",
+      "data visualisation charts",
+      "business data visualisation charts"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/ObXdeXE9oBU/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/ObXdeXE9oBU/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/ObXdeXE9oBU/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "n_lypNK0n_k",
+    "publishedAt": "2020-08-11T15:17:59Z",
+    "title": "Formatting Data Grid Cells using valueFormatters for JavaScript AG Grid",
+    "description": "We can apply custom formatting to data grid cells. This way the table of data matches what the user expects. AG Grid uses Value Formatters to do this.\n\n00:00 Intro\n00:28 What is a Value Formatter?\n00:50 Example Explained\n01:24 Number Formatting\n01:52 String Formatting\n02:34 Formatting Filters\n02:52 Currency Formatting\n04:19 Date Formatting\n05:00 Filtering and Sorting\n05:25 Sorting Comparators\n05:46 Filtering Comparators\n06:42 Outro\n\nThis video is an accompaniment to the valueFormatter blog.\n\nhttps://blog.ag-grid.com/formatting-numbers-strings-currency-in-ag-grid/ \n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "javascript data grid",
+      "javascript datagrid",
+      "ag grid",
+      "data table",
+      "javascript grid",
+      "javascript table",
+      "javascript data table",
+      "ag-grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/n_lypNK0n_k/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/n_lypNK0n_k/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/n_lypNK0n_k/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "6wpITiH8npM",
+    "publishedAt": "2020-05-07T09:04:37Z",
+    "title": "AG Grid Features Overview",
+    "description": "Ag-Grid offers a feature set, performance and quality not seen before in a JavaScript datagrid.\nOver 1,200,000 monthly downloads and used by more than 50% of the Fortune 500. Ag-Grid has become *the* datagrid for JavaScript developers. Fully supported and available for JavaScript, Angular, React and Vue. https://ag-grid.com Subscribe to our channel to quickly learn how to use ag-Grid!\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\n00:00 Intro\n00:04 Scrolling\n00:12 Column Moving\n00:24 Pinning Columns\n00:37 Sorting\n00:49 Grouping Data\n01:06 Filtering\n01:46 Themes Style the Grid\n02:02 Pivoting\n02:17 Editing Data\n02:34 Range Selection\n02:43 Embedded Charts\n03:18 Standalone Charts\n03:25 Outro\n\nTo find out more about the Grid, documentation, examples and tutorials, go to: \nhttps://www.ag-grid.com/\n\nFollow us on Twitter for the latest news and updates: \nhttps://twitter.com/ag_grid",
+    "tags": [
+      "ag grid",
+      "ag grid features",
+      "ag-grid features",
+      "ag grid overview",
+      "javascript data grid widget",
+      "javascript data table control",
+      "angular data grid",
+      "javascript data grid",
+      "react data table",
+      "react data grid",
+      "javascript grid control",
+      "javascript grid widget"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/6wpITiH8npM/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/6wpITiH8npM/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/6wpITiH8npM/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "gzqjP_kF4NI",
+    "publishedAt": "2020-03-19T11:44:48Z",
+    "title": "Row and Column Grouping for JavaScript Data Grid using AG Grid",
+    "description": "This video provides an overview of how to use the row and column grouping features in AG Grid.\n\n00:00 - Specifying Group Columns / Auto Column Group \n01:08 - Multi Auto Column Group  \n02:30 - Configuring the Auto Group Column\n03:50 - Adding Values To Leaf Nodes / Filtering on Group Columns\n04:55 - Specifying Row Group Order\n05:48 - Hide Open Parents\n06:57 - Keeping Columns Visible\n08:20 - Full Width Group Rows\n10:14 - Default Group Order\n11:31 - Unbalanced Groups\n12:30 - Grouping API\n13:37 - Grouping Complex Objects with Keys\n15:29 - Grouping Footers\n17:09 - Removing Single Children\n18:56 - Creating Your Own Group Display Columns\n\nFor more information on these features, have a look at the official documentation:\n\nhttps://www.ag-grid.com/javascript-grid-grouping/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid visit: https://ag-grid.com",
+    "tags": [
+      "data table",
+      "data grid",
+      "javascript grid",
+      "javascript table",
+      "react",
+      "angular",
+      "vue",
+      "row grouping",
+      "grid component",
+      "javascript",
+      "react grid",
+      "react table",
+      "angular table",
+      "angular grid",
+      "vue grid",
+      "vue table"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/gzqjP_kF4NI/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/gzqjP_kF4NI/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/gzqjP_kF4NI/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "8OeJn75or2w",
+    "publishedAt": "2020-03-19T11:44:44Z",
+    "title": "Embed JavaScript Data Grid - Master / Detail with ag-Grid",
+    "description": "AG Grid Enterprise has the ability to render grids within grids. This allows you to expand parent rows to show child tables of data, these can be fully customised with different formatting based on the parent row data.\n\nThe ability to embed or nest grids within grids makes complex data layout simple without having to create complex HTML table layouts.\n\n00:00 Intro\n00:07 Enabling Master/Detail\n02:12 Accessing Detail Grid API\n04:09 Syncing Detail Scrolling with Master\n04:33 Overriding the Default Detail Cell Renderer\n05:58 Providing a Custom Detail Cell Renderer\n09:20 Providing a Custom Detail Cell Renderer - Form\n10:26 Configure Grid per Row\n11:42 Dynamically Specify Master Nodes\n12:50 Nesting Master Detail\n14:00 Detail Row Height\n15:41 Filtering and Sorting \n16:10 Lazy Load Detail Rows\n16:57 Keeping Detail Rows\n18:38 Changing Data & Refresh\n19:43 Exporting Master / Detail Data\n23:34 Outro\n\nFull documentation for this feature set: https://www.ag-grid.com/javascript-grid-master-detail/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "data table",
+      "data grid",
+      "javascript grid",
+      "javascript table",
+      "grid component",
+      "javascript",
+      "react grid",
+      "react table",
+      "angular table",
+      "angular grid",
+      "vue grid",
+      "vue table",
+      "ag-grid",
+      "ag grid",
+      "embedded data table",
+      "embedded data grid",
+      "react data table"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/8OeJn75or2w/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/8OeJn75or2w/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/8OeJn75or2w/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "6PA45adHun8",
+    "publishedAt": "2020-01-30T16:53:49Z",
+    "title": "Getting Started with React Data Grid using ag-Grid",
+    "description": "The React Data Grid from AG Grid is easy to get started with and in this video you will see step by step how to make a grid with ag-Grid & ReactJS. You'll see features present in both the free community edition and the enterprise edition. \n\nThe new Getting Started Tutorial to match the documentation is here https://www.youtube.com/watch?v=GTu79aWJT1E\n\nAn updated version of getting started with Hooks with community edition is here https://www.youtube.com/watch?v=VIieyjYQ1KE\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\nIf you want to follow this video then the only change required is the url to the data we load. This is no longer on myjson.com and has changed to \"https://www.ag-grid.com/example-assets/row-data.json\"\n\n\nRelated Blog Posts:\n\n- getting started with React Classes\n    - https://blog.ag-grid.com/react-get-started-with-react-grid-in-5-minutes/#video-tutorial-for-react-classes-with-ag-grid\n- getting started with React Hooks and Functions\n    - https://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\nFor more information about ag-Grid & React, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/react-grid/\n\nIn this video Ahmed will be walking us through how easy it is to make a grid with ag-Grid & React. \n\n00:00 Intro\n00:04 Create a react application\n00:29 Running a react development server with npm\n01:00 How to install ag-Grid community edition for React\n01:30 Create a basic React app\n02:10 Import stylesheets and ag-Grid\n02:50 Create the grid definitions\n03:30 Create the grid container\n04:30 How to add Sorting and Filtering to ag-Grid\n05:00 Fetching datagrid row data from a remote server\n06:00 Adding row selection to ag-Grid\n06:25 Adding checkbox selection to ag-Grid\n08:08 Use enterprise features of ag-Grid\n08:56 Add grouping to the grid\n10:42 Outro\n\nFor more information about Ag-Grid please visit: \nhttps://www.ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "aggrid",
+      "react javascript datagrid",
+      "react javascript grid",
+      "react datagrid",
+      "reactjs datagrid",
+      "react grid",
+      "reactjs table",
+      "reactjs datable",
+      "use react and ag-grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/6PA45adHun8/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/6PA45adHun8/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/6PA45adHun8/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "eW3qCti1lsA",
+    "publishedAt": "2020-01-29T14:00:05Z",
+    "title": "Getting Started with Vue using AG Grid",
+    "description": "In this video Ahmed demonstrates how easy it is to get started with Vue and use a grid with ag-Grid. \n\n00:00 Introduction\n00:05 Install Vue\n00:23 Create project\n00:58 run project for development\n01:14 edit the source\n01:46 add AG grid to the project\n02:15 CSS Imports\n02:40 adding a grid\n04:53 adding sorting and filtering\n05:32 fetching row data dynamically\n06:00 adding row selection\n06:25 adding checkboxes for rows\n06:36 pulling data out of the grid\n08:45 adding enterprise functionality\n09:34 grouping data\n11:19 outro\n\nFor more information about Ag-Grid please visit: \nhttps://www.ag-grid.com/\n\nFor more information about ag-Grid & Vue, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/vue-grid/getting-started/",
+    "tags": [
+      "javascript datagrid",
+      "javascript data grid",
+      "ag-grid",
+      "ag grid",
+      "vue js tutorial",
+      "vue js datagrid",
+      "vue datagrid",
+      "vue data grid",
+      "vue data table",
+      "vue fetch data from api"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/eW3qCti1lsA/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/eW3qCti1lsA/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/eW3qCti1lsA/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "KS-wg5zfCXc",
+    "publishedAt": "2020-01-29T14:00:03Z",
+    "title": "Getting Started with JavaScript Data Grid using ag-Grid",
+    "description": "In this video Ahmed will demonstrate how easy it is to make a grid with ag-Grid & JavaScript to render and interact with data without creating an HTML table.\n\n00:00 Intro\n00:04 Install Instructions\n00:24 Start coding\n01:10 Add AG Grid\n01:50 Configure the Grid\n03:08 Enable Sorting and Filtering\n03:33 Dynamic data loading\n04:13 Enable Row Selection\n04:30 Get Selected Rows\n05:28 Enable Enterprise functionality\n06:20 Enable Grouping\n07:38 Outro\n\nFor more information about ag-Grid & JavaScript, code snippets and a running Stackblitz which you can use to follow along, please visit our documentation: \nhttps://www.ag-grid.com/javascript-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "ag-grid",
+      "ag grid",
+      "javascript data grid",
+      "javascript data table",
+      "javascript datagrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/KS-wg5zfCXc/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/KS-wg5zfCXc/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/KS-wg5zfCXc/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "AeEfiWAGyLc",
+    "publishedAt": "2020-01-29T14:00:02Z",
+    "title": "Getting Started with Angular Data Grid using ag-Grid",
+    "description": "In this video you will learn how easy it is to get started and make a grid with ag-Grid & AngularJS. You'll see features present in both the free community edition and the enterprise edition.\n\nA data grid is a table of data rendered using div's rather than table elements or a css grid layout.\n\nFor more information about ag-Grid & Angular, the code snippets and a running Stackblitz which you can use to follow along, visit our documentation: \n- https://www.ag-grid.com/angular-grid/\n\nBam's demonstration of ag-Grid and AngularJS:\n\n00:00 Introduction\n00:05 How to install Angular using npm\n00:17 How to create a new Angular application using ng\n00:40 How to run angular app in development web server mode\n00:54 How to install ag-Grid open source community edition for Angular\n01:16 Adding ag-Grid angular module to source\n01:37 Add ag-Grid stylesheet and theme\n01:52 Declaring initial grid configurations\n02:34 Add component definition to template\n03:06 Rendering our first grid\n03:17 How to enable sorting and filtering in ag-Grid\n04:13 How to Load datagrid data dynamically (from https://www.ag-grid.com/example-assets/small-row-data.json)\n05:28 How to add checkboxes to grid to select rows\n07:19 How to add grouping to an ag-Grid datagrid (enterprise)\n09:19 Outro\n\nFor more information about Ag-Grid visit: \nhttps://www.ag-grid.com/",
+    "tags": [
+      "ag-grid",
+      "aggrid",
+      "angular javascript datagrid",
+      "angular datagrid",
+      "angularjs datagrid",
+      "angular grid",
+      "angularjs table",
+      "angularjs datable",
+      "use angular and ag-grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/AeEfiWAGyLc/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/AeEfiWAGyLc/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/AeEfiWAGyLc/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "29ja0liMuv4",
+    "publishedAt": "2019-08-29T13:58:44Z",
+    "title": "ag-Grid - The Best JavaScript Grid in the World!",
+    "description": "Niall Crosby, the creator of ag-Grid, gives a short tour of ag-Grid's advanced features.\n\n00:00 Intro\n00:12 AG Grid Public Demo Application\n00:30 Sorting, Column Ordering and Grouping\n00:49 Filtering of data\n01:10 Range Selection with Copy and Paste\n01:38 High Performance with 100,000 Rows\n02:08 Themes for AG Grid\n02:25 Grouping and Aggregation of Data\n03:50 Pivoting support\n05:28 Integrated Charting\n07:00 Pivot Charts\n07:40 Configure Cell Display with Components\n08:26 Framework Support\n09:00 Streaming Data into a Grid\n09:50 Huge Data Set Support\n10:40 Infinite Scroll with Grouping\n11:18 Pivoting with Huge Data Sets\n12:07 Pricing - free community\n12:25 Paid Enterprise edition\n12:38 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "javascript datagrid",
+      "reactjs datagrid",
+      "angularjs datagrid",
+      "vue datagrid",
+      "ag-grid",
+      "ag grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/29ja0liMuv4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/29ja0liMuv4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/29ja0liMuv4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "bjvhSrfEwsw",
+    "publishedAt": "2019-06-12T13:08:35Z",
+    "title": "ag-Grid Integrated Charts",
+    "description": "",
+    "tags": [
+      "#hangoutsonair",
+      "Hangouts On Air",
+      "#hoa"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/bjvhSrfEwsw/default_live.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/bjvhSrfEwsw/mqdefault_live.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/bjvhSrfEwsw/hqdefault_live.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "QYorksRV8wM",
+    "publishedAt": "2019-06-10T11:28:18Z",
+    "title": "Javascript Charting for Data Grid",
+    "description": "AG Grid has integrated charting built in. The grid comes with charting integration allowing users to chart data directly from the grid without requiring additional developer coding.\n\nThe charting functionality is deeply integrated with the grid. This integration gives users a seamless charting experience while keeping the coding required by developers to a minimum.\n\nA seamless charting experience while keeping the coding required by developers to a minimum.\n\nStandalone charts are available as well as integrated charting.\n\nIntegrated Charts demonstrated in this video: https://www.ag-grid.com/react-grid/integrated-charts/\n\nStandalone charts: https://www.ag-grid.com/react-charts/overview/\n\n00:00 Intro\n00:10 Chart any Cell Ranges\n00:28 Different Chart Types - Bar, Line, Pie\n00:49 Customize Appearance\n00:58 Multiple charts\n01:30 Interactive Chart Legends\n01:40 Categories and Series Plots\n\n---\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "javascript charts",
+      "javascript data grid charts"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/QYorksRV8wM/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/QYorksRV8wM/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/QYorksRV8wM/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "rT0vQejPcrs",
+    "publishedAt": "2018-12-10T13:54:44Z",
+    "title": "Building a Complex High Performance JavaScript Project",
+    "description": "How do you build a complex JavaScript project? And make it High Performance? In this video Niall Crosby gives away the secrets to creating a high performance JavaScript Data Grid that supports multiple JavaScript Frameworks. Presented at AG Grid Conf in 2018.\n\nDesign decisions and insights into how the architecture of AG Grid was created. The challenges of building a component like ag-Grid, the internal framework ag-Grid now uses, and how to best squeeze ag-Grid for performance.\n\n- What makes writing your own data table and grid hard?\n- How to write your own IoC engine\n- Avoid external framework dependencies\n- How to make rendering fast and harness GPU\n- Auto Generating Examples for Documentation in Multiple JavaScript Frameworks\n- Use of a Mono Repo with Lerna\n- Role of a Developer and Development Approach\n\n00:00 Intro\n00:59 Writing a Grid is Hard\n01:49 Talk overview\n02:37 AG Grid Written in Typescript\n03:54 Managing Dependencies without a Dependency Manager\n08:50 Writing your own Component Library\n12:10 Component Library retrospective\n12:56 How to be Framework Agnostic\n14:44 Overview of the Custom Stack\n15:28 Q: What makes AG Grid Fast? A: Dom Virtualisation\n16:54 Q: How Row Animations Work? A: style.transform to use GPU\n20:00 Q: How to perform fast DOM Manipulation? A: innerHTML\n21:18 A: Animation Frames\n25:19 For Speed only update what has changed. How?\n26:08 Aggregation Tree Walking\n28:04 Batch Updates to a Grid\n30:00 Demo of High Performance with 10000 records\n31:08 AG Grid Build Process\n31:12 AG Grid Automated Example Generation\n32:24 Example Runner\n34:24 Git Project Management via Mono Repo and Lerna\n38:42 What does the Developer Do?\n40:00 Team Location - Co-location\n41:22 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "high performance javascript",
+      "using GPU from CSS",
+      "JavaScript Architecture",
+      "Complex JavaScript Design",
+      "MonoRepo Lerna",
+      "AngularJS Data Grid",
+      "React JS Data Grid",
+      "JavaScript Data Grid",
+      "CSS style.transform speed",
+      "VueJS Data Grid",
+      "JavaScript Data Table"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/rT0vQejPcrs/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/rT0vQejPcrs/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/rT0vQejPcrs/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "Tk46rwEg9pI",
+    "publishedAt": "2018-12-10T13:54:44Z",
+    "title": "JavaScript Data Grid With Server Side Data - 1,000,000 rows",
+    "description": "AG Grid can handle millions of data records by using the Server Side Row Model. This deep dive into the Server Side Row Model \"Big Reporting in a Small Browser\" was Presented at the AG Grid conference in 2018 by Robert Clarke.\n\n00:00 Intro\n00:20 Server Side Row Model\n01:00 Why Use Server Side Row Model\n02:53 Supported Row Models\n04:12 Server Side Row Model Explained\n04:53 Demo Java Backend and 1,000,000 Records\n06:50 Demo of Sorting\n07:50 Grouping Data\n09:10 Data Aggregation\n09:24 Data Pivoting\n12:00 Code Explanation\n13:30 Coding Demo\n23:00 Caching Explained\n30:00 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "vuejs",
+      "javascript",
+      "web development",
+      "big data",
+      "javascript data grid",
+      "javascript data table",
+      "reactjs",
+      "angularjs"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/Tk46rwEg9pI/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/Tk46rwEg9pI/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/Tk46rwEg9pI/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "RAJSfmBwa5g",
+    "publishedAt": "2018-12-10T13:54:44Z",
+    "title": "How can a JavaScript Data Grid Support Any Framework?",
+    "description": "Sean Landsman, ag-Grid's frameworks guru looks in-depth at ag-Grid's continued support for all the popular JavaScript frameworks.\n\n00:00 Intro\n00:28 History of AG Grid Framework Support\n01:30 Framework Adoption Rates\n02:30 Trends\n04:00 React Support\n07:00 Polymer Support\n09:00 Framework Agnostic\n\nag-Grid has zero dependencies such as Angular or React, we don’t even use JQuery, Underscore or LoDash. The foundations of ag-Grid is a custom made framework designed specifically for ag-Grid. Having no dependency means ag-Grid will work with any framework — we call this framework agnostic.\n\nBeing framework agnostic allows you to choose your framework and data grid separately. It also reduces the work required when you move frameworks (e.g. moving from Angular 1 to Angular, VueJS or React to Aurelia etc.).\n\nIf you choose a data grid that is not framework agnostic (e.g. written using Angular) then you have locked into that framework. If you select a data grid you should not be locked into a framework.\n\nWe are not aware of any other data grid that is agnostic like ag-Grid.\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "angular",
+      "react",
+      "vuejs",
+      "angularjs",
+      "aurelia",
+      "javascript",
+      "polymer",
+      "javascript data grid",
+      "datagrid",
+      "javascript data table",
+      "javascript datagrid",
+      "display tabular data using react.js"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/RAJSfmBwa5g/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/RAJSfmBwa5g/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/RAJSfmBwa5g/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "9R2V9OMetb4",
+    "publishedAt": "2018-12-10T13:54:44Z",
+    "title": "ag-Grid Conf | Roadmap 2018/19 | Niall Crosby",
+    "description": "Niall presents the 2018/2019 plans of ag-Grid. The roadmap our plans to stay the industry leader, what's under development at the moment, what's scheduled for development, and extra additions which are being considered.\n\nThe team have now implemented- more frameworks, Excel Export, improved performance, Master Detail Grids, Charting and more.\n\n00:00 Intro\n00:07 Why AG Grid?\n01:30 Continued JavaScript Framework Support\n02:00 Excel Export\n03:00 Improved Performance\n05:40 Embedded Grid Server Side Data\n08:00 Improved Documentation\n11:00 Charting\n14:00 Components\n16:00 iOC\n18:30 Value Getters and Cell Expressions\n20:45 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "angular",
+      "react",
+      "vuejs",
+      "javascript",
+      "web development"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/9R2V9OMetb4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/9R2V9OMetb4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/9R2V9OMetb4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "1RNsKFqBySc",
+    "publishedAt": "2018-12-10T13:54:44Z",
+    "title": "History and Mission of AG Grid",
+    "description": "Niall Crosby, CEO of ag-Grid delivering his keynote for ag-Grid Conf London 2018. \n\nNiall covers the birth and growth of ag-Grid from 2015. Starting as a side-project, to the defacto Angular Grid and then moving to become the defacto grid for all frameworks. \n\n\n00:00 Intro\n00:20 History of AG Grid\n01:16 npm downloads increase\n02:00 Company Growth\n03:20 Framework Support\n04:30 \"The Best\" Grid\n05:10 Enterprise and Big Data\n06:50 The Team\n07:15 Outro\n\nThree years have seen quite the growth all across ag-Grid. The grid now gets over 150,000 downloads a month, developing a strong presence within the community and the Enterprise version(paid) is now used by over 1,500 companies, over 25% of the Fortune 500 and by many of the top investment banks in the world. \n\nThe customer base isn't the only section of the company that has seen growth. The company has grown from 1 to 15 within three years and is ever growing. \n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "angular",
+      "react",
+      "javascript",
+      "web development",
+      "vuejs",
+      "web components",
+      "webpack",
+      "aurelia",
+      "polymer",
+      "javascript data grid",
+      "javascript datagrid",
+      "best javascript data grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/1RNsKFqBySc/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/1RNsKFqBySc/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/1RNsKFqBySc/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "6ihhAuHzJhs",
+    "publishedAt": "2018-05-09T10:13:28Z",
+    "title": "4 Simple Steps to Create a Ticket | ag-Grid x Zendesk",
+    "description": "This video details how to create a ticket on AG Grid Zendesk from start to finish.  Enterprise support for AG Grid is provided using ZenDesk, if you are an enterprise customer, contact us for access to ZenDesk.\n\nTranscript.\n\nAfter signing up you will receive a ‘Welcome’ email from ag-Grid Enterprise support\n\n1. Set your ‘Password’ using the link in the email\n2. ‘Sign In’ to the support forum\n3. Click ’Submit a Request’ to create a ticket\n4. Fill the ticket form with:\n- Subject\n- Description\n- Framework\n- Version\nFollowing these steps, you will receive an email confirming your ticket reached the support team\n5. You have successfully submitted your ticket!\n\nSubscribe to stay up to date with all our video content.\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "javascript",
+      "angular",
+      "react",
+      "datagrid",
+      "aggrid",
+      "support",
+      "zendesk",
+      "how-to",
+      "tutorial",
+      "developer",
+      "technology",
+      "dev"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/6ihhAuHzJhs/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/6ihhAuHzJhs/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/6ihhAuHzJhs/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "CN_OPTMD1Fw",
+    "publishedAt": "2018-03-12T11:55:50Z",
+    "title": "Visualising Enterprise Data with Angular &amp; d3",
+    "description": "Sean Landsman from ag-Grid delivers a talk on Visualising Enterprise Data with Angular & d3 at ngVikings 2018.\n\n00:00 Intro\n01:00 Why Visualise Data?\n02:40 Data Grid Demo\n03:56 What is Visualisation?\n05:00 Visualisation App Design\n05:35 Visualisation App Demo\n08:30 D3\n09:00 D3 Data Selection\n11:00 D3 Chaining\n13:07 D3 Enter Selection\n17:00 D3 Ordinal Scales\n18:42 D3 Band Scales\n19:42 D3 Linear Scales\n21:00 Summary\n21:54 Outro\n\nCredits:\nngVikings\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "Angular",
+      "Vuejs",
+      "javascript",
+      "big data",
+      "ngvikings",
+      "ag grid",
+      "data visualisation",
+      "d3 data visualization",
+      "data visualization",
+      "d3 graphs",
+      "big data visualisation",
+      "big data visualization d3",
+      "big data d3"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/CN_OPTMD1Fw/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/CN_OPTMD1Fw/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/CN_OPTMD1Fw/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "E_il3WippbA",
+    "publishedAt": "2018-02-28T16:58:20Z",
+    "title": "A sneak peek at our new tool panel coming  in Version 17.",
+    "description": "We've updated the UI in line with our new Balham theme, you can now view by column groups or filter for a particular column. Finally, you can now also toggle the tool panel to be on/off.\n\nTake our latest version for a spin: \nhttps://www.ag-grid.com/javascript-data-grid/getting-started/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "aggrid",
+      "datagrid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/E_il3WippbA/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/E_il3WippbA/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/E_il3WippbA/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "qKk1gA0Wtt4",
+    "publishedAt": "2017-11-20T11:15:25Z",
+    "title": "ag-Grid at Angular Connect 2017",
+    "description": "Sophia Lazarova from ag-Grid talks about our JavaScript Datagrid at AngularConnect 2017\n\n00:00 Intro\n01:00 Feature Overview\n01:10 Framework support\n01:20 Themes\n01:40 Built for developer by developers\n02:10 Enterprise Support\n\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "ag-grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/qKk1gA0Wtt4/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/qKk1gA0Wtt4/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/qKk1gA0Wtt4/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "2cdHmSxxpIY",
+    "publishedAt": "2017-09-29T14:36:12Z",
+    "title": "Getting Started with a React Grid in 5 Minutes using ag-Grid",
+    "description": "An overview of AG Grid with React JS, the fast quick start guide.\n\nA more up to date getting started guide is available here:\n\n- for classes https://youtu.be/6PA45adHun8\n- for functions https://youtu.be/VIieyjYQ1KE\n\n\nRelated Blog Posts:\n\n- getting started with React Classes\n    - https://blog.ag-grid.com/react-get-started-with-react-grid-in-5-minutes/#video-tutorial-for-react-classes-with-ag-grid\n- getting started with React Hooks and Functions\n    - https://blog.ag-grid.com/getting-started-with-react-hooks-and-ag-grid-in-5-minutes/\n\n00:00 Intro\n00:20 Prerequisites\n00:36 Install Sample Project\n01:22 Install Dependencies & Start\n01:43 Source Explanation\n02:10 Grid Configuration\n03:00 Rendering Configuration\n03:38 Adding Sorting\n04:30 Adding Filtering\n05:35 Summary\n\nsource:\nclone https://github.com/ag-grid/ag-grid-react-seed\n\nLearn more https://www.ag-grid.com/react-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "reactjs data table",
+      "reactjs data grid",
+      "javascript data grid",
+      "reactjs datagrid",
+      "react data table",
+      "javascript data table",
+      "ag-grid",
+      "ag grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/2cdHmSxxpIY/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/2cdHmSxxpIY/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/2cdHmSxxpIY/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "OWaBzKC4xPI",
+    "publishedAt": "2017-09-29T11:04:46Z",
+    "title": "Copy and Paste in ag-Grid",
+    "description": "https://www.ag-grid.com/javascript-grid-clipboard/\n\nThis shows how to copy and paste into and from Excel from ag-Grid JavaScript Data Grid.",
+    "tags": [
+      "iMovie"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/OWaBzKC4xPI/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/OWaBzKC4xPI/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/OWaBzKC4xPI/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "dRQtpULw6Hw",
+    "publishedAt": "2017-03-30T11:01:11Z",
+    "title": "Server Side Row Model for JavaScript Data Grid",
+    "description": "When our Server Side row model was originally introduced it was called the Enterprise Row Model. The current Server Side Model is an improved version of the implementation explained in this video and you can find more detail in the documentation. https://www.ag-grid.com/react-grid/server-side-model/\n\nThe server side model allows all data to be loaded from the server, with full support for dynamic grouping, aggregation and charting.\n\n00:00 Intro\n00:30 Lazy Loading Data from Server\n01:00 Examples using Mocked Server\n02:20 Grouping Support on Server Side\n04:15 Predefined Grouping\n05:00 Dynamic Grouping\n\n---\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "Javascript Grid",
+      "Angular Grid",
+      "React Grid",
+      "react data grid server side data",
+      "angular data grid server side data",
+      "javascript data grid server side data",
+      "vue data grid server side data",
+      "ag-grid",
+      "ag grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/dRQtpULw6Hw/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/dRQtpULw6Hw/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/dRQtpULw6Hw/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "tsuhoLiSWmU",
+    "publishedAt": "2017-01-26T17:42:23Z",
+    "title": "Javascript Datagrid Features - demo of ag-Grid",
+    "description": "ag-Grid Demonstration video. This a demo of some of the key features of ag-Grid. We show how sorting, set filtering, grouping & aggregation and pivoting works in our grid.\n\n00:00 Introduction for AG Grid Enterprise\n00:07 Demonstration of Column Sorting\n00:21 Data Filtering\n00:55 Grouping Data\n01:05 Aggregating Data\n01:48 Pivot Mode - Pivoting Data\n02:44 Outro\n\nhttps://www.ag-grid.com/javascript-grid/\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "javascript datagrid",
+      "angular datagrid",
+      "react grid",
+      "react datagrid",
+      "angular grids",
+      "angular 2 grid",
+      "javascript grid",
+      "javascript pivot table",
+      "aggrid",
+      "ag grid",
+      "ag-grid"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/tsuhoLiSWmU/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/tsuhoLiSWmU/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/tsuhoLiSWmU/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "YJuKhVatomY",
+    "publishedAt": "2016-11-24T13:16:32Z",
+    "title": "ag-Grid New Features for v7 - Animated Rows!!!",
+    "description": "AG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "ag grid",
+      "ag-grid",
+      "javascript data grid",
+      "javascript datagrid",
+      "javascript data table"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/YJuKhVatomY/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/YJuKhVatomY/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/YJuKhVatomY/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  },
+  {
+    "id": "jamr2jmEzh8",
+    "publishedAt": "2016-09-30T16:15:03Z",
+    "title": "How to Use Angular 2 with ag-Grid -  Angular Connect 2016",
+    "description": "A short overview of ag-Grid with Angular 2 - Presented at Angular Connect 2016.\n\n00:00 Intro\n00:14 What is a Data Grid?\n00:23 How to Configure AG Grid for Angular\n00:52 Add Angular Component in a Grid\n02:31 Outro\n\nAG Grid is available as a free community edition and commercially as an Enterprise product (full support and more features). AG Grid works with React, Angular, Vue, and JavaScript.\n\nFor more information about AG Grid please visit: https://ag-grid.com",
+    "tags": [
+      "iMovie"
+    ],
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/jamr2jmEzh8/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/jamr2jmEzh8/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/jamr2jmEzh8/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    }
+  }
+]

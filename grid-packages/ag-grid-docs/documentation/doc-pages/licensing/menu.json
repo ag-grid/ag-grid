@@ -31,13 +31,6 @@
             ]
           },
           {
-            "title": "Video Tutorial",
-            "url": "{video-tutorial}",
-            "icon": "youtube",
-            "menuHide": true,
-            "pane": "left"
-          },
-          {
             "title": "Plunker Example",
             "url": "{example}",
             "icon": "plunker",

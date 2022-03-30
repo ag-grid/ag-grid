@@ -10,6 +10,7 @@ import ReactPlayer from 'react-player'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
 import {phpPrefix} from "../utils/consts";
+import featuredVideos from './featuredVideos.json';
 
 const flatRenderItems = (items, framework) => {
     return items.reduce((prev, curr) => {
@@ -145,9 +146,9 @@ const VideoPanel = ({framework}) => {
                 border: "1px solid #d0d4d6",
                 borderRadius: "5px"
             }}>
-                <PlayerPanel id="PyGnASnJgGo" title="Quickstart Tutorial for the React Data Grid from AG Grid"/>
-                <PlayerPanel id="9IbhW4z--mg" title="Customising Cells with React Components as Cell Renderers"/>
-                <PlayerPanel id="pebXUHUdlos" title="Built-in column filters overview for the React Data Grid from AG Grid"/>
+                {featuredVideos.map(featuredVideo => (
+                    <PlayerPanel id={featuredVideo.id} key={featuredVideo.id} title={featuredVideo.title}/>
+                ))}
                 <div>
                     <div className={videoStyles['video-section']}
                          style={{marginLeft: "1rem", border: "1px solid #d0d4d6", borderRadius: "5px", height: 180, width: 320}}>
