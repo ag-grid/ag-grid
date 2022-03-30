@@ -89,9 +89,9 @@ function onBtStopEditing() {
 }
 
 function onBtStartEditing() {
-  gridOptions.api!.setFocusedCell(2, 'make')
+  gridOptions.api!.setFocusedCell(1, 'make')
   gridOptions.api!.startEditingCell({
-    rowIndex: 2,
+    rowIndex: 1,
     colKey: 'make',
   })
 }
