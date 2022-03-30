@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { data, series } from './templates';
 import { deepClone } from './utils';
 import styles from './Chart.module.scss';
-import { doOnEnter, doOnEscape } from '../key-handlers';
+import { doOnEnter } from '../key-handlers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCompress } from '@fortawesome/free-solid-svg-icons';
 
@@ -67,7 +67,6 @@ export class Chart extends React.Component<{ options: AgChartOptions, fullScreen
                 id="chart-container"
                 className={cssClasses}
                 ref={this.chart}
-                onKeyDown={e => doOnEscape(e, () => this.props.setFullScreen(false))}
             >
             </div>
             {this.props.fullScreen && <div
