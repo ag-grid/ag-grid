@@ -989,7 +989,28 @@
             "title": "Aggregation",
             "url": "/aggregation/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Custom Functions",
+                "url": "/aggregation-custom-functions/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Filtering",
+                "url": "/aggregation-filtering/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "/aggregation-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
           },
           {
             "title": "Tree Data",
