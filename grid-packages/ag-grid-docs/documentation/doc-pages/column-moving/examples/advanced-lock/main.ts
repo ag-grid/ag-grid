@@ -3,14 +3,14 @@ import { ControlsCellRenderer } from './controlsCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
     {
-        lockPosition: true,
+        lockPosition: 'left',
         valueGetter: 'node.rowIndex',
         cellClass: 'locked-col',
         width: 60,
         suppressNavigable: true,
     },
     {
-        lockPosition: true,
+        lockPosition: 'left',
         cellRenderer: ControlsCellRenderer,
         cellClass: 'locked-col',
         width: 120,

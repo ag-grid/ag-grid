@@ -43,16 +43,17 @@ The column property `suppressMovable` changes whether the column can be dragged.
 
 ## Lock Position
 
-The column property `lockPosition` locks columns to the first position in the grid. When `lockPosition=true`, the column will always appear first, cannot be dragged by the user, and cannot be moved out of position by dragging other columns.
+The column property `lockPosition` locks columns to one side of the grid. When `lockPosition` is set as either `"left"` or `"right"`, the column will always be locked to that position, cannot be dragged by the user, and cannot be moved out of position by dragging other columns.
 
 ## Suppress Movable &amp; Lock Position Example
 
 The example below demonstrates these properties as follows:
 
-- The **Age** column is locked as the first column in the scrollable area of the grid. It is not possible to move this column, or have other columns moved over it to impact its position. As a result the **Age** column marks the beginning of the scrollable area regardless of its position.
+- The **Age** column is locked `"left"` as the first column in the scrollable area of the grid. It is not possible to move this column, or have other columns moved over it to impact its position. As a result the **Age** column marks the beginning of the scrollable area regardless of its position within the column definitions.
+- The **Total** column is locked `"right"` and likewise its position can not be impacted by moving other columns.
 - The **Athlete** column has moving suppressed. It is not possible to move this column, but it is possible to move other columns around it.
 - The grid has `suppressDragLeaveHidesColumns=true` so columns dragged outside of the grid are not hidden (normally dragging a column out of the grid will hide the column).
-- The **Age** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
+- The **Age** **Total** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
 
 <grid-example title='Column Suppress & Lock' name='suppress-and-lock' type='generated'></grid-example>
 
@@ -63,7 +64,7 @@ Below is a more real-world example of where locked columns would be used. The fi
 From the example the following can be noted:
 
 
-- The first two columns are locked into first position by setting `colDef.lockPosition=true`. This means they cannot be moved out of place, and other columns cannot be moved around them.
+- The first two columns are locked into first position by setting `colDef.lockPosition='left'`. This means they cannot be moved out of place, and other columns cannot be moved around them.
 - The first two columns have the user provided `locked-col` CSS class applied to them to change the background colour.
 - The sample application listens for column pinned events. If any column is pinned, then the locked columns are also pinned. This is to keep the locked columns at the first position.
     - Clicking **Pin Athlete** will pin the Athlete column, which will result in locked columns being pinned.

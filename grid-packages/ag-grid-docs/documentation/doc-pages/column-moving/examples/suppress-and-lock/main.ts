@@ -7,7 +7,7 @@ const columnDefs: ColDef[] = [
     width: 150,
     cellClass: 'suppress-movable-col',
   },
-  { field: 'age', lockPosition: true, cellClass: 'locked-col' },
+  { field: 'age', lockPosition: 'left', cellClass: 'locked-col' },
   { field: 'country', width: 150 },
   { field: 'year' },
   { field: 'date' },
@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
   { field: 'gold' },
   { field: 'silver' },
   { field: 'bronze' },
-  { field: 'total' },
+  { field: 'total', lockPosition: 'right', cellClass: 'locked-col' },
 ]
 
 const gridOptions: GridOptions = {
