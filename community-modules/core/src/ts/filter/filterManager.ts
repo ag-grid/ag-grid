@@ -18,8 +18,7 @@ import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
-import { RowRenderer } from '../main';
-import { doOnce } from '../utils/function';
+import { RowRenderer } from '../rendering/rowRenderer';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -206,7 +205,7 @@ export class FilterManager extends BeanStub {
 
                 const isValueColumn = filterWrapper.column.isValueActive();
                 const filterAfterAggregations = isValueColumn && (!filterWrapper.column.isPrimary() || !this.columnApi.isPivotMode());
-                if(groupFilterEnabled && filterAfterAggregations) {
+                if (groupFilterEnabled && filterAfterAggregations) {
                     this.activeAdvancedAggregateFilters.push(resolvedPromise!);
                 } else {
                     this.activeAdvancedFilters.push(resolvedPromise!);
@@ -292,7 +291,7 @@ export class FilterManager extends BeanStub {
     // be kicked off adn then the application calling the grid's API. in AG-6554, the custom filter was
     // getting it's useEffect() triggered in this way.
     public callOnFilterChangedOutsideRenderCycle(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
-        const action = ()=> this.onFilterChanged(params);
+        const action = () => this.onFilterChanged(params);
         if (this.rowRenderer.isRefreshInProgress()) {
             setTimeout(action, 0);
         } else {

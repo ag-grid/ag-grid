@@ -52,7 +52,6 @@ import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import { PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, WithoutGridCommon } from '../main';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1971,7 +1970,7 @@ export class ColumnModel extends BeanStub {
             const autoGroupColumnStates: ColumnState[] = [];
             // If pivoting is modified, these are the states we try to reapply after
             // the secondary columns are re-generated
-            const unmatchedAndAutoStates: ColumnState[] = []; 
+            const unmatchedAndAutoStates: ColumnState[] = [];
             let unmatchedCount = 0;
 
             const previousRowGroupCols = this.rowGroupColumns.slice();
@@ -3125,8 +3124,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getPostProcessSecondaryColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getPostProcessSecondaryColGroupDefFunc();
+        const columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
+        const groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
 
         if (!columnCallback && !groupCallback) { return undefined; }
 
@@ -3136,15 +3135,13 @@ export class ColumnModel extends BeanStub {
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
                     if (groupCallback) {
-                        const params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams> = { colGroupDef }
-                        groupCallback(params);
+                        groupCallback(colGroupDef);
                     }
                     searchForColDefs(colGroupDef.children);
                 } else {
                     const colDef = abstractColDef as ColDef;
                     if (columnCallback) {
-                        const params: WithoutGridCommon<PostProcessSecondaryColDefParams> = { colDef };
-                        columnCallback(params);
+                        columnCallback(colDef);
                     }
                 }
             });

@@ -149,8 +149,6 @@ import {
     IsExternalFilterPresentParams,
     InitialGroupOrderComparatorParams,
     GetGroupRowAggParams,
-    PostProcessSecondaryColDefParams,
-    PostProcessSecondaryColGroupDefParams,
     PostSortRowsParams,
     IsFullWidthRowParams,
     GetLocaleTextParams,
@@ -908,16 +906,10 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** @deprecated - Use `initialGroupOrderComparator` instead
      */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    /** @deprecated - Use `postProcessSecondaryColDef` instead
-     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
-    /** @deprecated - Use `postProcessSecondaryColGroupDef` instead.
-     */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
-    @Input() public postProcessSecondaryColDef: ((params: PostProcessSecondaryColDefParams) => void) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
-    @Input() public postProcessSecondaryColGroupDef: ((params: PostProcessSecondaryColGroupDefParams) => void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     /** @deprecated - Use initialGroupOrderComparator instead

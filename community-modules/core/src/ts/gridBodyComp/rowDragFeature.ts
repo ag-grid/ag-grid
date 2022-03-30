@@ -25,8 +25,9 @@ import { doOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
-import { ColumnApi } from "../main";
+
 import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columns/columnApi";
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */

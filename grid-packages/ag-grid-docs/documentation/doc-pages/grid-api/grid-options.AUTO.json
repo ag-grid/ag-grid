@@ -1133,27 +1133,13 @@
     }
   },
   "processSecondaryColDef": {
-    "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
     "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
-    "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
-    "type": {
-      "arguments": { "colGroupDef": "ColGroupDef" },
-      "returnType": "void"
-    }
-  },
-  "postProcessSecondaryColDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-    "type": {
-      "arguments": { "params": "PostProcessSecondaryColDefParams" },
-      "returnType": "void"
-    }
-  },
-  "postProcessSecondaryColGroupDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
     "type": {
-      "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
+      "arguments": { "colGroupDef": "ColGroupDef" },
       "returnType": "void"
     }
   },

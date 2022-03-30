@@ -203,13 +203,6 @@ export interface GetGroupRowAggParams extends AgGridCommon {
     nodes: RowNode[];
 }
 
-export interface PostProcessSecondaryColDefParams extends AgGridCommon {
-    colDef: ColDef;
-}
-export interface PostProcessSecondaryColGroupDefParams extends AgGridCommon {
-    colGroupDef: ColGroupDef;
-}
-
 export interface PostSortRowsParams extends AgGridCommon {
     nodes: RowNode[];
 }

@@ -1,4 +1,4 @@
-import { Grid, GridOptions, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColDef, ColGroupDef } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -31,8 +31,7 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true,
 
   // this is a callback that gets called on each column definition
-  postProcessSecondaryColDef: function (params: PostProcessSecondaryColDefParams) {
-    const colDef = params.colDef;
+  processSecondaryColDef: function (colDef: ColDef) {
     // make all the columns upper case
     colDef.headerName = colDef.headerName!.toUpperCase()
 
@@ -46,8 +45,7 @@ const gridOptions: GridOptions = {
   },
 
   // this is a callback that gets called on each group definition
-  postProcessSecondaryColGroupDef: function (params: PostProcessSecondaryColGroupDefParams) {
-    const colGroupDef = params.colGroupDef;
+  processSecondaryColGroupDef: function (colGroupDef: ColGroupDef) {
     // for fun, add a css class for 2002    
     if (colGroupDef.pivotKeys![0] === '2002') {
       colGroupDef.headerClass = 'color-background'

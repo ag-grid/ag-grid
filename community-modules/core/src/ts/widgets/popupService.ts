@@ -15,7 +15,7 @@ import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../entities/iCallbackParams";
-import { WithoutGridCommon } from "../main";
+import { WithoutGridCommon } from "../interfaces/iCommon";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;

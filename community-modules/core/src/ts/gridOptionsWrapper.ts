@@ -5,7 +5,7 @@ import { Constants } from './constants/constants';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
-import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
+import { GetGroupAggFilteringParams, GetGroupRowAggParams, GetLocaleTextParams, GetRowIdParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, PostSortRowsParams, RowHeightParams } from './entities/iCallbackParams';
 import { RowNode } from './entities/rowNode';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { Environment, SASS_PROPERTIES } from './environment';
@@ -15,12 +15,11 @@ import { EventService } from './eventService';
 import { GridApi } from './gridApi';
 import { CsvExportParams } from './interfaces/exportParams';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { AgGridCommon } from './interfaces/iCommon';
+import { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { IDatasource } from './interfaces/iDatasource';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { WithoutGridCommon } from './main';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -140,8 +139,6 @@ export class GridOptionsWrapper {
 
     public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
     public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
-    public static PROP_POST_PROCESS_TO_SECONDARY_COLDEF = 'postProcessSecondaryColDef';
-    public static PROP_POST_PROCESS_SECONDARY_COL_GROUP_DEF = 'postProcessSecondaryColGroupDef';
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
@@ -1350,25 +1347,11 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
 
-    public getPostProcessSecondaryColDefFunc() {
-        const { postProcessSecondaryColDef, processSecondaryColDef } = this.gridOptions;
-        if (postProcessSecondaryColDef) {
-            return this.mergeGridCommonParams(postProcessSecondaryColDef);
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        if (processSecondaryColDef) {
-            return (params: WithoutGridCommon<PostProcessSecondaryColDefParams>) => processSecondaryColDef(params.colDef);
-        }
+    public getProcessSecondaryColDefFunc() {
+        return this.gridOptions.processSecondaryColDef;
     }
-    public getPostProcessSecondaryColGroupDefFunc() {
-        const { postProcessSecondaryColGroupDef, processSecondaryColGroupDef } = this.gridOptions;
-        if (postProcessSecondaryColGroupDef) {
-            return this.mergeGridCommonParams(postProcessSecondaryColGroupDef);
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        if (processSecondaryColGroupDef) {
-            return (params: WithoutGridCommon<PostProcessSecondaryColGroupDefParams>) => processSecondaryColGroupDef(params.colGroupDef);
-        }
+    public getProcessSecondaryColGroupDefFunc() {
+        return this.gridOptions.processSecondaryColGroupDef;
     }
 
     public getSendToClipboardFunc() {
@@ -1784,12 +1767,6 @@ export class GridOptionsWrapper {
         }
         if (options.localeTextFunc) {
             console.warn("AG Grid: since v27.2, the grid property `localeTextFunc` is deprecated and has been replaced by `getLocaleText` and now receives a single params object.");
-        }
-        if (options.processSecondaryColDef) {
-            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColDef` is deprecated and has been replaced by `postProcessSecondaryColDef` and now receives a single params object.");
-        }
-        if (options.processSecondaryColGroupDef) {
-            console.warn("AG Grid: since v27.2, the grid property `processSecondaryColGroupDef` is deprecated and has been replaced by `postProcessSecondaryColGroupDef` and now receives a single params object.");
         }
 
         if (options.colWidth) {

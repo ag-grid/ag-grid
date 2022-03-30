@@ -11,6 +11,7 @@ import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback }
 import { GridApi, unwrapUserComp } from '../../../gridApi';
 import { IFilter, IFilterComp } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -21,7 +22,6 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { FilterComponent } from "../../../components/framework/componentTypes";
-import { WithoutGridCommon } from "src/ts/main";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;

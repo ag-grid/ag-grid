@@ -419,8 +419,6 @@ export {
     IsExternalFilterPresentParams,
     InitialGroupOrderComparatorParams,
     GetGroupRowAggParams,
-    PostProcessSecondaryColDefParams,
-    PostProcessSecondaryColGroupDefParams,
     IsFullWidthRowParams,
     PostSortRowsParams,
     GetLocaleTextParams,

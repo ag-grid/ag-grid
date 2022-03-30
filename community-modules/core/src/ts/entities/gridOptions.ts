@@ -79,7 +79,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostProcessSecondaryColDefParams, PostProcessSecondaryColGroupDefParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideStoreParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "./iCallbackParams";
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
@@ -843,14 +843,10 @@ export interface GridOptions {
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** @deprecated - Use `postProcessSecondaryColDef` instead */
-    processSecondaryColDef?: (colDef: ColDef) => void;
-    /** @deprecated - Use `postProcessSecondaryColGroupDef` instead. */
-    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
-    postProcessSecondaryColDef?: (params: PostProcessSecondaryColDefParams) => void;
+    processSecondaryColDef?: (colDef: ColDef) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
-    postProcessSecondaryColGroupDef?: (params: PostProcessSecondaryColGroupDefParams) => void;
+    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use initialGroupOrderComparator instead */

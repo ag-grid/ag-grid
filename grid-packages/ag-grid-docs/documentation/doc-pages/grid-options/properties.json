@@ -637,8 +637,8 @@
         "pivotSuppressAutoColumn": {
             "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
         },
-        "postProcessSecondaryColDef": {},
-        "postProcessSecondaryColGroupDef": {},
+        "processSecondaryColDef": {},
+        "processSecondaryColGroupDef": {},
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Fixed Pivot Column Groups",

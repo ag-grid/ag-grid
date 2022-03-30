@@ -3413,7 +3413,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -3421,25 +3421,9 @@
       }
     },
     "processSecondaryColGroupDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
-      "type": {
-        "arguments": { "colGroupDef": "ColGroupDef" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "type": {
-        "arguments": { "params": "PostProcessSecondaryColDefParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
-        "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
+        "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
         "optional": true
       }
@@ -5624,38 +5608,6 @@
   },
   "GetGroupRowAggParams": {
     "nodes": { "type": { "returnType": "RowNode[]", "optional": false } },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PostProcessSecondaryColDefParams": {
-    "colDef": { "type": { "returnType": "ColDef", "optional": false } },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PostProcessSecondaryColGroupDefParams": {
-    "colGroupDef": {
-      "type": { "returnType": "ColGroupDef", "optional": false }
-    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi", "optional": false }
@@ -22644,7 +22596,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -22652,25 +22604,9 @@
       }
     },
     "processSecondaryColGroupDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
-      "type": {
-        "arguments": { "colGroupDef": "ColGroupDef" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "type": {
-        "arguments": { "params": "PostProcessSecondaryColDefParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
-        "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
+        "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
         "optional": true
       }
@@ -25344,7 +25280,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -25352,25 +25288,9 @@
       }
     },
     "processSecondaryColGroupDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
-      "type": {
-        "arguments": { "colGroupDef": "ColGroupDef" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "type": {
-        "arguments": { "params": "PostProcessSecondaryColDefParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
-        "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
+        "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
         "optional": true
       }
@@ -28054,7 +27974,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColDef` instead\n */",
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -28062,25 +27982,9 @@
       }
     },
     "processSecondaryColGroupDef": {
-      "description": "/** @deprecated - Use `postProcessSecondaryColGroupDef` instead.\n */",
-      "type": {
-        "arguments": { "colGroupDef": "ColGroupDef" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "type": {
-        "arguments": { "params": "PostProcessSecondaryColDefParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "postProcessSecondaryColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
-        "arguments": { "params": "PostProcessSecondaryColGroupDefParams" },
+        "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
         "optional": true
       }
