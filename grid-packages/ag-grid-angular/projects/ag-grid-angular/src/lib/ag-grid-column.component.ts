@@ -138,8 +138,8 @@ export class AgGridColumn {
     @Input() public initialHide: boolean | undefined;
     /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false`     */
     @Input() public lockVisible: boolean | undefined;
-    /** Set to `true` to always have this column displayed first. Default: `false`     */
-    @Input() public lockPosition: boolean | undefined;
+    /** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'`     */
+    @Input() public lockPosition: boolean | 'left' | 'right' | undefined;
     /** Set to `true` if you do not want this column to be movable via dragging. Default: `false`     */
     @Input() public suppressMovable: boolean | undefined;
     /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false`     */
