@@ -123,7 +123,7 @@ const VideoPanel = ({framework}) => {
             </h4>
             <div className={styles['docs-home__video-panel__videos']}>
                 {featuredVideos.map(featuredVideo => (
-                    <div className={styles['docs-home__video-panel__videos__video-player']}>
+                    <div className={styles['docs-home__video-panel__videos__video-player']} key={featuredVideo.id}>
                         <ReactPlayer url={`https://www.youtube.com/watch?v=${featuredVideo.id}`}
                                      height={180}
                                      width={320}
