@@ -180,16 +180,17 @@ export class ClientSideNodeManager {
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
             // allLeafChildren can be out of order, so we loop over all the Nodes to find the correct index that
             // represents the position `addIndex` intended to be.
-            const newChildren = [...this.rootNode.allLeafChildren];
-            const normalizedAddIndex = newChildren.reduce((prevValue: number, currNode: RowNode, currIdx: number) => {
+            const existingLeafChildren = this.rootNode.allLeafChildren;
+            const normalizedAddIndex = existingLeafChildren.reduce((prevValue: number, currNode: RowNode, currIdx: number) => {
                 const { rowIndex } = currNode;
-                if (rowIndex != null && rowIndex < addIndex! && rowIndex > newChildren[prevValue].rowIndex!) {
+                if (rowIndex != null && rowIndex < addIndex! && rowIndex > existingLeafChildren[prevValue].rowIndex!) {
                     return currIdx;
                 }
                 return prevValue;
             }, 0) + 1;
-            newChildren.splice(normalizedAddIndex, 0, ...newNodes);
-            this.rootNode.allLeafChildren = newChildren;
+            const nodesBeforeIndex = existingLeafChildren.slice(0, normalizedAddIndex);
+            const nodesAfterIndex = existingLeafChildren.slice(normalizedAddIndex, existingLeafChildren.length);
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
             this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
         }
