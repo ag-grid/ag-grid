@@ -24,6 +24,7 @@
     &__slider {
         flex-grow: 1;
         vertical-align: middle;
+        accent-color: $primary;
 
         &_hidden {
             visibility: hidden;
@@ -43,7 +44,7 @@
 
     &__option {
         flex-grow: 1;
-        border: 1px solid $primary;
+        border: 1px solid $ag-grey;
         border-right: 0;
         padding: 8px 4px;
         text-align: center;
@@ -56,14 +57,12 @@
         }
 
         &:last-child {
-            border: 1px solid $primary;
+            border: 1px solid $ag-grey;
             border-radius: 0 5px 5px 0;
         }
 
         &--selected {
-            background-color: $primary;
-            color: white;
-            box-shadow: inset 0 0 5px $ag-dark-blue;
+            box-shadow: inset 0 0 2px 2px $primary;
         }
     }
 }
