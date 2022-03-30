@@ -120,24 +120,23 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     protected calculateStep(range: number): number {
-            const { xScale, paddingInner, paddingOuter } = this;
-            // calculate step
-            let domainLength = xScale.domain[1] - xScale.domain[0];
-            const order = Math.floor(Math.log10(domainLength));
-            let magnitude = Math.pow(10, order);
-            domainLength += 1 * magnitude;
+        const { xScale, paddingInner, paddingOuter,  smallestInterval } = this;
 
-            // Make order 0 or 1
-            if (magnitude >= 10) {
-                magnitude /= 10;
-            }
+        // calculate step
+        let domainLength = xScale.domain[1] - xScale.domain[0];
+        let intervals = (domainLength / (smallestInterval?.x ?? 1)) + 1;
 
-            const bands = Math.ceil(domainLength / magnitude); // number of bands
-            const gaps = bands - 1; // number of gaps (padding between bands)
+        // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
+        // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
+        // If the number of intervals exceeds 50, calculate the step for 50 bands within the given range.
+        // This means there could be some overlap of the bands in the sparkline.
+        const maxBands = 50;
+        const bands = Math.min(intervals, maxBands);
+        const gaps = bands - 1; // number of gaps (padding between bands)
 
-            const step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+        const step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
 
-            return step;
+        return step;
     }
 
     protected updateYScaleDomain(): void {
