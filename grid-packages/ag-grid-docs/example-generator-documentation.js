@@ -468,7 +468,7 @@ function addPackageJson(type, framework, importType, basePath) {
     }
 
     const packageJson = {
-        name: importType === 'modules' ? 'ag-grid-modules' : 'ag-grid-packages',
+        name: `ag-${type}-${importType}`,
         description: 'NOTE: This package.json file is solely used by Plunker to look up type definitions.',
         dependencies: {},
     };
@@ -476,6 +476,10 @@ function addPackageJson(type, framework, importType, basePath) {
     const addDependency = (name) => {
         packageJson.dependencies[name] = '*';
     };
+
+    if (framework === 'angular') {
+        addDependency('@angular/core');
+    }
 
     if (importType === 'modules') {
         if (type === 'grid' && framework === 'angular') {
