@@ -348,7 +348,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/grid-events/ /angular-data-grid/grid-events/
     Redirect 301 /documentation/angular/grid-features/ /angular-data-grid/grid-features/
     Redirect 301 /documentation/angular/grid-interface/ /angular-data-grid/grid-interface/
-    Redirect 301 /documentation/angular/grid-properties/ /angular-data-grid/grid-properties/
+    Redirect 301 /documentation/angular/grid-properties/ /angular-data-grid/grid-options/
     Redirect 301 /documentation/angular/grid-size/ /angular-data-grid/grid-size/
     Redirect 301 /documentation/angular/group-cell-renderer/ /angular-data-grid/group-cell-renderer/
     Redirect 301 /documentation/angular/grouping/ /angular-data-grid/grouping/
@@ -602,7 +602,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/grid-events/ /javascript-data-grid/grid-events/
     Redirect 301 /documentation/javascript/grid-features/ /javascript-data-grid/grid-features/
     Redirect 301 /documentation/javascript/grid-interface/ /javascript-data-grid/grid-interface/
-    Redirect 301 /documentation/javascript/grid-properties/ /javascript-data-grid/grid-properties/
+    Redirect 301 /documentation/javascript/grid-properties/ /javascript-data-grid/grid-options/
     Redirect 301 /documentation/javascript/grid-size/ /javascript-data-grid/grid-size/
     Redirect 301 /documentation/javascript/group-cell-renderer/ /javascript-data-grid/group-cell-renderer/
     Redirect 301 /documentation/javascript/grouping/ /javascript-data-grid/grouping/
@@ -847,7 +847,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/grid-events/ /react-data-grid/grid-events/
     Redirect 301 /documentation/react/grid-features/ /react-data-grid/grid-features/
     Redirect 301 /documentation/react/grid-interface/ /react-data-grid/grid-interface/
-    Redirect 301 /documentation/react/grid-properties/ /react-data-grid/grid-properties/
+    Redirect 301 /documentation/react/grid-properties/ /react-data-grid/grid-options/
     Redirect 301 /documentation/react/grid-size/ /react-data-grid/grid-size/
     Redirect 301 /documentation/react/group-cell-renderer/ /react-data-grid/group-cell-renderer/
     Redirect 301 /documentation/react/grouping/ /react-data-grid/grouping/
@@ -1092,7 +1092,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/grid-events/ /vue-data-grid/grid-events/
     Redirect 301 /documentation/vue/grid-features/ /vue-data-grid/grid-features/
     Redirect 301 /documentation/vue/grid-interface/ /vue-data-grid/grid-interface/
-    Redirect 301 /documentation/vue/grid-properties/ /vue-data-grid/grid-properties/
+    Redirect 301 /documentation/vue/grid-properties/ /vue-data-grid/grid-options/
     Redirect 301 /documentation/vue/grid-size/ /vue-data-grid/grid-size/
     Redirect 301 /documentation/vue/group-cell-renderer/ /vue-data-grid/group-cell-renderer/
     Redirect 301 /documentation/vue/grouping/ /vue-data-grid/grouping/
@@ -1364,7 +1364,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-performance/ /javascript-data-grid/scrolling-performance/
     Redirect 301 /javascript-grid-pinning/ /javascript-data-grid/column-pinning/
     Redirect 301 /javascript-grid-pivoting/ /javascript-data-grid/pivoting/
-    Redirect 301 /javascript-grid-properties/ /javascript-data-grid/grid-properties/
+    Redirect 301 /javascript-grid-properties/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid-provided-cell-editors/ /javascript-data-grid/provided-cell-editors/
     Redirect 301 /javascript-grid-provided-renderer-change/ /javascript-data-grid/change-cell-renderers/
     Redirect 301 /javascript-grid-provided-renderer-group/ /javascript-data-grid/group-cell-renderer/
@@ -1529,7 +1529,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/grid-events/ /javascript-data-grid/grid-events/
     Redirect 301 /javascript-grid/grid-features/ /javascript-data-grid/grid-features/
     Redirect 301 /javascript-grid/grid-interface/ /javascript-data-grid/grid-interface/
-    Redirect 301 /javascript-grid/grid-properties/ /javascript-data-grid/grid-properties/
+    Redirect 301 /javascript-grid/grid-properties/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid/grid-size/ /javascript-data-grid/grid-size/
     Redirect 301 /javascript-grid/group-cell-renderer/ /javascript-data-grid/group-cell-renderer/
     Redirect 301 /javascript-grid/grouping/ /javascript-data-grid/grouping/
@@ -1725,7 +1725,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/grid-events/ /angular-data-grid/grid-events/
     Redirect 301 /angular-grid/grid-features/ /angular-data-grid/grid-features/
     Redirect 301 /angular-grid/grid-interface/ /angular-data-grid/grid-interface/
-    Redirect 301 /angular-grid/grid-properties/ /angular-data-grid/grid-properties/
+    Redirect 301 /angular-grid/grid-properties/ /angular-data-grid/grid-options/
     Redirect 301 /angular-grid/grid-size/ /angular-data-grid/grid-size/
     Redirect 301 /angular-grid/group-cell-renderer/ /angular-data-grid/group-cell-renderer/
     Redirect 301 /angular-grid/grouping/ /angular-data-grid/grouping/
@@ -1925,7 +1925,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/grid-events/ /react-data-grid/grid-events/
     Redirect 301 /react-grid/grid-features/ /react-data-grid/grid-features/
     Redirect 301 /react-grid/grid-interface/ /react-data-grid/grid-interface/
-    Redirect 301 /react-grid/grid-properties/ /react-data-grid/grid-properties/
+    Redirect 301 /react-grid/grid-properties/ /react-data-grid/grid-options/
     Redirect 301 /react-grid/grid-size/ /react-data-grid/grid-size/
     Redirect 301 /react-grid/group-cell-renderer/ /react-data-grid/group-cell-renderer/
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
@@ -2125,7 +2125,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/grid-events/ /vue-data-grid/grid-events/
     Redirect 301 /vue-grid/grid-features/ /vue-data-grid/grid-features/
     Redirect 301 /vue-grid/grid-interface/ /vue-data-grid/grid-interface/
-    Redirect 301 /vue-grid/grid-properties/ /vue-data-grid/grid-properties/
+    Redirect 301 /vue-grid/grid-properties/ /vue-data-grid/grid-options/
     Redirect 301 /vue-grid/grid-size/ /vue-data-grid/grid-size/
     Redirect 301 /vue-grid/group-cell-renderer/ /vue-data-grid/group-cell-renderer/
     Redirect 301 /vue-grid/grouping/ /vue-data-grid/grouping/
