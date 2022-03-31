@@ -191,7 +191,7 @@ function readAsJsFile(tsFilePath) {
     return jsFile;
 }
 
-function createExampleGenerator(prefix, importTypes) {
+function createExampleGenerator(exampleType, prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
@@ -254,7 +254,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             // Add if it is needed for the give framework, i.e Angular / Typescript
             // as used to power type checking in plunker.
-            addPackageJson(framework, importType, basePath);
+            addPackageJson(exampleType, framework, importType, basePath);
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
@@ -462,31 +462,44 @@ const modules = moduleMapping
     .map(moduleConfig => moduleConfig.module);
 
 /** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
-function addPackageJson(framework, importType, basePath) {
-    if (framework === 'angular' || framework === 'typescript') {
-        if (importType === 'modules') {
-            writeFile(path.join(basePath, 'package.json'),
-                `{
-    "name": "ag-grid-modules",
-    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
-    "dependencies": {
-        ${framework === 'angular' ? `"@ag-grid-community/angular": "*",` : ''}
-        ${modules.map(m => `"${m}": "*"`).join(",\n")}
+function addPackageJson(type, framework, importType, basePath) {
+    if (framework !== 'angular' && framework !== 'typescript') {
+        return;
     }
-}`);
-        } else {
-            writeFile(path.join(basePath, 'package.json'),
-                `{
-    "name": "ag-grid-packages",
-    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
-    "dependencies": {
-        ${framework === 'angular' ? `"ag-grid-angular": "*",` : ''}
-        "ag-grid-community": "*",
-        "ag-grid-enterprise": "*"
+
+    const packageJson = {
+        name: `ag-${type}-${importType}`,
+        description: 'NOTE: This package.json file is solely used by Plunker to look up type definitions.',
+        dependencies: {},
+    };
+
+    const addDependency = (name) => {
+        packageJson.dependencies[name] = '*';
+    };
+
+    if (framework === 'angular') {
+        addDependency('@angular/core');
     }
-}`);
+
+    if (importType === 'modules') {
+        if (type === 'grid' && framework === 'angular') {
+            addDependency('@ag-grid-community/angular');
+        }
+        modules.forEach(m => addDependency(m));
+    } else {
+        if (type === 'grid') {
+            if (framework === 'angular') {
+                addDependency('ag-grid-angular');
+            }
+            addDependency('ag-grid-community');
+            addDependency('ag-grid-enterprise');
+        }
+        if (type === 'chart') {
+            addDependency('ag-charts-community');
         }
     }
+
+    writeFile(path.join(basePath, 'package.json'), JSON.stringify(packageJson, null, 4));
 }
 
 function getGeneratorCode(prefix) {
@@ -509,7 +522,7 @@ function getGeneratorCode(prefix) {
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
-    const exampleGenerator = createExampleGenerator(`./src/example-generation/${type}-`, importTypes);
+    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes);
     const regex = new RegExp(`<${type}-example.*?name=['"](.*?)['"].*?type=['"](.*?)['"](.*?options='(.*?)')?`, 'g');
 
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);
