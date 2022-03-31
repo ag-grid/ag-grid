@@ -191,7 +191,7 @@ function readAsJsFile(tsFilePath) {
     return jsFile;
 }
 
-function createExampleGenerator(type, prefix, importTypes) {
+function createExampleGenerator(exampleType, prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
@@ -254,7 +254,7 @@ function createExampleGenerator(type, prefix, importTypes) {
 
             // Add if it is needed for the give framework, i.e Angular / Typescript
             // as used to power type checking in plunker.
-            addPackageJson(type, framework, importType, basePath);
+            addPackageJson(exampleType, framework, importType, basePath);
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
