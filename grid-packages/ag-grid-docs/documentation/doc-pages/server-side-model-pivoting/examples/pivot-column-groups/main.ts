@@ -111,6 +111,8 @@ function createPivotColDefs(request: IServerSideGetRowsRequest, pivotFields: str
         colDef['colId'] = colId
         colDef['headerName'] = valueCol.displayName
         colDef['field'] = colId
+        colDef['floatingFilter'] = true
+        colDef['filter'] = 'agNumberColumnFilter'
       }
 
       var children = addColDef(colId, parts, [])

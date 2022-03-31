@@ -136,15 +136,15 @@ export class HeaderRowCtrl extends BeanStub {
         let groupHeight: number | null | undefined;
         let headerHeight: number | null | undefined;
 
+        if (this.columnModel.hasFloatingFilters()) {
+            headerRowCount++;
+            numberOfFloating = 1;
+        }
+
         if (this.columnModel.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
         } else {
-            if (this.columnModel.hasFloatingFilters()) {
-                headerRowCount++;
-                numberOfFloating = 1;
-            }
-
             groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }

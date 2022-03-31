@@ -203,9 +203,10 @@ export class FilterManager extends BeanStub {
             if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
 
-                const isValueColumn = filterWrapper.column.isValueActive();
-                const filterAfterAggregations = isValueColumn && (!filterWrapper.column.isPrimary() || !this.columnApi.isPivotMode());
-                if (groupFilterEnabled && filterAfterAggregations) {
+                const isPrimaryValueColumn = filterWrapper.column.isValueActive() && filterWrapper.column.isPrimary();
+                const isPivotColumn = !filterWrapper.column.isPrimary();
+                const filterPrimaryAfterAggregations = groupFilterEnabled && isPrimaryValueColumn && !this.columnApi.isPivotMode();
+                if(filterPrimaryAfterAggregations || isPivotColumn) {
                     this.activeAdvancedAggregateFilters.push(resolvedPromise!);
                 } else {
                     this.activeAdvancedFilters.push(resolvedPromise!);
@@ -633,7 +634,17 @@ export class FilterManager extends BeanStub {
         const columns: Column[] = [];
 
         this.allAdvancedFilters.forEach((wrapper, colId) => {
-            const currentColumn = this.columnModel.getPrimaryColumn(colId);
+            let currentColumn: Column | null;
+            if (wrapper.column.isPrimary()) {
+                currentColumn = this.columnModel.getPrimaryColumn(colId);
+            } else {
+                const secondaryColDef = wrapper.column.getColDef();
+                if (secondaryColDef.pivotKeys && secondaryColDef.pivotValueColumn) {
+                    currentColumn = this.columnModel.getSecondaryPivotColumn(secondaryColDef.pivotKeys, secondaryColDef.pivotValueColumn) 
+                } else {
+                    currentColumn = null;
+                }
+            }
             if (currentColumn) { return; }
 
             columns.push(wrapper.column);
