@@ -58,7 +58,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected getAriaLabel(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = translate('pivotDropZonePanelLabel', 'Column Labels');
+        const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
         return label;
     }

@@ -175,24 +175,31 @@ export class ClientSideNodeManager {
 
         // add new row nodes to the root nodes 'allLeafChildren'
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
+
+        let nodesBeforeIndex: RowNode[];
+        let nodesAfterIndex: RowNode[];
+
         if (useIndex) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
             // allLeafChildren can be out of order, so we loop over all the Nodes to find the correct index that
             // represents the position `addIndex` intended to be.
-            const newChildren = [...this.rootNode.allLeafChildren];
-            const normalizedAddIndex = newChildren.reduce((prevValue: number, currNode: RowNode, currIdx: number) => {
+            const { allLeafChildren } = this.rootNode;
+            const normalizedAddIndex = allLeafChildren.reduce((prevIdx: number, currNode: RowNode, currIdx: number) => {
                 const { rowIndex } = currNode;
-                if (rowIndex != null && rowIndex < addIndex! && rowIndex > newChildren[prevValue].rowIndex!) {
-                    return currIdx;
-                }
-                return prevValue;
+                const prevValueAtIndex = allLeafChildren[prevIdx].rowIndex!;
+                const shouldUpdateIndex = rowIndex != null && rowIndex < addIndex! && rowIndex > prevValueAtIndex;
+
+                return shouldUpdateIndex ? currIdx : prevIdx;
             }, 0) + 1;
-            newChildren.splice(normalizedAddIndex, 0, ...newNodes);
-            this.rootNode.allLeafChildren = newChildren;
+            nodesBeforeIndex = allLeafChildren.slice(0, normalizedAddIndex);
+            nodesAfterIndex = allLeafChildren.slice(normalizedAddIndex, allLeafChildren.length);
         } else {
-            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
+            nodesBeforeIndex = this.rootNode.allLeafChildren;
+            nodesAfterIndex = [];
         }
+
+        this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
