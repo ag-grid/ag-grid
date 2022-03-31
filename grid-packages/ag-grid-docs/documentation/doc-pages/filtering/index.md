@@ -6,7 +6,7 @@ title: "Column Filter"
 |Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 
 [[only-react]]
-|<video-section id="pebXUHUdlos" title="React Custom Filters" header="true">
+|<video-section id="pebXUHUdlos" title="React Column Filters" header="true">
 |Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 |</video-section>
 
