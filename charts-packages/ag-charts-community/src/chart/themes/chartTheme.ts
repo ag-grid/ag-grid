@@ -47,6 +47,9 @@ export type ChartThemeDefaults = {
     { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions } &
     { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
+const BOLD: FontWeight = 'bold';
+const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
+const RIGHT: AgChartLegendPosition = 'right';
 export class ChartTheme {
 
     readonly palette: AgChartThemePalette;
@@ -75,7 +78,7 @@ export class ChartTheme {
                 },
                 text: 'Axis Title',
                 fontStyle: undefined,
-                fontWeight: 'bold' as FontWeight,
+                fontWeight: BOLD,
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
@@ -150,7 +153,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
                 formatter: undefined,
-                placement: 'inside' as AgBarSeriesLabelOptions['placement'],
+                placement: INSIDE,
             },
             shadow: {
                 enabled: false,
@@ -209,7 +212,7 @@ export class ChartTheme {
                 },
                 text: 'Title',
                 fontStyle: undefined,
-                fontWeight: 'bold' as FontWeight,
+                fontWeight: BOLD,
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
@@ -231,7 +234,7 @@ export class ChartTheme {
             },
             legend: {
                 enabled: true,
-                position: 'right' as AgChartLegendPosition,
+                position: RIGHT,
                 spacing: 20,
                 item: {
                     paddingX: 16,
