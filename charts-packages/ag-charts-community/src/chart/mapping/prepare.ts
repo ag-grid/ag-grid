@@ -2,13 +2,14 @@ import { AgChartOptions, AgHierarchyChartOptions, AgPolarChartOptions, AgCartesi
 import { CartesianChart } from "../cartesianChart";
 import { PolarChart } from "../polarChart";
 import { HierarchyChart } from "../hierarchyChart";
-import { SeriesOptionsTypes, DEFAULT_CARTESIAN_CHART_OPTIONS, DEFAULT_HIERARCHY_CHART_OPTIONS, DEFAULT_POLAR_CHART_OPTIONS, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES, DEFAULT_SERIES_OPTIONS, DEFAULT_AXES_OPTIONS, AxesOptionsTypes } from "./defaults";
+import { SeriesOptionsTypes, DEFAULT_CARTESIAN_CHART_OVERRIDES, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES } from "./defaults";
 import { jsonMerge, DELETE, jsonWalk } from "../../util/json";
 import { applySeriesTransform } from "./transforms";
 import { getChartTheme } from "./themes";
 import { processSeriesOptions } from "./prepareSeries";
 
 export type ChartType = CartesianChart | PolarChart | HierarchyChart;
+export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
 export function optionsType(
     input: { type?: AgChartOptions['type'], series?: { type?: SeriesOptionsTypes['type']}[]}
@@ -112,11 +113,6 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     const type = optionsType(options);
     options = {...options, type };
 
-    const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
-        isAgHierarchyChartOptions(options) ? DEFAULT_HIERARCHY_CHART_OPTIONS :
-        isAgPolarChartOptions(options) ? DEFAULT_POLAR_CHART_OPTIONS :
-        {};
-
     const defaultSeriesType = isAgCartesianChartOptions(options) ? 'line' :
         isAgHierarchyChartOptions(options) ? 'treemap' :
         isAgPolarChartOptions(options) ? 'pie' :
@@ -126,10 +122,11 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
         type === 'bar' ? DEFAULT_BAR_CHART_OVERRIDES :
         type === 'scatter' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
         type === 'histogram' ? DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES :
+        isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OVERRIDES :
         {};
 
     const { context, mergedOptions, axesThemes, seriesThemes } =
-        prepareMainOptions<T>(defaultOptions as T, defaultOverrides as T, options);
+        prepareMainOptions<T>(defaultOverrides as T, options);
 
     // Special cases where we have arrays of elements which need their own defaults.
     mergedOptions.series = processSeriesOptions(mergedOptions.series || [])
@@ -138,14 +135,14 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
                 isSeriesOptionType(userSuppliedOptionsType) ? userSuppliedOptionsType :
                 defaultSeriesType;
             const series = { ...s, type };
-            return prepareSeries(context, series, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
+            return prepareSeries(context, series, seriesThemes[type] || {});
         });
     if (isAgCartesianChartOptions(mergedOptions)) {
         (mergedOptions.axes || []).forEach((a, i) => {
             const type = a.type || 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
-            mergedOptions.axes![i] = prepareAxis(axis, DEFAULT_AXES_OPTIONS[type], axesTheme);
+            mergedOptions.axes![i] = prepareAxis(axis, axesTheme);
         });
     }
 
@@ -164,10 +161,10 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
     }
 }
 
-function prepareMainOptions<T>(defaultOptions: T, defaultOverrides: T, options: T): { context: PreparationContext, mergedOptions: T; axesThemes: any; seriesThemes: any; } {
+function prepareMainOptions<T>(defaultOverrides: T, options: T): { context: PreparationContext, mergedOptions: T; axesThemes: any; seriesThemes: any; } {
     const { theme, cleanedTheme, axesThemes, seriesThemes } = prepareTheme(options);
     const context: PreparationContext = { colourIndex: 0, palette: theme.palette };        
-    const mergedOptions = jsonMerge(defaultOptions as T, defaultOverrides, cleanedTheme, options);
+    const mergedOptions = jsonMerge(defaultOverrides, cleanedTheme, options);
 
     return { context, mergedOptions, axesThemes, seriesThemes };
 }

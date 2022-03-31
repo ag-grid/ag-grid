@@ -1,7 +1,5 @@
 import { deepMerge, defaultIsMergeableObject, getValue, isObject } from "../../util/object";
-import { copy } from "../../util/array";
-import { AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides } from "../agChartOptions";
-import { Series } from "../series/series";
+import { FontWeight, AgPolarSeriesTheme, AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides, AgCartesianThemeOptions, AgBarSeriesLabelOptions, AgChartLegendPosition, AgPolarThemeOptions, AgHierarchyThemeOptions, AgCartesianSeriesTheme, AgHierarchySeriesTheme } from "../agChartOptions";
 import { Padding } from "../../util/padding";
 import { Chart } from "../chart";
 import { TimeInterval } from "../../util/time/interval";
@@ -39,6 +37,19 @@ function isMergeableObject(value: any): boolean {
 
 export const mergeOptions = { arrayMerge, isMergeableObject };
 
+export type ChartThemeDefaults = {
+    cartesian: AgCartesianThemeOptions;
+    groupedCategory: AgCartesianThemeOptions;
+    polar: AgPolarThemeOptions;
+    hierarchy: AgHierarchyThemeOptions;
+} &
+    { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions } &
+    { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions } &
+    { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
+
+const BOLD: FontWeight = 'bold';
+const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
+const RIGHT: AgChartLegendPosition = 'right';
 export class ChartTheme {
 
     readonly palette: AgChartThemePalette;
@@ -51,7 +62,7 @@ export class ChartTheme {
 
     private static fontFamily = 'Verdana, sans-serif';
 
-    private static getAxisDefaults(): any {
+    private static getAxisDefaults() {
         return {
             top: {},
             right: {},
@@ -67,7 +78,7 @@ export class ChartTheme {
                 },
                 text: 'Axis Title',
                 fontStyle: undefined,
-                fontWeight: 'bold',
+                fontWeight: BOLD,
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
@@ -99,11 +110,11 @@ export class ChartTheme {
         };
     }
 
-    private static getSeriesDefaults(): any {
+    private static getSeriesDefaults() {
         return {
             tooltip: {
                 enabled: true,
-                renderer: undefined
+                renderer: undefined,
             },
             visible: true,
             showInLegend: true,
@@ -119,7 +130,7 @@ export class ChartTheme {
         };
     }
 
-    private static getBarSeriesDefaults(): any {
+    private static getBarSeriesDefaults() {
         return {
             ...this.getSeriesDefaults(),
             flipXY: false,
@@ -142,7 +153,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
                 formatter: undefined,
-                placement: 'inside'
+                placement: INSIDE,
             },
             shadow: {
                 enabled: false,
@@ -154,7 +165,18 @@ export class ChartTheme {
         };
     }
 
-    private static getCartesianSeriesMarkerDefaults(): any {
+    private static getLineSeriesDefaults() {
+        const seriesDefaults = this.getSeriesDefaults();
+        return {
+            ...seriesDefaults,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                format: undefined,
+            },
+        };
+    }
+
+    private static getCartesianSeriesMarkerDefaults() {
         return {
             enabled: true,
             shape: 'circle',
@@ -165,7 +187,7 @@ export class ChartTheme {
         };
     }
 
-    private static getChartDefaults(): any {
+    private static getChartDefaults() {
         return {
             width: 600,
             height: 300,
@@ -190,7 +212,7 @@ export class ChartTheme {
                 },
                 text: 'Title',
                 fontStyle: undefined,
-                fontWeight: 'bold',
+                fontWeight: BOLD,
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
@@ -212,7 +234,7 @@ export class ChartTheme {
             },
             legend: {
                 enabled: true,
-                position: 'right',
+                position: RIGHT,
                 spacing: 20,
                 item: {
                     paddingX: 16,
@@ -242,7 +264,7 @@ export class ChartTheme {
         };
     }
 
-    private static readonly cartesianDefaults: any = {
+    private static readonly cartesianDefaults: AgCartesianThemeOptions = {
         ...ChartTheme.getChartDefaults(),
         axes: {
             number: {
@@ -272,7 +294,7 @@ export class ChartTheme {
                 flipXY: true
             },
             line: {
-                ...ChartTheme.getSeriesDefaults(),
+                ...ChartTheme.getLineSeriesDefaults(),
                 title: undefined,
                 xKey: '',
                 xName: '',
@@ -377,7 +399,14 @@ export class ChartTheme {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined
-                }
+                },
+                shadow: {
+                    enabled: true,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 0,
+                    yOffset: 0,
+                    blur: 5,
+                },
             }
         },
         navigator: {
@@ -410,176 +439,177 @@ export class ChartTheme {
         }
     };
 
-    static readonly defaults: any = {
-        cartesian: ChartTheme.cartesianDefaults,
-        groupedCategory: ChartTheme.cartesianDefaults,
-        polar: {
-            ...ChartTheme.getChartDefaults(),
-            series: {
-                pie: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    title: {
+    private static readonly polarDefaults: AgPolarThemeOptions = {
+        ...ChartTheme.getChartDefaults(),
+        series: {
+            pie: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: {
+                    enabled: true,
+                    padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 10,
+                        left: 10
+                    },
+                    text: '',
+                    fontStyle: undefined,
+                    fontWeight: 'bold',
+                    fontSize: 14,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)'
+                },
+                angleKey: '',
+                angleName: '',
+                radiusKey: undefined,
+                radiusName: undefined,
+                labelKey: undefined,
+                labelName: undefined,
+                label: {
+                    enabled: true,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    offset: 3,
+                    minAngle: 20
+                },
+                callout: {
+                    length: 10,
+                    strokeWidth: 2
+                },
+                fillOpacity: 1,
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                lineDash: [0],
+                lineDashOffset: 0,
+                rotation: 0,
+                outerRadiusOffset: 0,
+                innerRadiusOffset: 0,
+                shadow: {
+                    enabled: false,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 3,
+                    yOffset: 3,
+                    blur: 5
+                }
+            }
+        }
+    };
+
+    private static readonly hierarchyDefaults: AgHierarchyThemeOptions = {
+        ...ChartTheme.getChartDefaults(),
+        series: {
+            treemap: {
+                ...ChartTheme.getSeriesDefaults(),
+                showInLegend: false,
+                labelKey: 'label',
+                sizeKey: 'size',
+                colorKey: 'color',
+                colorDomain: [-5, 5],
+                colorRange: ['#cb4b3f', '#6acb64'],
+                colorParents: false,
+                gradient: true,
+                nodePadding: 2,
+                title: {
+                    enabled: true,
+                    color: 'white',
+                    fontStyle: undefined,
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                    fontFamily: 'Verdana, sans-serif',
+                    padding: 15
+                },
+                subtitle: {
+                    enabled: true,
+                    color: 'white',
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 9,
+                    fontFamily: 'Verdana, sans-serif',
+                    padding: 13
+                },
+                labels: {
+                    large: {
                         enabled: true,
-                        padding: new Padding(0),
-                        text: '',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        fontFamily: 'Verdana, sans-serif',
+                        color: 'white'
+                    },
+                    medium: {
+                        enabled: true,
                         fontStyle: undefined,
                         fontWeight: 'bold',
                         fontSize: 14,
-                        fontFamily: ChartTheme.fontFamily,
-                        color: 'rgb(70, 70, 70)'
+                        fontFamily: 'Verdana, sans-serif',
+                        color: 'white'
                     },
-                    angleKey: '',
-                    angleName: '',
-                    radiusKey: undefined,
-                    radiusName: undefined,
-                    labelKey: undefined,
-                    labelName: undefined,
-                    label: {
+                    small: {
                         enabled: true,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: ChartTheme.fontFamily,
-                        color: 'rgb(70, 70, 70)',
-                        offset: 3,
-                        minAngle: 20
-                    },
-                    callout: {
-                        length: 10,
-                        strokeWidth: 2
-                    },
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    strokeWidth: 1,
-                    lineDash: [0],
-                    lineDashOffset: 0,
-                    rotation: 0,
-                    outerRadiusOffset: 0,
-                    innerRadiusOffset: 0,
-                    shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    }
-                }
-            }
-        },
-        hierarchy: {
-            ...ChartTheme.getChartDefaults(),
-            series: {
-                treemap: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    showInLegend: false,
-                    labelKey: 'label',
-                    sizeKey: 'size',
-                    colorKey: 'color',
-                    colorDomain: [-5, 5],
-                    colorRange: ['#cb4b3f', '#6acb64'],
-                    colorParents: false,
-                    gradient: true,
-                    nodePadding: 2,
-                    title: {
-                        enabled: true,
-                        color: 'white',
                         fontStyle: undefined,
                         fontWeight: 'bold',
-                        fontSize: 12,
+                        fontSize: 10,
                         fontFamily: 'Verdana, sans-serif',
-                        padding: 15
+                        color: 'white'
                     },
-                    subtitle: {
+                    color: {
                         enabled: true,
-                        color: 'white',
                         fontStyle: undefined,
                         fontWeight: undefined,
-                        fontSize: 9,
+                        fontSize: 12,
                         fontFamily: 'Verdana, sans-serif',
-                        padding: 13
-                    },
-                    labels: {
-                        large: {
-                            enabled: true,
-                            fontStyle: undefined,
-                            fontWeight: 'bold',
-                            fontSize: 18,
-                            fontFamily: 'Verdana, sans-serif',
-                            color: 'white'
-                        },
-                        medium: {
-                            enabled: true,
-                            fontStyle: undefined,
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            fontFamily: 'Verdana, sans-serif',
-                            color: 'white'
-                        },
-                        small: {
-                            enabled: true,
-                            fontStyle: undefined,
-                            fontWeight: 'bold',
-                            fontSize: 10,
-                            fontFamily: 'Verdana, sans-serif',
-                            color: 'white'
-                        },
-                        color: {
-                            enabled: true,
-                            fontStyle: undefined,
-                            fontWeight: undefined,
-                            fontSize: 12,
-                            fontFamily: 'Verdana, sans-serif',
-                            color: 'white'
-                        }
+                        color: 'white'
                     }
                 }
             }
         }
     };
 
+    static readonly defaults: ChartThemeDefaults = {
+        cartesian: ChartTheme.cartesianDefaults,
+        groupedCategory: ChartTheme.cartesianDefaults,
+        polar: ChartTheme.polarDefaults,
+        hierarchy: ChartTheme.hierarchyDefaults,
+    };
+
     constructor(options?: AgChartThemeOptions) {
+        options = deepMerge({}, options || {}, mergeOptions) as AgChartThemeOptions;
+        const { overrides = null, palette = null } = options;
+
         let defaults = this.createChartConfigPerSeries(this.getDefaults());
-        if (isObject(options)) {
-            options = deepMerge({}, options, mergeOptions) as AgChartThemeOptions;
-            const overrides = options.overrides;
-            if (overrides) {
-                if (isObject(overrides.common)) {
-                    ChartTheme.seriesTypes.concat(['cartesian', 'polar', 'hierarchy']).forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.common, mergeOptions);
+
+        if (overrides) {
+            const { common, cartesian, polar, hierarchy } = overrides;
+
+            const applyOverrides = <K extends keyof typeof defaults>(type: K, seriesTypes: (keyof typeof defaults)[], overrideOpts: AgChartThemeOverrides[K]) => {
+                if (overrideOpts) {
+                    defaults[type] = deepMerge(defaults[type], overrideOpts, mergeOptions);
+                    seriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts, mergeOptions);
                     });
                 }
-                if (overrides.cartesian) {
-                    defaults.cartesian = deepMerge(defaults.cartesian, overrides.cartesian, mergeOptions);
-                    ChartTheme.cartesianSeriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.cartesian, mergeOptions);
-                    });
-                }
-                if (overrides.polar) {
-                    defaults.polar = deepMerge(defaults.polar, overrides.polar, mergeOptions);
-                    ChartTheme.polarSeriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.polar, mergeOptions);
-                    });
-                }
-                if (overrides.hierarchy) {
-                    defaults.hierarchy = deepMerge(defaults.hierarchy, overrides.hierarchy, mergeOptions);
-                    ChartTheme.hierarchySeriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.hierarchy, mergeOptions);
-                    });
-                }
-                const seriesOverridesMap: {[key: string]: any} = {};
-                ChartTheme.seriesTypes.forEach(seriesType => {
-                    const chartConfig = overrides[seriesType];
-                    if (chartConfig) {
-                        if (chartConfig.series) {
-                            seriesOverridesMap[seriesType] = chartConfig.series;
-                            chartConfig.series = seriesOverridesMap;
-                        }
-                        defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
+            };
+            applyOverrides('common', Object.keys(defaults) as any[], common);
+            applyOverrides('cartesian', ChartTheme.cartesianSeriesTypes, cartesian);
+            applyOverrides('polar', ChartTheme.polarSeriesTypes, polar);
+            applyOverrides('hierarchy', ChartTheme.hierarchySeriesTypes, hierarchy);
+
+            const seriesOverridesMap: {[key: string]: any} = {};
+            ChartTheme.seriesTypes.forEach(seriesType => {
+                const chartConfig = overrides[seriesType];
+                if (chartConfig) {
+                    if (chartConfig.series) {
+                        seriesOverridesMap[seriesType] = chartConfig.series;
+                        chartConfig.series = seriesOverridesMap;
                     }
-                });
-            }
+                    defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
+                }
+            });
         }
-        this.palette = options && options.palette ? options.palette : this.getPalette();
+        this.palette = palette ?? this.getPalette();
 
         this.config = Object.freeze(defaults);
     }
@@ -587,21 +617,27 @@ export class ChartTheme {
     private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
     private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
     private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
-    private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
+    private static seriesTypes: (keyof AgChartThemeOverrides)[] =
+        ChartTheme.cartesianSeriesTypes
+            .concat(ChartTheme.polarSeriesTypes)
+            .concat(ChartTheme.hierarchySeriesTypes);
 
-    private createChartConfigPerSeries(config: any) {
-        const typeToAliases: { [key in string]: string[] } = {
+    private createChartConfigPerSeries(config: ChartThemeDefaults) {
+        const typeToAliases = {
             cartesian: ChartTheme.cartesianSeriesTypes,
-            polar: ChartTheme.polarSeriesTypes
+            polar: ChartTheme.polarSeriesTypes,
+            hierarchy: ChartTheme.hierarchySeriesTypes,
+            groupedCategory: [],
         };
-        for (const type in typeToAliases) {
-            typeToAliases[type].forEach(alias => {
-                if (!config[alias]) {
-                    config[alias] = deepMerge({}, config[type], mergeOptions);
+        Object.entries(typeToAliases).forEach(([type, aliases]) => {
+            aliases.forEach((alias) => {
+                if (!config[alias as keyof ChartThemeDefaults]) {
+                    config[alias as keyof ChartThemeDefaults] = deepMerge({}, config[type as keyof ChartThemeDefaults], mergeOptions);
                 }
             });
-        }
-        return config;
+        });
+
+        return config as AgChartThemeOverrides;
     }
 
     getConfig<T = any>(path: string, defaultValue?: T): T {
@@ -624,69 +660,14 @@ export class ChartTheme {
      *     }
      * ```
      */
-    protected getDefaults(): any {
+    protected getDefaults(): ChartThemeDefaults {
         return deepMerge({}, ChartTheme.defaults, mergeOptions);
     }
 
-    protected mergeWithParentDefaults(defaults: any): any {
-        const proto = Object.getPrototypeOf(Object.getPrototypeOf(this));
-
-        if (proto === Object.prototype) {
-            let config: any = deepMerge({}, ChartTheme.defaults, mergeOptions);
-            config = deepMerge(config, defaults, mergeOptions);
-            return config;
-        }
-
-        const parentDefaults = proto.getDefaults();
+    protected mergeWithParentDefaults(
+        parentDefaults: ChartThemeDefaults,
+        defaults: ChartThemeDefaults,
+    ): ChartThemeDefaults {
         return deepMerge(parentDefaults, defaults, mergeOptions);
-    }
-
-    setSeriesColors(series: Series, seriesOptions: any, firstColorIndex: number): number {
-        const { palette } = this;
-        const colorCount = this.getSeriesColorCount(seriesOptions);
-
-        if (colorCount === Infinity || colorCount === 0) {
-            series.setColors(palette.fills, palette.strokes);
-        } else {
-            const fills = copy(palette.fills, firstColorIndex, colorCount);
-            const strokes = copy(palette.strokes, firstColorIndex, colorCount);
-            series.setColors(fills, strokes);
-            firstColorIndex += colorCount;
-        }
-        return firstColorIndex;
-    }
-
-    private getYKeyCount(yKeys?: string[] | string[][]): number {
-        if (!Array.isArray(yKeys)) {
-            return 0;
-        }
-        let count = 0;
-        yKeys.forEach((key: string | string[]) => {
-            if (Array.isArray(key)) {
-                count += key.length;
-            } else {
-                count += 1;
-            }
-        });
-        return count;
-    }
-
-    /**
-     * This would typically correspond to the number of dependent variables the series plots.
-     * If the color count is not fixed, for example it's data-dependent with one color per data point,
-     * return Infinity to fetch all unique colors and manage them in the series.
-     */
-    getSeriesColorCount(seriesOptions: any): number {
-        const type = seriesOptions.type;
-        switch (type) {
-            case 'bar':
-            case 'column':
-            case 'area':
-                return this.getYKeyCount(seriesOptions.yKeys);
-            case 'pie':
-                return Infinity;
-            default:
-                return 1;
-        }
     }
 }
