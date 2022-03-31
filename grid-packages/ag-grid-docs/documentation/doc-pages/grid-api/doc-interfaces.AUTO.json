@@ -843,8 +843,8 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockPosition": {
-      "description": "/** Set to `true` to always have this column displayed first. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
+      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */",
+      "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "suppressMovable": {
       "description": "/** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */",
@@ -20764,8 +20764,8 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockPosition": {
-      "description": "/** Set to `true` to always have this column displayed first. Default: `false` */",
-      "type": { "returnType": "boolean", "optional": true }
+      "description": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. true is treated as `'left'` */",
+      "type": { "returnType": "boolean | 'left' | 'right'", "optional": true }
     },
     "suppressMovable": {
       "description": "/** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */",
