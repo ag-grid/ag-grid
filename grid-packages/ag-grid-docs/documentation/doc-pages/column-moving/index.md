@@ -52,7 +52,8 @@ The example below demonstrates these properties as follows:
 - The **Age** column is locked `"left"` as the first column in the scrollable area of the grid. It is not possible to move this column, or have other columns moved over it to impact its position. As a result the **Age** column marks the beginning of the scrollable area regardless of its position within the column definitions.
 - The **Total** column is locked `"right"` and likewise its position can not be impacted by moving other columns.
 - The **Athlete** column has moving suppressed. It is not possible to move this column, but it is possible to move other columns around it.
-- The grid has `suppressDragLeaveHidesColumns=true` so columns dragged outside of the grid are not hidden (normally dragging a column out of the grid will hide the column).
+- The grid has `suppressDragLeaveHidesColumns` set to `true` so columns dragged outside of the grid are not hidden (normally dragging a column out of the grid will hide the column).
+- The `defaultColDef` has `lockPinned` set to `true` so it is not possible to pin columns to the left or right of the locked columns. 
 - The **Age** **Total** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
 
 <grid-example title='Column Suppress & Lock' name='suppress-and-lock' type='generated'></grid-example>

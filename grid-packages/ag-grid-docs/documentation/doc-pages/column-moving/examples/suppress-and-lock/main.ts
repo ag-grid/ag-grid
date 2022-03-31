@@ -1,27 +1,19 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [
-  {
-    field: 'athlete',
-    suppressMovable: true,
-    width: 150,
-    cellClass: 'suppress-movable-col',
-  },
-  { field: 'age', lockPosition: 'left', cellClass: 'locked-col' },
-  { field: 'country', width: 150 },
-  { field: 'year' },
-  { field: 'date' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total', lockPosition: 'right', cellClass: 'locked-col' },
-]
-
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: [
+    {
+      field: 'athlete',
+      suppressMovable: true,
+      cellClass: 'suppress-movable-col',
+    },
+    { field: 'age', lockPosition: 'left', cellClass: 'locked-col' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'total', lockPosition: 'right', cellClass: 'locked-col' },
+  ],
   defaultColDef: {
-    width: 150,
+    flex: 1,
     lockPinned: true, // Dont allow pinning for this example
   },
   suppressDragLeaveHidesColumns: true,
