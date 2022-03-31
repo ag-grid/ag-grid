@@ -478,15 +478,15 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (importType === 'modules') {
-        if (framework === 'angular') {
+        if (type === 'grid' && framework === 'angular') {
             addDependency('@ag-grid-community/angular');
         }
         modules.forEach(m => addDependency(m));
     } else {
-        if (framework === 'angular') {
-            addDependency('ag-grid-angular');
-        }
         if (type === 'grid') {
+            if (framework === 'angular') {
+                addDependency('ag-grid-angular');
+            }
             addDependency('ag-grid-community');
             addDependency('ag-grid-enterprise');
         }
