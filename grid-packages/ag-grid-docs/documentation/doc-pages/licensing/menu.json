@@ -7,7 +7,7 @@
         "matrixExcludeChildren": true,
         "items": [
           {
-            "title": "Tutorial",
+            "title": "Getting Started",
             "url": "/getting-started/",
             "icon": "framework",
             "pane": "left"
@@ -28,6 +28,15 @@
             "pane": "left",
             "frameworks": [
               "react"
+            ]
+          },{
+            "title": "Video Tutorial",
+            "url": "{video-tutorial}",
+            "icon": "youtube",
+            "menuHide": true,
+            "pane": "left",
+            "frameworks": [
+              "javascript","angular","vue"
             ]
           },
           {

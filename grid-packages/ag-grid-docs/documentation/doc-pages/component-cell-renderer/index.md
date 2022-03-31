@@ -2,7 +2,13 @@
 title: "Cell Renderer"
 ---
 
-By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
+[[only-javascript-or-angular-or-vue]]
+|By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
+
+[[only-react]]
+|<video-section id="9IbhW4z--mg" title="React Custom Filters" header="true">
+|By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
+|</video-section>
 
 ## Simple Cell Renderer
 

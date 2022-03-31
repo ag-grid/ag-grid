@@ -2,7 +2,15 @@
 title: "Column Filter"
 ---
 
-Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
+[[only-javascript-or-angular-or-vue]]
+|Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
+
+[[only-react]]
+|<video-section id="pebXUHUdlos" title="React Custom Filters" header="true">
+|Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
+|</video-section>
+
+
 
 Column filters are accessed in the grid UI either through the [Column Menu](/column-menu/) or the [Tool Panel](/tool-panel/).
 

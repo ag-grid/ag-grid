@@ -116,10 +116,9 @@ const VideoPanel = ({framework}) => {
     return (
         <div className={styles['docs-home__video-panel']}>
             <h2 className={styles['docs-home__video-panel__title']}>
-                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Featured Videos
+                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Learning Videos
             </h2>
             <h4 className={styles['docs-home__video-panel__title__subtitle']}>
-                Some text Some text Some text Some text Some text Some text Some text Some text
             </h4>
             <div className={styles['docs-home__video-panel__videos']}>
                 {featuredVideos.map(featuredVideo => (

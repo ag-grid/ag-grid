@@ -3,9 +3,12 @@ title: "Rendering"
 frameworks: ["react"]
 ---
 
+<video-section id="oAQ5vavDupU" title="React Rendering" header="true">
 When using AG Grid React, all of the grid's core rendering (headers, rows, cells etc) is rendered using React.
-
 AG Grid React shares the same 'business logic layer' as the other AG Grid versions (Angular, Vue, or just JavaScript) frameworks. This means the features of AG Grid React are identical to the features in AG Grid's other framework flavours. However because the rendering is done 100% in React, the grid works as a native React Component.
+</video-section>
+
+
 
 The remainder of this page takes a deeper look at the grid's React rendering, including React Render Cycles and also React Developer Tools.
 
