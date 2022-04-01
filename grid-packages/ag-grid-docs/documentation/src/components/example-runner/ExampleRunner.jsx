@@ -186,8 +186,8 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     useVue3={useVue3}
                     onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
             }
-            {exampleInfo.framework === 'javascript' && (isGenerated || type === 'multi') &&
-                (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript') &&
+            {(exampleInfo.framework === 'javascript' || exampleInfo.framework === 'react') && (isGenerated || type === 'multi') &&
+                (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript' || exampleInfo.framework === 'react') &&
                 <TypscriptStyleSelector
                     useTypescript={useTypescript}
                     onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />

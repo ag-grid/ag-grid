@@ -18,15 +18,18 @@ import isDevelopment from 'utils/is-development';
  * - 'vue3' (Vue 3)
  */
 const getInternalFramework = (framework, useFunctionalReact, useVue3, useTypescript) => {
-    if (framework === 'javascript') {
-        return useTypescript ? 'typescript' : 'vanilla';
-    } else if (framework === 'react' && useFunctionalReact) {
-        return 'reactFunctional';
-    } else if (framework === 'vue' && useVue3) {
-        return 'vue3'
+    switch (framework) {
+        case 'vue':
+            return useVue3 ? 'vue3' : 'vue';
+        case 'javascript':
+            return useTypescript ? 'typescript' : 'vanilla';
+        case 'react':
+            return useFunctionalReact
+                ? useTypescript ? 'reactFunctionalTs' : 'reactFunctional'
+                : 'react';
+        default:
+            return framework;
     }
-
-    return framework;
 };
 
 export const getExampleInfo = (
@@ -49,12 +52,22 @@ export const getExampleInfo = (
     }
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3, useTypescript);
-    const boilerPlateFramework =
-        framework === 'vue' ?
-            useVue3 ? 'vue3' : 'vue' :
-            framework === 'javascript' ?
-                useTypescript ? 'typescript' : 'javascript' :
-                framework;
+
+    let boilerPlateFramework;
+    switch (framework) {
+        case 'vue':
+            boilerPlateFramework = useVue3 ? 'vue3' : 'vue';
+            break;
+        case 'javascript':
+            boilerPlateFramework = useTypescript ? 'typescript' : 'javascript';
+            break;
+        case 'react':
+            boilerPlateFramework = useTypescript ? 'react-ts' : 'react';
+            break;
+        default:
+            boilerPlateFramework = framework;
+    }
+
     const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
@@ -236,7 +249,7 @@ export const getCssFilePaths = theme => {
 
 export const getEntryFile = (framework, internalFramework) => {
     const entryFile = {
-        'react': 'index.jsx',
+        'react': internalFramework === 'reactFunctionalTs' ? 'index.tsx' : 'index.jsx',
         'angular': 'app/app.component.ts',
         'javascript': internalFramework === 'typescript' ? 'main.ts' : 'main.js'
     };

@@ -45,7 +45,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         appLocation,
         options,
         styleFiles,
-        importType
+        importType,
+        internalFramework
     };
 
     switch (framework) {
