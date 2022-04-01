@@ -337,6 +337,7 @@ export abstract class Sparkline extends Observable {
         this.tooltip.toggle(false);
     }
 
+    protected smallestInterval?: { x: number, y: number } = undefined;
     // Fetch required values from the data object and process them.
     private processData() {
         const { data, yData, xData } = this;
@@ -356,6 +357,22 @@ export abstract class Sparkline extends Observable {
         const { type: xValueType } = this.axis;
         const xType = xValueType !== 'number' && xValueType !== 'time' ? 'category' : xValueType;
 
+        const isContinuousX = xType === 'number' || xType === 'time';
+
+        const setSmallestXInterval = (curr: number, prev: number) => {
+            if (this.smallestInterval == undefined) {
+                this.smallestInterval = { x: Infinity, y: Infinity };
+            }
+            const { x } = this.smallestInterval;
+
+            const interval = Math.abs(curr - prev);
+            if (interval > 0 && interval < x ) {
+                this.smallestInterval.x = interval;
+            }
+        }
+
+        let prevX;
+
         if (dataType === 'number') {
             for (let i = 0; i < n; i++) {
                 const xDatum = i;
@@ -364,8 +381,14 @@ export abstract class Sparkline extends Observable {
                 const x = this.getDatum(xDatum, xType);
                 const y = this.getDatum(yDatum, 'number');
 
+                if (isContinuousX) {
+                    setSmallestXInterval(x, prevX);
+                }
+
                 xData.push(x);
                 yData.push(y);
+
+                prevX = x;
             }
         } else if (dataType === 'array') {
             for (let i = 0; i < n; i++) {
@@ -381,8 +404,14 @@ export abstract class Sparkline extends Observable {
                         continue;
                     }
 
+                    if (isContinuousX) {
+                        setSmallestXInterval(x, prevX);
+                    }
+
                     xData.push(x);
                     yData.push(y);
+
+                    prevX = x;
                 }
             }
         } else if (dataType === 'object') {
@@ -402,8 +431,14 @@ export abstract class Sparkline extends Observable {
                         continue;
                     }
 
+                    if (isContinuousX) {
+                        setSmallestXInterval(x, prevX);
+                    }
+
                     xData.push(x);
                     yData.push(y);
+
+                    prevX = x;
                 }
             }
         }
