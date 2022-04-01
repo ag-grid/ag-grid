@@ -179,15 +179,32 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
                 <ReactStyleSelector
                     useFunctionalReact={useFunctionalReact}
-                    onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
+                    useTypescript={useTypescript}
+                    onChange={event => {
+                        console.log(' react selecrot', event.target.value)
+                        switch (event.target.value) {
+                            case 'classes':
+                                set({ useFunctionalReact: false, useTypescript: false });
+                                break;
+                            case 'hooks':
+                                set({ useFunctionalReact: true, useTypescript: false });
+                                break;
+                            case 'hooksTs':
+                                set({ useFunctionalReact: true, useTypescript: true });
+                                break;
+                            default:
+                                set({ useFunctionalReact: true, useTypescript: true });
+                                break;
+                        }
+                    }} />
             }
             {enableVue3 && exampleInfo.framework === 'vue' &&
                 <VueStyleSelector
                     useVue3={useVue3}
                     onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
             }
-            {(exampleInfo.framework === 'javascript' || exampleInfo.framework === 'react') && (isGenerated || type === 'multi') &&
-                (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript' || exampleInfo.framework === 'react') &&
+            {(exampleInfo.framework === 'javascript') && (isGenerated || type === 'multi') &&
+                (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript') &&
                 <TypscriptStyleSelector
                     useTypescript={useTypescript}
                     onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
@@ -263,13 +280,14 @@ const ImportTypeSelector = ({ importType, onChange, framework }) => {
     </div>;
 };
 
-const ReactStyleSelector = ({ useFunctionalReact, onChange }) => {
+const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => {
     return <div className={styles['example-runner__react-style']}>
         {!isServerSideRendering() &&
-            <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)}
+            <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
                 onChange={onChange} onBlur={onChange}>
-                <option value="false">Classes</option>
-                <option value="true">Hooks</option>
+                <option value="classes">Classes</option>
+                <option value="hooks">Hooks</option>
+                <option value="hooksTs">Hooks Tsx</option>
             </select>}
     </div>;
 };
