@@ -118,7 +118,7 @@ function suppressNavigation(params: SuppressKeyboardEventParams) {
   return suppress
 }
 
-function suppressUpDownNavigation(params: SuppressHeaderKeyboardEventParams) {
+function suppressUpDownNavigation(params: SuppressHeaderKeyboardEventParams): boolean {
   var key = params.event.key
 
   return key === 'ArrowUp' || key === 'ArrowDown'

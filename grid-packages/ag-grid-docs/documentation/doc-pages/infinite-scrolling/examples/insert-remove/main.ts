@@ -6,15 +6,16 @@ import {
     IDatasource,
     IGetRowsParams,
     RowClassParams,
+    RowStyle,
     ValueFormatterParams
 } from '@ag-grid-community/core'
 
 const valueFormatter = function (params: ValueFormatterParams) {
-  if (typeof params.value === 'number') {
-    return '£' + params.value.toLocaleString()
-  } else {
-    return params.value
-  }
+    if (typeof params.value === 'number') {
+        return '£' + params.value.toLocaleString()
+    } else {
+        return params.value
+    }
 };
 const columnDefs: ColDef[] = [
     {
@@ -29,8 +30,8 @@ const columnDefs: ColDef[] = [
             }
         },
     },
-    {field: 'make'},
-    {field: 'model'},
+    { field: 'make' },
+    { field: 'model' },
     {
         field: 'price',
         valueFormatter: valueFormatter,
@@ -38,30 +39,30 @@ const columnDefs: ColDef[] = [
 ]
 
 const datasource: IDatasource = {
-  rowCount: undefined, // behave as infinite scroll
-  getRows: function (params: IGetRowsParams) {
-    console.log('asking for ' + params.startRow + ' to ' + params.endRow)
-    // At this point in your code, you would call the server.
-    // To make the demo look real, wait for 500ms before returning
-    setTimeout(function () {
-      // take a slice of the total rows
-      const rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
-      // make a copy of each row - this is what would happen if taking data from server
-      for (let i = 0; i < rowsThisPage.length; i++) {
-        const item = rowsThisPage[i];
-        // this is a trick to copy an object
-        const itemCopy = JSON.parse(JSON.stringify(item));
-        rowsThisPage[i] = itemCopy
-      }
-      // if on or after the last page, work out the last row.
-      let lastRow = -1;
-      if (allOfTheData.length <= params.endRow) {
-        lastRow = allOfTheData.length
-      }
-      // call the success callback
-      params.successCallback(rowsThisPage, lastRow)
-    }, 500)
-  },
+    rowCount: undefined, // behave as infinite scroll
+    getRows: function (params: IGetRowsParams) {
+        console.log('asking for ' + params.startRow + ' to ' + params.endRow)
+        // At this point in your code, you would call the server.
+        // To make the demo look real, wait for 500ms before returning
+        setTimeout(function () {
+            // take a slice of the total rows
+            const rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
+            // make a copy of each row - this is what would happen if taking data from server
+            for (let i = 0; i < rowsThisPage.length; i++) {
+                const item = rowsThisPage[i];
+                // this is a trick to copy an object
+                const itemCopy = JSON.parse(JSON.stringify(item));
+                rowsThisPage[i] = itemCopy
+            }
+            // if on or after the last page, work out the last row.
+            let lastRow = -1;
+            if (allOfTheData.length <= params.endRow) {
+                lastRow = allOfTheData.length
+            }
+            // call the success callback
+            params.successCallback(rowsThisPage, lastRow)
+        }, 500)
+    },
 };
 
 const gridOptions: GridOptions = {
@@ -93,7 +94,7 @@ const gridOptions: GridOptions = {
         params.api.sizeColumnsToFit()
     },
 
-    getRowStyle: function (params: RowClassParams) {
+    getRowStyle: function (params: RowClassParams): RowStyle | undefined {
         if (params.data && params.data.make === 'Honda') {
             return {
                 fontWeight: 'bold',
@@ -109,17 +110,17 @@ var sequenceId = 0
 var allOfTheData: any[] = []
 
 function createRowData(id: number) {
-  const makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
-  const models = [
-    'Cruze',
-    'Celica',
-    'Mondeo',
-    'Boxter',
-    'Genesis',
-    'Accord',
-    'Taurus',
-  ];
-  return {
+    const makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
+    const models = [
+        'Cruze',
+        'Celica',
+        'Mondeo',
+        'Boxter',
+        'Genesis',
+        'Accord',
+        'Taurus',
+    ];
+    return {
         id: id,
         make: makes[id % makes.length],
         model: models[id % models.length],
@@ -137,10 +138,10 @@ function insertItemsAt2AndRefresh(count: number) {
     // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
     // refreshVirtualPageCache() method, as this would be assuming you want to do it which
     // is not true, maybe the row count is constant and you just want to refresh the details.
-  const maxRowFound = gridOptions.api!.isLastRowIndexKnown();
-  if (maxRowFound) {
-      const rowCount = gridOptions.api!.getInfiniteRowCount() || 0;
-      gridOptions.api!.setRowCount(rowCount + count)
+    const maxRowFound = gridOptions.api!.isLastRowIndexKnown();
+    if (maxRowFound) {
+        const rowCount = gridOptions.api!.getInfiniteRowCount() || 0;
+        gridOptions.api!.setRowCount(rowCount + count)
     }
 
     // get grid to refresh the data
@@ -148,10 +149,10 @@ function insertItemsAt2AndRefresh(count: number) {
 }
 
 function insertItemsAt2(count: number) {
-  const newDataItems = [];
-  for (let i = 0; i < count; i++) {
-      const newItem = createRowData(sequenceId++);
-      allOfTheData.splice(2, 0, newItem)
+    const newDataItems = [];
+    for (let i = 0; i < count; i++) {
+        const newItem = createRowData(sequenceId++);
+        allOfTheData.splice(2, 0, newItem)
         newDataItems.push(newItem)
     }
     return newDataItems
@@ -213,6 +214,6 @@ function jumpTo500() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    new Grid(gridDiv, gridOptions)
 })

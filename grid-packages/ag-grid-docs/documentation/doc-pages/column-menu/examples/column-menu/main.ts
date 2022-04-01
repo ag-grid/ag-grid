@@ -52,7 +52,7 @@ const gridOptions: GridOptions = {
   },
 }
 
-function getMainMenuItems(params: GetMainMenuItemsParams) {
+function getMainMenuItems(params: GetMainMenuItemsParams): (string | MenuItemDef)[] {
   // you don't need to switch, we switch below to just demonstrate some different options
   // you have on how to build up the menu to return
   switch (params.column.getId()) {

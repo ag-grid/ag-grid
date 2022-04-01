@@ -245,7 +245,7 @@ const gridOptions: GridOptions = {
     getContextMenuItems: getContextMenuItems,
 }
 
-function getContextMenuItems(params: GetContextMenuItemsParams) {
+function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuItemDef)[] {
     const result: (string | MenuItemDef)[] = params.defaultItems!.splice(0);
     result.push({
         name: 'Custom Menu Item',

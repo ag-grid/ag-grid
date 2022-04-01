@@ -1,4 +1,4 @@
-import { Grid, GridOptions, NavigateToNextCellParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, NavigateToNextCellParams, CellPosition } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   navigateToNextCell: navigateToNextCell,
 }
 
-function navigateToNextCell(params: NavigateToNextCellParams) {
+function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | null) {
   var suggestedNextCell = params.nextCellPosition
 
   var KEY_UP = 'ArrowUp'

@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 280,
   },
-  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams) {
+  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams): ServerSideStoreParams {
     var res: ServerSideStoreParams = {
       storeType: params.level == 0 ? 'partial' : 'full',
     }

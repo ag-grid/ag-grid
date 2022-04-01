@@ -1,4 +1,4 @@
-import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, GridOptions, ValueParserParams, ChartMenuOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -140,7 +140,7 @@ function numberValueParser(params: ValueParserParams) {
   return res
 }
 
-function getChartToolbarItems(params: GetChartToolbarItemsParams) {
+function getChartToolbarItems(params: GetChartToolbarItemsParams): ChartMenuOptions[] {
   return []
 }
 

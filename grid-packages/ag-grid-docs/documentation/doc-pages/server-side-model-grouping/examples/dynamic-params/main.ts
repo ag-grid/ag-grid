@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   serverSideStoreType: 'partial',
 
-  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams) {
+  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams): ServerSideStoreParams {
     var noGroupingActive = params.rowGroupColumns.length == 0
     var res: ServerSideStoreParams;
     if (noGroupingActive) {

@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
   processDataFromClipboard: processDataFromClipboard,
 }
 
-function processDataFromClipboard(params: ProcessDataFromClipboardParams) {
+function processDataFromClipboard(params: ProcessDataFromClipboardParams): string[][] | null {
   var containsRed
   var containsYellow
   var data = params.data

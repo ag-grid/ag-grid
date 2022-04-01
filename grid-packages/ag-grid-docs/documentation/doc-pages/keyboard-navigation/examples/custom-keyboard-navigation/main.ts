@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, ColumnGroup, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams, CellPosition } from '@ag-grid-community/core'
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
 }
 
-function navigateToNextHeader(params: NavigateToNextHeaderParams) {
+function navigateToNextHeader(params: NavigateToNextHeaderParams): (HeaderPosition | null) {
   const nextHeader = params.nextHeaderPosition;
 
   if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
@@ -65,7 +65,7 @@ function navigateToNextHeader(params: NavigateToNextHeaderParams) {
   return processedNextHeader === nextHeader ? null : processedNextHeader
 }
 
-function tabToNextHeader(params: TabToNextHeaderParams) {
+function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null) {
   return moveHeaderFocusUpDown(
     params.previousHeaderPosition!,
     params.headerRowCount,
@@ -102,7 +102,7 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
   }
 }
 
-function tabToNextCell(params: TabToNextCellParams) {
+function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
   const previousCell = params.previousCellPosition;
   const lastRowIndex = previousCell.rowIndex;
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
@@ -124,7 +124,7 @@ function tabToNextCell(params: TabToNextCellParams) {
   return result
 }
 
-function navigateToNextCell(params: NavigateToNextCellParams) {
+function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | null) {
   const previousCell = params.previousCellPosition,
     suggestedNextCell = params.nextCellPosition;
   let nextRowIndex,

@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   getRowHeight: getRowHeight,
 }
 
-function getRowHeight(params: RowHeightParams) {
+function getRowHeight(params: RowHeightParams): number | undefined | null {
   return params.data.rowHeight
 }
 

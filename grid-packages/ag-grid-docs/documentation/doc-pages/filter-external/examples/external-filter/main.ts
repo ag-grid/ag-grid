@@ -47,12 +47,12 @@ const gridOptions: GridOptions = {
 
 var ageType = 'everyone'
 
-function isExternalFilterPresent() {
+function isExternalFilterPresent(): boolean {
   // if ageType is not everyone, then we are filtering
   return ageType !== 'everyone'
 }
 
-function doesExternalFilterPass(node: RowNode) {
+function doesExternalFilterPass(node: RowNode): boolean {
   switch (ageType) {
     case 'below25':
       return node.data.age < 25

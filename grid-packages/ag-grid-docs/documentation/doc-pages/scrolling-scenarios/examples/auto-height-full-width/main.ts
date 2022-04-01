@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
     domLayout: 'autoHeight',
 }
 
-function isFullWidthRow(params: IsFullWidthRowParams) {
+function isFullWidthRow(params: IsFullWidthRowParams): boolean {
     return params.rowNode.data.fullWidth
 }
 

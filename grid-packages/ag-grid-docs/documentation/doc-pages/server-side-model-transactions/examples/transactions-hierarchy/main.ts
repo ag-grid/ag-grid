@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams, ServerSideStoreParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'productName', rowGroup: true, hide: true },
@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
 
     params.api.setServerSideDatasource(dataSource)
   },
-  getServerSideStoreParams: function (params) {
+  getServerSideStoreParams: function (params): ServerSideStoreParams {
     const type = params.level == 0 ? 'partial' : 'full'
     return {
       storeType: type,

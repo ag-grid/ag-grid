@@ -1,4 +1,4 @@
-import { Grid, ChartType, ColDef, CreateRangeChartParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from '@ag-grid-community/core'
+import { Grid, ChartType, ColDef, CreateRangeChartParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, ChartMenuOptions } from '@ag-grid-community/core'
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [
@@ -102,7 +102,7 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  getChartToolbarItems: function () {
+  getChartToolbarItems: function (): ChartMenuOptions[] {
     return [] // hide toolbar items
   },
 }
