@@ -144,9 +144,8 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
 }
 
 export function toMatchImage(actual, expected) {
-    const {
-        testPath, currentTestName, isNot, snapshotState,
-    } = this;
+    // Grab values from enclosing Jest scope.
+    const { testPath, currentTestName } = this;
 
     const width = CANVAS_WIDTH;
     const height = CANVAS_HEIGHT;
