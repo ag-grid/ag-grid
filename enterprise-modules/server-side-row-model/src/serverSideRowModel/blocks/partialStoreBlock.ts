@@ -322,6 +322,7 @@ export class PartialStoreBlock extends RowNodeBlock {
         this.storeUtils.loadFromDatasource({
             startRow: this.startRow,
             endRow: this.startRow + this.storeParams.cacheBlockSize!,
+            parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),

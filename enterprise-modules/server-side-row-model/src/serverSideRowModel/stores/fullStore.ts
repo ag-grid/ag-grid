@@ -144,6 +144,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.storeUtils.loadFromDatasource({
             startRow: undefined,
             endRow: undefined,
+            parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),

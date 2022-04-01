@@ -10,7 +10,8 @@ import {
     IServerSideGetRowsRequest,
     StoreRefreshAfterParams,
     RowNode,
-    ColumnVO
+    ColumnVO,
+    RowNodeBlock
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 
@@ -23,6 +24,7 @@ export class StoreUtils extends BeanStub {
     public loadFromDatasource(p: {
         storeParams: SSRMParams,
         parentNode: RowNode,
+        parentBlock: RowNodeBlock,
         successCallback: () => void,
         failCallback: () => void,
         success: () => void,
@@ -30,8 +32,8 @@ export class StoreUtils extends BeanStub {
         startRow?: number,
         endRow?: number}
     ): void {
-        const groupKeys = p.parentNode.getGroupKeys();
-        const { storeParams } = p;
+        const { storeParams, parentBlock, parentNode } = p;
+        const groupKeys = parentNode.getGroupKeys();
 
         if (!storeParams.datasource) { return; }
 
@@ -59,9 +61,12 @@ export class StoreUtils extends BeanStub {
         } as IServerSideGetRowsParams;
 
         window.setTimeout(() => {
-            if (storeParams.datasource) {
-                storeParams.datasource.getRows(getRowsParams);
+            if (!storeParams.datasource || !parentBlock.isAlive()) {
+                // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
+                p.failCallback();
+                return;
             }
+            storeParams.datasource.getRows(getRowsParams);
         }, 0);
     }
 
