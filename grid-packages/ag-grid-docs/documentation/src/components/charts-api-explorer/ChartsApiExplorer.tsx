@@ -100,7 +100,7 @@ const createOptionsJson = (chartType, options) => {
  * settings and see how they affect the appearance of the chart, and it will generate the code they would need to use in
  * the framework of their choice.
  */
-export const ChartsApiExplorer = ({ framework }) => {
+export const ChartsApiExplorer = ({ framework, jsonData }) => {
     const [chartType, setChartType] = useState('bar');
     const [options, setOptions] = useState({});
     const [defaults, setDefaults] = useState({});
@@ -173,6 +173,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                     <div className={styles['explorer-container__options']}>
                         <Options
                             chartType={chartType}
+                            jsonData={jsonData}
                             axisType={'number'}
                             updateOption={updateOption}
                         />

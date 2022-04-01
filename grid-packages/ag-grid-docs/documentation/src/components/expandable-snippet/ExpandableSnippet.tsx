@@ -34,7 +34,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     breadcrumbs = [],
     config,
 }) => {
-    const { interfaceLookup, codeLookup } = loadLookups(jsonData, overridesrc);
+    const { interfaceLookup, codeLookup } = loadLookups(jsonData!, overridesrc);
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
