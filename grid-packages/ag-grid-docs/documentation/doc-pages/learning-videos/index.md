@@ -10,7 +10,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=Pr__B6HM_s4" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="Getting Started with AG Grid Community"/>
 | </a>
 | </div>
@@ -33,7 +33,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=pKUhYE1VTP4" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=pKUhYE1VTP4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="Getting Started with AG Grid Enterprise"/>
 | </a>
 | </div>
@@ -53,7 +53,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=9IbhW4z--mg" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="React Cell Renderers"/>
 | </a>
 | </div>
@@ -75,7 +75,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=oAQ5vavDupU" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="React Rendering"/>
 | </a>
 | </div>
@@ -96,7 +96,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=pebXUHUdlos" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="Column Filters"/>
 | </a>
 | </div>
@@ -119,7 +119,7 @@ title: "Learning Videos"
 |
 | <div style="display: flex;">
 | <div style="width: 320px">
-| <a href="https://www.youtube.com/watch?v=yO3_nTyDv6o" target="_blank" >
+| <a href="https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank" >
 |   <img src="resources/AgGridVideo.png" alt="Custom Column Filters"/>
 | </a>
 | </div>
