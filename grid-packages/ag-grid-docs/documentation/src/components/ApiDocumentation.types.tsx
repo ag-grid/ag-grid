@@ -197,6 +197,7 @@ export type FunctionCode = {
 export interface ApiProps {
     pageName?: string;
     framework?: string;
+    jsonData?: object;
     source?: string;
     sources?: string[];
     section?: string;

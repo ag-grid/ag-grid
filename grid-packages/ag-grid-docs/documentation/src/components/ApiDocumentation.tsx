@@ -12,7 +12,7 @@ import { useJsonFileNodes } from './use-json-file-nodes';
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", exclude = "", config = {} }): any => {
+export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, jsonData, overridesrc, names = "", exclude = "", config = {} }): any => {
     const nodes = useJsonFileNodes();
     let codeSrcProvided = [interfacename];
     let namesArr = [];
@@ -23,8 +23,8 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         config = { overrideBottomMargin: "1rem", ...config, };
     }
 
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
-    const codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/doc-interfaces.AUTO.json');
+    const interfaceLookup = getJsonFromFile(jsonData, nodes, undefined, 'grid-api/interfaces.AUTO.json');
+    const codeLookup = getJsonFromFile(jsonData, nodes, undefined, 'grid-api/doc-interfaces.AUTO.json');
 
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
     let hideHeader = true;
@@ -50,7 +50,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     let overrides = {};
     let interfaceOverrides = {};
     if (overridesrc) {
-        overrides = getJsonFromFile(nodes, undefined, overridesrc);
+        overrides = getJsonFromFile(jsonData, nodes, undefined, overridesrc);
         interfaceOverrides = overrides[interfacename];
         if (!interfaceOverrides) {
             throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);
@@ -108,7 +108,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = {} as Config }): any => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, jsonData, source, sources, section, names = "", config = {} as Config }): any => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -125,7 +125,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         config = { hideMore: true, overrideBottomMargin: "1rem", ...config, };
     }
 
-    const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
+    const propertiesFromFiles = sources.map(s => getJsonFromFile(jsonData, nodes, pageName, s));
 
 
     const configs = propertiesFromFiles.map(p => p['_config_']);
@@ -140,14 +140,14 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         }
         if (c.codeSrc) {
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
-            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
+            codeLookup = { ...codeLookup, ...getJsonFromFile(jsonData, nodes, undefined, c.codeSrc) };
         }
 
         if (c.suppressMissingPropCheck) {
             config = { ...config, suppressMissingPropCheck: true }
         }
     })
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+    const interfaceLookup = getJsonFromFile(jsonData, nodes, undefined, 'grid-api/interfaces.AUTO.json');
     const lookups = { codeLookup, interfaces: interfaceLookup };
     config = { ...config, lookups, codeSrcProvided }
 
@@ -634,11 +634,11 @@ const getInterfacesToWrite = (name, definition, config) => {
     return interfacesToWrite;
 };
 
-const getJsonFromFile = (nodes, pageName, source) => {
+const getJsonFromFile = (jsonData, nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
 
     if (json) {
-        return JSON.parse(json.internal.content);
+        return {...jsonData[json.relativePath]};
     }
 
     throw new Error(`Could not find JSON for source ${source}`);

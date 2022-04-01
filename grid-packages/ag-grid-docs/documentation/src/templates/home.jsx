@@ -8,7 +8,6 @@ import styles from './home.module.scss';
 import ReactPlayer from 'react-player'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
-import {phpPrefix} from "../utils/consts";
 import featuredVideos from './featuredVideos.json';
 
 const flatRenderItems = (items, framework) => {
