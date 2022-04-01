@@ -299,7 +299,7 @@ export class ColumnFactory extends BeanStub {
         return column;
     }
 
-    private applyColumnState(column: Column, colDef: ColDef): void {
+    public applyColumnState(column: Column, colDef: ColDef): void {
         // flex
         const flex = attrToNumber(colDef.flex);
         if (flex !== undefined) {

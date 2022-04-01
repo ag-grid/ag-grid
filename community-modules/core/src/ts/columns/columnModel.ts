@@ -3847,7 +3847,8 @@ export class ColumnModel extends BeanStub {
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
 
         if (needAutoColumns) {
-            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            const existingCols = this.groupAutoColumns || [];
+            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(existingCols, this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate when suppressColumnStateEvents changes, so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.

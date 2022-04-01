@@ -16,7 +16,7 @@ export class AutoGroupColService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
-    public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
+    public createAutoGroupColumns(existingCols: Column[], rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
         const doingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -31,17 +31,17 @@ export class AutoGroupColService extends BeanStub {
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
+                groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols, rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn());
+            groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols));
         }
 
         return groupAutoColumns;
     }
 
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
-    private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
+    private createOneAutoGroupColumn(existingCols: Column[], rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol);
         // if doing multi, set the field
@@ -74,9 +74,16 @@ export class AutoGroupColService extends BeanStub {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
+        const existingCol = existingCols.find( col => col.getId()==colId );
+
+        if (existingCol) {
+            existingCol.setColDef(defaultAutoColDef, null);
+            this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
+            return existingCol;
+        }
+
         const newCol = new Column(defaultAutoColDef, null, colId, true);
         this.context.createBean(newCol);
-
         return newCol;
     }
 
