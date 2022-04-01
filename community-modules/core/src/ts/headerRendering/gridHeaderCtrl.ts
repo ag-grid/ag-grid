@@ -69,17 +69,17 @@ export class GridHeaderCtrl extends BeanStub {
         let groupHeight: number | null | undefined;
         let headerHeight: number | null | undefined;
 
+        const hasFloatingFilters = columnModel.hasFloatingFilters();
+
+        if (hasFloatingFilters) {
+            headerRowCount++;
+            numberOfFloating = 1;
+        }
+
         if (columnModel.isPivotMode()) {
             groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
         } else {
-            const hasFloatingFilters = columnModel.hasFloatingFilters();
-
-            if (hasFloatingFilters) {
-                headerRowCount++;
-                numberOfFloating = 1;
-            }
-
             groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
             headerHeight = gridOptionsWrapper.getHeaderHeight();
         }

@@ -271,7 +271,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
         const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
-        return this.primary && filterDefined;
+        return filterDefined;
     }
 
     public isFieldContainsDots(): boolean {

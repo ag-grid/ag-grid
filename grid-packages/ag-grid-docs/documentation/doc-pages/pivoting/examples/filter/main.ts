@@ -2,10 +2,10 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', pivot: true, enablePivot: true },
+    { field: 'country', rowGroup: true, enableRowGroup: true },
     { field: 'year' },
     { field: 'date' },
-    { field: 'sport' },
+    { field: 'sport', pivot: true, enablePivot: true },
     { field: 'gold', aggFunc: 'sum' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },
@@ -17,8 +17,12 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
   },
+  processSecondaryColDef: (colDef) => {
+    colDef.filter = 'agNumberColumnFilter';
+    colDef.floatingFilter = true;
+  },
   pivotMode: true,
-  sideBar: true,
+  sideBar: 'filters',
 }
 
 function setTitle(title: string) {

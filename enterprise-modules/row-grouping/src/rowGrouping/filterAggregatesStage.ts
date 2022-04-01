@@ -17,14 +17,21 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
     @Autowired('filterManager') private filterManager: FilterManager;
 
     public execute(params: StageExecuteParams): void {
+        const isPivotMode = !!this.gridOptionsWrapper.getColumnApi()?.isPivotMode();
         const filterActive = this.filterManager.isAdvancedAggregateFilterPresent();
         const defaultApplyToLeafPredicate = (params: { node: RowNode }) => !params.node.group;
-        const applyFilterToNode = this.gridOptionsWrapper.getGroupAggFiltering() || defaultApplyToLeafPredicate;
+        const primaryColumnPredicate = this.gridOptionsWrapper.getGroupAggFiltering() || defaultApplyToLeafPredicate;
+        const secondaryColumnPredicate = (params: { node: RowNode }) => params.node.leafGroup;
+        const applyFilterToNode = isPivotMode ? secondaryColumnPredicate : primaryColumnPredicate;
 
         const { rowNode, changedPath } = params;
 
         const preserveFilterStageConfig = (node: RowNode) => {
             node.childrenAfterAggFilter = node.childrenAfterFilter;
+            const childCount = node.childrenAfterAggFilter!.reduce((acc: number, child: RowNode) => (
+                acc + (child.allChildrenCount || 1)
+            ), 0);
+            node.setAllChildrenCount(childCount);
 
             if(node.sibling) {
                 node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;

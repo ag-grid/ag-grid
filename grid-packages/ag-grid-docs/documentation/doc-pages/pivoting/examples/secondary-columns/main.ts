@@ -24,7 +24,6 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 250,
   },
-  sideBar: true,
   pivotMode: true,
 
   // we don't want the grid putting in 'sum' in the headers for us
@@ -32,22 +31,15 @@ const gridOptions: GridOptions = {
 
   // this is a callback that gets called on each column definition
   processSecondaryColDef: function (colDef: ColDef) {
-    // make all the columns upper case
-    colDef.headerName = colDef.headerName!.toUpperCase()
-
-    // the pivot keys are the keys use for the pivot
-    // don't change these, but you can use them for your information
-    // console.log('Pivot Keys:');
-    // console.log(colDef.pivotKeys);
-    // // the value column is the value we are aggregating on
-    // console.log('Pivot Value Keys:');
-    // console.log(colDef.pivotValueColumn);
+    if (colDef.pivotValueColumn?.getId() === 'gold') {
+      colDef.headerName = colDef.headerName?.toUpperCase();
+    }
   },
 
   // this is a callback that gets called on each group definition
   processSecondaryColGroupDef: function (colGroupDef: ColGroupDef) {
-    // for fun, add a css class for 2002    
-    if (colGroupDef.pivotKeys![0] === '2002') {
+    // for fun, add a css class for 2010
+    if (colGroupDef.pivotKeys?.length && colGroupDef.pivotKeys[0] === '2010') {
       colGroupDef.headerClass = 'color-background'
     }
     // put 'year' in front of each group

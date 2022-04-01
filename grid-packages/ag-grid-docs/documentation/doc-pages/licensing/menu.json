@@ -29,7 +29,8 @@
             "frameworks": [
               "react"
             ]
-          },{
+          },
+          {
             "title": "Video Tutorial",
             "url": "{video-tutorial}",
             "icon": "youtube",
@@ -80,6 +81,13 @@
               "vue"
             ],
             "pane": "right"
+          },
+          {
+            "title": "Learning Videos",
+            "url": "/learning-videos/",
+            "frameworks": [
+              "react"
+            ]
           }
         ]
       },
