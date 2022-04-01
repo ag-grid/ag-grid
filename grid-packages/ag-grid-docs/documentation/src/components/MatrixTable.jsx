@@ -21,7 +21,7 @@ const MatrixTable = ({
                          jsonData
                      }) => {
     const nodes = useJsonFileNodes();
-    const file = [...jsonData[nodes.find(node => node.relativePath === src).relativePath]];
+    const file = jsonData[nodes.find(node => node.relativePath === src).relativePath];
     const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);
 
