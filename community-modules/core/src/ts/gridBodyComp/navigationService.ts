@@ -15,7 +15,7 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
-import { doOnce } from "../utils/function";
+import { doOnce, throttle } from "../utils/function";
 import { Constants } from "../constants/constants";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowRenderer } from "../rendering/rowRenderer";
@@ -55,7 +55,11 @@ export class NavigationService extends BeanStub {
 
     private gridBodyCon: GridBodyCtrl;
 
-    private timeLastPageEventProcessed = 0;
+    constructor() {
+        super();
+        this.onPageDown = throttle(this.onPageDown, 100);
+        this.onPageUp = throttle(this.onPageUp, 100);
+    }
 
     @PostConstruct
     private postConstruct(): void {
@@ -122,24 +126,6 @@ export class NavigationService extends BeanStub {
         return processed;
     }
 
-    // the page up/down keys caused a problem, in that if the user
-    // held the page up/down key down, lots of events got generated,
-    // which clogged up the event queue (as they take time to process)
-    // which in turn froze the grid. Logic below makes sure we wait 100ms
-    // between processing the page up/down events, so when user has finger
-    // held down on key, we ignore page up/down events until 100ms has passed,
-    // which effectively empties the queue of page up/down events.
-    private isTimeSinceLastPageEventToRecent(): boolean {
-        const now = new Date().getTime();
-        const diff = now - this.timeLastPageEventProcessed;
-
-        return (diff < 100);
-    }
-
-    private setTimeLastPageEventProcessed(): void {
-        this.timeLastPageEventProcessed = new Date().getTime();
-    }
-
     private navigateTo(navigateParams: NavigateParams): void {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
@@ -165,8 +151,6 @@ export class NavigationService extends BeanStub {
     }
 
     private onPageDown(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
-
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const pixelsInOnePage = this.getViewportHeight();
@@ -177,9 +161,34 @@ export class NavigationService extends BeanStub {
         const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
         let scrollIndex = currentPageBottomRow;
 
-        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
+        const currentCellPixel = currentRowNode?.rowTop || 0;
+
+        let focusIndex: number;
+
+        if (this.columnModel.isAutoRowHeightActive()) {
+            this.navigateTo({
+                scrollIndex,
+                scrollType: 'top',
+                scrollColumn: null,
+                focusIndex: scrollIndex,
+                focusColumn: gridCell.column
+            });
+            setTimeout(() => {
+                focusIndex = this.getNextFocusIndexForAutoHeight(gridCell);
+                this.navigateTo({
+                    scrollIndex,
+                    scrollType: 'top',
+                    scrollColumn: null,
+                    focusIndex: focusIndex,
+                    focusColumn: gridCell.column
+                });
+            }, 50);
+            return;
+        }
+
         const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
+        focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         const pageLastRow = this.paginationProxy.getPageLastRow();
 
@@ -200,13 +209,9 @@ export class NavigationService extends BeanStub {
             focusIndex,
             focusColumn: gridCell.column
         });
-
-        this.setTimeLastPageEventProcessed();
     }
 
     private onPageUp(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
-
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const pixelsInOnePage = this.getViewportHeight();
@@ -217,9 +222,33 @@ export class NavigationService extends BeanStub {
         const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
         let scrollIndex = currentPageTopRow;
 
-        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
-        const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
+        const nextCellPixel = currentRowNode?.rowTop! + currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset;
+        let focusIndex: number;
+
+        if (this.columnModel.isAutoRowHeightActive()) {
+            this.navigateTo({
+                scrollIndex,
+                scrollType: 'bottom',
+                scrollColumn: null,
+                focusIndex: scrollIndex,
+                focusColumn: gridCell.column
+            });
+            setTimeout(() => {
+                focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, true);
+
+                this.navigateTo({
+                    scrollIndex,
+                    scrollType: 'bottom',
+                    scrollColumn: null,
+                    focusIndex: focusIndex,
+                    focusColumn: gridCell.column
+                });
+            }, 50);
+            return;
+        }
+
+        focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         const firstRow = this.paginationProxy.getPageFirstRow();
 
@@ -244,8 +273,30 @@ export class NavigationService extends BeanStub {
             focusIndex,
             focusColumn: gridCell.column
         });
+    }
 
-        this.setTimeLastPageEventProcessed();
+    private getNextFocusIndexForAutoHeight(gridCell: CellPosition, up: boolean = false): number {
+        const step = up ? -1 : 1;
+        const pixelsInOnePage = this.getViewportHeight();
+        const lastRowIndex = this.paginationProxy.getPageLastRow();
+
+        let pixelSum = 0;
+        let currentIndex = gridCell.rowIndex;
+
+        while (currentIndex >= 0 && currentIndex <= lastRowIndex) {
+            const currentCell = this.paginationProxy.getRow(currentIndex);
+
+            if (currentCell) {
+                const currentCellHeight = currentCell.rowHeight ?? 0;
+
+                if (pixelSum + currentCellHeight > pixelsInOnePage) { break; }
+                pixelSum += currentCellHeight;
+            }
+
+            currentIndex += step;
+        }
+
+        return Math.max(0, Math.min(currentIndex, lastRowIndex));
     }
 
     private getViewportHeight(): number {
