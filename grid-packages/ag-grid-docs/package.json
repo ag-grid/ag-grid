@@ -109,6 +109,8 @@
     "@types/jasmine": "^3.4.6",
     "@types/jest": "^25.2.1",
     "@types/node": "12.20.20",
+    "@types/react": "^16.7.0",
+    "@types/react-dom": "^16.7.0",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "@vue/compiler-sfc": "^3.2.26",
@@ -117,6 +119,7 @@
     "ag-grid-angular": "~27.1.0",
     "ag-grid-community": "~27.1.0",
     "ag-grid-enterprise": "~27.1.0",
+    "ag-grid-react": "~27.1.0",
     "ag-grid-testing": "0.0.3",
     "autoprefixer": "^9.6.0",
     "babel-loader": "8.0.5",
@@ -160,6 +163,7 @@
     "raw-loader": "1.0.0",
     "react": "16.7.0",
     "react-dom": "16.7.0",
+    "rimraf": "3.0.2",
     "rxjs": "^6.5.3",
     "sass-loader": "~10.2.0",
     "source-map-loader": "^0.2.4",
@@ -185,7 +189,6 @@
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
-    "zone.js": "^0.10.3",
-    "rimraf": "3.0.2"
+    "zone.js": "^0.10.3"
   }
 }

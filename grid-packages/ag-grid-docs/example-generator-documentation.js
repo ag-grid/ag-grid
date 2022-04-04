@@ -48,6 +48,11 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
 
         const updateImports = (src) => {
+
+            if(destinationFile.endsWith('.tsx')){
+                return '//@ts-nocheck\n' + src;
+            }
+
             if (!forceConversion && !destinationFile.endsWith('.ts')) {
                 return src;
             }
@@ -349,20 +354,20 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 const reactDeclarativeConfigs = new Map();
 
                 if (vanillaToReactFunctionalTs && options.reactFunctional !== false) {
-                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctionalTs.*').length > 0;
-                    const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctionalTs' : 'react';
+                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
+                    const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
 
                     reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
 
                     try {
-                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
+                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.jsx`, ''));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                     } catch (e) {
                         console.error(`Failed to process React Typescript example in ${examplePath}`, e);
                         throw e;
                     }
 
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctionalTs', reactScriptPostfix, reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
+                    importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctionalTs', reactScriptPostfix+'.jsx', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType),undefined, '.tsx'));
                 }
             }
 

@@ -94,13 +94,13 @@ function scrambleAndRefreshTopToBottom() {
     refreshRow(rowNode, api)
   }
 
-  for (i = 0; i < gridOptions.api!.getDisplayedRowCount(); i++) {
-    rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
+  for (i = 0; i < api.getDisplayedRowCount(); i++) {
+    rowNode = api.getDisplayedRowAtIndex(i)!
     refreshRow(rowNode, api)
   }
 
-  for (i = 0; i < gridOptions.api!.getPinnedBottomRowCount(); i++) {
-    rowNode = gridOptions.api!.getPinnedBottomRow(i)!
+  for (i = 0; i < api.getPinnedBottomRowCount(); i++) {
+    rowNode = api.getPinnedBottomRow(i)!
     refreshRow(rowNode, api)
   }
 

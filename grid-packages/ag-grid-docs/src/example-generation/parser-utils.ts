@@ -563,6 +563,16 @@ export function getImport(filename: string) {
     return `import { ${componentName} } from './${componentFileName}';`;
 }
 
+export function getPropertyInterfaces(properties) {
+    let propTypesUsed = [];
+    properties.forEach(prop => {
+        if (prop.typings?.typesToInclude?.length > 0) {
+            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
+        }
+    });
+    return [...new Set(propTypesUsed)];
+}
+
 /**
  *  Add the imports from the parsed file
  * We ignore any component files as those imports are generated for each framework.
