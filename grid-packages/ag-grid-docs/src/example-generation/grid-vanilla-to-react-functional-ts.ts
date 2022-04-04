@@ -126,7 +126,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
-            `const [rowData, setRowData] = useState();`
+            `const [rowData, setRowData] = useState<any[]>();`
         ];
 
         const imports = getImports(bindings, componentFilenames, importType);
@@ -172,7 +172,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
-                    const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState();');
+                    const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState<any[]();');
                     stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState(${property.value});`
                 }
             } else if (property.value === 'true' || property.value === 'false') {
@@ -249,7 +249,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
 
         const gridReady = additionalInReady.length > 0 ? `
-            const onGridReady = useCallback((params) => {
+            const onGridReady = useCallback((params: GridReadyEvent) => {
                 ${additionalInReady.join('\n')}
             }, []);` : '';
 
@@ -264,7 +264,7 @@ ${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 ${bindings.classes.join('\n')}
 
 const GridExample = () => {
-    const gridRef = useRef();
+    const gridRef = useRef<AgGridReact>();
     ${stateProperties.join('\n    ')}
 
 ${gridReady}
