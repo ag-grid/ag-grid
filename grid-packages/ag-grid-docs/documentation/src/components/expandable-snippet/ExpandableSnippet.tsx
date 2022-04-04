@@ -22,7 +22,6 @@ type Config = {
 export interface ExpandableSnippetParams {
     interfacename: string;
     overridesrc?: string;
-    jsonData?: object;
     breadcrumbs?: string[];
     config?: Config;
 }
@@ -30,11 +29,10 @@ export interface ExpandableSnippetParams {
 export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     interfacename,
     overridesrc,
-    jsonData,
     breadcrumbs = [],
     config,
 }) => {
-    const { interfaceLookup, codeLookup } = loadLookups(jsonData!, overridesrc);
+    const { interfaceLookup, codeLookup } = loadLookups(overridesrc);
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
@@ -119,7 +117,7 @@ function renderUnion(
     path: string[],
     config: Config,
 ) {
-    const renderPrimitiveUnionOption = (opt: JsonPrimitiveProperty, idx: number, last: boolean) =>
+    const renderPrimitiveUnionOption = (opt: JsonPrimitiveProperty, idx: number, last: boolean) => 
         <Fragment key={idx}>
             {renderPrimitiveType(opt)}
             {!last && <span className={classnames('token', 'operator')}> | </span>}
@@ -161,10 +159,10 @@ function renderUnionNestedObject(
     closeWith: string,
     path: string[],
     config: Config,
-) {
+) { 
     const discriminatorProp = "type";
     const discriminator = desc.model.properties[discriminatorProp];
-    const discriminatorType = discriminator && discriminator.desc.type === "primitive" ?
+    const discriminatorType = discriminator && discriminator.desc.type === "primitive" ? 
         discriminator.desc.tsType :
         null;
     const unionPath = path.concat(`[${discriminatorType || index}]`);
@@ -302,8 +300,8 @@ const PropertySnippet: React.FC<PropertySnippetParams> = ({
         >
             {renderPropertyDeclaration(propName, renderTsType ? tsType : null, meta, isJSONNodeExpanded, expandable)}
             {
-                !isJSONNodeExpanded && collapsePropertyRendering ?
-                    collapsePropertyRendering :
+                !isJSONNodeExpanded && collapsePropertyRendering ? 
+                    collapsePropertyRendering : 
                     <span className={classnames(styles['unexpandable'])} onClick={(e) => e.stopPropagation()}>{propertyRendering}</span>
             }
             {(!isJSONNodeExpanded || needsClosingSemi) && <span className={classnames('token', 'punctuation')}>; </span>}
@@ -331,7 +329,7 @@ function maybeRenderPropertyDocumentation(
                 className={classnames('token', 'comment', styles['jsdoc-expandable'])}
                 onClick={(e) => e.stopPropagation()}
                 dangerouslySetInnerHTML={{ __html: convertMarkdown(formattedDocumentation.join('\n')) }}
-                role="presentation"
+                role="presentation"                
             >
             </div>
         </Fragment>
@@ -419,7 +417,7 @@ function renderNestedObject(
                 <ModelSnippet model={desc.model} config={config} path={path}></ModelSnippet>
             </div>
             <span className={classnames('token', 'punctuation')}>}</span>
-        </Fragment>
+        </Fragment>    
     );
 }
 
@@ -430,7 +428,7 @@ function renderCollapsedNestedObject(desc: JsonObjectProperty) {
             <span className={classnames('token', 'operator')}> ... </span>
             <span className={classnames('token', 'punctuation')}>}</span>
         </Fragment>
-    )
+    )    
 }
 
 function renderArrayType(
@@ -562,24 +560,24 @@ function isExpandedInitially(propName: string, path: string[], config: Config) {
 function formatPropertyDocumentation(meta: Omit<JsonModel['properties'][number], 'desc'>, config: Config): string[] {
     const { documentation } = meta;
     const defaultValue = meta.default;
-    const result: string[] = documentation?.trim() ?
+    const result: string[] = documentation?.trim() ? 
         [ formatJsDocString(documentation.trim()) ] :
         [];
 
     if (meta.hasOwnProperty('default')) {
         result.push('Default: `' + JSON.stringify(defaultValue) + '`');
     }
-
+    
     return result.filter(v => !!v?.trim());
 }
 
 function formatModelDocumentation(model: JsonModel | JsonFunction, config: Config) {
     const { documentation } = model;
-    const result: string[] = documentation?.trim() ?
+    const result: string[] = documentation?.trim() ? 
         [ formatJsDocString(documentation) ] :
         [];
 
-    return result;
+    return result;    
 }
 
 export function buildObjectIndent(level: number): string {

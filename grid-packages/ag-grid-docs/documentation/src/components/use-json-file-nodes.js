@@ -6,10 +6,12 @@ import { graphql, useStaticQuery } from 'gatsby';
 export const useJsonFileNodes = () => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
-        allFile(filter: { absolutePath: {regex: "/^((?!_gen).)*$/"}, sourceInstanceName: { eq: "doc-pages" }, ext: { eq: ".json" } }) {
+        allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { eq: ".json" } }) {
             nodes {
-                absolutePath
                 relativePath
+                internal {
+                    content
+                }
             }
         }
     }

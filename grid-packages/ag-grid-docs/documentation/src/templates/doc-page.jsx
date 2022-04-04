@@ -27,7 +27,7 @@ import styles from './doc-page.module.scss';
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({data, pageContext: {framework, jsonData, pageName}}) => {
+const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
     const {markdownRemark: page} = data;
     const [showSideMenu, setShowSideMenu] = useState(true);
 
@@ -59,32 +59,29 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonData, pageName}}) =
                 ...props,
                 pageName,
                 framework,
-                jsonData,
                 sources: props.sources != null ? JSON.parse(props.sources) : undefined,
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'interface-documentation': props => InterfaceDocumentation({
                 ...props,
                 framework,
-                jsonData,
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'snippet': props => Snippet({...props, framework}),
             'expandable-snippet': props => ExpandableSnippet({
                 ...props,
                 framework,
-                jsonData,
                 breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
                 config: props.config != null ? JSON.parse(props.config) : undefined,
             }),
             'feature-overview': props => FeatureOverview({...props, framework}),
             'icons-panel': IconsPanel,
             'image-caption': props => ImageCaption({...props, pageName}),
-            'matrix-table': props => MatrixTable({...props, framework, jsonData}),
+            'matrix-table': props => MatrixTable({...props, framework}),
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': props => ChartsApiExplorer({...props, framework, jsonData})
+            'charts-api-explorer': props => ChartsApiExplorer({...props, framework})
         },
     }).Compiler;
 
