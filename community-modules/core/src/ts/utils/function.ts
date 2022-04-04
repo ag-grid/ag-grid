@@ -70,7 +70,7 @@ export function executeAfter(funcs: Function[], milliseconds = 0): void {
  * @param {boolean} immediate If it should run immediately or wait for the initial debounce delay
  * @return {Function} The debounced function
  */
-export function debounce(func: (...args: any[]) => void, wait: number, immediate: boolean = false) {
+export function debounce(func: (...args: any[]) => void, wait: number, immediate: boolean = false): (...args: any[]) => void {
     // 'private' variable for instance
     // The returned function will be able to reference this due to closure.
     // Each call to the returned function will share this common timer.
@@ -110,6 +110,26 @@ export function debounce(func: (...args: any[]) => void, wait: number, immediate
         if (callNow) {
             func.apply(context, args);
         }
+    };
+}
+
+/**
+ * @param {Function} func The function to be throttled
+ * @param {number} wait The time in ms to throttle
+ * @return {Function} The throttled function
+ */
+export function throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
+    let previousCall = 0;
+
+    return function(...args: any[]) {
+        const context = this;
+        const currentCall = new Date().getTime();
+
+        if (currentCall - previousCall < wait) { return; }
+
+        previousCall = currentCall;
+
+        func.apply(context, args);
     };
 }
 
