@@ -18,6 +18,7 @@ const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
+const cachedJsonData = {};
 
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.
@@ -224,6 +225,48 @@ const createHomePages = createPage => {
     });
 };
 
+async function getJsonFileData(graphql, reporter) {
+    const resultJsonNodes = await graphql(`
+    {
+        allFile(filter: { absolutePath: {regex: "/^((?!_gen).)*$/"}, sourceInstanceName: { eq: "doc-pages" }, ext: { eq: ".json" } }) {
+            nodes {
+                absolutePath
+                relativePath
+            }
+        }
+    }`);
+
+    if (resultJsonNodes.errors) {
+        reporter.panicOnBuild(`Error while running GraphQL query while creating doc pages.`);
+        return null;
+    }
+
+    function cacheJsonFile(relativePath, absolutePath, lastModifiedTime) {
+        cachedJsonData[relativePath] = {
+            lastModifiedTime,
+            data: JSON.parse(fs.readFileSync(absolutePath, 'UTF8'))
+        }
+    }
+
+    const jsonData = {};
+    resultJsonNodes.data.allFile.nodes.forEach(node => {
+        if (cachedJsonData[node.relativePath]) {
+            const lastModifiedTime = cachedJsonData[node.relativePath].lastModifiedTime;
+
+            const stats = fs.statSync(node.absolutePath);
+            if (stats.mtime !== lastModifiedTime) {
+                cacheJsonFile(node.relativePath, node.absolutePath, stats.mtime);
+            }
+        } else {
+            const stats = fs.statSync(node.absolutePath);
+            cacheJsonFile(node.relativePath, node.absolutePath, stats.mtime);
+        }
+
+        jsonData[node.relativePath] = cachedJsonData.data;
+    })
+    return jsonData;
+}
+
 /**
  * This creates pages for each of the Markdown files, creating different versions for each framework that the Markdown
  * file supports (by default, all frameworks).
@@ -252,31 +295,16 @@ const createDocPages = async (createPage, graphql, reporter) => {
         return;
     }
 
-    const resultJsonNodes = await graphql(`
-    {
-        allFile(filter: { absolutePath: {regex: "/^((?!_gen).)*$/"}, sourceInstanceName: { eq: "doc-pages" }, ext: { eq: ".json" } }) {
-            nodes {
-                absolutePath
-                relativePath
-            }
-        }
-    }`);
-
-    if (resultJsonNodes.errors) {
-        reporter.panicOnBuild(`Error while running GraphQL query while creating doc pages.`);
-        return;
-    }
-
     // get all json data required by the api and interface doc components
     // doing this upfront allows us to exclude the content in the resultJsonNodes and allows for a much smaller overall page load size
     // (esp page-data.json)
-    const jsonData = {};
-    resultJsonNodes.data.allFile.nodes.forEach(node => {
-        jsonData[node.relativePath] = JSON.parse(fs.readFileSync(node.absolutePath, 'UTF8'));
-    })
+    const jsonData = await getJsonFileData(graphql, reporter);
+    if(!jsonData) {
+        return;
+    }
 
     resultMarkDownNodes.data.allMarkdownRemark.nodes.forEach(node => {
-        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
+        const {frontmatter: {frameworks: specifiedFrameworks}, fields: {path: srcPath}} = node;
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
         const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
@@ -285,7 +313,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
             createPage({
                 path: convertToFrameworkUrl(srcPath, framework),
                 component: docPageTemplate,
-                context: { frameworks, framework, srcPath, pageName, jsonData }
+                context: {frameworks, framework, srcPath, pageName, jsonData}
             });
         });
     });
