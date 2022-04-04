@@ -116,22 +116,53 @@ It is possible to manipulate the [column definition](/column-definitions/) of th
 |        if (colDef.pivotValueColumn.getId() === 'gold') {
 |            colDef.headerName = colDef.headerName.toUpperCase();
 |        }
-|    }
+|    },
+|    processSecondaryColGroupDef: (colGroupDef) => {
+|        if (colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
+|            colGroupDef.headerClass = 'color-background'
+|        }
+|        colGroupDef.headerName = 'Year ' + colGroupDef.headerName
+|    },
 |}
 </snippet>
 
-The example below demonstrates how to selectively modify the column and column group headers.
+In the example below, notice how applying these functions can be used to manipulate the headers
+- The group headers have had `Year` prefixed onto each value
+- The group `Year 2010` has been coloured yellow
+- The columns pivoted from the `Gold` column have been uppercased
 
 <grid-example title='Secondary Columns' name='secondary-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
-## Filtering with Pivot
+## Default filtering
 
-Filtering can be applied to both primary and secondary columns. For information on how to filter by a primary column, this is demonstrated in the section on [Filtering](/filtering-overview/).
+While pivoting is active, you can still [filter](/filtering-overview/) primary columns using the [API](/grid-api/#reference-filter) or the [filters tool panel](/tool-panel-filters/). These filters are applied to the data before it is pivoted, as such a change in these filters can effect not only the resulting values and rows, but also the columns generated from the pivot.
 
-Filters can be enabled on secondary columns using the `processSecondaryColDef` callback.
+The example below demonstrates the effects of applying filters to primary columns while pivot mode is enabled:
+- Pivot mode is enabled using the `pivotMode` grid option
+- The **country** column has [row grouping](/grouping/) enabled via the column options `rowGroup` and `enableRowGroup`
+- The **sport** column has been pivoted using the column options `pivot` and `enablePivot`
+- The **gold**, **silver**, and **bronze** columns have [aggregations](/aggregation/) applied to them using the column option `aggFunc`
 
-[[note]]
-| Secondary columns do not support the use of set filters.
+__Filtering on a grouped column:__
+1. Using the filters tool panel, deselect **United States** using the **Country** column filters
+2. Observe how the row has disappeared from the pivot grid
+3. Make note of the column group for the **Biathlon** event
+4. Now, using the filters tool panel, deselect **Norway**, again using the **Country** column filters
+5. Observe now, how not only the row has disappeared, but so has the **Biathlon** column group
+
+__Filtering on a pivoted column:__
+1. Using the filters tool panel, deselect **Cross Country Skiing** using the **Sport** column filters
+2. Observe how, rather than reducing the number of rows, the **Cross Country Skiing** column group and the columns belonging to it are now gone.
+
+__Filtering on any other column:__
+1. Using the filters tool panel, deselect **1** using the **Gold** column filters
+2. Observe how in this case, some rows are hidden, and some of the pivot values change.
+
+<grid-example title='Filtering With Pivot' name='filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
+
+## Filtering on secondary columns
+
+When pivot mode is enabled, you may also [filter](/filtering-overview/) on the generated secondary columns using the column menu, or [floating filters](/floating-filters/).
 
 <snippet>
 |const gridOptions = {
@@ -142,11 +173,17 @@ Filters can be enabled on secondary columns using the `processSecondaryColDef` c
 |}
 </snippet>
 
-While pivoting is active, you can still filter using the API or the column tool panel, this will reduce the number of columns, rows, and the resulting aggregate values displayed in the pivot table.
+As demonstrated above, filters are enabled on secondary columns by utilising the `processSecondaryColDef` callback to [mutate the secondary column definition](/pivoting/#secondary-column-definitions).
 
-The secondary columns themselves are filterable using the column menu, or alternatively the column floating filter interface, these filters are applied after the aggregation has been calculated.
+The example below demonstrates the effects of applying filters to primary columns while pivot mode is enabled:
+- Pivot mode is enabled using the `pivotMode` grid option
+- The **country** column has [row grouping](/grouping/) enabled via the column options `rowGroup` and `enableRowGroup`
+- The **sport** column has been pivoted using the column options `pivot` and `enablePivot`
+- The **gold**, **silver**, and **bronze** columns have [aggregations](/aggregation/) applied to them using the column option `aggFunc`
+- `processSecondaryColDef` callback has been used to set the `filter` property to `agNumberColumnFilter` for all secondary columns
+- `processSecondaryColDef` callback has also been used to enable the `floatingFilter` column property for all secondary columns
 
-<grid-example title='Filtering With Pivot' name='filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
+<grid-example title='Filtering Secondary Columns' name='secondary-columns-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] }'></grid-example>
 
 ## Pivot Column Groups
 

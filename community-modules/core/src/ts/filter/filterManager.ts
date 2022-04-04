@@ -204,7 +204,7 @@ export class FilterManager extends BeanStub {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
 
                 const isPrimaryValueColumn = filterWrapper.column.isValueActive() && filterWrapper.column.isPrimary();
-                const isPivotColumn = !filterWrapper.column.isPrimary();
+                const isPivotColumn = !filterWrapper.column.isPrimary() || (filterWrapper.column.isValueActive() && !this.columnModel.getPivotColumns().length);
                 const filterPrimaryAfterAggregations = groupFilterEnabled && isPrimaryValueColumn && !this.columnApi.isPivotMode();
                 if(filterPrimaryAfterAggregations || isPivotColumn) {
                     this.activeAdvancedAggregateFilters.push(resolvedPromise!);

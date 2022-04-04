@@ -18,7 +18,10 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   pivotMode: true,
-  sideBar: 'filters',
+  processSecondaryColDef: (colDef) => {
+    colDef.filter = 'agNumberColumnFilter';
+    colDef.floatingFilter = true;
+  }
 }
 
 // setup the grid after the page has finished loading
