@@ -117,8 +117,8 @@ It is possible to manipulate the [column definition](/column-definitions/) of th
 |            colDef.headerName = colDef.headerName.toUpperCase();
 |        }
 |    },
-|    processSecondaryColGroupDef: (colGroupDef: ColGroupDef) => {
-|        if (colGroupDef.pivotKeys?.length && colGroupDef.pivotKeys[0] === '2010') {
+|    processSecondaryColGroupDef: (colGroupDef) => {
+|        if (colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
 |            colGroupDef.headerClass = 'color-background'
 |        }
 |        colGroupDef.headerName = 'Year ' + colGroupDef.headerName
