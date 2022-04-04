@@ -302,7 +302,7 @@ export class ColumnFactory extends BeanStub {
     public applyColumnState(column: Column, colDef: ColDef): void {
         // flex
         const flex = attrToNumber(colDef.flex);
-        if (flex !== undefined) {
+        if (flex !== undefined && !column.isFlexOverridden()) {
             column.setFlex(flex);
         }
 

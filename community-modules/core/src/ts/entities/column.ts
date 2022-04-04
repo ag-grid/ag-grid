@@ -111,6 +111,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private pivotActive = false;
     private aggregationActive = false;
     private flex: number | null | undefined;
+    private flexOverridden = false;
 
     private readonly primary: boolean;
 
@@ -700,6 +701,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             this.actualWidth = actualWidth;
             if (this.flex && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
+                this.flexOverridden = true;
             }
 
             if (!silent) {
@@ -734,7 +736,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     // this method should only be used by the columnModel to
     // change flex when required by the setColumnState method.
     public setFlex(flex: number | null) {
-        if (this.flex !== flex) { this.flex = flex; }
+        if (flex !== null) {
+            this.flexOverridden = false;
+        }
+        this.flex = flex;
+    }
+
+    public isFlexOverridden() {
+        return this.flexOverridden;
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {
