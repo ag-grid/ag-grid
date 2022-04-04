@@ -23,6 +23,7 @@ import {SEO} from 'components/SEO';
 import {getHeaderTitle} from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
+import LearningVideos from "../components/LearningVideos";
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
@@ -81,7 +82,8 @@ const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': props => ChartsApiExplorer({...props, framework})
+            'charts-api-explorer': props => ChartsApiExplorer({...props, framework}),
+            'learning-videos': LearningVideos
         },
     }).Compiler;
 
