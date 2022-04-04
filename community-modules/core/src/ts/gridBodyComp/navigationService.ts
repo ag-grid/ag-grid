@@ -272,21 +272,6 @@ export class NavigationService extends BeanStub {
         return rowHeight > this.getViewportHeight();
     }
 
-    private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {
-        let indexToFocus = indexToScrollTo;
-
-        // for SSRM, when user hits ctrl+down, we can end up trying to focus the loading row.
-        // instead we focus the last row with data instead.
-        if (isDown) {
-            const node = this.paginationProxy.getRow(indexToScrollTo);
-            if (node && node.stub) {
-                indexToFocus -= 1;
-            }
-        }
-
-        return indexToFocus;
-    }
-
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: string, gridCell: CellPosition): void {
         const upKey = key === KeyCode.UP;
@@ -296,7 +281,7 @@ export class NavigationService extends BeanStub {
             scrollIndex: rowIndexToScrollTo,
             scrollType: null,
             scrollColumn: gridCell.column,
-            focusIndex: this.getIndexToFocus(rowIndexToScrollTo, !upKey),
+            focusIndex: rowIndexToScrollTo,
             focusColumn: gridCell.column
         });
     }
@@ -329,7 +314,7 @@ export class NavigationService extends BeanStub {
             scrollIndex: scrollIndex,
             scrollType: null,
             scrollColumn: columnToSelect,
-            focusIndex: this.getIndexToFocus(scrollIndex, !homeKey),
+            focusIndex: scrollIndex,
             focusColumn: columnToSelect
         });
     }
