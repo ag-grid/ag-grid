@@ -15,7 +15,7 @@ const extensionsToOverride = new Set(['html', 'js', 'jsx', 'tsx', 'ts']);
 const parsers = {
     js: 'babel',
     jsx: 'babel',
-    tsx: 'babel',
+    tsx: 'babel-ts',
     ts: 'typescript',
 };
 
@@ -355,7 +355,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
 
                     try {
-                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
+                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                     } catch (e) {
                         console.error(`Failed to process React Typescript example in ${examplePath}`, e);

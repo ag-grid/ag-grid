@@ -1,6 +1,6 @@
-import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
-import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import { convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 
 function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
     let imports = [
@@ -259,7 +259,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
 ${imports.join('\n')}
 
-${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
+${bindings.utils.map(convertFunctionToConstPropertyTs).join('\n\n')}
 
 ${bindings.classes.join('\n')}
 
