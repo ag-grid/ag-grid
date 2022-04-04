@@ -266,6 +266,9 @@ export class CellCtrl extends BeanStub {
 
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
+            // because of the retry's below, it's possible the retry's go beyond
+            // the rows life.
+            if (!this.isAlive()) { return; }
 
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
@@ -280,7 +283,6 @@ export class CellCtrl extends BeanStub {
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
             const newHeight = Math.max(autoHeight, minRowHeight);
-
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
