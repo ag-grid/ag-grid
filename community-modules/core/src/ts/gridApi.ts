@@ -1344,7 +1344,7 @@ export class GridApi {
     }
 
     /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
-    public setSideBar(def: SideBarDef): void {
+    public setSideBar(def: SideBarDef | string | string[] | boolean): void {
         this.gridOptionsWrapper.setProperty('sideBar', SideBarDefParser.parse(def));
     }
 

@@ -920,7 +920,10 @@
   },
   "setSideBar": {
     "description": "/** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */",
-    "type": { "arguments": { "def": "SideBarDef" }, "returnType": "void" }
+    "type": {
+      "arguments": { "def": "SideBarDef | string | string[] | boolean" },
+      "returnType": "void"
+    }
   },
   "setSuppressClipboardPaste": {
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
