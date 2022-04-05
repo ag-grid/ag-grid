@@ -75,6 +75,33 @@
       "Creating Filter Components",
       "Custom Filter Models"
     ]
+  },
+  {
+    "title": "Custom Components",
+    "url": "https://www.youtube.com/watch?v=eglfpHRpcu0&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Custom Components"
+    },
+    "keyPoints": [
+      "Configuring Components",
+      "Component Params",
+      "Component Selectors",
+      "React & JavaScript Components"
+    ]
+  },
+  {
+    "title": "Updating Row Data",
+    "url": "https://www.youtube.com/watch?v=_V5qFr62uhY&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Updating Row Data"
+    },
+    "keyPoints": [
+      "Updating Row Data",
+      "Transaction Updates",
+      "High Frequency Updates"
+    ]
   }
 ]
 
