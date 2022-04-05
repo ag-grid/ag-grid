@@ -66,7 +66,7 @@ function getOpenedToolPanel() {
   alert(gridOptions.api!.getOpenedToolPanel())
 }
 
-function setSideBar(def: SideBarDef) {
+function setSideBar(def: SideBarDef | string | string[] | boolean) {
   gridOptions.api!.setSideBar(def)
 }
 

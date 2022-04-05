@@ -296,7 +296,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Specifies the status bar components to use in the status bar.     */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.     */
-    @Input() public sideBar: SideBarDef | string | boolean | null | undefined = undefined;
+    @Input() public sideBar: SideBarDef | string | string[] | boolean | null | undefined = undefined;
     /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`     */
     @Input() public suppressContextMenu: boolean | undefined = undefined;
     /** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.

@@ -5,7 +5,7 @@
   },
   "sideBar": {
     "description": "/** Specifies the side bar components. */",
-    "type": { "returnType": "SideBarDef | string | boolean | null" }
+    "type": { "returnType": "SideBarDef | string | string[] | boolean | null" }
   },
   "suppressContextMenu": {
     "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false` */",
