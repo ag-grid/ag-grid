@@ -21,7 +21,7 @@ describe('ExpandableSnippet Model', () => {
             .mockReturnValueOnce(mockInterfaces)
             .mockReturnValueOnce(mockDocInterfaces);
     
-        const loaded = loadLookups();
+        const loaded = loadLookups('test');
         loadedInterfaces = loaded.interfaceLookup;
         loadedDocInterfaces = loaded.codeLookup;
     });

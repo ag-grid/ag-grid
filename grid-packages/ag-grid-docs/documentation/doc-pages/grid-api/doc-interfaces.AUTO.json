@@ -13176,6 +13176,7 @@
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
+      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
       "type": {
         "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
         "optional": true
@@ -13246,8 +13247,12 @@
     }
   },
   "AgPolarChartOptions": {
-    "type": { "type": { "returnType": "'polar' | 'pie'", "optional": true } },
+    "type": {
+      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "type": { "returnType": "'polar' | 'pie'", "optional": true }
+    },
     "series": {
+      "description": "/** Series configurations. */",
       "type": { "returnType": "AgPolarSeriesOptions[]", "optional": true }
     },
     "data": {
@@ -13304,10 +13309,12 @@
   },
   "AgHierarchyChartOptions": {
     "type": {
+      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
       "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
     },
     "data": { "type": { "returnType": "any", "optional": true } },
     "series": {
+      "description": "/** Series configurations. */",
       "type": { "returnType": "AgHierarchySeriesOptions[]", "optional": true }
     },
     "container": {

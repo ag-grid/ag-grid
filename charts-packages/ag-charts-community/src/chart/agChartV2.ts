@@ -106,11 +106,11 @@ export abstract class AgChart {
         return null;
     }
 
-    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
+    public static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         return AgChartV2.create(options as any);
     }
 
-    static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
+    public static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
         return AgChartV2.update(chart, options as any);
     }
 }

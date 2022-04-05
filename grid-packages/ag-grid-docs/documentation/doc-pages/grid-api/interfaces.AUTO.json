@@ -7826,6 +7826,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
       "navigator?": "/** Configuration for the chart navigator. */",
@@ -7863,6 +7864,8 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -7897,6 +7900,8 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",

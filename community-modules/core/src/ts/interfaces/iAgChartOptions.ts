@@ -1168,6 +1168,7 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
+    /** Type of chart to render. Inherited from the first declared series if unspecified. */
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
@@ -1178,13 +1179,17 @@ export interface AgCartesianChartOptions extends AgBaseChartOptions {
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
+    /** Type of chart to render. Inherited from the first declared series if unspecified. */
     type?: 'polar' | 'pie';
+    /** Series configurations. */
     series?: AgPolarSeriesOptions[];
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
+    /** Type of chart to render. Inherited from the first declared series if unspecified. */
     type?: 'hierarchy' | 'treemap';
     data?: any;
+    /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
 }
 

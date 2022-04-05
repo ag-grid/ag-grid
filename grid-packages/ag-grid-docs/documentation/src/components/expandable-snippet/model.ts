@@ -498,16 +498,16 @@ function typeWrapping(type: string): Wrapping {
     return "none";
 }
 
-export function loadLookups(overridesrc?: string): { interfaceLookup; codeLookup } {
+export function loadLookups(lookupRoot: string, overridesrc?: string): { interfaceLookup; codeLookup } {
     const interfaceLookup: InterfaceLookup = getJsonFromFile(
         useJsonFileNodes(),
         undefined,
-        "grid-api/interfaces.AUTO.json"
+        `${lookupRoot}/interfaces.AUTO.json`
     );
     const codeLookup: CodeLookup = getJsonFromFile(
         useJsonFileNodes(),
         undefined,
-        "grid-api/doc-interfaces.AUTO.json"
+        `${lookupRoot}/doc-interfaces.AUTO.json`
     );
 
     if (overridesrc) {
