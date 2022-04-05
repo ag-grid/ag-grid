@@ -473,7 +473,11 @@
       "unit": "&deg;"
     },
     "format": {
-      "type": "string"
+      "type": "string",
+      "more": {
+        "name": "Axis Label Formatting",
+        "url": "/axes/#number-label-format-string"
+      }
     }
   },
   "AgAxisGridStyle": {

@@ -439,7 +439,7 @@ export interface AgAxisLabelOptions {
     rotation?: number;
     // mirrored?: boolean;
     // parallel?: boolean;
-    /** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../axes/#time-label-format-string\">click here</a> */
+    /** Format string used when rendering labels for time axes. */
     format?: string;
     /** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */
     formatter?: (params: AgAxisLabelFormatterParams) => string;

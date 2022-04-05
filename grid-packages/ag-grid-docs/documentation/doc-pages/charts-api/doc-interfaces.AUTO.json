@@ -1197,7 +1197,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "format": {
-      "description": "/** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\\\"../axes/#time-label-format-string\\\">click here</a> */",
+      "description": "/** Format string used when rendering labels for time axes. */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
