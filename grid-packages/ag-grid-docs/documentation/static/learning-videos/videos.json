@@ -1,7 +1,7 @@
 [
   {
     "title": "Getting Started with AG Grid Community",
-    "url": "https://www.youtube.com/watch?v=GTu79aWJT1E&t=105s",
+    "url": "https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "Getting Started with AG Grid Community"
@@ -15,7 +15,7 @@
   },
   {
     "title": "Getting Started with AG Grid Enterprise",
-    "url": "https://www.youtube.com/watch?v=pKUhYE1VTP4&t=2s",
+    "url": "https://www.youtube.com/watch?v=pKUhYE1VTP4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "Getting Started with AG Grid Enterprise"
@@ -26,7 +26,7 @@
   },
   {
     "title": "Customising Cells - Cell Renderers",
-    "url": "https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=3&t=1s",
+    "url": "https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "React Cell Renderers"
@@ -39,7 +39,7 @@
   },
   {
     "title": "React Rendering",
-    "url": "https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=5&t=2s",
+    "url": "https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "React Rendering"
@@ -52,7 +52,7 @@
   },
   {
     "title": "Column Filters",
-    "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=4&t=2s",
+    "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "Column Filters"
@@ -66,7 +66,7 @@
   },
   {
     "title": "Custom Column Filters",
-    "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=6&t=1s",
+    "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
       "altText": "Custom Column Filters"
