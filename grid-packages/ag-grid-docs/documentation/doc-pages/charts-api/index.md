@@ -6,7 +6,7 @@ This page documents the AG Charts API. You can find more details about getting s
 
 ## Options by Chart Type
 
-AgCharts is primarily configured by an instance of the `AgChartOptions` options - there are three main variations depending on the chart/series type to be rendered:
+AG Charts is primarily configured by an instance of the `AgChartOptions` option, and there are three main variations depending on the chart/series type to be rendered:
 
 <tabs>
     <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
@@ -14,9 +14,9 @@ AgCharts is primarily configured by an instance of the `AgChartOptions` options 
     <expandable-snippet label="Hierarchy" interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
 </tabs>
 
-## Creating and Updating Using Options
+## Creating and Updating Charts Using Options
 
-The `AgChartOptions` options object are used for both create and update cases.
+`AgChartOptions` option objects are used for both create and update cases of a chart instance.
 
 [[only-javascript]]
 | `AgChart` exposes both a `create()` and `update()` static method to perform chart initialisation and update respectively.
@@ -29,9 +29,9 @@ The `AgChartOptions` options object are used for both create and update cases.
 | | `update()` call, features maybe disabled or defaults assumed as the target configuration.
 
 [[only-frameworks]]
-| Options are supplied to the AgCharts component, and mutations of the options trigger an update of the chart configuration.
+| Options are supplied to the AG Charts component, and mutations of the options trigger an update of the chart configuration.
 
-The following example demonstrates both creation and update cases:
+The following example demonstrates both create and update cases:
 - Definition of an `options` object used to create the initial chart state.
 - Buttons that invoke mutations of the `options` and trigger update of the chart state.
 
