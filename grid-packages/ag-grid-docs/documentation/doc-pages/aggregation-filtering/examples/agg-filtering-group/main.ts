@@ -1,25 +1,17 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
-
-const columnDefs: ColDef[] = [
-  { field: 'country', rowGroup: true, hide: true },
-  { field: 'year', filter: 'agNumberColumnFilter' },
-  { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-  { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-  { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-]
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: [
+    { field: 'country', rowGroup: true, hide: true },
+    { field: 'athlete' },
+    { field: 'year' },
+    { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+  ],
   defaultColDef: {
     flex: 1,
     resizable: true,
-    floatingFilter: true,
   },
-  autoGroupColumnDef: {
-    headerName: 'Country',
-    field: 'athlete',
-  },
+  groupDefaultExpanded: -1,
   groupAggFiltering: (params) => !!params.node.group,
 }
 
@@ -28,7 +20,5 @@ document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+  gridOptions.api!.setRowData(getData());
 })
