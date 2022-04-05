@@ -48,7 +48,7 @@
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 typescript: "npm:typescript@3.7.7/lib/typescript.js",
 
-                app: appLocation + 'app'
+                app: appLocation
             },
             systemJsMap
         ), // systemJsMap comes from index.html
@@ -76,7 +76,8 @@
                 defaultExtension: 'js'
             },
             app: {
-                defaultExtension: 'jsx'
+                main: './index.tsx',
+                defaultExtension: 'tsx'
             },
             'ag-grid-react': {
                 main: './main.js',

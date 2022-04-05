@@ -287,7 +287,7 @@ const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => 
                 onChange={onChange} onBlur={onChange}>
                 <option value="classes">Classes</option>
                 <option value="hooks">Hooks</option>
-                <option value="hooksTs">Hooks Tsx</option>
+                <option value="hooksTs">Hooks Ts</option>
             </select>}
     </div>;
 };

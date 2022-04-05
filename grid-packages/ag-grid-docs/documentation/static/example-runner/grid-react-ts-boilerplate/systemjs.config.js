@@ -79,7 +79,7 @@
             },
             app: {
                 main: './index.tsx',
-                defaultExtension: false,
+                defaultExtension: 'tsx',
             },
             'ag-grid-react': {
                 main: './main.js',
