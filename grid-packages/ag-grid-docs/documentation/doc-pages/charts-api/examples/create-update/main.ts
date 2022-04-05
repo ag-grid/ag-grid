@@ -1,41 +1,42 @@
 import * as agCharts from "ag-charts-community"
-import { AgChartLegendPosition, AgChartOptions } from "ag-charts-community"
+import { AgChartLegendPosition, AgChartOptions, AgAreaSeriesOptions } from "ag-charts-community"
+
+function series(name: string): AgAreaSeriesOptions {
+  return {
+      type: "area",
+      xKey: "year",
+      yKey: name.toLowerCase(),
+      yName: name,
+      fillOpacity: 0.5,
+  };
+}
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   title: {
-    text: "Microsoft Internet Explorer vs Google Chrome",
+    text: "Browser Usage Statistics",
   },
   subtitle: {
     text: "2009-2019",
   },
   data: getData(),
   series: [
-    {
-      type: "area",
-      xKey: "year",
-      yKey: "ie",
-      yName: "IE",
-      fillOpacity: 0.7,
-    },
-    {
-      type: "area",
-      xKey: "year",
-      yKey: "chrome",
-      yName: "Chrome",
-      fillOpacity: 0.7,
-    },
+    series('IE'),
+    series('Chrome'),
+    series('Firefox'),
+    series('Safari'),
   ],
   legend: {
     position: "top",
   },
-}
+};
 
-let chart = agCharts.AgChart.create(options)
+let chart = agCharts.AgChart.create(options);
 
 function reverseSeries() {
-  options.series = options.series?.reverse()
-  agCharts.AgChart.update(chart, options)
+  options.series = options.series?.reverse();
+
+  agCharts.AgChart.update(chart, options);
 }
 
 function swapTitles() {
@@ -43,7 +44,7 @@ function swapTitles() {
   options.title = options.subtitle
   options.subtitle = oldTitle
 
-  agCharts.AgChart.update(chart, options)
+  agCharts.AgChart.update(chart, options);
 }
 
 function rotateLegend() {
@@ -52,5 +53,5 @@ function rotateLegend() {
   const currentIdx = positions.indexOf(legend?.position || "top")
   legend.position = positions[(currentIdx + 1) % positions.length]
 
-  agCharts.AgChart.update(chart, options)
+  agCharts.AgChart.update(chart, options);
 }
