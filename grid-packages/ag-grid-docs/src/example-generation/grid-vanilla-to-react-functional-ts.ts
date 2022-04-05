@@ -133,7 +133,7 @@ function getEventAndCallbackNames() {
 }
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares } = bindings;
+    const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
     const eventAndCallbackNames = getEventAndCallbackNames();
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -268,7 +268,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
             .replace(/(\s+)columnApi(!?)\./g, "$1gridRef.current!.columnApi.")
             .replace(/gridApi;/g, "gridRef.current!.api;")
             .replace(/columnApi;/g, "gridRef.current!.columnApi;")
-            .replace(/gridColumnApi(!?)\./g, "gridRef.current!.columnApi.")
+            .replace(/gridColumnApi(!?)/g, "gridRef.current!.columnApi")
             .replace(/gridRef\.current\.api(!?)\.setRowData/g, "setRowData")
             .replace(/gridApi/g, "gridRef.current!.api")
 
@@ -287,7 +287,8 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         let generatedOutput = `
 'use strict';
 
-${imports.join('\n')}${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}
+${imports.join('\n')}
+${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 ${bindings.utils.map(convertFunctionToConstPropertyTs).join('\n\n')}
 
