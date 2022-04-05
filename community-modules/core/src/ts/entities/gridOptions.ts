@@ -93,7 +93,7 @@ export interface GridOptions {
     /** Specifies the status bar components to use in the status bar. */
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /** Specifies the side bar components. */
-    sideBar?: SideBarDef | string | boolean | null;
+    sideBar?: SideBarDef | string | string[] | boolean | null;
     /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */
     suppressContextMenu?: boolean;
     /**

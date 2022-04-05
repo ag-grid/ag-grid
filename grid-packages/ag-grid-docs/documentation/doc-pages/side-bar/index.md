@@ -13,7 +13,7 @@ The side bar is configured using the grid property `sideBar`. The property takes
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `undefined` / `null`         | No side bar provided.                                                                              |
 | `boolean`                    | Set to `true` to display the side bar with default configuration.                       |
-| `string`                     | Set to `'columns'` or `'filters'` to display side bar with just one of [Columns](/tool-panel-columns/) or [Filters](/tool-panel-filters/) tool panels. |
+| `string` / `string[]`        | Set to `'columns'` or `'filters'` to display side bar with just one of [Columns](/tool-panel-columns/) or [Filters](/tool-panel-filters/) tool panels or an array of one or both of these values. |
 | `SideBarDef`<br/>(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the columns or filters panel) or to include custom tool panels. |
 
 
@@ -33,7 +33,7 @@ In the following example note the following:
 
 ### String Configuration
 
-To display just one of the provided tool panels, set either `sideBar='columns'` or `sideBar='filters'`. This will display the desired item with default configuration.
+To display just one of the provided tool panels, set either `sideBar='columns'` or `sideBar='filters'`. This will display the desired item with default configuration. Alternatively pass one or both as a `string[]`, i.e `sideBar=['columns','filters']`.
 
 The example below demonstrates using the string configuration. Note the following:
 

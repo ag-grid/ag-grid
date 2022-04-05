@@ -15,7 +15,7 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
-import { doOnce } from "../utils/function";
+import { doOnce, throttle } from "../utils/function";
 import { Constants } from "../constants/constants";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowRenderer } from "../rendering/rowRenderer";
@@ -55,7 +55,11 @@ export class NavigationService extends BeanStub {
 
     private gridBodyCon: GridBodyCtrl;
 
-    private timeLastPageEventProcessed = 0;
+    constructor() {
+        super();
+        this.onPageDown = throttle(this.onPageDown, 100);
+        this.onPageUp = throttle(this.onPageUp, 100);
+    }
 
     @PostConstruct
     private postConstruct(): void {
@@ -122,24 +126,6 @@ export class NavigationService extends BeanStub {
         return processed;
     }
 
-    // the page up/down keys caused a problem, in that if the user
-    // held the page up/down key down, lots of events got generated,
-    // which clogged up the event queue (as they take time to process)
-    // which in turn froze the grid. Logic below makes sure we wait 100ms
-    // between processing the page up/down events, so when user has finger
-    // held down on key, we ignore page up/down events until 100ms has passed,
-    // which effectively empties the queue of page up/down events.
-    private isTimeSinceLastPageEventToRecent(): boolean {
-        const now = new Date().getTime();
-        const diff = now - this.timeLastPageEventProcessed;
-
-        return (diff < 100);
-    }
-
-    private setTimeLastPageEventProcessed(): void {
-        this.timeLastPageEventProcessed = new Date().getTime();
-    }
-
     private navigateTo(navigateParams: NavigateParams): void {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
@@ -165,8 +151,6 @@ export class NavigationService extends BeanStub {
     }
 
     private onPageDown(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
-
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const pixelsInOnePage = this.getViewportHeight();
@@ -175,62 +159,61 @@ export class NavigationService extends BeanStub {
 
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
-        let scrollIndex = currentPageBottomRow;
 
-        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
-        const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
-
-        const pageLastRow = this.paginationProxy.getPageLastRow();
-
-        if (focusIndex === gridCell.rowIndex) {
-            scrollIndex = focusIndex = gridCell.rowIndex + 1;
+        if (this.columnModel.isAutoRowHeightActive()) {
+            this.navigateToNextPageWithAutoHeight(gridCell, currentPageBottomRow);
+        } else {
+            this.navigateToNextPage(gridCell, currentPageBottomRow);
         }
-        if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
-        if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
-
-        if (this.isRowTallerThanView(focusIndex)) {
-            scrollIndex = focusIndex;
-        }
-
-        this.navigateTo({
-            scrollIndex,
-            scrollType: 'top',
-            scrollColumn: null,
-            focusIndex,
-            focusColumn: gridCell.column
-        });
-
-        this.setTimeLastPageEventProcessed();
     }
 
     private onPageUp(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
-
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
-        const pixelsInOnePage = this.getViewportHeight();
 
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
         const currentPageTopPixel = scrollPosition.top;
         const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
-        let scrollIndex = currentPageTopRow;
 
-        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
-        const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
+        if (this.columnModel.isAutoRowHeightActive()) {
+            this.navigateToNextPageWithAutoHeight(gridCell, currentPageTopRow, true);
+        } else {
+            this.navigateToNextPage(gridCell, currentPageTopRow, true);
+        }
+    }
+
+    private navigateToNextPage(gridCell: CellPosition, scrollIndex: number, up: boolean = false): void {
+        const pixelsInOnePage = this.getViewportHeight();
+        const firstRow = this.paginationProxy.getPageFirstRow();
+        const lastRow = this.paginationProxy.getPageLastRow();
+        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
+
+        const rowPixelDiff = up 
+            ? (currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset) 
+            : (pixelsInOnePage - pagingPixelOffset);
+
+        const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
+
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
-        const firstRow = this.paginationProxy.getPageFirstRow();
-
         if (focusIndex === gridCell.rowIndex) {
-            scrollIndex = focusIndex = gridCell.rowIndex - 1;
+            const diff = up ? -1 : 1;
+            scrollIndex = focusIndex = gridCell.rowIndex + diff;
         }
 
-        if (focusIndex < firstRow) { focusIndex = firstRow; }
-        if (scrollIndex < firstRow) { scrollIndex = firstRow; }
+        let scrollType: 'top' | 'bottom';
 
-        let scrollType: 'top' | 'bottom' = 'bottom';
+        if (up) {
+            scrollType = 'bottom';
+            if (focusIndex < firstRow) { focusIndex = firstRow; }
+            if (scrollIndex < firstRow) { scrollIndex = firstRow; }
+        } else {
+            scrollType = 'top'
+            if (focusIndex > lastRow) { focusIndex = lastRow; }
+            if (scrollIndex > lastRow) { scrollIndex = lastRow; }
+        }
 
         if (this.isRowTallerThanView(focusIndex)) {
             scrollIndex = focusIndex;
@@ -244,8 +227,58 @@ export class NavigationService extends BeanStub {
             focusIndex,
             focusColumn: gridCell.column
         });
+    }
 
-        this.setTimeLastPageEventProcessed();
+    private navigateToNextPageWithAutoHeight(gridCell: CellPosition, scrollIndex: number, up: boolean = false): void {
+        // because autoHeight will calculate the height of rows after scroll
+        // first we scroll towards the required point, then we add a small 
+        // delay to allow the height to be recalculated, check which index
+        // should be focused and then finally navigate to that index.
+        // TODO: we should probably have an event fired once to scrollbar has
+        // settled and all rowHeights have been calculated instead of relying
+        // on a setTimeout of 50ms.
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: up ? 'bottom' : 'top',
+            scrollColumn: null,
+            focusIndex: scrollIndex,
+            focusColumn: gridCell.column
+        });
+        setTimeout(() => {
+            const focusIndex = this.getNextFocusIndexForAutoHeight(gridCell, up);
+
+            this.navigateTo({
+                scrollIndex: scrollIndex,
+                scrollType: up ? 'bottom' : 'top',
+                scrollColumn: null,
+                focusIndex: focusIndex,
+                focusColumn: gridCell.column
+            });
+        }, 50);
+    }
+
+    private getNextFocusIndexForAutoHeight(gridCell: CellPosition, up: boolean = false): number {
+        const step = up ? -1 : 1;
+        const pixelsInOnePage = this.getViewportHeight();
+        const lastRowIndex = this.paginationProxy.getPageLastRow();
+
+        let pixelSum = 0;
+        let currentIndex = gridCell.rowIndex;
+
+        while (currentIndex >= 0 && currentIndex <= lastRowIndex) {
+            const currentCell = this.paginationProxy.getRow(currentIndex);
+
+            if (currentCell) {
+                const currentCellHeight = currentCell.rowHeight ?? 0;
+
+                if (pixelSum + currentCellHeight > pixelsInOnePage) { break; }
+                pixelSum += currentCellHeight;
+            }
+
+            currentIndex += step;
+        }
+
+        return Math.max(0, Math.min(currentIndex, lastRowIndex));
     }
 
     private getViewportHeight(): number {
@@ -272,21 +305,6 @@ export class NavigationService extends BeanStub {
         return rowHeight > this.getViewportHeight();
     }
 
-    private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {
-        let indexToFocus = indexToScrollTo;
-
-        // for SSRM, when user hits ctrl+down, we can end up trying to focus the loading row.
-        // instead we focus the last row with data instead.
-        if (isDown) {
-            const node = this.paginationProxy.getRow(indexToScrollTo);
-            if (node && node.stub) {
-                indexToFocus -= 1;
-            }
-        }
-
-        return indexToFocus;
-    }
-
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: string, gridCell: CellPosition): void {
         const upKey = key === KeyCode.UP;
@@ -296,7 +314,7 @@ export class NavigationService extends BeanStub {
             scrollIndex: rowIndexToScrollTo,
             scrollType: null,
             scrollColumn: gridCell.column,
-            focusIndex: this.getIndexToFocus(rowIndexToScrollTo, !upKey),
+            focusIndex: rowIndexToScrollTo,
             focusColumn: gridCell.column
         });
     }
@@ -329,7 +347,7 @@ export class NavigationService extends BeanStub {
             scrollIndex: scrollIndex,
             scrollType: null,
             scrollColumn: columnToSelect,
-            focusIndex: this.getIndexToFocus(scrollIndex, !homeKey),
+            focusIndex: scrollIndex,
             focusColumn: columnToSelect
         });
     }

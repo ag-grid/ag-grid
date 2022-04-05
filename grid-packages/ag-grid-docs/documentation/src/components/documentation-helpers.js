@@ -409,11 +409,11 @@ export function getLongestNameLength(nameWithBreaks) {
     return splitNames[0].length;
 }
 
-export function getJsonFromFile(jsonData, nodes, pageName, source) {
+export function getJsonFromFile(nodes, pageName, source) {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
 
     if (json) {
-        return {...jsonData[json.relativePath]};
+        return JSON.parse(json.internal.content);
     }
 
     throw new Error(`Could not find JSON for source ${source}`);

@@ -8,6 +8,7 @@ import processFrameworkSpecificSections from 'utils/framework-specific-sections'
 import {ApiDocumentation, InterfaceDocumentation} from 'components/ApiDocumentation';
 import {Snippet} from 'components/snippet/Snippet';
 import {ExpandableSnippet} from 'components/expandable-snippet/ExpandableSnippet';
+import {Tabs} from 'components/Tabs';
 import FeatureOverview from 'components/FeatureOverview';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
@@ -23,11 +24,12 @@ import {SEO} from 'components/SEO';
 import {getHeaderTitle} from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
+import LearningVideos from "../components/LearningVideos";
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({data, pageContext: {framework, jsonData, pageName}}) => {
+const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
     const {markdownRemark: page} = data;
     const [showSideMenu, setShowSideMenu] = useState(true);
 
@@ -59,32 +61,31 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonData, pageName}}) =
                 ...props,
                 pageName,
                 framework,
-                jsonData,
                 sources: props.sources != null ? JSON.parse(props.sources) : undefined,
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'interface-documentation': props => InterfaceDocumentation({
                 ...props,
                 framework,
-                jsonData,
                 config: props.config != null ? JSON.parse(props.config) : undefined
             }),
             'snippet': props => Snippet({...props, framework}),
             'expandable-snippet': props => ExpandableSnippet({
                 ...props,
                 framework,
-                jsonData,
                 breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
                 config: props.config != null ? JSON.parse(props.config) : undefined,
             }),
             'feature-overview': props => FeatureOverview({...props, framework}),
             'icons-panel': IconsPanel,
             'image-caption': props => ImageCaption({...props, pageName}),
-            'matrix-table': props => MatrixTable({...props, framework, jsonData}),
+            'matrix-table': props => MatrixTable({...props, framework}),
+            'tabs': props => Tabs({...props}),
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': props => ChartsApiExplorer({...props, framework, jsonData})
+            'charts-api-explorer': props => ChartsApiExplorer({...props, framework}),
+            'learning-videos': LearningVideos
         },
     }).Compiler;
 

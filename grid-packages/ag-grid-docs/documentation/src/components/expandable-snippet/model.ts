@@ -498,22 +498,20 @@ function typeWrapping(type: string): Wrapping {
     return "none";
 }
 
-export function loadLookups(jsonData: {}, overridesrc?: string): { interfaceLookup; codeLookup } {
+export function loadLookups(overridesrc?: string): { interfaceLookup; codeLookup } {
     const interfaceLookup: InterfaceLookup = getJsonFromFile(
-        jsonData,
         useJsonFileNodes(),
         undefined,
         "grid-api/interfaces.AUTO.json"
     );
     const codeLookup: CodeLookup = getJsonFromFile(
-        jsonData,
         useJsonFileNodes(),
         undefined,
         "grid-api/doc-interfaces.AUTO.json"
     );
 
     if (overridesrc) {
-        const overrides: Overrides = getJsonFromFile(jsonData, useJsonFileNodes(), undefined, overridesrc);
+        const overrides: Overrides = getJsonFromFile(useJsonFileNodes(), undefined, overridesrc);
 
         Object.entries(overrides)
             .filter(([type]) => type !== '_config_')

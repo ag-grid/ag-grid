@@ -2223,7 +2223,7 @@
     "sideBar": {
       "description": "/** Specifies the side bar components. */",
       "type": {
-        "returnType": "SideBarDef | string | boolean | null",
+        "returnType": "SideBarDef | string | string[] | boolean | null",
         "optional": true
       }
     },
@@ -21406,7 +21406,7 @@
     "sideBar": {
       "description": "/** Specifies the side bar components. */",
       "type": {
-        "returnType": "SideBarDef | string | boolean | null",
+        "returnType": "SideBarDef | string | string[] | boolean | null",
         "optional": true
       }
     },
@@ -24090,7 +24090,7 @@
     "sideBar": {
       "description": "/** Specifies the side bar components. */",
       "type": {
-        "returnType": "SideBarDef | string | boolean | null",
+        "returnType": "SideBarDef | string | string[] | boolean | null",
         "optional": true
       }
     },
@@ -26784,7 +26784,7 @@
     "sideBar": {
       "description": "/** Specifies the side bar components. */",
       "type": {
-        "returnType": "SideBarDef | string | boolean | null",
+        "returnType": "SideBarDef | string | string[] | boolean | null",
         "optional": true
       }
     },

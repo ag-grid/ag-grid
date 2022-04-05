@@ -240,7 +240,7 @@ const Search = ({ value, onChange }) => {
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
-export const Options = ({ jsonData, chartType, axisType, updateOption }) => {
+export const Options = ({ chartType, axisType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();
     const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
@@ -265,7 +265,7 @@ export const Options = ({ jsonData, chartType, axisType, updateOption }) => {
 
     const isSearching = getTrimmedSearchText() !== '';
 
-    const { interfaceLookup, codeLookup } = loadLookups(jsonData, 'charts-api/api.json');
+    const { interfaceLookup, codeLookup } = loadLookups('charts-api/api.json');
     const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
     const model = buildModel(optionsType, interfaceLookup, codeLookup);
 

@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Getting Started with AG Grid Community",
+    "url": "https://www.youtube.com/watch?v=GTu79aWJT1E&t=105s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Getting Started with AG Grid Community"
+    },
+    "keyPoints": [
+      "Set up Rows and Columns.",
+      "Simple Grid Properties.",
+      "Use Grid's API.",
+      "Listen to Grid Events."
+    ]
+  },
+  {
+    "title": "Getting Started with AG Grid Enterprise",
+    "url": "https://www.youtube.com/watch?v=pKUhYE1VTP4&t=2s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Getting Started with AG Grid Enterprise"
+    },
+    "keyPoints": [
+      "Configure AG Grid Enterprise."
+    ]
+  },
+  {
+    "title": "Customising Cells - Cell Renderers",
+    "url": "https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=3&t=1s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "React Cell Renderers"
+    },
+    "keyPoints": [
+      "Cell Renderers.",
+      "Cell Renderer Params.",
+      "Cell Renderer Selector."
+    ]
+  },
+  {
+    "title": "React Rendering",
+    "url": "https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=5&t=2s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "React Rendering"
+    },
+    "keyPoints": [
+      "React Rendering.",
+      "React Developer Tools.",
+      "Grid Component Hierarchy."
+    ]
+  },
+  {
+    "title": "Column Filters",
+    "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=4&t=2s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Column Filters"
+    },
+    "keyPoints": [
+      "Configuring Filters",
+      "Filter Models",
+      "Text Filter, Number Filter, Date Filter",
+      "Set Filter, Multi Filter"
+    ]
+  },
+  {
+    "title": "Custom Column Filters",
+    "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=6&t=1s",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Custom Column Filters"
+    },
+    "keyPoints": [
+      "Creating Filter Components",
+      "Custom Filter Models"
+    ]
+  }
+]
+
+
+
