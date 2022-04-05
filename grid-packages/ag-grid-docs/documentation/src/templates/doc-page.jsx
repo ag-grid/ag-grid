@@ -8,6 +8,7 @@ import processFrameworkSpecificSections from 'utils/framework-specific-sections'
 import {ApiDocumentation, InterfaceDocumentation} from 'components/ApiDocumentation';
 import {Snippet} from 'components/snippet/Snippet';
 import {ExpandableSnippet} from 'components/expandable-snippet/ExpandableSnippet';
+import {Tabs} from 'components/Tabs';
 import FeatureOverview from 'components/FeatureOverview';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
@@ -79,6 +80,7 @@ const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
             'icons-panel': IconsPanel,
             'image-caption': props => ImageCaption({...props, pageName}),
             'matrix-table': props => MatrixTable({...props, framework}),
+            'tabs': props => Tabs({...props}),
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
