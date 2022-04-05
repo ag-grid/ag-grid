@@ -228,7 +228,7 @@ export class GridApi {
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
-    private gridBodyCon: GridBodyCtrl;
+    private gridBodyCtrl: GridBodyCtrl;
     private sideBarComp: ISideBar;
 
     private clientSideRowModel: IClientSideRowModel;
@@ -263,7 +263,7 @@ export class GridApi {
         }
 
         this.ctrlsService.whenReady(() => {
-            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
         });
     }
 
@@ -538,7 +538,7 @@ export class GridApi {
      *  - `bottom`: The bottom pixel position of the current scroll in the grid
      */
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridBodyCon.getScrollFeature().getVScrollPosition();
+        return this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
     }
 
     /**
@@ -547,7 +547,7 @@ export class GridApi {
      * - `right`: The right pixel position of the current scroll in the grid
      */
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridBodyCon.getScrollFeature().getHScrollPosition();
+        return this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
     }
 
     /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
@@ -828,7 +828,7 @@ export class GridApi {
 
     /** Sets columns to adjust in size to fit the grid horizontally. */
     public sizeColumnsToFit() {
-        this.gridBodyCon.sizeColumnsToFit();
+        this.gridBodyCtrl.sizeColumnsToFit();
     }
 
     /** Show the 'loading' overlay. */
@@ -897,7 +897,7 @@ export class GridApi {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key, position);
+        this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position);
     }
 
     /**
@@ -910,7 +910,7 @@ export class GridApi {
      * - if the row is already in view then the grid will do nothing.
      */
     public ensureIndexVisible(index: any, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.gridBodyCon.getScrollFeature().ensureIndexVisible(index, position);
+        this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position);
     }
 
     /**
@@ -921,7 +921,7 @@ export class GridApi {
      * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match).
      */
     public ensureNodeVisible(comparator: any, position: 'top' | 'bottom' | 'middle' | null = null) {
-        this.gridBodyCon.getScrollFeature().ensureNodeVisible(comparator, position);
+        this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(comparator, position);
     }
 
     /**
@@ -1075,7 +1075,7 @@ export class GridApi {
 
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     public addRowDropZone(params: RowDropZoneParams): void {
-        this.gridBodyCon.getRowDragFeature().addRowDropZone(params);
+        this.gridBodyCtrl.getRowDragFeature().addRowDropZone(params);
     }
 
     /** Removes an external drop zone added by `addRowDropZone`. */
@@ -1089,7 +1089,7 @@ export class GridApi {
 
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
     public getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams {
-        return this.gridBodyCon.getRowDragFeature().getRowDropZone(events);
+        return this.gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
     }
 
     /** Sets the height in pixels for the row containing the column label header. */
@@ -1107,7 +1107,7 @@ export class GridApi {
 
     /** Sets the `enableCellTextSelection` property. */
     public setEnableCellTextSelection(selectable: boolean) {
-        this.gridBodyCon.setCellTextSelection(selectable);
+        this.gridBodyCtrl.setCellTextSelection(selectable);
     }
 
     /** Sets the preferred direction for the selection fill handle. */
@@ -1689,7 +1689,7 @@ export class GridApi {
         };
         const notPinned = params.rowPinned == null;
         if (notPinned) {
-            this.gridBodyCon.getScrollFeature().ensureIndexVisible(params.rowIndex);
+            this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(params.rowIndex);
         }
 
         const cell = this.navigationService.getCellByPosition(cellPosition);

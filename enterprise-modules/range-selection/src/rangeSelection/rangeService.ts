@@ -70,16 +70,16 @@ export class RangeService extends BeanStub implements IRangeService {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
 
         this.ctrlsService.whenReady(() => {
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             this.autoScrollService = new AutoScrollService({
-                scrollContainer: gridBodyCon.getBodyViewportElement()!,
+                scrollContainer: gridBodyCtrl.getBodyViewportElement()!,
                 scrollAxis: 'xy',
-                getVerticalPosition: () => gridBodyCon.getScrollFeature().getVScrollPosition().top,
-                setVerticalPosition: (position) => gridBodyCon.getScrollFeature().setVerticalScrollPosition(position),
-                getHorizontalPosition: () => gridBodyCon.getScrollFeature().getHScrollPosition().left,
-                setHorizontalPosition: (position) => gridBodyCon.getScrollFeature().setHorizontalScrollPosition(position),
+                getVerticalPosition: () => gridBodyCtrl.getScrollFeature().getVScrollPosition().top,
+                setVerticalPosition: (position) => gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(position),
+                getHorizontalPosition: () => gridBodyCtrl.getScrollFeature().getHScrollPosition().left,
+                setHorizontalPosition: (position) => gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(position),
                 shouldSkipVerticalScroll: () => this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL,
-                shouldSkipHorizontalScroll: () => gridBodyCon.getScrollFeature().isHorizontalScrollShowing()
+                shouldSkipHorizontalScroll: () => gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()
             });
         });
     }
