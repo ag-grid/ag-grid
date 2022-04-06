@@ -51,17 +51,12 @@ export class SortService extends BeanStub {
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (!sortActive || skipSortingGroups) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
-                const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
-                if (groupMaintainOrder && rowNode.childrenAfterSort) {
-                    const indexedOrders = rowNode.childrenAfterSort.reduce<{ [key:string]: number }>(
-                        (acc, row, idx) => {
-                            acc[row.id!] = idx;
-                            return acc;
-                        }, {}
-                    );
-                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] || 0) - (indexedOrders[row2.id!] || 0));
+                const nextSortedRows = rowNode.childrenAfterAggFilter!.slice(0);
+                if (groupMaintainOrder) {
+                    const previouslySortedNodes = rowNode.childrenAfterSort;
+                    this.replicatePreviousSortOrder(nextSortedRows, previouslySortedNodes);
                 }
-                rowNode.childrenAfterSort = childrenToBeSorted;
+                rowNode.childrenAfterSort = nextSortedRows;
             } else {
                 rowNode.childrenAfterSort = deltaSort ?
                     this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
@@ -85,6 +80,17 @@ export class SortService extends BeanStub {
         }
 
         this.updateGroupDataForHideOpenParents(changedPath);
+    }
+
+    private replicatePreviousSortOrder = (nodesToSort: RowNode[], previouslySortedNodes: RowNode[] | null) => {
+        if (!previouslySortedNodes || !previouslySortedNodes.length) {
+            return;
+        }
+
+        const previousOrderIndexMap: { [key:string]: number } = {};
+        previouslySortedNodes.forEach((row, idx) => previousOrderIndexMap[row.id!] = idx);
+
+        nodesToSort.sort((row1, row2) => (previousOrderIndexMap[row1.id!] || 0) - (previousOrderIndexMap[row2.id!] || 0));
     }
 
     private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
