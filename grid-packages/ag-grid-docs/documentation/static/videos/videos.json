@@ -11,7 +11,8 @@
       "Simple Grid Properties.",
       "Use Grid's API.",
       "Listen to Grid Events."
-    ]
+    ],
+    "runningTime": "7:24"
   },
   {
     "title": "Getting Started with AG Grid Enterprise",
@@ -22,7 +23,8 @@
     },
     "keyPoints": [
       "Configure AG Grid Enterprise."
-    ]
+    ],
+    "runningTime": "4:42"
   },
   {
     "title": "Customising Cells - Cell Renderers",
@@ -35,7 +37,8 @@
       "Cell Renderers.",
       "Cell Renderer Params.",
       "Cell Renderer Selector."
-    ]
+    ],
+    "runningTime": "7:53"
   },
   {
     "title": "React Rendering",
@@ -48,7 +51,8 @@
       "React Rendering.",
       "React Developer Tools.",
       "Grid Component Hierarchy."
-    ]
+    ],
+    "runningTime": "4:09"
   },
   {
     "title": "Column Filters",
@@ -62,7 +66,8 @@
       "Filter Models",
       "Text Filter, Number Filter, Date Filter",
       "Set Filter, Multi Filter"
-    ]
+    ],
+    "runningTime": "14:32"
   },
   {
     "title": "Custom Column Filters",
@@ -74,7 +79,8 @@
     "keyPoints": [
       "Creating Filter Components",
       "Custom Filter Models"
-    ]
+    ],
+    "runningTime": "18:04"
   },
   {
     "title": "Custom Components",
@@ -88,7 +94,8 @@
       "Component Params",
       "Component Selectors",
       "React & JavaScript Components"
-    ]
+    ],
+    "runningTime": "15;21"
   },
   {
     "title": "Updating Row Data",
@@ -101,7 +108,8 @@
       "Updating Row Data",
       "Transaction Updates",
       "High Frequency Updates"
-    ]
+    ],
+    "runningTime": "19:11"
   }
 ]
 

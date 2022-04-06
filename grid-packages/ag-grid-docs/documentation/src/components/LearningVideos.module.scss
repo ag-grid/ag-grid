@@ -4,6 +4,13 @@
     display: flex;
     flex-direction: column;
 
+    a {
+        color: inherit;
+        &:hover {
+            color: inherit;
+        }
+    }
+
     &--header {
         font-size: 1.25rem;
     }
@@ -16,13 +23,40 @@
     }
 
     &__video {
-        margin-bottom: 3rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        width: 100%;
 
-        &__body {
-            display: flex;
+        &:hover {
+            color: inherit;
+            background-color: lightgrey;
+        }
 
-            &__video-content {
-                width: 320px;
+        &__anchor-body {
+            display: flex !important;
+
+            &__index {
+                padding-right: 1rem;
+                display: flex;
+                align-items: center;
+            }
+            &__body {
+                display: flex;
+
+                &__video-content {
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: flex-end;
+
+                    &__running-time {
+                        position: absolute;
+                        padding: 0.25rem;
+                        font-size: smaller;
+                        margin: 0;
+                        color: white;
+                        background-color: rgba(0,0,0,.5);
+                    }
+                }
             }
         }
     }
