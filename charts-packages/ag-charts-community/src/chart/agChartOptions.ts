@@ -37,6 +37,9 @@ export type Opacity = number;
 /** Alias to denote that a value is a measurement in pixels. */
 export type PixelSize = number;
 
+/** Alias for an actual HTMLElement. */
+type HTMLElement = any;
+
 export interface AgChartThemePalette {
     /** The array of fills to be used. */
     fills: string[];

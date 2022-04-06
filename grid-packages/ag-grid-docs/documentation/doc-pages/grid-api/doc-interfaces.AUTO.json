@@ -10284,6 +10284,7 @@
   "CssColor": {},
   "Opacity": {},
   "PixelSize": {},
+  "HTMLElement": {},
   "AgChartThemePalette": {
     "fills": {
       "description": "/** The array of fills to be used. */",

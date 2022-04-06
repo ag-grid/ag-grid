@@ -5877,6 +5877,7 @@
   "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "HTMLElement": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgChartThemePalette": {
     "meta": {},
     "type": { "fills": "string[]", "strokes": "string[]" },

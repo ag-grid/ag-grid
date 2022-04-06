@@ -43,6 +43,7 @@ import { Axis } from '../axis';
 import { GroupedCategoryChart } from './groupedCategoryChart';
 import { prepareOptions, isAgCartesianChartOptions, isAgHierarchyChartOptions, isAgPolarChartOptions, optionsType } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
+import { validateAgChartOptions } from './agChartOptions.ajv';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -117,9 +118,10 @@ export abstract class AgChart {
 
 export abstract class AgChartV2 {
     static DEBUG = false;
-    
+
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
+        validate(userOptions);
         const mergedOptions = prepareOptions(userOptions);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
@@ -137,6 +139,7 @@ export abstract class AgChartV2 {
 
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
+        validate(userOptions);
         const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
@@ -166,6 +169,73 @@ function debug(message?: any, ...optionalParams: any[]): void {
     if (AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
+}
+
+function validate(options: any): options is AgChartOptions {
+    const isDevelopmentEnvironment = window == null ||
+        window.location?.hostname.endsWith('plnkr.co') ||
+        window.location?.hostname === 'localhost';
+    if (!isDevelopmentEnvironment) {
+        // Disable outside development environment for now.
+        return true;
+    }
+
+    const startTime = Date.now();
+    if (validateAgChartOptions(options)) {
+        console.log(`AG Charts - AgChartOptions validation passes in ${Date.now() - startTime}ms.`); // TODO: Remove!
+        return true;
+    }
+
+    const merge = (target: any, source: any) => {
+        Object.entries(source).forEach(([key, value]) => {
+            const valueArray = value instanceof Array ? value : [value];
+
+            target[key] = [
+                ...(target[key] || []),
+                ...valueArray.filter(v => target[key] == null || !target[key].includes(v)),
+            ];
+        });
+
+        return target;
+    };
+
+    const errors = validateAgChartOptions.errors?.reduce(
+        (result, next) => {
+            const { instancePath, message, params } = next;
+            const entry = result[instancePath] || 
+                (result[instancePath] = { message: {} });
+
+            entry.message[message] = merge(entry.message[message] || {}, params);
+
+            return result;
+        },
+        {} as Record<string, { message: Record<string, Record<string, any[]>>}>,
+    ) || {};
+
+    const skipError = (msg: string, params: Record<string, any[]>) => {
+        if (msg === 'must match a schema in anyOf' && Object.keys(params).length === 0) {
+            return true;
+        }
+
+        return false;
+    };
+
+    Object.entries(errors).forEach(([path, { message: msgs }]) => {
+        let jsonPath = path
+            .replace(/\/([0-9]+)/g, (match) => `[${match[1]}]`)
+            .replace(/^\//, '')
+            .replace(/\//g, '.');
+        
+        Object.entries(msgs).forEach(([msg, props]) => {
+            if (skipError(msg, props)) {
+                return;
+            }
+
+            console.warn(`AG Charts - options validation error at path '${jsonPath}': ${msg} ${JSON.stringify(props)}`);
+        });
+    });
+
+    return false;
 }
 
 function applyChartOptions<
