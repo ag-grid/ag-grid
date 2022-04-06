@@ -5,6 +5,9 @@ import {SEO} from 'components/SEO';
 import {convertUrl} from 'components/documentation-helpers';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
+import menuStyles from '../components/menu-view/MenuView.module.scss';
+import tileStyles from '../components/menu-view/Tile.module.scss';
+import classnames from "classnames";
 import ReactPlayer from 'react-player'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
@@ -113,32 +116,28 @@ const GettingStarted = ({framework, data}) => {
 
 const VideoPanel = ({framework}) => {
     return (
-        <div className={styles['docs-home__video-panel']}>
-            <h2 className={styles['docs-home__video-panel__title']}>
-                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Learning Videos
+        <div key={"4"} className={menuStyles['menu-view']}>
+            <h2 className={menuStyles['menu-view__title']}>
+                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Videos
             </h2>
-            <h4 className={styles['docs-home__video-panel__title__subtitle']}>
-            </h4>
-            <div className={styles['docs-home__video-panel__videos']}>
+            <div className={menuStyles['menu-view__tile-row']}>
                 {featuredVideos.map(featuredVideo => (
-                    <div className={styles['docs-home__video-panel__videos__video-player']} key={featuredVideo.id}>
-                        <ReactPlayer url={`https://www.youtube.com/watch?v=${featuredVideo.id}`}
-                                     height={180}
-                                     width={320}
-                                     light={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}
-                                     title={featuredVideo.title}>
-
-                        </ReactPlayer>
-                        <span className={styles['docs-home__video-panel__video-player__title']}>{featuredVideo.title}</span>
-                    </div>
-                ))}
-                <div className={styles['docs-home__video-panel__videos__all-videos']}>
-                    <a href="./videos/" style={{margin: "auto"}}>
-                        <div style={{flexDirection: "column"}}>
-                            <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
-                            <div className={styles['docs-home__video-panel__videos__all-videos__title']}>All Videos</div>
+                        <div className={classnames(tileStyles['menu-view-tile'])} style={{height: "10rem"}}>
+                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}`} target="_blank">
+                                <img style={{height: "100%", width: "100%"}} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`} />
+                            </a>
                         </div>
-                    </a>
+                    )
+                )}
+                <div className={classnames(tileStyles['menu-view-tile'])} style={{height: "10rem"}}>
+                    <div className={styles['docs-home__video-panel__videos__all-videos']}>
+                        <a href="./videos/" style={{margin: "auto"}}>
+                            <div style={{flexDirection: "column"}}>
+                                <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
+                                <div className={styles['docs-home__video-panel__videos__all-videos__title']}>All Videos</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

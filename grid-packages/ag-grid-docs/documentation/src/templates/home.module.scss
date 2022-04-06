@@ -101,40 +101,9 @@
     }
 
     &__video-panel {
-        margin-top: -2rem;
-
-        &__title {
-            //composes: mb-0 p-2 from global;
-            font-size: 2rem;
-            font-weight: 500;
-            text-align: left;
-            text-transform: capitalize;
-            margin-top: 1rem;
-            margin-left: 1rem;
-            border-radius: 0.3rem;
-
-            &__subtitle {
-                margin-left: 1rem;
-                margin-top: -0.5rem;
-            }
-        }
 
         &__videos {
-            display: flex;
-            flex-grow: 1;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-left: 1rem;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            padding-right: 1rem;
-            border: 1px solid #d0d4d6;
-            border-radius: 5px;
-
             &__video-player {
-                margin-left: 1rem;
-                width: 320px;
-
                 &__title {
                     font-size: smaller;
                 }
@@ -142,22 +111,6 @@
 
             &__all-videos {
                 composes: d-flex from global;
-                margin-left: 1rem;
-                border: 1px solid #d0d4d6;
-                border-radius: 5px;
-                height: 180px;
-                width: 320px;
-
-                &--header {
-                    font-size: 1.25rem;
-                }
-
-                &__frame {
-                    composes: ml-3 from global;
-
-                    border: 2px solid $dark;
-                    border-radius: 5px;
-                }
 
                 &__title {
                     width: 80%;
