@@ -23,20 +23,6 @@ export class SelectableService extends BeanStub {
         }
     }
 
-    public updateSelectableAfterFiltering(rowNode: RowNode): void {
-        if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (node: RowNode) => node.childrenAfterFilter;
-            this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
-        }
-    }
-
-    public updateSelectableAfterAggregateFiltering(rowNode: RowNode): void {
-        if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (node: RowNode) => node.childrenAfterAggFilter;
-            this.recurseDown(rowNode.childrenAfterAggFilter, nextChildrenFunc);
-        }
-    }
-
     private recurseDown(children: RowNode[] | null, nextChildrenFunc: ((rowNode: RowNode) => RowNode[] | null)): void {
         if (!children) { return; }
 
