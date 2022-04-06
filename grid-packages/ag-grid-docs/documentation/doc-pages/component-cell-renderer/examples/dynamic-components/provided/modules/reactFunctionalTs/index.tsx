@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useMemo, useState } from 'react';
@@ -8,43 +7,43 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const SquareRenderer = props => {
-    const valueSquared = (value) => {
+const SquareRenderer = (props: ICellRendererParams) => {
+    const valueSquared = (value: any) => {
         return value * value;
     };
 
     return <span>{valueSquared(props.value)}</span>;
 };
 
-const CubeRenderer = props => {
-    const valueCubed = (value) => {
+const CubeRenderer = (props: ICellRendererParams) => {
+    const valueCubed = (value: any) => {
         return value * value * value;
     };
 
     return <span>{valueCubed(props.value)}</span>;
 };
 
-const ParamsRenderer = props => {
-    return <span>Field: {props.colDef.field}, Value: {props.value}</span>;
+const ParamsRenderer = (props: ICellRendererParams) => {
+    return <span>Field: {props.colDef?.field}, Value: {props.value}</span>;
 };
 
-const CurrencyRenderer = props => {
+const CurrencyRenderer = (props: ICellRendererParams) => {
     const value = useMemo(() => props.value, [props.value]);
 
-    const formatValueToCurrency = (currency, value) => {
+    const formatValueToCurrency = (currency: string, value: any) => {
         return `${currency}${value.toFixed(2)}`;
     };
 
     return <span>{formatValueToCurrency('EUR', value)}</span>;
 };
 
-const ChildMessageRenderer = props => {
+const ChildMessageRenderer = (props: ICellRendererParams) => {
     const invokeParentMethod = () => {
-        props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef.field}`);
+        props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef?.field}`);
     };
 
     return <span><button style={{ height: 20, lineHeight: 0.5 }} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
@@ -64,7 +63,7 @@ const createRowData = () => {
 
 const GridExample = () => {
     const [rowData, setRowData] = useState(createRowData());
-    const columnDefs = useMemo(() => [
+    const columnDefs = useMemo<ColDef[]>(() => [
         {
             headerName: "Row",
             field: "row",
@@ -107,7 +106,7 @@ const GridExample = () => {
             editable: false,
             minWidth: 150
         }
-    ]);
+    ], []);
 
     const refreshEvenRowsCurrencyData = () => {
         const newRowData = [];
@@ -121,7 +120,7 @@ const GridExample = () => {
         setRowData(newRowData);
     };
 
-    const methodFromParent = cell => {
+    const methodFromParent = (cell: string) => {
         alert('Parent Component Method from ' + cell + '!');
     };
 

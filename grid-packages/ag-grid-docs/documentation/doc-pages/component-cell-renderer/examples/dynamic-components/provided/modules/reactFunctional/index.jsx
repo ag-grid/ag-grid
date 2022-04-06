@@ -106,7 +106,7 @@ const GridExample = () => {
             editable: false,
             minWidth: 150
         }
-    ]);
+    ], []);
 
     const refreshEvenRowsCurrencyData = () => {
         const newRowData = [];

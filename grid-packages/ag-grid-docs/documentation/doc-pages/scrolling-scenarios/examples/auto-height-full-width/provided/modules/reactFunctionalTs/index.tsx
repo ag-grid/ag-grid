@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -6,7 +5,7 @@ import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, ICellRendererParams, IsFullWidthRowParams, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
@@ -14,7 +13,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule])
 
 const makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
-const createRow = (index) => {
+const createRow = (index: number) => {
     return {
         id: 'D' + (1000 + index),
         make: makes[Math.floor(Math.random() * makes.length)],
@@ -42,7 +41,7 @@ const createRowData = () => {
     return rowData;
 }
 
-const fullWidthCellRenderer = (props) => {
+const fullWidthCellRenderer = (props: ICellRendererParams) => {
     // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
     const [cssClass] = useState(props.node.rowPinned ? 'example-full-width-floating-row' : 'example-full-width-row')
     const [message] = useState(props.node.rowPinned ? `Floating full width row at index ${props.rowIndex}` : `Normal full width row at index ${props.rowIndex}`)
@@ -60,7 +59,7 @@ const fullWidthCellRenderer = (props) => {
 const GridExample = () => {
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData] = useState(createRowData());
-    const [columnDefs] = useState([
+    const [columnDefs] = useState<(ColDef | ColGroupDef)[]>([
         {
             headerName: 'Core',
             children: [
@@ -90,7 +89,7 @@ const GridExample = () => {
             ],
         },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             enableRowGroup: true,
             enablePivot: true,
@@ -110,7 +109,7 @@ const GridExample = () => {
     }, []);
 
 
-    const isFullWidthRow = useCallback((params) => {
+    const isFullWidthRow = useCallback((params: IsFullWidthRowParams) => {
         return params.rowNode.data.fullWidth;
     }, [])
 

@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -8,28 +7,28 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { CellClassParams, CellClassRules, ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const ragCellClassRules = {
+const ragCellClassRules: CellClassRules = {
     'rag-green-outer': params => params.value === 2008,
     'rag-amber-outer': params => params.value === 2004,
     'rag-red-outer': params => params.value === 2000,
 };
 
-const cellStyle = (params) => {
+const cellStyle = (params: CellClassParams) => {
     const color = numberToColor(params.value);
     return {
         backgroundColor: color,
     };
 }
 
-const cellClass = (params) => {
+const cellClass = (params: CellClassParams) => {
     return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
 }
 
-const numberToColor = (val) => {
+const numberToColor = (val: number) => {
     if (val === 0) {
         return '#ffaaaa';
     } else if (val == 1) {
@@ -39,11 +38,11 @@ const numberToColor = (val) => {
     }
 }
 
-const ragRenderer = (params) => {
-    return <span class="rag-element">{params.value}</span>;
+const ragRenderer = (params: ICellRendererParams) => {
+    return <span className="rag-element">{params.value}</span>;
 }
 
-const numberParser = (params) => {
+const numberParser = (params: ValueParserParams) => {
     const newValue = params.newValue;
     let valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {
@@ -60,7 +59,7 @@ const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete' },
         {
             field: 'age',
@@ -107,7 +106,7 @@ const GridExample = () => {
             cellStyle: cellStyle,
         },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 150,

@@ -1,8 +1,7 @@
-//@ts-nocheck
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -14,9 +13,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 const GridExample = () => {
 
-    const [gridApi, setGridApi] = useState(null);
+    const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [rowData, setRowData] = useState(null);
-    const columnDefs = useMemo(() => [
+    const columnDefs = useMemo<ColDef[]>(() => [
         { field: "athlete", width: 150 },
         { field: "age", width: 90 },
         { field: "country", width: 150 },
@@ -27,7 +26,7 @@ const GridExample = () => {
         { field: "silver", width: 100 },
         { field: "bronze", width: 100 },
         { field: "total", width: 100 },
-    ]);
+    ], []);
     const [style, setStyle] = useState({
         height: '100%',
         width: '100%'
@@ -35,11 +34,11 @@ const GridExample = () => {
 
     useEffect(() => {
         if (gridApi) {
-            gridApi.sizeColumnsToFit();
+            gridApi!.sizeColumnsToFit();
         }
     }, [rowData]);
 
-    const onGridReady = (params) => {
+    const onGridReady = (params: GridReadyEvent) => {
         setGridApi(params.api);
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -61,7 +60,7 @@ const GridExample = () => {
         setWidthAndHeight('400px', '400px');
     };
 
-    const setWidthAndHeight = (width, height) => {
+    const setWidthAndHeight = (width: string, height: string) => {
         setStyle({
             width,
             height

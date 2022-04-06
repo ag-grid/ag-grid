@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
@@ -9,7 +8,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellEditorParams, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -19,13 +18,13 @@ const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-const DoublingEditor = memo(forwardRef((props, ref) => {
+const DoublingEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
-    const refInput = useRef(null);
+    const refInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         // focus on the input
-        refInput.current.focus()
+        refInput.current?.focus()
     }, []);
 
     /* Component Editor Lifecycle methods */
@@ -56,14 +55,14 @@ const DoublingEditor = memo(forwardRef((props, ref) => {
         <input type="number"
             ref={refInput}
             value={value}
-            onChange={event => setValue(event.target.value)}
+            onChange={(event: any) => setValue(parseInt(event.target.value))}
             style={{ width: "100%" }}
         />
     );
 }));
 
-const MoodRenderer = memo(props => {
-    const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
+const MoodRenderer = memo((props: ICellRendererParams) => {
+    const imageForMood = (mood: string) => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
     const mood = useMemo(() => imageForMood(props.value), [props.value]);
 
@@ -72,15 +71,15 @@ const MoodRenderer = memo(props => {
     );
 });
 
-const MoodEditor = memo(forwardRef((props, ref) => {
-    const isHappy = value => value === 'Happy';
+const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
+    const isHappy = (value: string) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
     const [interimValue, setInterimValue] = useState(isHappy(props.value));
-    const [happy, setHappy] = useState(null);
+    const [happy, setHappy] = useState<boolean>(false);
     const refContainer = useRef(null);
 
-    const checkAndToggleMoodIfLeftRight = (event) => {
+    const checkAndToggleMoodIfLeftRight = (event: any) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
                 setInterimValue(!interimValue);
@@ -93,7 +92,7 @@ const MoodEditor = memo(forwardRef((props, ref) => {
     };
 
     useEffect(() => {
-        ReactDOM.findDOMNode(refContainer.current).focus();
+        (ReactDOM.findDOMNode(refContainer.current) as any).focus();
         setReady(true);
     }, [])
 
@@ -124,7 +123,7 @@ const MoodEditor = memo(forwardRef((props, ref) => {
         border: '1px solid grey',
         background: '#e6e6e6',
         padding: 15,
-        textAlign: 'center',
+        textAlign: 'center' as const,
         display: 'inline-block'
     };
 
@@ -160,12 +159,12 @@ const MoodEditor = memo(forwardRef((props, ref) => {
     );
 }));
 
-const NumericEditor = memo(forwardRef((props, ref) => {
+const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.key === KEY_BACKSPACE || props.key === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -175,7 +174,7 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.key === KEY_F2) {
+            if (props.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -189,12 +188,12 @@ const NumericEditor = memo(forwardRef((props, ref) => {
     const initialState = createInitialState();
     const [value, setValue] = useState(initialState.value);
     const [highlightAllOnFocus, setHighlightAllOnFocus] = useState(initialState.highlightAllOnFocus);
-    const refInput = useRef(null);
+    const refInput = useRef<HTMLInputElement>(null);
 
     // focus on the input
     useEffect(() => {
         // get ref from React component
-        const eInput = refInput.current;
+        const eInput = refInput.current!;
         eInput.focus();
         if (highlightAllOnFocus) {
             eInput.select();
@@ -215,29 +214,29 @@ const NumericEditor = memo(forwardRef((props, ref) => {
     /* Utility Methods */
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
-    const isLeftOrRight = event => {
+    const isLeftOrRight = (event: any) => {
         return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
     };
 
-    const isCharNumeric = charStr => {
+    const isCharNumeric = (charStr: string) => {
         return !!/\d/.test(charStr);
     };
 
-    const isKeyPressedNumeric = event => {
+    const isKeyPressedNumeric = (event: any) => {
         const charStr = event.key;
         return isCharNumeric(charStr);
     };
 
-    const deleteOrBackspace = event => {
+    const deleteOrBackspace = (event: any) => {
         return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     };
 
-    const finishedEditingPressed = event => {
+    const finishedEditingPressed = (event: any) => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
-    const onKeyDown = event => {
+    const onKeyDown = (event: any) => {
         if (isLeftOrRight(event) || deleteOrBackspace(event)) {
             event.stopPropagation();
             return;
@@ -279,8 +278,8 @@ const NumericEditor = memo(forwardRef((props, ref) => {
     return (
         <input ref={refInput}
             value={value}
-            onChange={event => setValue(event.target.value)}
-            onKeyDown={event => onKeyDown(event)}
+            onChange={(event: any) => setValue(event.target.value)}
+            onKeyDown={(event: any) => onKeyDown(event)}
             style={{ width: "100%" }}
         />
     );
@@ -303,7 +302,7 @@ const GridExample = () => {
         { name: "Larry", mood: "Happy", number: 13 },
     ]);
 
-    const columnDefs = useMemo(() => [
+    const columnDefs = useMemo<ColDef[]>(() => [
         {
             headerName: 'Doubling',
             field: 'number',

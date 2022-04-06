@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -9,13 +8,13 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
-function createUniqueRandomSymbol(data) {
-    let symbol;
+function createUniqueRandomSymbol(data: any[]) {
+    let symbol: string = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let isUnique = false;
     while (!isUnique) {
@@ -36,14 +35,14 @@ function createUniqueRandomSymbol(data) {
 }
 
 function getInitialData() {
-    const data = [];
+    const data: any[] = [];
     for (let i = 0; i < 5; i++) {
         data.push(createItem(data));
     }
     return data;
 }
 
-function createItem(data) {
+function createItem(data: any[]) {
     const item = {
         group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
         symbol: createUniqueRandomSymbol(data),
@@ -52,7 +51,7 @@ function createItem(data) {
     return item;
 }
 
-function setGroupingEnabled(enabled, columnApi) {
+function setGroupingEnabled(enabled: boolean, columnApi: ColumnApi) {
     if (enabled) {
         columnApi.applyColumnState({
             state: [
@@ -72,29 +71,29 @@ function setGroupingEnabled(enabled, columnApi) {
     setItemVisible('groupingOff', enabled);
 }
 
-function setItemVisible(id, visible) {
-    const element = document.querySelector('#' + id);
+function setItemVisible(id: string, visible: boolean) {
+    const element = document.querySelector('#' + id) as any;
     element.style.display = visible ? 'inline' : 'none';
 }
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState(getInitialData());
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { headerName: 'Symbol', field: 'symbol' },
         { headerName: 'Price', field: 'price' },
         { headerName: 'Group', field: 'group' },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             width: 250,
             sortable: true,
             resizable: true,
         }
     }, []);
-    const autoGroupColumnDef = useMemo(() => {
+    const autoGroupColumnDef = useMemo<ColDef>(() => {
         return {
             headerName: 'Symbol',
             cellRenderer: 'agGroupCellRenderer',
@@ -106,12 +105,12 @@ const GridExample = () => {
             statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
         }
     }, []);
-    const getRowId = useCallback(function (params) {
+    const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.symbol;
     }, []);
 
 
-    const onGridReady = useCallback((params) => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
         setGroupingEnabled(false, params.columnApi);
     }, []);
 
@@ -129,7 +128,7 @@ const GridExample = () => {
     }, [rowData])
 
     const removeSelected = useCallback(() => {
-        const selectedRowNodes = gridRef.current.api.getSelectedNodes();
+        const selectedRowNodes = gridRef.current!.api.getSelectedNodes();
         const selectedIds = selectedRowNodes.map(function (rowNode) {
             return rowNode.id;
         });
@@ -140,7 +139,7 @@ const GridExample = () => {
     }, [rowData])
 
     const setSelectedToGroup = useCallback((newGroup) => {
-        const selectedRowNodes = gridRef.current.api.getSelectedNodes();
+        const selectedRowNodes = gridRef.current!.api.getSelectedNodes();
         const selectedIds = selectedRowNodes.map(function (rowNode) {
             return rowNode.id;
         });
@@ -162,7 +161,7 @@ const GridExample = () => {
     }, [rowData])
 
     const updatePrices = useCallback(() => {
-        const newStore = [];
+        const newStore: any[] = [];
         rowData.forEach(function (item) {
             newStore.push({
                 // use same symbol as last time, this is the unique id
@@ -177,7 +176,7 @@ const GridExample = () => {
     }, [rowData])
 
     const onGroupingEnabled = useCallback((enabled) => {
-        setGroupingEnabled(enabled, gridRef.current.columnApi);
+        setGroupingEnabled(enabled, gridRef.current!.columnApi);
     }, [])
 
     const reverseItems = useCallback(() => {

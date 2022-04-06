@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -8,11 +7,11 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
-const valueFormatter = function (params) {
+const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {
         return '£' + params.value.toLocaleString();
     } else {
@@ -22,9 +21,9 @@ const valueFormatter = function (params) {
 
 // this counter is used to give id's to the rows
 let sequenceId = 0;
-let allOfTheData = [];
+let allOfTheData: any[] = [];
 
-const createRowData = (id) => {
+const createRowData = (id: number) => {
     const makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
     const models = [
         'Cruze',
@@ -43,7 +42,7 @@ const createRowData = (id) => {
     };
 }
 
-const insertItemsAt2 = (count) => {
+const insertItemsAt2 = (count: number) => {
     const newDataItems = [];
     for (let i = 0; i < count; i++) {
         const newItem = createRowData(sequenceId++);
@@ -55,16 +54,16 @@ const insertItemsAt2 = (count) => {
 
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
             headerName: 'Item ID',
             field: 'id',
             valueGetter: 'node.id',
-            cellRenderer: props => {
+            cellRenderer: (props: ICellRendererParams) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -79,7 +78,7 @@ const GridExample = () => {
             valueFormatter: valueFormatter,
         },
     ]);
-    const datasource = useMemo(() => {
+    const datasource = useMemo<IDatasource>(() => {
         return {
             rowCount: undefined,
             getRows: function (params) {
@@ -107,15 +106,15 @@ const GridExample = () => {
             },
         }
     }, []);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             resizable: true,
         }
     }, []);
-    const getRowId = useCallback(function (params) {
+    const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.id.toString();
     }, []);
-    const getRowStyle = useCallback(function (params) {
+    const getRowStyle = useCallback(function (params: RowClassParams) {
         if (params.data && params.data.make === 'Honda') {
             return {
                 fontWeight: 'bold',
@@ -126,7 +125,7 @@ const GridExample = () => {
     }, []);
 
 
-    const onGridReady = useCallback((params) => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
 
         sequenceId = 1;
         allOfTheData = [];
@@ -145,35 +144,35 @@ const GridExample = () => {
         // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
         // refreshVirtualPageCache() method, as this would be assuming you want to do it which
         // is not true, maybe the row count is constant and you just want to refresh the details.
-        const maxRowFound = gridRef.current.api.isLastRowIndexKnown();
+        const maxRowFound = gridRef.current!.api.isLastRowIndexKnown();
         if (maxRowFound) {
-            const rowCount = gridRef.current.api.getInfiniteRowCount() || 0;
-            gridRef.current.api.setRowCount(rowCount + count);
+            const rowCount = gridRef.current!.api.getInfiniteRowCount() || 0;
+            gridRef.current!.api.setRowCount(rowCount + count);
         }
         // get grid to refresh the data
-        gridRef.current.api.refreshInfiniteCache();
+        gridRef.current!.api.refreshInfiniteCache();
     }, [])
 
     const removeItem = useCallback((start, limit) => {
         allOfTheData.splice(start, limit);
-        gridRef.current.api.refreshInfiniteCache();
+        gridRef.current!.api.refreshInfiniteCache();
     }, [allOfTheData])
 
     const refreshCache = useCallback(() => {
-        gridRef.current.api.refreshInfiniteCache();
+        gridRef.current!.api.refreshInfiniteCache();
     }, [])
 
     const purgeCache = useCallback(() => {
-        gridRef.current.api.purgeInfiniteCache();
+        gridRef.current!.api.purgeInfiniteCache();
     }, [])
 
     const setRowCountTo200 = useCallback(() => {
-        gridRef.current.api.setRowCount(200, false);
+        gridRef.current!.api.setRowCount(200, false);
     }, [])
 
     const rowsAndMaxFound = useCallback(() => {
-        console.log('getInfiniteRowCount() => ' + gridRef.current.api.getInfiniteRowCount());
-        console.log('isLastRowIndexKnown() => ' + gridRef.current.api.isLastRowIndexKnown());
+        console.log('getInfiniteRowCount() => ' + gridRef.current!.api.getInfiniteRowCount());
+        console.log('isLastRowIndexKnown() => ' + gridRef.current!.api.isLastRowIndexKnown());
     }, [])
 
     // function just gives new prices to the row data, it does not update the grid
@@ -191,16 +190,16 @@ const GridExample = () => {
 
     const printCacheState = useCallback(() => {
         console.log('*** Cache State ***');
-        console.log(gridRef.current.api.getCacheBlockState());
+        console.log(gridRef.current!.api.getCacheBlockState());
     }, [])
 
     const jumpTo500 = useCallback(() => {
         // first up, need to make sure the grid is actually showing 500 or more rows
-        if ((gridRef.current.api.getInfiniteRowCount() || 0) < 501) {
-            gridRef.current.api.setRowCount(501, false);
+        if ((gridRef.current!.api.getInfiniteRowCount() || 0) < 501) {
+            gridRef.current!.api.setRowCount(501, false);
         }
         // next, we can jump to the row
-        gridRef.current.api.ensureIndexVisible(500);
+        gridRef.current!.api.ensureIndexVisible(500);
     }, [])
 
 

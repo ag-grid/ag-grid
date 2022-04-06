@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,7 +8,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -52,7 +51,7 @@ const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'
 
 // as we create books, we remember what products they belong to, so we can
 // add to these books later when use clicks one of the buttons
-const productToPortfolioToBooks = {};
+const productToPortfolioToBooks: any = {};
 
 // start the book id's and trade id's at some future random number,
 // looks more realistic than starting them at 0
@@ -62,7 +61,7 @@ let nextBatchId = 101;
 
 // simple value getter, however we can see how many times it gets called. this
 // gives us an indication to how many rows get recalculated when data changes
-const changeValueGetter = (params) => {
+const changeValueGetter = (params: ValueGetterParams) => {
     return params.data.previous - params.data.current;
 }
 
@@ -92,11 +91,11 @@ const createRowData = () => {
 }
 
 // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
-const randomBetween = (min, max) => {
+const randomBetween = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const createTradeRecord = (product, portfolio, book, batch) => {
+const createTradeRecord = (product: string, portfolio: string, book: string, batch: number) => {
     const current = Math.floor(Math.random() * 100000) + 100;
     const previous = current + Math.floor(Math.random() * 10000) - 2000;
     const trade = {
@@ -120,7 +119,7 @@ const createTradeRecord = (product, portfolio, book, batch) => {
     return trade;
 }
 
-const numberCellFormatter = (params) => {
+const numberCellFormatter = (params: ValueFormatterParams) => {
     return Math.floor(params.value)
         .toString()
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
@@ -136,7 +135,7 @@ const createTradeId = () => {
     return nextTradeId;
 }
 
-const updateSomeItems = (rowData) => {
+const updateSomeItems = (rowData: any) => {
     const updateCount = randomBetween(1, 6);
     for (let k = 0; k < updateCount; k++) {
         if (rowData.length === 0) {
@@ -154,7 +153,7 @@ const updateSomeItems = (rowData) => {
     }
 }
 
-const addSomeItems = (rowData) => {
+const addSomeItems = (rowData: any) => {
     const addCount = randomBetween(1, 6);
     const batch = nextBatchId++;
     for (let j = 0; j < addCount; j++) {
@@ -167,7 +166,7 @@ const addSomeItems = (rowData) => {
     }
 }
 
-const removeSomeItems = (rowData) => {
+const removeSomeItems = (rowData: any) => {
     const removeCount = randomBetween(1, 6);
     for (let i = 0; i < removeCount; i++) {
         if (rowData.length === 0) {
@@ -179,9 +178,9 @@ const removeSomeItems = (rowData) => {
 }
 
 // makes a copy of the original and merges in the new values
-const updateImmutableObject = (original, newValues) => {
+const updateImmutableObject = (original: any, newValues: any) => {
     // start with new object
-    const newObject = {};
+    const newObject: any = {};
     // copy in the old values
     Object.keys(original).forEach(function (key) {
         newObject[key] = original[key];
@@ -200,10 +199,10 @@ const GridExample = () => {
 
     // a list of the data, that we modify as we go. if you are using an immutable
     // data store (such as Redux) then this would be similar to your store of data.
-    const [globalRowData, setGlobalData] = useState(createRowData());
+    const [globalRowData, setGlobalData] = useState<any[]>(createRowData());
 
-    const [rowData, setRowData] = useState();
-    const [columnDefs, setColumnDefs] = useState([
+    const [rowData, setRowData] = useState<any[]>();
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         // these are the row groups, so they are all hidden (they are showd in the group column)
         {
             field: 'product',
@@ -345,7 +344,7 @@ const GridExample = () => {
         },
         { field: 'comment', editable: true },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             width: 120,
             sortable: true,

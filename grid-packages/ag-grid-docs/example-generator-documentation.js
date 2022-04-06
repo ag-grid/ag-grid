@@ -80,7 +80,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                         throw new Error(sourceFile + ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().')
                     }
                 }
-                // Need to handle useStrict and noChecks at top of file...
+                // Need to ensure that useStrict and noChecks remain at the top of the file.
                 let addStrict = false;
                 let addNoCheck = false;
                 if (src.includes(`'use strict';`)) {

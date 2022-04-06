@@ -27,7 +27,7 @@ const GridExample = () => {
         { field: "silver", width: 100 },
         { field: "bronze", width: 100 },
         { field: "total", width: 100 },
-    ]);
+    ], []);
     const [style, setStyle] = useState({
         height: '100%',
         width: '100%'

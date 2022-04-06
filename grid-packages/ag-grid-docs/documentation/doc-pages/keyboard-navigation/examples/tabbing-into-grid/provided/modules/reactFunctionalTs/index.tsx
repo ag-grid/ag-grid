@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -8,15 +7,15 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
-    const [rowData, setRowData] = useState(null);
-    const columnDefs = useMemo(() => [
+    const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
+    const [rowData, setRowData] = useState<any[] | null>(null);
+    const columnDefs = useMemo<ColDef[]>(() => [
         {
             headerName: "#",
             colId: "rowNum",
@@ -35,14 +34,14 @@ const GridExample = () => {
         { field: "silver" },
         { field: "bronze" },
         { field: "total" }
-    ]);
-    const myInput = useRef(null);
+    ], []);
+    const myInput = useRef<HTMLInputElement>(null);
 
-    const onGridReady = (params) => {
+    const onGridReady = (params: GridReadyEvent) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
 
-        const updateData = (data) => {
+        const updateData = (data: any[]) => {
             setRowData(data);
         };
 
@@ -54,7 +53,7 @@ const GridExample = () => {
     useEffect(() => {
         if (!myInput.current || !gridApi || !gridColumnApi) { return; }
 
-        myInput.current.addEventListener('keydown', function (event) {
+        myInput.current?.addEventListener('keydown', function (event: KeyboardEvent) {
             if (event.key !== 'Tab') { return; }
 
             event.preventDefault();
@@ -91,7 +90,7 @@ const GridExample = () => {
                             flex: 1,
                             minWidth: 100,
                             filter: true,
-                            resizable: true
+                            resizable: true,
                         }}
                         onGridReady={onGridReady}
                     >

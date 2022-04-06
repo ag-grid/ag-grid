@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -8,7 +7,7 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams, IDatasource, ModuleRegistry, RowNode } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -17,7 +16,7 @@ const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         // this row shows the row index, doesn't use any data from the row
         {
             headerName: 'ID',
@@ -25,7 +24,7 @@ const GridExample = () => {
             // it is important to have node.id here, so that when the id changes (which happens
             // when the row is loaded) then the cell is refreshed.
             valueGetter: 'node.id',
-            cellRenderer: props => {
+            cellRenderer: (props: ICellRendererParams) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -44,14 +43,14 @@ const GridExample = () => {
         { field: 'bronze' },
         { field: 'total' },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 100,
             resizable: true,
         }
     }, []);
-    const isRowSelectable = useCallback(function (rowNode) {
+    const isRowSelectable = useCallback(function (rowNode: RowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     }, []);
 
@@ -61,7 +60,7 @@ const GridExample = () => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => {
-                const dataSource = {
+                const dataSource: IDatasource = {
                     rowCount: undefined,
                     getRows: function (params) {
                         // console.log('asking for ' + params.startRow + ' to ' + params.endRow);

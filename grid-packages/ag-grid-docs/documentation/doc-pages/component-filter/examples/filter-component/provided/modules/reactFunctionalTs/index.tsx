@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -6,7 +5,7 @@ import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import { ColDef, ColGroupDef, Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -44,8 +43,8 @@ const GridExample = () => {
     }, []);
 
     const onClicked = useCallback(() => {
-        gridRef.current!.api.getFilterInstance('name', function (instance) {
-            instance.componentMethod('Hello World!');
+        gridRef.current!.api.getFilterInstance('name', function (instance: any) {
+            instance?.componentMethod('Hello World!');
         });
     }, [])
 

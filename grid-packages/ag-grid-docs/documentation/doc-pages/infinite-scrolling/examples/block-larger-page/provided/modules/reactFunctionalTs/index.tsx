@@ -1,6 +1,5 @@
-//@ts-nocheck
 'use strict';
-
+declare function countries(): string[];
 import React, { useCallback, useMemo, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -11,17 +10,17 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 const filterParams = { values: countries() };
 
-const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
+const sortAndFilter = (allOfTheData: any[], sortModel: any, filterModel: any) => {
     return sortData(sortModel, filterData(filterModel, allOfTheData));
 }
 
-const sortData = (sortModel, data) => {
+const sortData = (sortModel: any, data: any[]) => {
     const sortPresent = sortModel && sortModel.length > 0;
     if (!sortPresent) {
         return data;
@@ -50,7 +49,7 @@ const sortData = (sortModel, data) => {
     return resultOfSort;
 }
 
-const filterData = (filterModel, data) => {
+const filterData = (filterModel: any, data: any[]) => {
     const filterPresent = filterModel && Object.keys(filterModel).length > 0;
     if (!filterPresent) {
         return data;
@@ -98,13 +97,13 @@ const GridExample = () => {
 
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         // this row just shows the row index, doesn't use any data from the row
         {
             headerName: 'ID',
             maxWidth: 100,
             valueGetter: 'node.id',
-            cellRenderer: props => {
+            cellRenderer: (props: ICellRendererParams) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -141,7 +140,7 @@ const GridExample = () => {
         { field: 'bronze', suppressMenu: true },
         { field: 'total', suppressMenu: true },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 150,
@@ -150,7 +149,7 @@ const GridExample = () => {
             floatingFilter: true,
         }
     }, []);
-    const getRowId = useCallback(function (params) {
+    const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.id;
     }, []);
 
@@ -159,11 +158,11 @@ const GridExample = () => {
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
-            .then(data => {
+            .then((data: any[]) => {
                 data.forEach(function (d, index) {
                     d.id = 'R' + (index + 1);
                 });
-                const dataSource = {
+                const dataSource: IDatasource = {
                     rowCount: undefined,
                     getRows: function (params) {
                         console.log('asking for ' + params.startRow + ' to ' + params.endRow);

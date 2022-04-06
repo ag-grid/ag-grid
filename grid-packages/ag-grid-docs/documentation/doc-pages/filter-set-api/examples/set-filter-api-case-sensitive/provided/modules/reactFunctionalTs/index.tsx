@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -11,12 +10,12 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])
 
-const colourCellRenderer = props => {
+const colourCellRenderer = (props: ICellRendererParams) => {
     if (!props.value || props.value === '(Select All)') {
         return props.value;
     }
@@ -35,7 +34,7 @@ const colourCellRenderer = props => {
         {props.value}</React.Fragment>;
 }
 
-const FILTER_TYPES = {
+const FILTER_TYPES: Record<string, string> = {
     insensitive: 'colour',
     sensitive: 'colour_1',
 };
@@ -43,11 +42,11 @@ const FILTER_TYPES = {
 const MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState(getData());
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
             headerName: 'Case Insensitive (default)',
             field: 'colour',
@@ -67,7 +66,7 @@ const GridExample = () => {
             },
         },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 225,
@@ -79,37 +78,37 @@ const GridExample = () => {
 
 
     const onFirstDataRendered = useCallback((params) => {
-        ((gridRef.current.api.getToolPanelInstance('filters'))).expandFilters();
+        (gridRef.current!.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters();
     }, [])
 
     const setModel = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
+        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
         instance.setModel({ values: MANGLED_COLOURS });
-        gridRef.current.api.onFilterChanged();
+        gridRef.current!.api.onFilterChanged();
     }, [])
 
     const getModel = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
+        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
         alert(JSON.stringify(instance.getModel(), null, 2));
     }, [alert])
 
     const setFilterValues = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
+        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         instance.setFilterValues(MANGLED_COLOURS);
         instance.applyModel();
-        gridRef.current.api.onFilterChanged();
+        gridRef.current!.api.onFilterChanged();
     }, [])
 
     const getValues = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
+        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         alert(JSON.stringify(instance.getValues(), null, 2));
     }, [alert])
 
     const reset = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
+        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         instance.resetFilterValues();
         instance.setModel(null);
-        gridRef.current.api.onFilterChanged();
+        gridRef.current!.api.onFilterChanged();
     }, [])
 
 

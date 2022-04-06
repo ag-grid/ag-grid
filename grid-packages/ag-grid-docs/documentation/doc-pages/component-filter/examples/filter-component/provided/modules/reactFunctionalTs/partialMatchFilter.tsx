@@ -1,8 +1,8 @@
-//@ts-nocheck
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-export default forwardRef((props, ref) => {
+export default forwardRef((props: IFilterParams, ref) => {
     const [text, setText] = useState('');
     const refInput = useRef(null);
 
@@ -16,7 +16,7 @@ export default forwardRef((props, ref) => {
                 return text != null && text !== '';
             },
 
-            doesFilterPass(params) {
+            doesFilterPass(params: IDoesFilterPassParams) {
                 const { api, colDef, column, columnApi, context, valueGetter } = props;
                 const { node } = params;
                 const value = valueGetter({
@@ -29,7 +29,7 @@ export default forwardRef((props, ref) => {
                     getValue: (field) => node.data[field],
                     node,
                 }).toString().toLowerCase();
-        
+
                 return text.toLowerCase()
                     .split(' ')
                     .every(filterWord => value.indexOf(filterWord) >= 0);
@@ -38,18 +38,18 @@ export default forwardRef((props, ref) => {
             getModel() {
                 if (!this.isFilterActive()) { return null; }
 
-                return {value: text};
+                return { value: text };
             },
 
-            setModel(model) {
+            setModel(model: any) {
                 setText(model ? model.value : '');
             },
 
-            afterGuiAttached(params) {
+            afterGuiAttached(params: IAfterGuiAttachedParams) {
                 focus();
             },
 
-            componentMethod(message) {
+            componentMethod(message: string) {
                 alert(`Alert from PartialMatchFilterComponent: ${message}`);
             }
         }
@@ -57,14 +57,14 @@ export default forwardRef((props, ref) => {
 
     const focus = () => {
         window.setTimeout(() => {
-            const container = ReactDOM.findDOMNode(refInput.current);
+            const container = ReactDOM.findDOMNode(refInput.current) as any;
             if (container) {
                 container.focus();
             }
         });
     }
 
-    const onChange = event => {
+    const onChange = (event: any) => {
         const newValue = event.target.value;
         if (text !== newValue) {
             setText(newValue);
@@ -81,10 +81,10 @@ export default forwardRef((props, ref) => {
 
     return (
         <div style={style}>Filter:
-            <input style={{height: '20px'}} ref={refInput}
-                   value={text}
-                   onChange={onChange}
-                   className="form-control"/>
+            <input style={{ height: '20px' }} ref={refInput}
+                value={text}
+                onChange={onChange}
+                className="form-control" />
         </div>
     );
 

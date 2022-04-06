@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -8,16 +7,16 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
         { field: 'country', minWidth: 200 },
@@ -29,7 +28,7 @@ const GridExample = () => {
         { field: 'bronze' },
         { field: 'total' },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 100,
@@ -47,15 +46,15 @@ const GridExample = () => {
     }, []);
 
     const onBtShowLoading = useCallback(() => {
-        gridRef.current.api.showLoadingOverlay();
+        gridRef.current!.api.showLoadingOverlay();
     }, [])
 
     const onBtShowNoRows = useCallback(() => {
-        gridRef.current.api.showNoRowsOverlay();
+        gridRef.current!.api.showNoRowsOverlay();
     }, [])
 
     const onBtHide = useCallback(() => {
-        gridRef.current.api.hideOverlay();
+        gridRef.current!.api.hideOverlay();
     }, [])
 
 

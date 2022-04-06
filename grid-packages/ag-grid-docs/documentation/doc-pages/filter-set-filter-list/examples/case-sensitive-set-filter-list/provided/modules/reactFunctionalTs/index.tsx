@@ -1,4 +1,3 @@
-//@ts-nocheck
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -12,11 +11,11 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams, IFiltersToolPanel, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule, FiltersToolPanelModule]);
 
-const colourCellRenderer = props => {
+const colourCellRenderer = (props: ICellRendererParams) => {
     if (!props.value || props.value === '(Select All)') {
         return props.value;
     }
@@ -34,7 +33,7 @@ const colourCellRenderer = props => {
 }
 
 const GridExample = () => {
-    const gridRef = useRef(null);
+    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState([
@@ -61,7 +60,7 @@ const GridExample = () => {
         { colour: 'purple' },
     ]
     );
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
             headerName: 'Case Insensitive (default)',
             field: 'colour',
@@ -81,7 +80,7 @@ const GridExample = () => {
             },
         },
     ]);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 225,
@@ -93,7 +92,7 @@ const GridExample = () => {
 
 
     const onFirstDataRendered = useCallback((params) => {
-        ((gridRef.current.api.getToolPanelInstance('filters'))).expandFilters();
+        ((gridRef.current!.api.getToolPanelInstance('filters') as any) as IFiltersToolPanel).expandFilters();
     }, [])
 
 
