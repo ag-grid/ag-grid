@@ -1,9 +1,11 @@
+import { IFilterParams, IDoesFilterPassParams } from '@ag-grid-community/core';
+import { IFilterReactComp } from '@ag-grid-community/react';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-export default forwardRef(({ filterChangedCallback }, ref) => {
+export default forwardRef(({ filterChangedCallback }: IFilterParams, ref) => {
     const [isActive, setIsActive] = useState(false);
     const [activated, setActivated] = useState(false);
-    const toggleFilter = isActive => {
+    const toggleFilter = (isActive: boolean) => {
         setIsActive(isActive);
         setActivated(activated || isActive);
     };
@@ -14,11 +16,11 @@ export default forwardRef(({ filterChangedCallback }, ref) => {
         }
     }, [isActive, activated]);
 
-    const setModel = model => toggleFilter(!!model);
+    const setModel = (model: any) => toggleFilter(!!model);
     const isFilterActive = () => isActive;
 
     useImperativeHandle(ref, () => ({
-        doesFilterPass: params => {
+        doesFilterPass: (params: IDoesFilterPassParams) => {
             return params.data.year > 2004;
         },
 
@@ -30,7 +32,7 @@ export default forwardRef(({ filterChangedCallback }, ref) => {
 
         setModel,
 
-        onFloatingFilterChanged: value => {
+        onFloatingFilterChanged: (value: any) => {
             setModel(value);
         }
     }));

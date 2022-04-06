@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
-export default class FullWidthCellRenderer extends Component {
-    constructor(props) {
+export default class FullWidthCellRenderer extends Component<ICellRendererParams> {
+    constructor(props: ICellRendererParams) {
         super(props);
     }
 
     componentDidMount() {
         // to allow for inner scrolling
-        ReactDOM.findDOMNode(this).addEventListener('mousewheel', (event) => {
+        ReactDOM.findDOMNode(this)!.addEventListener('mousewheel', (event) => {
             event.stopPropagation();
         }, false);
     }

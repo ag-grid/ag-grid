@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
-
-const CustomCellRenderer = (props) => {
+const CustomCellRenderer = (props: ICellRendererParams) => {
     const myRef = useRef(null);
 
     useEffect(() => {
-        props.registerRowDragger(myRef.current);
+        props.registerRowDragger(myRef.current!, 0);
     });
 
     return (

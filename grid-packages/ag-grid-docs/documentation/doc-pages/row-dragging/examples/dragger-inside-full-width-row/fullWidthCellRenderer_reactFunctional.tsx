@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
-const FullWidthCellRenderer = forwardRef((params, ref) => {
-    const myRef = useRef();
-    const stopPropagation = e => e.stopPropagation();
+const FullWidthCellRenderer = forwardRef((params: ICellRendererParams, ref) => {
+    const myRef = useRef<HTMLDivElement>(null);
+    const stopPropagation = (e: Event) => e.stopPropagation();
 
     useImperativeHandle(ref, () => ({
         getReactContainerStyle() {
@@ -14,10 +15,10 @@ const FullWidthCellRenderer = forwardRef((params, ref) => {
     }));
 
     useEffect(() => {
-        myRef.current.addEventListener('mousewheel', stopPropagation);
+        myRef.current!.addEventListener('mousewheel', stopPropagation);
 
         return () => {
-            myRef.current.removeEventListener('mousewheel', stopPropagation);
+            myRef.current!.removeEventListener('mousewheel', stopPropagation);
         };
     });
 

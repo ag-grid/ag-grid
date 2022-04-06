@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
-export default class DetailCellRenderer extends Component {
+export default class DetailCellRenderer extends Component<ICellRendererParams, { pinned: string | null | undefined }> {
 
-    constructor(props) {
+    constructor(props: ICellRendererParams) {
         super(props);
 
         this.state = {
