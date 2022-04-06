@@ -24,7 +24,7 @@ const GridBodyComp = () => {
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
     const [movingCss, setMovingCss] = useState<string | null>(null);
-    const [layoutClass, setLayoutClass] = useState<string>('');
+    const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
