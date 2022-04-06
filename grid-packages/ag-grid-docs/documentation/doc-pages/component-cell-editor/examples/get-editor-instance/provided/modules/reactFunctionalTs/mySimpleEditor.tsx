@@ -9,7 +9,7 @@ export interface MySimpleInterface extends ICellEditorReactComp {
     myCustomFunction(): { rowIndex: number, colId: string };
 }
 
-export default forwardRef<MySimpleInterface, ICellEditorParams>((props, ref) => {
+export default forwardRef((props: ICellEditorParams, ref) => {
     const getInitialValue = (props: ICellEditorParams) => {
         let startValue = props.value;
 
