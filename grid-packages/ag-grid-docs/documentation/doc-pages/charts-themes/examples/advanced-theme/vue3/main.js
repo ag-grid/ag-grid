@@ -4,12 +4,16 @@ import { createApp } from "vue"
 const ChartExample = {
   template: `
         <div class="wrapper">
+          <div id="chart1">
             <ag-charts-vue
-                    :options="chartOptions1">
+                :options="chartOptions1">
             </ag-charts-vue>
+          </div>
+          <div id="chart2">
             <ag-charts-vue
-                    :options="chartOptions2">
+                :options="chartOptions2">
             </ag-charts-vue>
+          </div>
         </div>
     `,
   components: {
