@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 const FullWidthCellRenderer = forwardRef((params, ref) => {
-    const myRef = useRef();
+    const myRef = useRef(null);
     const stopPropagation = e => e.stopPropagation();
 
     useImperativeHandle(ref, () => ({

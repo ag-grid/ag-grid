@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
+import { IHeaderParams } from "@ag-grid-community/core";
 
-const CustomHeader = (props) => {
+const CustomHeader = (props: IHeaderParams) => {
     const { enableMenu, displayName, showColumnMenu } = props;
     const menuButtonRef = useRef(null);
 
@@ -11,7 +12,7 @@ const CustomHeader = (props) => {
             {enableMenu && <div
                 ref={menuButtonRef}
                 className="ag-icon ag-icon-menu"
-                onClick={() => showColumnMenu(menuButtonRef.current)}>&nbsp;</div>}
+                onClick={() => showColumnMenu(menuButtonRef.current!)}>&nbsp;</div>}
             <div className="customHeaderLabel">{displayName}</div>
         </div>
     );

@@ -1,23 +1,26 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { IDateParams } from "@ag-grid-community/core";
+// we'll be using the globally provided flatpickr for our example
+declare var flatpickr: any;
 
-export default forwardRef((props, ref) => {
+export default forwardRef((props: IDateParams, ref) => {
 
-    const [date, setDate] = useState(null);
-    const [picker, setPicker] = useState(null);
+    const [date, setDate] = useState<any>(null);
+    const [picker, setPicker] = useState<any>(null);
     const refFlatPickr = useRef(null);
-    const refInput = useRef(null);
+    const refInput = useRef<HTMLInputElement>(null);
 
     // we use a ref as well as state, as state is async,
     // and after the grid calls setDate() (eg when setting filter model)
     // it then can call getDate() immediately (eg to execute the filter)
     // and we need to pass back the most recent value, not the old 'current state'.
-    const dateRef = useRef(null);
+    const dateRef = useRef<any>(null);
 
     //*********************************************************************************
     //          LINKING THE UI, THE STATE AND AG-GRID
     //*********************************************************************************
 
-    const onDateChanged = (selectedDates) => {
+    const onDateChanged = (selectedDates: any) => {
         const newDate = selectedDates[0];
         setDate(newDate);
         dateRef.current = newDate;
@@ -56,7 +59,7 @@ export default forwardRef((props, ref) => {
             return dateRef.current;
         },
 
-        setDate(date) {
+        setDate(date: any) {
             //ag-grid will call us here when it needs this component to update the date that it holds.
             dateRef.current = date;
             setDate(date);
@@ -66,13 +69,13 @@ export default forwardRef((props, ref) => {
         //          AG-GRID OPTIONAL METHODS
         //*********************************************************************************
 
-        setInputPlaceholder(placeholder) {
+        setInputPlaceholder(placeholder: string) {
             if (refInput.current) {
                 refInput.current.setAttribute('placeholder', placeholder);
             }
         },
 
-        setInputAriaLabel(label) {
+        setInputAriaLabel(label: string) {
             if (refInput.current) {
                 refInput.current.setAttribute('aria-label', label);
             }
@@ -83,8 +86,8 @@ export default forwardRef((props, ref) => {
     return (
         <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
             <input type="text" ref={refInput} data-input style={{ width: "100%" }} />
-            <a class='input-button' title='clear' data-clear>
-                <i class='fa fa-times'></i>
+            <a className='input-button' title='clear' data-clear>
+                <i className='fa fa-times'></i>
             </a>
         </div>
     );

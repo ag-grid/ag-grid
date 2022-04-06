@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { IStatusPanelParams } from "@ag-grid-community/core";
 
-export default props => {
+export default (props: IStatusPanelParams) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
-        setCount(props.api.getModel().getCount());
+        setCount(props.api.getModel().getRowCount());
     }, []);
 
     return (
