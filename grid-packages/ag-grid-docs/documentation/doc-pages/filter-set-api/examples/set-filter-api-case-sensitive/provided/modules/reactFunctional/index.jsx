@@ -1,16 +1,16 @@
 'use strict';
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {FiltersToolPanelModule} from '@ag-grid-enterprise/filter-tool-panel';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import {ModuleRegistry} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])
@@ -30,7 +30,7 @@ const colourCellRenderer = props => {
         backgroundColor: props.value.toLowerCase()
     };
     return <React.Fragment>
-        <div style={styles}/>
+        <div style={styles} />
         {props.value}</React.Fragment>;
 }
 
@@ -42,9 +42,9 @@ const FILTER_TYPES = {
 const MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 const GridExample = () => {
-    const gridRef = useRef();
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridRef = useRef(null);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState(getData());
     const [columnDefs, setColumnDefs] = useState([
         {
@@ -83,7 +83,7 @@ const GridExample = () => {
 
     const setModel = useCallback((type) => {
         const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        instance.setModel({values: MANGLED_COLOURS});
+        instance.setModel({ values: MANGLED_COLOURS });
         gridRef.current.api.onFilterChanged();
     }, [])
 
@@ -124,7 +124,7 @@ const GridExample = () => {
                         <button onClick={() => getValues('insensitive')}>API: getValues()</button>
                         <button onClick={() => reset('insensitive')}>Reset</button>
                     </div>
-                    <div style={{"paddingTop": "10px"}}>
+                    <div style={{ "paddingTop": "10px" }}>
                         Case Sensitive:
                         <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                         <button onClick={() => getModel('sensitive')}>API: getModel()</button>

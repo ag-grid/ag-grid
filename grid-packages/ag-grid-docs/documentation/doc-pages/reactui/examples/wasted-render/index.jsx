@@ -26,7 +26,7 @@ const RenderCounterCellRenderer = (params) => {
 
 function GridExample() {
 
-    const gridRef = useRef();
+    const gridRef = useRef(null);
 
     const columnDefs = useMemo(() => [
         { field: 'athlete', cellRenderer: RenderCounterCellRenderer },

@@ -1,6 +1,6 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-export default forwardRef(({filterChangedCallback}, ref) => {
+export default forwardRef(({ filterChangedCallback }, ref) => {
     const [isActive, setIsActive] = useState(false);
     const [activated, setActivated] = useState(false);
     const toggleFilter = isActive => {
@@ -9,7 +9,7 @@ export default forwardRef(({filterChangedCallback}, ref) => {
     };
 
     useEffect(() => {
-        if(activated) {
+        if (activated) {
             filterChangedCallback();
         }
     }, [isActive, activated]);
@@ -36,12 +36,12 @@ export default forwardRef(({filterChangedCallback}, ref) => {
     }));
 
     return (
-        <div class="year-filter">
+        <div className="year-filter">
             <label>
-                <input type="radio" checked={!isActive} onChange={() => toggleFilter(false)}/> All
+                <input type="radio" checked={!isActive} onChange={() => toggleFilter(false)} /> All
             </label>
             <label>
-                <input type="radio" checked={isActive} onChange={() => toggleFilter(true)}/> After 2004
+                <input type="radio" checked={isActive} onChange={() => toggleFilter(true)} /> After 2004
             </label>
         </div>
     );

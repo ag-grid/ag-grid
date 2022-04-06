@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default props => {
-    const [count, setCount] = useState(true);
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
-        setCount(props.api.getModel().rowsToDisplay.length);
+        setCount(props.api.getModel().getCount());
     }, []);
 
     return (

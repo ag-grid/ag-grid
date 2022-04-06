@@ -112,7 +112,7 @@ const GridExample = () => {
         }
     ]);
 
-    const gridRef = useRef();
+    const gridRef = useRef(null);
 
     const onGridReady = () => {
         fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')

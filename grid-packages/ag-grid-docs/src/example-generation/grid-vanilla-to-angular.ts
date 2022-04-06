@@ -1,6 +1,6 @@
 import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports, getPropertyInterfaces, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }, hasApi: boolean, hasColApi: boolean): string {
     const additionalLines = [];
@@ -28,16 +28,6 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     onGridReady(params: GridReadyEvent) {
         ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
-}
-
-function getPropertyInterfaces(properties) {
-    let propTypesUsed = [];
-    properties.forEach(prop => {
-        if (prop.typings?.typesToInclude?.length > 0) {
-            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
-        }
-    });
-    return [...new Set(propTypesUsed)];
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {

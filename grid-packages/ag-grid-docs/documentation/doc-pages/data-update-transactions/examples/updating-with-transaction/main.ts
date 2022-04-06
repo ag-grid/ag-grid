@@ -45,7 +45,7 @@ function clearData() {
   gridOptions.api!.setRowData([])
 }
 
-function addItems(addIndex: number) {
+function addItems(addIndex: number | undefined) {
   const newItems = [createNewRowData(), createNewRowData(), createNewRowData()]
   const res = gridOptions.api!.applyTransaction({
     add: newItems,
