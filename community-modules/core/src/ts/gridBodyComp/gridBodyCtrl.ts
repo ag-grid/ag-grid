@@ -95,8 +95,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.setupRowAnimationCssClass();
 
-        this.ctrlsService.registerGridBodyCtrl(this);
-
         this.addEventListeners();
         this.addFocusListeners([eTop, eBodyViewport, eBottom]);
         this.onGridColumnsChanged();
@@ -108,6 +106,8 @@ export class GridBodyCtrl extends BeanStub {
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
+
+        this.ctrlsService.registerGridBodyCtrl(this);
     }
 
     public getComp(): IGridBodyComp {

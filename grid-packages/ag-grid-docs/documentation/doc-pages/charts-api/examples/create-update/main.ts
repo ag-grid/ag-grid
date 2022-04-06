@@ -1,7 +1,7 @@
 import * as agCharts from "ag-charts-community"
 import { AgChartLegendPosition, AgChartOptions, AgAreaSeriesOptions } from "ag-charts-community"
 
-function series(name: string): AgAreaSeriesOptions {
+function buildSeries(name: string): AgAreaSeriesOptions {
   return {
       type: "area",
       xKey: "year",
@@ -10,6 +10,18 @@ function series(name: string): AgAreaSeriesOptions {
       fillOpacity: 0.5,
   };
 }
+
+const series = [
+  buildSeries('IE'),
+  buildSeries('Chrome'),
+  buildSeries('Firefox'),
+  buildSeries('Safari'),
+];
+
+const positions: AgChartLegendPosition[] = ["left", "top", "right", "bottom"]
+const legend = {
+  position: positions[1],
+};
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -20,38 +32,36 @@ const options: AgChartOptions = {
     text: "2009-2019",
   },
   data: getData(),
-  series: [
-    series('IE'),
-    series('Chrome'),
-    series('Firefox'),
-    series('Safari'),
-  ],
-  legend: {
-    position: "top",
-  },
+  series,
+  legend,
 };
 
 let chart = agCharts.AgChart.create(options);
 
 function reverseSeries() {
-  options.series = options.series?.reverse();
+  // Mutate options.
+  options.series = series.reverse();
 
+  // Apply changes.
   agCharts.AgChart.update(chart, options);
 }
 
 function swapTitles() {
+  // Mutate options.
   const oldTitle = options.title
   options.title = options.subtitle
   options.subtitle = oldTitle
 
+  // Apply changes.
   agCharts.AgChart.update(chart, options);
 }
 
 function rotateLegend() {
-  const legend = options.legend || {}
-  const positions: AgChartLegendPosition[] = ["left", "top", "right", "bottom"]
-  const currentIdx = positions.indexOf(legend?.position || "top")
-  legend.position = positions[(currentIdx + 1) % positions.length]
+  // Mutate legend.
+  const currentIdx = positions.indexOf(legend.position || "top")
+  legend.position = positions[(currentIdx + 1) % positions.length];
 
+  // Apply changes.
+  options.legend = legend;
   agCharts.AgChart.update(chart, options);
 }

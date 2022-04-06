@@ -38,11 +38,6 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    @PostConstruct
-    protected postConstruct(): void {
-        this.ctrlsService.registerGridCtrl(this);
-    }
-
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
@@ -67,6 +62,8 @@ export class GridCtrl extends BeanStub {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
+
+        this.ctrlsService.registerGridCtrl(this);
     }
 
     public showDropZones(): boolean {

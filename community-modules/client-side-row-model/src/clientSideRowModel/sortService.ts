@@ -52,8 +52,14 @@ export class SortService extends BeanStub {
             if (!sortActive || skipSortingGroups) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
-                if (groupMaintainOrder) {
-                    childrenToBeSorted.sort((row1, row2) => (row1.rowIndex || 0) - (row2.rowIndex || 0));
+                if (groupMaintainOrder && rowNode.childrenAfterSort) {
+                    const indexedOrders = rowNode.childrenAfterSort.reduce<{ [key:string]: number }>(
+                        (acc, row, idx) => {
+                            acc[row.id!] = idx;
+                            return acc;
+                        }, {}
+                    );
+                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] || 0) - (indexedOrders[row2.id!] || 0));
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
             } else {

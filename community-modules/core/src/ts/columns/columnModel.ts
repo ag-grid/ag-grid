@@ -1278,9 +1278,10 @@ export class ColumnModel extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
-        const flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
+        let flexedCols: Column[] = [];
 
         if (atLeastOneColChanged) {
+            flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
             this.setLeftValues(source);
             this.updateBodyWidths();
             this.checkViewportColumns();

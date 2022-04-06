@@ -2,26 +2,20 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', rowGroup: true, enableRowGroup: true },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'sport', pivot: true, enablePivot: true },
-    { field: 'gold', aggFunc: 'sum' },
+    { field: 'country', rowGroup: true },
+    { field: 'year', pivot: true },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
     { field: 'silver', aggFunc: 'sum' },
     { field: 'bronze', aggFunc: 'sum' },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    filter: true,
+    floatingFilter: true,
     sortable: true,
     resizable: true,
   },
   pivotMode: true,
-  processSecondaryColDef: (colDef) => {
-    colDef.filter = 'agNumberColumnFilter';
-    colDef.floatingFilter = true;
-  }
 }
 
 // setup the grid after the page has finished loading
