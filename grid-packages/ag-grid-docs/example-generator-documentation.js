@@ -49,11 +49,8 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
 
         const updateImports = (src) => {
 
-            if(destinationFile.endsWith('.tsx')){
-                return '//@ts-nocheck\n' + src;
-            }
 
-            if (!forceConversion && !destinationFile.endsWith('.ts')) {
+            if (!forceConversion && (!destinationFile.endsWith('.ts') && !destinationFile.endsWith('.tsx'))) {
                 return src;
             }
 
@@ -83,7 +80,18 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                         throw new Error(sourceFile + ' Provided examples must be written using Feature Modules that are registered via the ModuleRegistry! You have provided modules directly to the grid which is not supported! Update the example to use the ModuleRegistry.registerModules().')
                     }
                 }
-                src = formattedImports + src
+                // Need to handle useStrict and noChecks at top of file...
+                let addStrict = false;
+                let addNoCheck = false;
+                if (src.includes(`'use strict';`)) {
+                    src = src.replace(`'use strict';\n`, '');
+                    addStrict = true;
+                }
+                if (src.includes(`//@ts-nocheck`)) {
+                    src = src.replace(`//@ts-nocheck\n`, '');
+                    addNoCheck = true;
+                }
+                src = (addNoCheck ? `//@ts-nocheck\n` : '') + (addStrict ? `'use strict';\n` : '') + formattedImports + src
             }
 
             return src;
@@ -294,6 +302,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             } else {
                 fs.copySync(sourcePath, destPath);
             }
+            addPackageJson(exampleType, framework, importType, destPath);
         };
 
         fs.emptyDirSync(createExamplePath(`_gen`));
@@ -309,7 +318,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             if (type === 'mixed' && providedExamples['react']) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
             } else {
-                const reactScripts = getMatchingPaths('*_react.*');
+                const reactScripts = getMatchingPaths('*_react.*', { ignore: ['**/*.tsx'] });
                 const reactConfigs = new Map();
 
                 try {
@@ -330,10 +339,10 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 const reactDeclarativeConfigs = new Map();
 
                 if (vanillaToReactFunctional && options.reactFunctional !== false) {
-                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
+                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*', { ignore: ['**/*.tsx'] }).length > 0;
                     const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
 
-                    reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
+                    reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, { ignore: ['**/*.tsx'] });
 
                     try {
                         const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
@@ -354,20 +363,20 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 const reactDeclarativeConfigs = new Map();
 
                 if (vanillaToReactFunctionalTs && options.reactFunctional !== false) {
-                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
+                    const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.tsx').length > 0;
                     const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
 
-                    reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
+                    reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.tsx`);
 
                     try {
-                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.jsx`, ''));
+                        const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                     } catch (e) {
                         console.error(`Failed to process React Typescript example in ${examplePath}`, e);
                         throw e;
                     }
 
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctionalTs', reactScriptPostfix+'.jsx', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType),undefined, '.tsx'));
+                    importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctionalTs', reactScriptPostfix + '.tsx', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType), undefined, '.tsx'));
                 }
             }
 
