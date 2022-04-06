@@ -603,7 +603,7 @@ export class GridApi {
 
     /** Returns `true` if any column filter is set, otherwise `false`. */
     public isColumnFilterPresent(): boolean {
-        return this.filterManager.isAdvancedFilterPresent();
+        return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
     }
 
     /** Returns `true` if the quick filter is set, otherwise `false`. */

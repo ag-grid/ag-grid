@@ -351,7 +351,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         return null;
     }
-
+    
     public onRowGroupOpened(): void {
         const animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
@@ -362,8 +362,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const animate = this.gridOptionsWrapper.isAnimateRows();
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some(col => col.isPrimary());
-        const eventType: ClientSideRowModelSteps = primaryOrQuickFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
-        this.refreshModel({ step: eventType, keepRenderedRows: true, animate: animate });
+        const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged ? ClientSideRowModelSteps.FILTER : ClientSideRowModelSteps.FILTER_AGGREGATES;
+        this.refreshModel({ step: step, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {

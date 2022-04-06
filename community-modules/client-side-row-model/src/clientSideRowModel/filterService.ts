@@ -21,7 +21,9 @@ export class FilterService extends BeanStub {
     }
 
     public filter(changedPath: ChangedPath): void {
-        const filterActive: boolean = this.filterManager.isAnyFilterPresent();
+        const filterActive: boolean = this.filterManager.isAdvancedFilterPresent() 
+                                    || this.filterManager.isQuickFilterPresent() 
+                                    || this.gridOptionsWrapper.isExternalFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
 

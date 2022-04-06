@@ -7,16 +7,18 @@ import {
     BeanStub,
     FilterManager,
     RowNode,
+    ColumnModel,
 } from "@ag-grid-community/core";
 
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public execute(params: StageExecuteParams): void {
-        const isPivotMode = !!this.gridOptionsWrapper.getColumnApi()?.isPivotMode();
-        const isAggFilterActive = this.filterManager.isAdvancedAggregateFilterPresent();
+        const isPivotMode = this.columnModel.isPivotMode();
+        const isAggFilterActive = this.filterManager.isAggregateFilterPresent();
 
         // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
         // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
