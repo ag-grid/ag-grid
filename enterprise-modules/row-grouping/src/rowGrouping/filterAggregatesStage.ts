@@ -18,11 +18,19 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
     public execute(params: StageExecuteParams): void {
         const isPivotMode = !!this.gridOptionsWrapper.getColumnApi()?.isPivotMode();
-        const filterActive = this.filterManager.isAdvancedAggregateFilterPresent();
-        const defaultApplyToLeafPredicate = (params: { node: RowNode }) => !params.node.group;
-        const primaryColumnPredicate = this.gridOptionsWrapper.getGroupAggFiltering() || defaultApplyToLeafPredicate;
-        const secondaryColumnPredicate = (params: { node: RowNode }) => params.node.leafGroup;
-        const applyFilterToNode = isPivotMode ? secondaryColumnPredicate : primaryColumnPredicate;
+        const isAggFilterActive = this.filterManager.isAdvancedAggregateFilterPresent();
+
+        // This is the default filter for applying only to leaf nodes, realistically this should not apply as primary agg columns,
+        // should not be applied by the filterManager if getGroupAggFiltering is missing. Predicate will apply filters to leaf level.
+        const defaultPrimaryColumnPredicate = (params: { node: RowNode }) => !params.node.group;
+
+        // Default secondary column predicate, selecting only leaf level groups.
+        const defaultSecondaryColumnPredicate = ((params: { node: RowNode }) => params.node.leafGroup);
+
+        // The predicate to determine whether filters should apply to this row. Either defined by the user in groupAggFiltering or a default depending
+        // on current pivot mode status.
+        const applyFilterToNode = this.gridOptionsWrapper.getGroupAggFiltering()
+            || (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
         const { rowNode, changedPath } = params;
 
@@ -81,7 +89,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
         };
 
         changedPath!.forEachChangedNodeDepthFirst(
-            filterActive ? filterChildren : preserveFilterStageConfig,
+            isAggFilterActive ? filterChildren : preserveFilterStageConfig,
             false,
         );
         this.selectableService.updateSelectableAfterAggregateFiltering(rowNode);
