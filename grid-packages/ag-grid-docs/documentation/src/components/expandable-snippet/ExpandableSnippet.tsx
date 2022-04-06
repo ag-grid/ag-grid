@@ -17,6 +17,7 @@ type Config = {
     expandedProperties?: string[],
     expandedPaths?: string[],
     expandAll?: boolean,
+    lookupRoot?: string;
 };
 
 export interface ExpandableSnippetParams {
@@ -30,9 +31,10 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     interfacename,
     overridesrc,
     breadcrumbs = [],
-    config,
+    config = {},
 }) => {
-    const { interfaceLookup, codeLookup } = loadLookups(overridesrc);
+    const { lookupRoot = 'grid-api' } = config;
+    const { interfaceLookup, codeLookup } = loadLookups(lookupRoot, overridesrc);
 
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 

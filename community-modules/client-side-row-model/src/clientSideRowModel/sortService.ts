@@ -48,19 +48,24 @@ export class SortService extends BeanStub {
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            if (sortActive) {
-
+            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            if (!sortActive || skipSortingGroups) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
-                let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
-                if (skipSortingGroups) {
-                    rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
-                } else {
-                    rowNode.childrenAfterSort = deltaSort ?
-                        this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                        : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
+                if (groupMaintainOrder && rowNode.childrenAfterSort) {
+                    const indexedOrders = rowNode.childrenAfterSort.reduce<{ [key:string]: number }>(
+                        (acc, row, idx) => {
+                            acc[row.id!] = idx;
+                            return acc;
+                        }, {}
+                    );
+                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] || 0) - (indexedOrders[row2.id!] || 0));
                 }
+                rowNode.childrenAfterSort = childrenToBeSorted;
             } else {
-                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+                rowNode.childrenAfterSort = deltaSort ?
+                    this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
+                    : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
 
             if (rowNode.sibling) {

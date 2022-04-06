@@ -147,7 +147,12 @@
         "hide": {},
         "initialHide": {},
         "lockVisible": {},
-        "lockPosition": {},
+        "lockPosition": {
+            "options": [
+                "left",
+                "right"
+            ]
+        },
         "suppressMovable": {}
     },
     "width": {

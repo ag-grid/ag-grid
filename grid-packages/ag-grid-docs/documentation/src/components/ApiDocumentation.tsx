@@ -23,8 +23,9 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         config = { overrideBottomMargin: "1rem", ...config, };
     }
 
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
-    const codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/doc-interfaces.AUTO.json');
+    const { lookupRoot = 'grid-api' } = config;
+    const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
+    const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
 
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
     let hideHeader = true;
@@ -638,7 +639,11 @@ const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
 
     if (json) {
-        return JSON.parse(json.internal.content);
+        try {
+            return JSON.parse(json.internal.content);
+        } catch (e) {
+            throw new Error(`Unable to JSON parse: ${json.relativePath} ; Reason: ${e.message}`);
+        }
     }
 
     throw new Error(`Could not find JSON for source ${source}`);

@@ -676,20 +676,41 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
-        if (this.rootNode) {
-            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
-        }
+        const usingPivotMode = this.columnModel.isPivotActive();
 
-        function recursiveExpandOrCollapse(rowNodes: RowNode[] | null): void {
+        const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) { return; }
-
             rowNodes.forEach(rowNode => {
-                const shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
-                if (shouldExpandOrCollapse) {
+                const actionRow = () => {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
+                };
+    
+                if (usingTreeData) {
+                    const hasChildren = _.exists(rowNode.childrenAfterGroup);
+                    if (hasChildren) {
+                        actionRow();
+                    }
+                    return;
+                }
+
+                if (usingPivotMode) {
+                    const notLeafGroup = !rowNode.leafGroup;
+                    if (notLeafGroup) {
+                        actionRow();
+                    }
+                    return;
+                }
+
+                const isRowGroup = rowNode.group;
+                if (isRowGroup) {
+                    actionRow();
                 }
             });
+        }
+
+        if (this.rootNode) {
+            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
         }
 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });

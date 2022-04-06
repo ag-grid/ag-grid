@@ -14,12 +14,12 @@ export class AutoWidthCalculator extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
-    private centerRowContainerCon: RowContainerCtrl;
+    private centerRowContainerCtrl: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCtrl;
+            this.centerRowContainerCtrl = p.centerRowContainerCtrl;
         });
     }
 
@@ -59,7 +59,7 @@ export class AutoWidthCalculator extends BeanStub {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.centerRowContainerCon.getContainerElement();
+        const eBodyContainer = this.centerRowContainerCtrl.getContainerElement();
         eBodyContainer.appendChild(eDummyContainer);
 
         elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));

@@ -21,34 +21,34 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private centerContainerCon: RowContainerCtrl;
-    private gridBodyCon: GridBodyCtrl;
+    private centerContainerCtrl: RowContainerCtrl;
+    private gridBodyCtrl: GridBodyCtrl;
 
     private centerWidth: number;
     private bodyHeight: number;
 
-    constructor(centerContainer: RowContainerCtrl) {
+    constructor(centerContainerCtrl: RowContainerCtrl) {
         super();
-        this.centerContainerCon = centerContainer;
+        this.centerContainerCtrl = centerContainerCtrl;
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(() => {
-            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             this.listenForResize();
         });
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
     }
 
     private listenForResize(): void {
-        const listener = this.onCenterViewportResized.bind(this);
+        const listener = ()=> this.onCenterViewportResized();
 
         // centerContainer gets horizontal resizes
-        this.centerContainerCon.registerViewportResizeListener(listener);
+        this.centerContainerCtrl.registerViewportResizeListener(listener);
 
         // eBodyViewport gets vertical resizes
-        this.gridBodyCon.registerBodyViewportResizeListener(listener);
+        this.gridBodyCtrl.registerBodyViewportResizeListener(listener);
     }
 
     private onScrollbarWidthChanged() {
@@ -56,10 +56,10 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        if (this.centerContainerCon.isViewportVisible()) {
+        if (this.centerContainerCtrl.isViewportVisible()) {
             this.checkViewportAndScrolls();
 
-            const newWidth = this.centerContainerCon.getCenterWidth();
+            const newWidth = this.centerContainerCtrl.getCenterWidth();
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
@@ -74,7 +74,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
-    public checkViewportAndScrolls(): void {
+    private checkViewportAndScrolls(): void {
         // results in updating anything that depends on scroll showing
         this.updateScrollVisibleService();
 
@@ -84,7 +84,7 @@ export class ViewportSizeFeature extends BeanStub {
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
 
-        this.gridBodyCon.getScrollFeature().checkScrollLeft();
+        this.gridBodyCtrl.getScrollFeature().checkScrollLeft();
     }
 
     public getBodyHeight(): number {
@@ -92,7 +92,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private checkBodyHeight(): void {
-        const eBodyViewport = this.gridBodyCon.getBodyViewportElement();
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
         const bodyHeight = getInnerHeight(eBodyViewport);
 
         if (this.bodyHeight !== bodyHeight) {
@@ -120,26 +120,26 @@ export class ViewportSizeFeature extends BeanStub {
     private updateScrollVisibleServiceImpl(): void {
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: this.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.gridBodyCon.isVerticalScrollShowing()
+            verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing()
         };
 
         this.scrollVisibleService.setScrollsVisible(params);
 
         // fix - gridComp should just listen to event from above
-        this.gridBodyCon.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
+        this.gridBodyCtrl.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
     }
 
-    public isHorizontalScrollShowing(): boolean {
+    private isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
-        return isAlwaysShowHorizontalScroll || this.centerContainerCon.isViewportHScrollShowing();
+        return isAlwaysShowHorizontalScroll || this.centerContainerCtrl.isViewportHScrollShowing();
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     private onHorizontalViewportChanged(): void {
-        const scrollWidth = this.centerContainerCon.getCenterWidth();
-        const scrollPosition = this.centerContainerCon.getViewportScrollLeft();
+        const scrollWidth = this.centerContainerCtrl.getCenterWidth();
+        const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
         this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
     }

@@ -88,7 +88,7 @@ The theme shown in the above snippet is applied to the chart in the example belo
 
 This example demonstrates a more advanced theme, providing different settings for different series and axis types.
 
-<chart-example title='Advanced Themes' name='advanced-theme' type='multi' options='{ "exampleHeight": "80vh" }'></chart-example>
+<chart-example title='Advanced Themes' name='advanced-theme' type='multi'></chart-example>
 
 ## Next Up
 

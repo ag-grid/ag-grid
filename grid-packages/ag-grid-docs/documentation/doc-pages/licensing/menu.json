@@ -83,8 +83,8 @@
             "pane": "right"
           },
           {
-            "title": "Learning Videos",
-            "url": "/learning-videos/",
+            "title": "Videos",
+            "url": "/videos/",
             "frameworks": [
               "react"
             ]

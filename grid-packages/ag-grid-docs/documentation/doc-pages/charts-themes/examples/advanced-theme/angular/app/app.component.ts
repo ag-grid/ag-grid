@@ -4,10 +4,10 @@ import { Component } from "@angular/core"
   selector: "my-app",
   template: `
     <div class="wrapper">
-      <ag-charts-angular style="height: 100%" [options]="chartOptions1">
+      <ag-charts-angular id="chart1" [options]="chartOptions1">
       </ag-charts-angular>
 
-      <ag-charts-angular style="height: 100%" [options]="chartOptions2">
+      <ag-charts-angular id="chart2" [options]="chartOptions2">
       </ag-charts-angular>
     </div>
   `,

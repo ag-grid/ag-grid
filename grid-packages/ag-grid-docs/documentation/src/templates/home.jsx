@@ -133,7 +133,7 @@ const VideoPanel = ({framework}) => {
                     </div>
                 ))}
                 <div className={styles['docs-home__video-panel__videos__all-videos']}>
-                    <a href="./learning-videos/" style={{margin: "auto"}}>
+                    <a href="./videos/" style={{margin: "auto"}}>
                         <div style={{flexDirection: "column"}}>
                             <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
                             <div className={styles['docs-home__video-panel__videos__all-videos__title']}>All Videos</div>

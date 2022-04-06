@@ -154,16 +154,8 @@ export class RowContainerCtrl extends BeanStub {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
-
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
-
-        this.registerWithCtrlsService();
-
     }
 
     private registerWithCtrlsService(): void {
@@ -224,6 +216,21 @@ export class RowContainerCtrl extends BeanStub {
         this.forContainers(allCenter, () => this.createManagedBean(
             new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))
         ));
+
+        this.addListeners();
+        this.registerWithCtrlsService();
+    }
+
+    private addListeners(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, ()=> this.onScrollVisibilityChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> this.onDisplayedColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, ()=> this.onDisplayedColumnsWidthChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, ()=> this.onDisplayedRowsChanged());
+
+        this.onScrollVisibilityChanged();
+        this.onDisplayedColumnsChanged();
+        this.onDisplayedColumnsWidthChanged();
+        this.onDisplayedRowsChanged();
     }
 
     private listenOnDomOrder(): void {

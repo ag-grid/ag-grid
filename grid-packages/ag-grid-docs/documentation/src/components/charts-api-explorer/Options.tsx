@@ -265,7 +265,7 @@ export const Options = ({ chartType, axisType, updateOption }) => {
 
     const isSearching = getTrimmedSearchText() !== '';
 
-    const { interfaceLookup, codeLookup } = loadLookups('charts-api/api.json');
+    const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
     const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
     const model = buildModel(optionsType, interfaceLookup, codeLookup);
 

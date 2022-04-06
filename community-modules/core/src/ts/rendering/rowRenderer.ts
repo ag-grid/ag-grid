@@ -331,7 +331,7 @@ export class RowRenderer extends BeanStub {
         if (!rowNodes) { return; }
 
         rowNodes.forEach(rowNode => {
-            const rowCon = new RowCtrl(
+            const rowCtrl = new RowCtrl(
                 this.$scope,
                 rowNode,
                 this.beans,
@@ -340,7 +340,7 @@ export class RowRenderer extends BeanStub {
                 this.printLayout
             );
 
-            rowComps.push(rowCon);
+            rowComps.push(rowCtrl);
         });
     }
 
@@ -944,27 +944,27 @@ export class RowRenderer extends BeanStub {
         afterScroll: boolean
     ): RowCtrl | null | undefined {
         let rowNode: RowNode | undefined;
-        let rowCon: RowCtrl | null = this.rowCtrlsByRowIndex[rowIndex];
+        let rowCtrl: RowCtrl | null = this.rowCtrlsByRowIndex[rowIndex];
 
         // if no row comp, see if we can get it from the previous rowComps
-        if (!rowCon) {
+        if (!rowCtrl) {
             rowNode = this.paginationProxy.getRow(rowIndex);
             if (exists(rowNode) && exists(rowsToRecycle) && rowsToRecycle[rowNode.id!] && rowNode.alreadyRendered) {
-                rowCon = rowsToRecycle[rowNode.id!];
+                rowCtrl = rowsToRecycle[rowNode.id!];
                 rowsToRecycle[rowNode.id!] = null;
             }
         }
 
-        const creatingNewRowCon = !rowCon;
+        const creatingNewRowCtrl = !rowCtrl;
 
-        if (creatingNewRowCon) {
+        if (creatingNewRowCtrl) {
             // create a new one
             if (!rowNode) {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
 
             if (exists(rowNode)) {
-                rowCon = this.createRowCon(rowNode, animate, afterScroll);
+                rowCtrl = this.createRowCon(rowNode, animate, afterScroll);
             } else {
                 // this should never happen - if somehow we are trying to create
                 // a row for a rowNode that does not exist.
@@ -978,9 +978,9 @@ export class RowRenderer extends BeanStub {
             rowNode.alreadyRendered = true;
         }
 
-        this.rowCtrlsByRowIndex[rowIndex] = rowCon!;
+        this.rowCtrlsByRowIndex[rowIndex] = rowCtrl!;
 
-        return rowCon;
+        return rowCtrl;
     }
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
@@ -1038,7 +1038,7 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             const suppressRowVirtualisation = this.gridOptionsWrapper.isSuppressRowVirtualisation();
 
             let rowHeightsChanged = false;
@@ -1053,7 +1053,7 @@ export class RowRenderer extends BeanStub {
                     firstPixel = pageFirstPixel + divStretchOffset;
                     lastPixel = pageLastPixel + divStretchOffset;    
                 } else {
-                    const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
+                    const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
                     const bodyTopPixel = bodyVRange.top;
                     const bodyBottomPixel = bodyVRange.bottom;
 

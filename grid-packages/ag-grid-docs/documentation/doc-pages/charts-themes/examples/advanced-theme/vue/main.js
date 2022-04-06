@@ -4,13 +4,17 @@ import Vue from "vue"
 const ChartExample = {
   template: `
         <div class="wrapper">
-                <ag-charts-vue
-                    :options="chartOptions1">
-                </ag-charts-vue>
-                <ag-charts-vue
-                    :options="chartOptions2">
-                </ag-charts-vue>
-            </div>
+          <div id="chart1">
+            <ag-charts-vue
+                :options="chartOptions1">
+            </ag-charts-vue>
+          </div>
+          <div id="chart2">
+            <ag-charts-vue
+                :options="chartOptions2">
+            </ag-charts-vue>
+          </div>
+        </div>
     `,
   components: {
     "ag-charts-vue": AgChartsVue,
@@ -27,33 +31,33 @@ const ChartExample = {
         },
         data,
         series: [
-            {
-                type: "column",
-                xKey: "label",
-                yKey: "v1",
-                stacked: true,
-                yName: "Reliability",
-              },
-              {
-                type: "column",
-                xKey: "label",
-                yKey: "v2",
-                stacked: true,
-                yName: "Ease of use",
-              },
-              {
-                type: "column",
-                xKey: "label",
-                yKey: "v3",
-                stacked: true,
-                yName: "Performance",
-              },
-              {
-                type: "line",
-                xKey: "label",
-                yKey: "v4",
-                yName: "Price",
-              },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v1",
+            stacked: true,
+            yName: "Reliability",
+          },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v2",
+            stacked: true,
+            yName: "Ease of use",
+          },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v3",
+            stacked: true,
+            yName: "Performance",
+          },
+          {
+            type: "line",
+            xKey: "label",
+            yKey: "v4",
+            yName: "Price",
+          },
         ],
       },
       chartOptions2: {

@@ -14,11 +14,10 @@ export const Tabs = (props) => {
         <ul className="nav nav-tabs">
             {realChildren.map(({ props: { label = '' } }, idx) => {
                 return (
-                    <li>
+                    <li key={label}>
                         <a
                             href={`#${label}`}
                             className={classnames('nav-link', {'active': label === selected})}
-                            key={label}
                             onClick={(e) => { setSelected(label); e.preventDefault(); }}
                             onKeyDown={(e) => doOnEnter(e, () => { setSelected(label); })}
                             role="tab"

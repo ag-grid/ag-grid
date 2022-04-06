@@ -6628,7 +6628,7 @@
       "padding?": "/** Padding in pixels between the axis label and the tick. */",
       "color?": "/** The colour to use for the labels */",
       "rotation?": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
-      "format?": "/** Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\\\"../axes/#time-label-format-string\\\">click here</a> */",
+      "format?": "/** Format string used when rendering labels for time axes. */",
       "formatter?": "/** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */"
     }
   },
@@ -7826,6 +7826,7 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
       "navigator?": "/** Configuration for the chart navigator. */",
@@ -7863,6 +7864,8 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -7897,6 +7900,8 @@
       "theme?": "string | AgChartTheme"
     },
     "docs": {
+      "type?": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "series?": "/** Series configurations. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",

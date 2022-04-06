@@ -86,7 +86,7 @@ export class FilterManager extends BeanStub {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach(colId => {
-                const column = this.columnModel.getPrimaryColumn(colId);
+                const column = this.columnModel.getPrimaryColumn(colId) || this.columnModel.getGridColumn(colId);
 
                 if (!column) {
                     console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
@@ -203,8 +203,11 @@ export class FilterManager extends BeanStub {
             if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
 
+                // Is the column both primary and aggregated
                 const isPrimaryValueColumn = filterWrapper.column.isValueActive() && filterWrapper.column.isPrimary();
-                const isPivotColumn = !filterWrapper.column.isPrimary() || (filterWrapper.column.isValueActive() && !this.columnModel.getPivotColumns().length);
+                // Is secondary column, or column is aggregated and pivot mode is enabled with no pivot columns.
+                const isPivotColumn = !filterWrapper.column.isPrimary() || (this.columnModel.isPivotMode() && !this.columnModel.isPivotActive() && filterWrapper.column.isValueActive());
+                // Has user enabled groupFiltering, does column need group filtered and is pivot disabled
                 const filterPrimaryAfterAggregations = groupFilterEnabled && isPrimaryValueColumn && !this.columnApi.isPivotMode();
                 if(filterPrimaryAfterAggregations || isPivotColumn) {
                     this.activeAdvancedAggregateFilters.push(resolvedPromise!);
