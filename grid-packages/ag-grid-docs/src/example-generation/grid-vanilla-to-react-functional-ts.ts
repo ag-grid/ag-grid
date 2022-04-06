@@ -132,6 +132,8 @@ function getEventAndCallbackNames() {
     return callbacksAndEvents;;
 }
 
+const ROW_DATA_STATE = 'const [rowData, setRowData] = useState<any[]>();'
+
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
@@ -149,7 +151,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
-            `const [rowData, setRowData] = useState<any[]>();`
+            ROW_DATA_STATE
         ];
 
 
@@ -202,8 +204,8 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
-                    const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState<any[]();');
-                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState(${property.value});`
+                    const rowDataIndex = stateProperties.indexOf(ROW_DATA_STATE);
+                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<any[]>(${property.value});`
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
@@ -325,8 +327,8 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace("const gridRef = useRef<AgGridReact>();", "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
-        if (generatedOutput.includes("const [rowData, setRowData] = useState();") && (generatedOutput.match(/setRowData/g) || []).length === 1) {
-            generatedOutput = generatedOutput.replace("const [rowData, setRowData] = useState<any[]>();", "")
+        if (generatedOutput.includes(ROW_DATA_STATE) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
+            generatedOutput = generatedOutput.replace(ROW_DATA_STATE, "")
             generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }
 
