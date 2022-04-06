@@ -8,6 +8,7 @@ import { exists } from "../utils/generic";
 import { removeFromArray } from "../utils/array";
 import { areEventsNear } from "../utils/mouse";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
+import { isBrowserSafari } from "../utils/browser";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -248,6 +249,7 @@ export class DragService extends BeanStub {
         // The event type can be `mousedown` when `dragStartPixels=0`
         // we should only preventDefault on `mousemove`.
         if (
+            isBrowserSafari() &&
             mouseEvent.type === 'mousemove' &&
             mouseEvent.cancelable &&
             this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
