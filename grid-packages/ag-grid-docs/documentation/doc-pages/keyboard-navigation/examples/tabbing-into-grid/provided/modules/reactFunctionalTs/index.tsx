@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const GridExample = () => {
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
     const [gridColumnApi, setGridColumnApi] = useState<ColumnApi | null>(null);
-    const [rowData, setRowData] = useState<any[] | null>(null);
+    const [rowData, setRowData] = useState<any[]>();
     const columnDefs = useMemo<ColDef[]>(() => [
         {
             headerName: "#",

@@ -76,7 +76,7 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
 
     const [ready, setReady] = useState(false);
     const [interimValue, setInterimValue] = useState(isHappy(props.value));
-    const [happy, setHappy] = useState<boolean>(false);
+    const [happy, setHappy] = useState<boolean | null>(null);
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event: any) => {

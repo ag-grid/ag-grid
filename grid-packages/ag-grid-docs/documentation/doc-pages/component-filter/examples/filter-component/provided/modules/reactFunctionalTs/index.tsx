@@ -17,7 +17,7 @@ const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState<any[]>();
+    const [rowData, setRowData] = useState<any[]>(getData());
     const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[] | null>([
         { field: 'row' },
         {
