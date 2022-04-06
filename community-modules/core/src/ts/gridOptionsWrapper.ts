@@ -561,6 +561,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMultiSort);
     }
 
+    public isAlwaysMultiSort() {
+        return isTrue(this.gridOptions.alwaysMultiSort);
+    }
+
     public isMultiSortKeyCtrl() {
         return this.gridOptions.multiSortKey === 'ctrl';
     }

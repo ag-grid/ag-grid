@@ -738,6 +738,8 @@ export interface GridOptions {
     unSortIcon?: boolean;
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */
     suppressMultiSort?: boolean;
+    /** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */
+    alwaysMultiSort?: boolean;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */
     multiSortKey?: string;
     /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */

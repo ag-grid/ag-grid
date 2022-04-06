@@ -3149,6 +3149,10 @@
       "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "alwaysMultiSort": {
+      "description": "/** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
       "type": { "returnType": "string", "optional": true }
@@ -22339,6 +22343,10 @@
       "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "alwaysMultiSort": {
+      "description": "/** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "multiSortKey": {
       "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
       "type": { "returnType": "string", "optional": true }
@@ -25021,6 +25029,10 @@
     },
     "suppressMultiSort": {
       "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "alwaysMultiSort": {
+      "description": "/** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "multiSortKey": {
@@ -27715,6 +27727,10 @@
     },
     "suppressMultiSort": {
       "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "alwaysMultiSort": {
+      "description": "/** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "multiSortKey": {
