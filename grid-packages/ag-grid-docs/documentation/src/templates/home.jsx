@@ -8,7 +8,6 @@ import styles from './home.module.scss';
 import menuStyles from '../components/menu-view/MenuView.module.scss';
 import tileStyles from '../components/menu-view/Tile.module.scss';
 import classnames from "classnames";
-import ReactPlayer from 'react-player'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
 import featuredVideos from './featuredVideos.json';
@@ -116,15 +115,15 @@ const GettingStarted = ({framework, data}) => {
 
 const VideoPanel = ({framework}) => {
     return (
-        <div key={"4"} className={menuStyles['menu-view']}>
+        <div className={menuStyles['menu-view']}>
             <h2 className={menuStyles['menu-view__title']}>
                 {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Videos
             </h2>
             <div className={menuStyles['menu-view__tile-row']}>
                 {featuredVideos.map(featuredVideo => (
                         <div className={classnames(tileStyles['menu-view-tile'])} style={{height: "10rem"}}>
-                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}`} target="_blank">
-                                <img style={{height: "100%", width: "100%"}} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`} />
+                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}`} target="_blank" rel="noreferrer">
+                                <img style={{height: "100%", width: "100%"}} alt={featuredVideo.title} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}/>
                             </a>
                         </div>
                     )
