@@ -29,11 +29,12 @@
 
         &:hover {
             color: inherit;
-            background-color: lightgrey;
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         &__anchor-body {
-            display: flex !important;
+            display: flex;
+            height: 100px;
 
             &__index {
                 padding-right: 1rem;
@@ -42,6 +43,18 @@
             }
             &__body {
                 display: flex;
+                width: 100%;
+
+                ul {
+                    width: 100%;
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    li {
+                        flex-grow: 1;
+                        min-width: 50%;
+                    }
+                }
 
                 &__video-content {
                     display: flex;

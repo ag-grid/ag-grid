@@ -18,15 +18,15 @@ const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
     return (
         <div className={classnames(styles["learning-videos__video"])}>
             <a href={url} target="_blank">
-                <div className={classnames(styles["learning-videos__video__anchor-body"])} >
-                    <div className={classnames(styles['learning-videos__video__anchor-body__index']) }>{index}</div>
-                    <div>
-                        <h2>{title}</h2>
-                        <div className={classnames(styles["learning-videos__video__anchor-body__body"])}>
-                            <div className={classnames(styles["learning-videos__video__anchor-body__body__video-content"])}>
-                                <img style={{height: 100}} alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
-                                <h5 className={classnames(styles["learning-videos__video__anchor-body__body__video-content__running-time"])}>{runningTime}</h5>
-                            </div>
+                <div className={classnames(styles["learning-videos__video__anchor-body"])}>
+                    <div className={classnames(styles['learning-videos__video__anchor-body__index'])}>{index}</div>
+                    <div className={classnames(styles["learning-videos__video__anchor-body__body"])}>
+                        <div className={classnames(styles["learning-videos__video__anchor-body__body__video-content"])}>
+                            <img style={{height: 100}} alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
+                            <h5 className={classnames(styles["learning-videos__video__anchor-body__body__video-content__running-time"])}>{runningTime}</h5>
+                        </div>
+                        <div style={{paddingLeft: "0.5rem", width: "60%"}}>
+                            <h4>{title}</h4>
                             <div>
                                 <ul>
                                     {
