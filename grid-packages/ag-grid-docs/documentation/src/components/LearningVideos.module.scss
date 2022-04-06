@@ -23,10 +23,8 @@
     }
 
     &__video {
-        margin-bottom: 0.5rem;
-        padding: 0.5rem;
+        padding: 1rem 0.5rem 0 0.5rem;
         width: 100%;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.10);
 
         &:hover {
             color: inherit;
@@ -45,6 +43,8 @@
             &__body {
                 display: flex;
                 width: 100%;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.10);
 
                 ul {
                     width: 100%;
