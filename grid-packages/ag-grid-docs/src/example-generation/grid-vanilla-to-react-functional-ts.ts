@@ -133,6 +133,7 @@ function getEventAndCallbackNames() {
 }
 
 const ROW_DATA_STATE = 'const [rowData, setRowData] = useState<any[]>();'
+const GRID_REF_HOOK = "const gridRef = useRef<AgGridReact>(null);"
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
@@ -297,7 +298,7 @@ ${bindings.utils.map(convertFunctionToConstPropertyTs).join('\n\n')}
 ${bindings.classes.join('\n')}
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact>(null);
+    ${GRID_REF_HOOK}
     ${stateProperties.join('\n    ')}
 
 ${gridReady}
@@ -324,7 +325,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
-            generatedOutput = generatedOutput.replace("const gridRef = useRef<AgGridReact>();", "")
+            generatedOutput = generatedOutput.replace(GRID_REF_HOOK, "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
         if (generatedOutput.includes(ROW_DATA_STATE) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
