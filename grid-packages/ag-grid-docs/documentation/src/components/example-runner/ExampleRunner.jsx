@@ -181,7 +181,6 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     useFunctionalReact={useFunctionalReact}
                     useTypescript={useTypescript}
                     onChange={event => {
-                        console.log(' react selecrot', event.target.value)
                         switch (event.target.value) {
                             case 'classes':
                                 set({ useFunctionalReact: false, useTypescript: false });
