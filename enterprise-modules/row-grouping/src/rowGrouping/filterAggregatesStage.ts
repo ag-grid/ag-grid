@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     IRowNodeStage,
-    SelectableService,
     StageExecuteParams,
     BeanStub,
     FilterManager,
@@ -13,7 +12,6 @@ import {
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('filterManager') private filterManager: FilterManager;
 
     public execute(params: StageExecuteParams): void {
@@ -32,7 +30,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
         const applyFilterToNode = this.gridOptionsWrapper.getGroupAggFiltering()
             || (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
 
-        const { rowNode, changedPath } = params;
+        const { changedPath } = params;
 
         const preserveFilterStageConfig = (node: RowNode) => {
             node.childrenAfterAggFilter = node.childrenAfterFilter;
@@ -92,6 +90,5 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             isAggFilterActive ? filterChildren : preserveFilterStageConfig,
             false,
         );
-        this.selectableService.updateSelectableAfterAggregateFiltering(rowNode);
     }
 }
