@@ -1,2 +1,5 @@
 # Ignore auto-generated file.
 agChartOptions.ajv.js
+
+# Don't ignore this versioned .d.ts.
+!agChartOptions.ajv.d.ts
