@@ -25,7 +25,7 @@ const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
                             <img style={{height: 100}} alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
                             <h5 className={classnames(styles["learning-videos__video__anchor-body__body__video-content__running-time"])}>{runningTime}</h5>
                         </div>
-                        <div style={{paddingLeft: "0.5rem", width: "60%"}}>
+                        <div className={classnames(styles["learning-videos__video__anchor-body__body__video-notes"])}>
                             <h4>{title}</h4>
                             <div>
                                 <ul>

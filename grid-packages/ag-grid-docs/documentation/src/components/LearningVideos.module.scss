@@ -23,7 +23,7 @@
     }
 
     &__video {
-        padding: 1rem 0.5rem 0 0.5rem;
+        padding: 1.5rem 0.5rem 0 0.5rem;
         width: 100%;
 
         &:hover {
@@ -43,7 +43,7 @@
             &__body {
                 display: flex;
                 width: 100%;
-                padding-bottom: 0.5rem;
+                padding-bottom: 0.75rem;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
 
                 ul {
@@ -70,6 +70,12 @@
                         color: white;
                         background-color: rgba(0,0,0,.5);
                     }
+                }
+
+                &__video-notes {
+                    padding-left: 0.5rem;
+                    width: 60%;
+                    margin-top: -1rem;
                 }
             }
         }
