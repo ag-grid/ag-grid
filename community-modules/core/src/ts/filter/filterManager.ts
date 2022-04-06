@@ -54,7 +54,6 @@ export class FilterManager extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
@@ -471,7 +470,7 @@ export class FilterManager extends BeanStub {
         node.quickFilterAggregateText = stringParts.join(FilterManager.QUICK_FILTER_SEPARATOR);
     }
 
-    private onNewRowsLoaded(source: ColumnEventType): void {
+    public onNewRowsLoaded(source: ColumnEventType): void {
         this.allColumnFilters.forEach(filterWrapper => {
             filterWrapper.filterPromise!.then(filter => {
                 if (filter!.onNewRowsLoaded) {

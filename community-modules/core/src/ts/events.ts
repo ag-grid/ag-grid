@@ -334,6 +334,7 @@ export type ColumnEventType =
     "contextMenu" |
     "columnMenu" |
     "rowModelUpdated" |
+    "rowDataUpdated" |
     "api" |
     "flex" |
     "pivotChart";

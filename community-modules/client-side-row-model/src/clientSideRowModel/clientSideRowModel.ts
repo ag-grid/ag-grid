@@ -30,7 +30,8 @@ import {
     ValueCache,
     AsyncTransactionsFlushed,
     AnimationFrameService,
-    Beans
+    Beans,
+    FilterManager
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -51,6 +52,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -838,9 +840,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.nodeManager.setRowData(rowData);
 
-        // this event kicks off:
         // - clears selection
+        this.selectionService.reset();
         // - updates filters
+        this.filterManager.onNewRowsLoaded('rowDataUpdated');
+
+        // this event kicks off:
         // - shows 'no rows' overlay if needed
         const rowDataChangedEvent: RowDataChangedEvent = {
             type: Events.EVENT_ROW_DATA_CHANGED,
