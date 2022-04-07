@@ -1,11 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     selector: 'my-app',
@@ -19,7 +24,6 @@ import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-gr
                     resizable: true
                 }'
                 [rowData]='rowData'
-                [modules]='modules'
                 [gridOptions]='topOptions'
                 [columnDefs]='columnDefs'>
         </ag-grid-angular>
@@ -35,7 +39,6 @@ import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-gr
                     resizable: true
                 }'
                 [rowData]='rowData'
-                [modules]='modules'
                 [gridOptions]='bottomOptions'
                 [columnDefs]='columnDefs'>
         </ag-grid-angular>
@@ -66,7 +69,6 @@ export class AppComponent {
             minWidth: 100
         }
     };
-    modules = [ClientSideRowModelModule];
 
     @ViewChild('topGrid') topGrid: any;
     @ViewChild('bottomGrid') bottomGrid: any;

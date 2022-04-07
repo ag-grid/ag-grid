@@ -34,7 +34,7 @@ Below shows two grids, both aligned with the other (so any column change to one 
 
 The grids don't serve much purpose (why would you show the same grid twice???) however it demonstrates the features in an easy to understand way.
 
-<grid-example title='Aligned Grids' name='aligned-grids' type='multi'></grid-example>
+<grid-example title='Aligned Grids' name='aligned-grids' type='mixed'></grid-example>
 
 ## Events
 
@@ -61,7 +61,7 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 - The bottom grid has no header, suppressed via a grid option.
 - sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column widths from the top grid.
 
-<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='multi'></grid-example>
+<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='mixed'></grid-example>
 
 [[note]]
 | * The property `suppressHorizontalScroll` does not work with the browser Edge.
@@ -75,7 +75,7 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 
 It is possible that you have column groups that are split because of pinning or the order of the columns. The grid below has only two groups that are split, displayed as many split groups. The column aligning also works here in that a change to a split group will open / close all the instances of that group in both tables.
 
-<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='multi'></grid-example>
+<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='mixed'></grid-example>
 
 ## Event Propagation
 

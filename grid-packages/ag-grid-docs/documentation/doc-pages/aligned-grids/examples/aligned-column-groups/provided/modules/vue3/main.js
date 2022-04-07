@@ -1,8 +1,12 @@
-import {createApp} from 'vue';
-import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-enterprise';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -32,7 +36,7 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue,
     },
-    data: function() {
+    data: function () {
         return {
             topOptions: {
                 alignedGrids: [],

@@ -1,8 +1,12 @@
 import Vue from 'vue';
-import {AgGridVue} from 'ag-grid-vue';
-import 'ag-grid-enterprise';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -66,14 +70,14 @@ const VueExample = {
                     headerClass: 'blue',
                     groupId: 'Group1',
                     children: [
-                        {field: 'athlete', pinned: true, width: 100},
-                        {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-                        {field: 'country', width: 100},
-                        {field: 'year', columnGroupShow: 'open', width: 100},
-                        {field: 'date', width: 100},
-                        {field: 'sport', columnGroupShow: 'open', width: 100},
-                        {field: 'date', width: 100},
-                        {field: 'sport', columnGroupShow: 'open', width: 100}
+                        { field: 'athlete', pinned: true, width: 100 },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+                        { field: 'country', width: 100 },
+                        { field: 'year', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 }
                     ]
                 },
                 {
@@ -81,14 +85,14 @@ const VueExample = {
                     headerClass: 'green',
                     groupId: 'Group2',
                     children: [
-                        {field: 'athlete', pinned: true, width: 100},
-                        {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-                        {field: 'country', width: 100},
-                        {field: 'year', columnGroupShow: 'open', width: 100},
-                        {field: 'date', width: 100},
-                        {field: 'sport', columnGroupShow: 'open', width: 100},
-                        {field: 'date', width: 100},
-                        {field: 'sport', columnGroupShow: 'open', width: 100}
+                        { field: 'athlete', pinned: true, width: 100 },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+                        { field: 'country', width: 100 },
+                        { field: 'year', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 }
                     ]
                 }
             ],
