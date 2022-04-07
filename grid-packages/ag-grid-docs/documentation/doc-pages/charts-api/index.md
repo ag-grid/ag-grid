@@ -2,11 +2,21 @@
 title: "Options Reference"
 ---
 
-This page documents the AG Charts API. You can find more details about getting started with AG Charts in the [Getting Started](/charts-getting-started/) section. You can also explore the API and see in real-time how different options affect charts using the [API Explorer](/charts-api-explorer/).
+This page documents the AG Charts Interface and API.
+
+The `AgChartOptions` interface is the gateway to creating charts, it includes all the configuration options available in AG Charts.
+
+To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` method.
 
 ## Options by Chart Type
 
-AG Charts is primarily configured by an instance of the `AgChartOptions` option, and there are three main variations depending on the chart/series type to be rendered:
+An instance of `AgChartOptions` is an essential configuration object required to create a chart with the desired data and attributes.
+
+Properties, formatters and event handlers are all available through the `AgChartOptions` interface. Specifying these on the `options` object will enable fine grained control of charts including registering event listeners and applying styles to individual data points.
+
+The `AgChartOptions` interface is displayed below in an expandable JSON graph, which can be navigated to explore the object structure.
+
+Click through the tabs to see the three main variations of `AgChartOptions` depending on the chart/series type to be rendered.
 
 <tabs>
     <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]'></expandable-snippet>
@@ -16,10 +26,8 @@ AG Charts is primarily configured by an instance of the `AgChartOptions` option,
 
 ## Creating and Updating Charts Using Options
 
-`AgChartOptions` option objects are used for both create and update cases of a chart instance.
-
 [[only-javascript]]
-| `AgChart` exposes both a `create()` and `update()` static method to perform chart initialisation and update respectively.
+| `AgChart` exposes `create()` and `update()` static methods to perform chart initialisation and update respectively.
 | Mutations to the previously used `options` object are not automatically picked up by the chart implementation,
 | `AgChart.update()` should be called for changes to be applied.
 |
