@@ -34,7 +34,7 @@ export class NumberFilterComponent implements IFilterComp {
         this.eFilterText.addEventListener('input', this.onFilterChanged);
     }
 
-    isNumeric = (n: any) => !isNaN(parseFloat(n)) && isFinite(n);
+    isNumeric = (n: any) => !isNaN(parseFloat(n)) && isFinite(parseFloat(n));
 
     myMethodForTakingValueFromFloatingFilter(value: any) {
         this.eFilterText.value = value;

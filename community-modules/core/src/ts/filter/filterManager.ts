@@ -37,9 +37,10 @@ export class FilterManager extends BeanStub {
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
-    private allAdvancedFilters = new Map<string, FilterWrapper>();
-    private activeAdvancedAggregateFilters: IFilterComp[] = [];
-    private activeAdvancedFilters: IFilterComp[] = [];
+    private allColumnFilters = new Map<string, FilterWrapper>();
+    private activeAggregateFilters: IFilterComp[] = [];
+    private activeColumnFilters: IFilterComp[] = [];
+
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
 
@@ -53,7 +54,6 @@ export class FilterManager extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.refreshFiltersForAggregations());
@@ -77,7 +77,7 @@ export class FilterManager extends BeanStub {
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = convertToSet(Object.keys(model));
 
-            this.allAdvancedFilters.forEach((filterWrapper, colId) => {
+            this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
 
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, newModel));
@@ -106,7 +106,7 @@ export class FilterManager extends BeanStub {
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
             });
         } else {
-            this.allAdvancedFilters.forEach(filterWrapper => {
+            this.allColumnFilters.forEach(filterWrapper => {
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
             });
         }
@@ -115,7 +115,7 @@ export class FilterManager extends BeanStub {
             const currentModel = this.getFilterModel();
 
             const columns: Column[] = [];
-            this.allAdvancedFilters.forEach((filterWrapper, colId) => {
+            this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
@@ -146,7 +146,7 @@ export class FilterManager extends BeanStub {
     public getFilterModel(): { [key: string]: any; } {
         const result: { [key: string]: any; } = {};
 
-        this.allAdvancedFilters.forEach((filterWrapper, key) => {
+        this.allColumnFilters.forEach((filterWrapper, key) => {
             // because user can provide filters, we provide useful error checking and messages
             const filterPromise = filterWrapper.filterPromise;
             const filter = filterPromise!.resolveNow(null, promiseFilter => promiseFilter);
@@ -168,25 +168,24 @@ export class FilterManager extends BeanStub {
         return result;
     }
 
-    // returns true if any advanced filter (ie not quick filter) active
-    public isAdvancedFilterPresent(): boolean {
-        return this.activeAdvancedFilters.length > 0;
+    public isColumnFilterPresent(): boolean {
+        return this.activeColumnFilters.length > 0;
     }
 
-    public isAdvancedAggregateFilterPresent(): boolean {
-        return !!this.activeAdvancedAggregateFilters.length;
+    public isAggregateFilterPresent(): boolean {
+        return !!this.activeAggregateFilters.length;
     }
 
-    public doAdvancedAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
-        return this.doAdvancedFiltersPass(node, filterToSkip, true);
+    private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
+        return this.doColumnFiltersPass(node, filterToSkip, true);
     }
 
     // called by:
     // 1) onFilterChanged()
     // 2) onNewRowsLoaded()
     private updateActiveFilters(): void {
-        this.activeAdvancedFilters.length = 0;
-        this.activeAdvancedAggregateFilters.length = 0;
+        this.activeColumnFilters.length = 0;
+        this.activeAggregateFilters.length = 0;
 
         const isFilterActive = (filter: IFilter | null) => {
             if (!filter) { return false; } // this never happens, including to avoid compile error
@@ -199,27 +198,43 @@ export class FilterManager extends BeanStub {
 
         const groupFilterEnabled = !!this.gridOptionsWrapper.getGroupAggFiltering();
 
-        this.allAdvancedFilters.forEach(filterWrapper => {
-            if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
-                const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
+        const isAggFilter = (column: Column) => {
 
-                // Is the column both primary and aggregated
-                const isPrimaryValueColumn = filterWrapper.column.isValueActive() && filterWrapper.column.isPrimary();
-                // Is secondary column, or column is aggregated and pivot mode is enabled with no pivot columns.
-                const isPivotColumn = !filterWrapper.column.isPrimary() || (this.columnModel.isPivotMode() && !this.columnModel.isPivotActive() && filterWrapper.column.isValueActive());
-                // Has user enabled groupFiltering, does column need group filtered and is pivot disabled
-                const filterPrimaryAfterAggregations = groupFilterEnabled && isPrimaryValueColumn && !this.columnApi.isPivotMode();
-                if(filterPrimaryAfterAggregations || isPivotColumn) {
-                    this.activeAdvancedAggregateFilters.push(resolvedPromise!);
+            const isSecondary = !column.isPrimary();
+            // the only filters that can appear on secondary columns are groupAgg filters
+            if (isSecondary) { return true; }
+
+            const isShowingPrimaryColumns = !this.columnModel.isPivotActive();
+            const isValueActive = column.isValueActive();
+
+            // primary columns are only ever groupAgg filters if a) value is active and b) showing primary columns
+            if (!isValueActive || !isShowingPrimaryColumns) { return false; }
+            
+            // from here on we know: isPrimary=true, isValueActive=true, isShowingPrimaryColumns=true
+            if (this.columnModel.isPivotMode()) { 
+                // primary column is pretending to be a pivot column, ie pivotMode=true, but we are
+                // still showing primary columns
+                return true; 
+            } else {
+                // we are not pivoting, so we groupFilter when it's an agg column
+                return groupFilterEnabled;
+            }
+        };
+
+        this.allColumnFilters.forEach(filterWrapper => {
+            if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
+                const filterComp = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
+                if (isAggFilter(filterWrapper.column)) {
+                    this.activeAggregateFilters.push(filterComp!);
                 } else {
-                    this.activeAdvancedFilters.push(resolvedPromise!);
+                    this.activeColumnFilters.push(filterComp!);
                 }
             }
         });
     }
 
     private updateFilterFlagInColumns(source: ColumnEventType, additionalEventAttributes?: any): void {
-        this.allAdvancedFilters.forEach(filterWrapper => {
+        this.allColumnFilters.forEach(filterWrapper => {
             const isFilterActive = filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive());
 
             filterWrapper.column.setFilterActive(isFilterActive, source, additionalEventAttributes);
@@ -227,13 +242,13 @@ export class FilterManager extends BeanStub {
     }
 
     public isAnyFilterPresent(): boolean {
-        return this.isQuickFilterPresent() || this.isAdvancedFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
+        return this.isQuickFilterPresent() || this.isColumnFilterPresent() || this.isAggregateFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
-    private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp, targetAggregates?: boolean): boolean {
+    private doColumnFiltersPass(node: RowNode, filterToSkip?: IFilterComp, targetAggregates?: boolean): boolean {
         const { data, aggData } = node;
 
-        const targetedFilters = targetAggregates ? this.activeAdvancedAggregateFilters : this.activeAdvancedFilters;
+        const targetedFilters = targetAggregates ? this.activeAggregateFilters : this.activeColumnFilters;
         const targetedData = targetAggregates ? aggData : data;
         for (let i = 0; i < targetedFilters.length; i++) {
             const filter = targetedFilters[i];
@@ -309,7 +324,7 @@ export class FilterManager extends BeanStub {
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
 
-        this.allAdvancedFilters.forEach(filterWrapper => {
+        this.allColumnFilters.forEach(filterWrapper => {
             if (!filterWrapper.filterPromise) { return; }
             filterWrapper.filterPromise.then(filter => {
                 if (filter && filter !== filterInstance && filter.onAnyFilterChanged) {
@@ -383,8 +398,7 @@ export class FilterManager extends BeanStub {
         rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
     }): boolean {
-        // check our internal advanced filter
-        if (this.isAdvancedAggregateFilterPresent() && !this.doAdvancedAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+        if (this.isAggregateFilterPresent() && !this.doAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
 
@@ -410,8 +424,8 @@ export class FilterManager extends BeanStub {
             return false;
         }
 
-        // lastly, check our internal advanced filter
-        if (this.isAdvancedFilterPresent() && !this.doAdvancedFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+        // lastly, check column filter
+        if (this.isColumnFilterPresent() && !this.doColumnFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
 
@@ -456,8 +470,8 @@ export class FilterManager extends BeanStub {
         node.quickFilterAggregateText = stringParts.join(FilterManager.QUICK_FILTER_SEPARATOR);
     }
 
-    private onNewRowsLoaded(source: ColumnEventType): void {
-        this.allAdvancedFilters.forEach(filterWrapper => {
+    public onNewRowsLoaded(source: ColumnEventType): void {
+        this.allColumnFilters.forEach(filterWrapper => {
             filterWrapper.filterPromise!.then(filter => {
                 if (filter!.onNewRowsLoaded) {
                     filter!.onNewRowsLoaded();
@@ -498,7 +512,7 @@ export class FilterManager extends BeanStub {
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
-            this.allAdvancedFilters.set(column.getColId(), filterWrapper);
+            this.allColumnFilters.set(column.getColId(), filterWrapper);
         } else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
         }
@@ -507,7 +521,7 @@ export class FilterManager extends BeanStub {
     }
 
     public cachedFilter(column: Column): FilterWrapper | undefined {
-        return this.allAdvancedFilters.get(column.getColId());
+        return this.allColumnFilters.get(column.getColId());
     }
 
     private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
@@ -636,7 +650,7 @@ export class FilterManager extends BeanStub {
     private onColumnsChanged(): void {
         const columns: Column[] = [];
 
-        this.allAdvancedFilters.forEach((wrapper, colId) => {
+        this.allColumnFilters.forEach((wrapper, colId) => {
             let currentColumn: Column | null;
             if (wrapper.column.isPrimary()) {
                 currentColumn = this.columnModel.getPrimaryColumn(colId);
@@ -661,7 +675,7 @@ export class FilterManager extends BeanStub {
 
     // destroys the filter, so it not longer takes part
     public destroyFilter(column: Column, source: ColumnEventType = 'api'): void {
-        const filterWrapper = this.allAdvancedFilters.get(column.getColId());
+        const filterWrapper = this.allColumnFilters.get(column.getColId());
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
@@ -684,7 +698,7 @@ export class FilterManager extends BeanStub {
                     filterWrapper.scope.$destroy();
                 }
 
-                this.allAdvancedFilters.delete(filterWrapper.column.getColId());
+                this.allColumnFilters.delete(filterWrapper.column.getColId());
             });
         });
     }
@@ -692,7 +706,7 @@ export class FilterManager extends BeanStub {
     @PreDestroy
     protected destroy() {
         super.destroy();
-        this.allAdvancedFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
+        this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
     }
 }
 

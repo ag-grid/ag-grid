@@ -24,7 +24,7 @@ export default class FullWidthCellRenderer extends Component {
         return (
             <div className="full-width-panel">
                 <div className="full-width-flag">
-                    <img border="0"
+                    <img
                         src={`https://www.ag-grid.com/example-assets/large-flags/${this.props.node.data.code}.png`} />
                 </div>
                 <div className="full-width-summary">

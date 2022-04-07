@@ -124,7 +124,7 @@ function onUpdateRandom() {
     gridOptions.api!.applyServerSideTransaction(tx)
 }
 
-function onAdd(index: number) {
+function onAdd(index: number | undefined) {
     const newProductName =
         all_products[Math.floor(all_products.length * Math.random())];
     const itemsToAdd = [];

@@ -37,8 +37,10 @@
 
             &__index {
                 padding-right: 1rem;
-                display: flex;
+                margin-top: 20px;
                 align-items: center;
+                font-weight: bold;
+                color: #666;
             }
             &__body {
                 display: flex;
@@ -73,9 +75,9 @@
                 }
 
                 &__video-notes {
-                    padding-left: 0.5rem;
+                    padding-left: 1.5rem;
                     width: 60%;
-                    margin-top: -1rem;
+                    margin-top: -.5rem;
                 }
             }
         }

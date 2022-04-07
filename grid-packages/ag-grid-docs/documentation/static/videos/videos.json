@@ -64,23 +64,35 @@
     "keyPoints": [
       "Configuring Filters",
       "Filter Models",
-      "Text Filter, Number Filter, Date Filter",
+      "Text, Number & Date Filters",
       "Set Filter, Multi Filter"
     ],
     "runningTime": "14:32"
   },
   {
-    "title": "Custom Column Filters",
+    "title": "Custom Column Filter Components",
     "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
       "image": "AgGridVideo.png",
-      "altText": "Custom Column Filters"
+      "altText": "Custom Column Filter Components"
     },
     "keyPoints": [
       "Creating Filter Components",
       "Custom Filter Models"
     ],
     "runningTime": "18:04"
+  },
+  {
+    "title": "Custom Floating Filter Components",
+    "url": "https://www.youtube.com/watch?v=CxwfX4KodaM&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Custom Floating Filter Components"
+    },
+    "keyPoints": [
+      "Creating Floating Components"
+    ],
+    "runningTime": "11:03"
   },
   {
     "title": "Custom Components",
@@ -106,8 +118,8 @@
     },
     "keyPoints": [
       "Updating Row Data",
-      "Transaction Updates",
-      "High Frequency Updates"
+      "High Frequency Updates",
+      "Transaction Updates"
     ],
     "runningTime": "19:11"
   }

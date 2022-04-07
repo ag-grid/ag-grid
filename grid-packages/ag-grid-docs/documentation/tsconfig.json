@@ -10,6 +10,7 @@
         "experimentalDecorators": true,
         "esModuleInterop": true,
         "noEmit": true,
+        "jsx": "preserve",
         "skipLibCheck": true,
         "lib": [
             "esnext",
@@ -23,8 +24,9 @@
         "./doc-pages/**/*_typescript.ts",
         "./doc-pages/**/*_angular.ts",
         "./doc-pages/**/*.ts",
-        "./custom-types/**/*"
-, "doc-pages/cell-editing-full-row/examples/full-row-editing/numericCellEditor.js", "doc-pages/cell-editing-full-row/examples/full-row-editing/numericCellEditor.js", "doc-pages/cell-editing-full-row/examples/full-row-editing/numericCellEditor.js"    ],
+        "./doc-pages/**/*.tsx",
+        "./custom-types/**/*",
+    ],
     "exclude": [
         "./node_modules"
     ]

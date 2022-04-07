@@ -1,15 +1,15 @@
 'use strict';
 
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MasterDetailModule} from '@ag-grid-enterprise/master-detail';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])
@@ -17,16 +17,16 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, Me
 let allRowData;
 
 const GridExample = () => {
-    const gridRef = useRef();
-    const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
+    const gridRef = useRef(null);
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState();
     const [columnDefs, setColumnDefs] = useState([
         // group cell renderer needed for expand / collapse icons
-        {field: 'name', cellRenderer: 'agGroupCellRenderer'},
-        {field: 'account'},
-        {field: 'calls'},
-        {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"},
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
     ]);
     const defaultColDef = useMemo(() => {
         return {
@@ -42,7 +42,7 @@ const GridExample = () => {
             template: (props) => (
                 <div class="ag-details-row ag-details-row-fixed-height">
                     <div style="padding: 4px; font-weight: bold;">{props.data.name} {props.data.calls} calls</div>
-                    <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
+                    <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height" />
                 </div>
             ),
             detailGridOptions: {
@@ -52,11 +52,11 @@ const GridExample = () => {
                     return params.data.callId;
                 },
                 columnDefs: [
-                    {field: 'callId', checkboxSelection: true},
-                    {field: 'direction'},
-                    {field: 'number', minWidth: 150},
-                    {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                    {field: 'switchCode', minWidth: 150},
+                    { field: 'callId', checkboxSelection: true },
+                    { field: 'direction' },
+                    { field: 'number', minWidth: 150 },
+                    { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                    { field: 'switchCode', minWidth: 150 },
                 ],
                 defaultColDef: {
                     flex: 1,
