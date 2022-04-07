@@ -2,8 +2,13 @@ import { Component } from '@angular/core';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     selector: 'my-app',
@@ -16,7 +21,6 @@ import { ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/
                         class="ag-theme-alpine"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
-                        [modules]="modules"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -47,7 +51,6 @@ import { ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/
                         class="ag-theme-alpine"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
-                        [modules]="modules"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -63,8 +66,6 @@ export class AppComponent {
         { field: "value1" },
         { field: "value2" }
     ];
-
-    modules = [ClientSideRowModelModule];
 
     leftGridOptions: GridOptions = {
         defaultColDef: {

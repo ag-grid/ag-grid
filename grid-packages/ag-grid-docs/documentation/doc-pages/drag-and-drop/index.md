@@ -53,7 +53,7 @@ In the example below, note the following:
 
 - New rows can be created by dragging out from red, green and blue 'Create' draggable areas.
 
-<grid-example title='Two Grids' name='two-grids' type='multi' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Two Grids' name='two-grids' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 
 Note that there is no specific drop zone logic in the grid. This was done on purpose after analysis.
 

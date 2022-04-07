@@ -1,12 +1,17 @@
-import Vue from 'vue';
-import { AgGridVue } from 'ag-grid-vue';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: /* html */ `
         <div class="outer ag-theme-alpine">
-            <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver(event)" v-on:drop="gridDrop(event, 'left')">
+            <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'left')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%;"
                     id="eLeftGrid"
@@ -19,29 +24,29 @@ const VueExample = {
                 </ag-grid-vue>
             </div>
             <div class="inner-col factory-panel">
-                <span id="eBin" class="factory factory-bin" v-on:dragover="binDragOver(event)" v-on:drop="binDrop(event)">
+                <span id="eBin" class="factory factory-bin" v-on:dragover="binDragOver($event)" v-on:drop="binDrop($event)">
                     <i class="far fa-trash-alt"><span class="filename"> Trash - </span></i>
                     Drop target to destroy row
                     </span>
-                <span draggable="true" class="factory factory-red" v-on:dragstart="dragStart(event, 'Red')">
+                <span draggable="true" class="factory factory-red" v-on:dragstart="dragStart($event, 'Red')">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new red item
                 </span>
-                <span draggable="true" class="factory factory-green" v-on:dragstart="dragStart(event, 'Green')">
+                <span draggable="true" class="factory factory-green" v-on:dragstart="dragStart($event, 'Green')">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new green item
                 </span>
-                <span draggable="true" class="factory factory-blue" v-on:dragstart="dragStart(event, 'Blue')">
+                <span draggable="true" class="factory factory-blue" v-on:dragstart="dragStart($event, 'Blue')">
                     <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new blue item
                 </span>
             </div>
-            <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver(event)" v-on:drop="gridDrop(event, 'right')">
+            <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'right')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%"
                     id="eRightGrid"
                     :gridOptions="rightGridOptions"
-                    :columnDefs="rightColumnDefs"
+                    :columnDefs ="rightColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="rightRowData"
                     :rowDragManaged="true"
@@ -139,14 +144,14 @@ const VueExample = {
             };
         },
 
-        dragStart(event, color) {
+        dragStart($event, color) {
             var newItem = this.createDataItem(color);
             var jsonData = JSON.stringify(newItem);
 
             event.dataTransfer.setData('application/json', jsonData);
         },
 
-        gridDragOver(event) {
+        gridDragOver($event) {
             var dragSupported = event.dataTransfer.types.length;
 
             if (dragSupported) {
@@ -156,7 +161,7 @@ const VueExample = {
 
         },
 
-        gridDrop(event, grid) {
+        gridDrop($event, grid) {
             event.preventDefault();
 
             var jsonData = event.dataTransfer.getData('application/json');
@@ -180,7 +185,7 @@ const VueExample = {
             gridApi.applyTransaction(transaction);
         },
 
-        binDragOver(event) {
+        binDragOver($event) {
             var dragSupported = event.dataTransfer.types.length;
 
             if (dragSupported) {
@@ -189,7 +194,7 @@ const VueExample = {
             }
         },
 
-        binDrop(event) {
+        binDrop($event) {
             event.preventDefault();
 
             var jsonData = event.dataTransfer.getData('application/json');
@@ -215,10 +220,4 @@ const VueExample = {
     }
 }
 
-
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample
-    }
-});
+createApp(VueExample).mount('#app');
