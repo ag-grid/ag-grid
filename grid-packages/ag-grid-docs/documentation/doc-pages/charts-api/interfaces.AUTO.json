@@ -36,6 +36,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
+  "MarkerShape": {
+    "meta": { "isTypeAlias": true },
+    "type": "'circle' | 'cross' | 'diamond' | 'heart' | 'plus' | 'triangle' | any"
+  },
   "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
@@ -572,7 +576,7 @@
     "meta": {},
     "type": {
       "size?": "PixelSize",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "padding?": "PixelSize",
       "strokeWidth?": "PixelSize"
     },
@@ -1091,7 +1095,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
@@ -1154,7 +1158,7 @@
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
@@ -1181,7 +1185,7 @@
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
