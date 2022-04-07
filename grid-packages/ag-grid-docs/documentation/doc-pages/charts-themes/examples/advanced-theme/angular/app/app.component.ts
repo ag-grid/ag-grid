@@ -1,4 +1,5 @@
 import { Component } from "@angular/core"
+import { AgChartOptions, AgChartTheme } from "ag-charts-community"
 
 @Component({
   selector: "my-app",
@@ -13,7 +14,7 @@ import { Component } from "@angular/core"
   `,
 })
 export class AppComponent {
-  private chartOptions1 = {
+  chartOptions1: AgChartOptions = {
     type: "cartesian",
     theme: myTheme,
     autoSize: true,
@@ -53,7 +54,7 @@ export class AppComponent {
     ],
   }
 
-  private chartOptions2 = {
+  chartOptions2: AgChartOptions = {
     theme: myTheme,
     autoSize: true,
     title: {
@@ -79,7 +80,7 @@ var data = [
   { label: "Windows", v1: 2.8, v2: 1.908, v3: 7.48, v4: 5.29, v5: 8.8 },
 ]
 
-var myTheme = {
+var myTheme: AgChartTheme = {
   baseTheme: "ag-default-dark",
   palette: {
     fills: ["#5C2983", "#0076C5", "#21B372", "#FDDE02", "#F76700", "#D30018"],

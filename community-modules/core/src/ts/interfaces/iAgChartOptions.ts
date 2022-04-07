@@ -28,6 +28,8 @@ export type AgChartThemeName =
     | 'ag-vivid'
     | 'ag-vivid-dark';
 
+export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'heart' | 'plus' | 'triangle' | any;
+
 /** Alias to denote that a value should be a CSS-compliant color string, such as `#FFFFFF` or `rgb(255, 255, 255)` or `white`. */
 export type CssColor = string;
 
@@ -278,7 +280,7 @@ export interface AgChartLegendMarkerOptions {
     /** The size in pixels of the markers in the legend. */
     size?: PixelSize;
     /** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to `'square'` if there is none. */
-    shape?: string | (new () => any); // Remove the (new () => any) eventually.
+    shape?: MarkerShape;
     /** The padding in pixels between a legend marker and the corresponding label. */
     padding?: PixelSize;
     /** The width in pixels of the stroke for markers in the legend. */
@@ -379,6 +381,7 @@ export interface AgBaseChartOptions {
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
+    /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
 }
 
@@ -636,7 +639,7 @@ export interface AgSeriesMarker {
     /** Whether or not to show markers. */
     enabled?: boolean;
     /** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */
-    shape?: string | (new () => any);
+    shape?: MarkerShape;
     /** The size in pixels of the markers. */
     size?: PixelSize;
     /** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */

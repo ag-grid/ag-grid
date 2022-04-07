@@ -309,6 +309,22 @@
     },
     "series": {
       "type": "AgCartesianSeriesOptions[]"
+    },
+    "theme": {
+      "default": "ag-default",
+      "options": [
+        "ag-default",
+        "ag-material",
+        "ag-pastel",
+        "ag-solar",
+        "ag-vivid",
+        "ag-default-dark",
+        "ag-material-dark",
+        "ag-pastel-dark",
+        "ag-solar-dark",
+        "ag-vivid-dark"
+      ],
+      "breakIndex": 5
     }
   },
   "AgPolarChartOptions": {
@@ -340,6 +356,22 @@
     },
     "series": {
       "type": "AgPolarSeriesOptions[]"
+    },
+    "theme": {
+      "default": "ag-default",
+      "options": [
+        "ag-default",
+        "ag-material",
+        "ag-pastel",
+        "ag-solar",
+        "ag-vivid",
+        "ag-default-dark",
+        "ag-material-dark",
+        "ag-pastel-dark",
+        "ag-solar-dark",
+        "ag-vivid-dark"
+      ],
+      "breakIndex": 5
     }
   },
   "AgHierarchyChartOptions": {
@@ -371,6 +403,22 @@
     },
     "series": {
       "type": "AgHierarchySeriesOptions[]"
+    },
+    "theme": {
+      "default": "ag-default",
+      "options": [
+        "ag-default",
+        "ag-material",
+        "ag-pastel",
+        "ag-solar",
+        "ag-vivid",
+        "ag-default-dark",
+        "ag-material-dark",
+        "ag-pastel-dark",
+        "ag-solar-dark",
+        "ag-vivid-dark"
+      ],
+      "breakIndex": 5
     }
   },
   "AgNumberAxisOptions": {
