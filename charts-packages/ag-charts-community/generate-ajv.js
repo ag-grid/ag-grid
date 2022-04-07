@@ -1,9 +1,10 @@
 const fs = require('fs');
 const { join, resolve } = require('path');
 const Ajv = require('ajv');
+const ajvKeywords = require('ajv-keywords');
 const standaloneCode = require('ajv/dist/standalone').default;
 const tjs = require('typescript-json-schema');
-const uglifyjs = require('uglify-js');
+const terser = require('terser');
 
 const DEBUG = process.argv.includes('--debug');
 
@@ -90,75 +91,89 @@ function normaliseAjvCode(code) {
             out += `var ${name}="${value}";`;
             return out;
         }, '');
-    code = code.replace('"use strict";', `"use strict";${constantJs}`);
 
-    return code;
+    return code.replace('"use strict";', `"use strict";${constantJs}`);
 }
 
-let exitCode = 0;
-sources.forEach(({ path, rootType }) => {
-    const inputFilename = `src/${path}`;
-    const schemaFilename = path.replace(/\.ts$/, '.jsonschema');
-    const ajvFilename = path.replace(/\.ts$/, '.ajv.raw.js');
-    const outputModuleName = path.replace(/\.ts$/, '.ajv').split('/').pop();
-    const outputFilename = path.replace(/\.ts$/, '.ajv.js');
-    const tsdFilename = path.replace(/\.ts$/, '.ajv.d.ts');
-    const tsjProgram = tjs.getProgramFromFiles(
-        [resolve(inputFilename)],
-        {
-            // strictNullChecks: true,
-        },
-        './src'
-    );
-    const tsjSettings = {
+function buildJsonSchema(inputFilename, rootType, schemaFilename) {
+    const tsjProgram = tjs.getProgramFromFiles([resolve(inputFilename)], {
+        // strictNullChecks: true,
+    }, './src');
+    const schema = tjs.generateSchema(tsjProgram, typeof rootType === 'string' ? rootType : '*', {
         topRef: true,
         required: true,
         noExtraProps: true,
         aliasRefs: true,
-    };
-    const schema = tjs.generateSchema(tsjProgram, typeof rootType === 'string' ? rootType : '*', tsjSettings);
+        // typeOfKeyword: true,
+    });
     const remappedSchemaIds = cleanJsonSchema(schema);
     if (DEBUG) {
         const debugFilename = join(__dirname, 'src', schemaFilename);
         fs.writeFileSync(debugFilename, JSON.stringify(schema, null, 2));
         console.log(` Debug ${debugFilename.replace(__dirname, '.')} ...`);
     }
+    return { remappedSchemaIds, schema };
+}
 
+function buildSchemaConfig(rootType, remappedSchemaIds) {
     let schemaConfig = undefined;
     if (rootType === '*') {
         // Skip.
     } else {
         const rootTypeArray = typeof rootType === 'string' ? [rootType] : rootType;
         schemaConfig = rootTypeArray.reduce((out, next) => {
-            out[`validate${next}`] = remappedSchemaIds[`#/definitions/${next}`];
+            const schemaId = `#/definitions/${next}`;
+            out[`validate${next}`] = remappedSchemaIds[schemaId] ?? schemaId;
             return out;
         }, {});
     }
+    return schemaConfig;
+}
+
+function buildValidator(schema, code, schemaConfig) {
+    const ajv = new Ajv({
+        schemas: [schema],
+        code: { source: true, lines: false, optimize: true, ...code },
+        strict: true,
+        strictSchema: true,
+        allowUnionTypes: true,
+        // Size optimisations below here.
+        inlineRefs: false,
+        meta: false,
+        validateSchema: false,
+        messages: false,
+    });
+    // ajvKeywords(ajv, 'typeof');
+
+    return normaliseAjvCode(standaloneCode(ajv, schemaConfig));
+}
+
+
+let exitCode = 0;
+sources.forEach(({ path, rootType }) => {
+    const inputFilename = `src/${path}`;
+    const schemaFilename = path.replace(/\.ts$/, '.jsonschema');
+    const outputFilename = path.replace(/\.ts$/, '.ajv.js');
+    const tsdFilename = path.replace(/\.ts$/, '.ajv.d.ts');
+
+    const { remappedSchemaIds, schema } = buildJsonSchema(inputFilename, rootType, schemaFilename);
+    const schemaConfig = buildSchemaConfig(rootType, remappedSchemaIds);
 
     outputs.forEach(({ path: outputPath, code }) => {
-        const ajv = new Ajv({
-            schemas: [schema],
-            code: { source: true, lines: false, optimize: true, ...code },
-            strict: true,
-            strictSchema: true,
-            allowUnionTypes: true,
-            // Size optimisations below here.
-            inlineRefs: false,
-            meta: false,
-            validateSchema: false,
-            messages: false,
-        });
-        const moduleCode = normaliseAjvCode(standaloneCode(ajv, schemaConfig));
-        const minifiedResult = uglifyjs.minify(
+        const moduleCode = buildValidator(schema, code, schemaConfig);
+        const minifiedResult = terser.minify(
             { main: moduleCode },
             {
                 compress: {
                     passes: 5,
+                    unsafe: true,
                 },
-                // mangle: {
-                //     properties: true,
-                //     reserved: Object.keys(schemaConfig),
-                // },
+                mangle: {
+                    // properties: {
+                    //     reserved: [...Object.keys(schemaConfig)],
+                    // },
+                    reserved: [...Object.keys(schemaConfig), 'exports'],
+                },
                 // wrap: outputModuleName,
             },
         );
