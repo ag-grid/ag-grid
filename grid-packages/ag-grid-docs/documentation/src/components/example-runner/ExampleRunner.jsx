@@ -69,13 +69,20 @@ const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, ty
         if (framework === 'react') {
             const alternativeStyleModulesExampleInfo =
                 getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false, 'modules');
-
             writeIndexHtmlFile(alternativeStyleModulesExampleInfo);
 
             const alternativeStylePackagesExampleInfo =
                 getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, false, 'packages');
-
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
+
+            // Add the typescript versions for functional
+            if (useFunctionalReact) {
+                const reactTsStyleModules = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true, 'modules');
+                writeIndexHtmlFile(reactTsStyleModules);
+
+                const reactTsStylePackages = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, true, 'packages');
+                writeIndexHtmlFile(reactTsStylePackages);
+            }
         }
 
         // 4. For Vue, also copy html file for Vue 3
@@ -286,7 +293,7 @@ const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => 
                 onChange={onChange} onBlur={onChange}>
                 <option value="classes">Classes</option>
                 <option value="hooks">Hooks</option>
-                <option value="hooksTs">Hooks Ts</option>
+                <option value="hooksTs">Hooks TS</option>
             </select>}
     </div>;
 };

@@ -655,12 +655,7 @@ export class FilterManager extends BeanStub {
             if (wrapper.column.isPrimary()) {
                 currentColumn = this.columnModel.getPrimaryColumn(colId);
             } else {
-                const secondaryColDef = wrapper.column.getColDef();
-                if (secondaryColDef.pivotKeys && secondaryColDef.pivotValueColumn) {
-                    currentColumn = this.columnModel.getSecondaryPivotColumn(secondaryColDef.pivotKeys, secondaryColDef.pivotValueColumn) 
-                } else {
-                    currentColumn = null;
-                }
+                currentColumn = this.columnModel.getGridColumn(colId);
             }
             if (currentColumn) { return; }
 

@@ -12,12 +12,11 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   groupDefaultExpanded: -1,
+  rowData: getData(),
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
-
-  gridOptions.api!.setRowData(getData());
 })

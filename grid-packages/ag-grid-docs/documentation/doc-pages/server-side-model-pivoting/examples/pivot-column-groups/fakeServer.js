@@ -40,38 +40,8 @@ function FakeServer(allData) {
                 results[i] = result;
             }
         });
-
-        // 'alasql' seems to not allow filtering on pivoted data
-        if (request.groupKeys && request.groupKeys.length) {
-            return results.filter(row => !Object.entries(request.filterModel).some(entry => !numberFilter(row, entry)));
-        }
+    
         return results;
-    }
-
-    function numberFilter(row, [key, item]) {
-        switch (item.type) {
-            case 'equals':
-                return row[key] === item.filter;
-            case 'notEqual':
-                return row[key] !== item.filter;
-            case 'greaterThan':
-                return row[key] > item.filter;
-            case 'greaterThanOrEqual':
-                return row[key] >= item.filter;
-            case 'lessThan':
-                return row[key] < item.filter;
-            case 'lessThanOrEqual':
-                return row[key] <= item.filter;
-            case 'inRange':
-                return row[key] >= item.filter && row[key] <= item.filter;
-            case 'blank':
-                return row[key] === undefined || row[key] === null;
-            case 'notBlank':
-                return row[key] !== undefined && row[key] !== null;
-            default:
-                console.log('unknown number filter type: ' + item.type);
-        }
-        return true;
     }
 
     function executePivotQuery(request, pivotCol, valueCol) {
