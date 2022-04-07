@@ -168,7 +168,9 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
     }
 
     if (desc.tsType.indexOf(' | ') >= 0) {
-        const options = desc.tsType.split(' | ').map((v) => v.substring(1, v.length - 1));
+        const options = desc.tsType.split(' | ')
+            .filter((v) => v.startsWith("'") && v.endsWith("'"))
+            .map((v) => v.substring(1, v.length - 1));
 
         if (options.every((v) => /^[a-z-]*$/.test(v))) {
             return { editor: PresetEditor, editorProps: { ...meta, options } };
