@@ -34,10 +34,6 @@ export class SelectionService extends BeanStub {
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('selectionService');
         this.reset();
-
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
-        }
     }
 
     @PostConstruct

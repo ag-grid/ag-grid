@@ -4,14 +4,14 @@ export default forwardRef((props, ref) => {
 
     const [date, setDate] = useState(null);
     const [picker, setPicker] = useState(null);
-    const refFlatPickr = useRef();
-    const refInput = useRef();
+    const refFlatPickr = useRef(null);
+    const refInput = useRef(null);
 
     // we use a ref as well as state, as state is async,
     // and after the grid calls setDate() (eg when setting filter model)
     // it then can call getDate() immediately (eg to execute the filter)
     // and we need to pass back the most recent value, not the old 'current state'.
-    const dateRef = useRef();
+    const dateRef = useRef(null);
 
     //*********************************************************************************
     //          LINKING THE UI, THE STATE AND AG-GRID

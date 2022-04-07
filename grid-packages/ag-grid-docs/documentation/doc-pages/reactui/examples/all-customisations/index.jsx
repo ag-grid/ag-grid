@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 function GridExample() {
 
-    const gridRef = useRef();
+    const gridRef = useRef(null);
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo(() => [

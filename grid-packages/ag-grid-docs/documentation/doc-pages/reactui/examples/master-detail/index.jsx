@@ -29,7 +29,7 @@ function GridExample() {
 
     const [rowData, setRowData] = useState(null);
 
-    const gridRef = useRef();
+    const gridRef = useRef(null);
 
     useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')

@@ -64,7 +64,7 @@ const createRowData = () => {
 }
 
 const GridExample = () => {
-    const gridRef = useRef();
+    const gridRef = useRef(null);
     const [gridApi, setGridApi] = useState(null);
     const [rowData] = useState(createRowData());
     const columnDefs = useMemo(() => [

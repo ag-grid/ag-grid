@@ -24,10 +24,16 @@ const GridBodyComp = () => {
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
     const [movingCss, setMovingCss] = useState<string | null>(null);
-    const [layoutClass, setLayoutClass] = useState<string>('');
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
+
+    // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
+    // render with no width (as ag-layout-normal sets width to 0, which is needed for flex) which
+    // gives the grid a massive width, which then renders a massive amount of columns. this problem
+    // is due to React been async, for the non-async version (ie when not using React) this is not a
+    // problem as the UI will finish initialising before we set data.
+    const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
 
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);

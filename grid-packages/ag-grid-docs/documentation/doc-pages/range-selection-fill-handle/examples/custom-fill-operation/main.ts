@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { FillOperationParams, Grid, GridOptions } from '@ag-grid-community/core'
 
 var daysList = [
   'Sunday',
@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   enableFillHandle: true,
-  fillOperation: function (params) {
+  fillOperation: function (params: FillOperationParams) {
     var hasNonDayValues = params.initialValues.some(function (val) {
       return daysList.indexOf(val) === -1
     })

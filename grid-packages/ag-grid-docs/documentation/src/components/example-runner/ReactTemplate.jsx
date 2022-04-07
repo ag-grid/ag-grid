@@ -9,7 +9,7 @@ import MetaData from './MetaData';
 /**
  * This is the template for executing React examples in the example runner.
  */
-const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType }) =>
+const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, importType, internalFramework }) =>
     <html lang="en">
         <head>
             <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
@@ -25,7 +25,7 @@ const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, 
                 library={library}
                 boilerplatePath={boilerplatePath}
                 appLocation={appLocation}
-                startFile={appLocation + 'index.jsx'}
+                startFile={appLocation + (internalFramework === 'reactFunctionalTs' ? 'index.tsx' : 'index.jsx')}
                 framework={'react'}
                 importType={importType}
                 options={options} />

@@ -497,7 +497,9 @@ export class RangeService extends BeanStub implements IRangeService {
     // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
     // the selection my mimicking a new mouse event
     private onBodyScroll(): void {
-        this.onDragging(this.lastMouseEvent);
+        if (this.dragging && this.lastMouseEvent) {
+            this.onDragging(this.lastMouseEvent);
+        }
     }
 
     public isCellInAnyRange(cell: CellPosition): boolean {
@@ -582,7 +584,7 @@ export class RangeService extends BeanStub implements IRangeService {
             this.removeAllCellRanges(true);
         }
 
-        // The DragService used by the this service (RangeService), automatically adds a `mousemove`
+        // The DragService used by this service (RangeService), automatically adds a `mousemove`
         // listener the document of the page that will then call `onDragging`. If you are in a shadow DOM
         // DOM elements outside your component's wrapper will be inaccessible to you, so here, we add a 
         // temporary `mousemove` listener to the gridPanel to be able to update the last hovered cell.
@@ -645,12 +647,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
-        if (!this.dragging || !mouseEvent) {
-            return;
-        }
+        if (!this.dragging || !mouseEvent) { return; }
+
+        this.lastMouseEvent = mouseEvent;
 
         const cellPosition = this.lastCellHovered!;
-
         const isMouseAndStartInPinned = (position: string) =>
             cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell!.rowPinned === position;
 

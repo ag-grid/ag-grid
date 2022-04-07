@@ -35,8 +35,8 @@ const GridExample = () => {
         { field: "silver" },
         { field: "bronze" },
         { field: "total" }
-    ]);
-    const myInput = useRef();
+    ], []);
+    const myInput = useRef(null);
 
     const onGridReady = (params) => {
         setGridApi(params.api);

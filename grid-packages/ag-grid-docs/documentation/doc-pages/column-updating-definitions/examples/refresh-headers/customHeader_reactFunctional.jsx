@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 
 const CustomHeader = (props) => {
     const { enableMenu, displayName, showColumnMenu } = props;
-    const menuButtonRef = useRef();
+    const menuButtonRef = useRef(null);
 
     console.log('CustomHeader rendered -> ' + displayName);
 

@@ -89,6 +89,9 @@ export const convertFunctionToProperty = (code: string) =>
 
 export const convertFunctionToConstProperty = (code: string) =>
     code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = ($2) =>');
+export const convertFunctionToConstPropertyTs = (code: string) => {
+    return code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\):(\s+[^\{]*)/, 'const $1: ($2) => $3 = ($2) =>');
+}
 
 export function isInstanceMethod(methods: string[], property: any): boolean {
     return methods.map(getFunctionName).filter(name => name === property.name).length > 0;
@@ -558,6 +561,16 @@ export function getImport(filename: string) {
     const componentFileName = filename.split('.')[0];
     const componentName = componentFileName[0].toUpperCase() + componentFileName.slice(1);
     return `import { ${componentName} } from './${componentFileName}';`;
+}
+
+export function getPropertyInterfaces(properties) {
+    let propTypesUsed = [];
+    properties.forEach(prop => {
+        if (prop.typings?.typesToInclude?.length > 0) {
+            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
+        }
+    });
+    return [...new Set(propTypesUsed)];
 }
 
 /**

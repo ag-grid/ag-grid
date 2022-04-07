@@ -1,4 +1,4 @@
-import {getFunctionName, recognizedDomEvents} from './parser-utils';
+import { getFunctionName, recognizedDomEvents } from './parser-utils';
 import * as JSON5 from "json5";
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
@@ -19,10 +19,10 @@ function convertStyles(code: string) {
 export function convertTemplate(template: string) {
     // React events are case sensitive, so need to ensure casing is correct
     const caseSensitiveEvents =
-        {
-            dragover: 'onDragOver',
-            dragstart: 'onDragStart',
-        };
+    {
+        dragover: 'onDragOver',
+        dragstart: 'onDragStart',
+    };
 
     recognizedDomEvents.forEach(event => {
         const jsEvent = caseSensitiveEvents[event] || `on${toTitleCase(event)}`;
@@ -44,10 +44,10 @@ export function convertTemplate(template: string) {
 export function convertFunctionalTemplate(template: string) {
     // React events are case sensitive, so need to ensure casing is correct
     const caseSensitiveEvents =
-        {
-            dragover: 'onDragOver',
-            dragstart: 'onDragStart',
-        };
+    {
+        dragover: 'onDragOver',
+        dragstart: 'onDragStart',
+    };
 
     recognizedDomEvents.forEach(event => {
         const jsEvent = caseSensitiveEvents[event] || `on${toTitleCase(event)}`;
@@ -75,6 +75,7 @@ export function convertFunctionalTemplate(template: string) {
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/ class=/g, ' className=')
+        .replace(/ for=/g, ' htmlFor=')
         // when using fontawesome just use "class" instead - it's always the case that we're treating it as a raw value
         // I had some fancy regex here to exclude rows with <i class but I thought this was easier to grok and maintain
         .replace(/<i className=/g, '<i class=')
@@ -98,4 +99,12 @@ export const getValueType = (value: string) => {
 export const convertFunctionToConstCallback = (code: string, callbackDependencies: {}) => {
     const functionName = getFunctionName(code);
     return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName] || ''}])`;
+}
+export const convertFunctionToConstCallbackTs = (code: string, callbackDependencies: {}) => {
+    const functionName = getFunctionName(code); //:(\s+[^\{]*)
+
+    // function isFullWidthRow(params: IsFullWidthRowParams): boolean {
+    // const isFullWidthRow = useCallback((params: IsFullWidthRowParams): boolean => {
+
+    return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)(:?\s+[^\{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 }

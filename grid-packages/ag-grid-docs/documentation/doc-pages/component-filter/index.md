@@ -88,7 +88,7 @@ There are two ways you can get fix this problem:
 |
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 |
-| <grid-example title='Angular Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+| <grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
 [[only-react]]
 | ## Accessing the React Component Instance
@@ -117,7 +117,7 @@ There are two ways you can get fix this problem:
 |
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 |
-| <grid-example title='React Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
+| <grid-example title='React Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
 |
 [[only-vue]]
 | ## Accessing the VueJS Component Instance
@@ -147,5 +147,5 @@ There are two ways you can get fix this problem:
 |
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 |
-| <grid-example title='Vue Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
+| <grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
 
