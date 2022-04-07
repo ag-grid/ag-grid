@@ -1,12 +1,7 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import "ag-grid-enterprise";
+class SportRenderer {
+    eGui;
 
-class SportRenderer implements ICellRendererComp {
-    eGui!: HTMLElement;
-
-    init(params: ICellRendererParams) {
+    init(params) {
         this.eGui = document.createElement('i');
 
         this.eGui.addEventListener('click', function () {
@@ -21,12 +16,12 @@ class SportRenderer implements ICellRendererComp {
         return this.eGui;
     }
 
-    refresh(params: ICellRendererParams): boolean {
+    refresh(params) {
         return false;
     }
 }
 
-const leftColumnDefs: ColDef[] = [
+const leftColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -35,14 +30,14 @@ const leftColumnDefs: ColDef[] = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode!.data.athlete;
+            return params.rowNode.data.athlete;
         },
     },
     { field: "athlete" },
     { field: "sport" }
 ];
 
-const rightColumnDefs: ColDef[] = [
+const rightColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -51,7 +46,7 @@ const rightColumnDefs: ColDef[] = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode!.data.athlete;
+            return params.rowNode.data.athlete;
         },
     },
     { field: "athlete" },
@@ -63,7 +58,7 @@ const rightColumnDefs: ColDef[] = [
     }
 ];
 
-const leftGridOptions: GridOptions = {
+const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -85,7 +80,7 @@ const leftGridOptions: GridOptions = {
     }
 };
 
-const rightGridOptions: GridOptions = {
+const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -101,12 +96,12 @@ const rightGridOptions: GridOptions = {
     animateRows: true
 };
 
-function addGridDropZone(params: GridReadyEvent) {
-    const dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
+function addGridDropZone(params) {
+    const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
         onDragStop: function (params) {
             const nodes = params.nodes;
 
-            leftGridOptions.api!.applyTransaction({
+            leftGridOptions.api.applyTransaction({
                 remove: nodes.map(function (node) {
                     return node.data;
                 })
@@ -117,26 +112,26 @@ function addGridDropZone(params: GridReadyEvent) {
     params.api.addRowDropZone(dropZoneParams);
 }
 
-function loadGrid(options: GridOptions, side: string, data: any[]) {
-    const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
+function loadGrid(options, side, data) {
+    const grid = document.querySelector('#e' + side + 'Grid');
 
     if (options && options.api) {
         options.api.destroy();
     }
 
     options.rowData = data;
-    new Grid(grid, options);
+    new agGrid.Grid(grid, options);
 }
 
 function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            const athletes: any[] = [];
+            const athletes = [];
             let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
-                const pos = i++;
+                let pos = i++;
                 if (athletes.some(function (rec) {
                     return rec.athlete === data[pos].athlete;
                 })) {
@@ -154,28 +149,30 @@ function onExcelExport() {
     const spreadsheets = [];
 
     spreadsheets.push(
-        leftGridOptions.api!.getSheetDataForExcel({ sheetName: 'Athletes' })!,
-        rightGridOptions.api!.getSheetDataForExcel({ sheetName: 'Selected Athletes' })!
+        leftGridOptions.api.getSheetDataForExcel({ sheetName: 'Athletes' }),
+        rightGridOptions.api.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
     );
 
     // could be leftGridOptions or rightGridOptions
-    leftGridOptions.api!.exportMultipleSheetsAsExcel({
+    leftGridOptions.api.exportMultipleSheetsAsExcel({
         data: spreadsheets,
         fileName: 'ag-grid.xlsx'
     });
 }
 
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    const resetBtn = document.querySelector('button.reset');
+    const exportBtn = document.querySelector('button.excel');
 
-const resetBtn = document.querySelector('button.reset')!;
-const exportBtn = document.querySelector('button.excel')!;
+    resetBtn.addEventListener('click', function () {
+        loadGrids();
+    });
 
-resetBtn.addEventListener('click', function () {
+    exportBtn.addEventListener('click', function () {
+        onExcelExport();
+    });
+
     loadGrids();
 });
-
-exportBtn.addEventListener('click', function () {
-    onExcelExport();
-});
-
-loadGrids();
 

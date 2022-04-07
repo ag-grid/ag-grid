@@ -1,13 +1,17 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule])
 
 @Component({
     selector: 'simple-component',
@@ -62,7 +66,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [rowData]="leftRowData"
                                     [columnDefs]="leftColumns"
                                     (gridReady)="onGridReady($event, 0)"
-                                    [modules]="modules">
+                                    >
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -80,7 +84,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [rowData]="rightRowData"
                                     [columnDefs]="rightColumns"
                                     (gridReady)="onGridReady($event, 1)"
-                                    [modules]="modules">
+                                    >
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -89,8 +93,6 @@ export class SportRenderer implements ICellRendererAngularComp {
         </div>`
 })
 export class AppComponent {
-
-    modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];
 
     rawData: any[] = [];
     leftRowData: any[] = [];

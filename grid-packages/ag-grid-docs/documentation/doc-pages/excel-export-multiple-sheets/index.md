@@ -50,7 +50,7 @@ Note the following:
 - The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
 - Only the `onExcelExport` method is relevant to **Excel Export**
 
-<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 
 ## API
 

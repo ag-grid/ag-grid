@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -65,7 +66,7 @@ const defaultColDef = {
     resizable: true
 };
 
-export default class extends Component {
+class GridExample extends Component {
 
     constructor(props) {
         super(props);
@@ -209,3 +210,8 @@ export default class extends Component {
         });
     }
 }
+
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+)

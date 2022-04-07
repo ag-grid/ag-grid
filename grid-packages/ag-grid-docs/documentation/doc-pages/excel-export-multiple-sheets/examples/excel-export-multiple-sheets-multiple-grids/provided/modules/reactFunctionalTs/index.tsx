@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -12,7 +12,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
-const SportRenderer = props => {
+const SportRenderer = (props: ICellRendererParams) => {
     return (
         <i className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
@@ -21,7 +21,7 @@ const SportRenderer = props => {
     )
 }
 
-const leftColumns = [
+const leftColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -37,7 +37,7 @@ const leftColumns = [
     { field: "sport" }
 ];
 
-const rightColumns = [
+const rightColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -58,7 +58,7 @@ const rightColumns = [
     }
 ]
 
-const defaultColDef = {
+const defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
     sortable: true,
@@ -66,10 +66,10 @@ const defaultColDef = {
     resizable: true
 };
 
-const TwoGridsWithMultipleRecordsExample = () => {
-    const [leftApi, setLeftApi] = useState(null);
-    const [leftColumnApi, setLeftColumnApi] = useState(null);
-    const [rightApi, setRightApi] = useState(null);
+const GridExample = () => {
+    const [leftApi, setLeftApi] = useState<GridApi>(null);
+    const [leftColumnApi, setLeftColumnApi] = useState<ColumnApi>(null);
+    const [rightApi, setRightApi] = useState<GridApi>(null);
     const [rawData, setRawData] = useState([]);
     const [leftRowData, setLeftRowData] = useState(null);
     const [rightRowData, setRightRowData] = useState([]);
@@ -122,7 +122,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         });
     }
 
-    const getRowId = params => params.data.athlete
+    const getRowId = (params: GetRowIdParams) => params.data.athlete
 
     const onDragStop = useCallback(params => {
         var nodes = params.nodes;
@@ -140,7 +140,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         leftApi.addRowDropZone(dropZoneParams);
     }, [leftApi, rightApi, onDragStop]);
 
-    const onGridReady = (params, side) => {
+    const onGridReady = (params: GridReadyEvent, side) => {
         if (side === 0) {
             setLeftApi(params.api);
             setLeftColumnApi(params.columnApi);
@@ -196,4 +196,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     );
 }
 
-export default TwoGridsWithMultipleRecordsExample;
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+)
