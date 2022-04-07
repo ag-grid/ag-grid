@@ -13,12 +13,11 @@ const gridOptions: GridOptions = {
   },
   groupDefaultExpanded: -1,
   groupAggFiltering: true,
+  rowData: getData(),
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
-
-  gridOptions.api!.setRowData(getData());
 })
