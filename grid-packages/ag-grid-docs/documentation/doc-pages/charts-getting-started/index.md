@@ -21,7 +21,7 @@ title: "Get Started with AG Charts"
     }
 </style>
 
-AG Charts is an exciting new addition to the AG Grid family, offering both integrated as well as standalone fully functional charting capabilities.
+AG Charts is a powerful standalone component with no dependencies. The charts factory API can be used to seamlessly create and update data visualizations independently of the grid.
 
 <section class="code-tab mb-3">
 <div class="card">
@@ -97,7 +97,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |         Q2: 170,
 |         Q3: 190,
 |         Q4: 200
-|     }
+|     },
 | ];
 |
 | var options = {
@@ -123,7 +123,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |     ],
 |     legend: {
 |         spacing: 40
-|     }
+|     },
 | };
 |
 | agCharts.AgChart.create(options);
@@ -285,7 +285,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |                         Q3: 190,
 |                         Q4: 200,
 |                     },
-|                 ]
+|                 ],
 |             };
 |         },
 |         beforeMount() {
@@ -408,6 +408,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 </div>
 </div>
 </section>
+
+[[only-vue]]
+| [[note]]
+| | The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
 
 ## Getting Started
 
@@ -548,7 +552,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'`, so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.
+| The series `type` defaults to `'line'`, so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.
 |
 | Finally, let's add the component definition to our template. Edit `app/app.component.html` and remove the scaffold code:
 |
@@ -632,13 +636,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.
+| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.
 
 [[only-vue]]
 | In this article we will walk through the necessary steps to add AG Charts to an existing Vue project and produce your first charts.
-|
-| [[note]]
-| | The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
 |
 | ## Add AG Charts to Your Project
 |
@@ -672,7 +673,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | npm install --save ag-charts-community ag-charts-vue vue-property-decorator
 | ```
 |
-| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/| components` directory. Our example application will live in `src/App.vue`.
+| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/components` directory. Our example application will live in `src/App.vue`.
 |
 | Let's add the component definition to our template. Edit `src/App.vue` and replace the scaffold code:
 |
@@ -733,7 +734,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.</p>
+| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.</p>
 |
 
 The `series` property is an array because it is possible to supply multiple series (including mixed kinds!) into a single chart.
@@ -980,13 +981,6 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q1',
-|             stacked: true,
-| +           label: {},
-|         },
-|         {
-|             type: 'column',
-|             xKey: 'beverage',
 |             yKey: 'Q3',
 |             stacked: true,
 | +           label: {},
@@ -1096,28 +1090,28 @@ We can enhance our chart by providing a label for each block segment. We can set
 |                 yKey: 'Q1',
 |                 stacked: true,
 | +               label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q2',
 |                 stacked: true,
 | +               label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q3',
 |                 stacked: true,
 | +               label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q4',
 |                 stacked: true,
 | +               label: {},
-|             }
+|             },
 |         ],
 |     };
 | }
@@ -1145,28 +1139,28 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |             yKey: 'Q1',
 |             stacked: true,
 |             label: {},
-|         }
+|         },
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
 |             yKey: 'Q2',
 |             stacked: true,
 |             label: {},
-|         }
+|         },
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
 |             yKey: 'Q3',
 |             stacked: true,
 |             label: {},
-|         }
+|         },
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
 |             yKey: 'Q4',
 |             stacked: true,
 |             label: {},
-|         }
+|         },
 |     ],
 | });
 | ```
@@ -1189,28 +1183,28 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                 yKey: 'Q1',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q2',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q3',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q4',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |         ],
 |     };
 | }
@@ -1237,28 +1231,28 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                     yKey: 'Q1',
 |                     stacked: true,
 |                     label: {},
-|                 }
+|                 },
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
 |                     yKey: 'Q2',
 |                     stacked: true,
 |                     label: {},
-|                 }
+|                 },
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
 |                     yKey: 'Q3',
 |                     stacked: true,
 |                     label: {},
-|                 }
+|                 },
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
 |                     yKey: 'Q4',
 |                     stacked: true,
 |                     label: {},
-|                 }
+|                 },
 |             ],
 |         }
 |     }
@@ -1283,28 +1277,28 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                 yKey: 'Q1',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q2',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q3',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
 |                 yKey: 'Q4',
 |                 stacked: true,
 |                 label: {},
-|             }
+|             },
 |         ],
 |     };
 | }
