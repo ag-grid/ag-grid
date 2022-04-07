@@ -6,7 +6,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry, ColDef, GridApi } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridApi, GridReadyEvent, GetRowIdParams, RowDropZoneParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -32,15 +32,15 @@ const defaultColDef: ColDef = {
 };
 
 const GridExample = () => {
-    const [leftApi, setLeftApi] = useState<GridApi>(null);
-    const [rightApi, setRightApi] = useState<GridApi>(null);
-    const [leftRowData, setLeftRowData] = useState([]);
-    const [rightRowData] = useState([]);
+    const [leftApi, setLeftApi] = useState<GridApi | null>(null);
+    const [rightApi, setRightApi] = useState<GridApi | null>(null);
+    const [leftRowData, setLeftRowData] = useState<any[]>([]);
+    const [rightRowData] = useState<any[]>([]);
 
     const eLeftGrid = useRef(null);
     const eRightGrid = useRef(null);
-    const eBin = useRef(null);
-    const eBinIcon = useRef(null);
+    const eBin = useRef<HTMLElement>(null);
+    const eBinIcon = useRef<HTMLElement>(null);
 
     let rowIdSequence = 100;
 
@@ -63,13 +63,13 @@ const GridExample = () => {
 
     const getRowId = (params: GetRowIdParams) => params.data.id
 
-    const addRecordToGrid = (side, data) => {
+    const addRecordToGrid = (side: string, data: any) => {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) { return; }
 
         const api = side === 'left' ? leftApi : rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        const rowAlreadyInGrid = !!api.getRowNode(data.id);
+        const rowAlreadyInGrid = !!api!.getRowNode(data.id);
         let transaction;
 
         if (rowAlreadyInGrid) {
@@ -81,10 +81,10 @@ const GridExample = () => {
             add: [data]
         };
 
-        api.applyTransaction(transaction);
+        api!.applyTransaction(transaction);
     };
 
-    const onFactoryButtonClick = e => {
+    const onFactoryButtonClick = (e: any) => {
         var button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
@@ -93,7 +93,7 @@ const GridExample = () => {
         addRecordToGrid(side, data);
     };
 
-    const binDrop = data => {
+    const binDrop = (data: any) => {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) { return; }
 
@@ -102,39 +102,39 @@ const GridExample = () => {
         };
 
         [leftApi, rightApi].forEach((api) => {
-            var rowsInGrid = !!api.getRowNode(data.id);
+            var rowsInGrid = !!api!.getRowNode(data.id);
 
             if (rowsInGrid) {
-                api.applyTransaction(transaction);
+                api!.applyTransaction(transaction);
             }
         });
     };
 
-    const addBinZone = api => {
-        const dropZone = {
-            getContainer: () => eBinIcon.current,
+    const addBinZone = (api: GridApi) => {
+        const dropZone: RowDropZoneParams = {
+            getContainer: () => eBinIcon.current!,
             onDragEnter: () => {
-                eBin.current.style.color = 'blue';
-                eBinIcon.current.style.transform = 'scale(1.5)';
+                eBin.current!.style.color = 'blue';
+                eBinIcon.current!.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.current.style.color = 'black';
-                eBinIcon.current.style.transform = 'scale(1)';
+                eBin.current!.style.color = 'black';
+                eBinIcon.current!.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.current.style.color = 'black';
-                eBinIcon.current.style.transform = 'scale(1)';
+                eBin.current!.style.color = 'black';
+                eBinIcon.current!.style.transform = 'scale(1)';
             }
         };
 
         api.addRowDropZone(dropZone);
     };
 
-    const addGridDropZone = (side, api) => {
+    const addGridDropZone = (side: string, api: GridApi) => {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
-        const dropZone = {
-            getContainer: () => dropSide === 'Right' ? eRightGrid.current : eLeftGrid.current,
+        const dropZone: RowDropZoneParams = {
+            getContainer: () => dropSide === 'Right' ? eRightGrid.current! : eLeftGrid.current!,
             onDragStop: (dragParams) => addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
         };
 
@@ -150,7 +150,7 @@ const GridExample = () => {
         }
     })
 
-    const onGridReady = (side, params) => {
+    const onGridReady = (side: string, params: GridReadyEvent) => {
         if (side === 'Left') {
             setLeftApi(params.api);
         } else {
@@ -158,7 +158,7 @@ const GridExample = () => {
         }
     }
 
-    const getAddRecordButton = (side, color) => (
+    const getAddRecordButton = (side: string, color: string) => (
         <button
             key={`btn_${side}_${color}`}
             className={`factory factory-${color.toLowerCase()}`}
@@ -170,7 +170,7 @@ const GridExample = () => {
         </button>
     )
 
-    const getInnerGridCol = side => (
+    const getInnerGridCol = (side: string) => (
         <div className="inner-col">
             <div className="toolbar">
                 {['Red', 'Green', 'Blue'].map(color => getAddRecordButton(side, color))}

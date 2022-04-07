@@ -8,7 +8,7 @@ import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterpr
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
@@ -30,7 +30,7 @@ const leftColumns: ColDef[] = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode.data.athlete;
+            return params.rowNode!.data.athlete;
         },
     },
     { field: "athlete" },
@@ -46,7 +46,7 @@ const rightColumns: ColDef[] = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode.data.athlete;
+            return params.rowNode!.data.athlete;
         },
     },
     { field: "athlete" },
@@ -67,19 +67,19 @@ const defaultColDef: ColDef = {
 };
 
 const GridExample = () => {
-    const [leftApi, setLeftApi] = useState<GridApi>(null);
-    const [leftColumnApi, setLeftColumnApi] = useState<ColumnApi>(null);
-    const [rightApi, setRightApi] = useState<GridApi>(null);
-    const [rawData, setRawData] = useState([]);
-    const [leftRowData, setLeftRowData] = useState(null);
-    const [rightRowData, setRightRowData] = useState([]);
+    const [leftApi, setLeftApi] = useState<GridApi | null>(null);
+    const [leftColumnApi, setLeftColumnApi] = useState<ColumnApi | null>(null);
+    const [rightApi, setRightApi] = useState<GridApi | null>(null);
+    const [rawData, setRawData] = useState<any[]>([]);
+    const [leftRowData, setLeftRowData] = useState<any[] | null>(null);
+    const [rightRowData, setRightRowData] = useState<any[]>([]);
 
     useEffect(() => {
         if (!rawData.length) {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then(resp => resp.json())
                 .then(data => {
-                    const athletes = [];
+                    const athletes: any[] = [];
                     let i = 0;
 
                     while (athletes.length < 20 && i < data.length) {
@@ -95,7 +95,7 @@ const GridExample = () => {
     const loadGrids = useCallback(() => {
         setLeftRowData([...rawData.slice(0, rawData.length / 2)]);
         setRightRowData([...rawData.slice(rawData.length / 2)]);
-        leftApi.deselectAll();
+        leftApi!.deselectAll();
     }, [leftApi, rawData]);
 
     useEffect(() => {
@@ -109,11 +109,11 @@ const GridExample = () => {
     }
 
     const onExcelExport = () => {
-        var spreadsheets = [];
+        var spreadsheets: any[] = [];
 
         spreadsheets.push(
-            leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
-            rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+            leftApi!.getSheetDataForExcel({ sheetName: 'Athletes' }),
+            rightApi!.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
 
         exportMultipleSheetsAsExcel({
@@ -124,10 +124,10 @@ const GridExample = () => {
 
     const getRowId = (params: GetRowIdParams) => params.data.athlete
 
-    const onDragStop = useCallback(params => {
+    const onDragStop = useCallback((params: RowDragEndEvent) => {
         var nodes = params.nodes;
 
-        leftApi.applyTransaction({
+        leftApi!.applyTransaction({
             remove: nodes.map(function (node) { return node.data; })
         });
     }, [leftApi]);
@@ -140,7 +140,7 @@ const GridExample = () => {
         leftApi.addRowDropZone(dropZoneParams);
     }, [leftApi, rightApi, onDragStop]);
 
-    const onGridReady = (params: GridReadyEvent, side) => {
+    const onGridReady = (params: GridReadyEvent, side: number) => {
         if (side === 0) {
             setLeftApi(params.api);
             setLeftColumnApi(params.columnApi);
@@ -162,12 +162,11 @@ const GridExample = () => {
         </div>
     );
 
-    const getGridWrapper = (id) => (
+    const getGridWrapper = (id: number) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body">
+            <div className="panel-body" style={{ height: '100%' }}>
                 <AgGridReact
-                    style={{ height: '100%;' }}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
@@ -188,7 +187,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>
