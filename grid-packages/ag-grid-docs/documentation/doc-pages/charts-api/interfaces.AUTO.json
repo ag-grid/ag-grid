@@ -162,7 +162,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarThemeOptions": {
@@ -197,7 +197,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -232,7 +232,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgNumberAxisThemeOptions": {
@@ -703,7 +703,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgBaseAxisOptions": {
@@ -2012,7 +2012,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarChartOptions": {
@@ -2049,7 +2049,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -2086,7 +2086,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgChartOptions": {
