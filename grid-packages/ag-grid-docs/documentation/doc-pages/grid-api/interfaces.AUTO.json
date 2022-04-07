@@ -5999,7 +5999,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarThemeOptions": {
@@ -6033,7 +6034,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -6067,7 +6069,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgNumberAxisThemeOptions": {
@@ -6537,7 +6540,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgBaseAxisOptions": {
@@ -7845,7 +7849,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarChartOptions": {
@@ -7881,7 +7886,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -7917,7 +7923,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */"
     }
   },
   "AgChartOptions": {

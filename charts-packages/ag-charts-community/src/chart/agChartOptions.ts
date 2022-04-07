@@ -381,6 +381,7 @@ export interface AgBaseChartOptions {
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
+    /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
 }
 

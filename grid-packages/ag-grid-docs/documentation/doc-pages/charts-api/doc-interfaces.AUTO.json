@@ -226,6 +226,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -284,6 +285,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -342,6 +344,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -1085,6 +1088,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -2986,6 +2990,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -3047,6 +3052,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -3105,6 +3111,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide a `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
