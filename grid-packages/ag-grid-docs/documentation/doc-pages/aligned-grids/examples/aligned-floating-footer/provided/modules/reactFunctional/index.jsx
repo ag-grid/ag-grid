@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -72,7 +73,7 @@ const bottomData = [
     }
 ];
 
-const SimpleGridComponent = () => {
+const GridExample = () => {
     const [rowData, setRowData] = useState(null);
     const [topGrid, setTopGrid] = useState(null);
 
@@ -110,4 +111,4 @@ const SimpleGridComponent = () => {
     );
 }
 
-export default SimpleGridComponent;
+render(<GridExample></GridExample>, document.querySelector('#root'))
