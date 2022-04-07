@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-
+import React, { useRef, useState } from 'react';
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, GridOptions, ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const topOptions = {
+const topOptions: GridOptions = {
     alignedGrids: [],
     defaultColDef: {
         editable: true,
@@ -21,7 +21,7 @@ const topOptions = {
         minWidth: 100
     }
 };
-const bottomOptions = {
+const bottomOptions: GridOptions = {
     alignedGrids: [],
     defaultColDef: {
         editable: true,
@@ -33,13 +33,13 @@ const bottomOptions = {
     }
 };
 
-topOptions.alignedGrids.push(bottomOptions);
-bottomOptions.alignedGrids.push(topOptions);
+topOptions.alignedGrids!.push(bottomOptions);
+bottomOptions.alignedGrids!.push(topOptions);
 
-export default () => {
-    const [topGrid, setTopGrid] = useState(null);
+const GridExample = () => {
+    const topGridRef = useRef<AgGridReact>(null);
 
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>([
         { field: 'athlete' },
         { field: 'age' },
         { field: 'country' },
@@ -62,30 +62,29 @@ export default () => {
 
     const [rowData, setRowData] = useState([]);
 
-    function onGridReady(params) {
-        setTopGrid(params);
+    function onGridReady(params: GridReadyEvent) {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => setRowData(data));
     }
 
-    function onFirstDataRendered(params) {
+    function onFirstDataRendered(params: FirstDataRenderedEvent) {
         params.api.sizeColumnsToFit();
     }
 
-    function onCbAthlete(event) {
+    function onCbAthlete(event: any) {
         // we only need to update one grid, as the other is a slave
-        topGrid.columnApi.setColumnVisible('athlete', event.target.checked);
+        topGridRef.current!.columnApi.setColumnVisible('athlete', event.target.checked);
     }
 
-    function onCbAge(event) {
+    function onCbAge(event: any) {
         // we only need to update one grid, as the other is a slave
-        topGrid.columnApi.setColumnVisible('age', event.target.checked);
+        topGridRef.current!.columnApi.setColumnVisible('age', event.target.checked);
     }
 
-    function onCbCountry(event) {
+    function onCbCountry(event: any) {
         // we only need to update one grid, as the other is a slave
-        topGrid.columnApi.setColumnVisible('country', event.target.checked);
+        topGridRef.current!.columnApi.setColumnVisible('country', event.target.checked);
     }
 
     return (
@@ -113,6 +112,7 @@ export default () => {
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
+                    ref={topGridRef}
                     rowData={rowData}
                     gridOptions={topOptions}
                     columnDefs={columnDefs}
@@ -129,3 +129,6 @@ export default () => {
         </div>
     );
 };
+
+
+render(<GridExample></GridExample>, document.querySelector('#root'))

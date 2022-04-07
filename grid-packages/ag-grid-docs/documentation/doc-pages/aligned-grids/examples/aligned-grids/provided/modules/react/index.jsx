@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -9,7 +10,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-export default class extends Component {
+class GridExample extends Component {
     constructor(props) {
         super(props);
 
@@ -139,3 +140,8 @@ export default class extends Component {
         );
     }
 }
+
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+)

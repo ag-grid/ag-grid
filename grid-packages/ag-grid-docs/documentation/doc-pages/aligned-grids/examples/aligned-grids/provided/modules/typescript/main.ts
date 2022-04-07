@@ -1,6 +1,11 @@
-import { ColDef, ColGroupDef, Grid, GridOptions } from "ag-grid-community";
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ColDef, ColGroupDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: "athlete" },
@@ -91,3 +96,11 @@ new Grid(gridDivBottom, gridOptionsBottom);
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => setData(data));
+
+
+if (typeof window !== 'undefined') {
+    // Attach external event handlers to window so they can be called from index.html
+    (<any>window).onCbAthlete = onCbAthlete;
+    (<any>window).onCbAge = onCbAge;
+    (<any>window).onCbCountry = onCbCountry;
+}
