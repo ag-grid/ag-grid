@@ -410,6 +410,7 @@ var gridOptions = {
     // suppressActionCtrlA: true,
     // suppressCellFocus: true,
     // suppressMultiSort: true,
+    // alwaysMultiSort: true,
     // scrollbarWidth: 20,
     sideBar: {
         toolPanels: [

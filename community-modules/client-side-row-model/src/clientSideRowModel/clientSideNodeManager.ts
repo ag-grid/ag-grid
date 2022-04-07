@@ -185,13 +185,15 @@ export class ClientSideNodeManager {
             // allLeafChildren can be out of order, so we loop over all the Nodes to find the correct index that
             // represents the position `addIndex` intended to be.
             const { allLeafChildren } = this.rootNode;
-            const normalizedAddIndex = allLeafChildren.reduce((prevIdx: number, currNode: RowNode, currIdx: number) => {
+            // if addIndex is 0, it should always be added at the start of the array
+            // there is no need to verify the order of node by nodeIndex.
+            const normalizedAddIndex = addIndex === 0 ? 0 : (allLeafChildren.reduce((prevIdx: number, currNode: RowNode, currIdx: number) => {
                 const { rowIndex } = currNode;
-                const prevValueAtIndex = allLeafChildren[prevIdx].rowIndex!;
-                const shouldUpdateIndex = rowIndex != null && rowIndex < addIndex! && rowIndex > prevValueAtIndex;
+                const prevValueAtIndex = allLeafChildren[prevIdx]?.rowIndex;
+                const shouldUpdateIndex = rowIndex != null && prevValueAtIndex != null && rowIndex < addIndex! && rowIndex > prevValueAtIndex;
 
                 return shouldUpdateIndex ? currIdx : prevIdx;
-            }, 0) + 1;
+            }, 0) + 1);
             nodesBeforeIndex = allLeafChildren.slice(0, normalizedAddIndex);
             nodesAfterIndex = allLeafChildren.slice(normalizedAddIndex, allLeafChildren.length);
         } else {

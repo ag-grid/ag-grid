@@ -1189,6 +1189,7 @@
             }
         },
         "suppressMultiSort": {},
+        "alwaysMultiSort": {},
         "multiSortKey": {
             "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
             "options": [
