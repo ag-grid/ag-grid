@@ -110,6 +110,10 @@ The example below demonstrates the following:
 
 <grid-example title='Multi Column Sort' name='multi-column' type='generated'></grid-example>
 
+[[note]]
+|You can suppress the multi sorting behaviour by enabling the `suppressMultiSort` option, or force the behaviour without key press by enabling
+|the `alwaysMultiSort` option.
+
 ## Sorting Animation
 
 To enable animation of the rows after sorting, set grid property `animateRows=true`.
