@@ -36,6 +36,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
+  "MarkerShape": {
+    "meta": { "isTypeAlias": true },
+    "type": "'circle' | 'cross' | 'diamond' | 'heart' | 'plus' | 'triangle' | any"
+  },
   "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
@@ -157,7 +161,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarThemeOptions": {
@@ -191,7 +196,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -225,7 +231,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgNumberAxisThemeOptions": {
@@ -572,7 +579,7 @@
     "meta": {},
     "type": {
       "size?": "PixelSize",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "padding?": "PixelSize",
       "strokeWidth?": "PixelSize"
     },
@@ -695,7 +702,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgBaseAxisOptions": {
@@ -1091,7 +1099,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
@@ -1154,7 +1162,7 @@
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
@@ -1181,7 +1189,7 @@
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string | (new () => any)",
+      "shape?": "MarkerShape",
       "size?": "PixelSize",
       "maxSize?": "PixelSize",
       "fill?": "CssColor",
@@ -2003,7 +2011,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgPolarChartOptions": {
@@ -2039,7 +2048,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -2075,7 +2085,8 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
-      "listeners?": "/** A map of event names to event listeners. */"
+      "listeners?": "/** A map of event names to event listeners. */",
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
     }
   },
   "AgChartOptions": {

@@ -10281,6 +10281,7 @@
   "FontFamily": {},
   "FontSize": {},
   "AgChartThemeName": {},
+  "MarkerShape": {},
   "CssColor": {},
   "Opacity": {},
   "PixelSize": {},
@@ -10483,6 +10484,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -10541,6 +10543,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -10599,6 +10602,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -11171,7 +11175,7 @@
     },
     "shape": {
       "description": "/** If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to `'square'` if there is none. */",
-      "type": { "returnType": "string | (new () => any)", "optional": true }
+      "type": { "returnType": "MarkerShape", "optional": true }
     },
     "padding": {
       "description": "/** The padding in pixels between a legend marker and the corresponding label. */",
@@ -11342,6 +11346,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -11843,7 +11848,7 @@
     },
     "shape": {
       "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
-      "type": { "returnType": "string | (new () => any)", "optional": true }
+      "type": { "returnType": "MarkerShape", "optional": true }
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
@@ -11913,7 +11918,7 @@
     },
     "shape": {
       "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
-      "type": { "returnType": "string | (new () => any)", "optional": true }
+      "type": { "returnType": "MarkerShape", "optional": true }
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
@@ -11958,7 +11963,7 @@
     },
     "shape": {
       "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
-      "type": { "returnType": "string | (new () => any)", "optional": true }
+      "type": { "returnType": "MarkerShape", "optional": true }
     },
     "size": {
       "description": "/** The size in pixels of the markers. */",
@@ -13243,6 +13248,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -13304,6 +13310,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
@@ -13362,6 +13369,7 @@
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
     "theme": {
+      "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     }
   },
