@@ -1,8 +1,12 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams, RowNodeTransaction } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams, RowNodeTransaction } from '@ag-grid-community/core';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { Component, ViewChild } from '@angular/core';
+
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     selector: 'my-app',
@@ -32,8 +36,7 @@ import { Component, ViewChild } from '@angular/core';
                         [animateRows]="true"
                         [rowData]="leftRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Left')"
-                        [modules]="modules">
+                        (gridReady)="onGridReady($event, 'Left')">
                     </ag-grid-angular>
                 </div>
             </div>
@@ -67,8 +70,7 @@ import { Component, ViewChild } from '@angular/core';
                         [animateRows]="true"
                         [rowData]="rightRowData"
                         [columnDefs]="columns"
-                        (gridReady)="onGridReady($event, 'Right')"
-                        [modules]="modules">
+                        (gridReady)="onGridReady($event, 'Right')">
                     </ag-grid-angular>
                 </div>
             </div>
@@ -77,8 +79,6 @@ import { Component, ViewChild } from '@angular/core';
     `
 })
 export class AppComponent {
-
-    modules = [ClientSideRowModelModule];
 
     leftRowData: any[] = [];
     rightRowData: any[] = []

@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -30,50 +31,43 @@ const defaultColDef = {
     resizable: true
 };
 
-export default class extends Component {
+const GridExample = () => {
+    const [leftApi, setLeftApi] = useState(null);
+    const [rightApi, setRightApi] = useState(null);
+    const [leftRowData, setLeftRowData] = useState([]);
+    const [rightRowData] = useState([]);
 
-    constructor(props) {
-        super(props);
+    const eLeftGrid = useRef(null);
+    const eRightGrid = useRef(null);
+    const eBin = useRef(null);
+    const eBinIcon = useRef(null);
 
-        this.state = {
-            leftApi: null,
-            rightApi: null,
-            leftRowData: [],
-            rightRowData: [],
-        };
+    let rowIdSequence = 100;
 
-        this.rowIdSequence = 100;
-
-        this.eLeftGrid = React.createRef();
-        this.eRightGrid = React.createRef();
-        this.eBin = React.createRef();
-        this.eBinIcon = React.createRef();
-    }
-
-    componentDidMount() {
-        this.setState({ leftRowData: this.createLeftRowData() });
-    }
-
-    createLeftRowData = () => ['Red', 'Green', 'Blue'].map((color) => this.createDataItem(color))
-
-    createDataItem(color) {
+    const createDataItem = useCallback((color) => {
         const obj = {
-            id: this.rowIdSequence++,
+            id: rowIdSequence++,
             color: color,
             value1: Math.floor(Math.random() * 100),
             value2: Math.floor(Math.random() * 100)
         };
 
         return obj;
-    }
+    }, [rowIdSequence]);
 
-    getRowId = params => params.data.id
+    useEffect(() => {
+        const createLeftRowData = () => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color))
+        setLeftRowData(createLeftRowData());
+    }, [createDataItem]);
 
-    addRecordToGrid(side, data) {
+
+    const getRowId = params => params.data.id
+
+    const addRecordToGrid = (side, data) => {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) { return; }
 
-        const api = side === 'left' ? this.state.leftApi : this.state.rightApi;
+        const api = side === 'left' ? leftApi : rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
         let transaction;
@@ -88,18 +82,18 @@ export default class extends Component {
         };
 
         api.applyTransaction(transaction);
-    }
+    };
 
-    onFactoryButtonClick(e) {
+    const onFactoryButtonClick = e => {
         var button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
-            data = this.createDataItem(buttonColor);
+            data = createDataItem(buttonColor);
 
-        this.addRecordToGrid(side, data);
-    }
+        addRecordToGrid(side, data);
+    };
 
-    binDrop(data) {
+    const binDrop = data => {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) { return; }
 
@@ -107,105 +101,108 @@ export default class extends Component {
             remove: [data]
         };
 
-        [this.state.leftApi, this.state.rightApi].forEach((api) => {
+        [leftApi, rightApi].forEach((api) => {
             var rowsInGrid = !!api.getRowNode(data.id);
 
             if (rowsInGrid) {
                 api.applyTransaction(transaction);
             }
         });
-    }
+    };
 
-    addBinZone(params) {
+    const addBinZone = api => {
         const dropZone = {
-            getContainer: () => this.eBinIcon.current,
+            getContainer: () => eBinIcon.current,
             onDragEnter: () => {
-                const eBin = this.eBin.current;
-                const eBinIcon = this.eBinIcon.current;
-                eBin.style.color = 'blue';
-                eBinIcon.style.transform = 'scale(1.5)';
+                eBin.current.style.color = 'blue';
+                eBinIcon.current.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                const eBin = this.eBin.current;
-                const eBinIcon = this.eBinIcon.current;
-                eBin.style.color = 'black';
-                eBinIcon.style.transform = 'scale(1)';
+                eBin.current.style.color = 'black';
+                eBinIcon.current.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
-                const eBin = this.eBin.current;
-                const eBinIcon = this.eBinIcon.current;
-                this.binDrop(params.node.data);
-                eBin.style.color = 'black';
-                eBinIcon.style.transform = 'scale(1)';
+                binDrop(params.node.data);
+                eBin.current.style.color = 'black';
+                eBinIcon.current.style.transform = 'scale(1)';
             }
         };
 
-        params.api.addRowDropZone(dropZone);
-    }
+        api.addRowDropZone(dropZone);
+    };
 
-    addGridDropZone(side, params) {
+    const addGridDropZone = (side, api) => {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
         const dropZone = {
-            getContainer: () => this[`e${dropSide}Grid`].current,
-            onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
+            getContainer: () => dropSide === 'Right' ? eRightGrid.current : eLeftGrid.current,
+            onDragStop: (dragParams) => addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
         };
 
-        params.api.addRowDropZone(dropZone);
-    }
+        api.addRowDropZone(dropZone);
+    };
 
-    onGridReady(side, params) {
-        this.addBinZone(params);
-        this.addGridDropZone(side, params);
+    useEffect(() => {
+        if (rightApi && leftApi) {
+            addBinZone(rightApi);
+            addBinZone(leftApi);
+            addGridDropZone('Right', rightApi);
+            addGridDropZone('Left', leftApi);
+        }
+    })
 
+    const onGridReady = (side, params) => {
         if (side === 'Left') {
-            this.setState({ leftApi: params.api });
+            setLeftApi(params.api);
         } else {
-            this.setState({ rightApi: params.api });
+            setRightApi(params.api);
         }
     }
 
-    getAddRecordButton = (side, color) => (
+    const getAddRecordButton = (side, color) => (
         <button
             key={`btn_${side}_${color}`}
             className={`factory factory-${color.toLowerCase()}`}
             data-color={color}
             data-side={side.toLowerCase()}
-            onClick={this.onFactoryButtonClick.bind(this)}
+            onClick={onFactoryButtonClick}
         >
             <i className="far fa-plus-square"></i>{`Add ${color}`}
         </button>
     )
 
-    getInnerGridCol = (side) => (
+    const getInnerGridCol = side => (
         <div className="inner-col">
             <div className="toolbar">
-                {['Red', 'Green', 'Blue'].map(color => this.getAddRecordButton(side, color))}
+                {['Red', 'Green', 'Blue'].map(color => getAddRecordButton(side, color))}
             </div>
-            <div style={{ height: '100%' }} className="inner-col" ref={this[`e${side}Grid`]}>
+            <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
-                    getRowId={this.getRowId}
+                    getRowId={getRowId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
                     animateRows={true}
-                    rowData={this.state[side === 'Left' ? 'leftRowData' : 'rightRowData']}
+                    rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
-                    onGridReady={this.onGridReady.bind(this, side)}
+                    onGridReady={params => onGridReady(side, params)}
                 />
             </div>
         </div>
     )
 
-    render = () => (
+    return (
         <div className="example-wrapper ag-theme-alpine">
-            {this.getInnerGridCol('Left')}
+            {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
-                <span className="bin" ref={this.eBin}>
-                    <i className="far fa-trash-alt fa-3x" ref={this.eBinIcon}></i>
+                <span className="bin" ref={eBin}>
+                    <i className="far fa-trash-alt fa-3x" ref={eBinIcon}></i>
                 </span>
             </div>
-            {this.getInnerGridCol('Right')}
+            {getInnerGridCol('Right')}
         </div>
     );
 }
+
+
+render(<GridExample></GridExample>, document.querySelector('#root'))

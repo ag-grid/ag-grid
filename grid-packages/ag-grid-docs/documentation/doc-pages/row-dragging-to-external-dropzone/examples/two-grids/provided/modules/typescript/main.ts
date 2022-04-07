@@ -1,6 +1,11 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams } from "ag-grid-community";
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams } from "@ag-grid-community/core";
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 var rowIdSequence = 100;
 
