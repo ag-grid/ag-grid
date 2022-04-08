@@ -251,7 +251,6 @@ const getFlattenedBuildChainInfo = async (includeExamples, skipPackageExamples, 
         return true;
     };
 
-    debugger
     packageNames.filter(filterExclusions)
         .forEach(packageName => {
             flattenedBuildChainInfo[packageName] = flattenArray(
@@ -388,6 +387,7 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
             buildFailed = result.exitCode !== 0 || result.failed === 1;
 
             if (runPackage && !buildFailed) {
+
                 // ag-grid-community & enterprise depend on community/all-modules and enterprise/all-modules so must be build AFTER these have run
                 // everything else can be run in parallel so do a build in two phases
                 const includesCommunity = packagesToRun.includes('ag-grid-community');
@@ -399,8 +399,8 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
 
                 // if we're doing community or enterprise and package examples then we need to defer these too
                 packagesToRun.forEach(packageToRun => {
-                    if (packageToRun.includes('-package') && (includesCommunity || includesEnterprise)) {
-                        secondPhase.push(packagesToRun.splice(packageToRun, 1))
+                    if (packageToRun.includes('-package-example') && (includesCommunity || includesEnterprise)) {
+                        secondPhase.push(packagesToRun.splice(packagesToRun.indexOf(packageToRun), 1))
                     }
                 })
 
