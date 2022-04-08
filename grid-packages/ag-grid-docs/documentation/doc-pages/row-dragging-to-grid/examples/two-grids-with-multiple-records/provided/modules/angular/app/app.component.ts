@@ -4,9 +4,11 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     selector: 'simple-component',
     template: `
@@ -67,8 +69,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [animateRows]="true"
                                     [rowData]="leftRowData"
                                     [columnDefs]="leftColumns"
-                                    (gridReady)="onGridReady($event, 0)"
-                                    [modules]="modules">
+                                    (gridReady)="onGridReady($event, 0)">
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -85,8 +86,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [animateRows]="true"
                                     [rowData]="rightRowData"
                                     [columnDefs]="rightColumns"
-                                    (gridReady)="onGridReady($event, 1)"
-                                    [modules]="modules">
+                                    (gridReady)="onGridReady($event, 1)">
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -95,9 +95,6 @@ export class SportRenderer implements ICellRendererAngularComp {
         </div>`
 })
 export class AppComponent {
-
-    modules = [ClientSideRowModelModule];
-
     rawData: any[] = [];
     leftRowData: any[] = [];
     rightRowData: any[] = []
