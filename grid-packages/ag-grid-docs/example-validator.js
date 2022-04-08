@@ -33,7 +33,7 @@ module.exports.watchValidateExampleTypes = async () => {
 
 module.exports.validateExampleTypes = async () => {
     const tsc = getTscPath();
-    console.log('Validating Typescript examples with Typescript ', tsc.version)
+    console.log('Validating Typescript examples with Typescript ',)
     
     const versionResult = cp.spawnSync(tsc, ['--version', "./grid-packages/ag-grid-docs/documentation/tsconfig.json"], {
         stdio: 'inherit',
