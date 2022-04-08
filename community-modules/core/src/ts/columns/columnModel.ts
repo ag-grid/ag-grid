@@ -3169,11 +3169,19 @@ export class ColumnModel extends BeanStub {
         }
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
+            const hasSameColumns = this.secondaryColumns.every((col) => {
+                return this.gridColumnsMap[col.getColId()] !== undefined;
+            });
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
-            this.orderGridColsLike(this.lastSecondaryOrder);
+            // If the current columns are the same or a subset of the previous
+            // we keep the previous order, otherwise we go back to the order the pivot
+            // cols are generated in
+            if (hasSameColumns) {
+                this.orderGridColsLike(this.lastSecondaryOrder);
+            }
         } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;

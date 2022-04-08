@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import { ColDef, GetDetailRowDataParams, GetRowIdParams, IDetailCellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent,  ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -71,7 +71,7 @@ const GridExample = () => {
     }, []);
 
 
-    const onGridReady = useCallback((params) => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
 
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
             .then(resp => resp.json())
@@ -81,7 +81,7 @@ const GridExample = () => {
             });
     }, []);
 
-    const onFirstDataRendered = useCallback((params) => {
+    const onFirstDataRendered = useCallback((params: FirstDataRenderedEvent) => {
         // arbitrarily expand a row for presentational purposes
         setTimeout(function () {
             gridRef.current!.api.getDisplayedRowAtIndex(0)!.setExpanded(true);

@@ -7,7 +7,7 @@ import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams, IDatasource, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -52,7 +52,7 @@ const GridExample = () => {
     }, []);
 
 
-    const onGridReady = useCallback((params) => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())

@@ -8,7 +8,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, ModuleRegistry, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, ModuleRegistry, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -359,7 +359,7 @@ const GridExample = () => {
             },
         }
     }, []);
-    const getRowId = useCallback(function (params) {
+    const getRowId = useCallback(function (params: GetRowIdParams) {
         return params.data.trade;
     }, []);
 

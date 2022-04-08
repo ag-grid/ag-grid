@@ -10,7 +10,7 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, GetRowIdParams, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, ICellRendererParams, IDatasource, ModuleRegistry, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -154,7 +154,7 @@ const GridExample = () => {
     }, []);
 
 
-    const onGridReady = useCallback((params) => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())

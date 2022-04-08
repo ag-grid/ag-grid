@@ -398,7 +398,8 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
                 includesEnterprise ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-enterprise'), 1)) : null;
 
                 // if we're doing community or enterprise and package examples then we need to defer these too
-                packagesToRun.forEach(packageToRun => {
+                const filterPackages = [...packagesToRun];
+                filterPackages.forEach(packageToRun => {
                     if (packageToRun.includes('-package-example') && (includesCommunity || includesEnterprise)) {
                         secondPhase.push(packagesToRun.splice(packagesToRun.indexOf(packageToRun), 1))
                     }
@@ -411,7 +412,7 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
                 }
 
                 if (secondPhase.length > 0 && !buildFailed) {
-                    console.log("Running 'package' on changed modules in parallel");
+                    console.log("Running second pass 'package' on changed modules in parallel");
                     result = await buildPackages(secondPhase, 'package', '--parallel');
                     buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
                 }

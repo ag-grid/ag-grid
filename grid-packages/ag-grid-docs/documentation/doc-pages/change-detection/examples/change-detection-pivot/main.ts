@@ -1,4 +1,4 @@
-import { Grid, GridApi, GridOptions, GridReadyEvent, RowNode, ValueGetterParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridApi, GridOptions, GridReadyEvent, RowNode, ValueGetterParams } from '@ag-grid-community/core'
 
 interface Student {
   student: number;
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
   animateRows: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.student
   },
   onGridReady: function (params: GridReadyEvent) {

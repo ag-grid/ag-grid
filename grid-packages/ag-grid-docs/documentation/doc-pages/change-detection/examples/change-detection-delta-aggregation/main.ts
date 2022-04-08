@@ -1,4 +1,4 @@
-import { Grid, GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
 
 var rowIdCounter = 0
 var callCount = 0
@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.id
   },
   onGridReady: function (params) {

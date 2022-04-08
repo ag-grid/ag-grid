@@ -114,7 +114,7 @@ const GridExample = () => {
         setGroupingEnabled(false, params.columnApi);
     }, []);
 
-    const addFiveItems = useCallback((append) => {
+    const addFiveItems = useCallback((append: boolean) => {
         const newStore = rowData.slice();
         for (let i = 0; i < 5; i++) {
             const newItem = createItem(newStore);
@@ -138,7 +138,7 @@ const GridExample = () => {
         setRowData(filteredData);
     }, [rowData])
 
-    const setSelectedToGroup = useCallback((newGroup) => {
+    const setSelectedToGroup = useCallback((newGroup: string) => {
         const selectedRowNodes = gridRef.current!.api.getSelectedNodes();
         const selectedIds = selectedRowNodes.map(function (rowNode) {
             return rowNode.id;
@@ -175,7 +175,7 @@ const GridExample = () => {
         setRowData(newStore);
     }, [rowData])
 
-    const onGroupingEnabled = useCallback((enabled) => {
+    const onGroupingEnabled = useCallback((enabled: boolean) => {
         setGroupingEnabled(enabled, gridRef.current!.columnApi);
     }, [])
 
