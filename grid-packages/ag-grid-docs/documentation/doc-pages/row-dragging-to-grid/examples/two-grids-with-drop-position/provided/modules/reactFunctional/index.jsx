@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -31,7 +31,7 @@ const defaultColDef = {
     resizable: true
 };
 
-const TwoGridsWithDropPositionExample = () => {
+const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
     const [leftRowData, setLeftRowData] = useState([]);
@@ -204,4 +204,7 @@ const TwoGridsWithDropPositionExample = () => {
     );
 }
 
-export default TwoGridsWithDropPositionExample;
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+)

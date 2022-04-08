@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-
+import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const SportRenderer = props => {
+const SportRenderer = (props: ICellRendererParams) => {
     return (
         <i className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
@@ -19,7 +19,7 @@ const SportRenderer = props => {
     )
 }
 
-const leftColumns = [
+const leftColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -28,7 +28,7 @@ const leftColumns = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode.data.athlete;
+            return params.rowNode!.data.athlete;
         },
     },
     {
@@ -42,7 +42,7 @@ const leftColumns = [
     { field: "sport" }
 ];
 
-const rightColumns = [
+const rightColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -51,7 +51,7 @@ const rightColumns = [
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
-            return params.rowNode.data.athlete;
+            return params.rowNode!.data.athlete;
         },
     },
     { field: "athlete" },
@@ -63,7 +63,7 @@ const rightColumns = [
     }
 ]
 
-const defaultColDef = {
+const defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
     sortable: true,
@@ -71,13 +71,13 @@ const defaultColDef = {
     resizable: true
 };
 
-const TwoGridsWithMultipleRecordsExample = () => {
-    const [leftApi, setLeftApi] = useState(null);
-    const [leftColumnApi, setLeftColumnApi] = useState(null);
-    const [rightApi, setRightApi] = useState(null);
-    const [rawData, setRawData] = useState([]);
-    const [leftRowData, setLeftRowData] = useState(null);
-    const [rightRowData, setRightRowData] = useState([]);
+const GridExample = () => {
+    const [leftApi, setLeftApi] = useState<GridApi | null>(null);
+    const [leftColumnApi, setLeftColumnApi] = useState<ColumnApi | null>(null);
+    const [rightApi, setRightApi] = useState<GridApi | null>(null);
+    const [rawData, setRawData] = useState<any[]>([]);
+    const [leftRowData, setLeftRowData] = useState<any[] | null>(null);
+    const [rightRowData, setRightRowData] = useState<any[]>([]);
     const [radioChecked, setRadioChecked] = useState(0);
     const [checkBoxSelected, setCheckBoxSelected] = useState(true);
 
@@ -86,7 +86,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then(resp => resp.json())
                 .then(data => {
-                    const athletes = [];
+                    const athletes: any[] = [];
                     let i = 0;
 
                     while (athletes.length < 20 && i < data.length) {
@@ -102,7 +102,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     const loadGrids = useCallback(() => {
         setLeftRowData([...rawData]);
         setRightRowData([]);
-        leftApi.deselectAll();
+        leftApi!.deselectAll();
     }, [leftApi, rawData]);
 
     useEffect(() => {
@@ -124,22 +124,22 @@ const TwoGridsWithMultipleRecordsExample = () => {
         loadGrids();
     }
 
-    const onRadioChange = (e) => {
+    const onRadioChange = (e: any) => {
         setRadioChecked(parseInt(e.target.value, 10));
     }
 
-    const onCheckboxChange = (e) => {
+    const onCheckboxChange = (e: any) => {
         const checked = e.target.checked;
         setCheckBoxSelected(checked);
     }
 
-    const getRowId = params => params.data.athlete
+    const getRowId = (params: GetRowIdParams) => params.data.athlete
 
-    const onDragStop = useCallback(params => {
+    const onDragStop = useCallback((params: RowDragEndEvent) => {
         var nodes = params.nodes;
 
         if (radioChecked === 0) {
-            leftApi.applyTransaction({
+            leftApi!.applyTransaction({
                 remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
@@ -157,7 +157,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         leftApi.addRowDropZone(dropZoneParams);
     }, [leftApi, rightApi, onDragStop]);
 
-    const onGridReady = (params, side) => {
+    const onGridReady = (params: GridReadyEvent, side: number) => {
         if (side === 0) {
             setLeftApi(params.api);
             setLeftColumnApi(params.columnApi);
@@ -173,14 +173,14 @@ const TwoGridsWithMultipleRecordsExample = () => {
             <div className="panel-body">
                 <div style={{ display: 'inline-flex' }} onChange={onRadioChange} >
                     <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />
-                    <label for="move">Remove Source Rows</label>
+                    <label htmlFor="move">Remove Source Rows</label>
                     <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />
-                    <label for="deselect">Only Deselect Source Rows</label>
+                    <label htmlFor="deselect">Only Deselect Source Rows</label>
                     <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />
-                    <label for="none">None</label>
+                    <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
-                <label for="toggleCheck">Checkbox Select</label>
+                <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
                     <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
                         <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
@@ -190,12 +190,11 @@ const TwoGridsWithMultipleRecordsExample = () => {
         </div>
     );
 
-    const getGridWrapper = (id) => (
+    const getGridWrapper = (id: number) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body">
+            <div className="panel-body" style={{ height: '100%;' }}>
                 <AgGridReact
-                    style={{ height: '100%;' }}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
@@ -216,7 +215,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>
@@ -224,4 +223,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     );
 }
 
-export default TwoGridsWithMultipleRecordsExample;
+render(
+    <GridExample></GridExample>,
+    document.querySelector('#root')
+)
