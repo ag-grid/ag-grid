@@ -2,9 +2,7 @@
 title: "Combination Charts"
 ---
 
-This section shows how to create Combination Charts - charts consisting of different series types.
-
-A combination chart combines two or more series types allowing for flexible data visualisations.
+A combination chart combines two or more series types allowing for flexible data visualisations. They are ideal for making visual comparisons of different sets of data in a single chart.
 
 ## Combination Series Types
 

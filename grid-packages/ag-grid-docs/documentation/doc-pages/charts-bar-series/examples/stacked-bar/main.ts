@@ -47,16 +47,6 @@ const options: AgChartOptions = {
       stacked: true,
     },
   ],
-  axes: [
-    {
-      type: 'number',
-      position: 'bottom',
-    },
-    {
-      type: 'category',
-      position: 'left',
-    },
-  ],
 }
 
 agCharts.AgChart.create(options)
