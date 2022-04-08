@@ -92,7 +92,7 @@ title: "Get Started with AG Grid"
 | const rowData = [
 |   { make: "Toyota", model: "Celica", price: 35000 },
 |   { make: "Ford", model: "Mondeo", price: 32000 },
-|   { make: "Porsche", model: "Boxter", price: 72000 }
+|   { make: "Porsche", model: "Boxster", price: 72000 }
 | ];
 |
 | // let the grid know which columns and what data to use
@@ -148,7 +148,7 @@ title: "Get Started with AG Grid"
 |    const [rowData] = useState([
 |        {make: "Toyota", model: "Celica", price: 35000},
 |        {make: "Ford", model: "Mondeo", price: 32000},
-|        {make: "Porsche", model: "Boxter", price: 72000}
+|        {make: "Porsche", model: "Boxster", price: 72000}
 |    ]);
 |    
 |    const [columnDefs] = useState([
@@ -208,7 +208,7 @@ title: "Get Started with AG Grid"
 |     this.rowData = [
 |       { make: "Toyota", model: "Celica", price: 35000 },
 |       { make: "Ford", model: "Mondeo", price: 32000 },
-|       { make: "Porsche", model: "Boxter", price: 72000 },
+|       { make: "Porsche", model: "Boxster", price: 72000 },
 |     ];
 |   },
 | };
@@ -371,7 +371,7 @@ title: "Get Started with AG Grid"
 |     const rowData = [
 |       { make: "Toyota", model: "Celica", price: 35000 },
 |       { make: "Ford", model: "Mondeo", price: 32000 },
-|       { make: "Porsche", model: "Boxter", price: 72000 }
+|       { make: "Porsche", model: "Boxster", price: 72000 }
 |     ];
 |
 |     // let the grid know which columns and what data to use
@@ -1628,7 +1628,7 @@ title: "Get Started with AG Grid"
 |
 | ## Add AG Grid to Your Project
 |
-| For the purposes of this tutorial, we are going to scaffold an Vue app with
+| For the purposes of this tutorial, we are going to scaffold a Vue app with
 | [Vue CLI](https://cli.vuejs.org/). Don't worry if your project has a different configuration.
 | Ag-Grid and its Vue wrapper are distributed as NPM packages, which should work with any common
 | Vue project module bundler setup. Let's follow the [Vue CLI instructions](https://cli.vuejs.org/) -
@@ -1800,7 +1800,7 @@ title: "Get Started with AG Grid"
 |     this.rowData = [
 |       { make: "Toyota", model: "Celica", price: 35000 },
 |       { make: "Ford", model: "Mondeo", price: 32000 },
-|       { make: "Porsche", model: "Boxter", price: 72000 },
+|       { make: "Porsche", model: "Boxster", price: 72000 },
 |     ];
 |   },
 | };
