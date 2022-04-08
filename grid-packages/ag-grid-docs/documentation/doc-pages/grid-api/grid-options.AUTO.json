@@ -911,6 +911,10 @@
     "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "alwaysMultiSort": {
+    "description": "/** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "multiSortKey": {
     "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
     "type": { "returnType": "string" }

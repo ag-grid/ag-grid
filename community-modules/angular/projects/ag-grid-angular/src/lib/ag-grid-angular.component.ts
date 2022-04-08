@@ -814,6 +814,8 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public unSortIcon: boolean | undefined = undefined;
     /** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false`     */
     @Input() public suppressMultiSort: boolean | undefined = undefined;
+    /** Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses. Default: `false`     */
+    @Input() public alwaysMultiSort: boolean | undefined = undefined;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.     */
     @Input() public multiSortKey: string | undefined = undefined;
     /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false`     */
@@ -1124,6 +1126,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressRowDeselection: boolean | null | '';
     static ngAcceptInputType_unSortIcon: boolean | null | '';
     static ngAcceptInputType_suppressMultiSort: boolean | null | '';
+    static ngAcceptInputType_alwaysMultiSort: boolean | null | '';
     static ngAcceptInputType_singleClickEdit: boolean | null | '';
     static ngAcceptInputType_suppressLoadingOverlay: boolean | null | '';
     static ngAcceptInputType_suppressNoRowsOverlay: boolean | null | '';

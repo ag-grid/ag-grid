@@ -26,4 +26,5 @@ module.exports = {
         "json",
         "node"
     ],
+    modulePathIgnorePatterns: ['<rootDir>/doc-pages', '<rootDir>/public/examples']
 }

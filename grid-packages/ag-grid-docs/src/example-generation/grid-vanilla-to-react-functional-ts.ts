@@ -220,7 +220,9 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                     instanceBindings.push(`${property.name}=${property.value}`);
                 } else {
                     if (property.name === 'columnDefs') {
-                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState<${property.typings.typeName}>(${property.value});`);
+                        // Special logic for columnDefs as its a popular property
+                        const typeName = (property.value.includes('children')) ? '(ColDef | ColGroupDef)[]' : 'ColDef[]';
+                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState<${typeName}>(${property.value});`);
                         componentProps.push(`${property.name}={${property.name}}`);
                     } else {
                         // for values like booleans or strings just inline the prop - no need for a separate variable for it

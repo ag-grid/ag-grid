@@ -40,7 +40,7 @@ from the other grid.
 
 - New rows can be created by clicking on the red, green and blue buttons.
 
-<grid-example title='Two Grids with Drop Position' name='two-grids-with-drop-position' type='multi' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Two Grids with Drop Position' name='two-grids-with-drop-position' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 
 ## Dragging Multiple Records Between Grids
 
@@ -58,5 +58,5 @@ In the example below, note the following:
 
 - If `None` is selected, the rows will be copied from one grid to another and the source grid will stay as is.
 
-<grid-example title='Multiple Records with Drop Position' name='two-grids-with-multiple-records' type='multi' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Multiple Records with Drop Position' name='two-grids-with-multiple-records' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 

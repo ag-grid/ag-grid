@@ -17,7 +17,7 @@ var rowDataA = [
 var rowDataB = [
   {id: '1', make: "Toyota", model: "Celica", price: 35000},
   {id: '2', make: "Ford", model: "Mondeo", price: 32000},
-  {id: '3', make: "Porsche", model: "Boxter", price: 72000},
+  {id: '3', make: "Porsche", model: "Boxster", price: 72000},
   {id: '4', make: "BMW", model: "M50", price: 60000},
   {id: '5', make: "Aston Martin", model: "DBX", price: 190000}
 ];
