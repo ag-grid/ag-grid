@@ -137,6 +137,16 @@ The example demonstrates the following:
 
 <grid-example title='Slice And Dice' name='slice-and-dice' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
+## Example: Filtering Secondary Columns
+
+The example below demonstrates server-side Pivoting with both primary and secondary column filters applied.
+
+- The columns `Country` and `Year` primary columns have filters applied, which are applied to the data before the pivot is applied.
+
+- All of the secondary columns have filters applied, which the server can then use to filter the data set after the pivot has been applied. In the provided example, only top level row groups are affected by the secondary column filters.
+
+<grid-example title='Filtering Secondary Columns' name='pivot-column-filtering'  type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about [Pagination](/server-side-model-pagination/).

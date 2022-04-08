@@ -19,29 +19,27 @@ function FakeServer(allData) {
 
     function executeQuery(request) {
         var pivotCols = request.pivotCols;
+        var groupKeys = request.groupKeys;
+        var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
         var pivotCol = pivotCols[0]; // 'alasql' can only pivot on a single column
 
-        // 'alasql' only supports pivoting on a single value column, to workaround this limitation we need to perform
-        // separate queries for each value column and combine the results
-        var results = [];
+        const splitResults = request.valueCols.map(valueCol => executePivotQuery(request, pivotCol, valueCol));
+        const generateJoinCondition = (col1, col2) => groupsToUse.map(col => `${col1}.${col.id} = ${col2}.${col.id}`).join(' AND ');
 
-        request.valueCols.forEach(function(valueCol) {
-            var pivotResults = executePivotQuery(request, pivotCol, valueCol);
-
-            // merge each row into existing results
-            for (var i = 0; i < pivotResults.length; i++) {
-                var pivotResult = pivotResults[i];
-                var result = results[i] || {};
-
-                Object.keys(pivotResult).forEach(function(key) {
-                    result[key] = pivotResult[key];
-                });
-
-                results[i] = result;
-            }
-        });
-    
-        return results;
+        const blockSize = request.endRow - request.startRow + 1;
+        const SQL_TEMPLATE = `
+          SELECT * FROM (
+            SELECT X.*, Y.*, Z.*
+            FROM ? AS X
+            INNER JOIN ? AS Y ON ${generateJoinCondition('X', 'Y')}
+            INNER JOIN ? AS Z ON ${generateJoinCondition('X', 'Z')}
+          )
+          ${groupKeys.length === 0 ? whereSql(request, false) : ''}
+          LIMIT ${blockSize}
+          OFFSET ${request.startRow}
+        `;
+        const result = alasql(SQL_TEMPLATE, splitResults);
+        return result;
     }
 
     function executePivotQuery(request, pivotCol, valueCol) {
@@ -56,8 +54,7 @@ function FakeServer(allData) {
 
         var result = alasql(SQL, [allData]);
 
-        // workaround - 'alasql' doesn't support PIVOT + LIMIT
-        return extractRowsForBlock(request, result);
+        return result;
     }
 
     function whereSql(request) {
@@ -78,12 +75,6 @@ function FakeServer(allData) {
         }
 
         return '';
-    }
-
-    function extractRowsForBlock(request, results) {
-        var blockSize = request.endRow - request.startRow + 1;
-
-        return results.slice(request.startRow, request.startRow + blockSize);
     }
 
     function getPivotFields(request) {

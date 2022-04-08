@@ -29,7 +29,7 @@ const extrasMap = {
         scripts: ['https://momentjs.com/downloads/moment-with-locales.min.js']
     },
     alasql: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js']
+        scripts: ['https://cdn.jsdelivr.net/npm/alasql@1.7.3']
     },
     d3: {
         scripts: ['https://d3js.org/d3.v4.min.js']
