@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent, memo, useContext } from 'react';
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, ForwardRefRenderFunction, memo, useContext } from 'react';
 
 import {
     TabGuardCtrl, ITabGuard, GridCtrl
@@ -16,7 +16,7 @@ interface TabGuardProps {
     gridCtrl: GridCtrl,
 }
 
-const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProps> = (props, forwardRef) => {
+const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardProps> = (props: any, forwardRef: any) => {
 
     const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
     const { context } = useContext(BeansContext);
