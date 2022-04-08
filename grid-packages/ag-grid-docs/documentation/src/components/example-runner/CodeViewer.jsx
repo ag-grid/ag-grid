@@ -70,7 +70,8 @@ const FileItem = ({ path, isActive, onClick }) =>
 const ExtensionMap = {
     sh: 'bash',
     vue: 'html',
-    tsx: 'jsx'
+    tsx: 'jsx',
+    json: 'js'
 };
 
 const FileView = ({ path, code }) => {
