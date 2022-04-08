@@ -11,7 +11,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, ICellRendererParams, IFiltersToolPanel, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule, FiltersToolPanelModule]);
 
@@ -91,7 +91,7 @@ const GridExample = () => {
     }, []);
 
 
-    const onFirstDataRendered = useCallback((params) => {
+    const onFirstDataRendered = useCallback((params: FirstDataRenderedEvent) => {
         ((gridRef.current!.api.getToolPanelInstance('filters') as any) as IFiltersToolPanel).expandFilters();
     }, [])
 

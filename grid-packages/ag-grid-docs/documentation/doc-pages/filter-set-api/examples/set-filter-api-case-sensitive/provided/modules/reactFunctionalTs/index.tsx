@@ -10,7 +10,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])
@@ -77,34 +77,34 @@ const GridExample = () => {
     }, []);
 
 
-    const onFirstDataRendered = useCallback((params) => {
+    const onFirstDataRendered = useCallback((params: FirstDataRenderedEvent) => {
         (gridRef.current!.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters();
     }, [])
 
-    const setModel = useCallback((type) => {
+    const setModel = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
         instance.setModel({ values: MANGLED_COLOURS });
         gridRef.current!.api.onFilterChanged();
     }, [])
 
-    const getModel = useCallback((type) => {
+    const getModel = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
         alert(JSON.stringify(instance.getModel(), null, 2));
     }, [alert])
 
-    const setFilterValues = useCallback((type) => {
+    const setFilterValues = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         instance.setFilterValues(MANGLED_COLOURS);
         instance.applyModel();
         gridRef.current!.api.onFilterChanged();
     }, [])
 
-    const getValues = useCallback((type) => {
+    const getValues = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         alert(JSON.stringify(instance.getValues(), null, 2));
     }, [alert])
 
-    const reset = useCallback((type) => {
+    const reset = useCallback((type: string) => {
         const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type]) as ISetFilter;
         instance.resetFilterValues();
         instance.setModel(null);

@@ -135,7 +135,7 @@ const GridExample = () => {
 
     }, []);
 
-    const insertItemsAt2AndRefresh = useCallback((count) => {
+    const insertItemsAt2AndRefresh = useCallback((count: number) => {
         insertItemsAt2(count);
         // if the data has stopped looking for the last row, then we need to adjust the
         // row count to allow for the extra data, otherwise the grid will not allow scrolling
@@ -153,7 +153,7 @@ const GridExample = () => {
         gridRef.current!.api.refreshInfiniteCache();
     }, [])
 
-    const removeItem = useCallback((start, limit) => {
+    const removeItem = useCallback((start: number, limit: number) => {
         allOfTheData.splice(start, limit);
         gridRef.current!.api.refreshInfiniteCache();
     }, [allOfTheData])

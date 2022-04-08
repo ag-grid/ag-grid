@@ -45,7 +45,7 @@ const GridExample = () => {
 
     let rowIdSequence = 100;
 
-    const createDataItem = useCallback((color) => {
+    const createDataItem = useCallback((color: string) => {
         const obj = {
             id: rowIdSequence++,
             color: color,

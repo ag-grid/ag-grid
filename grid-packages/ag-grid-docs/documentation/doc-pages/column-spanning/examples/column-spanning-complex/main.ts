@@ -1,4 +1,4 @@
-import { Grid, CellClassRules, ColDef, ColSpanParams, GridOptions, RowHeightParams } from '@ag-grid-community/core'
+import { Grid, CellClassRules, ColDef, ColSpanParams, GridOptions, RowHeightParams, GridReadyEvent } from '@ag-grid-community/core'
 
 var cellClassRules: CellClassRules = {
   'header-cell': 'data.section === "big-title"',
@@ -25,7 +25,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Apr',
     field: 'apr',
-    colSpan: function (params) {
+    colSpan: function (params: ColSpanParams) {
       if (isQuarterRow(params)) {
         return 3
       } else {
@@ -39,7 +39,7 @@ const columnDefs: ColDef[] = [
 ]
 
 const gridOptions: GridOptions = {
-  getRowHeight: function (params) {
+  getRowHeight: function (params: RowHeightParams) {
     if (isHeaderRow(params)) {
       return 60
     }
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     width: 100,
   },
-  onGridReady: function (params) {
+  onGridReady: function (params: GridReadyEvent) {
     params.api.sizeColumnsToFit()
   },
 }
