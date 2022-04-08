@@ -407,9 +407,9 @@ export abstract class Chart extends Observable {
 
         const scene = new Scene(document);
         this.scene = scene;
+        this.autoSize = true; // Triggers width/height calc - needs to happen before root group assignment.
         scene.root = root;
         scene.container = element;
-        this.autoSize = true;
 
         this.padding.addEventListener('layoutChange', this.scheduleLayout, this);
 

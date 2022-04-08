@@ -189,9 +189,6 @@ export class ChartTheme {
 
     private static getChartDefaults() {
         return {
-            width: 600,
-            height: 300,
-            autoSize: true,
             background: {
                 visible: true,
                 fill: 'white'
