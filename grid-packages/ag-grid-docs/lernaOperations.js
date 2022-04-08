@@ -390,9 +390,19 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
             if (runPackage && !buildFailed) {
                 // ag-grid-community & enterprise depend on community/all-modules and enterprise/all-modules so must be build AFTER these have run
                 // everything else can be run in parallel so do a build in two phases
+                const includesCommunity = packagesToRun.includes('ag-grid-community');
+                const includesEnterprise = packagesToRun.includes('ag-grid-enterprise');
+
                 const secondPhase = [];
-                packagesToRun.includes('ag-grid-community') ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-community'), 1)) : null;
-                packagesToRun.includes('ag-grid-enterprise') ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-enterprise'), 1)) : null;
+                includesCommunity ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-community'), 1)) : null;
+                includesEnterprise ? secondPhase.push(packagesToRun.splice(packagesToRun.indexOf('ag-grid-enterprise'), 1)) : null;
+
+                // if we're doing community or enterprise and package examples then we need to defer these too
+                packagesToRun.forEach(packageToRun => {
+                    if (packageToRun.includes('-package') && (includesCommunity || includesEnterprise)) {
+                        secondPhase.push(packagesToRun.splice(packageToRun, 1))
+                    }
+                })
 
                 if (packagesToRun.length > 0) {
                     console.log("Running 'package' on changed modules in parallel");
