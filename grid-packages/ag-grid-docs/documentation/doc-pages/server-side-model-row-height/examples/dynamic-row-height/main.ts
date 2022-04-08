@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, RowHeightParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   serverSideStoreType: 'partial',
 
   // dynamically set row heights
-  getRowHeight: function (params) {
+  getRowHeight: function (params: RowHeightParams) {
     if (params.node.level === 0) {
       return 80
     }

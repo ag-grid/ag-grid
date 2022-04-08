@@ -1,4 +1,4 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, RowHeightParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
-  getRowHeight: function (params) {
+  getRowHeight: function (params: RowHeightParams) {
     if (params.node && params.node.detail) {
       var offset = 80
       var allDetailRowHeight =

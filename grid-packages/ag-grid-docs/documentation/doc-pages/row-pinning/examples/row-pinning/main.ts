@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core'
 import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 
 const columnDefs: ColDef[] = [
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
   },
   columnDefs: columnDefs,
   rowData: null,
-  getRowStyle: function (params) {
+  getRowStyle: function (params: RowClassParams): RowStyle | undefined {
     if (params.node.rowPinned) {
       return { 'font-weight': 'bold' }
     }

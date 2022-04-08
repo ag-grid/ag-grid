@@ -1,4 +1,4 @@
-import { Grid, CheckboxSelectionCallbackParams, ColDef, FirstDataRenderedEvent, GridOptions, HeaderCheckboxSelectionCallbackParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, CheckboxSelectionCallbackParams, ColDef, FirstDataRenderedEvent, GridOptions, HeaderCheckboxSelectionCallbackParams, ValueGetterParams, PaginationNumberFormatterParams } from '@ag-grid-community/core'
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
   paginationPageSize: 10,
   autoGroupColumnDef: autoGroupColumnDef,
   onFirstDataRendered: onFirstDataRendered,
-  paginationNumberFormatter: function (params) {
+  paginationNumberFormatter: function (params: PaginationNumberFormatterParams) {
     return '[' + params.value.toLocaleString() + ']'
   },
 }

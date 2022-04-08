@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   serverSideStoreType: 'partial',
 
   // fetch group child count from 'childCount' returned by the server
-  getChildCount: function (data) {
+  getChildCount: function (data: any) {
     return data ? data.childCount : undefined
   },
 

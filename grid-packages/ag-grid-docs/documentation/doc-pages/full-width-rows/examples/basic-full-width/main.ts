@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, IsFullWidthRowParams } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core'
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const rowData = createData(100, 'body')
@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
     // see AG Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
     fullWidthCellRenderer: FullWidthCellRenderer,
-    getRowHeight: function (params) {
+    getRowHeight: function (params: RowHeightParams) {
         // you can have normal rows and full width rows any height that you want
         const isBodyRow = params.node.rowPinned === undefined
         const isFullWidth = params.node.data.fullWidth

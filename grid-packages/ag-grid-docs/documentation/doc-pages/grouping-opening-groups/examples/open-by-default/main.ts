@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     minWidth: 200,
   },
   animateRows: true,
-  isGroupOpenByDefault: params => {
+  isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => {
     return (
       (params.field === 'year' && params.key === '2004') ||
       (params.field === 'country' && params.key === 'United States')

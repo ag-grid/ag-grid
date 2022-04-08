@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode, GetRowIdParams } from '@ag-grid-community/core'
 declare var window: any
 
 const gridOptions: GridOptions = {
@@ -39,10 +39,10 @@ const gridOptions: GridOptions = {
   treeData: true,
   animateRows: true,
   groupDefaultExpanded: -1,
-  getDataPath: function (data) {
+  getDataPath: function (data: any) {
     return data.filePath
   },
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.id
   },
 }

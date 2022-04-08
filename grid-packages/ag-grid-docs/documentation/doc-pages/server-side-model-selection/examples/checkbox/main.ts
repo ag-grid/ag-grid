@@ -1,4 +1,4 @@
-import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource, RowNode } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
 
   // restrict selections to leaf rows
-  isRowSelectable: function (rowNode) {
+  isRowSelectable: function (rowNode: RowNode) {
     return !rowNode.group
   },
 

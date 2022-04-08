@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core'
 
 var rowData = [
   { id: 'aa', make: 'Toyota', model: 'Celica', price: 35000 },
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     filter: true,
   },
   animateRows: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.id
   },
   rowData: rowData,

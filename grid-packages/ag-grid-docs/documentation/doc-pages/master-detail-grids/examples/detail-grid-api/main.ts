@@ -1,4 +1,4 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridOptions, GetRowIdParams, IDetailCellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     // use 'account' as the row ID
     return params.data.account
   },

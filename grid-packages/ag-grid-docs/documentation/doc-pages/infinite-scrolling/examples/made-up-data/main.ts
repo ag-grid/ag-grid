@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDatasource, IGetRowsParams, GetRowIdParams } from '@ag-grid-community/core'
 
 var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   maxBlocksInCache: 2,
   suppressRowClickSelection: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.a
   },
   datasource: getDataSource(100),

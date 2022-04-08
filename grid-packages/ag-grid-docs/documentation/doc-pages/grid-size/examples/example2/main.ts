@@ -1,4 +1,4 @@
-import { Grid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent, RowHeightParams } from '@ag-grid-community/core'
 
 var minRowHeight = 25
 var currentRowHeight: number;
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
   },
   onFirstDataRendered: onFirstDataRendered,
   onGridSizeChanged: onGridSizeChanged,
-  getRowHeight: function () {
+  getRowHeight: function (params: RowHeightParams) {
     return currentRowHeight
   },
 }

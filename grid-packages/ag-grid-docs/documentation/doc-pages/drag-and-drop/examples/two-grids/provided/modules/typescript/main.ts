@@ -1,6 +1,6 @@
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -34,7 +34,7 @@ var leftGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: function (params) { return params.data.id; },
+    getRowId: function (params: GetRowIdParams) { return params.data.id; },
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
@@ -53,7 +53,7 @@ var rightGridOptions: GridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: function (params) { return params.data.id; },
+    getRowId: function (params: GetRowIdParams) { return params.data.id; },
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,

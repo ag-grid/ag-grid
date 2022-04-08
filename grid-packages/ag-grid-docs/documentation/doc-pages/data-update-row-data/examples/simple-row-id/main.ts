@@ -1,25 +1,25 @@
-import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColDef, GetRowIdParams } from '@ag-grid-community/core'
 
 
 var columnDefs: ColDef[] = [
-  {field: "make"},
-  {field: "model"},
-  {field: "price"}
+  { field: "make" },
+  { field: "model" },
+  { field: "price" }
 ];
 
 // specify the data
 var rowDataA = [
-  {id: '1', make: "Toyota", model: "Celica", price: 35000},
-  {id: '4', make: "BMW", model: "M50", price: 60000},
-  {id: '5', make: "Aston Martin", model: "DBX", price: 190000}
+  { id: '1', make: "Toyota", model: "Celica", price: 35000 },
+  { id: '4', make: "BMW", model: "M50", price: 60000 },
+  { id: '5', make: "Aston Martin", model: "DBX", price: 190000 }
 ];
 
 var rowDataB = [
-  {id: '1', make: "Toyota", model: "Celica", price: 35000},
-  {id: '2', make: "Ford", model: "Mondeo", price: 32000},
-  {id: '3', make: "Porsche", model: "Boxster", price: 72000},
-  {id: '4', make: "BMW", model: "M50", price: 60000},
-  {id: '5', make: "Aston Martin", model: "DBX", price: 190000}
+  { id: '1', make: "Toyota", model: "Celica", price: 35000 },
+  { id: '2', make: "Ford", model: "Mondeo", price: 32000 },
+  { id: '3', make: "Porsche", model: "Boxster", price: 72000 },
+  { id: '4', make: "BMW", model: "M50", price: 60000 },
+  { id: '5', make: "Aston Martin", model: "DBX", price: 190000 }
 ];
 
 // let the grid know which columns and what data to use
@@ -28,7 +28,7 @@ var gridOptions: GridOptions = {
   rowData: rowDataA,
   rowSelection: 'single',
   animateRows: true,
-  getRowId: params => params.data.id
+  getRowId: (params: GetRowIdParams) => params.data.id
 };
 
 function onRowDataA() {

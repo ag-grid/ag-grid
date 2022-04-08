@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, ServerSideStoreParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, ServerSideStoreParams, GetServerSideStoreParamsParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  getServerSideStoreParams: function (params): ServerSideStoreParams {
+  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams): ServerSideStoreParams {
     var noGroupingActive = params.rowGroupColumns.length == 0
     var res: ServerSideStoreParams;
     if (noGroupingActive) {

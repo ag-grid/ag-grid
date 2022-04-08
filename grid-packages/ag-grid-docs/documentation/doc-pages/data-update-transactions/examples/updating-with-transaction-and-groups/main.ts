@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ValueFormatterParams, RowClassParams } from '@ag-grid-community/core'
 
 declare function createNewRowData(category: string): any;
 
@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true,
   // this allows the different colors per group, by assigning a different
   // css class to each group level based on the key
-  getRowClass: function (params) {
+  getRowClass: function (params: RowClassParams) {
     var rowNode = params.node
     if (rowNode.group) {
       switch (rowNode.key) {

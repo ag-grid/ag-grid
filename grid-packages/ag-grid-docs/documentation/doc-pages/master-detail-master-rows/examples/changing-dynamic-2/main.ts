@@ -1,9 +1,9 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, GetRowIdParams } from '@ag-grid-community/core'
 import { CallsCellRenderer } from './callsCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  isRowMaster: function (dataItem) {
+  isRowMaster: function (dataItem: any) {
     return dataItem ? dataItem.callRecords.length > 0 : false
   },
   columnDefs: [
@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   animateRows: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.account
   },
   detailCellRendererParams: {

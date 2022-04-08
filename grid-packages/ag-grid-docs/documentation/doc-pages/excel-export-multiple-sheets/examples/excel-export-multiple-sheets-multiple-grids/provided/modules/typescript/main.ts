@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams } from "@ag-grid-community/core";
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -77,7 +77,7 @@ const leftGridOptions: GridOptions = {
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.athlete;
     },
     rowDragManaged: true,
@@ -97,7 +97,7 @@ const rightGridOptions: GridOptions = {
         filter: true,
         resizable: true
     },
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.athlete;
     },
     rowDragManaged: true,

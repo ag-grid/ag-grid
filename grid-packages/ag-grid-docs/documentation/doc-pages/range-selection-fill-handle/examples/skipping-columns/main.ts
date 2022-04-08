@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, FillOperationParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableFillHandle: true,
   suppressClearOnFillReduction: true,
-  fillOperation: function (params) {
+  fillOperation: function (params: FillOperationParams) {
     if (params.column.getColId() === 'country') {
       return params.currentCellValue
     }

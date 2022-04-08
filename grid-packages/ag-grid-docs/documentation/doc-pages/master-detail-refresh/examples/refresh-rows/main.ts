@@ -1,4 +1,4 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, GetRowIdParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.account
   },
   masterDetail: true,
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
     detailGridOptions: {
       rowSelection: 'multiple',
       enableCellChangeFlash: true,
-      getRowId: function (params) {
+      getRowId: function (params: GetRowIdParams) {
         return params.data.callId
       },
       columnDefs: [
