@@ -2,7 +2,7 @@
 title: "Themes Reference"
 ---
 
-Themes are used for configuring the chart appearance. They can help simplify the chart `options` and avoid duplication if a consistent style is required across multiple charts.
+Themes are used for configuring the appearance of charts. They can help simplify the chart `options` and avoid duplication if a consistent style is required across multiple charts.
 
 A theme can be provided to a chart by specifying an inbuilt theme name or a custom `AgChartTheme` instance in the `options` object.
 

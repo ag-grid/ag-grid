@@ -2,7 +2,7 @@
 title: "API Explorer"
 ---
 
-This explorer can be used to gain familiarity with the AG Charts API and see in real-time how different `options` affect charts. A code snippet showing the use of the API is produced based on the point and click configurations specified in the explorer.
+The API explorer can be used to gain familiarity with the AG Charts API and see in real-time how different `options` affect charts. A code snippet showing the use of the API is produced based on the point and click configurations specified in the explorer.
 
 <charts-api-explorer></charts-api-explorer>
 

@@ -23,43 +23,50 @@ interface LauncherProps {
 export const Launcher = ({ framework, options, fullScreen, setFullScreen, fullScreenGraph, setFullScreenGraph }: LauncherProps) => {
     const exampleInfo = buildExampleInfo(framework, options);
 
-    return <>
-        <div
-            className={styles['menu-item']}
-            onClick={() => setFullScreenGraph(!fullScreenGraph)}
-            onKeyDown={e => doOnEnter(e, () => setFullScreenGraph(!fullScreenGraph))}
-            role="button"
-            tabIndex={0}
-        >
-            <FontAwesomeIcon
-                icon={fullScreenGraph ? faCompress : faChartLine }
-                fixedWidth
-                title="Open chart preview fullscreen"
-            />
+    return (
+        <div className={styles['launcher']}>
+            <div className={styles['launcher__heading']}>
+                <h2>API Explorer</h2>
+            </div>
+            <div className={styles['launcher__menu-items']}>
+                <div
+                    className={styles['launcher__menu-item']}
+                    onClick={() => setFullScreenGraph(!fullScreenGraph)}
+                    onKeyDown={(e) => doOnEnter(e, () => setFullScreenGraph(!fullScreenGraph))}
+                    role="button"
+                    tabIndex={0}
+                >
+                    <FontAwesomeIcon
+                        icon={fullScreenGraph ? faCompress : faChartLine}
+                        fixedWidth
+                        title="Open chart preview fullscreen"
+                    />
+                </div>
+                <div
+                    className={styles['launcher__menu-item']}
+                    onClick={() => setFullScreen(!fullScreen)}
+                    onKeyDown={(e) => doOnEnter(e, () => setFullScreen(!fullScreen))}
+                    role="button"
+                    tabIndex={0}
+                >
+                    <FontAwesomeIcon
+                        icon={fullScreen ? faCompress : faWindowRestore}
+                        fixedWidth
+                        title={fullScreen ? 'Exit fullscreen' : 'Open fullscreen'}
+                    />
+                </div>
+                <div
+                    className={styles['launcher__menu-item']}
+                    onClick={() => openPlunker(exampleInfo)}
+                    onKeyDown={(e) => doOnEnter(e, () => openPlunker(exampleInfo))}
+                    role="button"
+                    tabIndex={0}
+                >
+                    <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth title="Open in Plunker" />
+                </div>
+            </div>
         </div>
-        <div
-            className={styles['menu-item']}
-            onClick={() => setFullScreen(!fullScreen)}
-            onKeyDown={e => doOnEnter(e, () => setFullScreen(!fullScreen))}
-            role="button"
-            tabIndex={0}
-        >
-            <FontAwesomeIcon
-                icon={fullScreen ? faCompress : faWindowRestore }
-                fixedWidth
-                title={fullScreen ? "Exit fullscreen" : "Open fullscreen" }
-            />
-        </div>
-        <div
-            className={styles['menu-item']}
-            onClick={() => openPlunker(exampleInfo)}
-            onKeyDown={e => doOnEnter(e, () => openPlunker(exampleInfo))}
-            role="button"
-            tabIndex={0}
-        >
-            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth title="Open in Plunker" />
-        </div>
-    </>
+    );
 };
 
 interface ExampleFile {

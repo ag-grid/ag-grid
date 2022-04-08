@@ -2,7 +2,7 @@
 title: "Options Reference"
 ---
 
-The `AgChartOptions` interface is the gateway to creating charts, it includes all the configuration options available in AG Charts.
+The `AgChartOptions` interface is the gateway to creating charts.
 
 To initialise a chart, an instance of the `AgChartOptions` is passed to the `AgChart.create()` factory method. Once the chart is initialised, it can be modified using the `AgChart.update()` method.
 
