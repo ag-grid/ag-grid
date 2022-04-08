@@ -1,4 +1,18 @@
-.menu-item {
-    padding: 8px;
-    display: inline-block;
+.launcher {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+
+    &__heading {
+        padding-top: 5px;
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+    }
+
+    &__menu-item {
+        padding: 8px;
+        display: inline-block;
+    }
 }

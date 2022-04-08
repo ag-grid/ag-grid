@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding-top: 0 !important;
 
     &__body {
         display: flex;
@@ -47,11 +48,7 @@
     }
 
     &__launcher {
-        position: relative;
-        top: -5px;
-        height: 40px;
         background: linear-gradient(to bottom right, #0084e7, #0067b4);
-        text-align: right;
         color: white;
     }
 
