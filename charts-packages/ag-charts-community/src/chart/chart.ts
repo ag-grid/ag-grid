@@ -1209,7 +1209,7 @@ export abstract class Chart extends Observable {
         const datum = this.legend.getDatumForPoint(offsetX, offsetY);
 
         const pointerInsideLegend = this.legendBBox.containsPoint(offsetX, offsetY);
-        const pointerOverLegendDatum = pointerInsideLegend && datum != null;
+        const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
 
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
