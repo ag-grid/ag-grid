@@ -49,12 +49,12 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
     <SimpleMailingListSignup />
 
     <Announcement title="Community or Enterprise?">
-        <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
+        <img style={{ width: '30px', height: '33px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
         <p >
             Everyone can use AG Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
-        <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={enterpriseSvg} alt="Enterprise" />
+        <img style={{ width: '30px', height: '33px', float: 'left', marginRight: '6px' }} src={enterpriseSvg} alt="Enterprise" />
         <p>
             Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with AG Grid Enterprise</DocumentationLink>.
             You don't need to contact us to evaluate AG Grid Enterprise. A license is only required
