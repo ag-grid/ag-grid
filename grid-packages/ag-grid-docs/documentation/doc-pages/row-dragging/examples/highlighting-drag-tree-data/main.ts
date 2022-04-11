@@ -1,4 +1,4 @@
-import { Grid, CellClassParams, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, CellClassParams, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, RowNode, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 declare var FileCellRenderer: any;
 
 var valueFormatter = function (params: ValueFormatterParams) {
@@ -31,10 +31,10 @@ const gridOptions: GridOptions = {
   treeData: true,
   animateRows: true,
   groupDefaultExpanded: -1,
-  getDataPath: function (data) {
+  getDataPath: function (data: any) {
     return data.filePath
   },
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.id
   },
   autoGroupColumnDef: {

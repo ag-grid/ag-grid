@@ -1,5 +1,5 @@
 ---
-title: "Learning Videos"
+title: "Videos"
 frameworks: ["react"]
 ---
 

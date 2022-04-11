@@ -1,8 +1,8 @@
-import {ColDef, Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, SortModelItem} from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, SortModelItem, GetRowIdParams } from '@ag-grid-community/core'
 
 declare function countries(): string[];
 
-const filterParams = {values: countries()};
+const filterParams = { values: countries() };
 const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
     {
@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
         sortable: false,
         suppressMenu: true,
     },
-    {headerName: 'Athlete', field: 'athlete', suppressMenu: true},
+    { headerName: 'Athlete', field: 'athlete', suppressMenu: true },
     {
         field: 'age',
         filter: 'agNumberColumnFilter',
@@ -37,14 +37,14 @@ const columnDefs: ColDef[] = [
     {
         field: 'year',
         filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012']},
+        filterParams: { values: ['2000', '2004', '2008', '2012'] },
     },
-    {field: 'date'},
-    {field: 'sport', suppressMenu: true},
-    {field: 'gold', suppressMenu: true},
-    {field: 'silver', suppressMenu: true},
-    {field: 'bronze', suppressMenu: true},
-    {field: 'total', suppressMenu: true},
+    { field: 'date' },
+    { field: 'sport', suppressMenu: true },
+    { field: 'gold', suppressMenu: true },
+    { field: 'silver', suppressMenu: true },
+    { field: 'bronze', suppressMenu: true },
+    { field: 'total', suppressMenu: true },
 ]
 
 const gridOptions: GridOptions = {
@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
     pagination: true,
     paginationAutoPageSize: true,
     // debug: true,
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.id
     },
 }

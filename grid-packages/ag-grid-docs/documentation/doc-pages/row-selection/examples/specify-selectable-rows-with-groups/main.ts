@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
-  isRowSelectable: function (node) {
+  isRowSelectable: function (node: RowNode) {
     return node.data
       ? node.data.year === 2008 || node.data.year === 2004
       : false

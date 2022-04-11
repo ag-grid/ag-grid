@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, GetRowIdParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [{ field: 'product' }, { field: 'value' }]
 
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
 
     params.api.setServerSideDatasource(dataSource)
   },
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.product
   },
 }

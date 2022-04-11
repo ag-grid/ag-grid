@@ -2,10 +2,9 @@
 title: "Markers"
 ---
 
-This section explores the markers used by line, area and scatter series.
+Data points in `line`, `area` and `scatter` series can be represented by markers.
 
-The shape of the markers can be changed by using the `shape` config. The `size`, `fill` and `stroke` are also valid configs:
-
+Marker attributes such as `shape`, `size`, `fill` and `stroke` are configurable via the chart `options`:
 
 ```js
 marker: {

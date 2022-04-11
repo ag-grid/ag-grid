@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
+import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams } from "ag-grid-community";
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
@@ -80,7 +80,7 @@ const leftGridOptions: GridOptions = {
     rowSelection: 'multiple',
     rowDragMultiRow: true,
     suppressRowClickSelection: true,
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.athlete;
     },
     rowDragManaged: true,
@@ -100,7 +100,7 @@ const rightGridOptions: GridOptions = {
         filter: true,
         resizable: true
     },
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.athlete;
     },
     rowDragManaged: true,

@@ -1,4 +1,4 @@
-import {Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams} from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -17,16 +17,16 @@ const gridOptions: GridOptions = {
                 }
             },
         },
-        {field: 'athlete', minWidth: 200},
-        {field: 'age'},
-        {field: 'country', minWidth: 200, checkboxSelection: true},
-        {field: 'year'},
-        {field: 'date', minWidth: 150},
-        {field: 'sport', minWidth: 150},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'},
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 200, checkboxSelection: true },
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
@@ -36,7 +36,7 @@ const gridOptions: GridOptions = {
     rowBuffer: 0,
     // debug: true,
     rowSelection: 'multiple',
-    isRowSelectable: function (rowNode) {
+    isRowSelectable: function (rowNode: RowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false
     },
     // tell grid we want virtual row model type

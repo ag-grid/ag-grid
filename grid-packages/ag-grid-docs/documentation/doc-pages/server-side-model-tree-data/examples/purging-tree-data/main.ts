@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroupOpenByDefaultParams, IsServerSideGroup } from '@ag-grid-community/core'
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
@@ -21,18 +21,18 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   animateRows: true,
   cacheBlockSize: 10,
-  isServerSideGroupOpenByDefault: function (params) {
+  isServerSideGroupOpenByDefault: function (params: IsServerSideGroupOpenByDefaultParams) {
     var isKathrynPowers =
       params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers'
     var isMabelWard =
       params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward'
     return isKathrynPowers || isMabelWard
   },
-  isServerSideGroup: function (dataItem) {
+  isServerSideGroup: function (dataItem: any) {
     // indicate if node is a group
     return dataItem.group
   },
-  getServerSideGroupKey: function (dataItem) {
+  getServerSideGroupKey: function (dataItem: any) {
     // specify which group key to use
     return dataItem.employeeName
   },

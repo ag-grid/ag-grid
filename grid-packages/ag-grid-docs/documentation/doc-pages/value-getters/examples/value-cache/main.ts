@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
 
 var callCount = 1
 
@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   enableRangeSelection: true,
   groupDefaultExpanded: 1,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.id
   },
   onCellValueChanged: function () {

@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IDetailCellRendererParams, IServerSideDatasource } from '@ag-grid-community/core'
+import { GetDetailRowDataParams, Grid, GridOptions, GridReadyEvent, IDetailCellRendererParams, IServerSideDatasource, RowHeightParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -35,13 +35,13 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: function (params: GetDetailRowDataParams) {
       // supply details records to detail cell renderer (i.e. detail grid)
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
 
-  getRowHeight: function (params) {
+  getRowHeight: function (params: RowHeightParams) {
     if (params.node && params.node.detail) {
       var offset = 60
       var sizes = params.api.getSizesForCurrentTheme() || {};
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
       return allDetailRowHeight + (sizes.headerHeight || 0) + offset
     }
   },
-  onGridReady: function (params) {
+  onGridReady: function (params: GridReadyEvent) {
     setTimeout(function () {
       // expand some master row
       var someRow = params.api.getRowNode('1')

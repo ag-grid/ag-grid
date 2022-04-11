@@ -1,4 +1,4 @@
-import { Grid, ChartType, ColDef, CreateRangeChartParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, ChartMenuOptions } from '@ag-grid-community/core'
+import { Grid, ChartType, ColDef, CreateRangeChartParams, GetRowIdParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams, ChartMenuOptions } from '@ag-grid-community/core'
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [
@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   enableCharts: true,
   suppressAggFuncInHeader: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.trade
   },
   onFirstDataRendered: function (params) {

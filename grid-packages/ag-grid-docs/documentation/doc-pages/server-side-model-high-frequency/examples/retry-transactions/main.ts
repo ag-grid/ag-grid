@@ -1,4 +1,4 @@
-import { Grid, AsyncTransactionsFlushed, ColDef, GridOptions, IServerSideDatasource, ServerSideTransactionResult, ServerSideTransactionResultStatus } from '@ag-grid-community/core'
+import { Grid, AsyncTransactionsFlushed, ColDef, GridOptions, IServerSideDatasource, ServerSideTransactionResult, ServerSideTransactionResultStatus, GetRowIdParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [{ field: 'product' }, { field: 'value' }]
 
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     gridOptions.api!.setServerSideDatasource(dataSource)
   },
 
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.product
   },
   rowModelType: 'serverSide',

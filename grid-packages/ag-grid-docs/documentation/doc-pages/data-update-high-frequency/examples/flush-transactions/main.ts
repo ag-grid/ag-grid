@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 // defined and updated in data.js
 declare var globalRowData: any[];
 
@@ -152,7 +152,7 @@ const gridOptions: GridOptions = {
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   asyncTransactionWaitMillis: 4000,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.trade
   },
   defaultColDef: {

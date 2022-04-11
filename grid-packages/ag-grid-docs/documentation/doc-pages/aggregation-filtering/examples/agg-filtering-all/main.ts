@@ -5,10 +5,12 @@ const gridOptions: GridOptions = {
     { field: 'country', rowGroup: true, hide: true },
     { field: 'athlete' },
     { field: 'year' },
-    { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
+    filter: true,
+    floatingFilter: true,
     resizable: true,
   },
   groupDefaultExpanded: -1,

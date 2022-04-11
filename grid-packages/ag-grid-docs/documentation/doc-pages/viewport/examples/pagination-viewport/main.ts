@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams, ICellRendererComp, GetRowIdParams } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
 
@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
   viewportRowModelPageSize: 1,
   viewportRowModelBufferSize: 0,
   // implement this so that we can do selection
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     // the code is unique, so perfect for the id
     return params.data.code
   },

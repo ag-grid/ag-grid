@@ -4,11 +4,13 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'athlete' },
-    { field: 'year', filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'year', filter: 'agNumberColumnFilter' },
     { field: 'total', aggFunc: 'sum' },
   ],
   defaultColDef: {
     flex: 1,
+    filter: true,
+    floatingFilter: true,
     resizable: true,
   },
   groupDefaultExpanded: -1,

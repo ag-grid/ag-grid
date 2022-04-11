@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, enableRowGroup: true },
@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
   },
-  processSecondaryColDef: (colDef) => {
+  processSecondaryColDef: (colDef: ColDef) => {
     colDef.filter = 'agNumberColumnFilter';
     colDef.floatingFilter = true;
   },

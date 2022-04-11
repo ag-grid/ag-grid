@@ -1,4 +1,4 @@
-import { Grid, GridOptions, CellEditRequestEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     editable: true,
   },
-  getRowId: params => params.data.id,
+  getRowId: (params: GetRowIdParams) => params.data.id,
   readOnlyEdit: true,
   onCellEditRequest: onCellEditRequest
 }
@@ -27,7 +27,7 @@ function onCellEditRequest(event: CellEditRequestEvent) {
   const oldData = event.data;
   const field = event.colDef.field;
   const newValue = event.newValue;
-  const newData = {...oldData};
+  const newData = { ...oldData };
   newData[field!] = event.newValue;
 
   console.log('onCellEditRequest, updating ' + field + ' to ' + newValue);
@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then( (data: any[]) => {
-      data.forEach( (item, index) => item.id = index);
+    .then((data: any[]) => {
+      data.forEach((item, index) => item.id = index);
       gridOptions.api!.setRowData(data);
     });
 })

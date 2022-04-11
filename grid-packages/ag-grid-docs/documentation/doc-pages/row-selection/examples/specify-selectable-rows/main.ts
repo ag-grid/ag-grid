@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
   },
   rowSelection: 'multiple',
   suppressMenuHide: true,
-  isRowSelectable: function (rowNode) {
+  isRowSelectable: function (rowNode: RowNode) {
     return rowNode.data ? rowNode.data.year < 2007 : false
   },
 }

@@ -1,4 +1,4 @@
-import {ColumnApi, Grid, GridOptions} from '@ag-grid-community/core'
+import { ColumnApi, Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core'
 
 function getInitialData() {
     const data = [];
@@ -86,7 +86,7 @@ function filter(list: any[], callback: any) {
 
 function createItem() {
     const item = {
-        group: ['A','B','C'][Math.floor(Math.random()*3)],
+        group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
         symbol: createUniqueRandomSymbol(),
         price: Math.floor(Math.random() * 100),
     };
@@ -101,15 +101,15 @@ function setGroupingEnabled(enabled: boolean, columnApi: ColumnApi) {
     if (enabled) {
         columnApi.applyColumnState({
             state: [
-                {colId: 'group', rowGroup: true, hide: true},
-                {colId: 'symbol', hide: true},
+                { colId: 'group', rowGroup: true, hide: true },
+                { colId: 'symbol', hide: true },
             ],
         })
     } else {
         columnApi.applyColumnState({
             state: [
-                {colId: 'group', rowGroup: false, hide: false},
-                {colId: 'symbol', hide: false},
+                { colId: 'group', rowGroup: false, hide: false },
+                { colId: 'symbol', hide: false },
             ],
         })
     }
@@ -154,9 +154,9 @@ function reverseItems() {
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        {headerName: 'Symbol', field: 'symbol'},
-        {headerName: 'Price', field: 'price'},
-        {headerName: 'Group', field: 'group'},
+        { headerName: 'Symbol', field: 'symbol' },
+        { headerName: 'Price', field: 'price' },
+        { headerName: 'Group', field: 'group' },
     ],
     defaultColDef: {
         width: 250,
@@ -171,11 +171,11 @@ const gridOptions: GridOptions = {
         field: 'symbol',
     },
     statusBar: {
-        statusPanels: [{statusPanel: 'agAggregationComponent', align: 'right'}],
+        statusPanels: [{ statusPanel: 'agAggregationComponent', align: 'right' }],
     },
     groupDefaultExpanded: 1,
     rowData: immutableStore,
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.symbol
     },
     onGridReady: function (params) {

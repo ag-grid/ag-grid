@@ -7,9 +7,9 @@ When [Row Grouping](/grouping/), aggregation functions can be applied to any col
 
 ## Enabling Aggregation
 
-The simplest way to enable aggregations is with the built-in agg functions; `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. 
+The simplest way to enable aggregations is with the built-in aggregation functions; `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. 
 
-The following snippet shows how these agg functions can be applied to value columns via `colDef.aggFunc`:
+The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
 
 <snippet>
 const gridOptions = {
@@ -23,7 +23,7 @@ const gridOptions = {
 }
 </snippet>
 
-The example below uses the configuration shown above. Note the following:
+The example below uses the same built-in aggregation functions shown in the snippet above. Note the following:
 
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
 

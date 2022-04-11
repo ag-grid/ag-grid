@@ -1,4 +1,4 @@
-import { Grid, CellRange, GridOptions, RangeSelectionChangedEvent } from '@ag-grid-community/core'
+import { Grid, CellRange, GridOptions, RangeSelectionChangedEvent, ProcessCellForExportParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   onRangeSelectionChanged: onRangeSelectionChanged,
 
-  processCellForClipboard: function (params) {
+  processCellForClipboard: function (params: ProcessCellForExportParams) {
     if (
       params.column.getColId() === 'athlete' &&
       params.value &&
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
     return params.value
   },
 
-  processCellFromClipboard: function (params) {
+  processCellFromClipboard: function (params: ProcessCellForExportParams) {
     if (
       params.column.getColId() === 'athlete' &&
       params.value &&

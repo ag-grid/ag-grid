@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core'
 
 var colorIndex = 0
 var colors = ['#000000', '#000066', '#006600', '#660000']
@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   rowData: createData(12),
-  getRowStyle: function () {
+  getRowStyle: function (params: RowClassParams): RowStyle | undefined {
     return {
       backgroundColor: colors[colorIndex],
     }

@@ -103,6 +103,8 @@ const GridExample = () => {
                     onFirstDataRendered={params => onFirstDataRendered(params)} />
             </div>
 
+            <div className="divider"></div>
+
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     rowData={rowData}

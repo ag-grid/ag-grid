@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 
 const columnDefs: ColDef[] = [
@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   columnDefs: columnDefs,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.code
   },
   onGridReady: function (params) {

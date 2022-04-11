@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -294,7 +294,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   suppressAggFuncInHeader: true,
   suppressRowClickSelection: true,
-  getRowId: function (params) {
+  getRowId: function (params: GetRowIdParams) {
     return params.data.trade
   },
   onGridReady: function (params) {

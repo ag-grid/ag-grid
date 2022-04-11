@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, GetRowIdParams } from '@ag-grid-community/core'
 
 const products = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper'];
 const all_products = [
@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         width: 250,
         resizable: true,
     },
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.product
     },
     rowSelection: 'multiple',

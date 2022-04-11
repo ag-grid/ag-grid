@@ -7,7 +7,10 @@ import {
     IGetRowsParams,
     RowClassParams,
     RowStyle,
-    ValueFormatterParams
+    ValueFormatterParams,
+    GetRowIdParams,
+    GridReadyEvent,
+    FirstDataRenderedEvent
 } from '@ag-grid-community/core'
 
 const valueFormatter = function (params: ValueFormatterParams) {
@@ -78,11 +81,11 @@ const gridOptions: GridOptions = {
     infiniteInitialRowCount: 500,
     maxConcurrentDatasourceRequests: 2,
 
-    getRowId: function (params) {
+    getRowId: function (params: GetRowIdParams) {
         return params.data.id.toString()
     },
 
-    onGridReady: function (params) {
+    onGridReady: function (params: GridReadyEvent) {
         sequenceId = 1
         allOfTheData = []
         for (let i = 0; i < 1000; i++) {
@@ -90,7 +93,7 @@ const gridOptions: GridOptions = {
         }
     },
 
-    onFirstDataRendered: function (params) {
+    onFirstDataRendered: function (params: FirstDataRenderedEvent) {
         params.api.sizeColumnsToFit()
     },
 

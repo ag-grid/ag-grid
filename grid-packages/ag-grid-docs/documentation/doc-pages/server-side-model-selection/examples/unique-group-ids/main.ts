@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -18,9 +18,9 @@ const gridOptions: GridOptions = {
     minWidth: 280,
     field: 'athlete',
   },
-  getRowId: params => {
+  getRowId: (params: GetRowIdParams) => {
     // if leaf level, we have ID
-    if (params.data.id!=null) {
+    if (params.data.id != null) {
       return params.data.id;
     }
 
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
     var parts = [];
 
     // if parent groups, add the value for the parent group
-    if (params.parentKeys){
+    if (params.parentKeys) {
       parts.push(...params.parentKeys);
     }
 
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (data) {
 
       // give an ID to each piece of row data
-      data.forEach( (item: any, index: number) => item.id = index );
+      data.forEach((item: any, index: number) => item.id = index);
 
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)
