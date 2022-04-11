@@ -48,7 +48,6 @@ export class RowRenderer extends BeanStub {
 
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
-    @Autowired("$scope") private $scope: any;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
@@ -332,7 +331,6 @@ export class RowRenderer extends BeanStub {
 
         rowNodes.forEach(rowNode => {
             const rowCtrl = new RowCtrl(
-                this.$scope,
                 rowNode,
                 this.beans,
                 false,
@@ -847,7 +845,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.updateAllRowCtrls();
-        this.checkAngularCompile();
         this.gridBodyCtrl.updateRowCount();
     }
 
@@ -1013,16 +1010,6 @@ export class RowRenderer extends BeanStub {
                 this.dispatchDisplayedRowsChanged();
             });
             executeInAWhile(executeInAWhileFuncs);
-        }
-    }
-
-    private checkAngularCompile(): void {
-        // if we are doing angular compiling, then do digest the scope here
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            // we do it in a timeout, in case we are already in an apply
-            window.setTimeout(() => {
-                this.$scope.$apply();
-            }, 0);
         }
     }
 
@@ -1204,7 +1191,6 @@ export class RowRenderer extends BeanStub {
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(
-            this.$scope,
             rowNode,
             this.beans,
             animate,

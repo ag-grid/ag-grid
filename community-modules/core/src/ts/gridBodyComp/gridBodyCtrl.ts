@@ -58,7 +58,6 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
-    @Autowired('$scope') private $scope: any;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -68,8 +67,6 @@ export class GridBodyCtrl extends BeanStub {
 
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
-
-    private angularApplyTriggered = false;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
@@ -102,10 +99,6 @@ export class GridBodyCtrl extends BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
-
-        if (this.$scope) {
-            this.addAngularApplyCheck();
-        }
 
         this.ctrlsService.registerGridBodyCtrl(this);
     }
@@ -364,23 +357,5 @@ export class GridBodyCtrl extends BeanStub {
     // + focusService
     public removeScrollEventListener(listener: () => void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
-    }
-
-    public requestAngularApply(): void {
-        if (this.angularApplyTriggered) { return; }
-
-        this.angularApplyTriggered = true;
-
-        window.setTimeout(() => {
-            this.angularApplyTriggered = false;
-            this.$scope.$apply();
-        }, 0);
-    }
-
-    private addAngularApplyCheck(): void {
-        // these are the events we need to do an apply after - these are the ones that can end up
-        // with columns added or removed
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.requestAngularApply());
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, () => this.requestAngularApply());
     }
 }

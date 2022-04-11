@@ -25,7 +25,6 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
 
     agGridReact: any;
     frameworkComponentWrapper: any;
-    $compile: any;
     pinned: string;
     /** @deprecated */
     autoHeight: boolean;

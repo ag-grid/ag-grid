@@ -1257,11 +1257,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "template": {
-      "description": "/** Cell template to use for cell. Useful for AngularJS cells. */",
+      "description": "/** Cell template to use for cell. */",
       "type": { "returnType": "string", "optional": true }
     },
     "templateUrl": {
-      "description": "/** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */",
+      "description": "/** Cell template URL to load template from to use for cell. */",
       "type": { "returnType": "string", "optional": true }
     },
     "pivotValueColumn": {
@@ -2152,10 +2152,6 @@
     "rowIndex": {
       "description": "/** The index of the row */",
       "type": { "returnType": "number", "optional": false }
-    },
-    "$scope": {
-      "description": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "type": { "returnType": "any", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -4904,10 +4900,6 @@
     "rowIndex": {
       "description": "/** The index of the row */",
       "type": { "returnType": "number", "optional": false }
-    },
-    "$scope": {
-      "description": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "type": { "returnType": "any", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7823,7 +7815,6 @@
         "optional": false
       }
     },
-    "scope": { "type": { "returnType": "any", "optional": false } },
     "guiPromise": {
       "type": {
         "returnType": "AgPromise<HTMLElement | null>",
@@ -8824,8 +8815,6 @@
     "globalEventListener": {
       "type": { "returnType": "Function", "optional": true }
     },
-    "$scope": { "type": { "returnType": "any", "optional": true } },
-    "$compile": { "type": { "returnType": "any", "optional": true } },
     "frameworkOverrides": {
       "type": { "returnType": "IFrameworkOverrides", "optional": true }
     },
@@ -13502,10 +13491,6 @@
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "onKeyDown": {
       "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "type": {
@@ -15792,10 +15777,6 @@
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "onKeyDown": {
       "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "type": {
@@ -16880,10 +16861,6 @@
     "column": {
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -17971,7 +17948,6 @@
     "frameworkComponentWrapper": {
       "type": { "returnType": "any", "optional": false }
     },
-    "$compile": { "type": { "returnType": "any", "optional": false } },
     "pinned": { "type": { "returnType": "string", "optional": false } },
     "autoHeight": {
       "description": "/** @deprecated */",
@@ -18012,10 +17988,6 @@
     "column": {
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -18402,10 +18374,6 @@
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "onKeyDown": {
       "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "type": {
@@ -18497,10 +18465,6 @@
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "onKeyDown": {
       "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
       "type": {
@@ -18591,10 +18555,6 @@
     "cellStartedEdit": {
       "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "type": { "returnType": "boolean", "optional": false }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "onKeyDown": {
       "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
@@ -18749,7 +18709,6 @@
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
-    "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {
       "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": false }
@@ -18781,10 +18740,6 @@
     "column": {
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -18880,10 +18835,6 @@
     "column": {
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -19044,10 +18995,6 @@
     "column": {
       "description": "/** The cell's column. */",
       "type": { "returnType": "Column", "optional": true }
-    },
-    "$scope": {
-      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
-      "type": { "returnType": "any", "optional": false }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -19391,8 +19338,7 @@
     "pinned": { "type": { "returnType": "string | null", "optional": true } },
     "extraCssClass": { "type": { "returnType": "string", "optional": true } },
     "rowFocused": { "type": { "returnType": "boolean", "optional": true } },
-    "fadeRowIn": { "type": { "returnType": "boolean", "optional": true } },
-    "scope": { "type": { "returnType": "any", "optional": true } }
+    "fadeRowIn": { "type": { "returnType": "boolean", "optional": true } }
   },
   "RowType": {},
   "IRowComp": {
@@ -21197,11 +21143,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "template": {
-      "description": "/** Cell template to use for cell. Useful for AngularJS cells. */",
+      "description": "/** Cell template to use for cell. */",
       "type": { "returnType": "string", "optional": true }
     },
     "templateUrl": {
-      "description": "/** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */",
+      "description": "/** Cell template URL to load template from to use for cell. */",
       "type": { "returnType": "string", "optional": true }
     },
     "pivotValueColumn": {

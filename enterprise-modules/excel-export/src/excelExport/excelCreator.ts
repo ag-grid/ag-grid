@@ -264,7 +264,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
                 rowIndex: rowIndex,
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                $scope: null,
                 context: this.gridOptionsWrapper.getContext()
             },
             (className: string) => {

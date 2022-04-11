@@ -53,7 +53,6 @@ export { ColDefUtil } from "ag-grid-community";
 export { UserComponentRegistry } from "ag-grid-community";
 export { UserComponentFactory, UserCompDetails } from "ag-grid-community";
 export { ComponentType } from "ag-grid-community";
-export { initialiseAgGridWithAngular1 } from "ag-grid-community";
 export { BeanStub } from "ag-grid-community";
 export { Context, ComponentMeta, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy } from "ag-grid-community";
 export { QuerySelector, RefSelector } from "ag-grid-community";

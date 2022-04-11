@@ -49,8 +49,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private rowCtrl: RowCtrl | null;
 
-    private scope: any = null;
-
     private cellCtrl: CellCtrl;
 
     private firstRender: boolean;
@@ -67,10 +65,9 @@ export class CellComp extends Component implements TooltipParentComp {
     private rendererVersion = 0;
     private editorVersion = 0;
 
-    constructor(scope: any, beans: Beans, cellCtrl: CellCtrl,
+    constructor(beans: Beans, cellCtrl: CellCtrl,
         printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
-        this.scope = scope;
         this.beans = beans;
         this.column = cellCtrl.getColumn();
         this.rowNode = cellCtrl.getRowNode();
@@ -118,7 +115,7 @@ export class CellComp extends Component implements TooltipParentComp {
         };
 
         this.cellCtrl = cellCtrl;
-        cellCtrl.setComp(compProxy, this.scope, this.getGui(), this.eCellWrapper, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
     }
 
     private getParentOfValue(): HTMLElement {
@@ -143,7 +140,6 @@ export class CellComp extends Component implements TooltipParentComp {
         // this means firstRender will be true for one pass only, as it's initialised to undefined
         this.firstRender = this.firstRender == null;
 
-        const usingAngular1Template = this.isUsingAngular1Template();
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
         const controlWrapperChanged = this.refreshWrapper(false);
@@ -158,11 +154,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         } else {
             this.destroyRenderer();
-            if (usingAngular1Template) {
-                this.insertValueUsingAngular1Template();
-            } else {
-                this.insertValueWithoutCellRenderer(valueToDisplay);
-            }
+            this.insertValueWithoutCellRenderer(valueToDisplay);
         }
     }
 
@@ -286,30 +278,6 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private insertValueUsingAngular1Template(): void {
-        const { template, templateUrl } = this.column.getColDef();
-
-        let templateToInsert: string | undefined;
-
-        if (template != null) {
-            templateToInsert = template;
-        } else if (templateUrl != null) {
-            // first time this happens it will return nothing, as the template will still be loading async,
-            // however once loaded it will refresh the cell and second time around it will be returned sync
-            // as in cache.
-            templateToInsert = this.beans.templateService.getTemplate(templateUrl,
-                () => this.cellCtrl.refreshCell({forceRefresh: true}));
-        } else {
-            // should never happen, as we only enter this method when template or templateUrl exist
-        }
-
-        if (templateToInsert != null) {
-            const eParent = this.getParentOfValue();
-            eParent.innerHTML = templateToInsert;
-            this.updateAngular1ScopeAndCompile();
-        }
-    }
-
     private destroyEditorAndRenderer(): void {
         this.destroyRenderer();
         this.destroyEditor();
@@ -392,12 +360,6 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private isUsingAngular1Template(): boolean {
-        const colDef = this.column.getColDef();
-        const res = colDef.template != null || colDef.templateUrl != null;
-        return res;
-    }
-
     public getCtrl(): CellCtrl {
         return this.cellCtrl;
     }
@@ -430,7 +392,6 @@ export class CellComp extends Component implements TooltipParentComp {
             const eParent = this.getParentOfValue();
             clearElement(eParent);
             eParent.appendChild(this.cellRendererGui);
-            this.updateAngular1ScopeAndCompile();
         }
     }
 
@@ -584,21 +545,5 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         clearElement(this.getParentOfValue());
-    }
-
-    private updateAngular1ScopeAndCompile() {
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
-            this.scope.data = { ...this.rowNode.data };
-
-            if (this.angularCompiledElement) {
-                this.angularCompiledElement.remove();
-            }
-
-            const eParent = this.getParentOfValue();
-            this.angularCompiledElement = this.beans.$compile(eParent.children)(this.scope);
-
-            // because this.scope is set, we are guaranteed GridBodyComp is vanilla JS, ie it's GridBodyComp.ts from AG Stack and and not react
-            this.beans.ctrlsService.getGridBodyCtrl().requestAngularApply();
-        }
     }
 }

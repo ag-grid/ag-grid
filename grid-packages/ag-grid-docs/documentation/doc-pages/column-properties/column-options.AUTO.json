@@ -560,11 +560,11 @@
     "type": { "returnType": "boolean" }
   },
   "template": {
-    "description": "/** Cell template to use for cell. Useful for AngularJS cells. */",
+    "description": "/** Cell template to use for cell. */",
     "type": { "returnType": "string" }
   },
   "templateUrl": {
-    "description": "/** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */",
+    "description": "/** Cell template URL to load template from to use for cell. */",
     "type": { "returnType": "string" }
   },
   "pivotValueColumn": {

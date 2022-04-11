@@ -22,7 +22,6 @@ import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
-import { AngularRowUtils } from "./angularRowUtils";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 
@@ -100,9 +99,6 @@ export class RowCtrl extends BeanStub {
 
     private paginationPage: number;
 
-    private parentScope: any;
-    private scope: any;
-
     private lastMouseDownOnDragger = false;
 
     private rowLevel: number;
@@ -122,7 +118,6 @@ export class RowCtrl extends BeanStub {
     private initialTransform: string;
 
     constructor(
-        parentScope: any,
         rowNode: RowNode,
         beans: Beans,
         animateIn: boolean,
@@ -130,7 +125,6 @@ export class RowCtrl extends BeanStub {
         printLayout: boolean
     ) {
         super();
-        this.parentScope = parentScope;
         this.beans = beans;
         this.rowNode = rowNode;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
@@ -142,7 +136,6 @@ export class RowCtrl extends BeanStub {
         this.setAnimateFlags(animateIn);
 
         this.rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
-        this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
@@ -332,20 +325,8 @@ export class RowCtrl extends BeanStub {
         gui.rowComp.showFullWidth(compDetails);
     }
 
-    public getScope(): any {
-        return this.scope;
-    }
-
     public isPrintLayout(): boolean {
         return this.printLayout;
-    }
-
-    private setupAngular1Scope(): void {
-        const scopeResult = AngularRowUtils.createChildScopeOrNull(this.rowNode, this.parentScope, this.beans.gridOptionsWrapper);
-        if (scopeResult) {
-            this.scope = scopeResult.scope;
-            this.addDestroyFunc(scopeResult.scopeDestroyFunc);
-        }
     }
 
     // use by autoWidthCalculator, as it clones the elements
@@ -929,8 +910,6 @@ export class RowCtrl extends BeanStub {
             node: this.rowNode,
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
-            $scope: this.scope ? this.scope : this.parentScope,
-            $compile: this.beans.$compile,
             rowIndex: this.rowNode.rowIndex!,
             api: this.beans.gridOptionsWrapper.getApi()!,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
@@ -1048,7 +1027,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private postProcessClassesFromGridOptions(): void {
-        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode, this.scope);
+        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode);
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
@@ -1058,8 +1037,7 @@ export class RowCtrl extends BeanStub {
 
     private postProcessRowClassRules(): void {
         this.beans.rowCssClassCalculator.processRowClassRules(
-            this.rowNode, this.scope,
-            (className: string) => {
+            this.rowNode, (className: string) => {
                 this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass(className, true));
             },
             (className: string) => {
@@ -1100,7 +1078,6 @@ export class RowCtrl extends BeanStub {
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
             expandable: this.rowNode.isExpandable(),
-            scope: this.scope,
             pinned: pinned
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
@@ -1123,8 +1100,7 @@ export class RowCtrl extends BeanStub {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: this.rowNode.data,
                 node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope
+                rowIndex: this.rowNode.rowIndex!
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }

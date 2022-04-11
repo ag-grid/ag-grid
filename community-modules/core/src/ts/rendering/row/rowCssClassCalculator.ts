@@ -22,7 +22,6 @@ export interface RowCssClassCalculatorParams {
     extraCssClass?: string;
     rowFocused?: boolean;
     fadeRowIn?: boolean;
-    scope?: any;
 }
 
 @Bean('rowCssClassCalculator')
@@ -79,8 +78,8 @@ export class RowCssClassCalculator {
             classes.push('ag-row-dragging');
         }
 
-        pushAll(classes, this.processClassesFromGridOptions(params.rowNode, params.scope));
-        pushAll(classes, this.preProcessRowClassRules(params.rowNode, params.scope));
+        pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        pushAll(classes, this.preProcessRowClassRules(params.rowNode));
 
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -105,7 +104,7 @@ export class RowCssClassCalculator {
         return classes;
     }
 
-    public processClassesFromGridOptions(rowNode: RowNode, scope: any): string[] {
+    public processClassesFromGridOptions(rowNode: RowNode): string[] {
         const res: string[] = [];
 
         const process = (rowCls: string | string[] | undefined) => {
@@ -133,8 +132,7 @@ export class RowCssClassCalculator {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,
-                rowIndex: rowNode.rowIndex!,
-                $scope: scope
+                rowIndex: rowNode.rowIndex!
             };
             const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
@@ -143,11 +141,10 @@ export class RowCssClassCalculator {
         return res;
     }
 
-    private preProcessRowClassRules(rowNode: RowNode, scope: any): string[] {
+    private preProcessRowClassRules(rowNode: RowNode): string[] {
         const res: string[] = [];
 
-        this.processRowClassRules(rowNode, scope,
-            (className: string) => {
+        this.processRowClassRules(rowNode, (className: string) => {
                 res.push(className);
             },
             (className: string) => {
@@ -159,14 +156,13 @@ export class RowCssClassCalculator {
         return res;
     }
 
-    public processRowClassRules(rowNode: RowNode, scope: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
+    public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
         const rowClassParams: RowClassParams = {
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex!,
             api: this.gridOptionsWrapper.getApi()!,
             columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            $scope: scope,
             context: this.gridOptionsWrapper.getContext()
         };
 

@@ -5,8 +5,6 @@ import { BeanStub } from "./context/beanStub";
 @Bean('templateService')
 export class TemplateService extends BeanStub {
 
-    @Autowired('$scope') private $scope: any;
-
     private templateCache:any = {};
     private waitingCallbacks:any = {};
 
@@ -62,13 +60,6 @@ export class TemplateService extends BeanStub {
             // is the cell renderer, and it passes the 'cellRefresh' method in as the callback
             // which doesn't take any parameters.
             callback();
-        }
-
-        if (this.$scope) {
-            const that = this;
-            window.setTimeout(function() {
-                that.$scope.$apply();
-            }, 0);
         }
     }
 }

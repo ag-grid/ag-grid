@@ -24,7 +24,6 @@ export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
-export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 
 // context
 export { BeanStub } from "./context/beanStub";

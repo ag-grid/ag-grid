@@ -103,7 +103,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             const formattedValues = availableValues.map(value => {
                 const { column, filterParams } = this.params;
                 const formattedValue = this.valueFormatterService.formatValue(
-                    column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+                    column, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
 
                 const valueToRender = formattedValue != null ? formattedValue : value;
 

@@ -347,7 +347,7 @@ const CellComp = (props: {
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
 
-        cellCtrl.setComp(compProxy, null, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
 
     }, []);
 

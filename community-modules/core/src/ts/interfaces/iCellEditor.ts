@@ -78,8 +78,6 @@ export interface ICellEditorParams extends AgGridCommon {
     /** If doing full row edit, this is true if the cell is the one that started the edit
      *  (eg it is the cell the use double clicked on, or pressed a key on etc). */
     cellStartedEdit: boolean;
-    /** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */
-    $scope: any;
     /** callback to tell grid a key was pressed - useful to pass control key events (tab,
      *  arrows etc) back to grid - however you do */
     onKeyDown: (event: KeyboardEvent) => void;

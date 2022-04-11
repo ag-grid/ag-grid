@@ -50,7 +50,6 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('$scope') private $scope: any;
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -473,12 +472,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             newPage: false
         };
         this.eventService.dispatchEvent(event);
-
-        if (this.$scope) {
-            window.setTimeout(() => {
-                this.$scope.$apply();
-            }, 0);
-        }
     }
 
     public isEmpty(): boolean {
