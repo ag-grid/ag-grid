@@ -1,34 +1,34 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from "ag-charts-community"
+import { AgChartOptions } from "ag-charts-community"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   theme: {
-    palette: { fills: ['#f44336', '#8bc34a'], strokes: ['#ab2f26', '#618834'] },
+    palette: { fills: ["#f3622d", "#41a9c9"], strokes: ["#aa4520", "#2d768d"] },
   },
   title: {
-    text: 'Microsoft Internet Explorer vs Google Chrome',
+    text: "Microsoft Internet Explorer vs Google Chrome",
   },
   subtitle: {
-    text: '2009-2019',
+    text: "2009-2019",
   },
   data: getData(),
   series: [
     {
-      type: 'area',
-      xKey: 'year',
-      yKey: 'ie',
-      yName: 'IE',
+      type: "area",
+      xKey: "year",
+      yKey: "ie",
+      yName: "IE",
       fillOpacity: 0.7,
       marker: {
         enabled: true,
       },
     },
     {
-      type: 'area',
-      xKey: 'year',
-      yKey: 'chrome',
-      yName: 'Chrome',
+      type: "area",
+      xKey: "year",
+      yKey: "chrome",
+      yName: "Chrome",
       fillOpacity: 0.7,
       marker: {
         enabled: true,
@@ -36,7 +36,7 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: 'top',
+    position: "top",
   },
 }
 
