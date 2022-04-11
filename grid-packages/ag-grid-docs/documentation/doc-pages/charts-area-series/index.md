@@ -6,7 +6,7 @@ Area series are line series with the area under the line filled, placing more em
 
 ## Single Area Series
 
-To create a simple area chart we need to use series type `'area'`. We also have to provide the `xKey` and at least one `yKey`. A minimal `'area'` series config would therefore look like this:
+To create a simple area chart we need to use series type `'area'`. We also have to provide the `xKey` and `yKey` properties. A minimal `'area'` series config would therefore look like this:
 
 ```js
 series: [{
@@ -16,7 +16,7 @@ series: [{
 }]
 ```
 
-In the snippet above we are using `'ie'` as the only `yKey`, to show market share of just this internet browser. Using this simple series config produces the following chart:
+In the snippet above we are using `'ie'` as the `yKey` to show market share of this internet browser. Using this simple series config produces the following chart:
 
 <chart-example title='Single Area Series' name='single-area' type='generated'></chart-example>
 
@@ -26,17 +26,22 @@ In the snippet above we are using `'ie'` as the only `yKey`, to show market shar
 To enable area markers, all we need to do is add this to the series config:
 
 ```js
-marker: {
-    enabled: true
-}
+series: [{
+    ...
+    marker: {
+        enabled: true
+    }
+}]
 ```
 
-When markers are enabled, the tooltips will be shown on hover. In this case the values shown are percentage values, however there is no `%` suffix because the series don't know about the nature of the data (as it is designed to work with all kinds of data). So for the purposes of this example we additionally provide a `tooltipRenderer` to add the `%` suffix. After this change, the tooltips will change like so:
+Tooltips will be shown on hover, which in this case show percentage values without a `%` suffix.
+
+The series are designed to work with all kinds of data and are unaware of the nature of the values. So we additionally provide a `tooltipRenderer` to add the `%` suffix. After this change, the tooltips will change like so:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="default-area-tooltip.png" alt="Default Area Tooltip" width="200px" constrained="true">Before</image-caption>
+    <image-caption src="default-area-tooltip.png" alt="Default Area Tooltip" width="256px" constrained="true">Before</image-caption>
     <div style="margin: auto 0;">--></div>
-    <image-caption src="custom-area-tooltip.png" alt="Custom Area Tooltip" width="300px" constrained="true">After</image-caption>
+    <image-caption src="custom-area-tooltip.png" alt="Custom Area Tooltip" width="256px" constrained="true">After</image-caption>
 </div>
 
 The final result can be seen in the example below.
@@ -56,7 +61,7 @@ series: [{
 }]
 ```
 
-The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-area.label).
+The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-AgAreaSeriesOptions-label).
 
 <chart-example title='Single Area Series with Markers and Labels' name='single-area-markers-labels' type='generated'></chart-example>
 
@@ -97,10 +102,10 @@ The `stacked: true` property controls series stacking behaviour. For example, to
 
 ```js
 series: [
-    { type: 'area', xKey: 'year', stacked: true, yKey: 'ie' },
-    { type: 'area', xKey: 'year', stacked: true, yKey: 'firefox' },
-    { type: 'area', xKey: 'year', stacked: true, yKey: 'safari' },
-    { type: 'area', xKey: 'year', stacked: true, yKey: 'chrome' }
+    { type: 'area', xKey: 'year', yKey: 'ie', stacked: true },
+    { type: 'area', xKey: 'year', yKey: 'firefox', stacked: true },
+    { type: 'area', xKey: 'year', yKey: 'safari', stacked: true },
+    { type: 'area', xKey: 'year', yKey: 'chrome', stacked: true }
 ]
 ```
 
@@ -110,7 +115,7 @@ This produces the following chart:
 
 ## Normalized Area Series
 
-Going back to our [stacked area series](#example-stacked-area-series) example, if we wanted to normalize the totals so that for any given year stack levels always added up to a certain value, for example 100%, we could add the following to our series config:
+Following on from our [stacked area series](#example-stacked-area-series) example, if we want to normalize the totals so that for any given year stack levels always added up to a certain value, for example 100%, we could add the following to our series config:
 
 ```js
 normalizedTo: 100

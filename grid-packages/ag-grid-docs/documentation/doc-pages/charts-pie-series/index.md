@@ -2,15 +2,15 @@
 title: "Pie and Doughnut Series"
 ---
 
-This section shows how to create pie charts.
+Pie series are useful for illustrating the numerical proportion of data values. The slices in a pie series show the contribution of individual values to the whole.
 
-Pie series are used for showing how parts relate to the whole, for example if you want to show the market share of each competitor.
+For example, a pie series could be used to visualise the market share of each competitor as a proportion of the total.
 
 ## Basic Configuration
 
 To plot a basic pie all we need is an array of values that will determine the angle of each pie slice. The total of all values will correspond to the full pie.
 
-A basic pie series configuration is shown below:
+A minimal pie series configuration is shown below:
 
 ```js
 series: [{
@@ -42,28 +42,33 @@ Each individual slice can be toggled on and off via the legend.
 
 You might notice that not all of the slices in the chart above have a label. The reason for this is that certain slices can be small, and if there's a cluster of small slices their labels will overlap, resulting in a messy chart. To prevent this from happening the series will only show labels for slices with an angle greater than a certain value, which by default is set to be `20` degrees. This value is adjustable via the `label.minAngle` config:
 
-
 ```js
-label: {
-    minAngle: 20
-}
+series: [{
+    ...
+    label: {
+        minAngle: 20
+    }
+}]
 ```
 
 The label's callout can be configured to have a different `length`, `color` and `strokeWidth`, for example:
 
 ```js
-callout: {
-    colors: 'red',
-    length: 20,
-    strokeWidth: 3
-}
+series: [{
+    ...
+    callout: {
+        colors: ['red'],
+        length: 20,
+        strokeWidth: 3
+    }
+}]
 ```
 
 Please check the [API reference](#api-reference) below to learn more about `label` and `callout`, as well as other series configuration.
 
 ## Variable Slice Radius
 
-Let's say you have the data for both the market share of mobile operating systems and the level of user satisfaction with each OS. We could represent the satisfaction level as the radius of a slice using the `radiusKey` config like so:
+Let's say we have the data for both the market share of mobile operating systems and the level of user satisfaction with each OS. We could represent the satisfaction level as the radius of a slice using the `radiusKey` config like so:
 
 ```js
 series: [{
@@ -74,7 +79,7 @@ series: [{
 }]
 ```
 
-A pie chart where slices can have different radii is also known as a **rose chart**.
+A pie chart where slices have different radii is also known as a **rose chart**.
 
 <chart-example title='Slices with Different Radii' name='slice-radius' type='generated'></chart-example>
 

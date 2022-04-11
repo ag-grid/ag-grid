@@ -5,12 +5,12 @@ title: "Treemap Series"
 Treemap series is used to render hierarchical data structures or trees, where each node in the
 tree is represented by a rectangle, and the value of a node by the area of its rectangle.
 
-The bigger the value, the bigger the rectangle is relative to its siblings. Also, parent nodes
+The bigger the value, the bigger the rectangle is relative to its siblings. Parent nodes
 are represented by rectangles with areas that are the totals of their children.
 
 If the nodes have no value, then their area is divided equally among siblings within their parent node.
 
-The Ag-Charts treemap series uses a popular "squarified" tiling algorithm which tries to keep
+The Ag Charts treemap series uses a popular "squarified" tiling algorithm which tries to keep
 each node's rectangle as square as possible.
 
 Treemap series would be a great fit for visualizing a directory structure (the original purpose of
@@ -19,10 +19,10 @@ or sales breakdown by city, state, and country. And these are just a few example
 
 ## Basic Configuration
 
-`cartesian` and `polar` charts are meant to be used with linear data or, in other words, arrays.
-But since treemaps are used to render tree data, to create a basic treemap we need to use
-another type of chart, a `hierarchy` chart. A basic treemap configuration would therefore look
-like this:
+`cartesian` and `polar` charts are used with linear data or, in other words, arrays.
+Since treemaps are used to render tree data, to create a basic treemap, we need to use a `hierarchy` chart.
+
+A basic treemap configuration would look like this:
 
 ```js
 type: 'hierarchy',
@@ -73,21 +73,19 @@ Feel free to open this example in Plunker to enlarge the size of the component a
 ## Alternative Configuration
 
 Although not very common, treemaps can be used to show the hierarchy without emphasizing size.
-In such a case, you can set the `colorKey` to `undefined`. This will make all sibling tiles within
+In such a case, you can set the `sizeKey` to `undefined`. This will make all sibling tiles within
 the same parent have the same area (but not necessarily the same shape).
 
 The org chart example below takes advantage of that by using the following config:
 
 ```js
-type: 'hierarchy',
-data,
 series: [{
     type: 'treemap',
     labelKey: 'orgHierarchy',
     sizeKey: undefined,  // make all siblings within a parent the same size
     colorKey: undefined, // use node depth value to determine the tile color
     colorParents: true,  // assign color to parent tiles based on their depth too (not just leaf tiles)
-    colorDomain: [0, 2, 4], // depth of 0 will correspond to 'red', of 2 to 'green' and so on
+    colorDomain: [0, 2, 4], // depth of 0 will correspond to 'red', 2 to 'green' and so on
     colorRange: ['red', 'green', 'blue'] // tiles with a depth of 1 will be a blend of 'red' and 'green'
 }]
 ```

@@ -22,8 +22,7 @@ const options: AgChartOptions = {
       tooltip: {
         renderer: function (params) {
           return {
-            content:
-              params.yName + ' - ' + params.yValue + '% - Jan ' + params.xValue,
+            content: `${params.xValue}: ${params.yValue.toFixed(1)}%`,
           }
         },
       },

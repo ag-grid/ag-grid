@@ -38,7 +38,7 @@ series: [
     { type: 'column', xKey: 'quarter', yKey: 'ipad', stacked: true },
     { type: 'column', xKey: 'quarter', yKey: 'wearables', stacked: true },
     { type: 'column', xKey: 'quarter', yKey: 'services', stacked: true },
-}]
+]
 ```
 
 This example demonstrates stacked columns using the `series` configuration above. Additionally:
