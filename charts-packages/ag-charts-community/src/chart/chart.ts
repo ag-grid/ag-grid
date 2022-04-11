@@ -1199,6 +1199,7 @@ export abstract class Chart extends Observable {
     }
 
     private pointerInsideLegend = false;
+    private pointerOverLegendDatum = false;
     private handleLegendMouseMove(event: MouseEvent) {
         if (!this.legend.enabled) {
             return;
@@ -1208,19 +1209,25 @@ export abstract class Chart extends Observable {
         const datum = this.legend.getDatumForPoint(offsetX, offsetY);
 
         const pointerInsideLegend = this.legendBBox.containsPoint(offsetX, offsetY);
-        if (pointerInsideLegend) {
-            if (!this.pointerInsideLegend) {
-                this.pointerInsideLegend = true;
-            }
-        } else if (this.pointerInsideLegend) {
+        const pointerOverLegendDatum = pointerInsideLegend && datum != null;
+
+        if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
+            this.scene.canvas.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
-            if (this.highlightedDatum) {
-                this.highlightedDatum = undefined;
-                this.series.forEach(s => s.updatePending = true);
-            }
+            this.dehighlightDatum();
             return;
         }
+
+        if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
+            this.scene.canvas.element.style.cursor = 'pointer';
+        }
+        if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
+            this.scene.canvas.element.style.cursor = 'default';
+        }
+
+        this.pointerInsideLegend = pointerInsideLegend;
+        this.pointerOverLegendDatum = pointerOverLegendDatum;
 
         const oldHighlightedDatum = this.highlightedDatum;
 
@@ -1281,7 +1288,6 @@ export abstract class Chart extends Observable {
 
     dehighlightDatum(): void {
         if (this.highlightedDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
             this.series.forEach(s => s.updatePending = true);
         }
