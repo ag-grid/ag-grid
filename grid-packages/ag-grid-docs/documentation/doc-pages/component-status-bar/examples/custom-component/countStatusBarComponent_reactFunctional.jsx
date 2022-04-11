@@ -4,7 +4,7 @@ export default props => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
-        setCount(props.api.getModel().getCount());
+        setCount(props.api.getModel().getRowCount());
     }, []);
 
     return (
