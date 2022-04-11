@@ -2,15 +2,15 @@
 title: "Bar and Column Series"
 ---
 
-Because bar series are just transposed column series and have the same configuration, this section covers both series at once.
+Bar series are commonly used to show values for a discrete set of objects, such as item categories, specific items, or time periods such as years or quarters.
 
-Bar series are a good choice to show values for a discrete set of objects, such as item categories, specific items, or time periods such as years or quarters.
+Because bar series are just transposed column series and have the same configuration, this section covers both series at once.
 
 ## Column Series
 
 ### Regular Columns
 
-To create a column chart, we need to use series type `'column'`. We also have to provide the `xKey` and at least one `yKey`.
+To create a column chart, we need to use series type `'column'`. We also have to provide the `xKey` and `yKey` properties.
 
 A minimal `'column'` series config would therefore look like this:
 
@@ -22,7 +22,7 @@ series: [{
 }]
 ```
 
-In the snippet above we are using the `'iphone'` as the only `yKey`, to show revenue per quarter for this product alone. Using this simple series config produces the following chart:
+In the snippet above we are using `'iphone'` as the `yKey`, to show revenue per quarter for this product. Using this simple series config produces the following chart:
 
 <chart-example title='Regular Column Series' name='regular-column' type='generated'></chart-example>
 
@@ -33,26 +33,22 @@ by adding more `column`-type series.
 
 ```js
 series: [
-    { type: 'column', xKey: 'quarter', yKey: 'iphone' },
-    { type: 'column', xKey: 'quarter', yKey: 'mac' },
-    { type: 'column', xKey: 'quarter', yKey: 'ipad' },
-    { type: 'column', xKey: 'quarter', yKey: 'wearables' },
-    { type: 'column', xKey: 'quarter', yKey: 'services' },
+    { type: 'column', xKey: 'quarter', yKey: 'iphone', stacked: true },
+    { type: 'column', xKey: 'quarter', yKey: 'mac', stacked: true },
+    { type: 'column', xKey: 'quarter', yKey: 'ipad', stacked: true },
+    { type: 'column', xKey: 'quarter', yKey: 'wearables', stacked: true },
+    { type: 'column', xKey: 'quarter', yKey: 'services', stacked: true },
 }]
 ```
 
-This example demonstrates stacked columns using the example above. Additionally:
+This example demonstrates stacked columns using the `series` configuration above. Additionally:
 - We set `yName` on each series to configure the display names to provide tooltip headers and legend entries.
 
 <chart-example title='Stacked Column Series' name='stacked-column' type='generated'></chart-example>
 
 ### Grouped Columns
 
-If we want to show quarterly revenue for each product category as grouped columns, we can simply take the [stacked column](#stacked-columns) config from the example above and set the `grouped` property of the series to `true`:
-
-```js
-grouped: true
-```
+If we want to show quarterly revenue for each product category as grouped columns, we can simply take the [stacked column](#stacked-columns) config from the example above and omit the `stacked` property.
 
 This will produce the following chart:</p>
 
@@ -60,7 +56,7 @@ This will produce the following chart:</p>
 
 ### Normalized Columns
 
-Going back to our [stacked column](#stacked-columns) example, if we wanted to normalize the totals so that each column's segments added up to a certain value, for example 100%, we could add the following to our series config:
+Going back to our [stacked column](#stacked-columns) example, if we wanted to normalize the totals so that each column's segments add up to a certain value, for example 100, we could add the following to our `series` config:
 
 ```js
 normalizedTo: 100
@@ -98,28 +94,24 @@ The above formatter produces an attractive chart where the labels don't stick ou
 [[note]]
 | It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
 
-To learn more about label configuration please refer to the [API reference](#reference-bar.label) below.
+To learn more about label configuration please refer to the [API reference](#reference-AgBarSeriesOptions-label) below.
 
 ## Bar Series
 
-`'bar'` series configuration is exactly the same as `'column'` series configuration and all the same modes (regular, stacked, grouped, normalized) apply to bars just as they do to columns.
+`'bar'` series configuration is exactly the same as `'column'` series configuration and all the same modes (stacked, grouped, normalized) apply to bars just as they do to columns.
 
-To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 'column'` in the series config and swap the axes &mdash; the `'category'` axis moves from the bottom to the left of a chart, and the `'number'` axis takes its place instead, moving from the left to the bottom:
+To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 'column'` in the `series` options.
 
 ```js
-axes: [
-    {
-        type: 'number',
-        position: 'bottom'
-    },
-    {
-        type: 'category',
-        position: 'left'
-    }
-]
+series: [{
+    type: 'column',
+    xKey: 'quarter',
+    yKey: 'iphone',
+    ...
+}]
 ```
 
-With these simple changes we go from [stacked columns](#stacked-columns) to stacked bars:
+With this simple change we go from [stacked columns](#stacked-columns) to stacked bars:
 
 <chart-example title='Stacked Bar Series' name='stacked-bar' type='generated'></chart-example>
 

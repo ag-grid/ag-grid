@@ -2,7 +2,7 @@
 title: "Formatters"
 ---
 
-This section explores customization of individual series items and markers based on data they represent.
+Formatters allow individual series items and markers to be customised based on the data they represent.
 
 When it comes to formatters, all series can be divided into two categories:
 - _series with markers_, such as `line`, `scatter` and `area`, where each data point is represented by a marker that can be of any shape
