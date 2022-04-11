@@ -54,6 +54,7 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'bottom',
       title: {
+        enabled: true,
         text: 'Height',
       },
       label: {
@@ -67,6 +68,7 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       title: {
+        enabled: true,
         text: 'Weight',
       },
       label: {
