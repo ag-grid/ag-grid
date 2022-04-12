@@ -74,7 +74,7 @@ There are two approaches you can take: 1) Providing Row IDs, or 2) Using Object 
       
       remove: [
           // deleting a row, only the ID is needed, other attributes (name, age) don't serve any purpose
-          {employeeId: '4'}
+          {employeeId: '5'}
       ]
   }
   ```
