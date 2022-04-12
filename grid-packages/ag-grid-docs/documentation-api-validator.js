@@ -78,7 +78,7 @@ validateDocFile('GridOptions', './documentation/doc-pages/grid-api/grid-options.
 ], './documentation/doc-pages/grid-events/events.json');
 
 validateDocFile('ColDef', './documentation/doc-pages/column-properties/column-options.AUTO.json', ['./documentation/doc-pages/column-properties/properties.json'], [
-    'pivotKeys', 'template', 'templateUrl', 'pivotValueColumn', 'pivotTotalColumnIds'
+    'pivotKeys', 'pivotValueColumn', 'pivotTotalColumnIds'
 ]);
 validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AUTO.json', ['./documentation/doc-pages/column-api/api.json']);
 
