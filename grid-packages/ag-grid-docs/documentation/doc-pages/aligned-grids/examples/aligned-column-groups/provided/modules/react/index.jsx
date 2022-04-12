@@ -87,6 +87,8 @@ class GridExample extends Component {
             ],
             rowData: this.rowData
         };
+
+        this.gridReady = 0;
     };
 
     onGridReady = (params) => {
@@ -105,7 +107,13 @@ class GridExample extends Component {
     };
 
     onFirstDataRendered = (params) => {
-        this.topGrid.api.sizeColumnsToFit();
+        this.setState({
+            gridReady: this.state.gridReady + 1
+        });
+
+        if (this.state.gridReady > 1) {
+            this.topGrid.api.sizeColumnsToFit();
+        }
     };
 
     render() {
@@ -127,7 +135,8 @@ class GridExample extends Component {
                     <AgGridReact
                         rowData={this.state.rowData}
                         gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs} />
+                        columnDefs={this.state.columnDefs}
+                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
                 </div>
             </div>
         );
