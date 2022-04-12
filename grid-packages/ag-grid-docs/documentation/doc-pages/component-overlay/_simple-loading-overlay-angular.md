@@ -10,7 +10,7 @@
 |    selector: 'app-loading-overlay',
 |    template: `
 |      <div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
-|        <i class="fas fa-hourglass-half">{{ this.params.loadingMessage }} </i>
+|        <i class="fas fa-hourglass-half">{{ params.loadingMessage }} </i>
 |      </div>
 |    `
 |})

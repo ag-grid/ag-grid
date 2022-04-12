@@ -5,8 +5,8 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
     selector: 'app-custom-header-group',
     template: `
         <div class="ag-header-group-cell-label">
-            <div class="customHeaderLabel">{{this.params.displayName}}</div>
-            <div class="customExpandButton" [ngClass]="this.expandState" (click)="expandOrCollapse()"><i
+            <div class="customHeaderLabel">{{params.displayName}}</div>
+            <div class="customExpandButton" [ngClass]="expandState" (click)="expandOrCollapse()"><i
                     class="fa fa-arrow-right"></i></div>
         </div>
     `,
