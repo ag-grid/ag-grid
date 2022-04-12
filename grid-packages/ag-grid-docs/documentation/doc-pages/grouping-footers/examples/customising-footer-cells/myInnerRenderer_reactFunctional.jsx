@@ -10,7 +10,7 @@ export default props => {
         if (isRootLevel) {
             return <span style={{color: 'navy', fontWeight: 'bold'}}>Grand Total</span>;
         } else {
-            return <span style={{color: 'navy'}}>Sub Total ${value}</span>;
+            return <span style={{color: 'navy'}}>Sub Total {value}</span>;
         }
     } else {
         return <span>{value}</span>;
