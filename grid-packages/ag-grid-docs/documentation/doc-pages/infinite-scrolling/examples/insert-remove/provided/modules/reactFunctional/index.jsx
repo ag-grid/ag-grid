@@ -29,7 +29,7 @@ const createRowData = (id) => {
         'Cruze',
         'Celica',
         'Mondeo',
-        'Boxter',
+        'Boxster',
         'Genesis',
         'Accord',
         'Taurus',

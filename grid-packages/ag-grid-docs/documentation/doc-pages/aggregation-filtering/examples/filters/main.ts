@@ -16,7 +16,6 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     field: 'athlete',
-    filterValueGetter: (params: ValueGetterParams) => params.data.athlete,
   },
   groupDefaultExpanded: -1,
   rowData: getData(),

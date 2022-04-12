@@ -3,7 +3,8 @@ import { Grid, GridOptions } from '@ag-grid-community/core'
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
-    { field: 'athlete' },
+    { field: 'sport', rowGroup: true, hide: true },
+    { field: 'athlete', hide: true },
     { field: 'year' },
     { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
@@ -12,6 +13,9 @@ const gridOptions: GridOptions = {
     filter: true,
     floatingFilter: true,
     resizable: true,
+  },
+  autoGroupColumnDef: {
+    field: 'athlete',
   },
   groupDefaultExpanded: -1,
   groupAggFiltering: (params) => !!params.node.group,

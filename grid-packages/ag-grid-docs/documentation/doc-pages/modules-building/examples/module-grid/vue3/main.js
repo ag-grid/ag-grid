@@ -1,4 +1,4 @@
-import {createApp} from 'vue';
+import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -23,7 +23,7 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue
     },
-    data: function() {
+    data: function () {
         return {
             columnDefs: null,
             rowData: null
@@ -39,7 +39,7 @@ const VueExample = {
         this.rowData = [
             { make: 'Toyota', model: 'Celica', price: 35000 },
             { make: 'Ford', model: 'Mondeo', price: 32000 },
-            { make: 'Porsche', model: 'Boxter', price: 72000 }
+            { make: 'Porsche', model: 'Boxster', price: 72000 }
         ];
     },
     methods: {
