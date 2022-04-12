@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
   getRowId: function (params: GetRowIdParams) {
     var data = params.data;
     // use year for group level ids, or the id we assigned for leaf level
-    return data.id || data.year;
+    return data.id!=null ? ('id-' + data.id) : ('year-' + data.year);
   },
   autoGroupColumnDef: {
     field: 'athlete',
