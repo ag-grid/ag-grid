@@ -442,16 +442,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */
     suppressAutoSize?: boolean;
 
-    /** Cell template to use for cell. */
-    template?: string;
-    // This property can be reported as Critical Issues by some security scans.
-    // We are aware of this, however As `templateUrl` is a legacy property used by angular 1.x users
-    // we don't want to sanitise it at this late stage due to the potential impact to existing users.
-    // Note that if this property is not used by application developers it won't pose a security risk
-    // in an application.
-    /** Cell template URL to load template from to use for cell. */
-    templateUrl?: string;
-
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column | null;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
