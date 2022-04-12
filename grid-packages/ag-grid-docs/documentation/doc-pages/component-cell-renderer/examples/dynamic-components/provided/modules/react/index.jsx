@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -76,22 +76,19 @@ class GridExample extends Component {
                 resizable: true
             }
         };
-    }
 
-    onGridReady = params => {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
-
+        this.gridRef = createRef();
     }
 
     refreshEvenRowsCurrencyData = () => {
-        this.gridApi.forEachNode(rowNode => {
+        this.gridRef.current.api.forEachNode(rowNode => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({ columns: ['currency'] });
-    }
+
+        this.gridRef.current.api.refreshCells({ columns: ['currency'] })
+    };
 
     methodFromParent = (cell) => {
         alert("Parent Component Method from " + cell + "!");
@@ -125,6 +122,7 @@ class GridExample extends Component {
                         }}
                         className="ag-theme-alpine">
                         <AgGridReact
+                            ref={this.gridRef}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             context={this.state.context}
