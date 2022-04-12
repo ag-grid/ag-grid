@@ -12,7 +12,7 @@ row groups instead of group columns. This can be preferred if you have a lot of 
 
 To display each row group using group rows set `groupDisplayType = 'groupRows'` as shown below:
 
-<snippet spaceBetweenProperties="true" inlineReactProperties="true">
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
