@@ -55,7 +55,7 @@ To customise a theme, include the theme mixin file and then call the mixin passi
 
     .ag-header {
         // or write CSS selectors to make customisations beyond what the parameters support
-        text-style: italic;
+        font-style: italic;
     }
 }
 ```
@@ -88,7 +88,7 @@ CSS variables (officially known to as "CSS Custom Properties") are supported by 
 
 /* or write CSS selectors to make customisations beyond what the parameters support */
 .ag-theme-alpine .ag-header {
-    text-style: italic;
+    font-style: italic;
 }
 ```
 
