@@ -53,7 +53,6 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 * [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/angular-grid/angularjs/?utm_source=@ag-grid-community/csv-export-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
