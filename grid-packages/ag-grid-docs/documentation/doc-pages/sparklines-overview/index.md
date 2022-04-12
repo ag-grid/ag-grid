@@ -69,7 +69,7 @@ Each Sparkline type contains specific `sparklineOptions` that can be overridden 
 The following sections are relevant to all sparkline types:
 
 - [Sparkline Data](/sparklines-data/) - compares the different data formats that can be supplied to sparklines.
-- [Axes Types](/sparklines-axis-types/) - compares the different axes types available to sparklines.
+- [Axis Types](/sparklines-axis-types/) - compares the different axis types available to sparklines.
 - [Sparkline Tooltips](/sparklines-tooltips/) - covers the various ways sparkline tooltips can be customised.
 - [Points of Interest](/sparklines-points-of-interest/) - shows how points of interest can be formatted on sparklines.
 
