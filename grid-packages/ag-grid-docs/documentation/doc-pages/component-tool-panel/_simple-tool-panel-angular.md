@@ -30,10 +30,10 @@
 |export class CustomStatsToolPanel implements IToolPanelAngularComp {
 |    private params: IToolPanelParams;
 |
-|    private numMedals: number;
-|    private numGold: number;
-|    private numSilver: number;
-|    private numBronze: number;
+|    public numMedals: number;
+|    public numGold: number;
+|    public numSilver: number;
+|    public numBronze: number;
 |
 |    agInit(params: IToolPanelParams): void {
 |        this.params = params;

@@ -305,7 +305,7 @@ export class SetValueModel implements IEventEmitter {
 
                 // TODO: should this be applying the text formatter *after* the value formatter?
                 const valueFormatterValue = this.valueFormatterService.formatValue(
-                    this.column, null, null, textFormatterValue, this.filterParams.valueFormatter, false);
+                    this.column, null, textFormatterValue, this.filterParams.valueFormatter, false);
 
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     this.displayedValues.push(value);

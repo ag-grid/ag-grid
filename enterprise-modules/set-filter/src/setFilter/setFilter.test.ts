@@ -35,7 +35,7 @@ beforeEach(() => {
     eventService = mock<EventService>('addEventListener');
 
     valueFormatterService = mock<ValueFormatterService>('formatValue');
-    valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
+    valueFormatterService.formatValue.mockImplementation((_1, _2, value) => value);
 
     gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
     gridOptionsWrapper.getLocaleTextFunc.mockImplementation(() => ((_: string, defaultValue: string) => defaultValue));

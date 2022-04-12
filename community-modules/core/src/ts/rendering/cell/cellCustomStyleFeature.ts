@@ -16,8 +16,6 @@ export class CellCustomStyleFeature extends BeanStub {
 
     private cellComp: ICellComp;
 
-    private scope: any;
-
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
@@ -28,9 +26,8 @@ export class CellCustomStyleFeature extends BeanStub {
         this.rowNode = ctrl.getRowNode();
     }
 
-    public setComp(comp: ICellComp, scope: any): void {
+    public setComp(comp: ICellComp): void {
         this.cellComp = comp;
-        this.scope = scope;
 
         this.applyUserStyles();
         this.applyCellClassRules();
@@ -47,7 +44,6 @@ export class CellCustomStyleFeature extends BeanStub {
             rowIndex: this.rowNode.rowIndex!,
             api: this.beans.gridOptionsWrapper.getApi()!,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            $scope: this.scope,
             context: this.beans.gridOptionsWrapper.getContext()
         };
 
@@ -74,7 +70,6 @@ export class CellCustomStyleFeature extends BeanStub {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi()!,
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 context: this.beans.gridOptionsWrapper.getContext(),
@@ -96,7 +91,6 @@ export class CellCustomStyleFeature extends BeanStub {
             node: this.rowNode,
             colDef: colDef,
             rowIndex: this.rowNode.rowIndex!,
-            $scope: this.scope,
             api: this.beans.gridOptionsWrapper.getApi()!,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext()

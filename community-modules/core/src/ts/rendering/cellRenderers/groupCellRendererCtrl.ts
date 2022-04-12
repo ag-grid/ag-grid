@@ -67,8 +67,6 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     /** Callback to enable different innerRenderers to be used based of value of params. */
     innerRendererSelector?: CellRendererSelectorFunc;
 
-    scope: any;
-
     /** @deprecated */
     padding: number;
 }
@@ -292,8 +290,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         const params = this.params;
 
-        const { value, scope, node } = this.params;
-        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, scope, value);
+        const { value, node } = this.params;
+        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, value);
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which

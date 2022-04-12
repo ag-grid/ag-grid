@@ -98,11 +98,8 @@ export interface GridParams {
     // used by Web Components
     globalEventListener?: Function;
 
-    // these are used by ng1 only
-    $scope?: any;
-    $compile?: any;
 
-    // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
+    // this allows the base frameworks (React, Angular, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
 
     // bean instances to add to the context
@@ -250,8 +247,6 @@ export class GridCoreCreator {
         const seed = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
-            $scope: params ? params.$scope : null,
-            $compile: params ? params.$compile : null,
             globalEventListener: params ? params.globalEventListener : null,
             frameworkOverrides: frameworkOverrides
         };

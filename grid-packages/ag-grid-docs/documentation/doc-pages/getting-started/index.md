@@ -129,7 +129,7 @@ title: "Get Started with AG Grid"
 |     rowData = [
 |         { make: 'Toyota', model: 'Celica', price: 35000 },
 |         { make: 'Ford', model: 'Mondeo', price: 32000 },
-|         { make: 'Porsche', model: 'Boxter', price: 72000 }
+|         { make: 'Porsche', model: 'Boxster', price: 72000 }
 |     ];
 |
 | }
@@ -839,7 +839,7 @@ title: "Get Started with AG Grid"
 |     rowData = [
 |         { make: 'Toyota', model: 'Celica', price: 35000 },
 |         { make: 'Ford', model: 'Mondeo', price: 32000 },
-|         { make: 'Porsche', model: 'Boxter', price: 72000 }
+|         { make: 'Porsche', model: 'Boxster', price: 72000 }
 |     ];
 | }
 | ```
@@ -1595,6 +1595,7 @@ title: "Get Started with AG Grid"
 | | ------------- | ---------------- |
 | | 15.x          | 18 - 21.2.0      |
 | | 16.3+ / 17+   | 22+              |
+| | 18+           | 27.2.0+          |
 
 [[only-vue]]
 | <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">

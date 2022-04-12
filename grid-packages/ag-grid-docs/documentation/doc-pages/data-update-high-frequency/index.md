@@ -34,16 +34,15 @@ Use Async Transactions if you have a high volume of streaming data going into th
 
 Each time the grid executes a batch of Async Transactions, it dispatches a `asyncTransactionsApplied` event.
 
-
 The event contains `results` attribute, which is a list of all the results for all Transactions that got applied.
 
-This even is useful for debugging or observing how the Async Transactions are applied for learning purposes.
+This event is useful for debugging or observing how the Async Transactions are applied for learning purposes.
 
 ## Flush Async Transactions
 
 The default wait between executing batches is 50ms. This means when an Async Transaction is provided to the grid, it can take up to 50ms for that transaction to be applied.
 
-Sometimes you may want all transactions to be applied before doing something - for example you may want to select a rows in the grid but want to make sure the grid has all the latest row data before doing so.
+Sometimes you may want all transactions to be applied before doing something - for example you may want to select a row in the grid but want to make sure the grid has all the latest row data before doing so.
 
 To make sure the grid has no Async Transactions pending, you can flush the Async Transaction queue. This is done by calling the API `flushAsyncTransactions`.
 

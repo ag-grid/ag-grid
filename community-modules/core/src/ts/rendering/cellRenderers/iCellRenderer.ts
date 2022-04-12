@@ -23,8 +23,6 @@ export interface ICellRendererParams extends AgGridCommon {
     colDef?: ColDef;
     /** The cell's column. */
     column?: Column;
-    /** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */
-    $scope: any;
     /** The grid's cell, a DOM div element. */
     eGridCell: HTMLElement;
     /** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */

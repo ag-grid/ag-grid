@@ -116,7 +116,7 @@ export class SetFilterListItem extends Component {
     private getFormattedValue(filterParams: ISetFilterParams, column: Column, value: any) {
         const formatter = filterParams && filterParams.valueFormatter;
 
-        return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
+        return this.valueFormatterService.formatValue(column, null, value, formatter, false);
     }
 
     private renderCell(params: ISetFilterCellRendererParams): void {

@@ -74,7 +74,7 @@ function getRowData() {
     })
     rowData.push({
       make: 'Porsche',
-      model: 'Boxter',
+      model: 'Boxster',
       price: 72000 + i * 1000,
       field4: 'Sample ZZ',
       field5: 'Sample 26',

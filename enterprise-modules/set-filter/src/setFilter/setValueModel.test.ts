@@ -55,7 +55,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     } as IClientSideRowModel;
 
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
-    valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
+    valueFormatterService.formatValue.mockImplementation((_1, _2, value) => value);
 
     const svmParams: ISetFilterParams = {
         rowModel,

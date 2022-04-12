@@ -72,7 +72,7 @@ By default Popup Editors appear over the editing Cell. It is also possible to ha
 [[only-javascript-or-angular-or-vue]]
 |Configure the Popup Editor to appear below the Cell in one of the following ways:
 |1. Implement the `getPopupPosition()` method on the Custom Cell Editor and return `under`.
-|1. Specify `cellEditorPopupPosition='undef'` on the [Column Definition](/column-definitions/).
+|1. Specify `cellEditorPopupPosition='under'` on the [Column Definition](/column-definitions/).
 
 ```js
  colDef = {

@@ -230,7 +230,7 @@ Next let's add the AG Grid NPM packages. Run the following command in
 `my-project`:
 
 ```bash
-npm install ag-grid-vue3 ag-grid-community vue-class-component@next
+npm install ag-grid-vue3 ag-grid-community 
 ```
 
 After a few seconds of waiting, you should be good to go. Let's get to the actual coding!

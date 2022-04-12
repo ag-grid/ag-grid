@@ -57,7 +57,6 @@ export class Beans {
     @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') public expressionService: ExpressionService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
-    @Autowired('$compile') public $compile: any;
     @Autowired('templateService') public templateService: TemplateService;
     @Autowired('valueService') public valueService: ValueService;
     @Autowired('eventService') public eventService: EventService;

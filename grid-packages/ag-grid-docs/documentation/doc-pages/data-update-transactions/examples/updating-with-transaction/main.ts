@@ -38,7 +38,7 @@ function getRowData() {
     rowData.push(node.data)
   })
   console.log('Row Data:')
-  console.log(rowData)
+  console.table(rowData)
 }
 
 function clearData() {

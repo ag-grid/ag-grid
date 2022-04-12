@@ -17,8 +17,6 @@ export class ColDefUtil {
         'headerTooltip',
         'cellClass',
         'showRowGroup',
-        'template',
-        'templateUrl',
         'filter',
         'initialAggFunc',
         'aggFunc',

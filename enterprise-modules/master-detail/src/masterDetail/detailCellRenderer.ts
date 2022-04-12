@@ -94,8 +94,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, gridOptions, {
-            $scope: this.params.$scope,
-            $compile: this.params.$compile,
             frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,

@@ -13,7 +13,6 @@ export class ValueFormatterService extends BeanStub {
     public formatValue(
         column: Column,
         node: RowNode | null,
-        $scope: any,
         value: any,
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
@@ -43,13 +42,6 @@ export class ValueFormatterService extends BeanStub {
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
-
-            // originally we put the angular 1 scope here, but we don't want the scope
-            // in the params interface, as other frameworks will see the interface, and
-            // angular 1 is not cool any more. so we hack the scope in here (we cannot
-            // include it above, as it's not in the interface, so would cause a compile error).
-            // in the future, when we stop supporting angular 1, we can take this out.
-            (params as any).$scope = $scope;
 
             result = this.expressionService.evaluate(formatter, params);
         } else if (colDef.refData) {

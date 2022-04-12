@@ -93,9 +93,6 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    // just passed in
-    private scope: any;
-
     private cellRangeFeature: CellRangeFeature;
     private cellPositionFeature: CellPositionFeature;
     private cellCustomStyleFeature: CellCustomStyleFeature;
@@ -141,7 +138,7 @@ export class CellCtrl extends BeanStub {
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
         this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
 
-        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.scope, this.rowCtrl);
+        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(() => this.cellKeyboardListenerFeature.destroy());
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
@@ -202,7 +199,6 @@ export class CellCtrl extends BeanStub {
 
     public setComp(
         comp: ICellComp,
-        scope: any,
         eGui: HTMLElement,
         eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
@@ -210,7 +206,6 @@ export class CellCtrl extends BeanStub {
     ): void {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
-        this.scope = scope;
         this.eGui = eGui;
         this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
@@ -242,7 +237,7 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setRole('gridcell');
 
         this.cellPositionFeature.setComp(eGui);
-        this.cellCustomStyleFeature.setComp(comp, scope);
+        this.cellCustomStyleFeature.setComp(comp);
         this.tooltipFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(this.eGui);
 
@@ -564,9 +559,6 @@ export class CellCtrl extends BeanStub {
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
-        if (this.scope) {
-            res.$scope = this.scope;
-        }
         return res as ICellEditorParams;
     }
 
@@ -603,10 +595,6 @@ export class CellCtrl extends BeanStub {
             // happens so no longer need to fire event.
             addRowCompListener: addRowCompListener
         };
-
-        if (this.scope) {
-            res.$scope = this.scope;
-        }
 
         return res as ICellRendererParams;
     }
@@ -720,9 +708,6 @@ export class CellCtrl extends BeanStub {
             this.cellCustomStyleFeature.applyClassesFromColDef();
         }
 
-        // we can't readily determine if the data in an angularjs template has changed, so here we just update
-        // and recompile (if applicable)
-
         this.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
@@ -815,7 +800,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private callValueFormatter(value: any): any {
-        return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
+        return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     }
 
     public updateAndFormatValue(force = false): boolean {
@@ -895,11 +880,6 @@ export class CellCtrl extends BeanStub {
             event: domEvent,
             rowIndex: this.rowNode.rowIndex!
         };
-
-        // because we are hacking in $scope for angular 1, we have to de-reference
-        if (this.scope) {
-            (event as any).$scope = this.scope;
-        }
 
         return event;
     }

@@ -140,7 +140,7 @@ and then tailor per column.
 The example below shows animation of the rows plus different combinations of sorting orders as follows:
 
 
-- **Grid Default:** ascending -> descending -> no sort
+- **Default Columns:** descending -> ascending -> no sort
 - **Column Athlete:** ascending -> descending
 - **Column Age:** descending -> ascending
 - **Column Country:** descending -> no sort
@@ -178,7 +178,8 @@ This is provided via the `postSortRows` grid callback function as shown below:
 
 <snippet>
 const gridOptions = {
-    postSortRows: rowNodes => {
+    postSortRows: params => {
+        let rowNodes = params.rowNodes;
         // here we put Ireland rows on top while preserving the sort order
         let nextInsertPos = 0;
         for (let i = 0; i < rowNodes.length; i++) {

@@ -1148,8 +1148,6 @@ export interface RowClassParams extends AgGridCommon {
     node: RowNode;
     /** The index of the row */
     rowIndex: number;
-    /** If using AngularJs, is the row's child scope, otherwise null */
-    $scope: any;
 }
 
 

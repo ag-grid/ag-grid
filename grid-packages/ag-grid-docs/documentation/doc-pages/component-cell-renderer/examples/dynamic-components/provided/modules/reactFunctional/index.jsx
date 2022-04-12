@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -63,6 +63,8 @@ const createRowData = () => {
 
 const GridExample = () => {
     const [rowData, setRowData] = useState(createRowData());
+    const gridRef = useRef();
+
     const columnDefs = useMemo(() => [
         {
             headerName: "Row",
@@ -109,15 +111,13 @@ const GridExample = () => {
     ], []);
 
     const refreshEvenRowsCurrencyData = () => {
-        const newRowData = [];
-        for (const data of rowData) {
-            let newData = { ...data };
-            if (newData.value % 2 === 0) {
-                newData.currency = newData.value + Number(Math.random().toFixed(2));
+        gridRef.current.api.forEachNode(rowNode => {
+            if (rowNode.data.value % 2 === 0) {
+                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
-            newRowData.push(newData);
-        }
-        setRowData(newRowData);
+        });
+
+        gridRef.current.api.refreshCells({ columns: ['currency'] })
     };
 
     const methodFromParent = cell => {
@@ -139,6 +139,7 @@ const GridExample = () => {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
+                        ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         getRowId={params => params.data.row}

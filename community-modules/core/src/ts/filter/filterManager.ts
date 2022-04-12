@@ -25,8 +25,6 @@ export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 @Bean('filterManager')
 export class FilterManager extends BeanStub {
 
-    @Autowired('$compile') private $compile: any;
-    @Autowired('$scope') private $scope: any;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -524,7 +522,7 @@ export class FilterManager extends BeanStub {
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
+    private createFilterInstance(column: Column): AgPromise<IFilterComp> | null {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
@@ -533,7 +531,7 @@ export class FilterManager extends BeanStub {
         let filterInstance: IFilterComp;
 
         const params: IFilterParams = {
-            ...this.createFilterParams(column, colDef, $scope),
+            ...this.createFilterParams(column, colDef),
             filterModifiedCallback: () => {
                 const event: FilterModifiedEvent = {
                     type: Events.EVENT_FILTER_MODIFIED,
@@ -563,7 +561,7 @@ export class FilterManager extends BeanStub {
         return componentPromise;
     }
 
-    public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {
+    public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
         const params: IFilterParams = {
             api: this.gridOptionsWrapper.getApi()!,
             columnApi: this.gridOptionsWrapper.getColumnApi()!,
@@ -577,11 +575,6 @@ export class FilterManager extends BeanStub {
             doesRowPassOtherFilter: () => true,
         };
 
-        // hack in scope if using AngularJS
-        if ($scope) {
-            (params as any).$scope = $scope;
-        }
-
         return params;
     }
 
@@ -589,13 +582,11 @@ export class FilterManager extends BeanStub {
         const filterWrapper: FilterWrapper = {
             column: column,
             filterPromise: null,
-            scope: null as any,
             compiledElement: null,
             guiPromise: AgPromise.resolve(null)
         };
 
-        filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
-        filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
+        filterWrapper.filterPromise = this.createFilterInstance(column);
 
         if (filterWrapper.filterPromise) {
             this.putIntoGui(filterWrapper, source);
@@ -626,13 +617,6 @@ export class FilterManager extends BeanStub {
                 }
 
                 eFilterGui.appendChild(guiFromFilter);
-
-                if (filterWrapper.scope) {
-                    const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
-                    filterWrapper.compiledElement = compiledElement;
-                    window.setTimeout(() => filterWrapper.scope.$apply(), 0);
-                }
-
                 resolve(eFilterGui);
 
                 this.eventService.dispatchEvent({
@@ -685,14 +669,6 @@ export class FilterManager extends BeanStub {
 
                 filterWrapper.column.setFilterActive(false, source);
 
-                if (filterWrapper.scope) {
-                    if (filterWrapper.compiledElement) {
-                        filterWrapper.compiledElement.remove();
-                    }
-
-                    filterWrapper.scope.$destroy();
-                }
-
                 this.allColumnFilters.delete(filterWrapper.column.getColId());
             });
         });
@@ -709,6 +685,5 @@ export interface FilterWrapper {
     compiledElement: any;
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
-    scope: any;
     guiPromise: AgPromise<HTMLElement | null>;
 }

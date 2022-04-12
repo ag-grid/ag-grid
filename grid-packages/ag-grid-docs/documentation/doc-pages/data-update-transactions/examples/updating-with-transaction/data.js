@@ -18,7 +18,7 @@ function getData() {
         },
         {
             make: 'Porsche',
-            model: 'Boxter',
+            model: 'Boxster',
             price: 72000,
             zombies: 'Jack',
             style: 'Dirty',
