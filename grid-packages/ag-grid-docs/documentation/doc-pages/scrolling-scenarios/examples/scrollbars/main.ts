@@ -16,6 +16,8 @@ var rowData = [
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
+  alwaysShowHorizontalScroll: true,
+  alwaysShowVerticalScroll: true,
   columnDefs: columnDefs,
   rowData: rowData,
   onGridReady: function (params) {
