@@ -645,10 +645,6 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellChanged(event: CellChangedEvent): void {
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so no need to refresh.
-        if (!this.cellComp) { return; }
-
         const eventImpactsThisCell = event.column === this.column;
 
         if (eventImpactsThisCell) {
@@ -663,6 +659,10 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean; }) {
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so no need to refresh.
+        if (!this.cellComp) { return; }
+
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell || this.editing) { return; }
 
