@@ -203,7 +203,7 @@ const GridExample = () => {
                         "whiteSpace": "nowrap",
                         "display": "inline-block"
                     }}>
-                        Group:
+                        Move to Group:
                         <button onClick={() => setSelectedToGroup('A')}>A</button>
                         <button onClick={() => setSelectedToGroup('B')}>B</button>
                         <button onClick={() => setSelectedToGroup('C')}>C</button>
