@@ -118,7 +118,7 @@ function createRowData(id: number) {
         'Cruze',
         'Celica',
         'Mondeo',
-        'Boxter',
+        'Boxster',
         'Genesis',
         'Accord',
         'Taurus',
