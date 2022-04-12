@@ -1595,6 +1595,7 @@ title: "Get Started with AG Grid"
 | | ------------- | ---------------- |
 | | 15.x          | 18 - 21.2.0      |
 | | 16.3+ / 17+   | 22+              |
+| | 18+           | 27.2.0+          |
 
 [[only-vue]]
 | <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
