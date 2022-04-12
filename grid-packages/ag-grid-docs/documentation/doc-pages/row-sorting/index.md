@@ -140,7 +140,7 @@ and then tailor per column.
 The example below shows animation of the rows plus different combinations of sorting orders as follows:
 
 
-- **Grid Default:** ascending -> descending -> no sort
+- **Default Columns:** descending -> ascending -> no sort
 - **Column Athlete:** ascending -> descending
 - **Column Age:** descending -> ascending
 - **Column Country:** descending -> no sort
