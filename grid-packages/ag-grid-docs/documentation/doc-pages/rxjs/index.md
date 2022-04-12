@@ -67,14 +67,15 @@ With this configuration we can supply the updates to AG Grid and the grid will o
 
 <grid-example title='RxJS - Full Updates' name='rxjs-full' type='generated' options='{ "enterprise": true, "extras": ["lodash", "rxjs", "bluebirdjs"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-### Async Pipe
-
-In the example above we manually subscribe to the `updates$` observable and call `api.setRowData` to update the grid. One potential downside of this approach is that we must remember to clean up this subscription when we are finished with it. 
-
-Alternatively, we can take advantage of the `async` pipe to manage the Subscription for us. Using the `async` pipe we can provide the updates directly to the grid.
-
-```html
-<ag-grid-angular>
-    [rowData]="updates$ | async"
-</ag-grid-angular>
-```
+[[only-angular]]
+|### Async Pipe
+|
+|In the example above we manually subscribe to the `updates$` observable and call `api.setRowData` to update the grid. One potential downside of this approach is that we |must remember to clean up this subscription when we are finished with it. 
+|
+|Alternatively, we can take advantage of the `async` pipe to manage the Subscription for us. Using the `async` pipe we can provide the updates directly to the grid.
+|
+|```html
+|<ag-grid-angular>
+|    [rowData]="updates$ | async"
+|</ag-grid-angular>
+|```
