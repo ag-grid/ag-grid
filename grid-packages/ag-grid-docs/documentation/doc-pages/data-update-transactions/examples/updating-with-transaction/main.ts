@@ -55,10 +55,10 @@ function addItems(addIndex: number | undefined) {
 }
 
 function updateItems() {
-  // update the first 5 items
+  // update the first 2 items
   const itemsToUpdate: any[] = []
   gridOptions.api!.forEachNodeAfterFilterAndSort(function (rowNode, index) {
-    // only do first 5
+    // only do first 2
     if (index >= 2) {
       return
     }
