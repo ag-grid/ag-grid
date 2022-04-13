@@ -7,12 +7,11 @@
 |
 |There are generally two ways to register custom components ("inline" components can only be registered by name):
 |
-|- By name.
-|- Direct reference.
+|- By name
+|- Direct reference (deprecated)
 |
-|Both options are fully supported by the grid, however registering by name is AG Grid's preferred option as it's more flexible.
-|All of the examples in the documentation use this approach.
-|The direct reference approach is kept for backwards compatibility as this was the original way to do it in AG Grid.
+|Registering by name is AG Grid's preferred option as it's more flexible. All of the examples in the documentation use the by name approach.
+|The direct reference approach has been deprecated but is kept for backwards compatibility as this was the original way to do it in AG Grid.
 |
 |## Registering Inline Custom Components
 |
