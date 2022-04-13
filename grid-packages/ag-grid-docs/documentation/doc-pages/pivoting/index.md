@@ -205,7 +205,9 @@ As shown in the snippet above, filters are enabled on secondary columns by inher
 
 [[note]]
 | While secondary columns inherit the properties of the value column from which they are generated, setting `filter: true` will instead
-| default to a [Number Filter](/filter-number/) in the case of a secondary column, rather than a [Set Filter](/filter-set/) or [Text Filter](/filter-text/).
+| default to a [Number Filter](/filter-number/) in the case of a secondary column.
+| You can use [Text Filter](/filter-text/) or [Date Filter](/filter-date/). However, [Set Filter](/filter-set/) cannot
+| be used for filtering secondary columns.
 
 __Filtering on a secondary column:__
 1. Using the filters tool panel, select the filter **Not Blank** using the **2000, gold** column filter
