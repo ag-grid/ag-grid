@@ -197,6 +197,7 @@ export function formatJsDocString(docString) {
         return;
     }
     const paramReg = /\* @param (\w+) (.*)\n/g;
+    const returnsReg = /\* (@returns) (.*)\n/g;
     const newLineReg = /\n \* /g;
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const defaultReg = /(\n \*)?(<br>)? Default:/g;
@@ -210,6 +211,7 @@ export function formatJsDocString(docString) {
         .replace('*/', '')
         .replace(defaultReg, NEWLINE_DEFAULT_STRING)
         .replace(paramReg, '<br> <strong>$1</strong> $2 \n')
+        .replace(returnsReg, '<br> <strong>Returns: </strong> $2 \n')
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');
 

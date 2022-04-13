@@ -133,7 +133,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const colDef = this.column.getColDef();
 
-        const params = {
+        const params: IHeaderParams = {
             column: this.column,
             displayName: this.displayName,
             enableSorting: colDef.sortable,

@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   },
   ensureDomOrder: true,
   suppressColumnVirtualisation: true,
-  rowBuffer: 600,
+  suppressRowVirtualisation: true,
 }
 
 // setup the grid after the page has finished loading
