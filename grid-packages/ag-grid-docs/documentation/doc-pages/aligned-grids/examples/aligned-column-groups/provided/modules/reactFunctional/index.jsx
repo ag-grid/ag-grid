@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -72,6 +72,7 @@ const GridExample = () => {
     ]);
 
     const [rowData, setRowData] = useState([]);
+    const [gridReady, setGridReady] = useState(0);
 
     function onGridReady(params) {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -87,8 +88,14 @@ const GridExample = () => {
     }
 
     function onFirstDataRendered(params) {
-        topGridRef.current.api.sizeColumnsToFit();
+        setGridReady(gridReady  + 1);
     };
+
+    useEffect(() => {
+        if (gridReady > 1) {
+            topGridRef.current.api.sizeColumnsToFit();
+        }
+    }, [setGridReady])
 
 
     return (
@@ -101,7 +108,8 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={{ resizable: true }}
                     onGridReady={params => onGridReady(params)}
-                    onFirstDataRendered={params => onFirstDataRendered(params)} />
+                    onFirstDataRendered={params => onFirstDataRendered(params)}
+                />
             </div>
 
             <div className="divider"></div>
@@ -110,7 +118,9 @@ const GridExample = () => {
                 <AgGridReact
                     rowData={rowData}
                     gridOptions={bottomOptions}
-                    columnDefs={columnDefs} />
+                    columnDefs={columnDefs} 
+                    onFirstDataRendered={params => onFirstDataRendered(params)}
+                />
             </div>
         </div>
     );

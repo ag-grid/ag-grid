@@ -22,7 +22,7 @@ const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
                     <div className={classnames(styles['learning-videos__video__anchor-body__index'])}>{index}</div>
                     <div className={classnames(styles["learning-videos__video__anchor-body__body"])}>
                         <div className={classnames(styles["learning-videos__video__anchor-body__body__video-content"])}>
-                            <img style={{height: 100}} alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
+                            <img alt={thumbnail.alt} src={`${hostPrefix}/videos/${thumbnail.image}`}/>
                             <h5 className={classnames(styles["learning-videos__video__anchor-body__body__video-content__running-time"])}>{runningTime}</h5>
                         </div>
                         <div className={classnames(styles["learning-videos__video__anchor-body__body__video-notes"])}>

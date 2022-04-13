@@ -91,6 +91,13 @@
     @include media-breakpoint-down(sm) {
         width: 100%;
         height: auto;
+
+        &.video-tile {
+            width: auto;
+            width: 13rem;
+            min-width: 5rem;
+        }
+        
         cursor: pointer;
 
         &--collapsed &__list {
