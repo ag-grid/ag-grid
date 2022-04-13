@@ -212,8 +212,10 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     private isImmutableDataActive() {
-        return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
+        return (this.props.deltaRowDataMode || this.props.immutableData || this.props.getRowId != null) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
+                || this.props.gridOptions.immutableData
+                || this.props.gridOptions.getRowId != null));
     }
 }
 
