@@ -227,9 +227,9 @@ const gridOptions: GridOptions = {
     timeOperation('Initialisation', function () {
       params.api.setRowData(getData())
     })
-
-    params.api.getDisplayedRowAtIndex(2)!.setExpanded(true)
-    params.api.getDisplayedRowAtIndex(4)!.setExpanded(true)
+  },
+  isGroupOpenByDefault: function (params) {
+      return ['Delhi', 'Seoul'].includes(params.key);
   },
 }
 
