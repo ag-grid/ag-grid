@@ -1256,14 +1256,6 @@
       "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "template": {
-      "description": "/** Cell template to use for cell. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "templateUrl": {
-      "description": "/** Cell template URL to load template from to use for cell. */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "pivotValueColumn": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "Column | null", "optional": true }
@@ -19095,7 +19087,7 @@
       }
     },
     "setDisabled": {
-      "description": "/** Sets the disabled state of this component */",
+      "description": "/** Optional: Sets the disabled state of this component */",
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
@@ -19103,7 +19095,7 @@
       }
     },
     "setInputPlaceholder": {
-      "description": "/** [optional method] sets the current input placeholder */",
+      "description": "/** Optional: Sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -19111,7 +19103,7 @@
       }
     },
     "setInputAriaLabel": {
-      "description": "/** [optional method] sets the current input aria label */",
+      "description": "/** Optional: Sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -19119,7 +19111,7 @@
       }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -19186,7 +19178,7 @@
       }
     },
     "setDisabled": {
-      "description": "/** Sets the disabled state of this component */",
+      "description": "/** Optional: Sets the disabled state of this component */",
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
@@ -19194,7 +19186,7 @@
       }
     },
     "setInputPlaceholder": {
-      "description": "/** [optional method] sets the current input placeholder */",
+      "description": "/** Optional: Sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -19202,7 +19194,7 @@
       }
     },
     "setInputAriaLabel": {
-      "description": "/** [optional method] sets the current input aria label */",
+      "description": "/** Optional: Sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -19210,7 +19202,7 @@
       }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -20253,7 +20245,7 @@
       }
     },
     "setDisabled": {
-      "description": "/** Sets the disabled state of this component */",
+      "description": "/** Optional: Sets the disabled state of this component */",
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
@@ -20261,7 +20253,7 @@
       }
     },
     "setInputPlaceholder": {
-      "description": "/** [optional method] sets the current input placeholder */",
+      "description": "/** Optional: Sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -20269,7 +20261,7 @@
       }
     },
     "setInputAriaLabel": {
-      "description": "/** [optional method] sets the current input aria label */",
+      "description": "/** Optional: Sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -20277,7 +20269,7 @@
       }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -21141,14 +21133,6 @@
     "suppressAutoSize": {
       "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "template": {
-      "description": "/** Cell template to use for cell. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "templateUrl": {
-      "description": "/** Cell template URL to load template from to use for cell. */",
-      "type": { "returnType": "string", "optional": true }
     },
     "pivotValueColumn": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
@@ -29465,7 +29449,7 @@
       }
     },
     "setDisabled": {
-      "description": "/** Sets the disabled state of this component */",
+      "description": "/** Optional: Sets the disabled state of this component */",
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
@@ -29473,7 +29457,7 @@
       }
     },
     "setInputPlaceholder": {
-      "description": "/** [optional method] sets the current input placeholder */",
+      "description": "/** Optional: Sets the current input placeholder */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -29481,7 +29465,7 @@
       }
     },
     "setInputAriaLabel": {
-      "description": "/** [optional method] sets the current input aria label */",
+      "description": "/** Optional: Sets the current input aria label */",
       "type": {
         "arguments": { "placeholder": "string" },
         "returnType": "void",
@@ -29489,7 +29473,7 @@
       }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",

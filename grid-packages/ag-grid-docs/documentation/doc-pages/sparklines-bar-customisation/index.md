@@ -113,7 +113,7 @@ Here is the result of the configuration shown in the above snippet.
 </div>
 
 [[note]]
-| If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `stroke` to the same value in order to preserve the alignment of the bars with the x-axis line.
+| If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `strokeWidth` to the same value in order to preserve the alignment of the bars with the x-axis line.
 
 ## Bar Padding Options
 

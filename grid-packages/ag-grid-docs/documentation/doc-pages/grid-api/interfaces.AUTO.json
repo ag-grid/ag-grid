@@ -573,8 +573,6 @@
       "resizable?": "boolean",
       "suppressSizeToFit?": "boolean",
       "suppressAutoSize?": "boolean",
-      "template?": "string",
-      "templateUrl?": "string",
       "pivotValueColumn?": "Column | null",
       "pivotTotalColumnIds?": "string[]",
       "headerName?": "string",
@@ -704,8 +702,6 @@
       "resizable?": "/** Set to `true` to allow this column should be resized. Default: `false` */",
       "suppressSizeToFit?": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */",
       "suppressAutoSize?": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
-      "template?": "/** Cell template to use for cell. */",
-      "templateUrl?": "/** Cell template URL to load template from to use for cell. */",
       "pivotValueColumn?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "pivotTotalColumnIds?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "headerName?": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
@@ -10937,10 +10933,10 @@
     "docs": {
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
-      "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
-      "setInputAriaLabel?(placeholder: string)": "/** [optional method] sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
+      "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
+      "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
+      "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IDateParams": {
@@ -10978,10 +10974,10 @@
       "init?(params: IDateParams)": "/** The init(params) method is called on the component once. */",
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
-      "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
-      "setInputAriaLabel?(placeholder: string)": "/** [optional method] sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
+      "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
+      "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
+      "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "PositionableOptions": {
@@ -11735,10 +11731,10 @@
     "docs": {
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
-      "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
-      "setInputAriaLabel?(placeholder: string)": "/** [optional method] sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
+      "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
+      "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
@@ -12028,8 +12024,6 @@
       "resizable?": "boolean",
       "suppressSizeToFit?": "boolean",
       "suppressAutoSize?": "boolean",
-      "template?": "string",
-      "templateUrl?": "string",
       "pivotValueColumn?": "Column | null",
       "pivotTotalColumnIds?": "string[]",
       "headerName?": "string",
@@ -12159,8 +12153,6 @@
       "resizable?": "/** Set to `true` to allow this column should be resized. Default: `false` */",
       "suppressSizeToFit?": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */",
       "suppressAutoSize?": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
-      "template?": "/** Cell template to use for cell. */",
-      "templateUrl?": "/** Cell template URL to load template from to use for cell. */",
       "pivotValueColumn?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "pivotTotalColumnIds?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "headerName?": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
@@ -14520,10 +14512,10 @@
     "docs": {
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */",
-      "setInputPlaceholder?(placeholder: string)": "/** [optional method] sets the current input placeholder */",
-      "setInputAriaLabel?(placeholder: string)": "/** [optional method] sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
+      "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
+      "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
+      "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IFilterReactComp": {

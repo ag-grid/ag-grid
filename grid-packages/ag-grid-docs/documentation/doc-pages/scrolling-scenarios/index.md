@@ -6,7 +6,7 @@ Here we show examples of some unusual use cases of scrolling and the grid.
 
 ## Make scrollbars always visible
 
-It is possible to show scrollbars even when there is not enough data to need scrolling. This voids visual table 'jumps' when toggling short and long data sets. To make that work, override the `overflow` of the `.ag-body-viewport` to `scroll !important`. The `!important` is necessary to override the inline styling.
+It is possible to show scrollbars even when there is not enough data to need scrolling. This voids visual table 'jumps' when toggling short and long data sets. To make that work, use the [alwaysShowHorizontalScroll](/grid-options/#reference-scrolling-alwaysShowHorizontalScroll) and [alwaysShowVerticalScroll](/grid-options/#reference-scrolling-alwaysShowVerticalScroll) properties of the Grid.
 
 <grid-example title='Always visible scrollbars' name='scrollbars' type='generated'></grid-example>
 

@@ -11,11 +11,13 @@ const columnDefs: ColDef[] = [
 var rowData = [
   { make: 'Toyota', model: 'Celica', price: 35000 },
   { make: 'Ford', model: 'Mondeo', price: 32000 },
-  { make: 'Porsche', model: 'Boxter', price: 72000 },
+  { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
+  alwaysShowHorizontalScroll: true,
+  alwaysShowVerticalScroll: true,
   columnDefs: columnDefs,
   rowData: rowData,
   onGridReady: function (params) {

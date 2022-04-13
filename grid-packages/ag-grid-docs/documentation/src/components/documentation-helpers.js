@@ -110,17 +110,10 @@ export function getLinkedType(type, framework) {
 };
 
 export function sortAndFilterProperties(properties, framework, applyOptionalOrdering = false) {
-    // Match $scope and $scope?
-    const scopeRegex = /\$scope(\??)/
-    properties.sort(([p1,], [p2,]) => {
-        // Push $scope to the end while maintaining original order
-        if (p1.match(scopeRegex))
-            return 1;
-        if (p2.match(scopeRegex))
-            return -1;
 
+    properties.sort(([p1,], [p2,]) => {
         if (applyOptionalOrdering) {
-            // Push mandantory props to the top
+            // Push mandatory props to the top
             const isP1Optional = p1.includes('?');
             const isP2Optional = p2.includes('?');
             if (isP1Optional && !isP2Optional)
@@ -133,9 +126,7 @@ export function sortAndFilterProperties(properties, framework, applyOptionalOrde
         }
         return 0;
     });
-    return properties
-        // Only show AngularJS $scope property for Angular or Javascript frameworks
-        .filter(([p,]) => !p.match(scopeRegex) || (framework === 'angular' || framework === 'javascript'));
+    return properties;
 }
 
 export function appendInterface(name, interfaceType, framework, allLines, printConfig = {}) {

@@ -2,7 +2,7 @@
 |Below is a simple example of header component:
 |
 |```js
-|const MyFloatingFilter = {
+|const CustomHeader = {
 |    template: `
 |      <div>
 |          <div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">

@@ -26,7 +26,7 @@ var names = [
 var models = [
     'Mondeo',
     'Celica',
-    'Boxter',
+    'Boxster',
     'Minty',
     'Snacky',
     'FastCar',

@@ -6,7 +6,6 @@ Client-Side Data means all of the data you want to show is loaded inside the dat
 
 <snippet>
 const gridOptions = {
-    // assumes each data item provided by the application has the key stored in an attribute called id
     rowData: getListOfRowData()
 }
 </snippet>

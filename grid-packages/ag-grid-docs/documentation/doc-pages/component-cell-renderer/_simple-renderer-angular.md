@@ -16,7 +16,7 @@
 |    `
 |})
 |export class TotalValueRenderer implements ICellRendererAngularComp {
-|    private cellValue: string;
+|    public cellValue: string;
 |
 |    // gets called once before the renderer is used
 |    agInit(params: ICellRendererParams): void {

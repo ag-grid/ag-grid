@@ -5,9 +5,8 @@
 |
 |```ts
 |interface IFloatingFilterAngularComp<ParentFilter = any> {
-|    // Mandatory methods
 |
-|    // The agInit(params) method is called on the floating filter once.
+|    // Mandatory - The agInit(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
 |    agInit(params: IFloatingFilterParams<ParentFilter>): void;
 |

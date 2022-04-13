@@ -48,6 +48,12 @@ export class ComponentUtil {
         const pGridOptions = gridOptions as any;
         const keyExists = (key: string) => typeof component[key] !== 'undefined';
 
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering') && typeof component.groupAggFiltering !== 'function') {
+            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(component.groupAggFiltering);
+            delete component.groupAggFiltering;
+        }
+
         // add in all the simple properties
         [
             ...ComponentUtil.ARRAY_PROPERTIES,
@@ -89,11 +95,18 @@ export class ComponentUtil {
         const pGridOptions = gridOptions as any;
         const keyExists = (key: string) => changesToApply[key];
 
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering') && typeof changesToApply.groupAggFiltering !== 'function') {
+            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+            delete changesToApply.groupAggFiltering;
+        }
+
         // check if any change for the simple types, and if so, then just copy in the new value
         [
             ...ComponentUtil.ARRAY_PROPERTIES,
             ...ComponentUtil.OBJECT_PROPERTIES,
             ...ComponentUtil.STRING_PROPERTIES,
+            ...ComponentUtil.FUNCTION_PROPERTIES,
             ...ComponentUtil.getEventCallbacks(),
         ]
             .filter(keyExists)

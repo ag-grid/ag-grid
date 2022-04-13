@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ISetFilter, KeyCreatorParams, ValueFormatterParams, IFiltersToolPanel } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -9,7 +9,6 @@ const gridOptions: GridOptions = {
                 cellHeight: 20,
             },
         },
-        { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         {
             field: 'country',
             valueFormatter: function (params: ValueFormatterParams) {
@@ -17,6 +16,7 @@ const gridOptions: GridOptions = {
             },
             keyCreator: countryKeyCreator,
         },
+        { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
         { field: 'year', maxWidth: 120 },
         { field: 'date' },
         { field: 'sport' },
@@ -30,7 +30,9 @@ const gridOptions: GridOptions = {
         minWidth: 160,
         filter: true,
         resizable: true,
-    }
+    },
+    sideBar: 'filters',
+    onFirstDataRendered: onFirstDataRendered,
 }
 
 function countryKeyCreator(params: KeyCreatorParams) {
@@ -81,6 +83,12 @@ function setCountriesToAll() {
     gridOptions.api!.onFilterChanged()
 }
 
+function onFirstDataRendered() {
+    ((gridOptions.api!.getToolPanelInstance(
+        'filters'
+    ) as any) as IFiltersToolPanel).expandFilters()
+}
+  
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
