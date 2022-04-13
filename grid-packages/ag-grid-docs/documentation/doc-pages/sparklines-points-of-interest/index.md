@@ -24,7 +24,7 @@ These special points can be customised via the `formatter` callback function to 
 Below are some examples demonstrating the different formatters for the three sparkline types:
 
 - [Line and Area Sparklines Points of Interest](/sparklines-points-of-interest/#line-and-area-sparklines-points-of-interest)
-- [Column Sparklines Points of Interest](/sparklines-points-of-interest/#column-sparklines-points-of-interest)
+- [Column and Bar Sparklines Points of Interest](/sparklines-points-of-interest/#column-and-bar-sparklines-points-of-interest)
 - [Full Example](/sparklines-points-of-interest/#example-points-of-interest)
 
 ## Line and Area Sparklines Points of Interest
@@ -153,7 +153,9 @@ See the result of adding this formatter in the sparklines on the right below, co
 </div>
 
 
-## Column Sparklines Points of Interest
+## Column And Bar Sparklines Points of Interest
+
+Bar sparklines are just transposed column sparklines and have the same configuration. This section only covers column sparkline examples but the same applies for bar sparklines.
 
 In the column sparklines, each data point is represented by a rectangle/ column. The `formatter` callback function applies to the individual columns and is added to `sparklineOptions`:
 
@@ -262,7 +264,6 @@ It should be noted that
 - The `size` property is returned from the area and line formatters to make certain special markers visible and the rest invisible.
 
 <grid-example title='Sparkline Special Points' name='sparkline-special-points' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
-
 
 [[note]]
 | All formatters will receive the highlighted property in the input. If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.

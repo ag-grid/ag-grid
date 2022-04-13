@@ -87,7 +87,7 @@ The following example demonstrates the results of the tooltip renderer above. No
 It is possible to display data from other columns of the current row in the sparkline tooltip.
 This access is provideded by the input parameter supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer), which includes a `context` object with a `data` property containing the row data.
 
-The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:
+The following snippet shows how values from the **Symbol** column can be shown in the tooltip title:
 
 ```js
 const tooltipRenderer = (params) => {
@@ -181,7 +181,7 @@ const tooltipRenderer = (params) => {
 }
 ```
 
-The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array.
+The tooltip renderer function receives the `params` object as a single parameter. The `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array is provided in the `params` object.
 
 Other row data is provided in the `context.data` object inside the `params` object. You can process the raw values in the `params` object however you like before using them as a part of the returned HTML string.
 
@@ -190,8 +190,8 @@ The effect of applying the tooltip renderer from the snippet above can be seen i
 Note that:
 
 - The structure of the returned DOM is up to you.
-- In this example the value of the title comes from `params.context.data.symbol` which is the value for the `symbol` column for the given row.
-- The elements have custom CSS class attributes, but the default class names can also be used so that our tooltip gets the default styling.
+- In this example the value of the title comes from `params.context.data.symbol` which is the value for the **Symbol** column for the given row.
+- The elements have custom CSS class attributes, but the default class names can also be used so that the tooltip gets the default styling.
 - The styles for the elements are defined in the external styles.css file.
 
 <grid-example title='Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>

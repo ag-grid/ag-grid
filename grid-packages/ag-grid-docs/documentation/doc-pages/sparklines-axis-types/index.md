@@ -59,9 +59,9 @@ In the snippet above, the x-axis type is set to `'category'` but this is optiona
 
 The example below demonstrates the Category Axis used in an Area Sparkline. Note the following:
 
-- The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[string, number][]`.
+- The **Rate Of Change** column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[string, number][]`.
 - The `string` X values are evenly spaced across the x-axis using a fixed width between each data point.
-- The `string` X values are included in the tooltip title.
+- The `string` X values are included in the tooltip.
 
 <grid-example title='Sparkline Category Axis' name='sparkline-category-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
@@ -98,15 +98,15 @@ In the snippet above, the x-axis type is set to `'number'` to select a Number Ax
 
 The example below demonstrates the Number Axis used in an Area Sparkline. Note the following:
 
-- The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[number, number][]`.
+- The **Rate Of Change** column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[number, number][]`.
 - The numeric X values are placed and spread along the x-axis based on the magnitude of the value.
-- The numeric X values are included in the tooltip title.
+- The numeric X values are included in the tooltip.
 
 <grid-example title='Sparkline Number Axis' name='sparkline-number-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Time Axis
 
-The Time Axis is similar to the [Number Axis](/sparklines-axis-types/#number-axis) in the sense that it is also used
+The Time Axis is similar to the [Number Axis](/sparklines-axis-types/#number-axis) in that it is also used
 to plot continuous values. X values can be `number` or `Date` objects, where `number` values are interpreted as
 timestamps derived from Unix time.
 
@@ -137,9 +137,9 @@ In the snippet above, the x-axis type is set to `'time'` to select a Time Axis i
 
 The example below demonstrates the Time Axis used in an Area Sparkline. Note the following:
 
-- The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[Date, number][]`.
+- The **Rate Of Change** column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[Date, number][]`.
 - The `Date` X values are placed in chronological order and spread along the x-axis based on the time between data points.
-- The `Date` X values are included in the tooltip title.
+- The `Date` X values are included in the tooltip.
 
 <grid-example title='Sparkline Time Axis' name='sparkline-time-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
