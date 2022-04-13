@@ -265,7 +265,7 @@ export class Component extends BeanStub {
         }
     }
 
-    public setTemplate(template: string | null, paramsMap?: { [key: string]: any; }): void {
+    public setTemplate(template: string | null | undefined, paramsMap?: { [key: string]: any; }): void {
         const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
