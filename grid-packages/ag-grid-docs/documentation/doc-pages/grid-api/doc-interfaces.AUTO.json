@@ -17158,7 +17158,7 @@
     },
     "fontSize": {
       "description": "/** Set size of the font. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
       "description": "/** Specify the font for the label text. */",
