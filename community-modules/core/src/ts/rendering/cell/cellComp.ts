@@ -53,9 +53,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private firstRender: boolean;
 
-    // for angular 1 only
-    private angularCompiledElement: any;
-
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
     // so if a framework component takes a while to be created, we know if the object
@@ -523,11 +520,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.destroyEditorAndRenderer();
         this.removeControls();
-
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
 
         super.destroy();
     }
