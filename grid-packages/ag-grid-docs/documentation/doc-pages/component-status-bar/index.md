@@ -21,8 +21,6 @@ md-include:component-interface-vue.md
 
 ## Status Panel Parameters
 
-The method init(params) takes a params object with the interface `IStatusPanelParams`.
-
 <interface-documentation interfaceName='IStatusPanelParams' ></interface-documentation>
 
 ## Configuring Status Bar Panels
