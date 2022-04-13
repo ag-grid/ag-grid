@@ -32,8 +32,7 @@
         }
 
         &__anchor-body {
-            display: flex;
-            height: 100px;
+            composes: d-flex from global;
 
             &__index {
                 padding-right: 1rem;
@@ -43,15 +42,21 @@
                 color: #666;
             }
             &__body {
-                display: flex;
-                width: 100%;
+                composes: w-100 d-flex flex-column flex-lg-row from global;
+
                 padding-bottom: 0.75rem;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
 
                 ul {
                     width: 100%;
                     display: flex;
-                    flex-wrap: wrap;
+                    flex-direction: column;
+
+                    @include media-breakpoint-up(lg) {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                    }
+                    
 
                     li {
                         flex-grow: 1;
@@ -60,9 +65,10 @@
                 }
 
                 &__video-content {
-                    display: flex;
-                    align-items: flex-end;
-                    justify-content: flex-end;
+                    composes: d-flex from global;
+
+                    position: relative;
+                    max-width: 30rem;
 
                     &__running-time {
                         position: absolute;
@@ -72,12 +78,27 @@
                         color: white;
                         background-color: rgba(0,0,0,.5);
                     }
+                    > img {
+                        width: 100%;
+                        @include media-breakpoint-up(lg) {
+                            width: auto;
+                            height: 100px;
+                        }
+                    }
                 }
 
                 &__video-notes {
-                    padding-left: 1.5rem;
-                    width: 60%;
-                    margin-top: -.5rem;
+                    composes: pl-lg-3 from global;
+                    max-width: 35rem;
+                    h4 {
+                        margin-top: 0.25rem;
+                        font-size: 1rem;
+                        @include media-breakpoint-up(lg) {
+                            margin-top: 0;
+                            font-size: 1.5rem;
+                        }
+
+                    }
                 }
             }
         }

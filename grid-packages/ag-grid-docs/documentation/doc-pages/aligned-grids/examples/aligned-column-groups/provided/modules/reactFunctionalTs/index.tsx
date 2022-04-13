@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -70,7 +70,8 @@ const GridExample = () => {
     }
     ]);
 
-    const [rowData, setRowData] = useState([]);
+    const [rowData, setRowData] = useState<any[]>([]);
+    const [gridReady, setGridReady] = useState<number>(0);
 
     function onGridReady(params: GridReadyEvent) {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -79,15 +80,21 @@ const GridExample = () => {
                 setRowData(data)
                 window.setTimeout(() => {
                     // mix up some columns
-                    topGridRef.current!.columnApi.moveColumnByIndex(11, 4);
-                    topGridRef.current!.columnApi.moveColumnByIndex(11, 4);
+                    topGridRef.current?.columnApi.moveColumnByIndex(11, 4);
+                    topGridRef.current?.columnApi.moveColumnByIndex(11, 4);
                 }, 100);
             });
     }
 
     function onFirstDataRendered(params: FirstDataRenderedEvent) {
-        topGridRef.current!.api.sizeColumnsToFit();
+        setGridReady(gridReady + 1);
     };
+
+    useEffect(() => {
+        if (gridReady > 1) {
+            topGridRef.current?.api.sizeColumnsToFit();
+        }
+    }, [setGridReady]);
 
 
     return (

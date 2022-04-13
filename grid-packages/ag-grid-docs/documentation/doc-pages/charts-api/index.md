@@ -31,8 +31,9 @@ Click through the tabs to see the three main variations of `AgChartOptions` depe
 |
 | [[note]]
 | | NOTE: We expect the options supplied to `AgChart.update()` to be the full configuration to update
-| | to, not a delta. If properties or nested objects are missing compared with an earlier `create()`/
-| | `update()` call, features maybe disabled or defaults assumed as the target configuration.
+| | to, not a partial configuration. If properties or nested objects are missing compared with an
+| | earlier `create()`/`update()` call, features may be disabled or defaults assumed as the target
+| | configuration.
 
 [[only-frameworks]]
 | Options are supplied to the AG Charts component, and mutations of the options trigger an update of the chart configuration.
