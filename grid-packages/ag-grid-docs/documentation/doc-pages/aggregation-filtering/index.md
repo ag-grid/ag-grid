@@ -3,11 +3,11 @@ title: "Aggregation - Filtering"
 enterprise: true
 ---
 
-This section covers some of the unique behaviours and features which emerge when mixing [Aggregation](/aggregation/) and [Filtering](/filtering/).
+This section describes the different ways that aggregated values can be filtered in the grid.
 
 ## Default Filtering
 
-By default, when using [Filters](/filtering-overview/) and [Aggregations](/aggregation/) the filtering will only apply to the cell values in leaf-level rows, and not to any of the row group values in the filtered column. Also note that when a column filter is applied, the aggregated values shown in the row groups are recalculated based on the filtered rows.
+By default, when using [Filters](/filtering-overview/) and [Aggregations](/aggregation/) the filtering will only apply to the cell values in leaf-level rows, and not to any of the aggregated values in the group rows. Also, when a column filter is applied, the aggregated values shown in the group rows will be updated based on the filtered rows only.
 
 <snippet>
 const gridOptions = {
@@ -28,7 +28,7 @@ The example below demonstrates how aggregated values update to reflect the appli
 
 <grid-example title='Aggregation and Filters' name='filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
-## Suppressing Filtered Aggregation
+## Suppressing Aggregation Updates When Filtering
 
 To prevent the [Default Behaviour](/aggregation-filtering/#default-filtering) of [Aggregated](/aggregation/) values being calculated from the [Filtered](/filtering-overview/) results, and instead calculate them from the pre-filtered data, enable the `suppressAggFilteredOnly` option.
 
@@ -38,7 +38,7 @@ const gridOptions = {
 }
 </snippet>
 
-The example below demonstrates how aggregated values ignore updates in the applied filters when filtered aggregation is suppressed. Note the following:
+The example below demonstrates this behaviour - when a filter is applied, group row aggregated values remain unchanged and show their original values representing the original unfiltered data. Note the following:
 - Apply a filter for the **year** column with the value **2008**
 - Note how the values in the **total** column *do not* update to reflect the filtered data.
 
