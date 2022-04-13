@@ -130,7 +130,7 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 - The Value column is aggregated with a custom aggregator. The aggregator records how many times it is called.
 
-- When the example first loads, all the data is set into the grid which results in 171 aggregation operations (one for each group), approximately 48,000 comparisons (for sorting all rows in each group, the number of sorts differs slightly dependent on the data values which are random in this example) and 10,000 filter passes (one for each row). The number of milliseconds to complete the operation is also printed (this value will depend on your hardware).
+- When the example first loads, all the data is set into the grid which results in 171 aggregation operations (one for each group), approximately 24,000 comparisons (for sorting all rows in each group, the number of sorts differs slightly dependent on the data values which are random in this example) and 10,000 filter passes (one for each row). The number of milliseconds to complete the operation is also printed (this value will depend on your hardware).
 
 - Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation). Note in the console that the number of aggregations, compares and filters is drastically fewer. The total time to execute is also drastically less.
 
