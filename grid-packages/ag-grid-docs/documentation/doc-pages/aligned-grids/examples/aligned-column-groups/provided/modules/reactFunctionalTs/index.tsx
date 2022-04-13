@@ -37,6 +37,7 @@ bottomOptions.alignedGrids!.push(topOptions);
 
 const GridExample = () => {
     const topGridRef = useRef<AgGridReact>(null);
+    const bottomGridRef = useRef<AgGridReact>(null);
 
     const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>([{
         headerName: 'Group 1',
@@ -92,9 +93,9 @@ const GridExample = () => {
 
     useEffect(() => {
         if (gridReady > 1) {
-            topGridRef.current?.api.sizeColumnsToFit();
+            bottomGridRef.current?.api.sizeColumnsToFit();
         }
-    }, [setGridReady]);
+    }, [gridReady]);
 
 
     return (
@@ -107,16 +108,20 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={{ resizable: true }}
                     onGridReady={params => onGridReady(params)}
-                    onFirstDataRendered={params => onFirstDataRendered(params)} />
+                    onFirstDataRendered={params => onFirstDataRendered(params)}
+                />
             </div>
 
             <div className="divider"></div>
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
+                    ref={bottomGridRef}
                     rowData={rowData}
                     gridOptions={bottomOptions}
-                    columnDefs={columnDefs} />
+                    columnDefs={columnDefs}
+                    onFirstDataRendered={params => onFirstDataRendered(params)}
+                />
             </div>
         </div>
     );
