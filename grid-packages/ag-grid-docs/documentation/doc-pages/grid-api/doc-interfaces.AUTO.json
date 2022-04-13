@@ -9471,7 +9471,7 @@
     },
     "enableSorting": {
       "description": "/** Whether sorting is enabled for the column.\n * Only put sort logic into your header if this is true. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean | undefined", "optional": false }
     },
     "enableMenu": {
       "description": "/** Whether menu is enabled for the column.\n * Only display a menu button in your header if this is true. */",
@@ -9504,7 +9504,10 @@
         "optional": false
       }
     },
-    "template": { "type": { "returnType": "string", "optional": false } },
+    "template": {
+      "description": "/** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://ag-grid.com/javascript-data-grid/column-headers/#header-templates) */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "eGridHeader": {
       "description": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "type": { "returnType": "HTMLElement", "optional": false }

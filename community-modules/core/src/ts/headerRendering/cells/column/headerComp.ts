@@ -27,7 +27,7 @@ export interface IHeaderParams extends AgGridCommon {
      * Whether sorting is enabled for the column.
      * Only put sort logic into your header if this is true.
      */
-    enableSorting: boolean;
+    enableSorting: boolean | undefined;
     /**
      * Whether menu is enabled for the column.
      * Only display a menu button in your header if this is true.
@@ -51,7 +51,9 @@ export interface IHeaderParams extends AgGridCommon {
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
     setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => void;
-    template: string;
+
+    /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
+    template?: string;
     /**
      * The header the grid provides.
      * The custom header component is a child of the grid provided header.
@@ -102,9 +104,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     private lastMovingChanged = 0;
 
     private currentDisplayName: string;
-    private currentTemplate: string | null;
+    private currentTemplate: string | null | undefined;
     private currentShowMenu: boolean;
-    private currentSort: boolean;
+    private currentSort: boolean | undefined;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -127,8 +129,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         return true;
     }
 
-    private workOutTemplate(): string | null {
-        let template: string | null = firstExistingValue(
+    private workOutTemplate(): string | null | undefined {
+        let template: string | null | undefined = firstExistingValue(
             this.params.template,
             HeaderComp.TEMPLATE
         );
@@ -263,7 +265,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         removeFromParent(this.eSortOrder);
     }
 
-    private workOutSort(): boolean {
+    private workOutSort(): boolean | undefined {
         return this.params.enableSorting;
     }
 
