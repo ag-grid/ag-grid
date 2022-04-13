@@ -52,9 +52,9 @@ As the [Default Behaviour](/aggregation-filtering/#default-filtering) of [Filter
 ### Enabling Group Aggregation Filtering
 
 By default, column filters are not applied to cell values shown in [Group Rows](/grouping/) as they do not usually 
-have any data of their own. However when using [Aggregation](/aggregation/), the aggregated columns in the group rows will contain values computed based on their child rows. 
+have any data of their own. However when using [Aggregation](/aggregation/), the aggregated columns in the group rows will show aggregated values computed based on their child rows.
 
-In such a case you can filter based on aggregated values by setting the `groupAggFiltering` grid option as shown below:
+You can filter the grid based on the group row aggregated values by setting the `groupAggFiltering` grid option as shown below:
 
 <snippet>
 const gridOptions = {
@@ -70,13 +70,9 @@ Once aggregation filtering is enabled and applied, when an aggregated value in a
 The example below demonstrates the behaviour when filtering aggregated values. Please go through the list of filtering scenarios below to better understand this functionality.
 
 Note the following:
-1. Using the **total** column apply a filter for the value **6**
-Note in the filtered grid the leaf row **Natalie Coughlin** is displayed with all of its parent group rows.
-2. Using the **total** column, now apply a filter for the value **38**
-Note that as the group row **United States** matches this filter due to its aggregated value, this shows all of its child and leaf-level rows. Specifically, note that both **Swimming** and **Gymnastics** row groups are displayed under the United States row group.
-3. Using the **total** column, now apply a filter for the value **34**
-Note that as the group row **United States-Swimming** matches this filter due to its aggregated value, this shows the Swimming group row and all its leaf-level rows. However, unlike the previous filtering scenario, the group row **United States-Gymnastics** is not displayed any more, because the filter match is in the **United States-Swimming** group row.
-
+1. Using the **total** column apply a filter for the value **6**. Note in the filtered grid the leaf row **Natalie Coughlin** is displayed with all of its parent group rows.
+2. Using the **total** column, now apply a filter for the value **38**. Note that as the group row **United States** aggregated value matches the filter, all of its child and leaf-level rows as shown. Specifically, note that both **United States-Swimming** and **United States-Gymnastics** row groups are displayed under the United States row group.
+3. Using the **total** column, now apply a filter for the value **34**. Note that as the group row **United States-Swimming** aggregated value matches the filter, this shows the **United States-Swimming** group row and all its leaf-level rows. However, unlike the previous filtering scenario, the group row **United States-Gymnastics** is not displayed any more, because the filter match is in the **United States-Swimming** group row only.
 <grid-example title='Group and Leaf Aggregate Filtering' name='agg-filtering-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
 [[note]]
@@ -106,7 +102,7 @@ The example below demonstrates this specific scenario. Note the following:
 
 <grid-example title='Group-only Aggregate filtering' name='agg-filtering-group' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
-The properties of the [Row Node](/row-object/) provided by the callback parameters can be used to further customise row group filtering behaviour.
+The properties of the [Row Node](/row-object/) provided by the `groupAggFiltering` callback parameters can be used to further customise row group filtering behaviour.
 
 <api-documentation source='resources/reference.json' section="rowNodeAttributes"></api-documentation>
 
