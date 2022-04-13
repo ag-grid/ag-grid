@@ -45,7 +45,7 @@ The cell renderer for `fullWidth` has one difference to normal cell renderers: t
 are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular
 column. Instead you should work off the data parameter, which represents the value for the entire row.
 
-The `isFullWidthRow(params)` callback takes a `rowNode` as input and should return a boolean
+The `isFullWidthRow(params)` callback receives a `params` object containing the `rowNode` as its input and should return a boolean
 `true` (use `fullWidth`) or `false` (do not use `fullWidth` and render as normal).
 
 
