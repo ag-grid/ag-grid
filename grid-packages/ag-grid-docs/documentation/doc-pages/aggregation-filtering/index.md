@@ -73,6 +73,7 @@ Note the following:
 1. Using the **total** column apply a filter for the value **6**. Note in the filtered grid the leaf row **Natalie Coughlin** is displayed with all of its parent group rows.
 2. Using the **total** column, now apply a filter for the value **38**. Note that as the group row **United States** aggregated value matches the filter, all of its child and leaf-level rows as shown. Specifically, note that both **United States-Swimming** and **United States-Gymnastics** row groups are displayed under the United States row group.
 3. Using the **total** column, now apply a filter for the value **34**. Note that as the group row **United States-Swimming** aggregated value matches the filter, this shows the **United States-Swimming** group row and all its leaf-level rows. However, unlike the previous filtering scenario, the group row **United States-Gymnastics** is not displayed any more, because the filter match is in the **United States-Swimming** group row only.
+
 <grid-example title='Group and Leaf Aggregate Filtering' name='agg-filtering-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
 [[note]]
