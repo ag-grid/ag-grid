@@ -1,6 +1,7 @@
 import { ICellRendererComp } from 'ag-grid-community';
 import { MutableRefObject, useCallback, useContext, useEffect } from 'react';
 import { BeansContext } from '../beansContext';
+import { useEffectOnce } from '../useEffectOnce';
 import { RenderDetails } from './cellComp';
 
 const useJsCellRenderer = (
@@ -75,9 +76,9 @@ const useJsCellRenderer = (
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
         // is a change in state
-        useEffect(() => {
+        useEffectOnce(() => {
             return destroyCellRenderer;
-        }, []);
+        }, 'showJsRenderer.destroy');
 }
 
 export default useJsCellRenderer;

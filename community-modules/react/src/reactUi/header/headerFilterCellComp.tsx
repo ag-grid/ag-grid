@@ -3,6 +3,7 @@ import { BeansContext } from '../beansContext';
 import { AgPromise, HeaderFilterCellCtrl, ResolveAndRejectCallback, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -24,7 +25,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const { ctrl } = props;
 
-    useEffect(() => {
+    useEffectOnce(() => {
 
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -38,7 +39,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
 
-    }, []);
+    }, 'headerFilterCellComp.main');
 
     // js comps
     useEffect(() => {
