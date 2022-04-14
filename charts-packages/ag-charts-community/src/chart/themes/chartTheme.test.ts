@@ -538,7 +538,7 @@ describe('ChartTheme', () => {
             expect(chart.axes[1].title && chart.axes[1].title.text).toBe('Test');
             // Since config is provided, the `enabled` should be auto-set to `true`,
             // even though theme's default is `false`.
-            expect(chart.axes[1].title && chart.axes[1].title.enabled).toBe(false);
+            expect(chart.axes[1].title && chart.axes[1].title.enabled).toBe(true);
         });
     });
 
