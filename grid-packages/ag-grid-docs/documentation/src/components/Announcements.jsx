@@ -10,6 +10,28 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
+    <Announcement date="Apr 19" version="27.2.0">
+        <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-2/">What's new in AG Grid 27.2.0</a><br/><br/>
+            Minor release with new features and bug fixes.
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/javascript-data-grid/aggregation-filtering/#filtering-group-aggregations">Filtering Group Aggregations</a>
+            </li>
+        </ul>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/javascript-data-grid/pivoting/#filtering-on-secondary-columns">Filtering on Secondary Columns</a>
+            </li>
+        </ul>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/javascript-data-grid/pivoting/#saving--restoring-column-state-with-pivot">Saving & Restoring Column State with Pivot</a>
+            </li>
+        </ul>
+    </Announcement>
+
     <Announcement date="Mar 15" version="27.1.0">
         <p className="card-text">
             <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-1/">What's new in AG Grid 27.1.0</a><br/><br/>
@@ -26,7 +48,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             </li>
         </ul>
     </Announcement>
-
 
     <Announcement date="Feb 8" version="27.0.0">
         <p className="card-text">
