@@ -23,7 +23,6 @@ var myTheme = {
         },
         column: {
           label: {
-            enabled: true,
             color: "white",
           },
         },
@@ -83,7 +82,6 @@ var chartOptions1 = {
   container: document.getElementById("chart1"),
   autoSize: true,
   title: {
-    enabled: true,
     text: "Cartesian Chart Theming",
   },
   data: data,
@@ -123,7 +121,6 @@ var chartOptions2 = {
   container: document.getElementById("chart2"),
   autoSize: true,
   title: {
-    enabled: true,
     text: "Polar Chart Theming",
   },
   data: data,

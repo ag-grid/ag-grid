@@ -73,7 +73,6 @@ function onChart2() {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Bronze Medal by Country',
         },
         legend: {

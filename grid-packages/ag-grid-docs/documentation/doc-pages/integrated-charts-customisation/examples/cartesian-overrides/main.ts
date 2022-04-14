@@ -69,7 +69,6 @@ const gridOptions: GridOptions = {
             },
           ],
           title: {
-            enabled: true,
             text: 'Tonnes',
             fontStyle: 'italic',
             fontWeight: 'bold',
@@ -121,7 +120,6 @@ const gridOptions: GridOptions = {
         },
       },
       navigator: {
-        enabled: true,
         height: 9,
         min: 0.2,
         max: 1,

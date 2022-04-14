@@ -66,7 +66,6 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Magnitude',
       },
     },
