@@ -1937,7 +1937,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Testing with FakeAsync",
+            "title": "Testing Async",
             "url": "/testing-async/",
             "showInCollapsed": true,
             "frameworks": [
