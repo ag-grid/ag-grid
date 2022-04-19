@@ -1772,6 +1772,11 @@ export class GridApi {
         return res;
     }
 
+    /** Enable or disable the delta sort grid option. */
+    public setDeltaSort(enable: boolean): void {
+        this.gridOptionsWrapper.setProperty('deltaSort', enable);
+    }
+
     /** @deprecated */
     public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null | undefined {
         const message = 'AG Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';

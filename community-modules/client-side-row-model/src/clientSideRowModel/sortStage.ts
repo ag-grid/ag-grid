@@ -32,34 +32,8 @@ export class SortStage extends BeanStub {
             // rolling out to everyone.
             && this.gridOptionsWrapper.isDeltaSort();
 
-        // we only need dirty nodes if doing delta sort
-        const dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
-
-        const noAggregations = _.missingOrEmpty(this.columnModel.getValueColumns());
         const sortContainsGroupColumns = sortOptions.some(opt => !!opt.column.getColDef().showRowGroup);
 
-        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations, sortContainsGroupColumns);
+        this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     }
-
-    private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: boolean } {
-        const dirtyNodes: { [nodeId: string]: boolean } = {};
-
-        const addNodesFunc = (rowNodes: RowNode[]) => {
-            if (rowNodes) {
-                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
-            }
-        };
-
-        // all leaf level nodes in the transaction were impacted
-        if (rowNodeTransactions) {
-            rowNodeTransactions.forEach(tran => {
-                addNodesFunc(tran.add);
-                addNodesFunc(tran.update);
-                addNodesFunc(tran.remove);
-            });
-        }
-
-        return dirtyNodes;
-    }
-
 }
