@@ -268,7 +268,7 @@ title: "Testing AG Grid"
 |
 | ## Configuring the Test Module
 |
-| The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule(`:
+| The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule`:
 |
 | ```ts
 | beforeEach(async(() => {
@@ -283,12 +283,11 @@ title: "Testing AG Grid"
 |     fixture = TestBed.createComponent(TestHostComponent);
 |     component = fixture.componentInstance;
 |
-|     fixture.detectChanges();
 | }));
 | ```
 |
 | Now that the test bed is aware of AG Grid we can continue with our testing. If however you wish
-| to add any user provided components to the grid then you'll need to declare them here too:
+| to add any user provided components to the grid then you'll need to declare them here too.
 |
 | ```diff
 | beforeEach(async(() => {
@@ -302,12 +301,12 @@ title: "Testing AG Grid"
 |
 |     fixture = TestBed.createComponent(TestHostComponent);
 |     component = fixture.componentInstance;
-|
-|     fixture.detectChanges();
 | }));
 | ```
-|
-| Here were initialising the test bed before each test for convenience.
+|[[note]]
+|| The `withComponents` call is only necessary for Angular <= v8 or if Ivy has been disabled (`enableIvy:false`).
+|| If this is the case you must use `withComponents` to enable the grid to use Angular
+|| components as cells / headers  otherwise you can ignore it and just import `AgGridModule`.
 |
 | ## Testing via the Grid API
 |
@@ -321,6 +320,8 @@ title: "Testing AG Grid"
 |
 | ```js
 | it('grid API is available after `detectChanges`', () => {
+|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // As part of the creation the grid apis will be attached to the gridOptions property.
 |     fixture.detectChanges();
 |     expect(component.gridOptions.api).toBeTruthy();
 | });
@@ -328,10 +329,15 @@ title: "Testing AG Grid"
 |
 | ## Testing Grid Contents
 |
-| The easiest way to check the grid contents is to access the `nativeElement` and query DOM elements from there:
+| One way to check the grid contents is to access the `nativeElement` and query DOM elements from there:
 |
 | ```js
 | it('the grid cells should be as expected', () => {
+|
+|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // As part of the creation the grid apis will be attached to the gridOptions property.
+|     fixture.detectChanges();
+|
 |     const appElement = fixture.nativeElement;
 |     const cellElements = appElement.querySelectorAll('.ag-cell-value');
 |
@@ -344,7 +350,7 @@ title: "Testing AG Grid"
 |
 | ## Testing User Supplied Components
 |
-| The easiest way to test user supplied components is to access them via the grid API.
+| To test user supplied components you can access them via the grid API.
 |
 | For example, given the following code:
 |
@@ -355,12 +361,12 @@ title: "Testing AG Grid"
 |     }
 | )
 | export class EditorComponent implements ICellEditorAngularComp {
-|     private params: any;
+|     private params: ICellEditorParams;
 |     public value: number;
 |
 |     @ViewChild('input', {read: ViewContainerRef}) public input;
 |
-|     agInit(params: any): void {
+|     agInit(params: ICellEditorParams): void {
 |         this.params = params;
 |         this.value = this.params.value;
 |     }
@@ -399,7 +405,7 @@ title: "Testing AG Grid"
 | class TestHostComponent {
 |     rowData: any[] = [{name: 'Test Name', number: 42}];
 |
-|     columnDefs: any[] = [
+|     columnDefs: ColDef[] = [
 |         {field: "name"},
 |         {field: "number", colId: "raw", headerName: "Raw Number", editable: true, cellEditor: 'editor'},
 |         {field: "number", colId: "renderer", headerName: "Renderer Value"}
@@ -412,7 +418,7 @@ title: "Testing AG Grid"
 |     api: GridApi;
 |     columnApi: ColumnApi;
 |
-|     public onGridReady(params) {
+|     public onGridReady(params: GridReadyEvent) {
 |         this.api = params.api;
 |         this.columnApi = params.columnApi;
 |     }
@@ -423,6 +429,10 @@ title: "Testing AG Grid"
 |
 | ```js
 | it('cell should be editable and editor component usable', () => {
+|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // As part of the creation the grid apis will be attached to the gridOptions property.
+|     fixture.detectChanges();
+|
 |     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
 |     component.api.startEditingCell({
 |             rowIndex: 0,
@@ -458,6 +468,11 @@ title: "Testing AG Grid"
 |     '../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css'
 | ]
 | ```
+|
+|
+|## Next Up
+|
+|Continue to the next section to learn about [Testing with FakeAsync](/testing-async/) parts of the grid.
 
 [[only-react]]
 | We will walk through how you can use testing AG Grid as part of your React application, using default

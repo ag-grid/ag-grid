@@ -37,7 +37,9 @@
             "menuHide": true,
             "pane": "left",
             "frameworks": [
-              "javascript","angular","vue"
+              "javascript",
+              "angular",
+              "vue"
             ]
           },
           {
@@ -1933,6 +1935,14 @@
             "title": "Testing",
             "url": "/testing/",
             "showInCollapsed": true
+          },
+          {
+            "title": "Testing with FakeAsync",
+            "url": "/testing-async/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
           },
           {
             "title": "Security",
