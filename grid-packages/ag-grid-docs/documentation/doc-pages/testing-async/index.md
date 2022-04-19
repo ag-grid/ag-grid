@@ -1,5 +1,5 @@
 ---
-title: "Testing with FakeAsync"
+title: "Testing Async"
 ---
 
  We will walk through an example that tests asynchronous grid code as part of your Angular application,
@@ -43,7 +43,7 @@ You can see the expected behaviour in the example below by entering the text `Ge
  The first part of the test is to configure our test module. We need to add AG Grid's `AgGridModule` and also Angular's `FormModule` as that is required for `ngModel` to work.
 
  ```ts
-    beforeEach((async () => {
+    beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [AppComponent],
             imports: [AgGridModule, FormsModule],
@@ -56,19 +56,19 @@ You can see the expected behaviour in the example below by entering the text `Ge
         // Get a reference to our quickFilter input and rendered template
         quickFilterDE = compDebugElement.query(By.css('#quickFilter'))
         rowNumberDE = compDebugElement.query(By.css('#numberOfRows'))
-    }));
+    });
  ```
 
 [[note]]
 |We do **not** run fixture.detectChanges() inside our beforeEach method as we want to ensure the grid is constructed within  our fakeAsync test. This avoids numerous issues.
 
- ## Testing Async Behaviour with FakeAsync
-
- Angular provides us with the testing tool [fakeAsync](https://angular.io/api/core/testing/fakeAsync) for handling asynchronous code in our tests. This enables us to control the flow of time and when asynchronous tasks are executed. Next we show how to write the filter test with `fakeAsync`.
+We will now outline two approaches to test our asynchronous grid behaviour.
+ - Using `fakeAsync`
+ - Using `async` `await`
 
 ### Validation Helper Function
 
-We use the helper function `validateState` to test the component at multiple stages to help understand how `fakeAsync` works with the grid. We validate the internal grid state, the state our our component variable and finally the html rendered by the component.
+We will use a helper function `validateState` to test the component at multiple stages to gain insight into how the test works. We validate the internal grid state, the state our our component variable and finally the html rendered by the component.
 
 ```ts
   function validateState({ gridRows, displayedRows, templateRows }) {
@@ -83,8 +83,11 @@ We use the helper function `validateState` to test the component at multiple sta
     expect(getTextValue(rowNumberDE)).toContain(templateRows)
   }
 ```
+ ## FakeAsync
 
-### FakeAsync Filter Test
+ Angular provides us with the testing tool [fakeAsync](https://angular.io/api/core/testing/fakeAsync) for handling asynchronous code in our tests. This enables us to control the flow of time and when asynchronous tasks are executed. Next we show how to write the filter test with `fakeAsync`.
+
+### Filter Test
 
 Now let's run through the filter test, step by step, explaining why we are calling the `fakeAsync` helper `flush` and also `fixture.detectChanges`. 
 
@@ -178,9 +181,6 @@ it('should filter rows by quickFilterText', fakeAsync(() => {
 
     validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
 
-    // Now let's test that updating the filter text input filters the data visible in the grid.
-    // First we set the filter value to 'Germany' and then fire the input event
-    // which is required for ngModel to see the change.
     quickFilterDE.nativeElement.value = 'Germany'
     quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
 
@@ -189,7 +189,93 @@ it('should filter rows by quickFilterText', fakeAsync(() => {
     fixture.detectChanges()
 
     validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
-
   }))
 
 ```
+
+ ## async await
+
+ The second option we have to testing asynchronous behaviour is to use `async` and `await` syntax along with the Angular method `fixture.whenStable()`. The difference with this approach is that you no longer have to trigger asynchronous methods, instead you wait for them to finish before making your assertions.
+
+ The same test can be written with `async`, `await` as follows.
+
+### Filter Test
+
+ ```ts
+it('should filter rows by quickFilterText (async await)', (async () => {
+
+    // When the test starts our test component has been created but not initialised yet.
+    // This means our <ag-grid-angular> component has not been created or had data passed to it yet.
+    expect(component.grid).toBeUndefined()
+    // Our first call to detectChanges, causes the grid to be create and passes the component values to the grid via its Inputs meaning the grid's internal model is setup
+    fixture.detectChanges()
+    // Grid has now been created
+    expect(component.grid.api).toBeDefined()
+
+    // We now validate that the internal grid model is correct. 
+    // It should have 1000 rows as this code is synchronous.
+    // However, at this point the asynchronous grid callbacks have not run.
+    // i.e our (modelUpdated) @Output has not fired.
+    // This is why the internal grid state has 1000 rows, but our component and template still have 0 values.
+    validateState({ gridRows: 1000, displayedRows: 0, templateRows: 0 })
+
+    // We wait for the fixture to be stable which allows all the asynchronous code to run.
+    await fixture.whenStable()
+
+    // Now that the fixture is stable we can confirm that the async callback (modelUpdated) has run.
+    validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 0 })
+
+    // We run change detection to update the template based off the new component state
+    fixture.detectChanges()
+
+    // Our grid is stable and the template value now matches
+    validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
+
+    // Now let's test that updating the filter text input does filter the grid data.
+    // Set the filter to Germany
+    quickFilterDE.nativeElement.value = 'Germany'
+    quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
+
+    // We force change detection to run which applies the update to our <ag-grid-angular [quickFilterText] Input.
+    fixture.detectChanges()
+
+    // The grid filtering is done synchronously so we see the internal model is already updated.
+    validateState({ gridRows: 68, displayedRows: 1000, templateRows: 1000 })
+
+    // Again we wait for the asynchronous code to complete
+    await fixture.whenStable()
+
+    // The grid callback has now completed updating our component state
+    validateState({ gridRows: 68, displayedRows: 1000, templateRows: 1000 })
+
+    // Run change detection again to update the template.
+    fixture.detectChanges()
+
+    // We have now reached a stable state and tested that passing a [quickFilterText] to our grid component does correctly filter the rows
+    // and update our display correctly with the number of filtered row.
+    validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
+
+  }))
+ ```
+
+ And as before you may want to shorten the test for your own use case. Once again you will see a similar pattern of `detectChanges` -> `await whenStable` -> `detectChanges` required for this asynchronous test.
+
+  ```ts
+it('should filter rows by quickFilterText (async await)', (async () => {
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
+
+    quickFilterDE.nativeElement.value = 'Germany'
+    quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
+  }))
+ ```
