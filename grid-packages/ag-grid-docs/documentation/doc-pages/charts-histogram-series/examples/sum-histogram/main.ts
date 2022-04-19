@@ -35,7 +35,6 @@ const options: AgChartOptions = {
       title: { text: 'Total winnings (USD)' },
     },
   ],
-  height: 550,
 }
 
 agCharts.AgChart.create(options)

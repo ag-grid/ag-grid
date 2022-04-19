@@ -16,6 +16,7 @@ export class SizeMonitor {
     static init() {
         const NativeResizeObserver = (window as any).ResizeObserver;
 
+        
         if (NativeResizeObserver) {
             this.resizeObserver = new NativeResizeObserver((entries: any) => {
                 for (const entry of entries) {
@@ -26,9 +27,7 @@ export class SizeMonitor {
         } else { // polyfill (more reliable even in browsers that support ResizeObserver)
             const step = () => {
                 this.elements.forEach((entry, element) => {
-                    const width = element.clientWidth ? element.clientWidth : 0;
-                    const height = element.clientHeight ? element.clientHeight : 0;
-                    this.checkSize(entry, element, width, height);
+                    this.checkClientSize(element, entry);
                 });
             }
             window.setInterval(step, 100);
@@ -56,6 +55,9 @@ export class SizeMonitor {
             this.resizeObserver.observe(element);
         }
         this.elements.set(element, {cb});
+
+        // Ensure first size callback happens synchronously.
+        this.checkClientSize(element, {cb});
     }
 
     static unobserve(element: HTMLElement) {
@@ -63,5 +65,11 @@ export class SizeMonitor {
             this.resizeObserver.unobserve(element);
         }
         this.elements.delete(element);
+    }
+
+    static checkClientSize(element: HTMLElement, entry: Entry) {
+        const width = element.clientWidth ? element.clientWidth : 0;
+        const height = element.clientHeight ? element.clientHeight : 0;
+        this.checkSize(entry, element, width, height);
     }
 }
