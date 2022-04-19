@@ -140,10 +140,11 @@ export class PartialStoreBlock extends RowNodeBlock {
         const rowsToCreate = endRow - startRow;
         // when using autoHeight, we default the row heights to a height to fill the old height of the block.
         // we only ever do this to autoHeight, as we could be setting invalid heights (especially if different
-        // number of rows in teh block due to a filter, less rows would mean bigger rows), and autoHeight is
-        // the only pattern that will automatically correct this.
-        const autoRowHeightActive = this.columnModel.isAutoRowHeightActive();
-        const cachedBlockHeight = autoRowHeightActive ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
+        // number of rows in the block due to a filter, less rows would mean bigger rows), and autoHeight is
+        // the only pattern that will automatically correct this. we check for visible autoHeight cols,
+        // to omit the case where all autoHeight cols are hidden.
+        const showingAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols().length > 0;
+        const cachedBlockHeight = showingAutoHeightCols ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
         const cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
         for (let i = 0; i < rowsToCreate; i++) {
             const rowNode = this.blockUtils.createRowNode({

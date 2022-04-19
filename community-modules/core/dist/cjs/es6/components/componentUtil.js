@@ -26,6 +26,11 @@ class ComponentUtil {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions;
         const keyExists = (key) => typeof component[key] !== 'undefined';
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering') && typeof component.groupAggFiltering !== 'function') {
+            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(component.groupAggFiltering);
+            delete component.groupAggFiltering;
+        }
         // add in all the simple properties
         [
             ...ComponentUtil.ARRAY_PROPERTIES,
@@ -58,6 +63,16 @@ class ComponentUtil {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions;
         const keyExists = (key) => changesToApply[key];
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering')) {
+            if (typeof changesToApply.groupAggFiltering === 'function') {
+                pGridOptions.groupAggFiltering = changesToApply.groupAggFiltering;
+            }
+            else {
+                pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+            }
+            delete changesToApply.groupAggFiltering;
+        }
         // check if any change for the simple types, and if so, then just copy in the new value
         [
             ...ComponentUtil.ARRAY_PROPERTIES,

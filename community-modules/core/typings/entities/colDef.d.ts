@@ -375,10 +375,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     suppressSizeToFit?: boolean;
     /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */
     suppressAutoSize?: boolean;
-    /** Cell template to use for cell. */
-    template?: string;
-    /** Cell template URL to load template from to use for cell. */
-    templateUrl?: string;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column | null;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */

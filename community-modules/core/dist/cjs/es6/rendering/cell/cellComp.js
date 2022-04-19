@@ -405,10 +405,6 @@ class CellComp extends component_1.Component {
         this.cellCtrl.stopEditing();
         this.destroyEditorAndRenderer();
         this.removeControls();
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
         super.destroy();
     }
     clearParentOfValue() {

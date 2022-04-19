@@ -29,7 +29,6 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private rowCtrl;
     private cellCtrl;
     private firstRender;
-    private angularCompiledElement;
     private rendererVersion;
     private editorVersion;
     constructor(beans: Beans, cellCtrl: CellCtrl, printLayout: boolean, eRow: HTMLElement, editingRow: boolean);

@@ -207,8 +207,10 @@ var AgGridReactUi = /** @class */ (function (_super) {
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
     AgGridReactUi.prototype.isImmutableDataActive = function () {
-        return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
+        return (this.props.deltaRowDataMode || this.props.immutableData || this.props.getRowId != null) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
+                || this.props.gridOptions.immutableData
+                || this.props.gridOptions.getRowId != null));
     };
     return AgGridReactUi;
 }(react_1.Component));

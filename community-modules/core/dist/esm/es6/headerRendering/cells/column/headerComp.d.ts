@@ -17,7 +17,7 @@ export interface IHeaderParams extends AgGridCommon {
      * Whether sorting is enabled for the column.
      * Only put sort logic into your header if this is true.
      */
-    enableSorting: boolean;
+    enableSorting: boolean | undefined;
     /**
      * Whether menu is enabled for the column.
      * Only display a menu button in your header if this is true.
@@ -41,7 +41,8 @@ export interface IHeaderParams extends AgGridCommon {
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
     setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => void;
-    template: string;
+    /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
+    template?: string;
     /**
      * The header the grid provides.
      * The custom header component is a child of the grid provided header.

@@ -47,8 +47,6 @@ var ColDefUtil = /** @class */ (function () {
         'headerTooltip',
         'cellClass',
         'showRowGroup',
-        'template',
-        'templateUrl',
         'filter',
         'initialAggFunc',
         'aggFunc',

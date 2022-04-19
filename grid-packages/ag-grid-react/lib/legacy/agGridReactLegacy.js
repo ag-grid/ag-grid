@@ -104,8 +104,10 @@ var AgGridReactLegacy = /** @class */ (function (_super) {
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
     AgGridReactLegacy.prototype.isImmutableDataActive = function () {
-        return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData || this.props.gridOptions.getRowId));
+        return (this.props.deltaRowDataMode || this.props.immutableData) || this.props.getRowId != null ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
+                || this.props.gridOptions.immutableData
+                || this.props.gridOptions.getRowId != null));
     };
     AgGridReactLegacy.prototype.shouldComponentUpdate = function (nextProps) {
         this.processPropsChanges(this.props, nextProps);

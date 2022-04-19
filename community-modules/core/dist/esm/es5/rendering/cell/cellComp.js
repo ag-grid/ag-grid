@@ -425,10 +425,6 @@ var CellComp = /** @class */ (function (_super) {
         this.cellCtrl.stopEditing();
         this.destroyEditorAndRenderer();
         this.removeControls();
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
         _super.prototype.destroy.call(this);
     };
     CellComp.prototype.clearParentOfValue = function () {

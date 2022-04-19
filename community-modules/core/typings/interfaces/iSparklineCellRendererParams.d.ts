@@ -113,7 +113,7 @@ export interface SparklineLabelOptions {
     /** Set to true to enable labels. */
     enabled?: boolean;
     /** Set size of the font. */
-    fontSize?: string;
+    fontSize?: number;
     /** Specify the font for the label text. */
     fontFamily?: string;
     /** Specify the font style for the label text. */

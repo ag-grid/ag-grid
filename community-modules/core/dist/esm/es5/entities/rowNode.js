@@ -418,7 +418,7 @@ var RowNode = /** @class */ (function () {
         }
     };
     /**
-    /* Replaces the value on the `rowNode` for the specified column. When complete,
+     * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
      *
      * @param colKey The column where the value should be updated

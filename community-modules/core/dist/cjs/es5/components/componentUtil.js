@@ -60,6 +60,11 @@ var ComponentUtil = /** @class */ (function () {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = gridOptions;
         var keyExists = function (key) { return typeof component[key] !== 'undefined'; };
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering') && typeof component.groupAggFiltering !== 'function') {
+            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(component.groupAggFiltering);
+            delete component.groupAggFiltering;
+        }
         // add in all the simple properties
         __spread(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.FUNCTION_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = component[key]; });
@@ -85,6 +90,16 @@ var ComponentUtil = /** @class */ (function () {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = gridOptions;
         var keyExists = function (key) { return changesToApply[key]; };
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering')) {
+            if (typeof changesToApply.groupAggFiltering === 'function') {
+                pGridOptions.groupAggFiltering = changesToApply.groupAggFiltering;
+            }
+            else {
+                pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+            }
+            delete changesToApply.groupAggFiltering;
+        }
         // check if any change for the simple types, and if so, then just copy in the new value
         __spread(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = changesToApply[key].currentValue; });

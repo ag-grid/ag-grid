@@ -1513,10 +1513,11 @@ var PartialStoreBlock = /** @class */ (function (_super) {
         var rowsToCreate = endRow - startRow;
         // when using autoHeight, we default the row heights to a height to fill the old height of the block.
         // we only ever do this to autoHeight, as we could be setting invalid heights (especially if different
-        // number of rows in teh block due to a filter, less rows would mean bigger rows), and autoHeight is
-        // the only pattern that will automatically correct this.
-        var autoRowHeightActive = this.columnModel.isAutoRowHeightActive();
-        var cachedBlockHeight = autoRowHeightActive ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
+        // number of rows in the block due to a filter, less rows would mean bigger rows), and autoHeight is
+        // the only pattern that will automatically correct this. we check for visible autoHeight cols,
+        // to omit the case where all autoHeight cols are hidden.
+        var showingAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols().length > 0;
+        var cachedBlockHeight = showingAutoHeightCols ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
         var cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
         for (var i = 0; i < rowsToCreate; i++) {
             var rowNode = this.blockUtils.createRowNode({

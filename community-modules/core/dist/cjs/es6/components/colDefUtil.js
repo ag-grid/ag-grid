@@ -27,8 +27,6 @@ ColDefUtil.STRING_PROPERTIES = [
     'headerTooltip',
     'cellClass',
     'showRowGroup',
-    'template',
-    'templateUrl',
     'filter',
     'initialAggFunc',
     'aggFunc',

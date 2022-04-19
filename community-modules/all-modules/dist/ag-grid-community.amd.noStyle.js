@@ -8501,6 +8501,11 @@ var ComponentUtil = /** @class */ (function () {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = gridOptions;
         var keyExists = function (key) { return typeof component[key] !== 'undefined'; };
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering') && typeof component.groupAggFiltering !== 'function') {
+            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(component.groupAggFiltering);
+            delete component.groupAggFiltering;
+        }
         // add in all the simple properties
         __spread(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.FUNCTION_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = component[key]; });
@@ -8526,6 +8531,16 @@ var ComponentUtil = /** @class */ (function () {
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = gridOptions;
         var keyExists = function (key) { return changesToApply[key]; };
+        // if groupAggFiltering exists and isn't a function, handle as a boolean.
+        if (keyExists('groupAggFiltering')) {
+            if (typeof changesToApply.groupAggFiltering === 'function') {
+                pGridOptions.groupAggFiltering = changesToApply.groupAggFiltering;
+            }
+            else {
+                pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+            }
+            delete changesToApply.groupAggFiltering;
+        }
         // check if any change for the simple types, and if so, then just copy in the new value
         __spread(ComponentUtil.ARRAY_PROPERTIES, ComponentUtil.OBJECT_PROPERTIES, ComponentUtil.STRING_PROPERTIES, ComponentUtil.getEventCallbacks()).filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = changesToApply[key].currentValue; });
@@ -8766,7 +8781,7 @@ var PropertyKeys = /** @class */ (function () {
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
-        'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation', 'groupAggFiltering'
+        'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation'
     ];
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     PropertyKeys.FUNCTION_PROPERTIES = [
@@ -8783,7 +8798,7 @@ var PropertyKeys = /** @class */ (function () {
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent',
         'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'initialGroupOrderComparator',
-        'loadingCellRendererSelector', 'getRowId'
+        'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
     ];
     PropertyKeys.ALL_PROPERTIES = __spread(PropertyKeys.ARRAY_PROPERTIES, PropertyKeys.OBJECT_PROPERTIES, PropertyKeys.STRING_PROPERTIES, PropertyKeys.NUMBER_PROPERTIES, PropertyKeys.FUNCTION_PROPERTIES, PropertyKeys.BOOLEAN_PROPERTIES);
     /**
@@ -8923,8 +8938,6 @@ var ColDefUtil = /** @class */ (function () {
         'headerTooltip',
         'cellClass',
         'showRowGroup',
-        'template',
-        'templateUrl',
         'filter',
         'initialAggFunc',
         'aggFunc',
@@ -18591,7 +18604,7 @@ var RowNode = /** @class */ (function () {
         }
     };
     /**
-    /* Replaces the value on the `rowNode` for the specified column. When complete,
+     * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
      *
      * @param colKey The column where the value should be updated
@@ -31744,10 +31757,6 @@ var CellComp = /** @class */ (function (_super) {
         this.cellCtrl.stopEditing();
         this.destroyEditorAndRenderer();
         this.removeControls();
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
         _super.prototype.destroy.call(this);
     };
     CellComp.prototype.clearParentOfValue = function () {

@@ -31,7 +31,7 @@ var App = function () {
     var _c = react_1.useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
         { make: 'Ford', model: 'Mondeo', price: 32000 },
-        { make: 'Porsche', model: 'Boxter', price: 72000 }
+        { make: 'Porsche', model: 'Boxster', price: 72000 }
     ]), rowData = _c[0], setRowData = _c[1];
     var onGridReady = function (params) {
         setGridApi(params.api);

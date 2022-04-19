@@ -403,10 +403,6 @@ export class CellComp extends Component {
         this.cellCtrl.stopEditing();
         this.destroyEditorAndRenderer();
         this.removeControls();
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
         super.destroy();
     }
     clearParentOfValue() {

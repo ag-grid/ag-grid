@@ -77,8 +77,10 @@ class AgGridReactLegacy extends react_1.Component {
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     }
     isImmutableDataActive() {
-        return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData || this.props.gridOptions.getRowId));
+        return (this.props.deltaRowDataMode || this.props.immutableData) || this.props.getRowId != null ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
+                || this.props.gridOptions.immutableData
+                || this.props.gridOptions.getRowId != null));
     }
     shouldComponentUpdate(nextProps) {
         this.processPropsChanges(this.props, nextProps);
