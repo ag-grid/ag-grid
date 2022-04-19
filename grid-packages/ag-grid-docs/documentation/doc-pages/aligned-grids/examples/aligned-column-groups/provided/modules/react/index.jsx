@@ -51,6 +51,7 @@ class GridExample extends Component {
         bottomOptions.alignedGrids.push(topOptions);
 
         return {
+            gridReady: 0,
             topOptions,
             bottomOptions,
             columnDefs: [
@@ -87,8 +88,6 @@ class GridExample extends Component {
             ],
             rowData: this.rowData
         };
-
-        this.gridReady = 0;
     };
 
     onGridReady = (params) => {
@@ -112,7 +111,7 @@ class GridExample extends Component {
         });
 
         if (this.state.gridReady > 1) {
-            this.topGrid.api.sizeColumnsToFit();
+            params.api.sizeColumnsToFit();
         }
     };
 

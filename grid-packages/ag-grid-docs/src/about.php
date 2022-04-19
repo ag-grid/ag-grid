@@ -231,8 +231,24 @@
                                      alt="Victoria Tennant, Business Development Manager"/>
                             </div>
                             <h3>Victoria Tennant</h3>
-                            <h4>Business Development Manager</h4>
+                            <h4>Renewals Team Manager</h4>
                         </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
+                            </div>
+                            <h3>Dimple Unalkat</h3>
+                            <h4>Initials Team Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
+                            </div>
+                            <h3>Sachshell Rhoden</h3>
+                            <h4>Sales Operations Manager</h4>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/alison.jpeg'
@@ -243,25 +259,9 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
-                            </div>
-                            <h3>Dimple Unalkat</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div>
                                 <img src='images/team/robD.jpg' alt="Rob Dunkiert, Customer Experience Manager"/>
                             </div>
                             <h3>Rob Dunkiert</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
-                            </div>
-                            <h3>Sachshell Rhoden</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
                         <div class="col-md-4">

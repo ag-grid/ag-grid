@@ -37,6 +37,7 @@ bottomOptions.alignedGrids.push(topOptions);
 
 const GridExample = () => {
     const topGridRef = useRef(null);
+    const bottomGridRef = useRef(null);
 
 
     const [columnDefs, setColumnDefs] = useState([{
@@ -93,9 +94,9 @@ const GridExample = () => {
 
     useEffect(() => {
         if (gridReady > 1) {
-            topGridRef.current.api.sizeColumnsToFit();
+            bottomGridRef.current.api.sizeColumnsToFit();
         }
-    }, [setGridReady])
+    }, [gridReady])
 
 
     return (
@@ -116,6 +117,7 @@ const GridExample = () => {
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
+                    ref={bottomGridRef}
                     rowData={rowData}
                     gridOptions={bottomOptions}
                     columnDefs={columnDefs} 

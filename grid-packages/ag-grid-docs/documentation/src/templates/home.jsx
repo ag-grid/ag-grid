@@ -122,7 +122,7 @@ const VideoPanel = ({framework}) => {
             <div className={menuStyles['menu-view__tile-row']}>
                 {featuredVideos.map(featuredVideo => (
                         <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={featuredVideo.id}>
-                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}`} target="_blank" rel="noreferrer">
+                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}&list=${featuredVideo.list}`} target="_blank" rel="noreferrer">
                                 <img style={{height: "100%", width: "100%"}} alt={featuredVideo.title} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}/>
                             </a>
                         </div>
