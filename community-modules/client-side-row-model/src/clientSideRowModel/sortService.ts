@@ -11,7 +11,8 @@ import {
     RowNode,
     BeanStub,
     WithoutGridCommon,
-    PostSortRowsParams
+    PostSortRowsParams,
+    RowNodeTransaction
 } from "@ag-grid-community/core";
 
 import { RowNodeMap } from "./clientSideRowModel";
@@ -33,23 +34,27 @@ export class SortService extends BeanStub {
         sortOptions: SortOption[],
         sortActive: boolean,
         deltaSort: boolean,
-        dirtyLeafNodes: { [nodeId: string]: boolean } | null,
+        rowNodeTransactions: RowNodeTransaction[] | null | undefined,
         changedPath: ChangedPath | undefined,
         noAggregations: boolean,
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
+        const isPivotMode = this.columnModel.isPivotMode();
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
 
+            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
+            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
+
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
-            if (!sortActive || skipSortingGroups) {
+            if (!sortActive || skipSortingGroups || skipSortingPivotLeafs) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (groupMaintainOrder && rowNode.childrenAfterSort) {
@@ -64,7 +69,7 @@ export class SortService extends BeanStub {
                 rowNode.childrenAfterSort = childrenToBeSorted;
             } else {
                 rowNode.childrenAfterSort = deltaSort ?
-                    this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
+                    this.doDeltaSort(rowNode, sortOptions, rowNodeTransactions, changedPath, noAggregations)
                     : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
 
@@ -81,7 +86,7 @@ export class SortService extends BeanStub {
         };
 
         if (changedPath) {
-            changedPath.forEachChangedNodeDepthFirst(callback);
+            changedPath.forEachChangedNodeDepthFirst(callback, false);
         }
 
         this.updateGroupDataForHideOpenParents(changedPath);
@@ -91,19 +96,51 @@ export class SortService extends BeanStub {
         return { currentPos: pos, rowNode: rowNode };
     }
 
+    private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[] | null | undefined): { [nodeId: string]: boolean } {
+        const dirtyNodes: { [nodeId: string]: boolean } = {};
+
+        const addNodesFunc = (rowNodes: RowNode[]) => {
+            if (rowNodes) {
+                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
+            }
+        };
+
+        // all leaf level nodes in the transaction were impacted
+        if (rowNodeTransactions) {
+            rowNodeTransactions.forEach(tran => {
+                addNodesFunc(tran.add);
+                addNodesFunc(tran.update);
+                addNodesFunc(tran.remove);
+            });
+        }
+
+        return dirtyNodes;
+    }
+
     private doDeltaSort(
         rowNode: RowNode,
         sortOptions: SortOption[],
-        dirtyLeafNodes: { [nodeId: string]: boolean } | null,
+        rowNodeTransactions: RowNodeTransaction[] | null | undefined,
         changedPath: ChangedPath | undefined,
         noAggregations: boolean
     ): RowNode[] {
-        // clean nodes will be a list of all row nodes that remain in the set
-        // and ordered. we start with the old sorted set and take out any nodes
-        // that were removed or changed (but not added, added doesn't make sense,
-        // if a node was added, there is no way it could be here from last time).
-        const cleanNodes: SortedRowNode[] = rowNode.childrenAfterSort!
-            .filter(node => {
+        const dirtyLeafNodes = this.calculateDirtyNodes(rowNodeTransactions);
+
+        const mappedNodes: RowNodeMap = {};
+        rowNode.childrenAfterAggFilter!.forEach(node => mappedNodes[node.id!] = node);
+
+        const cleanNodes: SortedRowNode[] = [];
+        const dirtyNodes: SortedRowNode[] = [];
+
+        if (rowNode.childrenAfterSort) {
+            rowNode.childrenAfterSort.forEach(node => {
+                // Skip all nodes which don't exist in the current filtered list
+                if (!mappedNodes[node.id!]) {
+                    return;
+                }
+                // Remove this node from mappedNodes so that the remnants will only be new nodes.
+                delete mappedNodes[node.id!];
+    
                 // take out all nodes that were changed as part of the current transaction.
                 // a changed node could a) be in a different sort position or b) may
                 // no longer be in this set as the changed node may not pass filtering,
@@ -115,23 +152,23 @@ export class SortService extends BeanStub {
                 // (b) in deltaSort as we only do deltaSort for transactions. for (a) if no value columns, then
                 // there is no value in the group that could of changed (ie no aggregate values)
                 const passesChangedPathCheck = noAggregations || (changedPath && changedPath.canSkip(node));
-                return passesDirtyNodesCheck && passesChangedPathCheck;
-            })
-            .map(this.mapNodeToSortedNode.bind(this));
+                if(passesDirtyNodesCheck && passesChangedPathCheck) {
+                    cleanNodes.push(this.mapNodeToSortedNode(node, cleanNodes.length));
+                } else {
+                    dirtyNodes.push(this.mapNodeToSortedNode(node, dirtyNodes.length));
+                }
+            });
+        }
 
-        // for fast access below, we map them
-        const cleanNodesMapped: RowNodeMap = {};
-        cleanNodes.forEach(sortedRowNode => cleanNodesMapped[sortedRowNode.rowNode.id!] = sortedRowNode.rowNode);
+        // New nodes which have not been sorted yet
+        const newNodes = Object.values(mappedNodes).map(this.mapNodeToSortedNode);
 
-        // these are all nodes that need to be placed
-        const changedNodes: SortedRowNode[] = rowNode.childrenAfterAggFilter!
-            // ignore nodes in the clean list
-            .filter(node => !cleanNodesMapped[node.id!])
-            .map(this.mapNodeToSortedNode.bind(this));
+        // Combine the dirty and new nodes
+        const changedNodes = dirtyNodes.concat(newNodes);
 
         // sort changed nodes. note that we don't need to sort cleanNodes as they are
         // already sorted from last time.
-        changedNodes.sort(this.rowNodeSorter.compareRowNodes.bind(this, sortOptions));
+        changedNodes.sort(this.rowNodeSorter.compareRowNodes.bind(this.rowNodeSorter, sortOptions));
 
         let result: SortedRowNode[];
 
