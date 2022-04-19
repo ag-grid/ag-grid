@@ -274,9 +274,7 @@ we imported earlier.
 Now let's replace the `script` section of`src/App.vue`:
 
 ```js
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import { AgGridVue } from "ag-grid-vue3";
+ import { AgGridVue } from "ag-grid-vue3";
 
 export default {
   name: "App",
@@ -423,8 +421,6 @@ just a matter of adding and changing couple of properties.
 
 <script>
 import {reactive, onMounted} from "vue";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridVue } from "ag-grid-vue3";
 
 export default {
@@ -487,8 +483,6 @@ Let's go ahead and make these changes:
 
 <script>
 +import {reactive, ref, onMounted} from "vue";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridVue } from "ag-grid-vue3";
 
 export default {
@@ -499,7 +493,6 @@ export default {
   setup() {
     let rowData = reactive([]);
 +   let gridApi = ref(null);
-+   let columnApi = ref(null);
 
     onMounted(() => {
       fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -508,12 +501,11 @@ export default {
     })
 
 +   const onGridReady = params => {
-+     gridApi = params.api;
-+     columnApi = params.columnApi;
++     gridApi.value = params.api;
 +   };
 
 +   const getSelectedRows = () => {
-+     const selectedNodes = gridApi.getSelectedNodes();
++     const selectedNodes = gridApi.value.getSelectedNodes();
 +     const selectedData = selectedNodes.map( node => node.data );
 +     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
 +     alert(`Selected nodes: ${selectedDataStringPresentation}`);
@@ -604,8 +596,6 @@ the `columnDefs` with a `rowGroup`:
 
 <script>
 import {reactive, ref, onMounted} from "vue";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridVue } from "ag-grid-vue3";
 
 export default {
@@ -616,7 +606,6 @@ export default {
   setup() {
     let rowData = reactive([]);
     let gridApi = ref(null);
-    let columnApi = ref(null);
 
     onMounted(() => {
 +     fetch('https://www.ag-grid.com/example-assets/row-data.json')
@@ -625,12 +614,11 @@ export default {
     })
 
     const onGridReady = params => {
-      gridApi = params.api;
-      columnApi = params.columnApi;
+      gridApi.value = params.api;
     };
 
     const getSelectedRows = () => {
-      const selectedNodes = gridApi.getSelectedNodes();
+      const selectedNodes = gridApi.value.getSelectedNodes();
       const selectedData = selectedNodes.map( node => node.data );
       const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
       alert(`Selected nodes: ${selectedDataStringPresentation}`);
@@ -638,7 +626,7 @@ export default {
 
     return {
       columnDefs: [
-+       { field: 'make', sortable: true, filter: true, checkboxSelection: true, rowGroup: true  },
++       { field: 'make', sortable: true, filter: true, rowGroup: true  },
         { field: 'model', sortable: true, filter: true },
         { field: 'price', sortable: true, filter: true }
       ],
