@@ -3,7 +3,7 @@ import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager extends BeanStub {
-    private static RELEASE_INFORMATION: string = 'MTY0Njk4MzkwMjkyOA==';
+    private static RELEASE_INFORMATION: string = 'MTY0OTY5MDE4MjExNA==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 
