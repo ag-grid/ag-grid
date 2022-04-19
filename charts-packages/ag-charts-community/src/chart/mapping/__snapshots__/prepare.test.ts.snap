@@ -120,7 +120,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -391,7 +390,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -559,7 +557,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -802,7 +799,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -914,7 +910,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1404,7 +1399,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -1516,7 +1510,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1714,7 +1707,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -1827,7 +1819,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -1974,7 +1965,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -2086,7 +2076,6 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -2413,7 +2402,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -2525,7 +2513,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -2978,7 +2965,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -3090,7 +3076,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3257,7 +3242,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -3369,7 +3353,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3527,7 +3510,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -3631,7 +3613,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3778,7 +3759,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -3897,7 +3877,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -4044,7 +4023,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -4155,7 +4133,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4342,7 +4319,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -4454,7 +4430,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4644,7 +4619,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -4755,7 +4729,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4962,7 +4935,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -5074,7 +5046,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -5235,7 +5206,6 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;
 
@@ -5351,7 +5321,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -6321,13 +6290,11 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
 exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
-  "autoSize": true,
   "axes": Array [
     Object {
       "base": 10,
@@ -6436,7 +6403,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -6583,20 +6549,17 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
 exports[`prepare #prepareOptions for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
-  "autoSize": true,
   "background": Object {
     "fill": "white",
     "visible": true,
   },
   "container": Any<HTMLElement>,
   "data": Any<Object>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -6749,7 +6712,6 @@ Object {
     "tracking": true,
   },
   "type": "hierarchy",
-  "width": 600,
 }
 `;
 
@@ -6862,7 +6824,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7062,7 +7023,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -7174,7 +7134,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7368,7 +7327,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -7480,7 +7438,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7690,7 +7647,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -7802,7 +7758,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8156,7 +8111,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -8269,7 +8223,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -8427,7 +8380,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -8440,7 +8392,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8599,7 +8550,6 @@ Object {
     "tracking": true,
   },
   "type": "pie",
-  "width": 600,
 }
 `;
 
@@ -8712,7 +8662,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -8860,7 +8809,6 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;
 
@@ -8976,7 +8924,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9189,7 +9136,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -9201,7 +9147,6 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9360,7 +9305,6 @@ Object {
     "tracking": true,
   },
   "type": "pie",
-  "width": 600,
 }
 `;
 
@@ -9473,7 +9417,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9620,7 +9563,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -9733,7 +9675,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9941,7 +9882,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -10052,7 +9992,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10238,7 +10177,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -10349,7 +10287,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10555,7 +10492,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -10667,7 +10603,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -10828,6 +10763,5 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;
