@@ -108,6 +108,12 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.dispatchChangedEvent(false, true, cellRange.id);
             }
         });
+        // Remove empty cell ranges
+        const countBefore = this.cellRanges.length;
+        this.cellRanges = this.cellRanges.filter((range) => range.columns.length > 0);
+        if (countBefore > this.cellRanges.length) {
+            this.dispatchChangedEvent(false, true);
+        }
     }
 
     public refreshLastRangeStart(): void {
