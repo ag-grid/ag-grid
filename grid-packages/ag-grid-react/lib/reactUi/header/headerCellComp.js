@@ -24,6 +24,7 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var jsComp_1 = require("../jsComp");
+var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderCellComp = function (props) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var _a = react_1.useState(), width = _a[0], setWidth = _a[1];
@@ -37,7 +38,7 @@ var HeaderCellComp = function (props) {
     var userCompRef = react_1.useRef();
     var ctrl = props.ctrl;
     var cssClassManager = react_1.useMemo(function () { return new ag_grid_community_1.CssClassManager(function () { return eGui.current; }); }, []);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             setWidth: function (width) { return setWidth(width); },
             addOrRemoveCssClass: function (name, on) { return cssClassManager.addOrRemoveCssClass(name, on); },
@@ -51,7 +52,7 @@ var HeaderCellComp = function (props) {
         ctrl.setComp(compProxy, eGui.current, eResize.current);
         var selectAllGui = ctrl.getSelectAllGui();
         eResize.current.insertAdjacentElement('afterend', selectAllGui);
-    }, []);
+    }, 'headerCell.main');
     // js comps
     react_1.useEffect(function () { return jsComp_1.showJsComp(userCompDetails, context, eGui.current, userCompRef); }, [userCompDetails]);
     // add drag handling, must be done after component is added to the dom

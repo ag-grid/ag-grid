@@ -18,6 +18,7 @@ const popupEditorComp_1 = __importDefault(require("./popupEditorComp"));
 const showJsRenderer_1 = __importDefault(require("./showJsRenderer"));
 const beansContext_1 = require("../beansContext");
 const jsComp_1 = require("../jsComp");
+const useEffectOnce_1 = require("../useEffectOnce");
 var CellCompState;
 (function (CellCompState) {
     CellCompState[CellCompState["ShowValue"] = 0] = "ShowValue";
@@ -215,7 +216,7 @@ const CellComp = (props) => {
             });
         };
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         if (!cellCtrl) {
             return;
         }
@@ -260,7 +261,7 @@ const CellComp = (props) => {
         };
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
         cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
-    }, []);
+    }, 'cellComp.main');
     const reactCellRendererStateless = react_1.useMemo(() => {
         const res = renderDetails && renderDetails.compDetails
             && renderDetails.compDetails.componentFromFramework

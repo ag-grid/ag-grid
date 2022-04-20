@@ -17,6 +17,7 @@ const jsComp_1 = require("../jsComp");
 const utils_1 = require("../utils");
 const beansContext_1 = require("../beansContext");
 const cellComp_1 = __importDefault(require("../cells/cellComp"));
+const useEffectOnce_1 = require("../useEffectOnce");
 const maintainOrderOnColumns = (prev, next, domOrder) => {
     if (domOrder) {
         const res = { list: next, instanceIdMap: new Map() };
@@ -96,7 +97,7 @@ const RowComp = (params) => {
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
     const cssClassManager = react_1.useMemo(() => new core_1.CssClassManager(() => eGui.current), []);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
@@ -125,7 +126,7 @@ const RowComp = (params) => {
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
-    }, []);
+    }, 'rowComp.main');
     react_1.useEffect(() => jsComp_1.showJsComp(fullWidthCompDetails, context, eGui.current, fullWidthCompRef), [fullWidthCompDetails]);
     const rowStyles = react_1.useMemo(() => {
         const res = { top, transform };

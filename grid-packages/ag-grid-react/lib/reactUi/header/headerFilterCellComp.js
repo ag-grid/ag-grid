@@ -24,6 +24,7 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var jsComp_1 = require("../jsComp");
+var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderFilterCellComp = function (props) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var _a = react_1.useState(new utils_1.CssClasses()), cssClasses = _a[0], setCssClasses = _a[1];
@@ -38,7 +39,7 @@ var HeaderFilterCellComp = function (props) {
     var userCompResolve = react_1.useRef();
     var userCompPromise = react_1.useMemo(function () { return new ag_grid_community_1.AgPromise(function (resolve) { return userCompResolve.current = resolve; }); }, []);
     var ctrl = props.ctrl;
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             addOrRemoveBodyCssClass: function (name, on) { return setBodyCssClasses(function (prev) { return prev.setClass(name, on); }); },
@@ -49,7 +50,7 @@ var HeaderFilterCellComp = function (props) {
             setMenuIcon: function (eIcon) { return eButtonShowMainFilter.current.appendChild(eIcon); }
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
-    }, []);
+    }, 'headerFilterCellComp.main');
     // js comps
     react_1.useEffect(function () {
         return jsComp_1.showJsComp(userCompDetails, context, eFloatingFilterBody.current, userCompResolve.current);

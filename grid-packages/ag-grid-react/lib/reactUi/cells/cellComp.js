@@ -29,6 +29,7 @@ var popupEditorComp_1 = __importDefault(require("./popupEditorComp"));
 var showJsRenderer_1 = __importDefault(require("./showJsRenderer"));
 var beansContext_1 = require("../beansContext");
 var jsComp_1 = require("../jsComp");
+var useEffectOnce_1 = require("../useEffectOnce");
 var CellCompState;
 (function (CellCompState) {
     CellCompState[CellCompState["ShowValue"] = 0] = "ShowValue";
@@ -226,7 +227,7 @@ var CellComp = function (props) {
             });
         };
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         if (!cellCtrl) {
             return;
         }
@@ -271,7 +272,7 @@ var CellComp = function (props) {
         };
         var cellWrapperOrUndefined = eCellWrapper.current || undefined;
         cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
-    }, []);
+    }, 'cellComp.main');
     var reactCellRendererStateless = react_1.useMemo(function () {
         var res = renderDetails && renderDetails.compDetails
             && renderDetails.compDetails.componentFromFramework

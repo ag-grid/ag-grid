@@ -12,10 +12,11 @@ var ag_grid_community_1 = require("ag-grid-community");
 var react_1 = __importStar(require("react"));
 var react_dom_1 = require("react-dom");
 var beansContext_1 = require("../beansContext");
+var useEffectOnce_1 = require("../useEffectOnce");
 var PopupEditorComp = function (props) {
     var _a = react_1.useState(), popupEditorWrapper = _a[0], setPopupEditorWrapper = _a[1];
     var _b = react_1.useContext(beansContext_1.BeansContext), context = _b.context, popupService = _b.popupService, gridOptionsWrapper = _b.gridOptionsWrapper;
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var editDetails = props.editDetails, cellCtrl = props.cellCtrl, eParentCell = props.eParentCell;
         var compDetails = editDetails.compDetails;
         var useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
@@ -57,7 +58,7 @@ var PopupEditorComp = function (props) {
             }
             context.destroyBean(wrapper);
         };
-    }, []);
+    }, 'popupEditor.main');
     return (react_1.default.createElement(react_1.default.Fragment, null, popupEditorWrapper && props.wrappedContent
         && react_dom_1.createPortal(props.wrappedContent, popupEditorWrapper.getGui())));
 };

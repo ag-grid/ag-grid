@@ -43,6 +43,9 @@ var newReactComponent_1 = require("../shared/newReactComponent");
 var portalManager_1 = require("../shared/portalManager");
 var gridComp_1 = __importDefault(require("./gridComp"));
 var reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
+function debug(msg, obj) {
+    // console.log(msg, obj);
+}
 var AgGridReactUi = /** @class */ (function (_super) {
     __extends(AgGridReactUi, _super);
     function AgGridReactUi(props) {
@@ -53,12 +56,19 @@ var AgGridReactUi = /** @class */ (function (_super) {
         _this.eGui = react_1.default.createRef();
         _this.whenReadyFuncs = [];
         _this.ready = false;
+        _this.renderedAfterMount = false;
+        _this.mounted = false;
+        debug('AgGridReactUi.constructor');
         _this.state = { context: undefined };
         _this.portalManager = new portalManager_1.PortalManager(_this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
         _this.destroyFuncs.push(function () { return _this.portalManager.destroy(); });
         return _this;
     }
     AgGridReactUi.prototype.render = function () {
+        debug('AgGridReactUi.render, context = ' + (this.state.context));
+        if (this.state.context) {
+            this.renderedAfterMount = true;
+        }
         return (react_1.default.createElement("div", { style: this.createStyleForDiv(), className: this.props.className, ref: this.eGui },
             this.state.context && react_1.default.createElement(gridComp_1.default, { context: this.state.context }),
             this.portalManager.getPortals()));
@@ -68,6 +78,12 @@ var AgGridReactUi = /** @class */ (function (_super) {
     };
     AgGridReactUi.prototype.componentDidMount = function () {
         var _this = this;
+        if (this.mounted) {
+            debug('AgGridReactUi.componentDidMount - skipping');
+            return;
+        }
+        debug('AgGridReactUi.componentDidMount');
+        this.mounted = true;
         var modules = this.props.modules || [];
         var gridParams = {
             providedBeanInstances: {
@@ -87,6 +103,7 @@ var AgGridReactUi = /** @class */ (function (_super) {
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             var ctrlsService = context.getBean(ag_grid_community_1.CtrlsService.NAME);
             ctrlsService.whenReady(function () {
+                debug('AgGridReactUi.createUiCallback');
                 _this.api = _this.gridOptions.api;
                 _this.columnApi = _this.gridOptions.columnApi;
                 _this.props.setGridApi(_this.api, _this.columnApi);
@@ -99,6 +116,7 @@ var AgGridReactUi = /** @class */ (function (_super) {
         var acceptChangesCallback = function (context) {
             var ctrlsService = context.getBean(ag_grid_community_1.CtrlsService.NAME);
             ctrlsService.whenReady(function () {
+                debug('AgGridReactUi.acceptChangesCallback');
                 _this.whenReadyFuncs.forEach(function (f) { return f(); });
                 _this.whenReadyFuncs.length = 0;
                 _this.ready = true;
@@ -109,7 +127,14 @@ var AgGridReactUi = /** @class */ (function (_super) {
         gridCoreCreator.create(this.eGui.current, this.gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     };
     AgGridReactUi.prototype.componentWillUnmount = function () {
-        this.destroyFuncs.forEach(function (f) { return f(); });
+        if (this.renderedAfterMount) {
+            debug('AgGridReactUi.componentWillUnmount - executing');
+            this.destroyFuncs.forEach(function (f) { return f(); });
+            this.destroyFuncs.length = 0;
+        }
+        else {
+            debug('AgGridReactUi.componentWillUnmount - skipping');
+        }
     };
     AgGridReactUi.prototype.componentDidUpdate = function (prevProps) {
         this.processPropsChanges(prevProps, this.props);
@@ -188,9 +213,11 @@ var AgGridReactUi = /** @class */ (function (_super) {
     };
     AgGridReactUi.prototype.processWhenReady = function (func) {
         if (this.ready) {
+            debug('AgGridReactUi.processWhenReady sync');
             func();
         }
         else {
+            debug('AgGridReactUi.processWhenReady async');
             this.whenReadyFuncs.push(func);
         }
     };

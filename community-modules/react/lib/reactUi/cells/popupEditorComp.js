@@ -12,10 +12,11 @@ const core_1 = require("@ag-grid-community/core");
 const react_1 = __importStar(require("react"));
 const react_dom_1 = require("react-dom");
 const beansContext_1 = require("../beansContext");
+const useEffectOnce_1 = require("../useEffectOnce");
 const PopupEditorComp = (props) => {
     const [popupEditorWrapper, setPopupEditorWrapper] = react_1.useState();
     const { context, popupService, gridOptionsWrapper } = react_1.useContext(beansContext_1.BeansContext);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const { editDetails, cellCtrl, eParentCell } = props;
         const { compDetails } = editDetails;
         const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
@@ -57,7 +58,7 @@ const PopupEditorComp = (props) => {
             }
             context.destroyBean(wrapper);
         };
-    }, []);
+    }, 'popupEditor.main');
     return (react_1.default.createElement(react_1.default.Fragment, null, popupEditorWrapper && props.wrappedContent
         && react_dom_1.createPortal(props.wrappedContent, popupEditorWrapper.getGui())));
 };

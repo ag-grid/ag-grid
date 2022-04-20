@@ -35,6 +35,7 @@ var jsComp_1 = require("../jsComp");
 var utils_1 = require("../utils");
 var beansContext_1 = require("../beansContext");
 var cellComp_1 = __importDefault(require("../cells/cellComp"));
+var useEffectOnce_1 = require("../useEffectOnce");
 var maintainOrderOnColumns = function (prev, next, domOrder) {
     if (domOrder) {
         var res_1 = { list: next, instanceIdMap: new Map() };
@@ -114,7 +115,7 @@ var RowComp = function (params) {
         }
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
     var cssClassManager = react_1.useMemo(function () { return new ag_grid_community_1.CssClassManager(function () { return eGui.current; }); }, []);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
@@ -143,7 +144,7 @@ var RowComp = function (params) {
             getFullWidthCellRenderer: function () { return fullWidthCompRef.current; },
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
-    }, []);
+    }, 'rowComp.main');
     react_1.useEffect(function () { return jsComp_1.showJsComp(fullWidthCompDetails, context, eGui.current, fullWidthCompRef); }, [fullWidthCompDetails]);
     var rowStyles = react_1.useMemo(function () {
         var res = { top: top, transform: transform };

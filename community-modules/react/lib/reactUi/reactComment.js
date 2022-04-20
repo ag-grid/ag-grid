@@ -1,9 +1,9 @@
 // @ag-grid-community/react v27.2.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = require("react");
+const useEffectOnce_1 = require("./useEffectOnce");
 const useReactCommentEffect = (comment, eForCommentRef) => {
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const eForComment = eForCommentRef.current;
         const eParent = eForComment.parentElement;
         if (!eParent) {
@@ -14,7 +14,7 @@ const useReactCommentEffect = (comment, eForCommentRef) => {
         return () => {
             eParent.removeChild(eComment);
         };
-    }, []);
+    }, 'reactComment');
 };
 exports.default = useReactCommentEffect;
 

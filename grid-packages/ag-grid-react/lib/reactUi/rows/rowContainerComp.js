@@ -24,6 +24,7 @@ var utils_1 = require("../utils");
 var reactComment_1 = __importDefault(require("../reactComment"));
 var rowComp_1 = __importDefault(require("./rowComp"));
 var beansContext_1 = require("../beansContext");
+var useEffectOnce_1 = require("../useEffectOnce");
 var RowContainerComp = function (params) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var _a = react_1.useState(''), viewportHeight = _a[0], setViewportHeight = _a[1];
@@ -61,7 +62,7 @@ var RowContainerComp = function (params) {
             return next;
         });
     }, [domOrder, rowCtrls]);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var beansToDestroy = [];
         var compProxy = {
             setViewportHeight: setViewportHeight,
@@ -75,7 +76,7 @@ var RowContainerComp = function (params) {
         return function () {
             context.destroyBeans(beansToDestroy);
         };
-    }, []);
+    }, 'rowContainerComp.main');
     var viewportStyle = react_1.useMemo(function () { return ({
         height: viewportHeight
     }); }, [viewportHeight]);

@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const core_1 = require("@ag-grid-community/core");
 const beansContext_1 = require("./beansContext");
+const useEffectOnce_1 = require("./useEffectOnce");
 const TabGuardCompRef = (props, forwardRef) => {
     const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
     const { context } = react_1.useContext(beansContext_1.BeansContext);
@@ -23,7 +24,7 @@ const TabGuardCompRef = (props, forwardRef) => {
             tabGuardCtrlRef.current.forceFocusOutOfContainer();
         }
     }));
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const eTopGuard = topTabGuardRef.current;
         const eBottomGuard = bottomTabGuardRef.current;
         const compProxy = {
@@ -40,7 +41,7 @@ const TabGuardCompRef = (props, forwardRef) => {
         return () => {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'tabGuard');
     const createTabGuard = (side) => (react_1.default.createElement("div", { className: `ag-tab-guard ag-tab-guard-${side}`, role: "presentation", tabIndex: tabIndex, ref: side === 'top' ? topTabGuardRef : bottomTabGuardRef }));
     return (react_1.default.createElement(react_1.default.Fragment, null,
         createTabGuard('top'),

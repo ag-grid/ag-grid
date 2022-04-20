@@ -17,6 +17,7 @@ var beansContext_1 = require("./beansContext");
 var gridHeaderComp_1 = __importDefault(require("./header/gridHeaderComp"));
 var reactComment_1 = __importDefault(require("./reactComment"));
 var rowContainerComp_1 = __importDefault(require("./rows/rowContainerComp"));
+var useEffectOnce_1 = require("./useEffectOnce");
 var utils_1 = require("./utils");
 var GridBodyComp = function () {
     var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, agStackComponentsRegistry = _a.agStackComponentsRegistry, resizeObserverService = _a.resizeObserverService;
@@ -45,7 +46,7 @@ var GridBodyComp = function () {
     reactComment_1.default(' AG Pinned Top ', eTop);
     reactComment_1.default(' AG Middle ', eBodyViewport);
     reactComment_1.default(' AG Pinned Bottom ', eBottom);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var beansToDestroy = [];
         var destroyFuncs = [];
         if (!context) {
@@ -86,7 +87,7 @@ var GridBodyComp = function () {
             context.destroyBeans(beansToDestroy);
             destroyFuncs.forEach(function (f) { return f(); });
         };
-    }, []);
+    }, 'gridBodyComp.main');
     var rootClasses = react_1.useMemo(function () {
         return utils_1.classesList('ag-root', 'ag-unselectable', movingCss, layoutClass);
     }, [movingCss, layoutClass]);

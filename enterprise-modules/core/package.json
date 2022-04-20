@@ -45,7 +45,7 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~27.2.1"
+    "@ag-grid-community/core": "~27.2.0"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",

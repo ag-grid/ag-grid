@@ -19,6 +19,9 @@ const newReactComponent_1 = require("../shared/newReactComponent");
 const portalManager_1 = require("../shared/portalManager");
 const gridComp_1 = __importDefault(require("./gridComp"));
 const reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
+function debug(msg, obj) {
+    // console.log(msg, obj);
+}
 class AgGridReactUi extends react_1.Component {
     constructor(props) {
         super(props);
@@ -28,11 +31,18 @@ class AgGridReactUi extends react_1.Component {
         this.eGui = react_1.default.createRef();
         this.whenReadyFuncs = [];
         this.ready = false;
+        this.renderedAfterMount = false;
+        this.mounted = false;
+        debug('AgGridReactUi.constructor');
         this.state = { context: undefined };
         this.portalManager = new portalManager_1.PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
         this.destroyFuncs.push(() => this.portalManager.destroy());
     }
     render() {
+        debug('AgGridReactUi.render, context = ' + (this.state.context));
+        if (this.state.context) {
+            this.renderedAfterMount = true;
+        }
         return (react_1.default.createElement("div", { style: this.createStyleForDiv(), className: this.props.className, ref: this.eGui },
             this.state.context && react_1.default.createElement(gridComp_1.default, { context: this.state.context }),
             this.portalManager.getPortals()));
@@ -41,6 +51,12 @@ class AgGridReactUi extends react_1.Component {
         return Object.assign({ height: '100%' }, (this.props.containerStyle || {}));
     }
     componentDidMount() {
+        if (this.mounted) {
+            debug('AgGridReactUi.componentDidMount - skipping');
+            return;
+        }
+        debug('AgGridReactUi.componentDidMount');
+        this.mounted = true;
         const modules = this.props.modules || [];
         const gridParams = {
             providedBeanInstances: {
@@ -60,6 +76,7 @@ class AgGridReactUi extends react_1.Component {
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean(core_1.CtrlsService.NAME);
             ctrlsService.whenReady(() => {
+                debug('AgGridReactUi.createUiCallback');
                 this.api = this.gridOptions.api;
                 this.columnApi = this.gridOptions.columnApi;
                 this.props.setGridApi(this.api, this.columnApi);
@@ -72,6 +89,7 @@ class AgGridReactUi extends react_1.Component {
         const acceptChangesCallback = (context) => {
             const ctrlsService = context.getBean(core_1.CtrlsService.NAME);
             ctrlsService.whenReady(() => {
+                debug('AgGridReactUi.acceptChangesCallback');
                 this.whenReadyFuncs.forEach(f => f());
                 this.whenReadyFuncs.length = 0;
                 this.ready = true;
@@ -82,7 +100,14 @@ class AgGridReactUi extends react_1.Component {
         gridCoreCreator.create(this.eGui.current, this.gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     }
     componentWillUnmount() {
-        this.destroyFuncs.forEach(f => f());
+        if (this.renderedAfterMount) {
+            debug('AgGridReactUi.componentWillUnmount - executing');
+            this.destroyFuncs.forEach(f => f());
+            this.destroyFuncs.length = 0;
+        }
+        else {
+            debug('AgGridReactUi.componentWillUnmount - skipping');
+        }
     }
     componentDidUpdate(prevProps) {
         this.processPropsChanges(prevProps, this.props);
@@ -157,9 +182,11 @@ class AgGridReactUi extends react_1.Component {
     }
     processWhenReady(func) {
         if (this.ready) {
+            debug('AgGridReactUi.processWhenReady sync');
             func();
         }
         else {
+            debug('AgGridReactUi.processWhenReady async');
             this.whenReadyFuncs.push(func);
         }
     }

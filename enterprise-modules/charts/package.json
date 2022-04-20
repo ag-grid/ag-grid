@@ -46,9 +46,9 @@
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
     "ag-charts-community": "~5.2.0",
-    "@ag-grid-community/core": "~27.2.1",
-    "@ag-grid-enterprise/core": "~27.2.1",
-    "@ag-grid-enterprise/range-selection": "~27.2.1"
+    "@ag-grid-community/core": "~27.2.0",
+    "@ag-grid-enterprise/core": "~27.2.0",
+    "@ag-grid-enterprise/range-selection": "~27.2.0"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",

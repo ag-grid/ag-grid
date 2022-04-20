@@ -17,6 +17,7 @@ const utils_1 = require("../utils");
 const reactComment_1 = __importDefault(require("../reactComment"));
 const rowComp_1 = __importDefault(require("./rowComp"));
 const beansContext_1 = require("../beansContext");
+const useEffectOnce_1 = require("../useEffectOnce");
 const RowContainerComp = (params) => {
     const { context } = react_1.useContext(beansContext_1.BeansContext);
     const [viewportHeight, setViewportHeight] = react_1.useState('');
@@ -54,7 +55,7 @@ const RowContainerComp = (params) => {
             return next;
         });
     }, [domOrder, rowCtrls]);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const beansToDestroy = [];
         const compProxy = {
             setViewportHeight: setViewportHeight,
@@ -68,7 +69,7 @@ const RowContainerComp = (params) => {
         return () => {
             context.destroyBeans(beansToDestroy);
         };
-    }, []);
+    }, 'rowContainerComp.main');
     const viewportStyle = react_1.useMemo(() => ({
         height: viewportHeight
     }), [viewportHeight]);

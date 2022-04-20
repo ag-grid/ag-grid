@@ -52,8 +52,8 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@ag-grid-community/core": "~27.2.1",
-    "@ag-grid-enterprise/core": "~27.2.1"
+    "@ag-grid-community/core": "~27.2.0",
+    "@ag-grid-enterprise/core": "~27.2.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

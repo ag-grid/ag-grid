@@ -13,6 +13,7 @@ const beansContext_1 = require("../beansContext");
 const core_1 = require("@ag-grid-community/core");
 const utils_1 = require("../utils");
 const jsComp_1 = require("../jsComp");
+const useEffectOnce_1 = require("../useEffectOnce");
 const HeaderCellComp = (props) => {
     const { context } = react_1.useContext(beansContext_1.BeansContext);
     const [width, setWidth] = react_1.useState();
@@ -26,7 +27,7 @@ const HeaderCellComp = (props) => {
     const userCompRef = react_1.useRef();
     const { ctrl } = props;
     const cssClassManager = react_1.useMemo(() => new core_1.CssClassManager(() => eGui.current), []);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
@@ -40,7 +41,7 @@ const HeaderCellComp = (props) => {
         ctrl.setComp(compProxy, eGui.current, eResize.current);
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current.insertAdjacentElement('afterend', selectAllGui);
-    }, []);
+    }, 'headerCell.main');
     // js comps
     react_1.useEffect(() => jsComp_1.showJsComp(userCompDetails, context, eGui.current, userCompRef), [userCompDetails]);
     // add drag handling, must be done after component is added to the dom

@@ -17,6 +17,7 @@ var beansContext_1 = require("./beansContext");
 var gridBodyComp_1 = __importDefault(require("./gridBodyComp"));
 var reactComment_1 = __importDefault(require("./reactComment"));
 var tabGuardComp_1 = __importDefault(require("./tabGuardComp"));
+var useEffectOnce_1 = require("./useEffectOnce");
 var utils_1 = require("./utils");
 var GridComp = function (_a) {
     var context = _a.context;
@@ -36,15 +37,15 @@ var GridComp = function (_a) {
     var beans = react_1.useMemo(function () { return context.getBean('beans'); }, []);
     reactComment_1.default(' AG Grid ', eRootWrapperRef);
     // create shared controller.
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var currentController = gridCtrlRef.current = context.createBean(new ag_grid_community_1.GridCtrl());
         return function () {
             context.destroyBean(currentController);
             gridCtrlRef.current = null;
         };
-    }, []);
+    }, 'gridComp.ctrl');
     // initialise the UI
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var gridCtrl = gridCtrlRef.current;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
         var compProxy = {
@@ -72,7 +73,7 @@ var GridComp = function (_a) {
         };
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
         setInitialised(true);
-    }, []);
+    }, 'gridComp.main');
     // initialise the extra components
     react_1.useEffect(function () {
         if (!tabGuardReady) {

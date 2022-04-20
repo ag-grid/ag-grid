@@ -23,6 +23,7 @@ var ag_grid_community_1 = require("ag-grid-community");
 var react_1 = __importStar(require("react"));
 var beansContext_1 = require("../beansContext");
 var jsComp_1 = require("../jsComp");
+var useEffectOnce_1 = require("../useEffectOnce");
 var utils_1 = require("../utils");
 var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
@@ -47,7 +48,7 @@ var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
     react_1.useEffect(function () {
         return jsComp_1.showJsComp(innerCompDetails, context, eValueRef.current);
     }, [innerCompDetails]);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             setInnerRenderer: function (details, valueToDisplay) {
                 setInnerCompDetails(details);
@@ -66,7 +67,7 @@ var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
         return function () {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'groupCellRenderer.main');
     var className = react_1.useMemo(function () { return "ag-cell-wrapper " + cssClasses.toString(); }, [cssClasses]);
     var expandedClassName = react_1.useMemo(function () { return "ag-group-expanded " + expandedCssClasses.toString(); }, [expandedCssClasses]);
     var contractedClassName = react_1.useMemo(function () { return "ag-group-contracted " + contractedCssClasses.toString(); }, [contractedCssClasses]);

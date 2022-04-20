@@ -16,12 +16,13 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var headerRowContainerComp_1 = __importDefault(require("./headerRowContainerComp"));
+var useEffectOnce_1 = require("../useEffectOnce");
 var GridHeaderComp = function () {
     var _a = react_1.useState(new utils_1.CssClasses()), cssClasses = _a[0], setCssClasses = _a[1];
     var _b = react_1.useState(), height = _b[0], setHeight = _b[1];
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var eGui = react_1.useRef(null);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             setHeightAndMinHeight: function (height) { return setHeight(height); }
@@ -31,7 +32,7 @@ var GridHeaderComp = function () {
         return function () {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'gridHeaderComp.main');
     var className = react_1.useMemo(function () {
         var res = cssClasses.toString();
         return 'ag-header ' + res;

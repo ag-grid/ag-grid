@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var beansContext_1 = require("../beansContext");
+var useEffectOnce_1 = require("../useEffectOnce");
 var useJsCellRenderer = function (showDetails, showTools, eCellValue, cellValueVersion, jsCellRendererRef, eGui) {
     var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, userComponentFactory = _a.userComponentFactory;
     var destroyCellRenderer = react_1.useCallback(function () {
@@ -62,8 +63,8 @@ var useJsCellRenderer = function (showDetails, showTools, eCellValue, cellValueV
     // this effect makes sure destroyCellRenderer gets called when the
     // component is destroyed. as the other effect only updates when there
     // is a change in state
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         return destroyCellRenderer;
-    }, []);
+    }, 'showJsRenderer.destroy');
 };
 exports.default = useJsCellRenderer;

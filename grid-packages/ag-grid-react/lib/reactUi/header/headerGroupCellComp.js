@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
 var beansContext_1 = require("../beansContext");
 var jsComp_1 = require("../jsComp");
+var useEffectOnce_1 = require("../useEffectOnce");
 var utils_1 = require("../utils");
 var HeaderGroupCellComp = function (props) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
@@ -35,7 +36,7 @@ var HeaderGroupCellComp = function (props) {
     var eGui = react_1.useRef(null);
     var eResize = react_1.useRef(null);
     var ctrl = props.ctrl;
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             setWidth: function (width) { return setWidth(width); },
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
@@ -46,7 +47,7 @@ var HeaderGroupCellComp = function (props) {
             setAriaExpanded: function (expanded) { return setAriaExpanded(expanded); }
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current);
-    }, []);
+    }, 'headerGroupCellComp.main');
     // js comps
     react_1.useEffect(function () {
         return jsComp_1.showJsComp(userCompDetails, context, eGui.current);

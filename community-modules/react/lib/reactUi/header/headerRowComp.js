@@ -17,6 +17,7 @@ const beansContext_1 = require("../beansContext");
 const headerCellComp_1 = __importDefault(require("./headerCellComp"));
 const headerGroupCellComp_1 = __importDefault(require("./headerGroupCellComp"));
 const headerFilterCellComp_1 = __importDefault(require("./headerFilterCellComp"));
+const useEffectOnce_1 = require("../useEffectOnce");
 const HeaderRowComp = (props) => {
     const { gridOptionsWrapper } = react_1.useContext(beansContext_1.BeansContext);
     const [transform, setTransform] = react_1.useState();
@@ -43,7 +44,7 @@ const HeaderRowComp = (props) => {
         const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()));
         return [...oldCtrlsWeAreKeeping, ...newCtrls];
     }, []);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             setTransform: transform => setTransform(transform),
             setHeight: height => setHeight(height),
@@ -53,7 +54,7 @@ const HeaderRowComp = (props) => {
             setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
         ctrl.setComp(compProxy);
-    }, []);
+    }, 'headerRowComp.main');
     const style = react_1.useMemo(() => ({
         transform: transform,
         height: height,

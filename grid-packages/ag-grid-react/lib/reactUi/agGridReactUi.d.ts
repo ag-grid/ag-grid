@@ -15,6 +15,8 @@ export declare class AgGridReactUi extends Component<AgReactUiProps, {
     private portalManager;
     private whenReadyFuncs;
     private ready;
+    private renderedAfterMount;
+    private mounted;
     constructor(props: any);
     render(): JSX.Element;
     private createStyleForDiv;

@@ -24,6 +24,7 @@ var beansContext_1 = require("../beansContext");
 var headerCellComp_1 = __importDefault(require("./headerCellComp"));
 var headerGroupCellComp_1 = __importDefault(require("./headerGroupCellComp"));
 var headerFilterCellComp_1 = __importDefault(require("./headerFilterCellComp"));
+var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderRowComp = function (props) {
     var gridOptionsWrapper = react_1.useContext(beansContext_1.BeansContext).gridOptionsWrapper;
     var _a = react_1.useState(), transform = _a[0], setTransform = _a[1];
@@ -50,7 +51,7 @@ var HeaderRowComp = function (props) {
         var newCtrls = next.filter(function (c) { return !prevMap.has(c.getInstanceId()); });
         return __spreadArrays(oldCtrlsWeAreKeeping, newCtrls);
     }, []);
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             setTransform: function (transform) { return setTransform(transform); },
             setHeight: function (height) { return setHeight(height); },
@@ -60,7 +61,7 @@ var HeaderRowComp = function (props) {
             setAriaRowIndex: function (rowIndex) { return setAriaRowIndex(rowIndex); }
         };
         ctrl.setComp(compProxy);
-    }, []);
+    }, 'headerRowComp.main');
     var style = react_1.useMemo(function () { return ({
         transform: transform,
         height: height,

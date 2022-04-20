@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const beansContext_1 = require("../beansContext");
 const jsComp_1 = require("../jsComp");
+const useEffectOnce_1 = require("../useEffectOnce");
 const utils_1 = require("../utils");
 const HeaderGroupCellComp = (props) => {
     const { context } = react_1.useContext(beansContext_1.BeansContext);
@@ -24,7 +25,7 @@ const HeaderGroupCellComp = (props) => {
     const eGui = react_1.useRef(null);
     const eResize = react_1.useRef(null);
     const { ctrl } = props;
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -35,7 +36,7 @@ const HeaderGroupCellComp = (props) => {
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current);
-    }, []);
+    }, 'headerGroupCellComp.main');
     // js comps
     react_1.useEffect(() => {
         return jsComp_1.showJsComp(userCompDetails, context, eGui.current);

@@ -44,7 +44,7 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~27.2.1"
+    "@ag-grid-community/core": "~27.2.0"
   },
   "devDependencies": {
     "typescript": "~3.7.7",

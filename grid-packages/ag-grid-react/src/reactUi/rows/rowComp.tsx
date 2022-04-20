@@ -4,6 +4,7 @@ import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -99,7 +100,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
@@ -128,7 +129,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
         };
         rowCtrl.setComp(compProxy, eGui.current!, containerType);
-    }, []);
+    }, 'rowComp.main');
 
     useEffect(() => showJsComp(
         fullWidthCompDetails, context, eGui.current!, fullWidthCompRef

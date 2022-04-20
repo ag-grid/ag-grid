@@ -16,6 +16,7 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var headerRowComp_1 = __importDefault(require("./headerRowComp"));
+var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderRowContainerComp = function (props) {
     var _a = react_1.useState(new utils_1.CssClasses()), cssClasses = _a[0], setCssClasses = _a[1];
     var _b = react_1.useState(), centerContainerWidth = _b[0], setCenterContainerWidth = _b[1];
@@ -27,7 +28,7 @@ var HeaderRowContainerComp = function (props) {
     var pinnedLeft = props.pinned === ag_grid_community_1.Constants.PINNED_LEFT;
     var pinnedRight = props.pinned === ag_grid_community_1.Constants.PINNED_RIGHT;
     var centre = !pinnedLeft && !pinnedRight;
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             setCtrls: function (ctrls) { return setHeaderRowCtrls(ctrls); },
@@ -42,7 +43,7 @@ var HeaderRowContainerComp = function (props) {
         return function () {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'headerRowContainerComp.main');
     var className = react_1.useMemo(function () { return cssClasses.toString(); }, [cssClasses]);
     var insertRowsJsx = function () { return headerRowCtrls.map(function (ctrl) { return react_1.default.createElement(headerRowComp_1.default, { ctrl: ctrl, key: ctrl.getInstanceId() }); }); };
     var eCenterContainerStyle = react_1.useMemo(function () { return ({

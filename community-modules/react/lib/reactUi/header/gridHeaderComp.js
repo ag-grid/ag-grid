@@ -16,12 +16,13 @@ const beansContext_1 = require("../beansContext");
 const core_1 = require("@ag-grid-community/core");
 const utils_1 = require("../utils");
 const headerRowContainerComp_1 = __importDefault(require("./headerRowContainerComp"));
+const useEffectOnce_1 = require("../useEffectOnce");
 const GridHeaderComp = () => {
     const [cssClasses, setCssClasses] = react_1.useState(new utils_1.CssClasses());
     const [height, setHeight] = react_1.useState();
     const { context } = react_1.useContext(beansContext_1.BeansContext);
     const eGui = react_1.useRef(null);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setHeightAndMinHeight: height => setHeight(height)
@@ -31,7 +32,7 @@ const GridHeaderComp = () => {
         return () => {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'gridHeaderComp.main');
     const className = react_1.useMemo(() => {
         let res = cssClasses.toString();
         return 'ag-header ' + res;

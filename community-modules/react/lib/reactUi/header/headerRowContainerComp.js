@@ -16,6 +16,7 @@ const beansContext_1 = require("../beansContext");
 const core_1 = require("@ag-grid-community/core");
 const utils_1 = require("../utils");
 const headerRowComp_1 = __importDefault(require("./headerRowComp"));
+const useEffectOnce_1 = require("../useEffectOnce");
 const HeaderRowContainerComp = (props) => {
     const [cssClasses, setCssClasses] = react_1.useState(new utils_1.CssClasses());
     const [centerContainerWidth, setCenterContainerWidth] = react_1.useState();
@@ -27,7 +28,7 @@ const HeaderRowContainerComp = (props) => {
     const pinnedLeft = props.pinned === core_1.Constants.PINNED_LEFT;
     const pinnedRight = props.pinned === core_1.Constants.PINNED_RIGHT;
     const centre = !pinnedLeft && !pinnedRight;
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
@@ -42,7 +43,7 @@ const HeaderRowContainerComp = (props) => {
         return () => {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'headerRowContainerComp.main');
     const className = react_1.useMemo(() => cssClasses.toString(), [cssClasses]);
     const insertRowsJsx = () => headerRowCtrls.map(ctrl => react_1.default.createElement(headerRowComp_1.default, { ctrl: ctrl, key: ctrl.getInstanceId() }));
     const eCenterContainerStyle = react_1.useMemo(() => ({

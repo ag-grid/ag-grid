@@ -17,6 +17,7 @@ const beansContext_1 = require("./beansContext");
 const gridHeaderComp_1 = __importDefault(require("./header/gridHeaderComp"));
 const reactComment_1 = __importDefault(require("./reactComment"));
 const rowContainerComp_1 = __importDefault(require("./rows/rowContainerComp"));
+const useEffectOnce_1 = require("./useEffectOnce");
 const utils_1 = require("./utils");
 const GridBodyComp = () => {
     const { context, agStackComponentsRegistry, resizeObserverService } = react_1.useContext(beansContext_1.BeansContext);
@@ -45,7 +46,7 @@ const GridBodyComp = () => {
     reactComment_1.default(' AG Pinned Top ', eTop);
     reactComment_1.default(' AG Middle ', eBodyViewport);
     reactComment_1.default(' AG Pinned Bottom ', eBottom);
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const beansToDestroy = [];
         const destroyFuncs = [];
         if (!context) {
@@ -86,7 +87,7 @@ const GridBodyComp = () => {
             context.destroyBeans(beansToDestroy);
             destroyFuncs.forEach(f => f());
         };
-    }, []);
+    }, 'gridBodyComp.main');
     const rootClasses = react_1.useMemo(() => utils_1.classesList('ag-root', 'ag-unselectable', movingCss, layoutClass), [movingCss, layoutClass]);
     const bodyViewportClasses = react_1.useMemo(() => utils_1.classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]);
     const topClasses = react_1.useMemo(() => utils_1.classesList('ag-floating-top', cellSelectableCss), [cellSelectableCss]);

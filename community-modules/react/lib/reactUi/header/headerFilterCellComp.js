@@ -13,6 +13,7 @@ const beansContext_1 = require("../beansContext");
 const core_1 = require("@ag-grid-community/core");
 const utils_1 = require("../utils");
 const jsComp_1 = require("../jsComp");
+const useEffectOnce_1 = require("../useEffectOnce");
 const HeaderFilterCellComp = (props) => {
     const { context } = react_1.useContext(beansContext_1.BeansContext);
     const [cssClasses, setCssClasses] = react_1.useState(new utils_1.CssClasses());
@@ -27,7 +28,7 @@ const HeaderFilterCellComp = (props) => {
     const userCompResolve = react_1.useRef();
     const userCompPromise = react_1.useMemo(() => new core_1.AgPromise(resolve => userCompResolve.current = resolve), []);
     const { ctrl } = props;
-    react_1.useEffect(() => {
+    useEffectOnce_1.useEffectOnce(() => {
         const compProxy = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveBodyCssClass: (name, on) => setBodyCssClasses(prev => prev.setClass(name, on)),
@@ -38,7 +39,7 @@ const HeaderFilterCellComp = (props) => {
             setMenuIcon: eIcon => eButtonShowMainFilter.current.appendChild(eIcon)
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
-    }, []);
+    }, 'headerFilterCellComp.main');
     // js comps
     react_1.useEffect(() => {
         return jsComp_1.showJsComp(userCompDetails, context, eFloatingFilterBody.current, userCompResolve.current);

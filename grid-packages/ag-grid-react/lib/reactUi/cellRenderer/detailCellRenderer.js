@@ -23,6 +23,7 @@ var react_1 = __importStar(require("react"));
 var utils_1 = require("../utils");
 var beansContext_1 = require("../beansContext");
 var agGridReactUi_1 = require("../agGridReactUi");
+var useEffectOnce_1 = require("../useEffectOnce");
 var DetailCellRenderer = function (props, ref) {
     var _a = react_1.useContext(beansContext_1.BeansContext), ctrlsFactory = _a.ctrlsFactory, context = _a.context, gridOptionsWrapper = _a.gridOptionsWrapper, resizeObserverService = _a.resizeObserverService, clientSideRowModel = _a.clientSideRowModel, serverSideRowModel = _a.serverSideRowModel;
     var _b = react_1.useState(new utils_1.CssClasses()), cssClasses = _b[0], setCssClasses = _b[1];
@@ -38,12 +39,12 @@ var DetailCellRenderer = function (props, ref) {
             refresh: function () { return ctrlRef.current.refresh(); }
         }); });
     }
-    react_1.useEffect(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
-    }, []);
-    react_1.useEffect(function () {
+    }, 'propsCheck');
+    useEffectOnce_1.useEffectOnce(function () {
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             addOrRemoveDetailGridCssClass: function (name, on) { return setGridCssClasses(function (prev) { return prev.setClass(name, on); }); },
@@ -91,7 +92,7 @@ var DetailCellRenderer = function (props, ref) {
         return function () {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'detailCellRenderer.main');
     var setGridApi = react_1.useCallback(function (api, columnApi) {
         ctrlRef.current.registerDetailWithMaster(api, columnApi);
     }, []);
