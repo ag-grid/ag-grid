@@ -1,4 +1,4 @@
-// ag-grid-react v27.2.0
+// ag-grid-react v27.2.1
 "use strict";
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;

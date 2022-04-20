@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.2.0
+// @ag-grid-community/react v27.2.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class PortalManager {

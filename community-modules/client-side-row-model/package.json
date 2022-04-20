@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/client-side-row-model",
-  "version": "27.2.0",
+  "version": "27.2.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -44,7 +44,7 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~27.2.0"
+    "@ag-grid-community/core": "~27.2.1"
   },
   "devDependencies": {
     "typescript": "~3.7.7",

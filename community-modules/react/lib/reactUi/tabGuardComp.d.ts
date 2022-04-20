@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.2.0
+// @ag-grid-community/react v27.2.1
 import React from 'react';
 import { GridCtrl } from '@ag-grid-community/core';
 export interface TabGuardCompCallback {

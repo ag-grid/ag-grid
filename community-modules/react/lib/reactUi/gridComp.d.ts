@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.2.0
+// @ag-grid-community/react v27.2.1
 import { Context } from '@ag-grid-community/core';
 import React from 'react';
 interface GridCompProps {

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.2.0
+// @ag-grid-community/react v27.2.1
 import { Context, UserCompDetails } from '@ag-grid-community/core';
 import { MutableRefObject } from 'react';
 export declare const showJsComp: (compDetails: UserCompDetails, context: Context, eParent: HTMLElement, ref?: MutableRefObject<any> | ((ref: any) => void)) => () => void;

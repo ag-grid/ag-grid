@@ -1,4 +1,4 @@
-// @ag-grid-community/react v27.2.0
+// @ag-grid-community/react v27.2.1
 "use strict";
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
