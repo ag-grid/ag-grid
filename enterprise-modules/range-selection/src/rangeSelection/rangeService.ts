@@ -60,14 +60,15 @@ export class RangeService extends BeanStub implements IRangeService {
 
     @PostConstruct
     private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.removeAllCellRanges());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
 
         this.ctrlsService.whenReady(() => {
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -84,16 +85,21 @@ export class RangeService extends BeanStub implements IRangeService {
         });
     }
 
-    public onColumnVisibleChange(): void {
+    // Called for both columns loaded & column visibility events
+    public onColumnsChanged(): void {
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
-        // then check if the column visibility has changed in any cell range
+        const allColumns = this.columnModel.getAllDisplayedColumns();
+
+        // check that the columns in each range still exist and are visible
         this.cellRanges.forEach(cellRange => {
             const beforeCols = cellRange.columns;
 
-            // remove hidden cols from cell range
-            cellRange.columns = cellRange.columns.filter(col => col.isVisible());
+            // remove hidden or removed cols from cell range
+            cellRange.columns = cellRange.columns.filter(
+                col => col.isVisible() && allColumns.indexOf(col) !== -1
+            );
 
             const colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
 
