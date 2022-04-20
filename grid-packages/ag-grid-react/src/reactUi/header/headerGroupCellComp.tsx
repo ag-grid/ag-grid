@@ -2,6 +2,7 @@ import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from 'ag-g
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
+import { useEffectOnce } from '../useEffectOnce';
 import { CssClasses } from '../utils';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
@@ -21,7 +22,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const { ctrl } = props;
 
-    useEffect(() => {
+    useEffectOnce(() => {
 
         const compProxy: IHeaderGroupCellComp = {
             setWidth: width => setWidth(width),
@@ -35,7 +36,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eResize.current!);
 
-    }, []);
+    }, 'headerGroupCellComp.main');
 
     // js comps
     useEffect(() => {

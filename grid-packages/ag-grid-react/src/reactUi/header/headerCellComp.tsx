@@ -3,6 +3,7 @@ import { BeansContext } from '../beansContext';
 import { ColumnSortState, CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
 import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
@@ -22,7 +23,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
@@ -38,7 +39,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current!.insertAdjacentElement('afterend', selectAllGui);
-    }, []);
+    }, 'headerCell.main');
 
     // js comps
     useEffect(() => showJsComp(

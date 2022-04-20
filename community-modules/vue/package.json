@@ -1,7 +1,7 @@
 {
   "name": "@ag-grid-community/vue",
   "description": "AG Grid Vue 2 Component",
-  "version": "27.2.0",
+  "version": "27.2.1",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
