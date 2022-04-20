@@ -5,6 +5,7 @@ import {
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 
 const HeaderRowContainerComp = (props: {pinned: string | null}) => {
@@ -22,7 +23,7 @@ const HeaderRowContainerComp = (props: {pinned: string | null}) => {
     const pinnedRight = props.pinned === Constants.PINNED_RIGHT;
     const centre = !pinnedLeft && !pinnedRight;
 
-    useEffect(() => {
+    useEffectOnce(() => {
 
         const compProxy: IHeaderRowContainerComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -43,7 +44,7 @@ const HeaderRowContainerComp = (props: {pinned: string | null}) => {
             context.destroyBean(ctrl);
         };
 
-    }, []);
+    }, 'headerRowContainerComp.main');
 
     const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
 

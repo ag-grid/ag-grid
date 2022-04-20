@@ -2,6 +2,7 @@ import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, Use
 import React, { useContext, useImperativeHandle, forwardRef, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
+import { useEffectOnce } from "../useEffectOnce";
 import { CssClasses } from "../utils";
 
 const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
@@ -33,7 +34,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         return showJsComp(innerCompDetails, context, eValueRef.current!);
     }, [innerCompDetails]);
 
-    useEffect( ()=> {
+    useEffectOnce( ()=> {
 
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (details, valueToDisplay) => {
@@ -55,7 +56,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         return () => {
             context.destroyBean(ctrl);
         };
-    }, []);
+    }, 'groupCellRenderer.main');
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
     const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
