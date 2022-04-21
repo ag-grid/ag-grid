@@ -556,12 +556,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
             let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
             let visible = false;
 
-            if (labelRotation) {
-                if (parallelLabels) {
-                    parallelLabels = labelRotation === Math.PI || labelRotation === -Math.PI / 2 ? parallelLabels : !parallelLabels;
-                } else {
-                    parallelLabels = labelRotation === Math.PI / 2 || labelRotation === -Math.PI / 2 ? !parallelLabels : parallelLabels;
-                }
+            const isDiscreteWithParallelLabels = !labelRotation && parallelLabels && isDiscrete;
+            if (isDiscreteWithParallelLabels && totalLabelLength > availableRange) {
+                // Rotate category axis labels if they overlap
+                labelSelection.each(label => {
+                    label.rotation = 0;
+                    label.textBaseline = 'middle';
+                    label.textAlign = sideFlag * regularFlipFlag === -1 ? 'start' : 'end';
+
+                    labelBboxes.set(label.id, label.computeBBox());
+                });
+                parallelLabels = false; // labels have been rotated - now perpendicular
+                totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
             }
 
             // Recursively remove half the labels if they overlap
@@ -575,6 +581,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         }
                     }
                 });
+
+                if (labelRotation) {
+                    if (parallelLabels) {
+                        parallelLabels = labelRotation === Math.PI || labelRotation === -Math.PI / 2 ? parallelLabels : !parallelLabels;
+                    } else {
+                        parallelLabels = labelRotation === Math.PI / 2 || labelRotation === -Math.PI / 2 ? !parallelLabels : parallelLabels;
+                    }
+                }
 
                 totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
             }
