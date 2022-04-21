@@ -11,6 +11,7 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
+import { CategoryAxis } from "./main";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -386,8 +387,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
-        const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
+        let parallelLabels = label.parallel;
 
         group.translationX = this.translation.x;
         group.translationY = this.translation.y;
@@ -497,6 +498,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
+        // Update properties that affect the size of the axis labels and measure the labels
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
                 node.fontStyle = label.fontStyle;
@@ -519,11 +521,64 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
+        const labelBboxes: Map<string, BBox> = new Map();
         labelSelection.each(label => {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation;
+            label.visible = true;
+
+            labelBboxes.set(label.id, label.computeBBox());
         });
+
+        const isDiscrete = this instanceof CategoryAxis;
+
+        // Only consider a fraction of the total range to allow more space for each label
+        const fractionOfRange = 0.8;
+        const availableRange = (parallelLabels || isDiscrete ? requestedRange[1] - requestedRange[0] : requestedRange[0] - requestedRange[1]) * fractionOfRange;
+
+        const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
+            let totalLength = 0;
+            if (parallel) {
+                bboxes.forEach((bbox) => {
+                    totalLength += bbox.width;
+                });
+            } else {
+                bboxes.forEach((bbox) => {
+                    totalLength += bbox.height;
+                });
+            }
+            return totalLength;
+        }
+
+        if (availableRange >= 0) {
+            // If the user has not specified a label rotation angle, auto fix the labels to prevent overlap
+            let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
+            let visible = false;
+
+            if (labelRotation) {
+                if (parallelLabels) {
+                    parallelLabels = labelRotation === Math.PI || labelRotation === -Math.PI / 2 ? parallelLabels : !parallelLabels;
+                } else {
+                    parallelLabels = labelRotation === Math.PI / 2 || labelRotation === -Math.PI / 2 ? !parallelLabels : parallelLabels;
+                }
+            }
+
+            // Recursively remove half the labels if they overlap
+            while (totalLabelLength > availableRange) {
+                labelSelection.each(label => {
+                    if (label.visible === true) {
+                        label.visible = !visible;
+                        visible = !visible;
+                        if (!label.visible) {
+                            labelBboxes.delete(label.id);
+                        }
+                    }
+                });
+
+                totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
+            }
+        }
 
         this.groupSelection = groupSelection;
 
