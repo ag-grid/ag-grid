@@ -97,7 +97,7 @@ export class AutoGroupColService extends BeanStub {
 
         const userHasProvidedGroupCellRenderer =
             userDef &&
-            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector );
+            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
@@ -124,7 +124,6 @@ export class AutoGroupColService extends BeanStub {
                     }
                 });
             }
-            
             res.showRowGroup = rowGroupCol.getColId();
         } else {
             res.showRowGroup = true;

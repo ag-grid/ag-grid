@@ -9,6 +9,7 @@ import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
+import { setAriaExpanded } from "../../utils/aria";
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
@@ -58,7 +59,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** 
+    /**
      * @deprecated as of v27, use innerRenderer for Framework components
      * Same as `innerRenderer` but for a framework component. */
     innerRendererFramework?: any;
@@ -142,6 +143,19 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
+        this.setupAriaExpanded();
+    }
+
+    private setupAriaExpanded(): void {
+        const { node, eParentOfValue } = this.params;
+
+        const listener = () => {
+            // for react, we don't use JSX, as setting attributes via jsx is slower
+            setAriaExpanded(eParentOfValue, !!node.expanded);
+        };
+
+        this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener);
+        listener();
     }
 
     private isTopLevelFooter(): boolean {

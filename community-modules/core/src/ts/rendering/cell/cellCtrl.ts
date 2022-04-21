@@ -10,7 +10,6 @@ import {
     CellFocusedEvent,
     Events,
     FlashCellsEvent,
-    CellValueChangedEvent,
     CellEditRequestEvent
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -35,7 +34,7 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
-import { setAriaColIndex, setAriaExpanded, setAriaSelected } from "../../utils/aria";
+import { setAriaColIndex } from "../../utils/aria";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -224,7 +223,6 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        this.setupAriaExpanded();
         this.setupAutoHeight();
         this.setAriaColIndex();
 
@@ -329,30 +327,6 @@ export class CellCtrl extends BeanStub {
         const res = rowNodePinned ? false : isFunc || value === true;
 
         return res;
-    }
-
-    private setupAriaExpanded(): void {
-
-        const colDef = this.column.getColDef();
-
-        if (!this.rowNode.isExpandable()) { return; }
-
-        const showRowGroup = colDef.showRowGroup;
-        const rowGroupColumn = this.rowNode.rowGroupColumn;
-
-        const showingAllGroups = showRowGroup === true;
-        const showingThisGroup = rowGroupColumn && rowGroupColumn.getColId() === showRowGroup;
-
-        const colMatches = showingAllGroups || showingThisGroup;
-        if (!colMatches) { return; }
-
-        const listener = () => {
-            // for react, we don't use JSX, as setting attributes via jsx is slower
-            setAriaExpanded(this.eGui, !!this.rowNode.expanded);
-        };
-
-        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, listener);
-        listener();
     }
 
     public refreshShouldDestroy(): boolean {
