@@ -384,6 +384,12 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialAggFunc?: string | IAggFunc;
     /**
+     * The name of the aggregation function to use for this column when it is enabled via the GUI.
+     * Note that this does not immediately apply the aggregation function like `aggFunc`
+     * Default: `sum`
+     */
+    defaultAggFunc?: string;
+    /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */

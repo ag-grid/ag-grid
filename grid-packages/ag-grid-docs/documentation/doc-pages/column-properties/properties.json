@@ -370,7 +370,8 @@
             ]
         },
         "initialAggFunc": {},
-        "allowedAggFuncs": {}
+        "allowedAggFuncs": {},
+        "defaultAggFunc": {}
     },
     "pivoting": {
         "meta": {

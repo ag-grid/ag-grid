@@ -295,6 +295,10 @@ export class AgGridColumn {
     @Input() public aggFunc: string | IAggFunc | null | undefined;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialAggFunc: string | IAggFunc | undefined;
+    /** The name of the aggregation function to use for this column when it is enabled via the GUI.
+     * Note that this does not immediately apply the aggregation function like `aggFunc`
+     * Default: `sum`     */
+    @Input() public defaultAggFunc: string | undefined;
     /** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API.     */

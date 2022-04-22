@@ -19,6 +19,7 @@ export class ColDefUtil {
         'showRowGroup',
         'filter',
         'initialAggFunc',
+        'defaultAggFunc',
         'aggFunc',
         'pinned',
         'initialPinned',
