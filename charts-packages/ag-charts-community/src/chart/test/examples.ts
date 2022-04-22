@@ -1,5 +1,5 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS, DATA_APPLE_REVENUE } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -633,6 +633,237 @@ export const INVALID_AXIS_LABEL_FORMAT: AgCartesianChartOptions = {
         },
     ],
 }
+
+export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            label: {
+                format: '%Y',
+            },
+        },
+        {
+            type: 'number',
+            position: 'left',
+            tick: {
+                count: 100
+            },
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'time',
+            position: 'top',
+            label: {
+                format: '%Y',
+            },
+        },
+        {
+            type: 'number',
+            position: 'left',
+            tick: {
+                count: 100
+            },
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+            label: {
+                format: '%Y',
+            },
+        },
+        {
+            type: 'number',
+            position: 'right',
+            tick: {
+                count: 100
+            },
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const LINE_CATEGORY_X_AXIS_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+    },
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+            tick: {
+                count: 100
+            },
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const LINE_CATEGORY_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+    },
+    axes: [
+        {
+            type: 'category',
+            position: 'top',
+        },
+        {
+            type: 'number',
+            position: 'left',
+            tick: {
+                count: 100
+            },
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const LINE_TIME_X_AXIS_CATEGORY_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_VISITORS,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'time',
+            position: 'bottom',
+        },
+        {
+            type: 'category',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'line',
+            xKey: 'year',
+            yKey: 'visitors',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const COLUMN_CATEGORY_X_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_APPLE_REVENUE,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'category',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'column',
+            xKey: 'quarter',
+            yKey: 'iphone',
+            showInLegend: false,
+        },
+    ],
+}
+
+export const BAR_CATEGORY_Y_AXIS_LABELS: AgCartesianChartOptions = {
+    data: DATA_APPLE_REVENUE,
+    padding: {
+        right: 400,
+        bottom: 200
+    },
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'category',
+            position: 'left',
+        },
+    ],
+    series: [
+        {
+            type: 'bar',
+            xKey: 'quarter',
+            yKey: 'iphone',
+            showInLegend: false,
+        },
+    ],
+}
+
 
 // START ADVANCED EXAMPLES =========================================================================
 

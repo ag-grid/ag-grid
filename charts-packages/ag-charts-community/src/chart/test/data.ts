@@ -5,6 +5,156 @@ function groupedData(game: string, country: string): {} {
     };
 }
 
+export const DATA_APPLE_REVENUE = [
+    {
+        quarter: "Q1'18",
+        iphone: 140,
+        mac: 16,
+        ipad: 14,
+        wearables: 12,
+        services: 20
+    },
+    {
+        quarter: "Q2'18",
+        iphone: 124,
+        mac: 20,
+        ipad: 14,
+        wearables: 12,
+        services: 30
+    },
+    {
+        quarter: "Q3'18",
+        iphone: 112,
+        mac: 20,
+        ipad: 18,
+        wearables: 14,
+        services: 36
+    },
+    {
+        quarter: "Q4'18",
+        iphone: 118,
+        mac: 24,
+        ipad: 14,
+        wearables: 14,
+        services: 36
+    },
+    {
+        quarter: "Q1'19",
+        iphone: 124,
+        mac: 18,
+        ipad: 16,
+        wearables: 18,
+        services: 26
+    },
+    {
+        quarter: "Q2'19",
+        iphone: 108,
+        mac: 20,
+        ipad: 16,
+        wearables: 18,
+        services: 40
+    },
+    {
+        quarter: "Q3'19",
+        iphone: 96,
+        mac: 22,
+        ipad: 18,
+        wearables: 24,
+        services: 42
+    },
+    {
+        quarter: "Q4'19",
+        iphone: 104,
+        mac: 22,
+        ipad: 14,
+        wearables: 20,
+        services: 40
+    }
+];
+
+export const DATA_VISITORS = [
+    {
+        year: new Date('01 Jan 2000 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2001 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2002 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2003 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2004 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2005 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2006 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2008 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2009 00:00:00 GMT'),
+        visitors: 45000,
+    },
+    {
+        year: new Date('01 Jan 2010 00:00:00 GMT'),
+        visitors: 100000,
+    },
+    {
+        year: new Date('01 Jan 2011 00:00:00 GMT'),
+        visitors: null,
+    },
+    {
+        year: new Date('01 Jan 2012 00:00:00 GMT'),
+        visitors: 78000,
+    },
+    {
+        year: new Date('01 Jan 2013 00:00:00 GMT'),
+        visitors: 136000,
+    },
+    {
+        year: new Date('01 Jan 2014 00:00:00 GMT'),
+        visitors: undefined,
+    },
+    {
+        year: new Date('01 Jan 2015 00:00:00 GMT'),
+        visitors: NaN,
+    },
+    {
+        year: new Date('01 Jan 2016 00:00:00 GMT'),
+        visitors: 67000,
+    },
+    {
+        year: new Date('01 Jan 2017 00:00:00 GMT'),
+        visitors: Infinity,
+    },
+    {
+        year: new Date('01 Jan 2018 00:00:00 GMT'),
+        visitors: 174000,
+    },
+    {
+        year: new Date('01 Jan 2019 00:00:00 GMT'),
+        visitors: 76000,
+    },
+    {
+        year: new Date('01 Jan 2020 00:00:00 GMT'),
+        visitors: 56000,
+    },
+];
+
 export const DATA_TIME_SENSOR = [
     {
         time: new Date('01 Jan 2020 13:25:30 GMT'),

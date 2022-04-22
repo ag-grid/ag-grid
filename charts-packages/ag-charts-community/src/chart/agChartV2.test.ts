@@ -134,6 +134,38 @@ const EXAMPLES: Record<string, TestCase> = {
             consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT)
         ),
     },
+    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_CATEGORY_X_AXIS_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_CATEGORY_X_AXIS_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_CATEGORY_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_CATEGORY_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_CATEGORY_Y_AXIS_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_CATEGORY_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'category'], seriesTypes: ['line'] }),
+    },
+    COLUMN_CATEGORY_X_AXIS_LABELS: {
+        options: examples.COLUMN_CATEGORY_X_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'] }),
+    },
+    BAR_CATEGORY_Y_AXIS_LABELS: {
+        options: examples.BAR_CATEGORY_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'] }),
+    },
 };
 
 describe('AgChartV2', () => {
