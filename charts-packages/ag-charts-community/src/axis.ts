@@ -11,7 +11,7 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
-import { BandScale } from "./scale/BandScale";
+import { ContinuousScale } from "./scale/continuousScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -531,12 +531,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
             labelBboxes.set(label.id, label.computeBBox());
         });
 
-        const isDiscrete = scale instanceof BandScale;
+        const isContinuous = scale instanceof ContinuousScale;
 
         // Only consider a fraction of the total range to allow more space for each label
         const fractionOfRange = 0.8;
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8; // Axes with a horizontal orientation will have rotation Math.PI / 2 radians, the cosine of this is 0
-        const availableRange = (isHorizontal || isDiscrete ? requestedRange[1] - requestedRange[0] : requestedRange[0] - requestedRange[1]) * fractionOfRange;
+        const availableRange = (isHorizontal || !isContinuous ? requestedRange[1] - requestedRange[0] : requestedRange[0] - requestedRange[1]) * fractionOfRange;
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
             let totalLength = 0;
@@ -557,7 +557,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
             let visible = false;
 
-            const isDiscreteWithParallelLabels = !labelRotation && parallelLabels && isDiscrete;
+            const isDiscreteWithParallelLabels = !labelRotation && parallelLabels && !isContinuous;
             if (isDiscreteWithParallelLabels && totalLabelLength > availableRange) {
                 // Rotate category axis labels if they overlap
                 labelSelection.each(label => {
