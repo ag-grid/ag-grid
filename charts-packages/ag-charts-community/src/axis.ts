@@ -554,17 +554,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         if (availableRange >= 0) {
             let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
-            let visible = false;
+            let visible = true;
 
             // Recursively remove half the labels if they overlap
             while (totalLabelLength > availableRange) {
                 labelSelection.each(label => {
                     if (label.visible === true) {
-                        label.visible = !visible;
-                        visible = !visible;
+                        label.visible = visible;
                         if (!label.visible) {
                             labelBboxes.delete(label.id);
                         }
+                        visible = !visible;
                     }
                 });
 
