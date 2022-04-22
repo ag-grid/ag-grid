@@ -370,6 +370,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
         let columns: Column[] | undefined;
+        let startsOnTheRight: boolean = false;
 
         if (params.columns) {
             columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
@@ -382,6 +383,10 @@ export class RangeService extends BeanStub implements IRangeService {
             }
 
             columns = this.calculateColumnsBetween(columnStart, columnEnd);
+
+            if (columns && columns.length) {
+                startsOnTheRight = columns[0] !== columnStart;
+            }
         }
 
         if (!columns) {
@@ -402,7 +407,7 @@ export class RangeService extends BeanStub implements IRangeService {
             startRow,
             endRow,
             columns,
-            startColumn: columns[0]
+            startColumn: startsOnTheRight ? _.last(columns) : columns[0]
         };
     }
 
@@ -418,7 +423,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.columns[0]
+                    column: newRange.startColumn
                 });
             }
             
