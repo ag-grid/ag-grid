@@ -11,7 +11,7 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
-import { CategoryAxis } from "./main";
+import { BandScale } from "./scale/BandScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -531,7 +531,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             labelBboxes.set(label.id, label.computeBBox());
         });
 
-        const isDiscrete = this instanceof CategoryAxis;
+        const isDiscrete = scale instanceof BandScale;
 
         // Only consider a fraction of the total range to allow more space for each label
         const fractionOfRange = 0.8;
