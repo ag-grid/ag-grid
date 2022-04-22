@@ -387,8 +387,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
+        const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
-        let parallelLabels = label.parallel;
 
         group.translationX = this.translation.x;
         group.translationY = this.translation.y;
