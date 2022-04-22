@@ -1,10 +1,10 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 var myIcons = {
-  sortAscending: function () {
+  sortAscending: () => {
     return 'ASC'
   },
-  sortDescending: function () {
+  sortDescending: () => {
     return 'DESC'
   },
 }

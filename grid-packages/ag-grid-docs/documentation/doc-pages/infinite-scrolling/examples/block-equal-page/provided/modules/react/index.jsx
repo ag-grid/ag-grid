@@ -75,7 +75,7 @@ class GridExample extends Component {
             maxConcurrentDatasourceRequests: 2,
             infiniteInitialRowCount: 1,
             maxBlocksInCache: 2,
-            getRowId: function (params) {
+            getRowId: (params) => {
                 return params.data.id;
             }
         };
@@ -94,7 +94,7 @@ class GridExample extends Component {
             });
             const dataSource = {
                 rowCount: undefined,
-                getRows: function (params) {
+                getRows: (params) => {
                     console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                     // At this point in your code, you would call the server
                     // To make the demo look real, wait for 500ms before returning

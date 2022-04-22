@@ -330,9 +330,9 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
                 const functionHandler = ts.isArrowFunction(node.initializer)
                     ? eventHandler
                         // (event: RowEditingStoppedEvent) => {  
-                        .replace(/(\(.*?\)) (=>) {/g, `function ${onEventName} $1 {`)
+                        .replace(/^(\(.*?\)) (=>) {/, `function ${onEventName} $1 {`)
                         // event => {}
-                        .replace(/(\w*?) (=>) {/g, `function ${onEventName} ($1) {`)
+                        .replace(/^(\w*?) (=>) {/, `function ${onEventName} ($1) {`)
                     : eventHandler.replace('function', 'function ' + onEventName)
 
                 bindings.eventHandlers.push({
@@ -420,7 +420,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
-        } else if (ts.isFunctionExpression(property.initializer)) {
+        } else if (ts.isFunctionLike(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);
             const escaped = func
                 .replace(/\\/g, "\\\\")

@@ -59,7 +59,7 @@ const options: AgChartOptions = {
       },
       label: {
         rotation: 45,
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value + 'cm'
         },
       },
@@ -72,7 +72,7 @@ const options: AgChartOptions = {
         text: 'Weight',
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value + 'kg'
         },
       },

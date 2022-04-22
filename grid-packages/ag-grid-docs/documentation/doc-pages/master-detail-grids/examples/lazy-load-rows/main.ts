@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       // simulate delayed supply of data to the detail pane
       setTimeout(function () {
         params.successCallback(params.data.callRecords)

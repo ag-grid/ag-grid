@@ -21,18 +21,18 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   animateRows: true,
   cacheBlockSize: 10,
-  isServerSideGroupOpenByDefault: function (params: IsServerSideGroupOpenByDefaultParams) {
+  isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     var isKathrynPowers =
       params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers'
     var isMabelWard =
       params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward'
     return isKathrynPowers || isMabelWard
   },
-  isServerSideGroup: function (dataItem: any) {
+  isServerSideGroup: (dataItem: any) => {
     // indicate if node is a group
     return dataItem.group
   },
-  getServerSideGroupKey: function (dataItem: any) {
+  getServerSideGroupKey: (dataItem: any) => {
     // specify which group key to use
     return dataItem.employeeName
   },
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createFakeServer(fakeServerData: any[]) {
   const fakeServer = {
-    getData: function (request: IServerSideGetRowsRequest) {
+    getData: (request: IServerSideGetRowsRequest) => {
       function extractRowsFromData(groupKeys: string[], data: any[]): any {
         if (groupKeys.length === 0) {
           return data.map(function (d) {
@@ -92,7 +92,7 @@ function createFakeServer(fakeServerData: any[]) {
 function createServerSideDatasource(fakeServer: any) {
 
   const dataSource: IServerSideDatasource = {
-    getRows: function (params: IServerSideGetRowsParams) {
+    getRows: (params: IServerSideGetRowsParams) => {
       console.log('ServerSideDatasource.getRows: params = ', params)
       var request = params.request
       var allRows = fakeServer.getData(request)

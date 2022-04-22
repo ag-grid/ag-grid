@@ -10,11 +10,11 @@ const gridOptions: GridOptions = {
 
   onAsyncTransactionsFlushed: onAsyncTransactionsFlushed,
 
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     setupData()
 
     var dataSource: IServerSideDatasource = {
-      getRows: function (params) {
+      getRows: (params) => {
         var rowData = allServerSideData.slice()
         console.log('getRows: found ' + rowData.length + ' records on server.')
         setTimeout(function () {
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     gridOptions.api!.setServerSideDatasource(dataSource)
   },
 
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.product
   },
   rowModelType: 'serverSide',

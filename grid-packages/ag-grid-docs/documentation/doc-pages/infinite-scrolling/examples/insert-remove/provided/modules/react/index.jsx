@@ -37,7 +37,7 @@ class GridExample extends Component {
             ],
             datasource: {
                 rowCount: undefined,
-                getRows: function (params) {
+                getRows: (params) => {
                     console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning
@@ -69,10 +69,10 @@ class GridExample extends Component {
             maxBlocksInCache: 2,
             infiniteInitialRowCount: 500,
             maxConcurrentDatasourceRequests: 2,
-            getRowId: function (params) {
+            getRowId: (params) => {
                 return params.data.id.toString();
             },
-            getRowStyle: function (params) {
+            getRowStyle: (params) => {
                 if (params.data && params.data.make === 'Honda') {
                     return {
                         fontWeight: 'bold',

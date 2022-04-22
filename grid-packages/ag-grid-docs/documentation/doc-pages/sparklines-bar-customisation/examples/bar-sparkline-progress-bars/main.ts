@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
             color: 'white',
             fontSize: 10,
             fontWeight: 'bold',
-            formatter: function (params: LabelFormatterParams) { return `${params.value}%` }
+            formatter: (params: LabelFormatterParams) => { return `${params.value}%` }
           },
           paddingOuter: 0,
           padding: {

@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     filter: true,
   },
   animateRows: true,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
   rowData: rowData,

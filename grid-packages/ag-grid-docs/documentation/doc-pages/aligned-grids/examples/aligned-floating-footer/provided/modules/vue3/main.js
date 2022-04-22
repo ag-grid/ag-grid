@@ -119,7 +119,7 @@ const VueExample = {
             .then(rowData => this.rowData = rowData);
     },
     methods: {
-        onFirstDataRendered: function () {
+        onFirstDataRendered: () => {
             this.gridColumnApi.autoSizeAllColumns();
         }
     },

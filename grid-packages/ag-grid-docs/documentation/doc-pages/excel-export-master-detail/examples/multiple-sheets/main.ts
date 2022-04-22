@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.name
   },
   groupDefaultExpanded: 1,
@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,

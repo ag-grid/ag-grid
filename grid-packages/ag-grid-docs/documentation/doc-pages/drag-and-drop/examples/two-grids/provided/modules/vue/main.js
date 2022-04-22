@@ -82,7 +82,7 @@ const VueExample = {
         };
 
         const baseGridOptions = {
-            getRowId: function (params) { return params.data.id; },
+            getRowId: (params) => { return params.data.id; },
             rowDragManaged: true,
             animateRows: true
         }

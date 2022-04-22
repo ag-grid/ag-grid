@@ -1,5 +1,5 @@
 export default {
-    template: `
+  template: `
       <div class="custom-tooltip" v-if="isHeader">
           <p>Group Name: {{ params.value }}</p>
           <hr v-if="isGroupedHeader"/>
@@ -14,15 +14,15 @@ export default {
           <p><span>{{ athlete }}</span></p>
       </div>
     `,
-    data: function () {
-        return {
-            athlete: null
-        };
-    },
-    beforeMount() {
-        const params = this.params;
-        this.athlete = params.value.value ? params.value.value : '- Missing -';
-        this.isHeader = params.rowIndex === undefined;
-        this.isGroupedHeader = !!params.colDef.children;
-    }
+  data: function () {
+    return {
+      athlete: null
+    };
+  },
+  beforeMount() {
+    const params = this.params;
+    this.athlete = params.value.value ? params.value.value : '- Missing -';
+    this.isHeader = params.rowIndex === undefined;
+    this.isGroupedHeader = !!params.colDef.children;
+  }
 };

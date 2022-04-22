@@ -15,7 +15,7 @@ var listOfDays = [
 ]
 
 var daysValuesNotProvidedFilterParams = {
-  comparator: function (a: string, b: string) {
+  comparator: (a: string, b: string) => {
     var aIndex = listOfDays.indexOf(a)
     var bIndex = listOfDays.indexOf(b)
     if (aIndex === bIndex) return 0

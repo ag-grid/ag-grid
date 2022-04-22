@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
     width: 250,
     resizable: true,
   },
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
   rowModelType: 'serverSide',
@@ -19,11 +19,11 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
-  onGridReady: function (params: GridReadyEvent) {
+  onGridReady: (params: GridReadyEvent) => {
     setupData()
 
     const dataSource: IServerSideDatasource = {
-      getRows: function (params2: IServerSideGetRowsParams) {
+      getRows: (params2: IServerSideGetRowsParams) => {
         // To make the demo look real, wait for 500ms before returning
         setTimeout(function () {
           const doingTopLevel = params2.request.groupKeys.length == 0
@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
 
     params.api.setServerSideDatasource(dataSource)
   },
-  getServerSideStoreParams: function (params: GetServerSideStoreParamsParams): ServerSideStoreParams {
+  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
     const type = params.level == 0 ? 'partial' : 'full'
     return {
       storeType: type,

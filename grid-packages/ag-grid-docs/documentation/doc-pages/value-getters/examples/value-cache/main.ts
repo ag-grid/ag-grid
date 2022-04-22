@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
     cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     valueFormatter: formatNumber,
-    valueGetter: function (params: ValueGetterParams) {
+    valueGetter: (params: ValueGetterParams) => {
       var q1 = params.getValue('q1')
       var q2 = params.getValue('q2')
       var q3 = params.getValue('q3')
@@ -53,10 +53,10 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   enableRangeSelection: true,
   groupDefaultExpanded: 1,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
-  onCellValueChanged: function () {
+  onCellValueChanged: () => {
     console.log('onCellValueChanged')
   },
 }

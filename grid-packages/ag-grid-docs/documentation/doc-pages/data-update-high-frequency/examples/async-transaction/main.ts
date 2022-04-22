@@ -146,7 +146,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.trade
   },
   defaultColDef: {
@@ -157,7 +157,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     width: 250,
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     getData();
     params.api.setRowData(globalRowData)
   },

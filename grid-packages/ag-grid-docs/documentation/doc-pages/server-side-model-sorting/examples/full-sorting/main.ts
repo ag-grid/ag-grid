@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createServerSideDatasource(server: any): IServerSideDatasource {
   return {
-    getRows: function (params: IServerSideGetRowsParams) {
+    getRows: (params: IServerSideGetRowsParams) => {
       console.log(
         '[Datasource] - rows requested by grid: startRow = ' +
         params.request.startRow +
@@ -69,7 +69,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
 
 function createFakeServer(allData: any[]) {
   return {
-    getData: function () {
+    getData: () => {
       return {
         success: true,
         rows: allData,

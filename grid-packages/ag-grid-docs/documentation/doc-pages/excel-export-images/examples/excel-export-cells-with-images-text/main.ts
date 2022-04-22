@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         },
     ],
     defaultExcelExportParams: {
-        addImageToCell: function (rowIndex, col, value) {
+        addImageToCell: (rowIndex, col, value) => {
             if (col.getColId() !== 'country') {
                 return
             }

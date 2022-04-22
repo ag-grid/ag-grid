@@ -37,18 +37,6 @@ Below shows a simple example using Async Transactions. Note the following:
 - Clicking **Flush** will apply all waiting Transactions.
 - Row data finished loading will also apply (flush) all waiting Transactions.
 
-<grid-example title='High Frequency Flat' name='high-frequency-flat' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
-
-## Flushed Event
-
-When Async Transactions are applied, the `asyncTransactionsFlushed` event is fired. The event contains all of the `ServerSideTransactionResult` objects of all attempted transactions.
-
-<interface-documentation interfaceName='AsyncTransactionsFlushed' ></interface-documentation>
-
-The example below listens for this event and prints a summary of the result objects to the console.
-
-<grid-example title='Transaction Flushed Event' name='transaction-flushed-event' type='generated' options=' { "enterprise": true, "modules": ["serverside"] }'></grid-example>
-
 ## Retrying Transactions
 
 The Retrying Transactions feature guards against Lost Updates. Lost updates refers to new data created in the server's data store that due to the order of data getting read and the transaction applied, the record ends up missing in the grid.
@@ -66,7 +54,7 @@ The example is configured to demonstrate this. Note the following:
 - While a refresh is underway, add records using the **Add** button. This will add records to the server that will be missing in the row data the grid receives. The transactions will be applied after the data load is complete.
 - Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing from the loaded row data.
 
-<grid-example title='Retry Transactions' name='retry-transactions' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+
 
 This only applies to loading stores. If the grid is limiting the number of concurrent loads (property `maxConcurrentDatasourceRequests` is set) then it's possible Stores are waiting to load. If they are waiting to load, transactions for updates will all be discarded as no race condition (see below) is possible.
 
@@ -125,7 +113,7 @@ In the example, note the following:
 - All columns are sortable. The sorting is done by the grid without needing to request data again from the server.
 - Column Deal Type has a filter associated with it. The filter is done by the grid without needing to request data again from the server.
 
-<grid-example title='High Frequency Hierarchy' name='high-frequency-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside","rowgrouping"] }'></grid-example>
+
 
 ## Next Up
 
