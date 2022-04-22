@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,18 +19,18 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   pinnedTopRowData: getPinnedTopData(),
   pinnedBottomRowData: getPinnedBottomData(),
-  onRowEditingStarted: function (event) {
+  onRowEditingStarted: (event: RowEditingStartedEvent) => {
     console.log('never called - not doing row editing')
   },
-  onRowEditingStopped: function (event) {
+  onRowEditingStopped: (event: RowEditingStoppedEvent) => {
     console.log('never called - not doing row editing')
   },
-  onCellEditingStarted: function (event) {
+  onCellEditingStarted: (event: CellEditingStartedEvent) => {
     console.log('cellEditingStarted')
   },
-  onCellEditingStopped: function (event) {
+  onCellEditingStopped: (event: CellEditingStoppedEvent) => {
     console.log('cellEditingStopped')
-  },
+  }
 }
 
 function getPinnedTopData() {

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, RowEditingStartedEvent, RowEditingStoppedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, } from '@ag-grid-community/core'
 
 import { GenderRenderer } from './genderRenderer_typescript'
 import { NumericEditor } from './numericEditor_typescript'
@@ -96,16 +96,16 @@ const gridOptions: GridOptions = {
         filter: true,
         resizable: true,
     },
-    onRowEditingStarted: event => {
+    onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('never called - not doing row editing')
     },
-    onRowEditingStopped: event => {
+    onRowEditingStopped: (event: RowEditingStoppedEvent) => {
         console.log('never called - not doing row editing')
     },
-    onCellEditingStarted: event => {
+    onCellEditingStarted: (event: CellEditingStartedEvent) => {
         console.log('cellEditingStarted')
     },
-    onCellEditingStopped: event => {
+    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped')
     }
 }

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams, AsyncTransactionsFlushed } from '@ag-grid-community/core'
 // defined and updated in data.js
 declare var globalRowData: any[];
 
@@ -168,7 +168,7 @@ const gridOptions: GridOptions = {
     params.api.setRowData(globalRowData)
     startFeed(params.api)
   },
-  onAsyncTransactionsFlushed: function (e) {
+  onAsyncTransactionsFlushed: function (e: AsyncTransactionsFlushed) {
     console.log(
       '========== onAsyncTransactionsFlushed: applied ' +
       e.results.length +

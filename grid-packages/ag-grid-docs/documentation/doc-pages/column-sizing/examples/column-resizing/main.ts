@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ColumnResizedEvent } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, suppressSizeToFit: true },
@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
   },
   columnDefs: columnDefs,
   rowData: null,
-  onColumnResized: params => {
+  onColumnResized: (params: ColumnResizedEvent) => {
     console.log(params)
   },
 }

@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, ICellRendererParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
 
 import { MoodRenderer } from './moodRenderer_typescript'
 import { GenderRenderer } from './genderRenderer_typescript'
@@ -39,16 +39,16 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   rowData: rowData,
-  onRowEditingStarted: function (event) {
+  onRowEditingStarted: (event: RowEditingStartedEvent) => {
     console.log('never called - not doing row editing')
   },
-  onRowEditingStopped: function (event) {
+  onRowEditingStopped: (event: RowEditingStoppedEvent) => {
     console.log('never called - not doing row editing')
   },
-  onCellEditingStarted: function (event) {
+  onCellEditingStarted: (event: CellEditingStartedEvent) => {
     console.log('cellEditingStarted')
   },
-  onCellEditingStopped: function (event) {
+  onCellEditingStopped: (event: CellEditingStoppedEvent) => {
     console.log('cellEditingStopped')
   }
 }
