@@ -300,10 +300,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     // returns true if successful, false if not successful
-    public extendLatestRangeInDirection(key: string): CellPosition | undefined {
-        if (this.isEmpty() || !this.newestRangeStartCell) {
-            return;
-        }
+    public extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined {
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+
+        const key = event.key;
+        const ctrlKey = event.ctrlKey || event.metaKey;
 
         const lastRange = _.last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
@@ -316,12 +317,10 @@ export class RangeService extends BeanStub implements IRangeService {
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
-        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell);
+        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell, ctrlKey);
 
         // if user is at end of grid, so no cell to extend to, we return false
-        if (!newEndCell) {
-            return;
-        }
+        if (!newEndCell) { return; }
 
         this.setCellRange({
             rowStartIndex: startCell.rowIndex,
