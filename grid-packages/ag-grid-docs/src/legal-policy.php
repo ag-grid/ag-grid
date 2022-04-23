@@ -61,8 +61,8 @@ meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG 
                         <br/><br/>
                         We strongly recommend you read our policy and understand what a cookie is, how we use them and your rights in relation to them.
                         <br/><br/>
-                        <a href="cookies.php">
-                            <button type="button" class="btn btn-primary btn-lg btn-block" href="cookies.php">Cookies Policy</button>
+                        <a href="cookies">
+                            <button type="button" class="btn btn-primary btn-lg btn-block" href="cookies">Cookies Policy</button>
                         </a>
                     </p>
                     <hr>

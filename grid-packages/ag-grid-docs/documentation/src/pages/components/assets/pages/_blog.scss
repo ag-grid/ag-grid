@@ -1,0 +1,88 @@
+#blogs-homepage {
+    h1 a,
+    h2 a,
+    h3 a {
+        color: $body-color;
+
+        &:hover {
+            color: $body-color;
+            text-decoration: none;
+        }
+    }
+
+    p {
+        color: $gray-700;
+        font-size: 0.9rem;
+    }
+
+    .media-body h4 {
+        font-size: 0.9rem;
+
+        span {
+            color: $secondary;
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 300;
+        }
+    }
+
+    #headline {
+        @extend .text-center;
+
+        h1 span {
+            @extend .text-muted;
+
+            display: block;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+    }
+
+    #featured-blogs {
+        .cover {
+            @extend .card-header; 
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            height: 2.4em;
+        }
+    }
+
+    .media > img {
+        @extend .rounded-circle, .mr-3;
+
+        width: 30px;
+    }
+
+    #featured-blogs .cover,
+    #recent-blogs .cover {
+        background-size: cover;
+        background-position: center;
+        display: block;
+        height: 7rem;
+        overflow: hidden;
+        text-indent: -10000px;
+    }
+
+    #recent-blogs .cover {
+        @extend .rounded;
+    }
+
+    .post-summary {
+        border-bottom: 1px solid $border-color;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+    }
+}
+
+.blog-author {
+    color: $secondary;
+    font-weight: 300;
+}
+
+.large-cover-img {
+    @extend .img-fluid;
+
+    margin-bottom: 2rem;
+}

@@ -52,11 +52,11 @@
             },
             {
                 "name": "Privacy Policy",
-                "url": "/privacy.php"
+                "url": "/privacy"
             },
             {
                 "name": "Cookies Policy",
-                "url": "/cookies.php"
+                "url": "/cookies"
             }
         ]
     },

@@ -1,0 +1,58 @@
+header#nav {
+    @extend .sticky-top, .bg-primary, .py-1;
+    -webkit-font-smoothing: antialiased;
+    background-image: linear-gradient(to top left, $blue-2, $blue-1);
+    box-shadow: inset 0 -0.5rem 7.5rem -3rem $blue-1;
+    min-height: 4rem;
+
+    nav.nav {
+        @extend .navbar, .navbar-dark, .navbar-expand-md, .full-width-row, .align-middle;
+
+        #logo {
+            @extend .text-hide;
+            background-image: url('../svg/logo-white.svg');
+            background-repeat: no-repeat;
+            background-size: contain;
+            min-height: 40px;
+            min-width: 235px;
+        }
+
+        ul {
+            @extend .navbar-nav, .ml-auto;
+
+            li {
+                @extend .nav-item, .px-2;
+                position: relative;
+                &.active {
+                    @extend .active;
+
+                    @include media-breakpoint-up(md) {
+                        &::after {
+                            content: '';
+                            height: 0.2rem;
+                            width: 100%;
+                            background-color: white;
+                            position: absolute;
+                            bottom: -0.7rem;
+                            left: 0;
+                        }
+                    }
+                }
+                a {
+                    @extend .nav-link, .px-4;
+                    color: #b3d4ed;
+                    &:hover {
+                        color: white;
+                    }
+                }
+            }
+        }
+
+        #navbar-toggle {
+            @extend .navbar-toggler;
+            span {
+                @extend .navbar-toggler-icon;
+            }
+        }
+    }
+}

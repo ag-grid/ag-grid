@@ -24,7 +24,7 @@
                 <li><a href="/about.php">About</a></li>
                 <li><a href="https://blog.ag-grid.com/">Blog</a></li>
                 <li><a href=/privacy.php>Privacy Policy</a><li>
-                  <li><a href="/cookies.php">Cookies Policy</a><li>
+                  <li><a href="/cookies">Cookies Policy</a><li>
             </ul>
         </div>
         <div>

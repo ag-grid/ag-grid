@@ -1,0 +1,10 @@
+@mixin scrollbars($size, $foreground-color,
+    $background-color: mix($foreground-color, white,  50%),
+    $hover-color: mix($foreground-color, white, 25%),
+    $border-color: rgba(0,0,0,0)
+) {
+    @if (lightness($background-color) < 50) {
+        // For Firefox
+        scrollbar-color: $foreground-color $background-color;
+    }
+}
