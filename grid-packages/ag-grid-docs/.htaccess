@@ -2263,6 +2263,8 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-data-grid/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /react-data-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /cookies.php /cookies
+    Redirect 301 /privacy.php /privacy
 </IfModule>
 
 # CORS settings
