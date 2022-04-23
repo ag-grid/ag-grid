@@ -2265,6 +2265,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
+    Redirect 301 /about.php /about
 </IfModule>
 
 # CORS settings
