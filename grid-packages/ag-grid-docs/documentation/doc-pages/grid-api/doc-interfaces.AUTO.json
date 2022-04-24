@@ -15564,7 +15564,7 @@
     },
     "extendLatestRangeInDirection": {
       "type": {
-        "arguments": { "key": "string" },
+        "arguments": { "event": "KeyboardEvent" },
         "returnType": "CellPosition | undefined",
         "optional": false
       }
