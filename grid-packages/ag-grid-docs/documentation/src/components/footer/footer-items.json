@@ -8,11 +8,11 @@
             },
             {
                 "name": "Changelog",
-                "url": "/ag-grid-changelog/"
+                "url": "/changelog/"
             },
             {
                 "name": "Pipeline",
-                "url": "/ag-grid-pipeline/"
+                "url": "/pipeline/"
             },
             {
                 "name": "Documentation Archive",
@@ -30,7 +30,7 @@
             },
             {
                 "name": "License & Pricing",
-                "url": "/license-pricing.php"
+                "url": "/license-pricing"
             },
             {
                 "name": "Support via Zendesk",

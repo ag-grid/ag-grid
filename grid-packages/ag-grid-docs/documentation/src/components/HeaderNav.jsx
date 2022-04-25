@@ -15,7 +15,7 @@ const links = [
     },
     {
         name: 'Pricing',
-        url: '/license-pricing.php'
+        url: '/license-pricing'
     },
     {
         name: 'Blog',

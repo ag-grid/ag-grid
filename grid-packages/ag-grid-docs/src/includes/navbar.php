@@ -21,7 +21,7 @@
                 </li>
 
                 <li class="<?php if ($navKey == "licenseAndPricing") { ?>active<?php }?>">
-                <a href="/license-pricing.php">Pricing</a>
+                <a href="/license-pricing">Pricing</a>
             </li>
             <li>
                 <a href="https://blog.ag-grid.com/" target="_blank">Blog</a>

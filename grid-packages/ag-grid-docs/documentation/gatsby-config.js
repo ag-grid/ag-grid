@@ -197,8 +197,7 @@ const plugins = [
                     }).concat(
                         [
                             '/ag-grid-jobs-board/',
-                            '/example.php',
-                            '/license-pricing.php'
+                            '/example.php'
                         ]
                     );
 
