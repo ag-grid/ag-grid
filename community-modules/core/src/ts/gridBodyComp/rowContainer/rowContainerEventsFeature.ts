@@ -245,7 +245,7 @@ export class RowContainerEventsFeature extends BeanStub {
         // was from a child grid (happens in master detail)
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
 
-        switch (keyboardEvent.key.toUpperCase()) {
+        switch (keyboardEvent.code) {
             case KeyCode.A:
                 return this.onCtrlAndA(keyboardEvent);
             case KeyCode.C:
