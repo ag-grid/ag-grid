@@ -531,8 +531,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             labelBboxes.set(label.id, label.computeBBox());
         });
 
-        const isContinuous = scale instanceof ContinuousScale;
-
         // Only consider a fraction of the total range to allow more space for each label
         const fractionOfRange = 0.8;
         const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
