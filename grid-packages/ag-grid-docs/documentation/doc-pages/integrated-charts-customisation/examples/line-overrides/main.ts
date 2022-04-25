@@ -54,7 +54,6 @@ const gridOptions: GridOptions = {
           },
         },
         marker: {
-          enabled: true,
           shape: 'diamond',
           size: 12,
           strokeWidth: 4,

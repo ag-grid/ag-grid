@@ -55,7 +55,6 @@ const gridOptions: GridOptions = {
         fill: '#e5e5e5',
       },
       title: {
-        enabled: true,
         text: 'Precious Metals Production',
         fontStyle: 'italic',
         fontWeight: '600',
@@ -64,14 +63,12 @@ const gridOptions: GridOptions = {
         color: '#414182',
       },
       subtitle: {
-        enabled: true,
         text: 'by country',
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
         color: 'rgb(100, 100, 100)',
       },
       legend: {
-        enabled: true,
         position: 'left',
         spacing: 20,
         item: {

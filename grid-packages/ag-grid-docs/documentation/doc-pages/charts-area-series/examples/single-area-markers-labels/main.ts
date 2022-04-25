@@ -20,7 +20,6 @@ const options: AgChartOptions = {
         enabled: true,
       },
       label: {
-        enabled: true,
         fontWeight: 'bold',
       },
       tooltip: {

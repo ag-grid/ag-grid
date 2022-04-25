@@ -94,7 +94,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
           right: 10,
         },
         legend: {
-          enabled: true,
           position: 'bottom',
         },
       },
@@ -120,7 +119,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
           right: 10,
         },
         legend: {
-          enabled: true,
           position: 'bottom',
         },
       },

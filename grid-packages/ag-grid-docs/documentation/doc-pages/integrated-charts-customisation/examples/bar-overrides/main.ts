@@ -47,14 +47,12 @@ const gridOptions: GridOptions = {
         strokeOpacity: 0.8,
         strokeWidth: 2,
         shadow: {
-          enabled: true,
           color: 'rgba(0, 0, 0, 0.3)',
           xOffset: 10,
           yOffset: 5,
           blur: 8,
         },
         label: {
-          enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
           fontSize: 15,

@@ -14,7 +14,6 @@ class Chart1 extends Component {
         theme: myTheme,
         autoSize: true,
         title: {
-          enabled: true,
           text: "Cartesian Chart Theming",
         },
         data: data,
@@ -118,7 +117,6 @@ var myTheme = {
         },
         column: {
           label: {
-            enabled: true,
             color: "white",
           },
         },
