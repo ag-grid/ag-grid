@@ -535,8 +535,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         // Only consider a fraction of the total range to allow more space for each label
         const fractionOfRange = 0.8;
-        const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8; // Axes with a horizontal orientation will have rotation Math.PI / 2 radians, the cosine of this is 0
-        const availableRange = (isHorizontal || !isContinuous ? requestedRange[1] - requestedRange[0] : requestedRange[0] - requestedRange[1]) * fractionOfRange;
+        const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
             let totalLength = 0;
