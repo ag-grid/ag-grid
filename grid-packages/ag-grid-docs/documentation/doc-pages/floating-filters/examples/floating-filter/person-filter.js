@@ -63,10 +63,10 @@ class PersonFilter {
     getApi() {
         var that = this
         return {
-            getModel: function () {
+            getModel: () => {
                 return { value: that.filterText.value }
             },
-            setModel: function (model) {
+            setModel: (model) => {
                 that.eFilterText.value = model.value
             },
         }

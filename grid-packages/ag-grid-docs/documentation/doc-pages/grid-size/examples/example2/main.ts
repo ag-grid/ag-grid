@@ -22,14 +22,14 @@ const gridOptions: GridOptions = {
   },
 
   rowData: getData(),
-  onGridReady: function (params: GridReadyEvent) {
+  onGridReady: (params: GridReadyEvent) => {
     minRowHeight = params.api.getSizesForCurrentTheme().rowHeight
     currentRowHeight = minRowHeight
     params.api.sizeColumnsToFit()
   },
   onFirstDataRendered: onFirstDataRendered,
   onGridSizeChanged: onGridSizeChanged,
-  getRowHeight: function (params: RowHeightParams) {
+  getRowHeight: (params: RowHeightParams) => {
     return currentRowHeight
   },
 }

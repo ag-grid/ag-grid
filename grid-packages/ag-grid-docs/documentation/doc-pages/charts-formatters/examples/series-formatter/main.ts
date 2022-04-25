@@ -30,7 +30,7 @@ const options: AgChartOptions = {
       xKey: 'country',
       yKey: 'gdp',
       showInLegend: false,
-      formatter: function (params) {
+      formatter: (params) => {
         return {
           fill:
             params.datum[params.xKey] === 'UK'

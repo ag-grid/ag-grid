@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: [],
-    onGridReady: function (params) {
+    onGridReady: (params) => {
         params.api.sizeColumnsToFit()
     },
 }

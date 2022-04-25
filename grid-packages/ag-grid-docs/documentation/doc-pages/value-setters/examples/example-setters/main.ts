@@ -3,10 +3,10 @@ import { Grid, CellValueChangedEvent, ColDef, GridOptions, ValueGetterParams, Va
 const columnDefs: ColDef[] = [
     {
         headerName: 'Name',
-        valueGetter: function (params: ValueGetterParams) {
+        valueGetter: (params: ValueGetterParams) => {
             return params.data.firstName + ' ' + params.data.lastName
         },
-        valueSetter: function (params: ValueSetterParams) {
+        valueSetter: (params: ValueSetterParams) => {
             var fullName = params.newValue
             var nameSplit = fullName.split(' ')
             var newFirstName = nameSplit[0]
@@ -31,10 +31,10 @@ const columnDefs: ColDef[] = [
     },
     {
         headerName: 'B',
-        valueGetter: function (params: ValueGetterParams) {
+        valueGetter: (params: ValueGetterParams) => {
             return params.data.b
         },
-        valueSetter: function (params: ValueSetterParams) {
+        valueSetter: (params: ValueSetterParams) => {
             var newValInt = parseInt(params.newValue)
             var valueChanged = params.data.b !== newValInt
             if (valueChanged) {
@@ -45,14 +45,14 @@ const columnDefs: ColDef[] = [
     },
     {
         headerName: 'C.X',
-        valueGetter: function (params: ValueGetterParams) {
+        valueGetter: (params: ValueGetterParams) => {
             if (params.data.c) {
                 return params.data.c.x
             } else {
                 return undefined
             }
         },
-        valueSetter: function (params: ValueSetterParams) {
+        valueSetter: (params: ValueSetterParams) => {
             if (!params.data.c) {
                 params.data.c = {}
             }
@@ -62,14 +62,14 @@ const columnDefs: ColDef[] = [
     },
     {
         headerName: 'C.Y',
-        valueGetter: function (params: ValueGetterParams) {
+        valueGetter: (params: ValueGetterParams) => {
             if (params.data.c) {
                 return params.data.c.y
             } else {
                 return undefined
             }
         },
-        valueSetter: function (params: ValueSetterParams) {
+        valueSetter: (params: ValueSetterParams) => {
             if (!params.data.c) {
                 params.data.c = {}
             }

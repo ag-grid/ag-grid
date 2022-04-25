@@ -24,16 +24,16 @@ const gridOptions: GridOptions = {
       defaultColDef: {
         flex: 1,
       },
-      onGridReady: function (params) {
+      onGridReady: (params) => {
         // using auto height to fit the height of the the detail grid
         params.api.setDomLayout('autoHeight')
       },
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
-  getRowHeight: function (params: RowHeightParams) {
+  getRowHeight: (params: RowHeightParams) => {
     if (params.node && params.node.detail) {
       var offset = 80
       var allDetailRowHeight =

@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableFillHandle: true,
   suppressClearOnFillReduction: true,
-  fillOperation: function (params: FillOperationParams) {
+  fillOperation: (params: FillOperationParams) => {
     if (params.column.getColId() === 'country') {
       return params.currentCellValue
     }

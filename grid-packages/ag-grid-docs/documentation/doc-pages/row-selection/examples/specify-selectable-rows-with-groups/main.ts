@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
-  isRowSelectable: function (node: RowNode) {
+  isRowSelectable: (node: RowNode) => {
     return node.data
       ? node.data.year === 2008 || node.data.year === 2004
       : false

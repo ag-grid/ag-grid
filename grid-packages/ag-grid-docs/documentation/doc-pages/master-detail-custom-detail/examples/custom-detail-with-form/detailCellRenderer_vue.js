@@ -1,5 +1,5 @@
 export default {
-    template: `
+  template: `
       <div>
       <form>
         <div>
@@ -25,18 +25,18 @@ export default {
       </form>
       </div>
     `,
-    data: function () {
-        return {
-            firstRecord: {}
-        };
-    },
-    mounted() {
-        this.firstRecord = this.params.data.callRecords[0];
-    },
-    methods: {
-        // called when the cell is refreshed
-        refresh() {
-            return false;
-        }
+  data: function () {
+    return {
+      firstRecord: {}
+    };
+  },
+  mounted() {
+    this.firstRecord = this.params.data.callRecords[0];
+  },
+  methods: {
+    // called when the cell is refreshed
+    refresh() {
+      return false;
     }
+  }
 };

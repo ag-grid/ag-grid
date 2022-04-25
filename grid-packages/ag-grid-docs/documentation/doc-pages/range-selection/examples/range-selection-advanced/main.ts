@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   onRangeSelectionChanged: onRangeSelectionChanged,
 
-  processCellForClipboard: function (params: ProcessCellForExportParams) {
+  processCellForClipboard: (params: ProcessCellForExportParams) => {
     if (
       params.column.getColId() === 'athlete' &&
       params.value &&
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
     return params.value
   },
 
-  processCellFromClipboard: function (params: ProcessCellForExportParams) {
+  processCellFromClipboard: (params: ProcessCellForExportParams) => {
     if (
       params.column.getColId() === 'athlete' &&
       params.value &&

@@ -6,16 +6,16 @@ export default {
             <span>{{ value }}</span>
         </span>
     `,
-    data: function() {
+    data: function () {
         return {};
     },
     computed: {
-        value: function () {
+        value: () => {
             return this.params.value;
         },
     },
     methods: {
-        onAdd: function () {
+        onAdd: () => {
             const oldData = this.params.node.data;
             const oldCallRecords = oldData.callRecords;
             const newCallRecords = oldCallRecords.slice(0); // make a copy
@@ -42,11 +42,11 @@ export default {
                 callRecords: newCallRecords
             };
 
-            this.params.api.applyTransaction({update: [newData]});
+            this.params.api.applyTransaction({ update: [newData] });
 
             this.params.node.setExpanded(true);
         },
-        onRemove: function () {
+        onRemove: () => {
             const oldData = this.params.node.data;
 
             const oldCallRecords = oldData.callRecords;
@@ -71,7 +71,7 @@ export default {
                 callRecords: newCallRecords
             };
 
-            this.params.api.applyTransaction({update: [newData]});
+            this.params.api.applyTransaction({ update: [newData] });
         }
     }
 };

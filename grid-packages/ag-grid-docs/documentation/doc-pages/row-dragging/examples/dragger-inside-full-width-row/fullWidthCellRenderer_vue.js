@@ -24,7 +24,7 @@ export default {
                 </div>
             </div>
     `,
-    data: function() {
+    data: function () {
         return {
             maxValue: 0,
             currentValue: 0,

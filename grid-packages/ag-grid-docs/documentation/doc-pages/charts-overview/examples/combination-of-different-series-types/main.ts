@@ -57,7 +57,7 @@ const options: AgChartOptions = {
         text: "Number of cattle",
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value / 1000 + "M"
         },
       },
@@ -71,7 +71,7 @@ const options: AgChartOptions = {
         text: "Exports (tonnes)",
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value / 1000 + "k"
         },
       },

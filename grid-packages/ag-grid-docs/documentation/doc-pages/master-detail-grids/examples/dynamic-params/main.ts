@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
   },
   masterDetail: true,
   detailRowHeight: 195,
-  detailCellRendererParams: function (params: ICellRendererParams) {
+  detailCellRendererParams: (params: ICellRendererParams) => {
     var res = {} as IDetailCellRendererParams;
 
     // we use the same getDetailRowData for both options

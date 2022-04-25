@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 var filterParams = {
-  comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
     var dateParts = dateAsString.split('/')

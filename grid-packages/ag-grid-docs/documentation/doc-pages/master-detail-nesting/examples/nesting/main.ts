@@ -75,12 +75,12 @@ const gridOptions: GridOptions = {
             flex: 1,
           },
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: (params) => {
           params.successCallback(params.data.children)
         },
       } as IDetailCellRendererParams,
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       params.successCallback(params.data.children)
     },
   } as IDetailCellRendererParams,
