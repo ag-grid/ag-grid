@@ -1,5 +1,6 @@
 ---
 title: "Testing Async"
+frameworks: ["angular"]
 ---
 
  We will walk through an example that tests asynchronous grid code as part of your Angular application,
