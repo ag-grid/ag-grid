@@ -2266,6 +2266,7 @@ AddType text/javascript ts jsx
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
     Redirect 301 /about.php /about
+    Redirect 301 /license-pricing.php /license-pricing
 </IfModule>
 
 # CORS settings
