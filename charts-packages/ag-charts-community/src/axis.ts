@@ -540,14 +540,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
             let totalLength = 0;
-            if (parallel) {
-                bboxes.forEach((bbox) => {
-                    totalLength += bbox.width;
-                });
-            } else {
-                bboxes.forEach((bbox) => {
-                    totalLength += bbox.height;
-                });
+            for (let [labelId, bbox] of bboxes.entries()) {
+                totalLength += (parallel ? bbox.width : bbox.height);
             }
             return totalLength;
         }
@@ -556,16 +550,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
             let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
             let visible = true;
 
-            // Recursively remove half the labels if they overlap
+            // Remove half the labels if they overlap
             while (totalLabelLength > availableRange) {
                 labelSelection.each(label => {
-                    if (label.visible === true) {
-                        label.visible = visible;
-                        if (!label.visible) {
-                            labelBboxes.delete(label.id);
-                        }
-                        visible = !visible;
+                    if (label.visible !== true) { return; }
+
+                    label.visible = visible;
+                    if (!label.visible) {
+                        labelBboxes.delete(label.id);
                     }
+                    visible = !visible;
                 });
 
                 totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
