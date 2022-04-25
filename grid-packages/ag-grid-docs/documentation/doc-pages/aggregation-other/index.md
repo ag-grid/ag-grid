@@ -23,6 +23,24 @@ const gridOptions = {
 }
 </snippet>
 
+## Default Aggregation Function
+
+When aggregation is enabled for a column via the GUI, it is initially set to the default aggregation function for that column, which if unspecified is the `sum` function. You can configure the default aggregation function for a column using the `defaultAggFunc` column property.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'silver',
+            // allow gui to set aggregations for this column
+            enableValue: true,
+            // Default to the avg function when aggregation is enabled
+            defaultAggFunc: 'avg'
+        }
+    ]
+}
+</snippet>
+
 ## Aggregation API
 
 After the grid is initialised an aggregation can be applied to a column using the following:
