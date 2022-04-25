@@ -5,6 +5,89 @@ function groupedData(game: string, country: string): {} {
     };
 }
 
+export const DATA_VISITORS = [
+    {
+        year: new Date('01 Jan 2000 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2001 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2002 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2003 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2004 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2005 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2006 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2008 00:00:00 GMT'),
+        visitors: 191000,
+    },
+    {
+        year: new Date('01 Jan 2009 00:00:00 GMT'),
+        visitors: 45000,
+    },
+    {
+        year: new Date('01 Jan 2010 00:00:00 GMT'),
+        visitors: 100000,
+    },
+    {
+        year: new Date('01 Jan 2011 00:00:00 GMT'),
+        visitors: null,
+    },
+    {
+        year: new Date('01 Jan 2012 00:00:00 GMT'),
+        visitors: 78000,
+    },
+    {
+        year: new Date('01 Jan 2013 00:00:00 GMT'),
+        visitors: 136000,
+    },
+    {
+        year: new Date('01 Jan 2014 00:00:00 GMT'),
+        visitors: undefined,
+    },
+    {
+        year: new Date('01 Jan 2015 00:00:00 GMT'),
+        visitors: NaN,
+    },
+    {
+        year: new Date('01 Jan 2016 00:00:00 GMT'),
+        visitors: 67000,
+    },
+    {
+        year: new Date('01 Jan 2017 00:00:00 GMT'),
+        visitors: Infinity,
+    },
+    {
+        year: new Date('01 Jan 2018 00:00:00 GMT'),
+        visitors: 174000,
+    },
+    {
+        year: new Date('01 Jan 2019 00:00:00 GMT'),
+        visitors: 76000,
+    },
+    {
+        year: new Date('01 Jan 2020 00:00:00 GMT'),
+        visitors: 56000,
+    },
+];
+
 export const DATA_TIME_SENSOR = [
     {
         time: new Date('01 Jan 2020 13:25:30 GMT'),

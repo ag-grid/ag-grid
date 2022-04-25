@@ -173,7 +173,7 @@ export class Text extends Shape {
         return this._lineHeight;
     }
 
-    computeBBox(): BBox | undefined {
+    computeBBox(): BBox {
         return HdpiCanvas.has.textMetrics
             ? this.getPreciseBBox()
             : this.getApproximateBBox();
