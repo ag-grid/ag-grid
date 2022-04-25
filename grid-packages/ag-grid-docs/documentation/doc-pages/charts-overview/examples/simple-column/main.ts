@@ -20,7 +20,6 @@ const options: AgChartOptions = {
       fill: '#0084e7',
       strokeWidth: 0,
       shadow: {
-        enabled: true,
         xOffset: 3,
       },
     },
@@ -30,7 +29,6 @@ const options: AgChartOptions = {
       type: 'category',
       position: 'bottom',
       title: {
-        enabled: true,
         text: 'Year',
       },
     },
@@ -38,7 +36,6 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       title: {
-        enabled: true,
         text: 'Total visitors',
       },
       label: {

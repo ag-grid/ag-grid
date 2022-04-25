@@ -11,6 +11,7 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
+import { ContinuousScale } from "./scale/continuousScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -497,6 +498,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
+        // Update properties that affect the size of the axis labels and measure the labels
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
                 node.fontStyle = label.fontStyle;
@@ -519,11 +521,47 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
+        const labelBboxes: Map<string, BBox> = new Map();
         labelSelection.each(label => {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation;
+            label.visible = true;
+
+            labelBboxes.set(label.id, label.computeBBox());
         });
+
+        // Only consider a fraction of the total range to allow more space for each label
+        const fractionOfRange = 0.8;
+        const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
+
+        const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
+            let totalLength = 0;
+            for (let [labelId, bbox] of bboxes.entries()) {
+                totalLength += (parallel ? bbox.width : bbox.height);
+            }
+            return totalLength;
+        }
+
+        if (availableRange >= 0) {
+            let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
+            let visible = true;
+
+            // Remove half the labels if they overlap
+            while (totalLabelLength > availableRange) {
+                labelSelection.each(label => {
+                    if (label.visible !== true) { return; }
+
+                    label.visible = visible;
+                    if (!label.visible) {
+                        labelBboxes.delete(label.id);
+                    }
+                    visible = !visible;
+                });
+
+                totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
+            }
+        }
 
         this.groupSelection = groupSelection;
 

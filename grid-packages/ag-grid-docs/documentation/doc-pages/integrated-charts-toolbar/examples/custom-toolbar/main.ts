@@ -46,14 +46,12 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     pie: {
       title: {
-        enabled: true,
         text: 'Precious Metals Production',
         fontWeight: 'bold',
         fontSize: 20,
         color: 'rgb(100, 100, 100)',
       },
       subtitle: {
-        enabled: true,
         text: 'by country',
         fontStyle: 'italic',
         fontWeight: 'bold',

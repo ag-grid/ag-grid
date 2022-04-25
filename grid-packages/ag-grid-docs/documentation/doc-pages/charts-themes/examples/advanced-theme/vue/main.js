@@ -26,7 +26,6 @@ const ChartExample = {
         theme: myTheme,
         autoSize: true,
         title: {
-          enabled: true,
           text: "Cartesian Chart Theming",
         },
         data,
@@ -64,7 +63,6 @@ const ChartExample = {
         theme: myTheme,
         autoSize: true,
         title: {
-          enabled: true,
           text: "Polar Chart Theming",
         },
         data,
@@ -113,7 +111,6 @@ var myTheme = {
         },
         column: {
           label: {
-            enabled: true,
             color: "white",
           },
         },

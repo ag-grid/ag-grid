@@ -30,7 +30,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Sales by Representative ($)',
         },
       },

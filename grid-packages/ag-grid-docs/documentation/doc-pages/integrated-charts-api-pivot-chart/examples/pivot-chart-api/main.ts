@@ -40,11 +40,9 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
           right: 10,
         },
         legend: {
-          enabled: true,
           position: 'bottom',
         },
         navigator: {
-          enabled: true,
           height: 10,
         },
       },

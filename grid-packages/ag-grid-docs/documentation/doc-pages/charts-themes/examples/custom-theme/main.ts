@@ -15,7 +15,6 @@ var myTheme: AgChartTheme = {
       series: {
         column: {
           label: {
-            enabled: true,
             color: "black",
           },
         },
@@ -34,7 +33,6 @@ const options: AgChartOptions = {
     right: 70,
   },
   title: {
-    enabled: true,
     text: "Custom Chart Theme Example",
   },
   data: [
