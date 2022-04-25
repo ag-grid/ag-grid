@@ -67,7 +67,7 @@ export const wrapPageElement = ({ element, props: { location: { pathname } } }) 
 /**
  * This allows us to customise the page before it is rendered.
  */
-export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents }) => {
+export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, pathname }) => {
     // Remove script that causes issues with scroll position when a page is first loaded
     const headComponents = getHeadComponents().filter(el => el.key !== 'gatsby-remark-autolink-headers-script');
 
@@ -109,6 +109,56 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents }) =>
         headComponents.unshift(
             <script defer data-domain="ag-grid.com" src="https://plausible.io/js/plausible.js"></script>
         );
+    }
+
+    if(pathname === '/') {
+        if(isDevelopment()) {
+            headComponents.unshift(<link
+                key="example-styles"
+                rel="stylesheet"
+                href="https://localhost:8080/example-rich-grid/styles.css"
+                crossOrigin="anonymous" />,
+            );
+            headComponents.unshift(<link
+                key="material-styles"
+                rel="stylesheet"
+                href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
+                crossOrigin="anonymous" />,
+            );
+
+            headComponents.unshift(
+                <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
+            )
+            headComponents.unshift(
+                <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
+            )
+            headComponents.unshift(
+                <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
+            )
+        } else {
+/*            headComponents.unshift(<link
+                key="example-styles"
+                rel="stylesheet"
+                href="https://localhost:8080/example-rich-grid/styles.css"
+                crossOrigin="anonymous" />,
+            );
+            headComponents.unshift(<link
+                key="material-styles"
+                rel="stylesheet"
+                href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
+                crossOrigin="anonymous" />,
+            );
+
+            headComponents.unshift(
+                <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
+            )
+            headComponents.unshift(
+                <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
+            )
+            headComponents.unshift(
+                <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
+            )*/
+        }
     }
 
     replaceHeadComponents(headComponents);
