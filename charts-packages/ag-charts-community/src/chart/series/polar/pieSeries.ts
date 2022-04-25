@@ -9,7 +9,7 @@ import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTool
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { normalizeAngle180, toRadians } from "../../../util/angle";
-import { toFixed } from "../../../util/number";
+import { toFixed, mod } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
@@ -313,8 +313,16 @@ export class PieSeries extends PolarSeries {
 
         let datumIndex = 0;
 
-        // Simply use reduce here to pair up adjacent ratios.
-        angleDataRatios.reduce((start, end) => {
+        const quadrantTextOpts: {textAlign: CanvasTextAlign, textBaseline: CanvasTextBaseline}[] = [
+            { textAlign: 'center', textBaseline: 'bottom' },
+            { textAlign: 'left', textBaseline: 'middle' },
+            { textAlign: 'center', textBaseline: 'hanging' },
+            { textAlign: 'right', textBaseline: 'middle' },
+        ];
+
+        // Process segments.
+        let end = 0;
+        angleDataRatios.forEach((start) => {
             const radius = radiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
             const endAngle = angleScale.convert(end) + rotation;
@@ -329,23 +337,12 @@ export class PieSeries extends PolarSeries {
             const midAngle180 = normalizeAngle180(midAngle);
 
             // Split the circle into quadrants like so: ⊗
-            let quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
-            let textAlign: CanvasTextAlign;
-            let textBaseline: CanvasTextBaseline;
+            const quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
+            const quadrantOffset = midAngle180 - quadrantStart;
+            const quadrant = Math.floor(quadrantOffset / halfPi);
+            const quadrantIndex = mod(quadrant, quadrantTextOpts.length);
 
-            if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
-                textAlign = 'center';
-                textBaseline = 'bottom';
-            } else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
-                textAlign = 'left';
-                textBaseline = 'middle';
-            } else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
-                textAlign = 'center';
-                textBaseline = 'hanging';
-            } else {
-                textAlign = 'right';
-                textBaseline = 'middle';
-            }
+            const { textAlign, textBaseline } = quadrantTextOpts[quadrantIndex];
 
             groupSelectionData.push({
                 series: this,
@@ -366,9 +363,8 @@ export class PieSeries extends PolarSeries {
             });
 
             datumIndex++;
-
-            return end;
-        }, 0);
+            end = start; // Update for next iteration.
+        });
 
         return true;
     }

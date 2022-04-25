@@ -456,6 +456,10 @@
     "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "string | IAggFunc" }
   },
+  "defaultAggFunc": {
+    "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
+    "type": { "returnType": "string" }
+  },
   "allowedAggFuncs": {
     "description": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",
     "type": { "returnType": "string[]" }
