@@ -105,6 +105,18 @@ export function combineAssertions(...assertions: ((chart: Chart) => void)[]) {
     }
 }
 
+export function extractImageData({ nodeCanvas, bbox }: { nodeCanvas?: Canvas, bbox?: { x: number, y: number, width: number, height: number }}) {
+    let sourceCanvas = nodeCanvas;
+    if (bbox) {
+        const { x, y, width, height } = bbox;
+        sourceCanvas = createCanvas(width, height);
+        sourceCanvas.getContext("2d")
+            .drawImage(nodeCanvas, Math.round(x), Math.round(y), Math.round(width), Math.round(height), 0, 0, Math.round(width), Math.round(height));
+    }
+
+    return sourceCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+}
+
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     let realCreateElement: typeof document.createElement;
     let ctx: { nodeCanvas?: Canvas } = {};
