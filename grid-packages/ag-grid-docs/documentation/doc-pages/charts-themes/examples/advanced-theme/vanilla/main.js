@@ -23,6 +23,7 @@ var myTheme = {
         },
         column: {
           label: {
+            enabled: true,
             color: "white",
           },
         },

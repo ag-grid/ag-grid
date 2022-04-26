@@ -29,6 +29,7 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     common: {
       title: {
+        enabled: true,
         text: 'Medals by Age',
       },
       legend: {

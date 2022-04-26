@@ -47,6 +47,7 @@ const gridOptions: GridOptions = {
         strokeOpacity: 0.8,
         strokeWidth: 2,
         title: {
+          enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
           fontSize: 14,
@@ -66,6 +67,7 @@ const gridOptions: GridOptions = {
           blur: 1,
         },
         label: {
+          enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
           fontSize: 14,

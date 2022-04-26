@@ -17,6 +17,7 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     area: {
       title: {
+        enabled: true,
         text: 'CPU Usage',
       },
       legend: {
@@ -27,6 +28,7 @@ const gridOptions: GridOptions = {
         bottom: 25,
       },
       navigator: {
+        enabled: true,
         height: 20,
         margin: 25,
       },

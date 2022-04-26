@@ -21,6 +21,7 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     line: {
       title: {
+        enabled: true,
         text: 'Average Daily Temperatures',
       },
       legend: {
@@ -31,6 +32,7 @@ const gridOptions: GridOptions = {
         bottom: 25,
       },
       navigator: {
+        enabled: true,
         height: 20,
         margin: 25,
       },

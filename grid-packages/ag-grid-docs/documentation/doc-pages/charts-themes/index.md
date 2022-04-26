@@ -68,6 +68,7 @@ var myTheme = {
             series: {
                 column: {
                     label: {
+                        enabled: true,
                         color: 'black'
                     }
                 }

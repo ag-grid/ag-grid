@@ -34,6 +34,7 @@ const gridOptions: GridOptions = {
           },
         },
         marker: {
+          enabled: true,
           shape: 'square',
           size: 5,
           maxSize: 12,

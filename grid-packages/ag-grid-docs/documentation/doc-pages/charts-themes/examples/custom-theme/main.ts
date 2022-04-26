@@ -15,6 +15,7 @@ var myTheme: AgChartTheme = {
       series: {
         column: {
           label: {
+            enabled: true,
             color: "black",
           },
         },

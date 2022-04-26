@@ -37,6 +37,7 @@ function createColumnChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
+          enabled: true,
           text: 'Number of Most Populous Cities by Country',
         },
         legend: {
@@ -66,6 +67,7 @@ function createBubbleChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
+          enabled: true,
           text: 'Latitude vs Longitude of Most Populous Cities',
         },
         legend: {
