@@ -5904,7 +5904,7 @@
       "overrides?": "AgChartThemeOverrides"
     },
     "docs": {
-      "baseTheme?": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from \n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see \n * below). */",
+      "baseTheme?": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from\n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see\n * below). */",
       "palette?": "/** The palette to use. If specified, this replaces the palette from the base theme. */",
       "overrides?": "/** Configuration from this object is merged over the defaults specified in the base theme. */"
     }
@@ -6619,6 +6619,7 @@
       "padding?": "PixelSize",
       "color?": "CssColor",
       "rotation?": "number",
+      "autoRotate?": "boolean",
       "format?": "string",
       "formatter?": "(params: AgAxisLabelFormatterParams) => string"
     },
@@ -6630,6 +6631,7 @@
       "padding?": "/** Padding in pixels between the axis label and the tick. */",
       "color?": "/** The colour to use for the labels */",
       "rotation?": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
+      "autoRotate?": "/** By default, for a category axis, the labels will be automatically rotated to be perpendicular to the axis line to prevent overlaps. Set this to `false` to disable this behaviour. Note: if a label rotation angle is specified, auto rotation will not be applied. */",
       "format?": "/** Format string used when rendering labels for time axes. */",
       "formatter?": "/** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */"
     }
@@ -7062,7 +7064,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -7236,7 +7238,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -7318,7 +7320,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "placement?": "/** Where to render series labels relative to the segments. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
@@ -7435,7 +7437,7 @@
       "color?": "CssColor"
     },
     "docs": {
-      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "formatter?": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",

@@ -94,7 +94,7 @@ export class AxisLabel {
     /**
      * By default, if the category axis labels collide, they are rotated so that they are positioned perpendicular to the horizontal axis line to reduce overlap.
      */
-    autoRotate: boolean = true;
+    autoRotate: boolean = false;
 
     /**
      * By default labels and ticks are positioned to the left of the axis line.
@@ -545,12 +545,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         let totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
 
-        if (label.autoRotate) {
-            const isContinuous = scale instanceof ContinuousScale;
-            const isDiscreteWithParallelLabels = !labelRotation && parallelLabels && !isContinuous;
-
-            if (isDiscreteWithParallelLabels && totalLabelLength > availableRange) {
-                // When the axis is a horizontal category axis (with parallel labels), and no user rotation angle has been specified,
+        if (label.autoRotate && !labelRotation) {
+            if (parallelLabels && totalLabelLength > availableRange) {
+                // When the labels are parallel to the axis line and no user rotation angle has been specified,
                 // and the available range is not sufficient for parallel labels,
                 // display the labels perpendicular to the horizontal axis line
                 parallelLabels = false;

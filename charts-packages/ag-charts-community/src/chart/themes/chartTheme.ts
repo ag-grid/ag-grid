@@ -1,6 +1,5 @@
 import { deepMerge, defaultIsMergeableObject, getValue, isObject } from "../../util/object";
 import { FontWeight, AgPolarSeriesTheme, AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides, AgCartesianThemeOptions, AgBarSeriesLabelOptions, AgChartLegendPosition, AgPolarThemeOptions, AgHierarchyThemeOptions, AgCartesianSeriesTheme, AgHierarchySeriesTheme } from "../agChartOptions";
-import { Padding } from "../../util/padding";
 import { Chart } from "../chart";
 import { TimeInterval } from "../../util/time/interval";
 
@@ -91,7 +90,8 @@ export class ChartTheme {
                 padding: 5,
                 rotation: 0,
                 color: 'rgb(87, 87, 87)',
-                formatter: undefined
+                formatter: undefined,
+                autoRotate: false
             },
             line: {
                 width: 1,
@@ -272,7 +272,11 @@ export class ChartTheme {
                 base: 10
             },
             category: {
-                ...ChartTheme.getAxisDefaults()
+                ...ChartTheme.getAxisDefaults(),
+                label: {
+                    ...ChartTheme.getAxisDefaults().label,
+                    autoRotate: true
+                }
             },
             groupedCategory: {
                 ...ChartTheme.getAxisDefaults()

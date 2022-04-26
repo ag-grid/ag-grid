@@ -49,7 +49,7 @@
   },
   "AgChartTheme": {
     "baseTheme": {
-      "description": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from \n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see \n * below). */",
+      "description": "/** The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from\n * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see\n * below). */",
       "type": { "returnType": "AgChartThemeName", "optional": true }
     },
     "palette": {
@@ -1201,6 +1201,10 @@
       "description": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
       "type": { "returnType": "number", "optional": true }
     },
+    "autoRotate": {
+      "description": "/** By default, for a category axis, the labels will be automatically rotated to be perpendicular to the axis line to prevent overlaps. Set this to `false` to disable this behaviour. Note: if a label rotation angle is specified, auto rotation will not be applied. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "format": {
       "description": "/** Format string used when rendering labels for time axes. */",
       "type": { "returnType": "string", "optional": true }
@@ -1744,7 +1748,7 @@
   },
   "AgLineSeriesLabelOptions": {
     "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: any; }" },
         "returnType": "string",
@@ -2029,7 +2033,7 @@
   },
   "AgAreaSeriesLabelOptions": {
     "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: any; }" },
         "returnType": "string",
@@ -2171,7 +2175,7 @@
   },
   "AgBarSeriesLabelOptions": {
     "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: number; }" },
         "returnType": "string",
@@ -2360,7 +2364,7 @@
   },
   "AgHistogramSeriesLabelOptions": {
     "formatter": {
-      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */",
+      "description": "/** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */",
       "type": {
         "arguments": { "params": "{ value: number; }" },
         "returnType": "string",
