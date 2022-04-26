@@ -1,9 +1,19 @@
 import React from "react";
 import {Helmet} from "react-helmet";
-import {rootLocalPrefix} from "../../../utils/consts";
+import {localPrefix, rootLocalPrefix} from "../../../utils/consts";
+import isDevelopment from '../../../utils/is-development';
 
-const LiveStreamingDemo = () => {
-    return (<>
+const helmet = [];
+if (isDevelopment()) {
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`}
+                      crossOrigin="anonymous"/>);
+    helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`}
+                        type="text/javascript"/>);
+} else {
+    helmet.push(<script key="enterprise-lib" src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.js" type="text/javascript"/>);
+}
+const LiveStreamingDemo = () => (
+    <>
         <Helmet>
             <style type="text/css">{`
                 #live-stream-updates-grid .number { text-align: right; }
@@ -11,10 +21,8 @@ const LiveStreamingDemo = () => {
                 #live-stream-updates-grid .ag-row-level-1 { color: lightblue; }
                 #live-stream-updates-grid .ag-row-level-2 { color: lightyellow; }
             `}</style>
-            <link rel="stylesheet" href={`${rootLocalPrefix}/dev/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`}
-                  crossOrigin="anonymous"/>
             <script crossOrigin="anonymous" src={`${rootLocalPrefix}/live-stream-updates/main.js`} type="text/javascript"/>
-            <script src={`${rootLocalPrefix}/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`} type="text/javascript"/>
+            {helmet.map(entry => entry)}
         </Helmet>
         <div className="container-fluid blackish text-light pt-2" id="dashboard-demo">
             <div className="row">
@@ -31,7 +39,7 @@ const LiveStreamingDemo = () => {
                 </div>
             </div>
         </div>
-    </>)
-}
+    </>
+)
 
 export default LiveStreamingDemo;

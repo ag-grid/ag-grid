@@ -32,7 +32,7 @@ const Default = () => {
                             <h2>Get Started</h2>
                         </div>
                         <div className={styles['stage-frameworks__section-frameworks__framework-boxes']}>
-                            <div className={styles['stage-frameworks_¡_section-frameworks__framework-boxes__framework-box']}>
+                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
                                     <a href="/javascript-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
