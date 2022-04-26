@@ -564,14 +564,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        labelSelection.each(label => {
-            label.textBaseline = parallelLabels && !labelRotation
-                ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
-                : 'middle';
-            label.textAlign = parallelLabels
-                ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
-                : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
+        const labelTextBaseline =  parallelLabels && !labelRotation
+        ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
+        : 'middle';
 
+        const labelTextAlign = parallelLabels
+        ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
+        : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
+
+        labelSelection.each(label => {
+            label.textBaseline = labelTextBaseline;
+            label.textAlign = labelTextAlign;
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation;
