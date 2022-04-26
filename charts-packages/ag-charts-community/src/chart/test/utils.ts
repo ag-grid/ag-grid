@@ -28,6 +28,31 @@ export function repeat<T>(value: T, count: number): T[] {
     return result;
 }
 
+export function range(start: number, end: number, step = 1): number[] {
+    const result = new Array(Math.floor((end - start) / step));
+
+    let resultIndex = 0;
+    for (let index = start ; index <= end; index += step) {
+        result[resultIndex++] = index;
+    }
+
+    return result;
+}
+
+export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
+    const result = [];
+    
+    let next = start.getTime();
+    const endTime = end.getTime();
+    while (next <= endTime) {
+        result.push(new Date(next));
+
+        next += step;
+    }
+
+    return result;
+}
+
 export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
     return new Promise((resolve, reject) => {
         let retryMs = 10;
