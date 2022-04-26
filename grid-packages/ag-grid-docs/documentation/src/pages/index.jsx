@@ -4,6 +4,10 @@ import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 
+const BestHtmlDemo = React.lazy(() => import("./components/home-page-demos/BestHtmlGrid"));
+const LiveStreamingDemo = React.lazy(() => import("./components/home-page-demos/LiveStreaming"));
+const ChartingDashboardDemo = React.lazy(() => import("./components/home-page-demos/ChartingDashboard"));
+
 const Default = () => {
     return (
         <>
@@ -14,7 +18,9 @@ const Default = () => {
                     <h1 className={styles['heading-scenarios']}>The Best JavaScript Grid in the World</h1>
                     <section>
                         <div className={styles['demo']}>
-                            <div id='bestHtml5Grid' className={`${styles['stage-scenarios__bestHtml5Grid']} ag-theme-material`}></div>
+                            <React.Suspense fallback={<div>Loading...</div>}>
+                                <BestHtmlDemo/>
+                            </React.Suspense>
                         </div>
                     </section>
                 </div>
@@ -26,7 +32,7 @@ const Default = () => {
                         <div className={styles['stage-frameworks__section-frameworks__framework-boxes']}>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/javascript-grid/" style={{textDecoration: "none"}}>
+                                    <a href="/javascript-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/javascript.svg" alt="JavaScript"/>
                                             <div>
@@ -38,7 +44,7 @@ const Default = () => {
                             </div>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/angular-grid/" style={{textDecoration: "none"}}>
+                                    <a href="/angular-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/angular.svg" alt="Angular"/>
                                             <div>
@@ -50,7 +56,7 @@ const Default = () => {
                             </div>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/react-grid/" style={{textDecoration: "none"}}>
+                                    <a href="/react-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/react.svg" alt="React"/>
                                             <div>
@@ -62,7 +68,7 @@ const Default = () => {
                             </div>
                             <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
-                                    <a href="/vue-grid/" style={{textDecoration: "none"}}>
+                                    <a href="/vue-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
                                             <img src="images/fw-logos/vue.svg" alt="Vue"/>
                                             <div>
@@ -108,13 +114,10 @@ const Default = () => {
                 <div className={styles['stage-scenarios']}>
                     <h2 className={styles['heading-scenarios']}>Live Streaming Updates</h2>
                     <section>
-                        <div className={styles['demo']} id="demo-2" data-load="home/demo-2.php">
-                            <div className={styles['loading']}>
-                                <p>Loading Demo...</p>
-                            </div>
-                            <div className={styles['view-code']}>
-                                &nbsp;
-                            </div>
+                        <div className={styles['demo']}>
+                            <React.Suspense fallback={<div>Loading...</div>}>
+                                <LiveStreamingDemo />
+                            </React.Suspense>
                         </div>
                     </section>
                 </div>
@@ -122,13 +125,10 @@ const Default = () => {
                 <div className={styles['stage-scenarios']}>
                     <h2 className={styles['heading-scenarios']}>Integrated Charting</h2>
                     <section>
-                        <div className={styles['demo']} id="demo-2" data-load="home/demo-3.php">
-                            <div className={styles['loading']}>
-                                <p>Loading Demo...</p>
-                            </div>
-                            <div className={styles['view-code']}>
-                                &nbsp;
-                            </div>
+                        <div className={styles['demo']}>
+                            <React.Suspense fallback={<div>Loading...</div>}>
+                                <ChartingDashboardDemo />
+                            </React.Suspense>
                         </div>
                     </section>
                 </div>

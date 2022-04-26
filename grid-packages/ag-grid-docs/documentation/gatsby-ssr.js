@@ -111,55 +111,51 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         );
     }
 
-    if(pathname === '/') {
-        if(isDevelopment()) {
-            headComponents.unshift(<link
-                key="example-styles"
-                rel="stylesheet"
-                href="https://localhost:8080/example-rich-grid/styles.css"
-                crossOrigin="anonymous" />,
-            );
-            headComponents.unshift(<link
-                key="material-styles"
-                rel="stylesheet"
-                href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
-                crossOrigin="anonymous" />,
-            );
-
-            headComponents.unshift(
-                <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
-            )
-            headComponents.unshift(
-                <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
-            )
-            headComponents.unshift(
-                <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
-            )
-        } else {
-/*            headComponents.unshift(<link
-                key="example-styles"
-                rel="stylesheet"
-                href="https://localhost:8080/example-rich-grid/styles.css"
-                crossOrigin="anonymous" />,
-            );
-            headComponents.unshift(<link
-                key="material-styles"
-                rel="stylesheet"
-                href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
-                crossOrigin="anonymous" />,
-            );
-
-            headComponents.unshift(
-                <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
-            )
-            headComponents.unshift(
-                <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
-            )
-            headComponents.unshift(
-                <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
-            )*/
-        }
-    }
+//     if(pathname === '/') {
+//         if(isDevelopment()) {
+//             headComponents.unshift(,
+//             );
+//             headComponents.unshift(<link
+//                 key="material-styles"
+//                 rel="stylesheet"
+//                 href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
+//                 crossOrigin="anonymous" />,
+//             );
+//
+//             headComponents.unshift(
+//                 <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
+//             )
+//             headComponents.unshift(
+//                 <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
+//             )
+//             headComponents.unshift(
+//                 <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
+//             )
+//         } else {
+// /*            headComponents.unshift(<link
+//                 key="example-styles"
+//                 rel="stylesheet"
+//                 href="https://localhost:8080/example-rich-grid/styles.css"
+//                 crossOrigin="anonymous" />,
+//             );
+//             headComponents.unshift(<link
+//                 key="material-styles"
+//                 rel="stylesheet"
+//                 href="https://localhost:8080/dev/@ag-grid-community/core/dist/styles/ag-theme-material.css"
+//                 crossOrigin="anonymous" />,
+//             );
+//
+//             headComponents.unshift(
+//                 <script key={'root-page-data'} defer src="https://localhost:8080/example-rich-grid/data.js"></script>
+//             )
+//             headComponents.unshift(
+//                 <script key={'root-page-example'} defer src="https://localhost:8080/example-rich-grid/example.js"></script>
+//             )
+//             headComponents.unshift(
+//                 <script key={'ag-grid-community'} defer src="https://localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js"></script>
+//             )*/
+//         }
+//     }
 
     replaceHeadComponents(headComponents);
 };

@@ -6,11 +6,11 @@
 //@import "../common/footer.scss";
 @import "../common/content.scss";
 //@import "../common/note.scss";
-//@import "../common/mixins.scss";
-//@import "./demo.scss";
+@import "../common/mixins.scss";
+@import "./demo.scss";
 //@import "../pages/media_pages";
 @import "../pages/about.scss";
-//@import "../pages/example.scss";
+@import "../pages/example.scss";
 //@import "../pages/support.scss";
 @import "../pages/license-pricing.scss";
 //@import "../pages/jobs.scss";
@@ -65,7 +65,7 @@ body {
     }
 }
 
-#stage-description {
+.stage-description {
     @extend %stage;
     font-weight: 400;
     font-style: normal;
@@ -89,11 +89,11 @@ body {
     }
 }
 
-#stage-frameworks {
+.stage-frameworks {
     @extend %stage;
     background-color: $offwhite;
 
-    section#section-frameworks {
+    &__section-frameworks {
         @extend .align-items-center;
 
         & > div {
@@ -105,7 +105,7 @@ body {
             @extend .display-4, .text-center, .mb-3;
         }
 
-        .framework-boxes {
+        &__framework-boxes {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
             @include media-breakpoint-up(sm) {
@@ -115,18 +115,18 @@ body {
                 grid-template-columns: repeat(4, 1fr);
             }
             box-sizing: border-box;
+
+            &__framework-box {
+                padding: 20px;
+            }
         }
 
-        .framework-box {
-            padding: 20px;
-        }
-
-        .box-shadow {
+        &__box-shadow {
             box-shadow: 0 1px 5px 0 lightgray, 0 2px 2px 0 lightgray, 0 3px 1px -2px lightgray;
             border-radius: 3px;
         }
 
-        .box-contents {
+        &__box-contents {
             display: flex;
             height: 80px;
             padding: 25px;
@@ -134,14 +134,14 @@ body {
             justify-content: center;
         }
 
-        .box-contents img {
+        &__box-contents img {
             width: 40px;
             height: 40px;
             margin-right: 14px;
         }
     }
 
-    #frameworks {
+    &__frameworks {
         @extend .row, .no-gutters, .list-unstyled;
 
         li {
@@ -181,7 +181,7 @@ body {
         @each $framework in $frameworks {
             $i: index($frameworks, $framework);
 
-            #fw-#{$framework} a {
+            &__fw-#{$framework} a {
                 background-image: url("../fw-logos/#{$framework}.svg");
 
                 @media (max-width: 767px) {
@@ -222,11 +222,11 @@ body {
     }
 }
 
-#stage-sponsorships {
+.stage-sponsorships {
     @extend %stage;
     background-color: $offwhite;
 
-    #sponsorships {
+    &__sponsorships {
         @extend .align-items-center;
         @extend %card, .py-4;
 
@@ -370,20 +370,19 @@ body {
                 @extend .form-control;
             }
         }
+    }
+    &__bestHtml5Grid {
+        @extend .rounded;
+        border: 1px solid $gray-400;
+        width: 100%;
+        height: 515px;
+    }
 
-        #bestHtml5Grid {
-            @extend .rounded;
-            border: 1px solid $gray-400;
-            width: 100%;
-            height: 515px;
-        }
+    &__bestHtml5Grid.small {
+        height: 460px;
+    }
 
-        #bestHtml5Grid.small {
-            height: 460px;
-        }
-
-        #bestHtml5Grid.small:not(.tall) {
-            height: 320px;
-        }
+    &__bestHtml5Grid.small:not(.tall) {
+        height: 320px;
     }
 }

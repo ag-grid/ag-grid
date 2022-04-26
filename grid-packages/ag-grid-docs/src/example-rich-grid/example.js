@@ -38,7 +38,8 @@
         return iconEl;
     }
 
-    function ContactInfoRenderer() { }
+    function ContactInfoRenderer() {
+    }
 
     ContactInfoRenderer.prototype.init = function (params) {
         var wrapperEl = document.createElement('div');
@@ -157,7 +158,7 @@
                     field: "country",
                     width: 150,
                     cellRenderer: countryCellRenderer,
-                    filterCompParams: { cellRenderer: countryCellRenderer, cellHeight: 20 }
+                    filterCompParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
                 }
             ]
         },
@@ -208,9 +209,9 @@
         {
             headerName: "Contact",
             children: [
-                { headerName: "Mobile", field: "mobile", width: 180, filterComp: "agTextColumnFilter" },
-                { headerName: "Land-line", field: "landline", width: 180, filterComp: "agTextColumnFilter" },
-                { headerName: "Address", field: "address", width: 500, filterComp: "agTextColumnFilter" }
+                {headerName: "Mobile", field: "mobile", width: 180, filterComp: "agTextColumnFilter"},
+                {headerName: "Land-line", field: "landline", width: 180, filterComp: "agTextColumnFilter"},
+                {headerName: "Address", field: "address", width: 500, filterComp: "agTextColumnFilter"}
             ]
         }
     ];
@@ -236,17 +237,21 @@
     // wait for the document to be loaded, otherwise
     // AG Grid will not find the div in the document.
     var loadGrid = function () {
-        btBringGridBack = document.querySelector("#btBringGridBack");
-        btDestroyGrid = document.querySelector("#btDestroyGrid");
+        if (document.querySelector("#bestHtml5Grid") && window.agGrid) {
+            btBringGridBack = document.querySelector("#btBringGridBack");
+            btDestroyGrid = document.querySelector("#btDestroyGrid");
 
-        // this example is also used in the website landing page, where
-        // we don't display the buttons, so we check for the buttons existence
-        if (btBringGridBack) {
-            btBringGridBack.addEventListener("click", onBtBringGridBack);
-            btDestroyGrid.addEventListener("click", onBtDestroyGrid);
+            // this example is also used in the website landing page, where
+            // we don't display the buttons, so we check for the buttons existence
+            if (btBringGridBack) {
+                btBringGridBack.addEventListener("click", onBtBringGridBack);
+                btDestroyGrid.addEventListener("click", onBtDestroyGrid);
+            }
+
+            onBtBringGridBack();
+        } else {
+            setTimeout(() => loadGrid())
         }
-
-        onBtBringGridBack();
     };
 
     if (document.readyState === "complete") {
@@ -257,6 +262,7 @@
 
     function onBtBringGridBack() {
         var eGridDiv = document.querySelector("#bestHtml5Grid");
+        eGridDiv.textContent = ''
         if (isSmall) {
             eGridDiv.classList.add('small');
         }
@@ -316,7 +322,7 @@
     }
 
     function barSparklineFormatter(params) {
-        const { yValue } = params;
+        const {yValue} = params;
         return {
             fill: yValue < 20 ? 'rgb(245, 93, 81)' : yValue < 60 ? 'rgb(255, 179, 0)' : 'rgb(130, 210, 73)'
         }
@@ -335,7 +341,8 @@
 
     var FILTER_TITLE = '<div style="text-align: center; background: lightgrey; width: 100%; display: block; border-bottom: 1px solid grey;">' + "<b>TITLE_NAME</b>" + "</div>";
 
-    function SkillFilter() { }
+    function SkillFilter() {
+    }
 
     SkillFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
@@ -348,9 +355,11 @@
         };
     };
 
-    SkillFilter.prototype.getModel = function () { };
+    SkillFilter.prototype.getModel = function () {
+    };
 
-    SkillFilter.prototype.setModel = function (model) { };
+    SkillFilter.prototype.setModel = function (model) {
+    };
 
     SkillFilter.prototype.getGui = function () {
         var eGui = document.createElement("div");
@@ -410,7 +419,8 @@
     var PROFICIENCY_NAMES = ["No Filter", "Above 40%", "Above 60%", "Above 80%"];
     var PROFICIENCY_VALUES = [PROFICIENCY_NONE, PROFICIENCY_ABOVE40, PROFICIENCY_ABOVE60, PROFICIENCY_ABOVE80];
 
-    function ProficiencyFilter() { }
+    function ProficiencyFilter() {
+    }
 
     ProficiencyFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
@@ -418,9 +428,11 @@
         this.params = params;
     };
 
-    ProficiencyFilter.prototype.getModel = function () { };
+    ProficiencyFilter.prototype.getModel = function () {
+    };
 
-    ProficiencyFilter.prototype.setModel = function (model) { };
+    ProficiencyFilter.prototype.setModel = function (model) {
+    };
 
     ProficiencyFilter.prototype.getGui = function () {
         var eGui = document.createElement("div");
@@ -451,8 +463,8 @@
     };
 
     ProficiencyFilter.prototype.doesFilterPass = function (params) {
-        var { api, colDef, column, columnApi, context } = this.params;
-        var { node } = params;
+        var {api, colDef, column, columnApi, context} = this.params;
+        var {node} = params;
 
         var value = this.params.valueGetter({
             api,
@@ -464,7 +476,7 @@
             getValue: (field) => node.data[field],
             node,
         });
-        
+
         var valueAsNumber = parseFloat(value);
 
         switch (this.selected) {
