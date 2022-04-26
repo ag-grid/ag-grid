@@ -4,6 +4,8 @@ import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
 
+const IS_SSR = typeof window === "undefined"
+
 const BestHtmlDemo = React.lazy(() => import("./components/home-page-demos/BestHtmlGrid"));
 const LiveStreamingDemo = React.lazy(() => import("./components/home-page-demos/LiveStreaming"));
 const ChartingDashboardDemo = React.lazy(() => import("./components/home-page-demos/ChartingDashboard"));
@@ -18,9 +20,9 @@ const Default = () => {
                     <h1 className={styles['heading-scenarios']}>The Best JavaScript Grid in the World</h1>
                     <section>
                         <div className={styles['demo']}>
-                            <React.Suspense fallback={<div>Loading...</div>}>
+                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
                                 <BestHtmlDemo/>
-                            </React.Suspense>
+                            </React.Suspense>}
                         </div>
                     </section>
                 </div>
@@ -30,7 +32,7 @@ const Default = () => {
                             <h2>Get Started</h2>
                         </div>
                         <div className={styles['stage-frameworks__section-frameworks__framework-boxes']}>
-                            <div className={styles['stage-frameworks__section-frameworks__framework-boxes__framework-box']}>
+                            <div className={styles['stage-frameworks_¡_section-frameworks__framework-boxes__framework-box']}>
                                 <div className={styles['stage-frameworks__section-frameworks__box-shadow']}>
                                     <a href="/javascript-data-grid/" style={{textDecoration: "none"}}>
                                         <div className={styles['stage-frameworks__section-frameworks__box-contents']}>
@@ -115,9 +117,9 @@ const Default = () => {
                     <h2 className={styles['heading-scenarios']}>Live Streaming Updates</h2>
                     <section>
                         <div className={styles['demo']}>
-                            <React.Suspense fallback={<div>Loading...</div>}>
+                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
                                 <LiveStreamingDemo />
-                            </React.Suspense>
+                            </React.Suspense>}
                         </div>
                     </section>
                 </div>
@@ -126,9 +128,9 @@ const Default = () => {
                     <h2 className={styles['heading-scenarios']}>Integrated Charting</h2>
                     <section>
                         <div className={styles['demo']}>
-                            <React.Suspense fallback={<div>Loading...</div>}>
+                            {!IS_SSR && <React.Suspense fallback={<div>Loading...</div>}>
                                 <ChartingDashboardDemo />
-                            </React.Suspense>
+                            </React.Suspense>}
                         </div>
                     </section>
                 </div>
