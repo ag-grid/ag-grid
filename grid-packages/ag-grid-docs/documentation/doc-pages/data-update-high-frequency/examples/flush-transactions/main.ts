@@ -1,6 +1,5 @@
 import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams, AsyncTransactionsFlushed } from '@ag-grid-community/core'
-// defined and updated in data.js
-declare var globalRowData: any[];
+import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 20
 

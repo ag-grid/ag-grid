@@ -9,7 +9,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-
+import { getData } from "./data";
 import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid

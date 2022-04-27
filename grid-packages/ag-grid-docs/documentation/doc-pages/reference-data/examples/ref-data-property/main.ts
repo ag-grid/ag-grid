@@ -1,5 +1,7 @@
-import { CellValueChangedEvent, Grid, GridOptions, ICellRendererParams, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core'
-import { ColourCellRenderer } from './colourCellRenderer_typescript'
+import { CellValueChangedEvent, Grid, GridOptions, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core';
+import { ColourCellRenderer } from './colourCellRenderer_typescript';
+import { getData } from "./data";
+
 
 const carMappings = {
     tyt: 'Toyota',

@@ -1,4 +1,6 @@
-import { Grid, GridOptions, DndSourceOnRowDragParams } from '@ag-grid-community/core'
+import { DndSourceOnRowDragParams, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   defaultColDef: {

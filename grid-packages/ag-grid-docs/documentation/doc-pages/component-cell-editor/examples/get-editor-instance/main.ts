@@ -1,5 +1,7 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
-import { MySimpleEditor } from './mySimpleEditor_typescript'
+import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { MySimpleEditor } from './mySimpleEditor_typescript';
+
 
 const columnDefs: ColDef[] = [
   { field: 'first_name', headerName: 'First Name', width: 120, editable: true },

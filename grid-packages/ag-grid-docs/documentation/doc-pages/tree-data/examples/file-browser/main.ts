@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode, GetRowIdParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 declare var window: any
 
 const gridOptions: GridOptions = {

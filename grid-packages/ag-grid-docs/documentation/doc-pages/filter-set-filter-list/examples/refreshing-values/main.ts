@@ -1,11 +1,11 @@
 import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
-  IFiltersToolPanel,
-  ISetFilterParams,
-  SetFilterValuesFuncParams,
-  ISetFilter,
-} from '@ag-grid-community/core'
+  IFiltersToolPanel, ISetFilter, ISetFilterParams,
+  SetFilterValuesFuncParams
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var list1 = ['Elephant', 'Lion', 'Monkey']
 var list2 = ['Elephant', 'Giraffe', 'Tiger']

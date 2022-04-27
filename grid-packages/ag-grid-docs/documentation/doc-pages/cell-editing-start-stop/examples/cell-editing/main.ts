@@ -1,4 +1,6 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

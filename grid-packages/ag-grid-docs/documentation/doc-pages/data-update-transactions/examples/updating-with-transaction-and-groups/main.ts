@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ValueFormatterParams, RowClassParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 declare function createNewRowData(category: string): any;
 

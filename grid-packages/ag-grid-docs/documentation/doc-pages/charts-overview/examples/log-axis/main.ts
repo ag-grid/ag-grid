@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { AgCartesianChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 

@@ -1,4 +1,6 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { ColDef, GetRowIdParams, Grid, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var callCount = 1
 

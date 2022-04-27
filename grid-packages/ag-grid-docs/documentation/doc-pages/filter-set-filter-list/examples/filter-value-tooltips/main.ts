@@ -1,4 +1,5 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
 
 declare var CustomTooltip: any
 

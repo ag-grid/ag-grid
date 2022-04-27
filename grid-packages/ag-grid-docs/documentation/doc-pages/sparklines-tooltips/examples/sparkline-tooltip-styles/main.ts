@@ -3,7 +3,9 @@ import {
   GridOptions,
   LineSparklineOptions,
   TooltipRendererParams
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

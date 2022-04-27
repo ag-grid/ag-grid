@@ -1,4 +1,6 @@
-import { Grid, AreaSparklineOptions, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { AreaSparklineOptions, Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

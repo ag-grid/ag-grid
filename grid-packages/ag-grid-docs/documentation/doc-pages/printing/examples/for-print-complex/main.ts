@@ -1,4 +1,6 @@
-import { Grid, ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { ColDef, FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const columnDefs: ColDef[] = [
   { field: 'group', rowGroup: true, hide: true },

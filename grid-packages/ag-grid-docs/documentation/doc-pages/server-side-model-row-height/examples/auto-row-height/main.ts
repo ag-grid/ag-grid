@@ -1,4 +1,6 @@
 import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { getData } from "./data";
+
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {

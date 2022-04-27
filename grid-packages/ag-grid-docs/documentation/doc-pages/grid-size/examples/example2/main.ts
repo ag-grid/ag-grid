@@ -1,4 +1,6 @@
-import { Grid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent, RowHeightParams } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, Grid, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent, RowHeightParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var minRowHeight = 25
 var currentRowHeight: number;

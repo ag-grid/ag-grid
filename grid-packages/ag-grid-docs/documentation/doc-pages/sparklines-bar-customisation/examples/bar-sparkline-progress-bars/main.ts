@@ -1,4 +1,6 @@
-import { Grid, GridOptions, BarSparklineOptions, BarFormat, BarFormatterParams, LabelFormatterParams } from '@ag-grid-community/core'
+import { BarFormat, BarFormatterParams, Grid, GridOptions, LabelFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 
 

@@ -1,5 +1,5 @@
 import { Grid, ColumnSparklineOptions, GridOptions } from '@ag-grid-community/core'
-declare function getStockData(): any[];
+import { getStockData } from "./data";
 
 const gridOptions: GridOptions = {
   columnDefs: [

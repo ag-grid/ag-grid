@@ -1,4 +1,6 @@
-import { Grid, CellValueChangedEvent, GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { CellValueChangedEvent, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

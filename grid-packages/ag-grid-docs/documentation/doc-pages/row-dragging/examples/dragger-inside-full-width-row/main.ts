@@ -1,5 +1,7 @@
-import { Grid, GridOptions, ICellRendererParams, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core'
-import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
+import { Grid, GridOptions, ICellRendererParams, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

@@ -1,4 +1,6 @@
-import { Grid, AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, GridOptions, LineSparklineOptions, MarkerFormatterParams } from '@ag-grid-community/core'
+import { AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, Grid, GridOptions, LineSparklineOptions, MarkerFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   rowHeight: 70,

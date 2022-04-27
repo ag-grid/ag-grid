@@ -2,8 +2,10 @@ import {
   FirstDataRenderedEvent, Grid,
   GridOptions,
   ICellRendererParams,
-  IFiltersToolPanel,
-} from '@ag-grid-community/core'
+  IFiltersToolPanel
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

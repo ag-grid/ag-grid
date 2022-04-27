@@ -1,4 +1,6 @@
-import { Grid, ColDef, GridOptions, INumberFilterParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var numberValueFormatter = function (params: ValueFormatterParams) {
   return params.value.toFixed(2)

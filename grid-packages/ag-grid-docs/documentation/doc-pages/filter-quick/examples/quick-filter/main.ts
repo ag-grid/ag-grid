@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const getMedalString = function ({ gold, silver, bronze }: { gold: number, silver: number, bronze: number }) {
   const goldStr = gold > 0 ? `Gold: ${gold} ` : '';

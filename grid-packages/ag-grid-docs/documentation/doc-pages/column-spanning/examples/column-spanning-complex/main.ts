@@ -1,4 +1,6 @@
-import { Grid, CellClassRules, ColDef, ColSpanParams, GridOptions, RowHeightParams, GridReadyEvent } from '@ag-grid-community/core'
+import { CellClassRules, ColDef, ColSpanParams, Grid, GridOptions, GridReadyEvent, RowHeightParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var cellClassRules: CellClassRules = {
   'header-cell': 'data.section === "big-title"',

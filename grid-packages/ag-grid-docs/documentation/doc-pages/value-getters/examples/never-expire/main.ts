@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
 
 var callCount = 1

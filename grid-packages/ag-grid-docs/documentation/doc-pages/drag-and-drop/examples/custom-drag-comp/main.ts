@@ -1,5 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
-import { DragSourceRenderer } from './dragSourceRenderer_typescript'
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { DragSourceRenderer } from './dragSourceRenderer_typescript';
 
 var rowClassRules = {
   'red-row': 'data.color == "Red"',
