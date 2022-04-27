@@ -22,6 +22,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -75,6 +76,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -409,6 +411,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -462,6 +465,7 @@ Object {
         "female",
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -514,6 +518,7 @@ Object {
         "exportedTonnes",
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -819,6 +824,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -868,6 +874,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1420,6 +1427,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1469,6 +1477,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1729,6 +1738,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1778,6 +1788,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1987,6 +1998,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2037,6 +2049,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2425,6 +2438,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2474,6 +2488,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2989,6 +3004,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3038,6 +3054,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3267,6 +3284,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3316,6 +3334,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3537,6 +3556,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3578,6 +3598,7 @@ Object {
     Object {
       "gridStyle": Array [],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3787,6 +3808,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3839,6 +3861,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4051,6 +4074,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4100,6 +4124,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4349,6 +4374,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4398,6 +4424,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4650,6 +4677,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4699,6 +4727,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4968,6 +4997,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5017,6 +5047,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5240,6 +5271,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5289,6 +5321,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6324,6 +6357,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6374,6 +6408,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6746,6 +6781,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6795,6 +6831,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7058,6 +7095,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7107,6 +7145,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7364,6 +7403,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7413,6 +7453,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7686,6 +7727,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7735,6 +7777,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8151,6 +8194,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8200,6 +8244,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8590,6 +8635,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8639,6 +8685,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8849,6 +8896,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8901,6 +8949,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9345,6 +9394,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9394,6 +9444,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9603,6 +9654,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9653,6 +9705,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9923,6 +9976,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9972,6 +10026,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10220,6 +10275,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10269,6 +10325,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10537,6 +10594,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10586,6 +10644,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
