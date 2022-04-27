@@ -56,8 +56,8 @@ export interface AgChartThemeOptions {
 /** This object is used to define the configuration for a custom chart theme. */
 export interface AgChartTheme extends AgChartThemeOptions {
     /**
-     * The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from 
-     * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see 
+     * The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from
+     * the base theme, allowing you to override just the settings you wish to change using the `overrides` config (see
      * below).
      */
     baseTheme?: AgChartThemeName; // | ChartTheme;
@@ -78,12 +78,12 @@ export interface AgChartThemeOverrides {
     scatter?: AgCartesianThemeOptions<AgScatterSeriesOptions>;
     /** Specifies defaults for histogram charts. */
     histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions>;
-    
+
     /** Specifies defaults for all polar charts (used for pie series) */
     polar?: AgPolarThemeOptions<AgPolarSeriesTheme>;
     /** Specifies defaults for pie/doughnut charts. */
     pie?: AgPolarThemeOptions<AgPieSeriesOptions>;
-    
+
     /** Specifies defaults for all hierarchy charts (used for treemap series) */
     hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme>;
     /** Specifies defaults for all treemap charts. */
@@ -345,15 +345,15 @@ export interface AgChartBackground {
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick: (
-        type: 'seriesNodeClick', 
+        type: 'seriesNodeClick',
         series: any,
         datum: any,
         xKey: string,
         yKey: string,
     ) => any;
     /** Generic listeners. */
-    [key: string]: Function,
-} 
+    [key: string]: Function;
+}
 
 /** Configuration common to all charts.  */
 export interface AgBaseChartOptions {
@@ -440,6 +440,8 @@ export interface AgAxisLabelOptions {
     color?: CssColor;
     /** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */
     rotation?: number;
+    /** By default, for a category axis, the labels will be automatically rotated to be perpendicular to the axis line to prevent overlaps. Set this to `false` to disable this behaviour. Note: if a label rotation angle is specified, auto rotation will not be applied. */
+    autoRotate?: boolean;
     // mirrored?: boolean;
     // parallel?: boolean;
     /** Format string used when rendering labels for time axes. */
@@ -572,7 +574,7 @@ export interface AgBaseSeriesListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie slice) in the series is clicked. */
     nodeClick: (
         params: {
-            type: 'nodeClick', 
+            type: 'nodeClick',
             series: any,
             datum: any,
             xKey: string,
@@ -694,7 +696,7 @@ export interface AgSeriesTooltip {
 }
 
 export interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
+    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
     formatter?: (params: { value: any }) => string;
 }
 
@@ -787,7 +789,7 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
 }
 
 export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
+    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
     formatter?: (params: { value: any }) => string;
 }
 
@@ -853,7 +855,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
 }
 
 export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
+    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
     formatter?: (params: { value: number }) => string;
     /** Where to render series labels relative to the segments. */
     placement?: 'inside' | 'outside';
@@ -946,7 +948,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
 }
 
 export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
-    /** Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified. */
+    /** Function used to turn 'yKey' values into text to be displayed by a label. By default the values are simply stringified. */
     formatter?: (params: { value: number }) => string;
 }
 
