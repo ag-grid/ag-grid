@@ -9,7 +9,8 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 
-export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0.05, failureThresholdType: "percent" };
+const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.05);
+export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: FAILURE_THRESHOLD, failureThresholdType: "percent" };
 export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filters: (Canvas as any).PNG_NO_FILTERS };
 
 // process.env.FC_DEBUG = String(0xffff);
