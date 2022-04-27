@@ -4,7 +4,7 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from '../agChartOptions';
 import { AgChartV2 } from '../agChartV2';
 import { Chart } from '../chart';
-import { ChartAxis } from '../chartAxis';
+import { ChartAxis, ChartAxisPosition } from '../chartAxis';
 import * as examples from '../test/examples-axes';
 import {
     waitForChartStability,
@@ -24,53 +24,75 @@ function applyRotation<T>(opts: T, rotation: number): T {
     };
 }
 
+function applyAxesFlip<T>(opts: T): T {
+    const positionFlip = (position: ChartAxisPosition) => {
+        switch (position) {
+            case 'top':
+                return 'bottom';
+            case 'left':
+                return 'right';
+            case 'bottom':
+                return 'top';
+            case 'right':
+                return 'left';
+            default:
+                return position;
+        }
+    };
+
+    return {
+        ...opts,
+        axes: opts['axes']?.map(axis => ({ ...axis, position: positionFlip(axis.position) })) || undefined,
+    };
+}
+
 type TestCase = {
     options: AgChartOptions;
     assertions: (chart: Chart) => Promise<void>;
     extraScreenshotActions?: (chart: Chart) => Promise<void>;
 };
-const EXAMPLES: Record<string, TestCase> = {
+const EXAMPLES = mixinDerivedCases({
     BASIC_CATEGORY_AXIS: {
         options: examples.CATEGORY_AXIS_BASIC_EXAMPLE,
-        assertions: cartesianChartAssertions(),
-    },
-    BASIC_CATEGORY_AXIS_MANUAL_ROTATION: {
-        options: applyRotation(examples.CATEGORY_AXIS_BASIC_EXAMPLE, -30),
         assertions: cartesianChartAssertions(),
     },
     BASIC_CATEGORY_UNIFORM_AXIS: {
         options: examples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions(),
     },
-    BASIC_CATEGORY_UNIFORM_AXIS_MANUAL_ROTATION: {
-        options: applyRotation(examples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE, -30),
-        assertions: cartesianChartAssertions(),
-    },
     GROUPED_CATEGORY_AXIS: {
         options: examples.GROUPED_CATEGORY_AXIS_EXAMPLE,
-        assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
-    },
-    GROUPED_CATEGORY_AXIS_MANUAL_ROTATION: {
-        options: applyRotation(examples.GROUPED_CATEGORY_AXIS_EXAMPLE, -30),
         assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
     },
     BASIC_TIME_AXIS: {
         options: examples.TIME_AXIS_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line']}),
     },
-    BASIC_TIME_AXIS_MANUAL_ROTATION: {
-        options: applyRotation(examples.TIME_AXIS_BASIC_EXAMPLE, -30),
-        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line']}),
-    },
     NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE: {
         options: examples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line']}),
     },
-    NUMBER_AXIS_UNIFORM_MANUAL_ROTATION: {
-        options: applyRotation(examples.NUMBER_AXIS_UNIFORM_BASIC_EXAMPLE, -30),
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['line']}),
-    }
-};
+});
+
+function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
+    const result = { ...baseCases };
+
+    Object.entries(baseCases).forEach(([name, baseCase]) => {
+        // Add manual rotation.
+        result[name + '_MANUAL_ROTATION'] = {
+            ...baseCase,
+            options: applyRotation(baseCase.options, -30),
+        };
+
+        // Add flipped axes.
+        result[name + '_FLIP'] = {
+            ...baseCase,
+            options: applyAxesFlip(baseCase.options),
+        };
+    });
+
+    return result;
+}
 
 function calculateAxisBBox(axis: ChartAxis<any>): { x: number, y: number, width: number, height: number} {
     let bbox = axis.computeBBox();
