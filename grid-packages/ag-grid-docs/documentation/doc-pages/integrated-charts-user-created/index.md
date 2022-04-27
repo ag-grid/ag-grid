@@ -13,7 +13,7 @@ Users can select a range of cells in the grid and create a chart from the contex
 Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by
 highlighting the charted category and series data in the grid.
 
-Try it out on our [demo page](../../example.php) by doing the following:
+Try it out on our [demo page](../../example) by doing the following:
 
 - Select a [Cell Range](/range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.

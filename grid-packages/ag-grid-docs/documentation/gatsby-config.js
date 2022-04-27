@@ -196,8 +196,7 @@ const plugins = [
                         return node.path;
                     }).concat(
                         [
-                            '/ag-grid-jobs-board/',
-                            '/example.php'
+                            '/ag-grid-jobs-board/'
                         ]
                     );
 

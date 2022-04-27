@@ -1,4 +1,4 @@
-var gridDiv = document.getElementById('myGrid');
+var gridDiv;
 var grid;
 
 function refreshGrid() {
@@ -11,7 +11,7 @@ function refreshGrid() {
     createData();
 }
 
-function onThemeChanged(initial) {
+function onThemeChanged() {
     var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
 
     gridDiv.className = newTheme;
@@ -27,19 +27,6 @@ function onThemeChanged(initial) {
     }
 
     refreshGrid();
-
-    if (!initial) {
-        var newUrl;
-        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
-        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
-        if (attrRegex.test(location.href)) {
-            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
-        } else {
-            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
-            newUrl = location.href + sep + "theme=" + urlName;
-        }
-        history.replaceState(null, "", newUrl);
-    }
 }
 
 function axisLabelFormatter(params) {
@@ -87,37 +74,6 @@ function axisLabelFormatter(params) {
         return value;
     }
 };
-
-document.addEventListener('DOMContentLoaded', function() {
-    var select = document.getElementById('data-size');
-
-    if (select) {
-        var rowsCols = [
-            [100, defaultColCount],
-            [1000, defaultColCount]
-        ];
-
-        if (!isSmall) {
-            rowsCols.push(
-                [10000, 100],
-                [50000, defaultColCount],
-                [100000, defaultColCount]
-            );
-        }
-
-        for (var i = 0; i < rowsCols.length; i++) {
-            var option = document.createElement('option');
-            var rows = rowsCols[i][0];
-            var cols = rowsCols[i][1];
-
-            option.value = (rows / 1000) + 'x' + cols;
-            option.text = rows + ' Rows, ' + cols + ' Cols';
-            select.appendChild(option);
-        }
-    }
-
-    onThemeChanged(true);
-});
 
 // for easy access in the dev console, we put api and columnApi into global variables
 var docEl = document.documentElement;
@@ -1164,14 +1120,8 @@ if (isSmall) {
 var dataSize;
 
 
-function filterDoubleClicked(event) {
-    setInterval(function() {
-        gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
-    }, 4000);
-}
-
-function onDataSizeChanged(newDataSize) {
-    dataSize = newDataSize;
+function onDataSizeChanged(event) {
+    dataSize = event.target.value;
     createData();
 }
 
@@ -1327,12 +1277,12 @@ function rowSelected(event) {
 
 var filterCount = 0;
 
-function onFilterChanged(newFilter) {
+function onFilterChanged(event) {
     filterCount++;
     var filterCountCopy = filterCount;
     window.setTimeout(function() {
         if (filterCount === filterCountCopy) {
-            gridOptions.api.setQuickFilter(newFilter);
+            gridOptions.api.setQuickFilter(event.target.value);
         }
     }, 300);
 }
@@ -1754,3 +1704,51 @@ function countryCellRenderer(params) {
     flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
     return flag + ' ' + params.value;
 }
+
+function start() {
+    if(document.getElementById('myGrid') && window.agGrid) {
+        gridDiv = document.getElementById('myGrid');
+
+        document.getElementById('data-size').addEventListener('change', onDataSizeChanged);
+        document.getElementById('grid-theme').addEventListener('change', onThemeChanged);
+        document.getElementById('options-toggle').addEventListener('click', toggleOptionsCollapsed);
+        document.getElementById('global-filter').addEventListener('input', onFilterChanged);
+
+        var select = document.getElementById('data-size');
+
+        if (select) {
+            var rowsCols = [
+                [100, defaultColCount],
+                [1000, defaultColCount]
+            ];
+
+            if (!isSmall) {
+                rowsCols.push(
+                    [10000, 100],
+                    [50000, defaultColCount],
+                    [100000, defaultColCount]
+                );
+            }
+
+            for (var i = 0; i < rowsCols.length; i++) {
+                var option = document.createElement('option');
+                var rows = rowsCols[i][0];
+                var cols = rowsCols[i][1];
+
+                option.value = (rows / 1000) + 'x' + cols;
+                option.text = rows + ' Rows, ' + cols + ' Cols';
+                select.appendChild(option);
+            }
+        }
+
+        onThemeChanged(true);
+    } else {
+        setTimeout(() => start())
+    }
+}
+if (document.readyState == "complete") {
+    start();
+} else {
+    document.addEventListener("readystatechange", start);
+}
+

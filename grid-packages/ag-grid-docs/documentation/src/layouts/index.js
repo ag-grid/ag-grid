@@ -42,7 +42,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
         return children;
     }
 
-    const rootPage = path === '/';
+    const fullScreenPage = path === '/' || path === '/example';
 
     return <GlobalContextProvider>
         <Helmet>
@@ -57,9 +57,9 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
                     <HeaderNav/>
                 </div>
             </header>
-            {!rootPage && <TopBar frameworks={frameworks} framework={framework} path={path}/>}
+            {!fullScreenPage && <TopBar frameworks={frameworks} framework={framework} path={path}/>}
             <div className={styles['content-viewport']}>
-                {!rootPage &&
+                {!fullScreenPage &&
                     <aside className={`${styles['main-menu']}`}>
                         <Menu currentFramework={framework} currentPage={pageName}/>
                     </aside>}
@@ -68,7 +68,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
                 </main>
             </div>
         </div>
-        {!rootPage && <Footer framework={framework}/>}
+        {!fullScreenPage && <Footer framework={framework}/>}
     </GlobalContextProvider>;
 };
 

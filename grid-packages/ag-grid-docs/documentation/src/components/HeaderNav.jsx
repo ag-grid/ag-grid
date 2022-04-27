@@ -6,7 +6,7 @@ import styles from './HeaderNav.module.scss';
 const links = [
     {
         name: 'Demo',
-        url: '/example.php'
+        url: '/example'
     },
     {
         name: 'Documentation',

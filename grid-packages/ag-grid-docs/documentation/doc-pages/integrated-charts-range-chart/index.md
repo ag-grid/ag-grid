@@ -11,7 +11,7 @@ Range charts provide a quick and easy way for users to create charts from inside
 
 When a chart is created from a selected range of cells in the grid, or via the charting API, the underlying cell range is replaced by a chart range.
 
-To see how chart ranges are created from a cell range, using our [demo page](../../example.php) do the following:
+To see how chart ranges are created from a cell range, using our [demo page](../../example) do the following:
 
 - Select a [Cell Range](/range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 

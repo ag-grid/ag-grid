@@ -6,18 +6,16 @@
     background-position: calc(100% - 7px) 49%;
 }
 
-#example-wrapper {
-    position: absolute;
-    top: 4rem;
-    height: calc(100% - 4rem);
+.example-wrapper {
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
+    overflow: auto;
 
     max-width: 100%;
     width: 100%;
 
-    #grid-wrapper {
+    &__grid-wrapper {
         flex: 1 1 auto;
         overflow: hidden;
         display: flex;

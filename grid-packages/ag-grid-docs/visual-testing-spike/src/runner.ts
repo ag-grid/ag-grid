@@ -10,7 +10,7 @@ import { Spec, SpecResult, SpecDefinition, SpecStep } from './types';
 import { getReportHtml } from './reporting';
 import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
-const defaultSpecPath = '/example.php';
+const defaultSpecPath = '/example';
 const defaultSelector = '.ag-root-wrapper';
 const exampleBasePath = '/example-runner/';
 const maxParallelPageLoads = 8;
