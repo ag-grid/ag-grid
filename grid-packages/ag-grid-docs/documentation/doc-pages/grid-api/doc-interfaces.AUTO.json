@@ -13634,6 +13634,9 @@
     "chartOptions": {
       "type": { "returnType": "AgChartThemeOverrides", "optional": false }
     },
+    "chartPalette": {
+      "type": { "returnType": "AgChartThemePalette", "optional": false }
+    },
     "suppressChartRanges": {
       "type": { "returnType": "boolean", "optional": true }
     },

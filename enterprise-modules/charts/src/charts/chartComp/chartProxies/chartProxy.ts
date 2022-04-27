@@ -1,5 +1,13 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
+import {
+    AgChartTheme,
+    AgChartThemePalette,
+    CategoryAxis,
+    Chart,
+    ChartTheme,
+    getChartTheme,
+    themes
+} from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
@@ -16,6 +24,7 @@ export interface ChartProxyParams {
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartOptionsToRestore?: AgChartThemeOverrides;
+    chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
 }
 
@@ -47,6 +56,7 @@ export abstract class ChartProxy {
     protected chartTheme: ChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
+    private chartPalette: AgChartThemePalette;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartType = chartProxyParams.chartType;
@@ -56,13 +66,15 @@ export abstract class ChartProxy {
 
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            const themeOverrides = { overrides:  this.chartOptions } as any;
+            this.chartPalette = this.chartProxyParams.chartPaletteToRestore!;
+            const themeOverrides = { overrides:  this.chartOptions, palette: this.chartPalette } as any;
             this.chartTheme = getChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
             return;
         }
 
         this.chartTheme = this.createChartTheme();
         this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
+        this.chartPalette = this.chartTheme.palette;
     }
 
     protected abstract createChart(options?: AgChartThemeOverrides): Chart;
@@ -148,6 +160,10 @@ export abstract class ChartProxy {
 
     public getChartOptions(): AgChartThemeOverrides {
         return this.chartOptions;
+    }
+
+    public getChartPalette(): AgChartThemePalette {
+        return this.chartPalette;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
