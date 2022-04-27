@@ -79,7 +79,7 @@ const Example = () => (
             </div>
 
             <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
-                <div id="myGrid" style={{height: 500, flex: "1 1 auto", overflow: "hidden"}} className="ag-theme-alpine"/>
+                <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className="ag-theme-alpine"/>
             </section>
         </div>
     </>
