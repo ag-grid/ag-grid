@@ -56,7 +56,7 @@ export abstract class ChartProxy {
     protected chartTheme: ChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
-    private chartPalette: AgChartThemePalette;
+    private readonly chartPalette: AgChartThemePalette | undefined;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartType = chartProxyParams.chartType;
@@ -66,7 +66,7 @@ export abstract class ChartProxy {
 
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            this.chartPalette = this.chartProxyParams.chartPaletteToRestore!;
+            this.chartPalette = this.chartProxyParams.chartPaletteToRestore;
             const themeOverrides = { overrides:  this.chartOptions, palette: this.chartPalette } as any;
             this.chartTheme = getChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
             return;
@@ -162,7 +162,7 @@ export abstract class ChartProxy {
         return this.chartOptions;
     }
 
-    public getChartPalette(): AgChartThemePalette {
+    public getChartPalette(): AgChartThemePalette | undefined {
         return this.chartPalette;
     }
 

@@ -26,7 +26,7 @@ export interface ChartModel {
     cellRange: CellRangeParams;
     chartThemeName?: string;
     chartOptions: AgChartThemeOverrides;
-    chartPalette: AgChartThemePalette;
+    chartPalette?: AgChartThemePalette;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
