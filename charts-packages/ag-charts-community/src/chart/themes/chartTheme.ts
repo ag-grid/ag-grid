@@ -69,6 +69,7 @@ export class ChartTheme {
             left: {},
             thickness: 0,
             title: {
+                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,

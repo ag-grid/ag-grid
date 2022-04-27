@@ -6,7 +6,7 @@ export default {
         return {};
     },
     computed: {
-        formattedValue: () => {
+        formattedValue() {
             return this.formatValueToCurrency('EUR', this.params.value)
         }
     },

@@ -33,7 +33,6 @@ const options: AgChartOptions = {
       xKey: 'year',
       yKey: 'spending',
       label: {
-        enabled: true,
         fontWeight: 'bold',
       },
     },

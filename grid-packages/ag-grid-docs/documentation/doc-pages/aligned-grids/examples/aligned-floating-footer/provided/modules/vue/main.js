@@ -132,7 +132,7 @@ const VueExample = {
             };
         },
 
-        onFirstDataRendered: () => {
+        onFirstDataRendered() {
             this.gridColumnApi.autoSizeAllColumns();
         }
     },

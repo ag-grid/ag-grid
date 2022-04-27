@@ -9,7 +9,7 @@ import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { setAriaExpanded } from "../../utils/aria";
+import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
@@ -95,6 +95,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
     private eCheckbox: HTMLElement;
+    private expandListener: (() => null) | null;
 
     // keep reference to this, so we can remove again when indent changes
     private indentClass: string;
@@ -143,18 +144,33 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
-        this.setupAriaExpanded();
+        this.refreshAriaExpanded();
     }
 
-    private setupAriaExpanded(): void {
+    protected destroy(): void {
+        super.destroy();
+        // property cleanup to avoid memory leaks
+        this.expandListener = null;
+    }
+
+    private refreshAriaExpanded(): void {
         const { node, eParentOfValue } = this.params;
+
+        if (this.expandListener) {
+            this.expandListener = this.expandListener();
+        }
+
+        if (!this.isExpandable()) {
+            removeAriaExpanded(eParentOfValue);
+            return;
+        }
 
         const listener = () => {
             // for react, we don't use JSX, as setting attributes via jsx is slower
             setAriaExpanded(eParentOfValue, !!node.expanded);
         };
 
-        this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener);
+        this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
         listener();
     }
 
@@ -551,6 +567,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // if we have no children, this impacts the indent
         this.setIndent();
+
+        this.refreshAriaExpanded();
     }
 
     private setupIndent(): void {

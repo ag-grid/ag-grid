@@ -223,7 +223,7 @@ const createHomePages = createPage => {
 
     createPage({
         path: `/documentation/`,
-        component: path.resolve('src/pages/index.jsx'),
+        component: path.resolve('src/pages/loading.jsx'),
     });
 };
 

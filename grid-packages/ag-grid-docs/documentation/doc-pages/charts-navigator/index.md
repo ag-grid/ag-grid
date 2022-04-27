@@ -26,7 +26,6 @@ The visible range is normalized to the `[0, 1]` interval. For example, to show t
 
 ```js
 navigator: {
-    enabled: true,
     min: 0.75,
     max: 1
 }
@@ -40,7 +39,6 @@ The navigator's `height` is configurable and affects chart's layout by leaving m
 
 ```js
 navigator: {
-    enabled: true,
     height: 50
 }
 ```

@@ -12,7 +12,7 @@ import {
     hoverAction,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
-    CANVAS_TO_BUFFER_DEFAULTS,
+    extractImageData,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -171,7 +171,7 @@ describe('AgChartV2', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+                    const imageData = extractImageData(ctx);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 

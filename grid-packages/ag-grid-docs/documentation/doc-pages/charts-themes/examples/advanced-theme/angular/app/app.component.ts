@@ -19,7 +19,6 @@ export class AppComponent {
     theme: myTheme,
     autoSize: true,
     title: {
-      enabled: true,
       text: "Cartesian Chart Theming",
     },
     data,
@@ -58,7 +57,6 @@ export class AppComponent {
     theme: myTheme,
     autoSize: true,
     title: {
-      enabled: true,
       text: "Polar Chart Theming",
     },
     data,
@@ -105,7 +103,6 @@ var myTheme: AgChartTheme = {
         },
         column: {
           label: {
-            enabled: true,
             color: "white",
           },
         },

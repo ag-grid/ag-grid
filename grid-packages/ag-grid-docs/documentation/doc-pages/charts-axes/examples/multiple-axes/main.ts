@@ -56,7 +56,6 @@ const options: AgChartOptions = {
       position: "left",
       keys: ["male", "female"],
       title: {
-        enabled: true,
         text: "Number of cattle",
       },
       label: {

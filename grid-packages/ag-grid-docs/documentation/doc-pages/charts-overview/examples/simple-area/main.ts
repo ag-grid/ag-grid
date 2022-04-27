@@ -60,7 +60,6 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       title: {
-        enabled: true,
         text: 'Total visitors',
       },
       label: {
