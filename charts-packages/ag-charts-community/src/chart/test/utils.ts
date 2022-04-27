@@ -28,6 +28,31 @@ export function repeat<T>(value: T, count: number): T[] {
     return result;
 }
 
+export function range(start: number, end: number, step = 1): number[] {
+    const result = new Array(Math.floor((end - start) / step));
+
+    let resultIndex = 0;
+    for (let index = start ; index <= end; index += step) {
+        result[resultIndex++] = index;
+    }
+
+    return result;
+}
+
+export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
+    const result = [];
+    
+    let next = start.getTime();
+    const endTime = end.getTime();
+    while (next <= endTime) {
+        result.push(new Date(next));
+
+        next += step;
+    }
+
+    return result;
+}
+
 export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Promise<void> {
     return new Promise((resolve, reject) => {
         let retryMs = 10;
@@ -103,6 +128,18 @@ export function combineAssertions(...assertions: ((chart: Chart) => void)[]) {
             await assertion(chart);
         }
     }
+}
+
+export function extractImageData({ nodeCanvas, bbox }: { nodeCanvas?: Canvas, bbox?: { x: number, y: number, width: number, height: number }}) {
+    let sourceCanvas = nodeCanvas;
+    if (bbox) {
+        const { x, y, width, height } = bbox;
+        sourceCanvas = createCanvas(width, height);
+        sourceCanvas.getContext("2d")
+            .drawImage(nodeCanvas, Math.round(x), Math.round(y), Math.round(width), Math.round(height), 0, 0, Math.round(width), Math.round(height));
+    }
+
+    return sourceCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
 }
 
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {
