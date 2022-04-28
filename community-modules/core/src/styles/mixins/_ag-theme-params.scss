@@ -162,9 +162,76 @@ $-ag-params: null !default;
     $-ag-params: $params !global;
 }
 
+$-theme-parameters-to-map-onto-variables: (grid-size icon-size widget-container-horizontal-padding widget-container-vertical-padding widget-horizontal-spacing widget-vertical-spacing cell-horizontal-padding cell-widget-spacing row-height header-height list-item-height column-select-indent-size row-group-indent-size filter-tool-panel-group-indent tab-min-width menu-min-width);
+
+@mixin ag-theme-parameters-to-variable-expressions() {
+    @each $name in $-theme-parameters-to-map-onto-variables {
+        $value: -ag-parameter-as-expression($name);
+        --ag-#{$name}: #{$value};
+    }
+}
+
 //
 // PRIVATE IMPLEMENTATION FUNCTIONS
 //
+
+// Convert a parameer to a runtime expression, using CSS variables to implement
+// parameter cascades and calc() expressions to implement ag-derived math operations
+@function -ag-parameter-as-expression($name) {
+    $value: map-get($-ag-params, $name);
+    // plain values get returned as-is
+    @if not -is-ag-derived($value) {
+        @return $value;
+    }
+    $reference-name: map-get($value, "reference-name");
+
+    $result: "var(--ag-#{$reference-name})";
+
+    // ag-derived(prop) becomes var(--ag-prop)
+    $has-modificatons: length($value) > 2;
+    @if not $has-modificatons {
+        @return unquote($result);
+    }
+
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, times)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, divide)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, plus)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, minus)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, opacity)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, mix)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, lighten)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, darken)}";
+    $result: "#{$result}#{-ag-value-operator-as-expression-fragment($value, self-overlay)}";
+    
+    @return unquote("calc(#{$result})");
+}
+
+$-ag-operator-strings: (
+    "times": "*",
+    "divide": "/",
+    "plus": "+",
+    "minus": "-"
+);
+
+// Produce a fragment of a runtime CSS expression implementing part of a derived value, e.g.
+// f(ag-derived(grid-size, $times: 4), times) -> " * 4"
+// f(ag-derived(grid-size, $plus: icon-size), plus) -> " + var(--ag-icon-size)"
+@function -ag-value-operator-as-expression-fragment($value, $operator) {
+    $rhs: map-get($value, $operator);
+    @if not $rhs {
+        @return "";
+    }
+    @if type-of($rhs) == string {
+        $rhs: "var(--ag-#{$rhs})";
+    }
+    $operator-string: map-get($-ag-operator-strings, $operator);
+    @if not $operator-string {
+        // TODO don't go live with this check still here
+        @error "Operator #{$operator} not implemented yet";
+        @return "";
+    }
+    @return " #{$operator-string} #{$rhs}"
+}
 
 // Return a parameter value as a CSS variable declaration
 @function -ag-param-as-css-var($name) {
@@ -312,7 +379,7 @@ $-ag-params: null !default;
 @function -ag-operator-function-divide($params, $lhs, $rhs) {
     $lhs: -ag-require-type($lhs, "number", "value before $divide");
     $rhs: -ag-require-type($rhs, "number", "argument to $divide");
-    @return math.div($lhs, $rhs);
+    @return div($lhs, $rhs);
 }
 
 @function -ag-operator-function-plus($params, $lhs, $rhs) {
