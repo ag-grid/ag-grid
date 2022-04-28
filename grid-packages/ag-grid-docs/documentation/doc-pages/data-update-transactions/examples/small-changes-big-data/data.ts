@@ -63,3 +63,52 @@ var LAPTOPS = [
     'Microsoft',
     'Razer',
 ]
+
+var idCounter = 0
+
+function letter(i: number) {
+    return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1)
+}
+
+function randomLetter() {
+    return letter(Math.floor(Math.random() * 26 + 1))
+}
+
+export function createDataItem(name: string, distro: string, laptop: string, city: string, value: number, idToUse: number | undefined = undefined): any {
+
+    const id = idToUse || idCounter++;
+    return {
+        id: id,
+        name: name,
+        city: city,
+        distro: distro,
+        laptop: laptop,
+        value: value,
+    }
+}
+
+export function getData() {
+    var myRowData = []
+    for (var i = 0; i < 10000; i++) {
+        var name =
+            'Mr ' +
+            randomLetter().toUpperCase() +
+            ' ' +
+            randomLetter().toUpperCase() +
+            randomLetter() +
+            randomLetter() +
+            randomLetter() +
+            randomLetter()
+        var city = CITIES[i % CITIES.length]
+        var distro =
+            LINUX_DISTROS[i % LINUX_DISTROS.length] +
+            ' v' +
+            Math.floor(Math.random() * 100 + 1) / 10
+        var university = LAPTOPS[i % LAPTOPS.length]
+        var value = Math.floor(Math.random() * 100) + 10 // between 10 and 110        
+        myRowData.push(
+            createDataItem(name, distro, university, city, value)
+        )
+    }
+    return myRowData;
+}
