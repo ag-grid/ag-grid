@@ -47,7 +47,7 @@
 
     .ag-cell-inline-editing {
         padding: var(--ag-grid-size);
-        height: ag-param(row-height) + ag-param(grid-size) * 3;
+        height: calc(var(--ag-row-height) + var(--ag-grid-size) * 3);
         @include ag-color-property(border-color, border-color, $important: true);
     }
 
@@ -81,7 +81,7 @@
         @include ag-color-property(color, disabled-foreground-color);
 
         @include ag-theme-rtl((
-            padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
+            padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
             padding-right: var(--ag-grid-size)
         ));
     }

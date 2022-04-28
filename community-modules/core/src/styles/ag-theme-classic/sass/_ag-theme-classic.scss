@@ -98,6 +98,6 @@
         margin-left: var(--ag-grid-size);
     }
     .ag-column-drop-vertical-empty-message {
-        margin-left: ag-param(grid-size) * 3 + ag-param(icon-size);
+        margin-left: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
     }
 }

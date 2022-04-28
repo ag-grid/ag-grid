@@ -456,7 +456,7 @@
     // Column select
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
-            @include ag-theme-rtl((padding-left: $i * ag-param(column-select-indent-size)));
+            @include ag-theme-rtl(( padding-left: calc(#{$i} * var(--ag-column-select-indent-size)) ));
         }
     }
 
@@ -499,7 +499,7 @@
     // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
     // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
     .ag-column-select-add-group-indent {
-        @include ag-theme-rtl(( margin-left: ag-param(icon-size) + ag-param(grid-size) * 2 ));
+        @include ag-theme-rtl(( margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2) ));
     }
 
     .ag-column-select-virtual-list-viewport {
@@ -771,7 +771,7 @@
 
     &::-webkit-slider-thumb {
         @include ag-internal-range-thumb;
-        transform: translateY(ag-param(icon-size) * -0.5 + 1.5px);
+        transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
     }
 
     &::-ms-thumb {

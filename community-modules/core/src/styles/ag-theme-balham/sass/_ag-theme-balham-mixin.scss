@@ -71,7 +71,7 @@
 
     .ag-column-drop-vertical-empty-message {
         @include ag-theme-rtl((
-            padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
+            padding-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
             padding-right: var(--ag-grid-size)
         ));
     }
@@ -110,7 +110,7 @@
     }
 
     .ag-panel-title-bar-button-icon {
-        font-size: ag-param(icon-size) + ag-param(grid-size);
+        font-size: calc(var(--ag-icon-size) + var(--ag-grid-size));
     }
 
     .ag-chart-data-section,
