@@ -27,7 +27,7 @@
     }
 
     .ag-filter-toolpanel-search {
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
     }
 
     .ag-filter-toolpanel-search-input {

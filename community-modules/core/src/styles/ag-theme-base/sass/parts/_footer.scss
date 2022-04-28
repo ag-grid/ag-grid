@@ -5,7 +5,7 @@
         border-top: 1px solid;
         @include ag-color-property(border-top-color, border-color);
         @include ag-color-property(color, secondary-foreground-color);
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
 
         > * {
             margin: 0 ag-param(cell-horizontal-padding);

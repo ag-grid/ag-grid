@@ -102,7 +102,7 @@
     }
 
     .ag-column-select-header {
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
     }
 
     .ag-group-title-bar {

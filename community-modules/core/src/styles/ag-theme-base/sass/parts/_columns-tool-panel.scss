@@ -2,8 +2,8 @@
 @mixin ag-theme-base-part-columns-tool-panel {
     
     .ag-pivot-mode-panel {
-        min-height: ag-param(header-height);
-        height: ag-param(header-height);
+        min-height: var(--ag-header-height);
+        height: var(--ag-header-height);
         display: flex;
     }
 
@@ -17,7 +17,7 @@
     @include ag-keyboard-focus((ag-column-select-header), 4px);
     
     .ag-column-select-header {
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
         align-items: center;
         padding: 0 ag-param(widget-container-horizontal-padding);
 

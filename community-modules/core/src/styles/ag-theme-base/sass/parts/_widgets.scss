@@ -380,8 +380,8 @@
         text-overflow: ellipsis;
         @include ag-border(secondary);
         @include ag-color-property(color, secondary-foreground-color);
-        height: ag-param(header-height) !important;
-        line-height: ag-param(header-height);
+        height: var(--ag-header-height) !important;
+        line-height: var(--ag-header-height);
         margin: 0;
         padding: 0 ag-param(grid-size) * 2;
         transform: translateY(ag-param(grid-size) * 2);
@@ -421,7 +421,7 @@
     .ag-panel-title-bar {
         @include ag-color-property(background-color, header-background-color);
         @include ag-color-property(color, header-foreground-color);
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
         padding: ag-param(grid-size) ag-param(cell-horizontal-padding);
         @include ag-border(primary, bottom);
     }

@@ -7,7 +7,7 @@
 
     .ag-header-row {
         @include ag-color-property(color, header-foreground-color);
-        height: ag-param(header-height);
+        height: var(--ag-header-height);
     }
 
     .ag-pinned-right-header {
