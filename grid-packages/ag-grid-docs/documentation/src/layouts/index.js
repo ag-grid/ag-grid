@@ -42,7 +42,10 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
         return children;
     }
 
-    const fullScreenPage = path === '/' || path === '/example';
+    // takes account of archives too
+    const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/,'');
+    const fullScreenPage = processedPath === '/' ||
+        processedPath === '/example';
 
     return <GlobalContextProvider>
         <Helmet>

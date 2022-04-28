@@ -732,7 +732,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
+            icon: '<img src="../images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function() {
                 var value = params.value ? params.value : '<empty>';
@@ -1317,7 +1317,7 @@ PersonFilter.prototype.setupGui = function() {
         '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" aria-label="Full name search" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
-        '<div><img src="images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
+        '<div><img src="../images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
     this.eFilterText = this.gui.querySelector('#filterText');
@@ -1526,7 +1526,7 @@ function ratingRendererGeneral(value, forFilter) {
 
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
+            result += '<img src="../images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
         }
     }
 
