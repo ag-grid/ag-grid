@@ -1202,8 +1202,8 @@
       "type": { "returnType": "number", "optional": true }
     },
     "autoRotate": {
-      "description": "/** By default, for a category axis, the labels will be automatically rotated to be perpendicular to the axis line to prevent overlaps. Set this to `false` to disable this behaviour. Note: if a label rotation angle is specified, auto rotation will not be applied. */",
-      "type": { "returnType": "boolean", "optional": true }
+      "description": "/** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 45 degrees. If the `rotation` property is specified, it takes precedence. */",
+      "type": { "returnType": "boolean | number", "optional": true }
     },
     "format": {
       "description": "/** Format string used when rendering labels for time axes. */",
