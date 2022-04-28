@@ -16,7 +16,7 @@ import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
 import { MeasuredLabel, PlacedLabel, PointLabelDatum } from "../../../util/labelPlacement";
-import { isContinuous, isNumber } from "../../../util/value";
+import { isContinuous } from "../../../util/value";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -199,6 +199,10 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const data = xKey && yKey && this.data ? this.data : [];
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
 
         const xyData = data.map(d => ({
             x: d[xKey],
@@ -207,7 +211,7 @@ export class ScatterSeries extends CartesianSeries {
             size: sizeKey ? d[sizeKey] : null,
             label: String(labelKey ? d[labelKey] : null),
         }))
-            .filter(({x, y}) => x != null && x !== NaN && y != null && y !== NaN);
+            .filter(({x, y}) => this.checkDomainXY(x, y, isContinuousX, isContinuousY) != null);
         this.xData = xyData.map(({x}) => x);
         this.yData = xyData.map(({y}) => y);
         this.datum = xyData.map(({datum}) => datum);
