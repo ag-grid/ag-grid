@@ -77,7 +77,7 @@
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        padding: calc(var(--ag-grid-size) var(--ag-grid-size) * 2);
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
         line-height: calc(var(--ag-icon-size) + var(--ag-grid-size) - 2px);
     }
 
