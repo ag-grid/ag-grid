@@ -505,6 +505,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<string, BBox> = new Map();
+        let rotate = false;
 
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
@@ -523,11 +524,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Only consider a fraction of the total range to allow more space for each label
         const fractionOfRange = 0.8;
         const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
+        const step = availableRange / ticks.length;
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, useWidth: boolean) => {
             let totalLength = 0;
             for (let [labelId, bbox] of bboxes.entries()) {
-                totalLength += (useWidth ? bbox.width : bbox.height);
+                const length = useWidth ? bbox.width : bbox.height;
+                totalLength += length;
+
+                if (length > step) {
+                    rotate = true;
+                }
             }
             return totalLength;
         }
@@ -546,9 +553,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
 
         if (label.autoRotate && !labelRotation) {
-            if (parallelLabels && totalLabelLength > availableRange) {
+            if (parallelLabels && rotate) {
                 // When the labels are parallel to the axis line and no user rotation angle has been specified,
-                // and the available range is not sufficient for parallel labels,
+                // If any of the labels exceed the bandwidth in the parallel orientation,
                 // display the labels perpendicular to the horizontal axis line
                 parallelLabels = false;
                 regularFlipFlag = 1;
