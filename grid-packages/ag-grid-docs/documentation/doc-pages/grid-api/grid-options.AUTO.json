@@ -1200,6 +1200,10 @@
     "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
     "type": { "returnType": "GetRowIdFunc" }
   },
+  "resetRowDataOnUpdate": {
+    "description": "/** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */",
+    "type": { "returnType": "boolean" }
+  },
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
     "type": {

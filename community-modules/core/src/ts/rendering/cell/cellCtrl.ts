@@ -257,25 +257,36 @@ export class CellCtrl extends BeanStub {
         // thus allowing different min heights for different rows.
         const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
 
+        console.log(`setup ${this.rowNode.id}`);
+
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
             // because of the retry's below, it's possible the retry's go beyond
             // the rows life.
             if (!this.isAlive()) { return; }
 
-            // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
-            // maybe it will be ready next VM turn
-            const doc = this.beans.gridOptionsWrapper.getDocument();
-
-            if ((!doc || !doc.contains(eAutoHeightContainer)) && timesCalled < 5) {
-                this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
-                return;
-            }
-
             const { paddingTop, paddingBottom } = getElementSize(eParentCell);
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+
+            if (timesCalled<5) {
+                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
+                // maybe it will be ready next VM turn
+                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+
+                // this happens in React, where React hasn't put any content in. we say 'possibly'
+                // as a) may not be React and b) the cell could be empty anyway
+                const possiblyNoContentYet = autoHeight==0;
+
+                if (notYetInDom || possiblyNoContentYet) {
+                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    return;
+                }
+            }
+
             const newHeight = Math.max(autoHeight, minRowHeight);
+            console.log(`setting height id=${this.rowNode.id}, autoHeight=${autoHeight}, height=${newHeight}, rowHeightEstimated=${this.rowNode.rowHeightEstimated}`);
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
@@ -287,6 +298,7 @@ export class CellCtrl extends BeanStub {
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
 
         this.addDestroyFunc(() => {
+            console.log(`destroy ${this.rowNode.id}`);
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
