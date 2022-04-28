@@ -962,6 +962,7 @@
             }
         },
         "rowData": {},
+        "resetRowDataOnUpdate": {},
         "asyncTransactionWaitMillis": {
             "more": {
                 "name": "Async transactions",
