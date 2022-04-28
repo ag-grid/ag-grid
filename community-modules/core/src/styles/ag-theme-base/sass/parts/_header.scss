@@ -113,7 +113,7 @@
     }
 
     .ag-floating-filter-button {
-        @include ag-theme-rtl(( margin-left: ag-param(grid-size) * 3 ));
+        @include ag-theme-rtl(( margin-left: calc(var(--ag-grid-size) * 3) ));
     }
 
     .ag-floating-filter-button-button {

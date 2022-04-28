@@ -21,7 +21,7 @@
     button.ag-side-button-button {
         @include ag-inherit-text-styles();
         background: transparent;
-        padding: ag-param(grid-size) * 2 0 ag-param(grid-size) * 2 0;
+        padding: calc(var(--ag-grid-size) * 2) 0 calc(var(--ag-grid-size) * 2) 0;
         @if ag-param(borders-side-button) {
             width: calc(100% + 1px);
         } @else {

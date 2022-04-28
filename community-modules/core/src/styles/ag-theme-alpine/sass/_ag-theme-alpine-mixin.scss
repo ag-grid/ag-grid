@@ -138,7 +138,7 @@
         @include ag-color-property(color, alpine-active-color);
         @include ag-color-property(background-color, background-color);
         font-weight: 600;
-        padding: var(--ag-grid-size) ag-param(grid-size) * 2;
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
 
         &:hover {
             @include ag-color-property(border-color, alpine-active-color);

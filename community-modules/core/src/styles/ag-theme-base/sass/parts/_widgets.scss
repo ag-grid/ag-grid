@@ -383,8 +383,8 @@
         height: var(--ag-header-height) !important;
         line-height: var(--ag-header-height);
         margin: 0;
-        padding: 0 ag-param(grid-size) * 2;
-        transform: translateY(ag-param(grid-size) * 2);
+        padding: 0 calc(var(--ag-grid-size) * 2);
+        transform: translateY(calc(var(--ag-grid-size) * 2));
     }
 
     .ag-dnd-ghost-icon {

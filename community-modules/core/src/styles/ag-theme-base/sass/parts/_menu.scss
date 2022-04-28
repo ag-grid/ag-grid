@@ -26,7 +26,7 @@
 
     .ag-menu-option-part, .ag-compact-menu-option-part {
         line-height: var(--ag-icon-size);
-        padding: (ag-param(grid-size) + 2) 0;
+        padding: calc(var(--ag-grid-size) + 2px) 0;
     }
 
     .ag-menu-option-disabled, .ag-compact-menu-option-disabled {
@@ -172,7 +172,7 @@
     }
 
     .ag-multi-filter-group-title-bar {
-        padding: ag-param(grid-size) * 2 var(--ag-grid-size);
+        padding: calc(var(--ag-grid-size) * 2) var(--ag-grid-size);
         background-color: transparent;
     }
 
