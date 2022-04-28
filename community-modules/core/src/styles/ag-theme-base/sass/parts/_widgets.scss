@@ -250,7 +250,7 @@
     }
 
     .group-item {
-        margin: ag-param(grid-size) * 0.5 0;
+        margin: calc(var(--ag-grid-size) * 0.5) 0;
     }
 
     .ag-label {
