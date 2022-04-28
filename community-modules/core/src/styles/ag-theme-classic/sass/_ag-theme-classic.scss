@@ -38,7 +38,7 @@
     .ag-tab {
         border: 1px solid transparent;
         padding: ag-param(grid-size) ag-param(grid-size) * 2;
-        margin: ag-param(grid-size);
+        margin: var(--ag-grid-size);
         margin-bottom: -1px; // shift down 1px to make tab background blend with area below
     }
 
@@ -86,16 +86,16 @@
     }
 
     .ag-menu-option-part {
-        padding-top: ag-param(grid-size);
-        padding-bottom: ag-param(grid-size);
+        padding-top: var(--ag-grid-size);
+        padding-bottom: var(--ag-grid-size);
     }
 
     .ag-column-drop-vertical-title-bar {
-        margin-top: ag-param(grid-size);
-        margin-left: ag-param(grid-size);
+        margin-top: var(--ag-grid-size);
+        margin-left: var(--ag-grid-size);
     }
     .ag-column-drop-vertical-title {
-        margin-left: ag-param(grid-size);
+        margin-left: var(--ag-grid-size);
     }
     .ag-column-drop-vertical-empty-message {
         margin-left: ag-param(grid-size) * 3 + ag-param(icon-size);

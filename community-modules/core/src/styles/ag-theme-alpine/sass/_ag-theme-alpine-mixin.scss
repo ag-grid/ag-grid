@@ -94,14 +94,14 @@
     }
 
     .ag-charts-format-top-level-group-toolbar {
-        margin-top: ag-param(grid-size);
+        margin-top: var(--ag-grid-size);
         @include ag-theme-rtl((padding-left: ag-param(icon-size) * 0.5 + ag-param(grid-size) * 2));
     }
 
     .ag-charts-format-sub-level-group {
         border-left: dashed 1px;
         @include ag-color-property(border-left-color, border-color);
-        padding-left: ag-param(grid-size);
+        padding-left: var(--ag-grid-size);
         margin-bottom: ag-param(grid-size) * 2;
     }
 
@@ -233,7 +233,7 @@
     }
 
     .ag-filter-toolpanel-group-container {
-        padding-left: ag-param(grid-size);
+        padding-left: var(--ag-grid-size);
     }
 
     .ag-filter-toolpanel-instance-filter {

@@ -66,7 +66,7 @@
     }
 
     .ag-row {
-        height: ag-param(row-height);
+        height: var(--ag-row-height);
         @include ag-color-property(background-color, background-color);
         @include ag-color-property(color, data-color);
         
@@ -165,7 +165,7 @@
     .ag-cell-inline-editing {
         @include ag-card();
         padding: 0;
-        height: ag-param(row-height);
+        height: var(--ag-row-height);
         @include ag-color-property(background-color, control-panel-background-color);
     }
 
@@ -177,7 +177,7 @@
 
     .ag-large-text-input {
         height: auto;
-        padding: ag-param(cell-horizontal-padding);
+        padding: var(--ag-cell-horizontal-padding);
     }
 
     .ag-details-row {
@@ -205,14 +205,14 @@
     }
 
     .ag-loading {
-        padding-left: ag-param(cell-horizontal-padding);
+        padding-left: var(--ag-cell-horizontal-padding);
         display: flex;
         height: 100%;
         align-items: center;
     }
 
     .ag-loading-icon {
-        padding-right: ag-param(cell-widget-spacing);
+        padding-right: var(--ag-cell-widget-spacing);
     }
 
     .ag-icon-loading {

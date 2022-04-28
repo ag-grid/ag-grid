@@ -25,7 +25,7 @@
     }
 
     .ag-menu-option-part, .ag-compact-menu-option-part {
-        line-height: ag-param(icon-size);
+        line-height: var(--ag-icon-size);
         padding: (ag-param(grid-size) + 2) 0;
     }
 
@@ -35,7 +35,7 @@
 
     .ag-menu-option-icon, .ag-compact-menu-option-icon {
         @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
-        width: ag-param(icon-size);
+        width: var(--ag-icon-size);
     }
 
     .ag-menu-option-text, .ag-compact-menu-option-text {
@@ -48,14 +48,14 @@
     }
 
     .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
-        padding-right: ag-param(grid-size);
+        padding-right: var(--ag-grid-size);
     }
 
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
     .ag-tabs {
-        min-width: ag-param(tab-min-width);
+        min-width: var(--ag-tab-min-width);
     }
 
     .ag-tabs-header {
@@ -120,7 +120,7 @@
     }
 
     .ag-set-filter-select-all {
-        padding-top: ag-param(widget-container-vertical-padding);
+        padding-top: var(--ag-widget-container-vertical-padding);
     }
 
     .ag-set-filter-list, .ag-filter-no-matches {
@@ -128,21 +128,21 @@
     }
 
     .ag-set-filter-filter {
-        margin-top: ag-param(widget-container-vertical-padding);
-        margin-left: ag-param(widget-container-horizontal-padding);
-        margin-right: ag-param(widget-container-horizontal-padding);
+        margin-top: var(--ag-widget-container-vertical-padding);
+        margin-left: var(--ag-widget-container-horizontal-padding);
+        margin-right: var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-filter-to {
-        margin-top: ag-param(widget-vertical-spacing);
+        margin-top: var(--ag-widget-vertical-spacing);
     }
 
     .ag-mini-filter {
-        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        margin: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-set-filter-item {
-        margin: 0px ag-param(widget-container-horizontal-padding);
+        margin: 0px var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-set-filter-item-value {
@@ -150,7 +150,7 @@
     }
 
     .ag-filter-apply-panel {
-        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         @include ag-border(secondary, top);
     }
 
@@ -164,7 +164,7 @@
     }
 
     .ag-filter-no-matches {
-        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-multi-filter-menu-item {
@@ -172,7 +172,7 @@
     }
 
     .ag-multi-filter-group-title-bar {
-        padding: ag-param(grid-size) * 2 ag-param(grid-size);
+        padding: ag-param(grid-size) * 2 var(--ag-grid-size);
         background-color: transparent;
     }
 

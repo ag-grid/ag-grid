@@ -63,11 +63,11 @@
 }
 
 @mixin ag-vertical-widget-container {
-    padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);
 
     & > * {
-        margin-bottom: ag-param(widget-vertical-spacing);
+        margin-bottom: var(--ag-widget-vertical-spacing);
     }
 }
 
@@ -119,7 +119,7 @@
     @include ag-color-property(background, background-color);
     border-radius: ag-param(card-radius);
     box-shadow: ag-param(card-shadow);
-    padding: ag-param(grid-size);
+    padding: var(--ag-grid-size);
 }
 
 
@@ -146,8 +146,8 @@
 
 @mixin ag-icon() {
     font-family: '#{ag-param(icon-font-family)}';
-    font-size: ag-param(icon-size);
-    line-height: ag-param(icon-size);
+    font-size: var(--ag-icon-size);
+    line-height: var(--ag-icon-size);
     font-style: normal;
     font-weight: normal;
     font-variant: normal;

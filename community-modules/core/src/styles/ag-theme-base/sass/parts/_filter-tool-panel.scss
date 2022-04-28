@@ -61,12 +61,12 @@
     }
 
     .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-        padding-left: ag-param(grid-size);
+        padding-left: var(--ag-grid-size);
     }
 
     .ag-filter-toolpanel-instance-filter {
         @include ag-border(primary, (top, bottom));
-        margin-top: ag-param(grid-size);
+        margin-top: var(--ag-grid-size);
     }
 
     .ag-filter-toolpanel-instance-header-icon {

@@ -19,7 +19,7 @@
     .ag-column-select-header {
         height: var(--ag-header-height);
         align-items: center;
-        padding: 0 ag-param(widget-container-horizontal-padding);
+        padding: 0 var(--ag-widget-container-horizontal-padding);
 
         @include ag-border(secondary, bottom);
     }

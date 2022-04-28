@@ -28,8 +28,8 @@
 
     .ag-header-cell,
     .ag-header-group-cell {
-        padding-left: ag-param(cell-horizontal-padding);
-        padding-right: ag-param(cell-horizontal-padding);
+        padding-left: var(--ag-cell-horizontal-padding);
+        padding-right: var(--ag-cell-horizontal-padding);
 
         &.ag-header-cell-moving {
             @include ag-color-property(background-color, header-cell-moving-background-color);
@@ -121,15 +121,15 @@
         appearance: none;
         background: transparent;
         border: none;
-        height: ag-param(icon-size);
+        height: var(--ag-icon-size);
         padding: 0;
-        width: ag-param(icon-size);
+        width: var(--ag-icon-size);
     }
 
     .ag-filter-loading {
         @include ag-color-property(background-color, control-panel-background-color);
         height: 100%;
-        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         position: absolute;
         width: 100%;
         z-index: 1;

@@ -46,7 +46,7 @@
     }
 
     .ag-cell-inline-editing {
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
         height: ag-param(row-height) + ag-param(grid-size) * 3;
         @include ag-color-property(border-color, border-color, $important: true);
     }
@@ -64,7 +64,7 @@
     .ag-column-drop-vertical {
         border-bottom: solid 1px;
         @include ag-color-property(border-bottom-color, border-color);
-        padding-top: ag-param(grid-size);
+        padding-top: var(--ag-grid-size);
 
         &.ag-last-column-drop {
             border-bottom: none;
@@ -106,11 +106,11 @@
     }
 
     .ag-group-title-bar {
-        padding: ag-param(grid-size) * 0.75 ag-param(grid-size);
+        padding: ag-param(grid-size) * 0.75 var(--ag-grid-size);
     }
 
     .ag-charts-format-sub-level-group-title-bar {
-        padding: ag-param(grid-size) * 0.5 ag-param(grid-size);
+        padding: ag-param(grid-size) * 0.5 var(--ag-grid-size);
     }
 
     .ag-chart-data-section,
@@ -130,7 +130,7 @@
         font-family: inherit;
         font-size: inherit;
         height: ag-param(grid-size) * 5;
-        padding-bottom: ag-param(grid-size);
+        padding-bottom: var(--ag-grid-size);
 
         border-width: 0;
         border-bottom: 2px solid;

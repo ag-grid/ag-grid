@@ -58,7 +58,7 @@
     }
 
     .ag-chart-data-column-drag-handle {
-        margin-left: ag-param(grid-size);
+        margin-left: var(--ag-grid-size);
     }
 
     .ag-charts-settings-group-title-bar,
@@ -68,14 +68,14 @@
     }
 
     .ag-charts-settings-group-container {
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-charts-data-group-container {
-        padding: ag-param(widget-container-vertical-padding) * 0.5 ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) * 0.5 var(--ag-widget-container-horizontal-padding);
 
         .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
-            height: ag-param(list-item-height);
+            height: var(--ag-list-item-height);
         }
 
         @include ag-list-item-hovered();
@@ -83,7 +83,7 @@
 
     .ag-charts-format-top-level-group-container {
         margin-left: ag-param(grid-size) * 2;
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-charts-format-top-level-group-item {
@@ -95,7 +95,7 @@
     }
 
     .ag-charts-group-container.ag-group-container-horizontal {
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-chart-data-section,

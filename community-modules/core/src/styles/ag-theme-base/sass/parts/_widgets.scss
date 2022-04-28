@@ -98,7 +98,7 @@
     // Lists
     ////////////////////////////////////////
     .ag-list-item, .ag-virtual-list-item {
-        height: ag-param(list-item-height);
+        height: var(--ag-list-item-height);
     }
 
     @include ag-keyboard-focus((ag-virtual-list-item), 4px);
@@ -136,7 +136,7 @@
     .ag-select {
         .ag-picker-field-wrapper {
             @include ag-color-property(background-color, background-color);
-            min-height: ag-param(list-item-height);
+            min-height: var(--ag-list-item-height);
             cursor: default;
         }
 
@@ -145,7 +145,7 @@
         }
 
         &:not(.ag-cell-editor) {
-            height: ag-param(list-item-height);
+            height: var(--ag-list-item-height);
         }
         .ag-picker-field-display {
             margin: 4px;
@@ -176,15 +176,15 @@
     }
 
     .ag-rich-select-value {
-        padding: 0 ag-param(grid-size) 0 ag-param(cell-horizontal-padding);
-        height: ag-param(row-height);
+        padding: 0 ag-param(grid-size) 0 var(--ag-cell-horizontal-padding);
+        height: var(--ag-row-height);
 
         @include ag-border(secondary, bottom);
     }
 
     .ag-rich-select-virtual-list-item {
         cursor: default;
-        height: ag-param(list-item-height);
+        height: var(--ag-list-item-height);
 
         &:hover {
             @include ag-color-property(background-color, row-hover-color);
@@ -192,7 +192,7 @@
     }
 
     .ag-rich-select-row {
-        padding-left: ag-param(cell-horizontal-padding);
+        padding-left: var(--ag-cell-horizontal-padding);
     }
 
     .ag-rich-select-row-selected {
@@ -238,11 +238,11 @@
 
     .ag-group-title-bar {
         @include ag-color-property(background-color, subheader-background-color);
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-group-toolbar {
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-disabled-group-title-bar, .ag-disabled-group-container {
@@ -305,11 +305,11 @@
     }
 
     .ag-color-picker .ag-picker-field-display {
-        height: ag-param(icon-size);
+        height: var(--ag-icon-size);
     }
 
     .ag-color-panel {
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
     }
 
     .ag-spectrum-color {
@@ -388,7 +388,7 @@
     }
 
     .ag-dnd-ghost-icon {
-        margin-right: ag-param(grid-size);
+        margin-right: var(--ag-grid-size);
         @include ag-color-property(color, foreground-color);
     }
 
@@ -422,7 +422,7 @@
         @include ag-color-property(background-color, header-background-color);
         @include ag-color-property(color, header-foreground-color);
         height: var(--ag-header-height);
-        padding: ag-param(grid-size) ag-param(cell-horizontal-padding);
+        padding: ag-param(grid-size) var(--ag-cell-horizontal-padding);
         @include ag-border(primary, bottom);
     }
 
@@ -436,7 +436,7 @@
     .ag-tooltip {
         @include ag-color-property(background-color, header-background-color);
         @include ag-color-property(color, foreground-color);
-        padding: ag-param(grid-size);
+        padding: var(--ag-grid-size);
         @include ag-border(primary);
         border-radius: ag-param(card-radius);
         transition: opacity 1s;
@@ -486,7 +486,7 @@
     .ag-column-select-column-group,
     .ag-column-select-column {
         &:not(:last-child) {
-            margin-bottom: ag-param(widget-vertical-spacing);
+            margin-bottom: var(--ag-widget-vertical-spacing);
         }
     }
 
@@ -507,7 +507,7 @@
     }
 
     .ag-column-select-virtual-list-item {
-        padding: 0 ag-param(widget-container-horizontal-padding);
+        padding: 0 var(--ag-widget-container-horizontal-padding);
     }
 }
 
@@ -545,8 +545,8 @@
 @mixin ag-check-button-base {
     @include ag-icon();
 
-    width: ag-param(icon-size);
-    height: ag-param(icon-size);
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
 
     & input, input {
         -webkit-appearance: none;
@@ -610,7 +610,7 @@
 @mixin ag-radio {
     @include ag-check-button-base();
 
-    border-radius: ag-param(icon-size);
+    border-radius: var(--ag-icon-size);
 
     &::after {
         content: ag-icon-char(radio-button-off);
@@ -723,12 +723,12 @@
         margin: 0;
         padding: 0;
         -webkit-appearance: none;
-        width: ag-param(icon-size);
-        height: ag-param(icon-size);
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
         @include ag-color-property(background-color, background-color);
         border: 1px solid;
         @include ag-color-property(border-color, checkbox-unchecked-color);
-        border-radius: ag-param(icon-size);
+        border-radius: var(--ag-icon-size);
     }
 }
 
