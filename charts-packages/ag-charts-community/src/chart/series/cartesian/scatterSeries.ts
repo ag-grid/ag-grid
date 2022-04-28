@@ -204,25 +204,18 @@ export class ScatterSeries extends CartesianSeries {
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
 
-        const xyData = data.map(d => ({
-            x: d[xKey],
-            y: d[yKey],
-            datum: d,
-            size: sizeKey ? d[sizeKey] : null,
-            label: String(labelKey ? d[labelKey] : null),
-        }))
-            .filter(({x, y}) => this.checkDomainXY(x, y, isContinuousX, isContinuousY) != null);
-        this.xData = xyData.map(({x}) => x);
-        this.yData = xyData.map(({y}) => y);
-        this.datum = xyData.map(({datum}) => datum);
+        this.datum = data.filter(d => this.checkDatum(d[xKey], isContinuousX) != null && this.checkDatum(d[yKey], isContinuousY) != null);
+        this.xData = this.datum.map((d) => d[xKey]);
+        this.yData = this.datum.map((d) => d[yKey]);
 
-        this.sizeData = sizeKey ? xyData.map(({size}) => size) : [];
+        this.sizeData = sizeKey ? this.datum.map((d) => d[sizeKey]) : [];
 
         const font = label.getFont();
-        this.labelData = labelKey ? xyData.map(({label}) => {
-            const size = HdpiCanvas.getTextSize(label, font);
+        this.labelData = labelKey ? this.datum.map((d) => {
+            const text = String(d[labelKey]);
+            const size = HdpiCanvas.getTextSize(text, font);
             return {
-                text: label,
+                text,
                 ...size
             };
         }) : [];
