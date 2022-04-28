@@ -522,14 +522,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const labelX = sideFlag * (tick.size + label.padding);
 
         // Only consider a fraction of the total range to allow more space for each label
-        const fractionOfRange = 0.8;
-        const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
+        const availableRange = requestedRangeMax - requestedRangeMin;
         const step = availableRange / ticks.length;
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, useWidth: boolean) => {
             let totalLength = 0;
+            const padding = 10;
             for (let [labelId, bbox] of bboxes.entries()) {
-                const length = useWidth ? bbox.width : bbox.height;
+                const length = (useWidth ? bbox.width : bbox.height) + padding;
                 totalLength += length;
 
                 if (length > step) {
