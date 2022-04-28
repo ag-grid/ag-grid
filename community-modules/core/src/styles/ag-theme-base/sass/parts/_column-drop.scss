@@ -39,7 +39,7 @@
         height: var(--ag-row-height);
         @include ag-border(primary, bottom);
 
-        @include ag-theme-rtl(( padding-left: ag-param(cell-horizontal-padding) ));
+        @include ag-theme-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
     }
     
     .ag-column-drop-horizontal-half-width:not(:last-child) {
@@ -58,7 +58,7 @@
     }
 
     .ag-column-drop-horizontal-icon {
-        @include ag-theme-rtl(( margin-right: ag-param(cell-horizontal-padding) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-cell-horizontal-padding) ));
     }
 
     // VERTICAL COLUMN DROP

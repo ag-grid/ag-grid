@@ -87,7 +87,7 @@
     }
 
     .ag-charts-format-top-level-group-item {
-        margin: ag-param(grid-size) 0;
+        margin: var(--ag-grid-size) 0;
     }
 
     .ag-charts-format-sub-level-group-container {

@@ -37,7 +37,7 @@
 
     .ag-tab {
         border: 1px solid transparent;
-        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        padding: var(--ag-grid-size) ag-param(grid-size) * 2;
         margin: var(--ag-grid-size);
         margin-bottom: -1px; // shift down 1px to make tab background blend with area below
     }

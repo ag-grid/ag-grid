@@ -63,7 +63,7 @@
 }
 
 @mixin ag-vertical-widget-container {
-    padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);
 
     & > * {

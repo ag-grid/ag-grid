@@ -11,7 +11,7 @@
         display: flex;
         align-items: center;
 
-        @include ag-theme-rtl(( margin-left: ag-param(widget-container-horizontal-padding) ));
+        @include ag-theme-rtl(( margin-left: var(--ag-widget-container-horizontal-padding) ));
     }
 
     @include ag-keyboard-focus((ag-column-select-header), 4px);

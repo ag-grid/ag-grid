@@ -20,7 +20,7 @@
     }
 
     .ag-label-align-right .ag-label {
-        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
+        @include ag-theme-rtl((margin-left: var(--ag-grid-size)));
     }
 
     input[class^='ag-'] {
@@ -176,7 +176,7 @@
     }
 
     .ag-rich-select-value {
-        padding: 0 ag-param(grid-size) 0 var(--ag-cell-horizontal-padding);
+        padding: 0 var(--ag-grid-size) 0 var(--ag-cell-horizontal-padding);
         height: var(--ag-row-height);
 
         @include ag-border(secondary, bottom);
@@ -208,7 +208,7 @@
     .ag-selection-checkbox,
     .ag-group-expanded,
     .ag-group-contracted {
-        @include ag-theme-rtl(( margin-right: ag-param(cell-widget-spacing) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-cell-widget-spacing) ));
 
         @include ag-color-property(color, secondary-foreground-color);
     }
@@ -255,7 +255,7 @@
 
     .ag-label {
         white-space: nowrap;
-        @include ag-theme-rtl((margin-right: ag-param(grid-size)));
+        @include ag-theme-rtl((margin-right: var(--ag-grid-size)));
     }
 
     .ag-label-align-top .ag-label {
@@ -422,12 +422,12 @@
         @include ag-color-property(background-color, header-background-color);
         @include ag-color-property(color, header-foreground-color);
         height: var(--ag-header-height);
-        padding: ag-param(grid-size) var(--ag-cell-horizontal-padding);
+        padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
         @include ag-border(primary, bottom);
     }
 
     .ag-panel-title-bar-button {
-        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
+        @include ag-theme-rtl((margin-left: var(--ag-grid-size)));
     }
 
     ////////////////////////////////////////
@@ -475,7 +475,7 @@
     .ag-column-select-column-group-drag-handle,
     .ag-column-select-column-label {
         &:not(:last-child) {
-            @include ag-theme-rtl((margin-right: ag-param(widget-horizontal-spacing)))
+            @include ag-theme-rtl((margin-right: var(--ag-widget-horizontal-spacing)))
         }
     }
 

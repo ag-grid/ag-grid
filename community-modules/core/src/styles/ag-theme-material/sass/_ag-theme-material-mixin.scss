@@ -82,7 +82,7 @@
 
         @include ag-theme-rtl((
             padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
-            padding-right: ag-param(grid-size)
+            padding-right: var(--ag-grid-size)
         ));
     }
 

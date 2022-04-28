@@ -19,11 +19,11 @@
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
-        @include ag-theme-rtl(( margin-left: ag-param(grid-size) ));
+        @include ag-theme-rtl(( margin-left: var(--ag-grid-size) ));
     }
 
     .ag-header-cell.ag-right-aligned-header .ag-header-label-icon {
-        @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-grid-size) ));
     }
 
     .ag-header-cell,
@@ -109,7 +109,7 @@
     }
 
     .ag-header-select-all {
-        @include ag-theme-rtl(( margin-right: ag-param(cell-horizontal-padding) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-cell-horizontal-padding) ));
     }
 
     .ag-floating-filter-button {
@@ -129,7 +129,7 @@
     .ag-filter-loading {
         @include ag-color-property(background-color, control-panel-background-color);
         height: 100%;
-        padding: ag-param(widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         position: absolute;
         width: 100%;
         z-index: 1;

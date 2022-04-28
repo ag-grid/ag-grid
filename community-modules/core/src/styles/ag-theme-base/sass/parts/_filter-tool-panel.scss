@@ -5,14 +5,14 @@
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search {
-        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
+        @include ag-theme-rtl(( padding-left: var(--ag-grid-size) ));
     }
 
     @include ag-keyboard-focus((ag-filter-toolpanel-header), 4px);
 
     .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
         @include ag-icon();
-        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
+        @include ag-theme-rtl(( padding-left: var(--ag-grid-size) ));
         content: ag-icon-char(filter);
         position: absolute;
     }
@@ -33,7 +33,7 @@
     .ag-filter-toolpanel-search-input {
         flex-grow: 1;
         height: ag-param(grid-size) * 4;
-        @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-grid-size) ));
     }
 
     .ag-filter-toolpanel-group-level-0 {
@@ -42,7 +42,7 @@
 
     .ag-filter-toolpanel-expand,
     .ag-filter-toolpanel-group-title-bar-icon {
-        @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
+        @include ag-theme-rtl(( margin-right: var(--ag-grid-size) ));
     }
 
     @for $i from 1 through 10 {
@@ -70,6 +70,6 @@
     }
 
     .ag-filter-toolpanel-instance-header-icon {
-        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
+        @include ag-theme-rtl((margin-left: var(--ag-grid-size)));
     }
 }

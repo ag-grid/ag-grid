@@ -20,12 +20,12 @@
         }
 
         .ag-row-level-#{$i} .ag-pivot-leaf-group {
-            @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+            @include ag-theme-rtl(( margin-left: var(--ag-row-group-indent-size) ));
         }
     }
 
     .ag-row-group-leaf-indent {
-        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+        @include ag-theme-rtl(( margin-left: var(--ag-row-group-indent-size) ));
     }
 
     .ag-value-change-delta {

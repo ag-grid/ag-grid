@@ -49,7 +49,7 @@
         border-radius: ag-param(border-radius);
 
         @include ag-theme-rtl((
-            padding-left: ag-param(grid-size),
+            padding-left: var(--ag-grid-size),
         ));
     }
 
@@ -77,7 +77,7 @@
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        padding: var(--ag-grid-size) ag-param(grid-size) * 2;
         line-height: ag-param(icon-size) + ag-param(grid-size) - 2;
     }
 
@@ -90,7 +90,7 @@
     }
 
     .ag-group-title-bar-icon {
-        @include ag-theme-rtl((margin-right: ag-param(grid-size)))
+        @include ag-theme-rtl((margin-right: var(--ag-grid-size)))
     }
 
     .ag-charts-format-top-level-group-toolbar {
@@ -138,7 +138,7 @@
         @include ag-color-property(color, alpine-active-color);
         @include ag-color-property(background-color, background-color);
         font-weight: 600;
-        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        padding: var(--ag-grid-size) ag-param(grid-size) * 2;
 
         &:hover {
             @include ag-color-property(border-color, alpine-active-color);
@@ -228,7 +228,7 @@
     .ag-panel-title-bar-button {
         @include ag-theme-rtl((
             margin-left: ag-param(grid-size) * 2,
-            margin-right: ag-param(grid-size)
+            margin-right: var(--ag-grid-size)
         ));
     }
 
