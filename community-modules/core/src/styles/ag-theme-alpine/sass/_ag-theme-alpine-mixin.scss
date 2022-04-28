@@ -45,7 +45,7 @@
     }
 
     %ag-text-input {
-        min-height: ag-param(grid-size) * 4;
+        min-height: calc(var(--ag-grid-size) * 4);
         border-radius: ag-param(border-radius);
 
         @include ag-theme-rtl((
@@ -54,7 +54,7 @@
     }
 
     .ag-tab {
-        padding: ag-param(grid-size) * 1.5;
+        padding: calc(var(--ag-grid-size) * 1.5);
         transition: color 0.4s;
     }
     .ag-tab-selected {
@@ -102,7 +102,7 @@
         border-left: dashed 1px;
         @include ag-color-property(border-left-color, border-color);
         padding-left: var(--ag-grid-size);
-        margin-bottom: ag-param(grid-size) * 2;
+        margin-bottom: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-charts-format-sub-level-group-title-bar {
@@ -126,7 +126,7 @@
     }
 
     .ag-side-buttons {
-        width: ag-param(grid-size) * 5;
+        width: calc(var(--ag-grid-size) * 5);
     }
 
     .ag-standard-button {
@@ -163,7 +163,7 @@
     }
 
     .ag-column-drop-vertical-title-bar {
-        padding: ag-param(grid-size) * 2;
+        padding: calc(var(--ag-grid-size) * 2);
         padding-bottom: 0px;
     }
 
@@ -172,8 +172,8 @@
         align-items: center;
         border: dashed 1px;
         @include ag-color-property(border-color, border-color);
-        margin: ag-param(grid-size) * 2;
-        padding: ag-param(grid-size) * 2;
+        margin: calc(var(--ag-grid-size) * 2);
+        padding: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-column-drop-empty-message {
@@ -241,14 +241,14 @@
         @include ag-color-property(background-color, control-panel-background-color);
         border-left: dashed 1px;
         @include ag-color-property(border-left-color, border-color);
-        margin-left: ag-param(icon-size) * 0.5;
-        padding-left: ag-param(icon-size) * 0.5;
-        margin-right: ag-param(grid-size) * 2;
+        margin-left: calc(var(--ag-icon-size) * 0.5);
+        padding-left: calc(var(--ag-icon-size) * 0.5);
+        margin-right: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-set-filter-list {
-        padding-top: ag-param(grid-size) * 0.5;
-        padding-bottom: ag-param(grid-size) * 0.5;
+        padding-top: calc(var(--ag-grid-size) * 0.5);
+        padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-layout-auto-height, .ag-layout-print {

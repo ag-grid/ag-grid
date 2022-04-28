@@ -181,7 +181,7 @@
     }
 
     .ag-details-row {
-        padding: ag-param(grid-size) * 5;
+        padding: calc(var(--ag-grid-size) * 5);
         @include ag-color-property(background-color, background-color);
     }
 

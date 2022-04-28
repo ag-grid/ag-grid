@@ -11,8 +11,8 @@
     }
 
     .ag-side-buttons {
-        padding-top: ag-param(grid-size) * 4;
-        width: ag-param(icon-size) + 4;
+        padding-top: calc(var(--ag-grid-size) * 4);
+        width: calc(var(--ag-icon-size) + 4);
         position: relative;
         @include ag-color-property(color, foreground-color);
         overflow: hidden;
@@ -28,7 +28,7 @@
             width: 100%;
         }
         margin: 0;
-        min-height: ag-param(grid-size) * 18;
+        min-height: calc(var(--ag-grid-size) * 18);
         background-position-y: center;
         background-position-x: center;
         background-repeat: no-repeat;

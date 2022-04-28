@@ -20,7 +20,7 @@
     }
 
     .ag-tab {
-        height: ag-param(grid-size) * 4.5;
+        height: calc(var(--ag-grid-size) * 4.5);
     }
 
     .ag-tabs-header,
@@ -115,7 +115,7 @@
 
     .ag-chart-data-section,
     .ag-chart-format-section {
-        padding-bottom: ag-param(grid-size) * 0.5;
+        padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-group-toolbar {
@@ -129,7 +129,7 @@
         @include ag-color-property(color, foreground-color);
         font-family: inherit;
         font-size: inherit;
-        height: ag-param(grid-size) * 5;
+        height: calc(var(--ag-grid-size) * 5);
         padding-bottom: var(--ag-grid-size);
 
         border-width: 0;
@@ -184,11 +184,11 @@
     }
 
     .ag-filter-toolpanel-header {
-        height: ag-param(grid-size) * 4;
+        height: calc(var(--ag-grid-size) * 4);
     }
 
     .ag-filter-toolpanel-group-level-0-header {
-        height: ag-param(grid-size) * 7;
+        height: calc(var(--ag-grid-size) * 7);
     }
 
     .ag-layout-auto-height, .ag-layout-print {

@@ -39,8 +39,8 @@
     }
 
     .ag-menu-option-text, .ag-compact-menu-option-text {
-        padding-left: ag-param(grid-size) * 2;
-        padding-right: ag-param(grid-size) * 2;
+        padding-left: calc(var(--ag-grid-size) * 2);
+        padding-right: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-menu-option-shortcut, .ag-compact-menu-option-shortcut {
@@ -124,7 +124,7 @@
     }
 
     .ag-set-filter-list, .ag-filter-no-matches {
-        height: ag-param(list-item-height) * 6;
+        height: calc(var(--ag-list-item-height) * 6);
     }
 
     .ag-set-filter-filter {

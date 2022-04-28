@@ -31,8 +31,8 @@
     .ag-status-bar {
         @include ag-border(primary, top);
         @include ag-color-property(color, disabled-foreground-color);
-        padding-right: ag-param(grid-size) * 4;
-        padding-left: ag-param(grid-size) * 4;
+        padding-right: calc(var(--ag-grid-size) * 4);
+        padding-left: calc(var(--ag-grid-size) * 4);
         line-height: 1.5;
     }
 
@@ -47,8 +47,8 @@
     .ag-status-name-value {
         margin-left: var(--ag-grid-size);
         margin-right: var(--ag-grid-size);
-        padding-top: ag-param(grid-size) * 2;
-        padding-bottom: ag-param(grid-size) * 2;
+        padding-top: calc(var(--ag-grid-size) * 2);
+        padding-bottom: calc(var(--ag-grid-size) * 2);
     }
 
 }

@@ -1,6 +1,6 @@
 @mixin ag-theme-base-part-filter-tool-panel {
     .ag-filter-toolpanel-header {
-        height: ag-param(grid-size) * 6;
+        height: calc(var(--ag-grid-size) * 6);
     }
 
     .ag-filter-toolpanel-header,
@@ -18,12 +18,12 @@
     }
 
     .ag-filter-toolpanel-group-level-0-header {
-        height: ag-param(grid-size) * 8;
+        height: calc(var(--ag-grid-size) * 8);
     }
 
     .ag-filter-toolpanel-group-item {
-        margin-top: ag-param(grid-size) * 0.5;
-        margin-bottom: ag-param(grid-size) * 0.5;
+        margin-top: calc(var(--ag-grid-size) * 0.5);
+        margin-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-filter-toolpanel-search {
@@ -32,7 +32,7 @@
 
     .ag-filter-toolpanel-search-input {
         flex-grow: 1;
-        height: ag-param(grid-size) * 4;
+        height: calc(var(--ag-grid-size) * 4);
         @include ag-theme-rtl(( margin-right: var(--ag-grid-size) ));
     }
 

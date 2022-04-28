@@ -172,7 +172,7 @@
     .ag-rich-select-list {
         width: 100%;
         min-width: 200px;
-        height: ag-param(row-height) * 6.5; // intentional
+        height: calc(var(--ag-row-height) * 6.5); // intentional
     }
 
     .ag-rich-select-value {
@@ -259,7 +259,7 @@
     }
 
     .ag-label-align-top .ag-label {
-        margin-bottom: ag-param(grid-size) * 0.5;
+        margin-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-slider-field,

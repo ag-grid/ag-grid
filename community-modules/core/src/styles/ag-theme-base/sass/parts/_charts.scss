@@ -82,7 +82,7 @@
     }
 
     .ag-charts-format-top-level-group-container {
-        margin-left: ag-param(grid-size) * 2;
+        margin-left: calc(var(--ag-grid-size) * 2);
         padding: var(--ag-grid-size);
     }
 

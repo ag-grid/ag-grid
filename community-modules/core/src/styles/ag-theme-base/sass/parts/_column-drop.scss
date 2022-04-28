@@ -4,8 +4,8 @@
     // CELL (SHARED)
     .ag-column-drop-cell {
         @include ag-color-property(background, chip-background-color);
-        border-radius: ag-param(grid-size) * 4;
-        height: ag-param(grid-size) * 4;
+        border-radius: calc(var(--ag-grid-size) * 4);
+        height: calc(var(--ag-grid-size) * 4);
         padding: 0 ag-param(grid-size) * 0.5;
         border: 1px solid transparent;
     }
@@ -17,14 +17,14 @@
     }
 
     .ag-column-drop-cell-button {
-        min-width: ag-param(grid-size) * 4;
+        min-width: calc(var(--ag-grid-size) * 4);
 
         margin: 0 ag-param(grid-size) * 0.5;
         @include ag-color-property(color, secondary-foreground-color);
     }
     
     .ag-column-drop-cell-drag-handle {
-        margin-left: ag-param(grid-size) * 2;
+        margin-left: calc(var(--ag-grid-size) * 2);
     }
 
     .ag-column-drop-cell-ghost {
@@ -108,7 +108,7 @@
 
     .ag-select-agg-func-virtual-list-item {
         cursor: default;
-        padding-left: ag-param(grid-size) * 2;
+        padding-left: calc(var(--ag-grid-size) * 2);
 
         &:hover {
             @include ag-color-property(background-color, selected-row-background-color);
