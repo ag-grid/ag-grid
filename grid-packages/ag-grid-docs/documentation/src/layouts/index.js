@@ -54,7 +54,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
                     <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" style={{width: 235, height: 40}}/></a>
-                    <HeaderNav/>
+                    <HeaderNav path={path}/>
                 </div>
             </header>
             {!fullScreenPage && <TopBar frameworks={frameworks} framework={framework} path={path}/>}

@@ -9,6 +9,13 @@ The grid comes with several provided themes which act as a great starting point 
 The table below provides a summary of the themes provided with the grid. To see the themes in action take a look at our [Demo Application](../../example)
 and try switching between the available themes.
 
+| Theme Name | Description |
+|------------|-------------|
+|**ag-theme-alpine**<br/>**ag-theme-alpine-dark** | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+|**ag-theme-balham**<br/>**ag-theme-balham-dark** | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
+|**ag-theme-material** | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
+
+
 ## Applying a Theme to an App
 
 To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Alpine theme:

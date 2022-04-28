@@ -15,6 +15,7 @@
     max-width: 100%;
     width: 100%;
     height: 100%;
+    min-height: 90vh;
 
     &__grid-wrapper {
         flex: 1 1 auto;
@@ -172,6 +173,7 @@ button[disabled] {
         }
     }
 }
+
 .collapsed {
     + .options-expander > div span::before {
         content: '\2193'

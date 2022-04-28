@@ -211,7 +211,7 @@ function suppressColumnMoveAnimation() {
 }
 
 function toggleOptionsCollapsed() {
-    var optionsEl = document.querySelector('.example-toolbar');
+    var optionsEl = document.querySelector('#example-toolbar');
 
     optionsEl.classList.toggle('collapsed');
 }
