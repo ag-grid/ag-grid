@@ -880,6 +880,8 @@ export interface GridOptions {
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
     getRowId?: GetRowIdFunc;
+    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */
+    resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */

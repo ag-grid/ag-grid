@@ -930,6 +930,8 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
+    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost.     */
+    @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
@@ -1242,6 +1244,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
+    static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     // @END@
 }
 
