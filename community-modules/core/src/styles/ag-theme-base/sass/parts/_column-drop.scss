@@ -6,7 +6,7 @@
         @include ag-color-property(background, chip-background-color);
         border-radius: calc(var(--ag-grid-size) * 4);
         height: calc(var(--ag-grid-size) * 4);
-        padding: 0 ag-param(grid-size) * 0.5;
+        padding: 0 calc(var(--ag-grid-size) * 0.5);
         border: 1px solid transparent;
     }
 
@@ -19,7 +19,7 @@
     .ag-column-drop-cell-button {
         min-width: calc(var(--ag-grid-size) * 4);
 
-        margin: 0 ag-param(grid-size) * 0.5;
+        margin: 0 calc(var(--ag-grid-size) * 0.5);
         @include ag-color-property(color, secondary-foreground-color);
     }
     
