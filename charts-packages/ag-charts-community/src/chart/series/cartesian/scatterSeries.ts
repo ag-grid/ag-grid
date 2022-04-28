@@ -16,7 +16,7 @@ import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
 import { MeasuredLabel, PlacedLabel, PointLabelDatum } from "../../../util/labelPlacement";
-import { isContinuous } from "../../../util/value";
+import { isContinuous, isNumber } from "../../../util/value";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -58,6 +58,7 @@ export class ScatterSeries extends CartesianSeries {
     private yDomain: number[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
+    private datum: any[] = [];
     private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
@@ -199,17 +200,25 @@ export class ScatterSeries extends CartesianSeries {
 
         const data = xKey && yKey && this.data ? this.data : [];
 
-        this.xData = data.map(d => d[xKey]);
-        this.yData = data.map(d => d[yKey]);
+        const xyData = data.map(d => ({
+            x: d[xKey],
+            y: d[yKey],
+            datum: d,
+            size: sizeKey ? d[sizeKey] : null,
+            label: String(labelKey ? d[labelKey] : null),
+        }))
+            .filter(({x, y}) => x != null && x !== NaN && y != null && y !== NaN);
+        this.xData = xyData.map(({x}) => x);
+        this.yData = xyData.map(({y}) => y);
+        this.datum = xyData.map(({datum}) => datum);
 
-        this.sizeData = sizeKey ? data.map(d => d[sizeKey]) : [];
+        this.sizeData = sizeKey ? xyData.map(({size}) => size) : [];
 
         const font = label.getFont();
-        this.labelData = labelKey ? data.map(d => {
-            const text = String(d[labelKey]);
-            const size = HdpiCanvas.getTextSize(text, font);
+        this.labelData = labelKey ? xyData.map(({label}) => {
+            const size = HdpiCanvas.getTextSize(label, font);
             return {
-                text,
+                text: label,
                 ...size
             };
         }) : [];
@@ -270,7 +279,7 @@ export class ScatterSeries extends CartesianSeries {
         const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { xData, yData, sizeData, sizeScale, marker } = this;
+        const { xData, yData, datum, sizeData, sizeScale, marker } = this;
         const nodeData: ScatterNodeDatum[] = [];
 
         sizeScale.range = [marker.size, marker.maxSize];
@@ -291,7 +300,7 @@ export class ScatterSeries extends CartesianSeries {
 
             nodeData.push({
                 series: this,
-                datum: data[i],
+                datum: datum[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
                 label: this.labelData[i]
