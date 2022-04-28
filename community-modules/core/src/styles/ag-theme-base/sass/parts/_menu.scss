@@ -34,7 +34,7 @@
     }
 
     .ag-menu-option-icon, .ag-compact-menu-option-icon {
-        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
+        @include ag-theme-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
         width: var(--ag-icon-size);
     }
 
@@ -116,7 +116,7 @@
     }
 
     .ag-filter-condition-operator-or {
-        @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
+        @include ag-theme-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
     }
 
     .ag-set-filter-select-all {
@@ -156,7 +156,7 @@
 
     .ag-filter-apply-panel-button {
         line-height: 1.5;
-        @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
+        @include ag-theme-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
     }
 
     .ag-simple-filter-body-wrapper {

@@ -264,7 +264,7 @@
 
     .ag-slider-field,
     .ag-angle-select-field {
-        @include ag-theme-rtl((margin-right: ag-param(grid-size) * 2));
+        @include ag-theme-rtl((margin-right: calc(var(--ag-grid-size) * 2)));
     }
 
     .ag-angle-select-parent-circle {

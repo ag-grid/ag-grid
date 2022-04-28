@@ -227,7 +227,7 @@
 
     .ag-panel-title-bar-button {
         @include ag-theme-rtl((
-            margin-left: ag-param(grid-size) * 2,
+            margin-left: calc(var(--ag-grid-size) * 2),
             margin-right: var(--ag-grid-size)
         ));
     }

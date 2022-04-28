@@ -102,7 +102,7 @@
         @include ag-card();
 
         @include ag-color-property(background, background-color);
-        height: ag-param(grid-size) * 5 * 3.5;
+        height: calc(var(--ag-grid-size) * 5 * 3.5);
         padding: 0;
     }
 
