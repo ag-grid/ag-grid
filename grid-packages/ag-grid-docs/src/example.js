@@ -188,19 +188,6 @@ var groupColumn = {
     }
 };
 
-//var aVisible = true;
-//setTimeout( function() {
-//    var start = new Date().getTime();
-//    console.log('start');
-//    aVisible = !aVisible;
-//    gridOptions.columnApi.setColumnsVisible(gridOptions.columnApi.getAllColumns(), aVisible);
-//    //gridOptions.columnApi.getAllColumns().forEach( function(column) {
-//    //    gridOptions.columnApi.setColumnVisible(column, aVisible);
-//    //});
-//    var end = new Date().getTime();
-//    console.log('end ' + (end - start));
-//}, 5000);
-
 // the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
 function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -743,14 +730,6 @@ function getContextMenuItems(params) {
 
     return result;
 }
-
-//var groupColumn = {
-//    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
-//    cellRenderer: {
-//        renderer: "group",
-//        checkbox: true
-//    }
-//};
 
 var desktopDefaultCols = [
     // {
@@ -1706,7 +1685,7 @@ function countryCellRenderer(params) {
 }
 
 function start() {
-    if(document.getElementById('myGrid') && window.agGrid) {
+    if(document.getElementById('myGrid') && window.agGrid && !gridDiv) {
         gridDiv = document.getElementById('myGrid');
 
         document.getElementById('data-size').addEventListener('change', onDataSizeChanged);
