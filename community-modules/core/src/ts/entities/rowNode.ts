@@ -632,7 +632,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setExpanded(expanded: boolean): void {
+    public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void {
         if (this.expanded === expanded) { return; }
 
         this.expanded = expanded;
@@ -642,7 +642,8 @@ export class RowNode implements IEventEmitter {
         }
 
         const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
-            expanded
+            expanded,
+            event: e || null
         });
 
         this.beans.rowNodeEventThrottle.dispatchExpanded(event);

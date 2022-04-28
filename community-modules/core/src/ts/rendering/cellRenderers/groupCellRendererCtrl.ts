@@ -496,14 +496,14 @@ export class GroupCellRendererCtrl extends BeanStub {
         // so if we expand a node, it does not also get selected.
         stopPropagationForAgGrid(mouseEvent);
 
-        this.onExpandOrContract();
+        this.onExpandOrContract(mouseEvent);
     }
 
-    public onExpandOrContract(): void {
+    public onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
-        rowNode.setExpanded(nextExpandState);
+        rowNode.setExpanded(nextExpandState, e);
     }
 
     private isExpandable(): boolean {
@@ -656,7 +656,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (cellEditable) { return; }
 
-        this.onExpandOrContract();
+        this.onExpandOrContract(event);
     }
 
     public onCellDblClicked(mouseEvent: MouseEvent): void {
@@ -671,7 +671,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             || isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
-            this.onExpandOrContract();
+            this.onExpandOrContract(mouseEvent);
         }
     }
 }
