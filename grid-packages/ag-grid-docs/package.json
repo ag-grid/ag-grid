@@ -6,7 +6,7 @@
     "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
     "build": "npm run generate-examples",
     "clean-examples-dir": "cd documentation/doc-pages && git clean -fxd",
-    "generate-examples": "echo 'xx'",
+    "generate-examples": "node dev-server.js generate-examples",
     "start": "npx gulp serve --max_old_space_size=6144",
     "serve-core-only": "npx gulp --max_old_space_size=6144 serve-core-only",
     "serve-with-formatting": "npx gulp serve-with-formatting",
