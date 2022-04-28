@@ -14,7 +14,7 @@
     .ag-panel-title-bar-title,
     .ag-side-button-button,
     .ag-multi-filter-group-title-bar {
-        font-size: ag-param(font-size) - 1;
+        font-size: ag-param(font-size) - 1px;
         font-weight: 600;
         @include ag-color-property(color, header-foreground-color);
     }
@@ -76,7 +76,7 @@
     }
 
     .ag-column-drop-vertical-empty-message {
-        font-size: ag-param(font-size) - 1;
+        font-size: ag-param(font-size) - 1px;
         font-weight: 600;
         @include ag-color-property(color, disabled-foreground-color);
 
@@ -179,7 +179,7 @@
     }
 
     .ag-dnd-ghost {
-        font-size: ag-param(font-size) - 1;
+        font-size: ag-param(font-size) - 1px;
         font-weight: 600;
     }
 

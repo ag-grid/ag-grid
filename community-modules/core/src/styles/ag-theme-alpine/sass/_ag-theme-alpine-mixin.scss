@@ -41,7 +41,7 @@
     }
 
     .ag-row {
-        font-size: ag-param(font-size) + 1;
+        font-size: ag-param(font-size) + 1px;
     }
 
     %ag-text-input {
@@ -121,7 +121,7 @@
     }
 
     .ag-dnd-ghost {
-        font-size: ag-param(font-size) - 1;
+        font-size: ag-param(font-size) - 1px;
         font-weight: 700;
     }
 

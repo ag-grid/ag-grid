@@ -11,7 +11,7 @@
     }
 
     .ag-menu-separator {
-        height: (ag-param(grid-size) * 2) + 1;
+        height: (ag-param(grid-size) * 2) + 1px;
     }
 
     .ag-menu-separator-part::after {
@@ -95,11 +95,11 @@
     }
 
     .ag-menu:not(.ag-tabs) .ag-filter-select {
-        min-width: (ag-param(menu-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2);
+        min-width: (ag-param(menu-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2px);
     }
 
     .ag-tabs .ag-filter-select {
-        min-width: (ag-param(tab-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2);
+        min-width: (ag-param(tab-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2px);
     }
 
     .ag-filter-select .ag-picker-field-wrapper {

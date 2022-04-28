@@ -12,7 +12,7 @@
 
     .ag-side-buttons {
         padding-top: calc(var(--ag-grid-size) * 4);
-        width: calc(var(--ag-icon-size) + 4);
+        width: calc(var(--ag-icon-size) + 4px);
         position: relative;
         @include ag-color-property(color, foreground-color);
         overflow: hidden;
