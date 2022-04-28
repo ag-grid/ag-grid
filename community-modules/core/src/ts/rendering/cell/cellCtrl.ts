@@ -257,8 +257,6 @@ export class CellCtrl extends BeanStub {
         // thus allowing different min heights for different rows.
         const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
 
-        console.log(`setup ${this.rowNode.id}`);
-
         const measureHeight = (timesCalled: number) => {
             if (this.editing) { return; }
             // because of the retry's below, it's possible the retry's go beyond
@@ -286,7 +284,6 @@ export class CellCtrl extends BeanStub {
             }
 
             const newHeight = Math.max(autoHeight, minRowHeight);
-            console.log(`setting height id=${this.rowNode.id}, autoHeight=${autoHeight}, height=${newHeight}, rowHeightEstimated=${this.rowNode.rowHeightEstimated}`);
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
