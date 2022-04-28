@@ -743,7 +743,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "field": {
-      "description": "/** The field of the row to get the cells data from */",
+      "description": "/** The field of the row object to get the cell's data from.\n * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`. */",
       "type": { "returnType": "string", "optional": true }
     },
     "type": {
@@ -2311,7 +2311,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
-      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+      "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {
@@ -20635,7 +20635,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "field": {
-      "description": "/** The field of the row to get the cells data from */",
+      "description": "/** The field of the row object to get the cell's data from.\n * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`. */",
       "type": { "returnType": "string", "optional": true }
     },
     "type": {
@@ -21469,7 +21469,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
-      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+      "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {
@@ -24157,7 +24157,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
-      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+      "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {
@@ -26855,7 +26855,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
-      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+      "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {

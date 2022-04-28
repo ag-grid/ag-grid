@@ -346,7 +346,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
+    /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
