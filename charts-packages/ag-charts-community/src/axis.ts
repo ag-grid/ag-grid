@@ -519,6 +519,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.fill = label.color;
                 node.text = this.formatTickDatum(datum, index);
 
+                node.visible = node.parent!.visible;
+                if (node.visible !== true) { return; }
+
                 labelBboxes.set(node.id, node.computeBBox());
             });
 
@@ -526,7 +529,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         // Only consider a fraction of the total range to allow more space for each label
         const availableRange = requestedRangeMax - requestedRangeMin;
-        const step = availableRange / ticks.length;
+        const step = availableRange / labelBboxes.size;
 
         const calculateLabelsLength = (bboxes: Map<string, BBox>, useWidth: boolean) => {
             let totalLength = 0;
@@ -586,7 +589,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation;
-            label.visible = true;
         });
 
         if (availableRange >= 0) {
