@@ -490,7 +490,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
 
-    public onExpandClicked(mouseEvent: MouseEvent): void {
+    private onExpandClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // so if we expand a node, it does not also get selected.
@@ -499,7 +499,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.onExpandOrContract(mouseEvent);
     }
 
-    public onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
+    private onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
@@ -659,7 +659,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.onExpandOrContract(event);
     }
 
-    public onCellDblClicked(mouseEvent: MouseEvent): void {
+    private onCellDblClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // we want to avoid acting on double click events on the expand / contract icon,
