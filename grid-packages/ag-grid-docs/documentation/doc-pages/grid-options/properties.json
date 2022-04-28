@@ -122,7 +122,12 @@
                 "url": "/column-updating-definitions/#maintain-column-order"
             }
         },
-        "suppressFieldDotNotation": {}
+        "suppressFieldDotNotation": {
+            "more": {
+                "name": "Accessing Row Data Values",
+                "url": "/column-definitions/#accessing-row-data-values"
+            }
+        }
     },
     "headers": {
         "meta": {
