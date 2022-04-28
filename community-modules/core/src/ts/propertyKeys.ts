@@ -62,7 +62,7 @@ export class PropertyKeys {
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
         'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation',
-        'resetRowDataOnUpdate'
+        'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
