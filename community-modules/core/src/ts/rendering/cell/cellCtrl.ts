@@ -295,7 +295,6 @@ export class CellCtrl extends BeanStub {
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
 
         this.addDestroyFunc(() => {
-            console.log(`destroy ${this.rowNode.id}`);
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
