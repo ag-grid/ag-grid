@@ -12,7 +12,7 @@ const LicensePricing = () => {
                     <section className={styles['license-pricing__content__packages']}>
                         <div>
                             <div>
-                                <img src="images/loudspeaker_grey.png" style={{maxWidth: 50}} alt="warning"/>
+                                <img src="../images/loudspeaker_grey.png" style={{maxWidth: 50}} alt="warning"/>
                             </div>
                             <div>
                                 <h3>Sales Update</h3>
@@ -25,7 +25,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Community.svg" style={{maxWidth: 50}} alt="MIT"/>
+                                <img src="../images/pricing/Community.svg" style={{maxWidth: 50}} alt="MIT"/>
                             </div>
                             <div>
                                 <h3>AG Grid Community</h3>
@@ -43,7 +43,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/svg/enterprise.svg" style={{maxWidth: 50}} alt="Enterprise"/>
+                                <img src="../images/svg/enterprise.svg" style={{maxWidth: 50}} alt="Enterprise"/>
                             </div>
                             <div>
                                 <h3>AG Grid Enterprise</h3>
@@ -77,7 +77,7 @@ const LicensePricing = () => {
                         <div className={styles['license-pricing__licenses__license-container']}>
                             <div className={styles['license-pricing__licenses__license']} style={{borderColor: "#009ede"}}>
                                 <div>
-                                    <img src="images/pricing/SA.svg" alt="Single Application"/>
+                                    <img src="../images/pricing/SA.svg" alt="Single Application"/>
                                     <h3>AG Grid Enterprise</h3>
                                     <h2>Single Application</h2>
                                     <h3>Development License</h3>
@@ -94,7 +94,7 @@ const LicensePricing = () => {
                             </div>
                             <div className={styles['license-pricing__licenses__license']} style={{borderColor: "#009d70"}}>
                                 <div>
-                                    <img src="images/pricing/MA.svg" alt="Multiple Applications"/>
+                                    <img src="../images/pricing/MA.svg" alt="Multiple Applications"/>
                                     <h3>AG Grid Enterprise</h3>
                                     <h2>Multiple Applications</h2>
                                     <h3>Development License</h3>
@@ -111,7 +111,7 @@ const LicensePricing = () => {
                             </div>
                             <div className={styles['license-pricing__licenses__license']} style={{borderColor: "#fbad18"}}>
                                 <div>
-                                    <img src="images/pricing/Deployment%20Add-on.svg" alt="Deployment License"/>
+                                    <img src="../images/pricing/Deployment%20Add-on.svg" alt="Deployment License"/>
                                     <h3>AG Grid Enterprise</h3>
                                     <h2>Deployment License</h2>
                                     <h3>Add-on</h3>
@@ -155,7 +155,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/SA.svg"/>
+                                <img src="../images/pricing/SA.svg"/>
                             </div>
                             <div>
                                 <h3>Single Application Development License</h3>
@@ -191,7 +191,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/MA.svg"/>
+                                <img src="../images/pricing/MA.svg"/>
                             </div>
                             <div>
 
@@ -226,7 +226,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Deployment%20Add-on.svg"/>
+                                <img src="../images/pricing/Deployment%20Add-on.svg"/>
                             </div>
                             <div>
                                 <h3>Deployment License Add-on</h3>
@@ -298,7 +298,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Perpetual.svg" alt="Perpetual"/>
+                                <img src="../images/pricing/Perpetual.svg" alt="Perpetual"/>
                             </div>
                             <div>
                                 <span>Perpetual License</span>
@@ -313,13 +313,13 @@ const LicensePricing = () => {
                                     alter older versions.
                                 </p>
                                 <div>
-                                    <img src="images/pricing/Version%201.svg" alt="Perpetual timeline"/>
+                                    <img src="../images/pricing/Version%201.svg" alt="Perpetual timeline"/>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/1-year.svg" alt="1-year"/>
+                                <img src="../images/pricing/1-year.svg" alt="1-year"/>
                             </div>
                             <div>
                                 <span>1-year Subscription to New Versions (included)</span>
@@ -336,13 +336,13 @@ const LicensePricing = () => {
                                     alter older versions.
                                 </p>
                                 <div>
-                                    <img src="images/pricing/Versions%202.svg" alt="1-year timeline"/>
+                                    <img src="../images/pricing/Versions%202.svg" alt="1-year timeline"/>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Renewal%20icon.svg" alt="Renewal"/>
+                                <img src="../images/pricing/Renewal%20icon.svg" alt="Renewal"/>
                             </div>
                             <div>
                                 <span>Subscription Renewal (optional)</span>
@@ -360,7 +360,7 @@ const LicensePricing = () => {
                                     releases; we don’t patch, fix or in any way alter older versions.
                                 </p>
                                 <div>
-                                    <img src="images/pricing/Versions%203.svg" alt="Renewal timeline"/>
+                                    <img src="../images/pricing/Versions%203.svg" alt="Renewal timeline"/>
                                 </div>
                             </div>
                         </div>
@@ -402,7 +402,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Dependency.svg" alt="Project dependency"/>
+                                <img src="../images/pricing/Dependency.svg" alt="Project dependency"/>
                             </div>
                             <div>
                                 <span>Project Dependency</span>
@@ -428,7 +428,7 @@ const LicensePricing = () => {
                         </div>
                         <div>
                             <div>
-                                <img src="images/pricing/Indirect.svg" alt="Indirect dependency"/>
+                                <img src="../images/pricing/Indirect.svg" alt="Indirect dependency"/>
                             </div>
                             <div>
                                 <span>Indirect Project Dependency</span>

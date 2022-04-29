@@ -194,11 +194,7 @@ const plugins = [
                 const allPaths = allSitePage.nodes
                     .map((node) => {
                         return node.path;
-                    }).concat(
-                        [
-                            '/ag-grid-jobs-board/'
-                        ]
-                    );
+                    });
 
                 return allPaths.map(path => ({
                     path,

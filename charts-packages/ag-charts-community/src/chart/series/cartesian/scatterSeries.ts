@@ -58,6 +58,7 @@ export class ScatterSeries extends CartesianSeries {
     private yDomain: number[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
+    private validData: any[] = [];
     private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
@@ -198,14 +199,19 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const data = xKey && yKey && this.data ? this.data : [];
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
 
-        this.xData = data.map(d => d[xKey]);
-        this.yData = data.map(d => d[yKey]);
+        this.validData = data.filter(d => this.checkDatum(d[xKey], isContinuousX) !== undefined && this.checkDatum(d[yKey], isContinuousY) !== undefined);
+        this.xData = this.validData.map((d) => d[xKey]);
+        this.yData = this.validData.map((d) => d[yKey]);
 
-        this.sizeData = sizeKey ? data.map(d => d[sizeKey]) : [];
+        this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 
         const font = label.getFont();
-        this.labelData = labelKey ? data.map(d => {
+        this.labelData = labelKey ? this.validData.map((d) => {
             const text = String(d[labelKey]);
             const size = HdpiCanvas.getTextSize(text, font);
             return {
@@ -270,7 +276,7 @@ export class ScatterSeries extends CartesianSeries {
         const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { xData, yData, sizeData, sizeScale, marker } = this;
+        const { xData, yData, validData, sizeData, sizeScale, marker } = this;
         const nodeData: ScatterNodeDatum[] = [];
 
         sizeScale.range = [marker.size, marker.maxSize];
@@ -291,7 +297,7 @@ export class ScatterSeries extends CartesianSeries {
 
             nodeData.push({
                 series: this,
-                datum: data[i],
+                datum: validData[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
                 label: this.labelData[i]

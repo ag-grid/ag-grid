@@ -87,7 +87,7 @@
     "type": { "returnType": "string" }
   },
   "field": {
-    "description": "/** The field of the row to get the cells data from */",
+    "description": "/** The field of the row object to get the cell's data from.\n * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`. */",
     "type": { "returnType": "string" }
   },
   "type": {

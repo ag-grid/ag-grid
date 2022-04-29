@@ -1,8 +1,6 @@
 import { Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
-import { getData } from "./data";
+import { getData, createNewRowData } from "./data";
 
-
-declare function createNewRowData(category: string): any;
 
 function poundFormatter(params: ValueFormatterParams) {
   return (

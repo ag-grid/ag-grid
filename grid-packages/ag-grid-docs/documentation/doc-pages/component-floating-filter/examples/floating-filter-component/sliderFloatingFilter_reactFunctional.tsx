@@ -9,11 +9,6 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams {
 export default forwardRef((props: SliderFloatingFilterParams, ref) => {
     const [currentValue, setCurrentValue] = useState<number>(0);
 
-    useEffect(() => {
-        let valueToUse = currentValue === 0 ? null : currentValue;
-        props.parentFilterInstance(instance => instance.onFloatingFilterChanged('greaterThan', valueToUse));
-    }, [currentValue]);
-
     useImperativeHandle(ref, () => {
         return {
             onParentModelChanged(parentModel: NumberFilterModel) {
@@ -26,14 +21,10 @@ export default forwardRef((props: SliderFloatingFilterParams, ref) => {
 
     const valueChanged = (event: any) => {
         setCurrentValue(event.target.value);
-    };
-
-    const style = {
-        border: '2px solid #22ff22',
-        borderRadius: '5px',
-        backgroundColor: '#bbffbb',
-        width: '200px',
-        height: '50px'
+        let valueForMainFilter = (event.target.value === "0") ? null : event.target.value;
+        props.parentFilterInstance(instance => {
+            instance.onFloatingFilterChanged('greaterThan', valueForMainFilter);
+        });
     };
 
     return (

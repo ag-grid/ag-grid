@@ -188,19 +188,6 @@ var groupColumn = {
     }
 };
 
-//var aVisible = true;
-//setTimeout( function() {
-//    var start = new Date().getTime();
-//    console.log('start');
-//    aVisible = !aVisible;
-//    gridOptions.columnApi.setColumnsVisible(gridOptions.columnApi.getAllColumns(), aVisible);
-//    //gridOptions.columnApi.getAllColumns().forEach( function(column) {
-//    //    gridOptions.columnApi.setColumnVisible(column, aVisible);
-//    //});
-//    var end = new Date().getTime();
-//    console.log('end ' + (end - start));
-//}, 5000);
-
 // the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
 function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -211,7 +198,7 @@ function suppressColumnMoveAnimation() {
 }
 
 function toggleOptionsCollapsed() {
-    var optionsEl = document.querySelector('.example-toolbar');
+    var optionsEl = document.querySelector('#example-toolbar');
 
     optionsEl.classList.toggle('collapsed');
 }
@@ -732,7 +719,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
+            icon: '<img src="../images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function() {
                 var value = params.value ? params.value : '<empty>';
@@ -743,14 +730,6 @@ function getContextMenuItems(params) {
 
     return result;
 }
-
-//var groupColumn = {
-//    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
-//    cellRenderer: {
-//        renderer: "group",
-//        checkbox: true
-//    }
-//};
 
 var desktopDefaultCols = [
     // {
@@ -1317,7 +1296,7 @@ PersonFilter.prototype.setupGui = function() {
         '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" aria-label="Full name search" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
-        '<div><img src="images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
+        '<div><img src="../images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
     this.eFilterText = this.gui.querySelector('#filterText');
@@ -1526,7 +1505,7 @@ function ratingRendererGeneral(value, forFilter) {
 
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
+            result += '<img src="../images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
         }
     }
 
@@ -1706,7 +1685,7 @@ function countryCellRenderer(params) {
 }
 
 function start() {
-    if(document.getElementById('myGrid') && window.agGrid) {
+    if(document.getElementById('myGrid') && window.agGrid && !gridDiv) {
         gridDiv = document.getElementById('myGrid');
 
         document.getElementById('data-size').addEventListener('change', onDataSizeChanged);

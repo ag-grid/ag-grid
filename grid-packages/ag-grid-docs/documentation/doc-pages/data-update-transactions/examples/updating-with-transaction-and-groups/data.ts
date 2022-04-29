@@ -38,7 +38,7 @@ var models = [
 var categories = ['Sold', 'For Sale', 'In Workshop']
 
 
-function createNewRowData(category: string) {
+export function createNewRowData(category: string) {
     var newData = {
         // use make if provided, otherwise select random make
         category: category,

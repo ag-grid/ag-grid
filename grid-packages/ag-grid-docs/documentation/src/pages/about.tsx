@@ -68,21 +68,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/niall.jpg' alt="Niall Crosby, Founder / CEO / CTO"/>
+                                        <img src='../images/team/niall.jpg' alt="Niall Crosby, Founder / CEO / CTO"/>
                                     </div>
                                     <h3>Niall Crosby</h3>
                                     <h4>CEO / CTO</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/rob.jpg' alt="Rob Clarke, Head of Engineering"/>
+                                        <img src='../images/team/rob.jpg' alt="Rob Clarke, Head of Engineering"/>
                                     </div>
                                     <h3>Rob Clarke</h3>
                                     <h4>Head of Engineering</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
+                                        <img src='../images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
                                     </div>
                                     <h3>Sean Landsman</h3>
                                     <h4>Lead Developer, Frameworks</h4>
@@ -91,21 +91,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/gil.jpg' alt="Guilherme Lopes, Lead Developer"/>
+                                        <img src='../images/team/gil.jpg' alt="Guilherme Lopes, Lead Developer"/>
                                     </div>
                                     <h3>Guilherme Lopes</h3>
                                     <h4>Lead Developer, UI</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/stephen.jpeg' alt="Stephen Cooper, Developer"/>
+                                        <img src='../images/team/stephen.jpeg' alt="Stephen Cooper, Developer"/>
                                     </div>
                                     <h3>Stephen Cooper</h3>
                                     <h4>Developer, Grid Core</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/alanT.jpg' alt="Alan Treadway, Developer"/>
+                                        <img src='../images/team/alanT.jpg' alt="Alan Treadway, Developer"/>
                                     </div>
                                     <h3>Alan Treadway</h3>
                                     <h4>Developer, Grid Core</h4>
@@ -114,21 +114,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
+                                        <img src='../images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
                                     </div>
                                     <h3>Mana Peirov</h3>
                                     <h4>Developer, Data Visualisation</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services"/>
+                                        <img src='../images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services"/>
                                     </div>
                                     <h3>Alberto Gutierrez</h3>
                                     <h4>Head of Customer Services</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/shuheb.jpg' alt="Shuheb Ahmed, Developer"/>
+                                        <img src='../images/team/shuheb.jpg' alt="Shuheb Ahmed, Developer"/>
                                     </div>
                                     <h3>Shuheb Ahmed</h3>
                                     <h4>Developer</h4>
@@ -137,21 +137,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/bam.jpg' alt="Bamdad Fard, Developer"/>
+                                        <img src='../images/team/bam.jpg' alt="Bamdad Fard, Developer"/>
                                     </div>
                                     <h3>Bamdad Fard</h3>
                                     <h4>Developer</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/louis.jpg' alt="Louis Moore, Developer"/>
+                                        <img src='../images/team/louis.jpg' alt="Louis Moore, Developer"/>
                                     </div>
                                     <h3>Louis Moore</h3>
                                     <h4>Developer</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
+                                        <img src='../images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
                                     </div>
                                     <h3>Marats Stelihs</h3>
                                     <h4>Developer</h4>
@@ -160,21 +160,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/kiril.png' alt="Kiril Matev, Developer"/>
+                                        <img src='../images/team/kiril.png' alt="Kiril Matev, Developer"/>
                                     </div>
                                     <h3>Kiril Matev</h3>
                                     <h4>Technical Product Manager</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
+                                        <img src='../images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
                                     </div>
                                     <h3>Viqas Hussain</h3>
                                     <h4>Lead Developer, E-commerce</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
+                                        <img src='../images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
                                     </div>
                                     <h3>Alan Richardson</h3>
                                     <h4>Digital Marketing</h4>
@@ -188,21 +188,21 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/dimo.jpg' alt="Dimo Iliev, Managing Director"/>
+                                        <img src='../images/team/dimo.jpg' alt="Dimo Iliev, Managing Director"/>
                                     </div>
                                     <h3>Dimo Iliev</h3>
                                     <h4>Managing Director</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
+                                        <img src='../images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
                                     </div>
                                     <h3>Simon Kenny</h3>
                                     <h4>Sales Director</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Counsel"/>
+                                        <img src='../images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Counsel"/>
                                     </div>
                                     <h3>Nathan Gauge-Klein</h3>
                                     <h4>General Counsel</h4>
@@ -211,7 +211,7 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/victoria.jpeg'
+                                        <img src='../images/team/victoria.jpeg'
                                              alt="Victoria Tennant, Business Development Manager"/>
                                     </div>
                                     <h3>Victoria Tennant</h3>
@@ -219,14 +219,14 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
+                                        <img src='../images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
                                     </div>
                                     <h3>Dimple Unalkat</h3>
                                     <h4>Initials Team Manager</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
+                                        <img src='../images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
                                     </div>
                                     <h3>Sachshell Rhoden</h3>
                                     <h4>Sales Operations Manager</h4>
@@ -235,7 +235,7 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/alison.jpeg'
+                                        <img src='../images/team/alison.jpeg'
                                              alt="Alison Bunworth, Business Development Manager"/>
                                     </div>
                                     <h3>Alison Bunworth</h3>
@@ -243,14 +243,14 @@ const AboutPage = () => {
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/robD.jpg' alt="Rob Dunkiert, Customer Experience Manager"/>
+                                        <img src='../images/team/robD.jpg' alt="Rob Dunkiert, Customer Experience Manager"/>
                                     </div>
                                     <h3>Rob Dunkiert</h3>
                                     <h4>Customer Experience Manager</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
+                                        <img src='../images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
                                     </div>
                                     <h3>Ryan Short</h3>
                                     <h4>Customer Experience Manager</h4>
@@ -259,14 +259,14 @@ const AboutPage = () => {
                             <div className="row">
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
+                                        <img src='../images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
                                     </div>
                                     <h3>Seweety Kumar</h3>
                                     <h4>Customer Experience Manager</h4>
                                 </div>
                                 <div className="col-md-4">
                                     <div>
-                                        <img src='images/team/kathryn.png' alt="Kathryn Knapman, Customer Experience Manager"/>
+                                        <img src='../images/team/kathryn.png' alt="Kathryn Knapman, Customer Experience Manager"/>
                                     </div>
                                     <h3>Kathryn Knapman</h3>
                                     <h4>PA to CEO and Office Manager</h4>

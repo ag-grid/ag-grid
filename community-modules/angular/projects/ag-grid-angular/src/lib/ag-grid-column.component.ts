@@ -94,7 +94,8 @@ export class AgGridColumn {
      * If both field and colId are missing, a unique ID will be generated.
      * This ID is used to identify the column in the API for sorting, filtering etc.     */
     @Input() public colId: string | undefined;
-    /** The field of the row to get the cells data from     */
+    /** The field of the row object to get the cell's data from.
+     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.     */
     @Input() public field: string | undefined;
     /** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
      * This helps to reduce duplication of properties when you have a lot of common column properties.     */

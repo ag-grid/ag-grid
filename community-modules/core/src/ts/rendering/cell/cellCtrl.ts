@@ -263,18 +263,26 @@ export class CellCtrl extends BeanStub {
             // the rows life.
             if (!this.isAlive()) { return; }
 
-            // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
-            // maybe it will be ready next VM turn
-            const doc = this.beans.gridOptionsWrapper.getDocument();
-
-            if ((!doc || !doc.contains(eAutoHeightContainer)) && timesCalled < 5) {
-                this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
-                return;
-            }
-
             const { paddingTop, paddingBottom } = getElementSize(eParentCell);
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+
+            if (timesCalled<5) {
+                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
+                // maybe it will be ready next VM turn
+                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const notYetInDom = !doc || !doc.contains(eAutoHeightContainer);
+
+                // this happens in React, where React hasn't put any content in. we say 'possibly'
+                // as a) may not be React and b) the cell could be empty anyway
+                const possiblyNoContentYet = autoHeight==0;
+
+                if (notYetInDom || possiblyNoContentYet) {
+                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    return;
+                }
+            }
+
             const newHeight = Math.max(autoHeight, minRowHeight);
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };

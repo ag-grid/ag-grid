@@ -20,8 +20,27 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const eButtonWrapper = useRef<HTMLDivElement>(null);
     const eButtonShowMainFilter = useRef<HTMLButtonElement>(null);
 
-    const userCompResolve = useRef<(value: IFloatingFilter)=>void>();
-    const userCompPromise = useMemo( ()=> new AgPromise<IFloatingFilter>( resolve => userCompResolve.current = resolve), []);
+    const alreadyResolved = useRef<boolean>(false);
+    const userCompResolve = useRef<(value: IFloatingFilter)=>void>();  
+    const userCompPromise = useRef<AgPromise<IFloatingFilter>>();
+    useEffectOnce( ()=> {
+        userCompPromise.current = new AgPromise<IFloatingFilter>( resolve => {
+            userCompResolve.current = resolve;
+        });
+    }, 'headerFilterCellComp.userCompPromise');
+    
+    const userCompRef = (value: IFloatingFilter) => {
+        // i don't know why, but react was calling this method multiple
+        // times, thus un-setting, them immediately setting the reference again.
+        // because we are resolving a promise, it's not good to be resolving
+        // the promise multiple times, so we only resolve the first time.
+        if (alreadyResolved.current) { return; }
+        // we also skip when it's un-setting
+        if (value==null) { return; }
+
+        userCompResolve.current && userCompResolve.current(value);
+        alreadyResolved.current = true;
+    };
 
     const { ctrl } = props;
 
@@ -33,7 +52,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
-            getFloatingFilterComp: ()=> userCompPromise,
+            getFloatingFilterComp: ()=> userCompPromise.current ? userCompPromise.current :  null,
             setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
         };
 
@@ -43,7 +62,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     // js comps
     useEffect(() => {
-        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompResolve.current!);
+        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef);
     }, [userCompDetails]);
 
     const style = useMemo( ()=> ({
@@ -68,7 +87,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         <div ref={eGui} className={className} style={style} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompResolve.current! }/> }
+                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
             </div>
             <div ref={eButtonWrapper} className={buttonWrapperClassName} role="presentation">
                 <button ref={eButtonShowMainFilter} type="button" aria-label="Open Filter Menu" className="ag-floating-filter-button-button" tabIndex={-1}></button>

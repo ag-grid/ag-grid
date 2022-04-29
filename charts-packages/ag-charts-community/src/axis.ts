@@ -11,7 +11,6 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
-import { ContinuousScale } from "./scale/continuousScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {

@@ -1,10 +1,18 @@
 import React from 'react';
-import { Link } from 'gatsby';
+import {Link} from 'gatsby';
+import Seo from "./components/SEO";
+import styles from "./components/assets/homepage/homepage.module.scss";
 
 const ErrorPage = () =>
-  <div style={{ textAlign: 'center' }}>
-    <h1>404: Awesomeness Not Found</h1>
-    <div>Try <Link to="/">going home?</Link></div>
-  </div>;
+    <>
+        <Seo title="AG Grid: Page Not Found"/>
+        <div className={styles['page-content']}>
+            <h1>AG Grid: Page Not Found</h1>
+            <p style={{height: 600}}>
+                Sorry, but it looks like you've ended up in the wrong place. Please go to the <Link to="/">homepage</Link> or&nbsp;
+                <Link to="/documentation">documentation</Link> to try to find what you're looking for.
+            </p>
+        </div>
+    </>
 
 export default ErrorPage;

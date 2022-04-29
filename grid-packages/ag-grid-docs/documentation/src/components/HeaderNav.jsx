@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withPrefix } from 'gatsby';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
@@ -10,8 +10,7 @@ const links = [
     },
     {
         name: 'Documentation',
-        url: withPrefix('/documentation/'),
-        isActive: true,
+        url: withPrefix('/documentation/')
     },
     {
         name: 'Pricing',
@@ -23,23 +22,27 @@ const links = [
     }
 ];
 
-const HeaderLinks = () => (
-    <ul className={styles['header-nav__navbar']}>
-        {links.map(link => {
-            const linkClasses = classnames(
-                styles['header-nav__link'],
-                {
-                    [styles['header-nav__link--active']]: link.isActive
-                });
+const HeaderLinks = ({path} ) => {
+    const [active, setActive] = useState('Documentation')
 
-            return (
-                <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                    <a className={styles['header-nav__link-anchor']} href={link.url}>{link.name}</a>
-                </li>
-            );
-        })}
-    </ul>
-);
+    return (
+        <ul className={styles['header-nav__navbar']}>
+            {links.map(link => {
+                const linkClasses = classnames(
+                    styles['header-nav__link'],
+                    {
+                        [styles['header-nav__link--active']]: link.name === active && path !== '/'
+                    });
+
+                return (
+                    <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
+                        <a className={styles['header-nav__link-anchor']} href={link.url} onClick={() => setActive(link.name)}>{link.name}</a>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
 
 const HeaderExpandButton = () => (
     <button
@@ -53,11 +56,11 @@ const HeaderExpandButton = () => (
     </button>
 );
 
-const HeaderNav = () => (
+const HeaderNav = ({path}) => (
     <nav className={styles['header-nav']}>
         <div className={styles['header-nav__wrapper']}>
             <div className={styles['header-nav__navbar-collapse']} id="main-nav">
-                <HeaderLinks />
+                <HeaderLinks path={path}/>
             </div>
             <div className={styles['header-nav__widgets']}>
                 <HeaderExpandButton />
