@@ -13,13 +13,6 @@ export class FilterService extends BeanStub {
 
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    private doingTreeData: boolean;
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
-    }
-
     public filter(changedPath: ChangedPath): void {
         const filterActive: boolean = this.filterManager.isColumnFilterPresent()
                                     || this.filterManager.isQuickFilterPresent() 
@@ -54,11 +47,8 @@ export class FilterService extends BeanStub {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
                 }
 
-                this.setAllChildrenCount(rowNode);
-
             } else {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-                rowNode.setAllChildrenCount(null);
             }
 
             if (rowNode.sibling) {
@@ -95,39 +85,6 @@ export class FilterService extends BeanStub {
 
             const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
             changedPath.forEachChangedNodeDepthFirst(defaultFilterCallback, true);
-        }
-    }
-
-    private setAllChildrenCountTreeData(rowNode: RowNode) {
-        // for tree data, we include all children, groups and leafs
-        let allChildrenCount = 0;
-        rowNode.childrenAfterFilter!.forEach((child: RowNode) => {
-            // include child itself
-            allChildrenCount++;
-            // include children of children
-            allChildrenCount += child.allChildrenCount as any;
-        });
-        rowNode.setAllChildrenCount(allChildrenCount);
-    }
-
-    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
-        // for grid data, we only count the leafs
-        let allChildrenCount = 0;
-        rowNode.childrenAfterFilter!.forEach((child: RowNode) => {
-            if (child.group) {
-                allChildrenCount += child.allChildrenCount as any;
-            } else {
-                allChildrenCount++;
-            }
-        });
-        rowNode.setAllChildrenCount(allChildrenCount);
-    }
-
-    private setAllChildrenCount(rowNode: RowNode) {
-        if (this.doingTreeData) {
-            this.setAllChildrenCountTreeData(rowNode);
-        } else {
-            this.setAllChildrenCountGridGrouping(rowNode);
         }
     }
 
