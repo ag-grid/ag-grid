@@ -2,7 +2,7 @@
 @mixin ag-theme-base-part-grid-borders {
 
     .ag-cell {
-        @include ag-theme-rtl(( border-right: ag-param(cell-horizontal-border) ));
+        @include ag-theme-rtl(( border-right: var(--ag-cell-horizontal-border) ));
         @include ag-theme-rtl(( border-right-width: 1px ));
     }
 

@@ -30,8 +30,8 @@ $ag-compatibility-mode: "variables" !default;
 
     -webkit-font-smoothing: antialiased;
     @include ag-color-property(color, foreground-color);
-    font-family: ag-param(font-family);
-    font-size: ag-param(font-size);
+    font-family: var(--ag-font-family);
+    font-size: var(--ag-font-size);
     line-height: normal;
     .ag-root-wrapper {
         @include ag-color-property(background-color, background-color);

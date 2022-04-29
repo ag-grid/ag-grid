@@ -1,6 +1,6 @@
 @mixin ag-theme-base-part-charts {
     .ag-chart-menu {
-        border-radius: ag-param(card-radius);
+        border-radius: var(--ag-card-radius);
         @include ag-color-property(background, background-color);
     }
 
@@ -12,7 +12,7 @@
         height: 24px;
         margin: 2px 0;
         cursor: pointer;
-        border-radius: ag-param(card-radius);
+        border-radius: var(--ag-card-radius);
         @include ag-color-property(color, secondary-foreground-color);
 
         &:hover {

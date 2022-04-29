@@ -41,12 +41,12 @@
     }
 
     .ag-row {
-        font-size: ag-param(font-size) + 1px;
+        font-size: calc(var(--ag-font-size) + 1px);
     }
 
     %ag-text-input {
         min-height: calc(var(--ag-grid-size) * 4);
-        border-radius: ag-param(border-radius);
+        border-radius: var(--ag-border-radius);
 
         @include ag-theme-rtl((
             padding-left: var(--ag-grid-size),
@@ -121,7 +121,7 @@
     }
 
     .ag-dnd-ghost {
-        font-size: ag-param(font-size) - 1px;
+        font-size: calc(var(--ag-font-size) - 1px);
         font-weight: 700;
     }
 
@@ -132,7 +132,7 @@
     .ag-standard-button {
         appearance: none;
         -webkit-appearance: none;
-        border-radius: ag-param(border-radius);
+        border-radius: var(--ag-border-radius);
         border: 1px solid;
         @include ag-color-property(border-color, alpine-active-color);
         @include ag-color-property(color, alpine-active-color);

@@ -396,7 +396,7 @@
     // Popup
     ////////////////////////////////////////
     .ag-popup-child:not(.ag-tooltip-custom) {
-        box-shadow: ag-param(popup-shadow);
+        box-shadow: var(--ag-popup-shadow);
     }
 
     ////////////////////////////////////////
@@ -410,7 +410,7 @@
     }
 
     .ag-dialog {
-        border-radius: ag-param(border-radius);
+        border-radius: var(--ag-border-radius);
         @include ag-border(primary);
     }
 
@@ -438,7 +438,7 @@
         @include ag-color-property(color, foreground-color);
         padding: var(--ag-grid-size);
         @include ag-border(primary);
-        border-radius: ag-param(card-radius);
+        border-radius: var(--ag-card-radius);
         transition: opacity 1s;
         white-space: normal;
         &.ag-tooltip-hiding {
@@ -556,7 +556,7 @@
     }
 
     @include ag-color-property(background-color, checkbox-background-color);
-    border-radius: ag-param(checkbox-border-radius);
+    border-radius: var(--ag-checkbox-border-radius);
     display: inline-block;
     vertical-align: middle;
     flex: none;
@@ -632,12 +632,12 @@
 }
 
 @mixin ag-toggle-button {
-    $border-width: ag-param(toggle-button-border-width);
+    $border-width: var(--ag-toggle-button-border-width);
     box-sizing: border-box;
-    width: ag-param(toggle-button-width);
-    height: ag-param(toggle-button-height);
+    width: var(--ag-toggle-button-width);
+    height: var(--ag-toggle-button-height);
     @include ag-color-property(background-color, toggle-button-off-background-color);
-    border-radius: ag-param(toggle-button-height) * 0.5;
+    border-radius: calc(var(--ag-toggle-button-height) * 0.5);
     position: relative;
     flex: none;
     border: $border-width solid;
@@ -670,17 +670,17 @@
         left: -$border-width;
         display: block;
         box-sizing: border-box;
-        height: ag-param(toggle-button-height);
-        width: ag-param(toggle-button-height);
+        height: var(--ag-toggle-button-height);
+        width: var(--ag-toggle-button-height);
         @include ag-color-property(background-color, toggle-button-switch-background-color);
-        border-radius: ag-param(toggle-button-height) * 0.5;
+        border-radius: calc(var(--ag-toggle-button-height) * 0.5);
         transition: left 100ms;
         border: $border-width solid;
         @include ag-color-property(border-color, toggle-button-switch-border-color);
     }
 
     &.ag-checked::before {
-        left: calc(100% - #{ag-param(toggle-button-height)} );
+        left: calc(100% - var(--ag-toggle-button-height) );
         @include ag-color-property(border-color, toggle-button-on-border-color);
     }
 }
@@ -695,8 +695,8 @@
         width: 100%;
         height: 3px;
         @include ag-color-property(background-color, border-color);
-        border-radius: ag-param(border-radius);
-        border-radius: ag-param(checkbox-border-radius);
+        border-radius: var(--ag-border-radius);
+        border-radius: var(--ag-checkbox-border-radius);
     }
 }
 

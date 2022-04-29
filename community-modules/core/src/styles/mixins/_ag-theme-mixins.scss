@@ -117,8 +117,8 @@
     @include ag-border(primary);
     
     @include ag-color-property(background, background-color);
-    border-radius: ag-param(card-radius);
-    box-shadow: ag-param(card-shadow);
+    border-radius: var(--ag-card-radius);
+    box-shadow: var(--ag-card-shadow);
     padding: var(--ag-grid-size);
 }
 
