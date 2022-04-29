@@ -1,11 +1,11 @@
 import { Grid, AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, GridOptions, LineSparklineOptions, BarSparklineOptions, BarFormatterParams, MarkerFormatterParams } from '@ag-grid-community/core'
 
 const palette = {
-  blue: 'rgba(3,195,168,0.9)',
-  red: 'rgb(228,21,81)',
-  yellow: 'rgba(251,203,110,0.9)',
+  blue: 'rgb(20,94,140)',
+  lightBlue: 'rgb(182,219,242)',
+  green: 'rgb(63,141,119)',
+  lightGreen: 'rgba(75,168,142, 0.2)',
 };
-
 
 const gridOptions: GridOptions = {
   rowHeight: 70,
@@ -22,18 +22,16 @@ const gridOptions: GridOptions = {
           label: {
             enabled: true,
             placement: 'outsideEnd',
-            formatter: function(params) { return  `${params.value}%`},
+            formatter: function (params) { return `${params.value}%` },
             fontWeight: 'bold',
-            fontSize: 12,
             fontFamily: 'Arial, Helvetica, sans-serif',
-            color: 'white',
           },
           highlightStyle: {
             strokeWidth: 0,
           },
           padding: {
-            top: 10,
-            bottom: 10,
+            top: 15,
+            bottom: 15,
           },
           formatter: barFormatter,
         } as BarSparklineOptions,
@@ -47,7 +45,7 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           line: {
-            stroke: 'rgb(251,203,110)',
+            stroke: 'rgb(63,141,119)',
           },
           padding: {
             top: 10,
@@ -70,9 +68,7 @@ const gridOptions: GridOptions = {
           label: {
             enabled: true,
             placement: 'outsideEnd',
-            fontSize: 9,
             fontFamily: 'Arial, Helvetica, sans-serif',
-            color: 'white',
           },
           highlightStyle: {
             strokeWidth: 0,
@@ -93,9 +89,9 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           type: 'area',
-          fill: 'rgba(251,203,110, 0.2)',
+          fill: 'rgba(75,168,142, 0.2)',
           line: {
-            stroke: 'rgb(251,203,110)',
+            stroke: 'rgb(63,141,119)',
           },
           padding: {
             top: 10,
@@ -119,15 +115,8 @@ const gridOptions: GridOptions = {
 function barFormatter(params: BarFormatterParams) {
   const { yValue, highlighted } = params;
 
-  if (!highlighted) {
-    if (yValue <= 50) {
-      return { fill: palette.red };
-    }
-    if (yValue < 50) {
-      return { fill: palette.yellow };
-    }
-    return { fill: palette.blue };
-  }
+  if (highlighted) { return; }
+  return { fill: yValue <= 50 ? palette.lightBlue : palette.blue };
 }
 
 function lineMarkerFormatter(params: MarkerFormatterParams) {
@@ -136,8 +125,8 @@ function lineMarkerFormatter(params: MarkerFormatterParams) {
   const color = highlighted
     ? palette.blue
     : last
-      ? palette.red
-      : palette.yellow;
+      ? palette.lightBlue
+      : palette.green;
 
   return {
     size: highlighted || first || last ? 5 : 0,
@@ -149,21 +138,17 @@ function lineMarkerFormatter(params: MarkerFormatterParams) {
 function columnFormatter(params: ColumnFormatterParams) {
   const { yValue, highlighted } = params;
 
-  if (!highlighted) {
-    if (yValue < 0) {
-      return { fill: palette.red };
-    }
-    return { fill: palette.blue };
-  }
+  if (highlighted) { return; }
+  return { fill: yValue < 0 ? palette.lightBlue : palette.blue };
 }
 
 function areaMarkerFormatter(params: MarkerFormatterParams) {
-  const { min } = params;
+  const { min, highlighted } = params;
 
   return {
-    size: min ? 5 : 0,
-    fill: palette.red,
-    stroke: palette.red,
+    size: min || highlighted ? 5 : 0,
+    fill: palette.green,
+    stroke: palette.green,
   };
 }
 
