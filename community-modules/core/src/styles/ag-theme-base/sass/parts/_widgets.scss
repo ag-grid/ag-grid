@@ -632,7 +632,6 @@
 }
 
 @mixin ag-toggle-button {
-    $border-width: var(--ag-toggle-button-border-width);
     box-sizing: border-box;
     width: var(--ag-toggle-button-width);
     height: var(--ag-toggle-button-height);
@@ -640,7 +639,7 @@
     border-radius: calc(var(--ag-toggle-button-height) * 0.5);
     position: relative;
     flex: none;
-    border: $border-width solid;
+    border: var(--ag-toggle-button-border-width) solid;
     @include ag-color-property(border-color, toggle-button-off-border-color);
 
     input {
@@ -666,16 +665,16 @@
     &::before {
         content: ' ';
         position: absolute;
-        top: -$border-width;
-        left: -$border-width;
+        top: calc(0px - var(--ag-toggle-button-border-width));
+        left: calc(0px - var(--ag-toggle-button-border-width));
         display: block;
         box-sizing: border-box;
         height: var(--ag-toggle-button-height);
         width: var(--ag-toggle-button-height);
         @include ag-color-property(background-color, toggle-button-switch-background-color);
-        border-radius: calc(var(--ag-toggle-button-height) * 0.5);
+        border-radius: 100%;
         transition: left 100ms;
-        border: $border-width solid;
+        border: var(--ag-toggle-button-border-width) solid;
         @include ag-color-property(border-color, toggle-button-switch-border-color);
     }
 
