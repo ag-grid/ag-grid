@@ -338,7 +338,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowCount(): number {
         const rootStore = this.getRootStore();
-        if (!rootStore) { return 1; }
+        if (!rootStore) { return 0; }
 
         return rootStore.getDisplayIndexEnd()!;
     }
