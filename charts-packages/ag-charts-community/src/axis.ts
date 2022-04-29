@@ -526,7 +526,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI + labelAutoRotation : 0 - labelAutoRotation);
 
-        const labelTextBaseline =  parallelLabels && !labelRotation
+        const labelTextBaseline = parallelLabels && !labelRotation
             ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
             : 'middle';
 
@@ -562,15 +562,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         groupSelection.selectByTag<Line>(Tags.Tick)
-        .each((line, _, index) => {
-            line.strokeWidth = tick.width;
-            line.stroke = tick.color;
-            line.visible = labelBboxes.has(index);
-        })
-        .attr('x1', sideFlag * tick.size)
-        .attr('x2', 0)
-        .attr('y1', 0)
-        .attr('y2', 0);
+            .each((line, _, index) => {
+                line.strokeWidth = tick.width;
+                line.stroke = tick.color;
+                line.visible = labelBboxes.has(index);
+            })
+            .attr('x1', sideFlag * tick.size)
+            .attr('x2', 0)
+            .attr('y1', 0)
+            .attr('y2', 0);
 
         if (this.gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
