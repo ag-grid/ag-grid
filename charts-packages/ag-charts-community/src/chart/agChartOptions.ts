@@ -440,8 +440,8 @@ export interface AgAxisLabelOptions {
     color?: CssColor;
     /** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */
     rotation?: number;
-    /** By default, for a category axis, the labels will be automatically rotated to be perpendicular to the axis line to prevent overlaps. Set this to `false` to disable this behaviour. Note: if a label rotation angle is specified, auto rotation will not be applied. */
-    autoRotate?: boolean;
+    /** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 45 degrees. If the `rotation` property is specified, it takes precedence. */
+    autoRotate?: boolean | number;
     // mirrored?: boolean;
     // parallel?: boolean;
     /** Format string used when rendering labels for time axes. */
