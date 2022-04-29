@@ -11,7 +11,6 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
-import { ContinuousScale } from "./scale/continuousScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -455,59 +454,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 return node.translationY >= min && node.translationY <= max;
             });
 
-        groupSelection.selectByTag<Line>(Tags.Tick)
-            .each(line => {
-                line.strokeWidth = tick.width;
-                line.stroke = tick.color;
-            })
-            .attr('x1', sideFlag * tick.size)
-            .attr('x2', 0)
-            .attr('y1', 0)
-            .attr('y2', 0);
-
-        if (this.gridLength && gridStyle.length) {
-            const styleCount = gridStyle.length;
-            let gridLines: Selection<Shape, Group, D, D>;
-
-            if (this.radialGrid) {
-                const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
-
-                gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
-                    .each((arc, datum) => {
-                        const radius = Math.round(scale.convert(datum) + halfBandwidth);
-
-                        arc.centerX = 0;
-                        arc.centerY = scale.range[0] - radius;
-                        arc.endAngle = angularGridLength;
-                        arc.radiusX = radius;
-                        arc.radiusY = radius;
-                    });
-            } else {
-                gridLines = groupSelection.selectByTag<Line>(Tags.GridLine)
-                    .each(line => {
-                        line.x1 = 0;
-                        line.x2 = -sideFlag * this.gridLength;
-                        line.y1 = 0;
-                        line.y2 = 0;
-                        line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
-                    });
-            }
-
-            gridLines.each((gridLine, _, index) => {
-                const style = gridStyle[index % styleCount];
-
-                gridLine.stroke = style.stroke;
-                gridLine.strokeWidth = tick.width;
-                gridLine.lineDash = style.lineDash;
-                gridLine.fill = undefined;
-            });
-        }
-
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         // Update properties that affect the size of the axis labels and measure the labels
-        const labelBboxes: Map<string, BBox> = new Map();
+        const labelBboxes: Map<number, BBox> = new Map();
         let rotate = false;
 
         const labelSelection = groupSelection.selectByClass(Text)
@@ -522,7 +473,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.visible = node.parent!.visible;
                 if (node.visible !== true) { return; }
 
-                labelBboxes.set(node.id, node.computeBBox());
+                labelBboxes.set(index, node.computeBBox());
             });
 
         const labelX = sideFlag * (tick.size + label.padding);
@@ -531,10 +482,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const availableRange = requestedRangeMax - requestedRangeMin;
         const step = availableRange / labelBboxes.size;
 
-        const calculateLabelsLength = (bboxes: Map<string, BBox>, useWidth: boolean) => {
+        const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
             let totalLength = 0;
             const padding = 10;
-            for (let [labelId, bbox] of bboxes.entries()) {
+            for (let [_, bbox] of bboxes.entries()) {
                 const length = (useWidth ? bbox.width : bbox.height) + padding;
                 totalLength += length;
 
@@ -596,18 +547,68 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             // Remove half the labels if they overlap
             while (totalLabelLength > availableRange) {
-                labelSelection.each(label => {
+                labelSelection.each((label, _, index) => {
                     if (label.visible !== true) { return; }
 
                     label.visible = visible;
                     if (!label.visible) {
-                        labelBboxes.delete(label.id);
+                        labelBboxes.delete(index);
                     }
                     visible = !visible;
                 });
 
                 totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
             }
+        }
+
+        groupSelection.selectByTag<Line>(Tags.Tick)
+        .each((line, _, index) => {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.visible = labelBboxes.has(index);
+        })
+        .attr('x1', sideFlag * tick.size)
+        .attr('x2', 0)
+        .attr('y1', 0)
+        .attr('y2', 0);
+
+        if (this.gridLength && gridStyle.length) {
+            const styleCount = gridStyle.length;
+            let gridLines: Selection<Shape, Group, D, D>;
+
+            if (this.radialGrid) {
+                const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
+
+                gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
+                    .each((arc, datum, index) => {
+                        const radius = Math.round(scale.convert(datum) + halfBandwidth);
+
+                        arc.centerX = 0;
+                        arc.centerY = scale.range[0] - radius;
+                        arc.endAngle = angularGridLength;
+                        arc.radiusX = radius;
+                        arc.radiusY = radius;
+                        arc.visible = labelBboxes.has(index);
+                    });
+            } else {
+                gridLines = groupSelection.selectByTag<Line>(Tags.GridLine)
+                    .each((line, _, index) => {
+                        line.x1 = 0;
+                        line.x2 = -sideFlag * this.gridLength;
+                        line.y1 = 0;
+                        line.y2 = 0;
+                        line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1 && labelBboxes.has(index);
+                    });
+            }
+
+            gridLines.each((gridLine, _, index) => {
+                const style = gridStyle[index % styleCount];
+
+                gridLine.stroke = style.stroke;
+                gridLine.strokeWidth = tick.width;
+                gridLine.lineDash = style.lineDash;
+                gridLine.fill = undefined;
+            });
         }
 
         this.groupSelection = groupSelection;
