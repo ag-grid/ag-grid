@@ -1,59 +1,98 @@
-import { AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, Grid, GridOptions, LineSparklineOptions, MarkerFormatterParams } from '@ag-grid-community/core';
+import { Grid, AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, GridOptions, LineSparklineOptions, BarSparklineOptions, BarFormatterParams, MarkerFormatterParams } from '@ag-grid-community/core'
 import { getData } from "./data";
 
+const palette = {
+  blue: 'rgb(20,94,140)',
+  lightBlue: 'rgb(182,219,242)',
+  green: 'rgb(63,141,119)',
+  lightGreen: 'rgba(75,168,142, 0.2)',
+};
 
 const gridOptions: GridOptions = {
   rowHeight: 70,
   columnDefs: [
     {
-      field: 'sparkline',
+      field: 'bar',
+      headerName: 'Bar Sparkline',
+      minWidth: 100,
+      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererParams: {
+        sparklineOptions: {
+          type: 'bar',
+          valueAxisDomain: [0, 100],
+          label: {
+            enabled: true,
+            placement: 'outsideEnd',
+            formatter: function (params) { return `${params.value}%` },
+            fontWeight: 'bold',
+            fontFamily: 'Arial, Helvetica, sans-serif',
+          },
+          highlightStyle: {
+            strokeWidth: 0,
+          },
+          padding: {
+            top: 15,
+            bottom: 15,
+          },
+          formatter: barFormatter,
+        } as BarSparklineOptions,
+      },
+    },
+    {
+      field: 'line',
       headerName: 'Line Sparkline',
       minWidth: 100,
       cellRenderer: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           line: {
-            stroke: 'rgb(124, 255, 178)',
-            strokeWidth: 3,
+            stroke: 'rgb(63,141,119)',
           },
           padding: {
             top: 10,
             bottom: 10,
           },
           marker: {
-            shape: 'diamond',
             formatter: lineMarkerFormatter,
           },
         } as LineSparklineOptions,
       },
     },
     {
-      field: 'sparkline',
+      field: 'column',
       headerName: 'Column Sparkline',
       minWidth: 100,
       cellRenderer: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'column',
+          label: {
+            enabled: true,
+            placement: 'outsideEnd',
+            fontFamily: 'Arial, Helvetica, sans-serif',
+          },
+          highlightStyle: {
+            strokeWidth: 0,
+          },
           padding: {
-            top: 10,
-            bottom: 10,
+            top: 15,
+            bottom: 15,
           },
           formatter: columnFormatter,
         } as ColumnSparklineOptions,
       },
     },
     {
-      field: 'sparkline',
+      field: 'area',
       headerName: 'Area Sparkline',
       minWidth: 100,
       cellRenderer: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'area',
-          fill: 'rgba(84, 112, 198, 0.3)',
+          fill: 'rgba(75,168,142, 0.2)',
           line: {
-            stroke: 'rgb(84, 112, 198)',
+            stroke: 'rgb(63,141,119)',
           },
           padding: {
             top: 10,
@@ -72,71 +111,46 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   rowData: getData(),
-}
+};
 
-const colors = {
-  firstLast: 'rgb(253, 221, 96)',
-  min: 'rgb(239, 108, 0)',
-  max: 'rgb(59, 162, 114)',
-  negative: 'rgb(255, 110, 118)',
-  positive: 'rgba(0,128,0, 0.3)',
-  highlighted: 'rgb(88, 217, 249)',
+function barFormatter(params: BarFormatterParams) {
+  const { yValue, highlighted } = params;
+
+  if (highlighted) { return; }
+  return { fill: yValue <= 50 ? palette.lightBlue : palette.blue };
 }
 
 function lineMarkerFormatter(params: MarkerFormatterParams) {
-  const { min, max, first, last, highlighted } = params
+  const { first, last, highlighted } = params;
 
   const color = highlighted
-    ? colors.highlighted
-    : min
-      ? colors.min
-      : max
-        ? colors.max
-        : colors.firstLast
+    ? palette.blue
+    : last
+      ? palette.lightBlue
+      : palette.green;
 
   return {
-    size: highlighted || min || max || first || last ? 5 : 0,
+    size: highlighted || first || last ? 5 : 0,
     fill: color,
     stroke: color,
-  }
+  };
 }
 
 function columnFormatter(params: ColumnFormatterParams) {
-  const { first, last, yValue, highlighted } = params
+  const { yValue, highlighted } = params;
 
-  let fill = undefined
-
-  if (!highlighted) {
-    if (first || last) {
-      fill = colors.firstLast
-    } else if (yValue < 0) {
-      fill = colors.negative
-    } else {
-      fill = colors.positive
-    }
-  } else {
-    fill = colors.highlighted
-  }
-
-  return { fill }
+  if (highlighted) { return; }
+  return { fill: yValue < 0 ? palette.lightBlue : palette.blue };
 }
 
 function areaMarkerFormatter(params: MarkerFormatterParams) {
-  const { min, max, first, last, highlighted } = params
-
-  const color = highlighted
-    ? colors.highlighted
-    : min
-      ? colors.min
-      : max
-        ? colors.max
-        : colors.firstLast
+  const { min, highlighted } = params;
 
   return {
-    size: highlighted || min || max || first || last ? 5 : 0,
-    fill: color,
-    stroke: color,
-  }
+    size: min || highlighted ? 5 : 0,
+    fill: palette.green,
+    stroke: palette.green,
+  };
 }
 
 // setup the grid after the page has finished loading
