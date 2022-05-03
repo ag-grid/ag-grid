@@ -1,5 +1,6 @@
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import * as agCharts from "ag-charts-community";
+import { AgChartOptions } from "ag-charts-community";
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -42,7 +43,7 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value / 1000 + "M"
         },
       },

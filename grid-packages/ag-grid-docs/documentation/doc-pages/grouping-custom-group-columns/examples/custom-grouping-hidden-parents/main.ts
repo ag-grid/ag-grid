@@ -10,7 +10,7 @@ const gridOptions: GridOptions = {
     },
     {
       headerName: 'Year',
-      valueGetter: function (params: ValueGetterParams) {
+      valueGetter: (params: ValueGetterParams) => {
         if (params.data) {
           return params.data.year
         }

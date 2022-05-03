@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
     sortable: true,
   },
   autoGroupColumnDef: {
-    comparator: function (valueA, valueB, nodeA, nodeB, isInverted) {
+    comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
       var res = valueA == valueB ? 0 : valueA > valueB ? 1 : -1
       return res
     },

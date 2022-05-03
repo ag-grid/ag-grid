@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
     sortable: true,
   },
   sideBar: 'filters',
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     ((params.api.getToolPanelInstance(
       'filters'
     ) as any) as IFiltersToolPanel).expandFilters()

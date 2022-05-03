@@ -149,8 +149,7 @@ However note that lots of rendered rows will mean a very large amount of renderi
 The example below presents a simple grid layout with the following properties enabled:
 
 - `ensureDomOrder` - ensures the rows and columns in the DOM always appear in the same order as displayed in the grid.
-- `suppressColumnVirtualisation` - ensures all columns are rendered, i.e. appears in the DOM.
-- `rowBuffer` - sets the number of rows rendered outside of the scrollable viewable area.
+- `suppressColumnVirtualisation` and `suppressRowVirtualisation` - ensure all column and rows appear in the DOM.
 
 <grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter"] }'></grid-example>
 

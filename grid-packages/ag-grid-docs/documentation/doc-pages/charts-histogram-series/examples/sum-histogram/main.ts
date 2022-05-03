@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -35,7 +36,6 @@ const options: AgChartOptions = {
       title: { text: 'Total winnings (USD)' },
     },
   ],
-  height: 550,
 }
 
 agCharts.AgChart.create(options)

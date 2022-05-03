@@ -1,6 +1,6 @@
 export default {
-    template:
-        `
+  template:
+    `
           <div class="custom-tooltip">
           <div :class="'panel panel-' + type">
             <div class="panel-heading">
@@ -12,19 +12,19 @@ export default {
             </div>
           </div>
           </div>`,
-    data: function () {
-        return {
-            type: null,
-            athlete: null,
-            country: null,
-            total: null
-        };
-    },
-    beforeMount() {
-        const data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
-        this.type = this.params.type || 'primary';
-        this.athlete = data.athlete;
-        this.country = data.country;
-        this.total = data.total;
-    }
+  data: function () {
+    return {
+      type: null,
+      athlete: null,
+      country: null,
+      total: null
+    };
+  },
+  beforeMount() {
+    const data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
+    this.type = this.params.type || 'primary';
+    this.athlete = data.athlete;
+    this.country = data.country;
+    this.total = data.total;
+  }
 };

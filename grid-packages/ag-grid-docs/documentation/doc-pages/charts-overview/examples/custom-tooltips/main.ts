@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
 import { AgChartOptions } from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
@@ -117,11 +119,10 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       title: {
-        enabled: true,
         text: "Waste collected (tonnes)",
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value / 1000 + "k"
         },
       },

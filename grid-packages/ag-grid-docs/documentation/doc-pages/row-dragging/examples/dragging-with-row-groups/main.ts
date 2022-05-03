@@ -1,4 +1,5 @@
 import { Grid, GridOptions, RowDragCallbackParams, RowDragEndEvent } from '@ag-grid-community/core'
+import { getData } from "./data";
 
 var rowDrag = function (params: RowDragCallbackParams) {
   // only rows that are NOT groups should be draggable
@@ -24,7 +25,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
-  onGridReady: function () {
+  onGridReady: (params) => {
     gridOptions.api!.setRowData(getData())
   },
 }

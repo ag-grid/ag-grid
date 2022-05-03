@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         width: 250,
         resizable: true,
     },
-    getRowId: function (params: GetRowIdParams) {
+    getRowId: (params: GetRowIdParams) => {
         return params.data.product
     },
     rowSelection: 'multiple',
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(function (data) {
             const dataSource: IServerSideDatasource = {
-                getRows: function (params: IServerSideGetRowsParams) {
+                getRows: (params: IServerSideGetRowsParams) => {
                     // To make the demo look real, wait for 500ms before returning
                     setTimeout(function () {
                         const rows: any[] = [];

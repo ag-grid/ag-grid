@@ -55,6 +55,21 @@
     "runningTime": "4:09"
   },
   {
+    "title": "Column Definitions",
+    "url": "https://www.youtube.com/watch?v=aDCepyF_DUY&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+    "thumbnail": {
+      "image": "AgGridVideo.png",
+      "altText": "Configuring AG Grid Column Definitions Using React"
+    },
+    "keyPoints": [
+      "Column Width, Column Pinning",
+      "Value Getter, Value Formatter",
+      "Column Groups",
+      "Column IDs, Column API"
+    ],
+    "runningTime": "22:17"
+  },
+  {
     "title": "Column Filters",
     "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
     "thumbnail": {
@@ -107,7 +122,7 @@
       "Component Selectors",
       "React & JavaScript Components"
     ],
-    "runningTime": "15;21"
+    "runningTime": "15:21"
   },
   {
     "title": "Updating Row Data",
@@ -124,6 +139,3 @@
     "runningTime": "19:11"
   }
 ]
-
-
-

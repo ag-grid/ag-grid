@@ -4,6 +4,7 @@ import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
+import { useEffectOnce } from '../useEffectOnce';
 
 const RowContainerComp = (params: {name: RowContainerName}) => {
 
@@ -52,7 +53,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         });
     }, [domOrder, rowCtrls]);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
@@ -70,7 +71,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             context.destroyBeans(beansToDestroy);
         };
 
-    }, []);
+    }, 'rowContainerComp.main');
 
     const viewportStyle = useMemo(() => ({
         height: viewportHeight

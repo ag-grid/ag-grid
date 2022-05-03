@@ -1,4 +1,6 @@
-import { Grid, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

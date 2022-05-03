@@ -49,7 +49,7 @@ In this example the default pagination settings are changed. Note the following:
 
 ## Example: Custom Pagination Controls
 
-If you set `suppressPaginationPanel=true`, the grid will not show the standard navigation controls for pagination. This is useful is you want to provide your own navigation controls.
+If you set `suppressPaginationPanel=true`, the grid will not show the standard navigation controls for pagination. This is useful if you want to provide your own navigation controls.
 
 In the example below you can see how this works. Note that we are listening to `onPaginationChanged` to update the information about the current pagination status. We also call methods on the pagination API to change the pagination state.
 

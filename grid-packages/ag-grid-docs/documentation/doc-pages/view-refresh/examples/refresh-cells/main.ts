@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   pinnedTopRowData: [],
   pinnedBottomRowData: [],
   enableCellChangeFlash: true,
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
     // the row animation look nice when you see all the rows
     data = createData(14)

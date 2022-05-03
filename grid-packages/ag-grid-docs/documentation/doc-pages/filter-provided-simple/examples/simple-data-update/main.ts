@@ -1,7 +1,7 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var filterParams = {
-  comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
     var dateParts = dateAsString.split('/')
@@ -50,7 +50,7 @@ function jumbleData() {
   if (fetchedData) {
     const ages = fetchedData.map(d => d.age);
     // Force reload by mutating fetched data - jumble the ages.
-    const jumbledData = fetchedData.map(d => { 
+    const jumbledData = fetchedData.map(d => {
       const randomAgeIndex = Math.round(Math.random() * (ages.length - 1));
       return { ...d, age: ages.splice(randomAgeIndex, 1)[0] };
     });

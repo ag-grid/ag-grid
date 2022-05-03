@@ -18,7 +18,7 @@ const baseDefaultColDef: ColDef = {
 };
 
 const baseGridOptions: GridOptions = {
-    getRowId: function (params) { return params.data.id; },
+    getRowId: (params) => { return params.data.id; },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
         'green-row': 'data.color == "Green"',

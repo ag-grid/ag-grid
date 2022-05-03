@@ -3,8 +3,10 @@ import {
   GridOptions,
   KeyCreatorParams,
   ValueFormatterParams,
-  ValueGetterParams,
-} from '@ag-grid-community/core'
+  ValueGetterParams
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var valueGetter = function (params: ValueGetterParams) {
   return params.data['animalsString'].split('|')

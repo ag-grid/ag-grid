@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { AgCartesianChartOptions, AgCartesianAxisOptions, AgCartesianSeriesOptions, AgBarSeriesOptions, AgLineSeriesOptions, AgCartesianSeriesTooltipRendererParams } from "ag-charts-community"
 import * as agCharts from "ag-charts-community"
 
@@ -87,7 +89,6 @@ const options: AgCartesianChartOptions = {
       position: "left",
       keys: ["women", "men", "children", "adults"],
       title: {
-          enabled: true,
           text: "Adults Who Eat 5 A Day (%)",
       },
     },
@@ -97,7 +98,6 @@ const options: AgCartesianChartOptions = {
       position: "right",
       keys: ["portions"],
       title: {
-          enabled: true,
           text: "Portions Consumed (Per Day)",
       },
     }

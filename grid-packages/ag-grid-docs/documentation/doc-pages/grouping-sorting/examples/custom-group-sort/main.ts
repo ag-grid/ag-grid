@@ -1,4 +1,5 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,7 +12,7 @@ const gridOptions: GridOptions = {
       field: 'month',
       rowGroup: true,
       hide: true,
-      comparator: function (a, b) {
+      comparator: (a, b) => {
         const months = [
           'January',
           'February',

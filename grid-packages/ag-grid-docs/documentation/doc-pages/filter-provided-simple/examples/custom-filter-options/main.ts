@@ -126,7 +126,7 @@ var equalsFilterParams = {
       numberOfInputs: 2,
     },
   ] as IFilterOptionDef[],
-  comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
     var dateParts = dateAsString.split('/')

@@ -60,14 +60,15 @@ export class RangeService extends BeanStub implements IRangeService {
 
     @PostConstruct
     private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.removeAllCellRanges());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
 
         this.ctrlsService.whenReady(() => {
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
@@ -84,16 +85,21 @@ export class RangeService extends BeanStub implements IRangeService {
         });
     }
 
-    public onColumnVisibleChange(): void {
+    // Called for both columns loaded & column visibility events
+    public onColumnsChanged(): void {
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
-        // then check if the column visibility has changed in any cell range
+        const allColumns = this.columnModel.getAllDisplayedColumns();
+
+        // check that the columns in each range still exist and are visible
         this.cellRanges.forEach(cellRange => {
             const beforeCols = cellRange.columns;
 
-            // remove hidden cols from cell range
-            cellRange.columns = cellRange.columns.filter(col => col.isVisible());
+            // remove hidden or removed cols from cell range
+            cellRange.columns = cellRange.columns.filter(
+                col => col.isVisible() && allColumns.indexOf(col) !== -1
+            );
 
             const colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
 
@@ -102,6 +108,12 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.dispatchChangedEvent(false, true, cellRange.id);
             }
         });
+        // Remove empty cell ranges
+        const countBefore = this.cellRanges.length;
+        this.cellRanges = this.cellRanges.filter((range) => range.columns.length > 0);
+        if (countBefore > this.cellRanges.length) {
+            this.dispatchChangedEvent(false, true);
+        }
     }
 
     public refreshLastRangeStart(): void {
@@ -288,10 +300,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     // returns true if successful, false if not successful
-    public extendLatestRangeInDirection(key: string): CellPosition | undefined {
-        if (this.isEmpty() || !this.newestRangeStartCell) {
-            return;
-        }
+    public extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined {
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+
+        const key = event.key;
+        const ctrlKey = event.ctrlKey || event.metaKey;
 
         const lastRange = _.last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
@@ -304,12 +317,10 @@ export class RangeService extends BeanStub implements IRangeService {
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
-        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell);
+        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell, ctrlKey);
 
         // if user is at end of grid, so no cell to extend to, we return false
-        if (!newEndCell) {
-            return;
-        }
+        if (!newEndCell) { return; }
 
         this.setCellRange({
             rowStartIndex: startCell.rowIndex,
@@ -358,6 +369,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
         let columns: Column[] | undefined;
+        let startsOnTheRight: boolean = false;
 
         if (params.columns) {
             columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
@@ -370,6 +382,10 @@ export class RangeService extends BeanStub implements IRangeService {
             }
 
             columns = this.calculateColumnsBetween(columnStart, columnEnd);
+
+            if (columns && columns.length) {
+                startsOnTheRight = columns[0] !== columnStart;
+            }
         }
 
         if (!columns) {
@@ -390,7 +406,7 @@ export class RangeService extends BeanStub implements IRangeService {
             startRow,
             endRow,
             columns,
-            startColumn: columns[0]
+            startColumn: startsOnTheRight ? _.last(columns) : columns[0]
         };
     }
 
@@ -406,7 +422,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.columns[0]
+                    column: newRange.startColumn
                 });
             }
             

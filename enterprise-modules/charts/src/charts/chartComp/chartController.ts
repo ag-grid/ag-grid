@@ -103,6 +103,7 @@ export class ChartController extends BeanStub {
             chartType: this.model.chartType,
             chartThemeName: this.model.chartThemeName,
             chartOptions: this.chartProxy.getChartOptions(),
+            chartPalette: this.chartProxy.getChartPalette(),
             cellRange: this.getCellRangeParams(),
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,

@@ -96,8 +96,12 @@ export class ComponentUtil {
         const keyExists = (key: string) => changesToApply[key];
 
         // if groupAggFiltering exists and isn't a function, handle as a boolean.
-        if (keyExists('groupAggFiltering') && typeof changesToApply.groupAggFiltering !== 'function') {
-            pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+        if (keyExists('groupAggFiltering')) {
+            if (typeof changesToApply.groupAggFiltering === 'function') {
+                pGridOptions.groupAggFiltering = changesToApply.groupAggFiltering;
+            } else {
+                pGridOptions.groupAggFiltering = ComponentUtil.toBoolean(changesToApply.groupAggFiltering);
+            }
             delete changesToApply.groupAggFiltering;
         }
 
@@ -106,7 +110,6 @@ export class ComponentUtil {
             ...ComponentUtil.ARRAY_PROPERTIES,
             ...ComponentUtil.OBJECT_PROPERTIES,
             ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.FUNCTION_PROPERTIES,
             ...ComponentUtil.getEventCallbacks(),
         ]
             .filter(keyExists)

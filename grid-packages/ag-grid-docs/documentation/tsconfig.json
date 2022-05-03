@@ -25,7 +25,6 @@
         "./doc-pages/**/*_angular.ts",
         "./doc-pages/**/*.ts",
         "./doc-pages/**/*.tsx",
-        "./custom-types/**/*",
     ],
     "exclude": [
         "./node_modules"

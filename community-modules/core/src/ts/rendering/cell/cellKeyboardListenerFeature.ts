@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { CellCtrl, ICellComp } from "./cellCtrl";
+import { CellCtrl } from "./cellCtrl";
 import { Beans } from "../beans";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
@@ -61,7 +61,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (this.cellCtrl.isEditing()) { return; }
 
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
-            this.onShiftRangeSelect(key);
+            this.onShiftRangeSelect(event);
         } else {
             this.beans.navigationService.navigateToNextCell(event, key, this.cellCtrl.getCellPosition(), true);
         }
@@ -70,10 +70,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
         event.preventDefault();
     }
 
-    private onShiftRangeSelect(key: string): void {
+    private onShiftRangeSelect(event: KeyboardEvent): void {
         if (!this.beans.rangeService) { return; }
 
-        const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
+        const endCell = this.beans.rangeService.extendLatestRangeInDirection(event);
 
         if (endCell) {
             this.beans.navigationService.ensureCellVisible(endCell);

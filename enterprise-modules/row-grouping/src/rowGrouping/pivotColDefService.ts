@@ -185,7 +185,6 @@ export class PivotColDefService extends BeanStub {
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-
         if (!this.gridOptionsWrapper.getPivotColumnGroupTotals()) { return; }
 
         const insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
@@ -235,7 +234,7 @@ export class PivotColDefService extends BeanStub {
             const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template
-            const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys);
+            const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, true);
             totalColDef.pivotTotalColumnIds = colIds;
             totalColDef.aggFunc = valueColumn.getAggFunc();
 
@@ -319,7 +318,7 @@ export class PivotColDefService extends BeanStub {
         insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
 
-    private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined): ColDef {
+    private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, totalColumn: boolean = false): ColDef {
 
         const colDef: ColDef = {};
 
@@ -333,7 +332,7 @@ export class PivotColDefService extends BeanStub {
         }
 
         colDef.headerName = headerName;
-        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn ? valueColumn.getColId() : '');
+        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn && !totalColumn ? valueColumn.getColId() : '');
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
@@ -397,7 +396,7 @@ export class PivotColDefService extends BeanStub {
 
     private generateColumnGroupId(pivotKeys: string[]): string {
         const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
-        return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}}`;
+        return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}`;
     }
 
     private generateColumnId(pivotKeys: string[], measureColumnId: string) {

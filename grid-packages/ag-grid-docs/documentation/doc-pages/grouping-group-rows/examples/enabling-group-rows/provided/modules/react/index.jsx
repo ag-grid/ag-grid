@@ -23,7 +23,7 @@ class GridExample extends Component {
                 {
                     field: 'athlete',
                     minWidth: 250,
-                    cellRenderer: function (params) {
+                    cellRenderer: (params) => {
                         return <span style={{ marginLeft: 60 }}>{params.value}</span>;
                     },
                 },

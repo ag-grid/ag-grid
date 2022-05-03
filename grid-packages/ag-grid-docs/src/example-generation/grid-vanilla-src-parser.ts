@@ -302,12 +302,9 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     });
 
     // all onXXX will be handled here
-    // note: gridOptions = { onGridSizeChanged = function() {}  WILL NOT WORK
-    // needs to be a separate function  gridOptions = { onGridSizeChanged = myGridSizeChangedFunc
-    // ALSO event must match function name: onColumnPinned: onColumnPinned (not onColumnPinned: someOtherFunc)
+    // note: gridOptions = { onGridSizeChanged = function() {}  handled below    
     EVENTS.forEach(eventName => {
         const onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
-
         registered.push(onEventName);
 
         tsCollectors.push({
@@ -321,6 +318,31 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
             }
         });
     });
+
+    EVENTS.forEach(eventName => {
+        const onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
+        tsGridOptionsCollectors.push({
+            // onGridReady is handled separately
+            matches: node => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
+            apply: (bindings, node: ts.PropertyAssignment) => {
+                // Find any inline arrow functions or functions for events and convert to external function definition
+                const eventHandler = tsGenerateWithReplacedGridOptions(node.initializer, tsTree);
+                const functionHandler = ts.isArrowFunction(node.initializer)
+                    ? eventHandler
+                        // (event: RowEditingStoppedEvent) => {  
+                        .replace(/^(\(.*?\)) (=>) {/, `function ${onEventName} $1 {`)
+                        // event => {}
+                        .replace(/^(\w*?) (=>) {/, `function ${onEventName} ($1) {`)
+                    : eventHandler.replace('function', 'function ' + onEventName)
+
+                bindings.eventHandlers.push({
+                    name: eventName,
+                    handlerName: onEventName,
+                    handler: functionHandler
+                });
+            }
+        });
+    })
 
     FUNCTION_PROPERTIES.forEach(functionName => {
         registered.push(functionName);
@@ -398,7 +420,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
-        } else if (ts.isFunctionExpression(property.initializer)) {
+        } else if (ts.isFunctionLike(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);
             const escaped = func
                 .replace(/\\/g, "\\\\")

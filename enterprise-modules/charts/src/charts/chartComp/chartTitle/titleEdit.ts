@@ -61,12 +61,17 @@ export class TitleEdit extends Component {
             }
         });
 
+        let wasInTitle = false;
         const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', event => {
             const { title } = chart;
 
-            const inTitle = title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY);
+            const inTitle = !!(title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY));
 
-            canvas.style.cursor = inTitle ? 'pointer' : '';
+            if (wasInTitle !== inTitle) {
+                canvas.style.cursor = inTitle ? 'pointer' : '';
+            }
+
+            wasInTitle = inTitle;
         });
 
         this.destroyableChartListeners = [

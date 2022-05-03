@@ -17,7 +17,7 @@ var gridOptions: GridOptions = {
         { headerName: 'Col 6', valueGetter: 'data.width' }
     ],
     rowData: createRowData(),
-    onGridReady: function (params: GridReadyEvent) {
+    onGridReady: (params: GridReadyEvent) => {
         var cols = params.columnApi.getAllColumns()!;
         cols.forEach(function (col) {
             var colDef = col.getColDef();

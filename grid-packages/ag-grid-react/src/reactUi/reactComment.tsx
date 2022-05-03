@@ -1,16 +1,18 @@
 import { RefObject, useEffect } from 'react';
+import { useEffectOnce } from './useEffectOnce';
 
 const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLElement>) => {
-    useEffect(() => {
+    useEffectOnce( () => {
         const eForComment = eForCommentRef.current!;
         const eParent = eForComment.parentElement;
         if (!eParent) { return; }
         const eComment = document.createComment(comment);
         eParent.insertBefore(eComment, eForComment);
+
         return () => {
             eParent.removeChild(eComment);
         };
-    }, []);
+    }, 'reactComment');
 };
 
 export default useReactCommentEffect;

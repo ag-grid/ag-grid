@@ -12,7 +12,7 @@ import {
     hoverAction,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
-    CANVAS_TO_BUFFER_DEFAULTS,
+    extractImageData,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -134,6 +134,18 @@ const EXAMPLES: Record<string, TestCase> = {
             consoleWarnAssertions(examples.INVALID_AXIS_LABEL_FORMAT)
         ),
     },
+    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
+    LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: {
+        options: examples.LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line'] }),
+    },
 };
 
 describe('AgChartV2', () => {
@@ -159,7 +171,7 @@ describe('AgChartV2', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+                    const imageData = extractImageData(ctx);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 

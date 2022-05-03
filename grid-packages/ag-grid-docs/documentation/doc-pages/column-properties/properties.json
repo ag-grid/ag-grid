@@ -6,7 +6,12 @@
         "meta": {
             "displayName": "Columns"
         },
-        "field": {},
+        "field": {
+            "more": {
+                "name": "Accessing Row Data Values",
+                "url": "/column-definitions/#accessing-row-data-values"
+            }
+        },
         "colId": {},
         "type": {
             "more": {
@@ -370,7 +375,8 @@
             ]
         },
         "initialAggFunc": {},
-        "allowedAggFuncs": {}
+        "allowedAggFuncs": {},
+        "defaultAggFunc": {}
     },
     "pivoting": {
         "meta": {

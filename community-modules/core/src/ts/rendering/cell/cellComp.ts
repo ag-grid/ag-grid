@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded, setAriaRole } from "../../utils/aria";
+import { setAriaColIndex, setAriaDescribedBy, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
@@ -52,9 +52,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellCtrl: CellCtrl;
 
     private firstRender: boolean;
-
-    // for angular 1 only
-    private angularCompiledElement: any;
 
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
@@ -523,11 +520,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.destroyEditorAndRenderer();
         this.removeControls();
-
-        if (this.angularCompiledElement) {
-            this.angularCompiledElement.remove();
-            this.angularCompiledElement = undefined;
-        }
 
         super.destroy();
     }

@@ -1,13 +1,15 @@
-import {Grid, GridOptions} from '@ag-grid-community/core'
-import {MyInnerRenderer} from "./myInnerRenderer_typescript";
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { MyInnerRenderer } from "./myInnerRenderer_typescript";
+
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        {field: 'country', rowGroup: true, hide: true},
-        {field: 'year', rowGroup: true, hide: true},
-        {field: 'gold', aggFunc: 'sum'},
-        {field: 'silver', aggFunc: 'sum'},
-        {field: 'bronze', aggFunc: 'sum'},
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,

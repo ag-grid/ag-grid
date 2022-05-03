@@ -22,6 +22,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -49,6 +50,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -74,6 +76,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "#3f7cbf",
         "fontFamily": "Impact, Charcoal, Sans-Serif",
         "fontSize": 14,
@@ -120,7 +123,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -391,7 +393,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -410,6 +411,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -433,6 +435,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -462,6 +465,7 @@ Object {
         "female",
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -514,6 +518,7 @@ Object {
         "exportedTonnes",
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -559,7 +564,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -802,7 +806,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -821,6 +824,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -844,6 +848,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -869,6 +874,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -914,7 +920,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1404,7 +1409,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -1423,6 +1427,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1446,6 +1451,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -1471,6 +1477,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1516,7 +1523,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -1714,7 +1720,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -1733,6 +1738,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1782,6 +1788,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -1827,7 +1834,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -1974,7 +1980,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -1993,6 +1998,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2017,6 +2023,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -2042,6 +2049,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2086,7 +2094,6 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -2413,7 +2420,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -2432,6 +2438,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2455,6 +2462,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -2480,6 +2488,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -2525,7 +2534,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -2978,7 +2986,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -2997,6 +3004,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3020,6 +3028,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -3045,6 +3054,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3090,7 +3100,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3257,7 +3266,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -3276,6 +3284,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3299,6 +3308,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -3324,6 +3334,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3369,7 +3380,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3527,7 +3537,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -3547,6 +3556,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3570,6 +3580,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -3587,6 +3598,7 @@ Object {
     Object {
       "gridStyle": Array [],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3610,6 +3622,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -3631,7 +3644,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -3778,7 +3790,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -3797,6 +3808,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3849,6 +3861,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -3897,7 +3910,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -4044,7 +4056,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -4063,6 +4074,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4086,6 +4098,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -4111,6 +4124,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4134,6 +4148,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -4155,7 +4170,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4342,7 +4356,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -4361,6 +4374,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4384,6 +4398,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -4409,6 +4424,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4454,7 +4470,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4644,7 +4659,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -4663,6 +4677,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4686,6 +4701,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -4711,6 +4727,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -4734,6 +4751,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -4755,7 +4773,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -4962,7 +4979,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -4981,6 +4997,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5030,6 +5047,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5053,6 +5071,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -5074,7 +5093,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -5235,7 +5253,6 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;
 
@@ -5254,6 +5271,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5303,6 +5321,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -5351,7 +5370,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -6321,13 +6339,11 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
 exports[`prepare #prepareOptions for LOG_AXIS_EXAMPLE it should prepare options as expected 1`] = `
 Object {
-  "autoSize": true,
   "axes": Array [
     Object {
       "base": 10,
@@ -6341,6 +6357,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6391,6 +6408,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 10,
@@ -6436,7 +6454,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -6583,20 +6600,17 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
 exports[`prepare #prepareOptions for MARKET_INDEX_TREEMAP_GRAPH_EXAMPLE it should prepare options as expected 1`] = `
 Object {
-  "autoSize": true,
   "background": Object {
     "fill": "white",
     "visible": true,
   },
   "container": Any<HTMLElement>,
   "data": Any<Object>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -6749,7 +6763,6 @@ Object {
     "tracking": true,
   },
   "type": "hierarchy",
-  "width": 600,
 }
 `;
 
@@ -6768,6 +6781,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6791,6 +6805,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -6816,6 +6831,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -6862,7 +6878,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7062,7 +7077,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -7081,6 +7095,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7104,6 +7119,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -7129,6 +7145,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7153,6 +7170,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -7174,7 +7192,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7368,7 +7385,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -7387,6 +7403,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7410,6 +7427,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -7435,6 +7453,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7459,6 +7478,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -7480,7 +7500,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -7690,7 +7709,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -7709,6 +7727,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7732,6 +7751,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -7757,6 +7777,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -7802,7 +7823,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8156,7 +8176,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -8175,6 +8194,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8224,6 +8244,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8269,7 +8290,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -8427,7 +8447,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -8440,7 +8459,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -8599,7 +8617,6 @@ Object {
     "tracking": true,
   },
   "type": "pie",
-  "width": 600,
 }
 `;
 
@@ -8618,6 +8635,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8667,6 +8685,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8712,7 +8731,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -8860,7 +8878,6 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;
 
@@ -8879,6 +8896,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8931,6 +8949,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -8976,7 +8995,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9189,7 +9207,6 @@ Object {
     "tracking": true,
   },
   "type": "line",
-  "width": 600,
 }
 `;
 
@@ -9201,7 +9218,6 @@ Object {
     "visible": true,
   },
   "container": Any<HTMLElement>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9360,7 +9376,6 @@ Object {
     "tracking": true,
   },
   "type": "pie",
-  "width": 600,
 }
 `;
 
@@ -9379,6 +9394,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9428,6 +9444,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9473,7 +9490,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -9620,7 +9636,6 @@ Object {
     "tracking": true,
   },
   "type": "scatter",
-  "width": 600,
 }
 `;
 
@@ -9639,6 +9654,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9663,6 +9679,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -9688,6 +9705,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9733,7 +9751,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -9941,7 +9958,6 @@ Object {
     "tracking": true,
   },
   "type": "area",
-  "width": 600,
 }
 `;
 
@@ -9960,6 +9976,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -9983,6 +10000,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -10008,6 +10026,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10031,6 +10050,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -10052,7 +10072,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10238,7 +10257,6 @@ Object {
     "tracking": true,
   },
   "type": "bar",
-  "width": 600,
 }
 `;
 
@@ -10257,6 +10275,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10280,6 +10299,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -10305,6 +10325,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10328,6 +10349,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -10349,7 +10371,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": true,
     "item": Object {
@@ -10555,7 +10576,6 @@ Object {
     "tracking": true,
   },
   "type": "column",
-  "width": 600,
 }
 `;
 
@@ -10574,6 +10594,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10623,6 +10644,7 @@ Object {
         },
       ],
       "label": Object {
+        "autoRotate": false,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
@@ -10646,6 +10668,7 @@ Object {
       },
       "title": Object {
         "color": "rgb(70, 70, 70)",
+        "enabled": false,
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
         "fontStyle": undefined,
@@ -10667,7 +10690,6 @@ Object {
   },
   "container": Any<HTMLElement>,
   "data": Any<Array>,
-  "height": 300,
   "legend": Object {
     "enabled": false,
     "item": Object {
@@ -10828,6 +10850,5 @@ Object {
     "tracking": true,
   },
   "type": "histogram",
-  "width": 600,
 }
 `;

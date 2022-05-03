@@ -1,4 +1,6 @@
-import { Grid, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
@@ -62,7 +64,7 @@ const gridOptions: GridOptions = {
           strokeOpacity: 0.2
         },
         tooltip: {
-          renderer: function (params) {
+          renderer: (params) => {
             return {
               content:
                 '<b>' +

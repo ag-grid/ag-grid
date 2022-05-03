@@ -1,4 +1,6 @@
-import { Grid, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -83,7 +85,7 @@ function createQuarterlySalesChart(gridApi: GridApi) {
           },
           number: {
             label: {
-              formatter: function (params: any) {
+              formatter: (params: any) => {
                 return params.value / 1000 + 'k'
               },
             },

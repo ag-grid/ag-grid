@@ -1,4 +1,6 @@
-import { Grid, GridOptions, RowHeightParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowHeightParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 var swimmingHeight: number;
 var groupHeight: number;

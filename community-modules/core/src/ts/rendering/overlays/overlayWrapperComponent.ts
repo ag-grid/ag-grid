@@ -36,6 +36,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private activeOverlay: ILoadingOverlayComp;
     private inProgress = false;
     private destroyRequested = false;
+    private manuallyDisplayed: boolean = false;
 
     constructor() {
         super(OverlayWrapperComponent.TEMPLATE);
@@ -116,6 +117,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             });
         }
 
+        this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
         this.setDisplayed(true);
     }
 
@@ -135,6 +137,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public hideOverlay(): void {
+        this.manuallyDisplayed = false;
         this.destroyActiveOverlay();
         this.setDisplayed(false);
     }
@@ -163,7 +166,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty()) {
+        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
             this.hideOverlay();
         }
     }

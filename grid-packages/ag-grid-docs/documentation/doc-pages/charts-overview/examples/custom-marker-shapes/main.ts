@@ -1,5 +1,6 @@
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import * as agCharts from "ag-charts-community";
+import { AgChartOptions } from "ag-charts-community";
+import { getData } from "./data";
 
 var markerSize = 10
 
@@ -138,7 +139,7 @@ const options: AgChartOptions = {
         text: "Volume (hectolitres)",
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value / 1000000 + "M"
         },
       },

@@ -4,6 +4,7 @@ import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
+import { useEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface SectionProperties {
@@ -45,7 +46,7 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    useEffect(() => {
+    useEffectOnce( () => {
         const beansToDestroy: any[] = [];
         const destroyFuncs: (() => void)[] = [];
 
@@ -93,7 +94,7 @@ const GridBodyComp = () => {
             destroyFuncs.forEach(f => f());
         };
 
-    }, []);
+    }, 'gridBodyComp.main');
 
     const rootClasses = useMemo( ()=> 
         classesList('ag-root','ag-unselectable', movingCss, layoutClass), 

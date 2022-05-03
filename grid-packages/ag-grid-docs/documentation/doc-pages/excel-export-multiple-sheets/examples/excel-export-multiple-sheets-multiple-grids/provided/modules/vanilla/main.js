@@ -26,7 +26,7 @@ const leftColumnDefs = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function (params, dragItemCount) {
+        rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -42,7 +42,7 @@ const rightColumnDefs = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function (params, dragItemCount) {
+        rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -68,14 +68,14 @@ const leftGridOptions = {
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
-    getRowId: function (params) {
+    getRowId: (params) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
     animateRows: true,
-    onGridReady: function (params) {
+    onGridReady: (params) => {
         addGridDropZone(params);
     }
 };
@@ -88,7 +88,7 @@ const rightGridOptions = {
         filter: true,
         resizable: true
     },
-    getRowId: function (params) {
+    getRowId: (params) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
@@ -98,7 +98,7 @@ const rightGridOptions = {
 
 function addGridDropZone(params) {
     const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
-        onDragStop: function (params) {
+        onDragStop: (params) => {
             const nodes = params.nodes;
 
             leftGridOptions.api.applyTransaction({

@@ -96,7 +96,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function (params, dragItemCount) {
+                    rowDragText: (params, dragItemCount) => {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
@@ -111,7 +111,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function (params, dragItemCount) {
+                    rowDragText: (params, dragItemCount) => {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }

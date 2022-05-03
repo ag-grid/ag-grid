@@ -1,4 +1,6 @@
-import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -41,7 +43,7 @@ const gridOptions: GridOptions = {
           strokeWidth: 4,
         },
         tooltip: {
-          renderer: function (params) {
+          renderer: (params) => {
             var label = params.datum[params.labelKey!]
             var size = params.datum[params.sizeKey!]
 

@@ -17,7 +17,6 @@
 |}
 |```
 |
-|The interface for the init parameters is as follows:
+|The method init(params) takes a params object with the interface `IStatusPanelParams`.
 |
-
 

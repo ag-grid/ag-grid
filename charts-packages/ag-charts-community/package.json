@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-community",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -8,6 +8,7 @@
   "scripts": {
     "clean": "rimraf dist .hash",
     "test": "export FONTCONFIG_PATH=$PWD/src/chart/test ; export FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf ; export PANGOCAIRO_BACKEND=fontconfig ; npx jest",
+    "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0 ; npm run test -- -u",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",

@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
         { field: 'switchCode' },
       ],
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,

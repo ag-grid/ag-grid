@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   rowData: createData(12),
-  getRowStyle: function (params: RowClassParams): RowStyle | undefined {
+  getRowStyle: (params: RowClassParams): RowStyle | undefined => {
     return {
       backgroundColor: colors[colorIndex],
     }

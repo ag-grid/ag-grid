@@ -1,5 +1,7 @@
-import { Grid, GridOptions, ICellRendererParams, ICellRendererComp, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core'
-import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
+import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';
+
 
 class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -34,13 +36,13 @@ const gridOptions: GridOptions = {
         filter: true,
     },
     rowData: getData(),
-    getRowHeight: function (params: RowHeightParams) {
+    getRowHeight: (params: RowHeightParams) => {
         // return 100px height for full width rows
         if (isFullWidth(params.data)) {
             return 100
         }
     },
-    isFullWidthRow: function (params: IsFullWidthRowParams) {
+    isFullWidthRow: (params: IsFullWidthRowParams) => {
         return isFullWidth(params.rowNode.data)
     },
     // see AG Grid docs cellRenderer for details on how to build cellRenderers

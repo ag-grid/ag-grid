@@ -1,4 +1,6 @@
-import { Grid, GridOptions, BarSparklineOptions, BarFormat, BarFormatterParams, LabelFormatterParams } from '@ag-grid-community/core'
+import { BarFormat, BarFormatterParams, Grid, GridOptions, LabelFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 
 
@@ -17,7 +19,7 @@ const gridOptions: GridOptions = {
             color: 'white',
             fontSize: 10,
             fontWeight: 'bold',
-            formatter: function (params: LabelFormatterParams) { return `${params.value}%` }
+            formatter: (params: LabelFormatterParams) => { return `${params.value}%` }
           },
           paddingOuter: 0,
           padding: {

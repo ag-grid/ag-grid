@@ -44,10 +44,10 @@ const gridOptions: GridOptions = {
   animateRows: true,
   enableCharts: true,
   suppressAggFuncInHeader: true,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.trade
   },
-  onFirstDataRendered: function (params) {
+  onFirstDataRendered: (params) => {
     var createRangeChartParams: CreateRangeChartParams = {
       cellRange: {
         columns: [

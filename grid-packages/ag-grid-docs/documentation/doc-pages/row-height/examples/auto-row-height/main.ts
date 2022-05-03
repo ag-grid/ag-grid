@@ -1,4 +1,5 @@
 import { Grid, GridOptions } from '@ag-grid-community/core'
+import { getData } from "./data";
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -25,7 +26,7 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     // in this example, the CSS styles are loaded AFTER the grid is created,
     // so we put this in a timeout, so height is calculated after styles are applied.
     setTimeout(function () {

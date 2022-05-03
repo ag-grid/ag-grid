@@ -54,12 +54,11 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'bottom',
       title: {
-        enabled: true,
         text: 'Height',
       },
       label: {
         rotation: 45,
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value + 'cm'
         },
       },
@@ -68,11 +67,10 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       title: {
-        enabled: true,
         text: 'Weight',
       },
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value + 'kg'
         },
       },

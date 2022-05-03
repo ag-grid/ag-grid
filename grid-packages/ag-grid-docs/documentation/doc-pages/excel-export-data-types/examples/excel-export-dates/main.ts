@@ -12,7 +12,7 @@ const gridOptions: GridOptions = {
       field: 'date',
       headerName: 'dd/mm/yy',
       cellClass: 'dateUK',
-      valueFormatter: function (params) {
+      valueFormatter: (params) => {
         var date = new Date(params.value)
         var day = date.getDate().toString().padStart(2, '0')
         var month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
       field: 'date',
       headerName: 'mm/dd/yy',
       cellClass: 'dateUS',
-      valueFormatter: function (params) {
+      valueFormatter: (params) => {
         var date = new Date(params.value)
         var day = date.getDate().toString().padStart(2, '0')
         var month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
       headerName: 'dd/mm/yyy h:mm:ss AM/PM',
       cellClass: 'dateLong',
       minWidth: 150,
-      valueFormatter: function (params) {
+      valueFormatter: (params) => {
         var date = new Date(params.value)
         var day = date.getDate().toString().padStart(2, '0')
         var month = (date.getMonth() + 1).toString().padStart(2, '0')

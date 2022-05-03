@@ -829,7 +829,14 @@ export class GridOptionsWrapper {
     public isImmutableData() {
         // we used to have a property immutableData for this. however this was deprecated
         // in favour of having Immutable Data on by default when getRowId is provided
-        return this.gridOptions.getRowId != null || isTrue(this.gridOptions.immutableData);
+        const getRowIdProvided = this.gridOptions.getRowId != null;
+        const immutableData = isTrue(this.gridOptions.immutableData);
+        // this property is a backwards compatibility property, for those who want
+        // the old behaviour of Row ID's but NOT Immutable Data.
+        const resetRowDataOnUpdate = isTrue(this.gridOptions.resetRowDataOnUpdate);
+
+        if (resetRowDataOnUpdate) { return false; }
+        return getRowIdProvided || immutableData;
     }
 
     public isEnsureDomOrder() {

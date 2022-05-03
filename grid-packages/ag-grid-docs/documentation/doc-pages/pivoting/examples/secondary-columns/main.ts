@@ -30,14 +30,14 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true,
 
   // this is a callback that gets called on each column definition
-  processSecondaryColDef: function (colDef: ColDef) {
+  processSecondaryColDef: (colDef: ColDef) => {
     if (colDef.pivotValueColumn?.getId() === 'gold') {
       colDef.headerName = colDef.headerName?.toUpperCase();
     }
   },
 
   // this is a callback that gets called on each group definition
-  processSecondaryColGroupDef: function (colGroupDef: ColGroupDef) {
+  processSecondaryColGroupDef: (colGroupDef: ColGroupDef) => {
     // for fun, add a css class for 2010
     if (colGroupDef.pivotKeys?.length && colGroupDef.pivotKeys[0] === '2010') {
       colGroupDef.headerClass = 'color-background'

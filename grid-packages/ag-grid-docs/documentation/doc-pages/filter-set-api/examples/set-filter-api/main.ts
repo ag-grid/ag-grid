@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
         },
         {
             field: 'country',
-            valueFormatter: function (params: ValueFormatterParams) {
+            valueFormatter: (params: ValueFormatterParams) => {
                 return `${params.value.name} (${params.value.code})`
             },
             keyCreator: countryKeyCreator,
@@ -88,7 +88,7 @@ function onFirstDataRendered() {
         'filters'
     ) as any) as IFiltersToolPanel).expandFilters()
 }
-  
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!

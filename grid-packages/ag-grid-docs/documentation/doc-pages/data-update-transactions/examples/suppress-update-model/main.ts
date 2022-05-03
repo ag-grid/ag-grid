@@ -1,14 +1,10 @@
 import { ColDef, Grid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
 
-declare var LINUX_DISTROS: string[];
-declare var CITIES: string[];
-declare var LAPTOPS: string[];
+import { createDataItem, getData } from './data'
 
 let aggCallCount = 0;
 let compareCallCount = 0;
 let filterCallCount = 0;
-let idCounter = 0;
-
 function myAggFunc(params: IAggFuncParams) {
     aggCallCount++
 
@@ -125,9 +121,7 @@ function onBtDuplicate() {
 
     const newItems: any[] = [];
     selectedRows.forEach(function (selectedRow) {
-        idCounter++
         const newItem = createDataItem(
-            idCounter,
             selectedRow.name,
             selectedRow.distro,
             selectedRow.laptop,
@@ -156,12 +150,12 @@ function onBtUpdate() {
     selectedRows.forEach(function (oldItem) {
         const newValue = Math.floor(Math.random() * 100) + 10;
         const newItem = createDataItem(
-            oldItem.id,
             oldItem.name,
             oldItem.distro,
             oldItem.laptop,
             oldItem.city,
-            newValue
+            newValue,
+            oldItem.id
         );
         updatedItems.push(newItem)
     })
@@ -217,7 +211,7 @@ const gridOptions: GridOptions = {
         field: 'name',
         cellRendererParams: { checkbox: true },
     },
-    onGridReady: function (params) {
+    onGridReady: (params) => {
         params.api.setFilterModel({
             value: { value: '50' },
         })
@@ -225,9 +219,9 @@ const gridOptions: GridOptions = {
         timeOperation('Initialisation', function () {
             params.api.setRowData(getData())
         })
-
-        params.api.getDisplayedRowAtIndex(2)!.setExpanded(true)
-        params.api.getDisplayedRowAtIndex(4)!.setExpanded(true)
+    },
+    isGroupOpenByDefault: (params) => {
+        return ['Delhi', 'Seoul'].includes(params.key);
     },
 }
 
@@ -259,48 +253,3 @@ function timeOperation(name: string, operation: any) {
 }
 
 
-function letter(i: number) {
-    return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1)
-}
-
-function randomLetter() {
-    return letter(Math.floor(Math.random() * 26 + 1))
-}
-
-function getData() {
-    const myRowData = [];
-    for (let i = 0; i < 10000; i++) {
-        const name =
-            'Mr ' +
-            randomLetter().toUpperCase() +
-            ' ' +
-            randomLetter().toUpperCase() +
-            randomLetter() +
-            randomLetter() +
-            randomLetter() +
-            randomLetter();
-        const city = CITIES[i % CITIES.length];
-        const distro =
-            LINUX_DISTROS[i % LINUX_DISTROS.length] +
-            ' v' +
-            Math.floor(Math.random() * 100 + 1) / 10;
-        const university = LAPTOPS[i % LAPTOPS.length];
-        const value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
-        idCounter++
-        myRowData.push(
-            createDataItem(idCounter, name, distro, university, city, value)
-        )
-    }
-    return myRowData;
-}
-
-function createDataItem(id: any, name: any, distro: any, laptop: any, city: any, value: any): any {
-    return {
-        id: id,
-        name: name,
-        city: city,
-        distro: distro,
-        laptop: laptop,
-        value: value,
-    }
-}

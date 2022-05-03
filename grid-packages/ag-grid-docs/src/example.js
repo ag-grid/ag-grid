@@ -1,4 +1,4 @@
-var gridDiv = document.getElementById('myGrid');
+var gridDiv;
 var grid;
 
 function refreshGrid() {
@@ -11,7 +11,7 @@ function refreshGrid() {
     createData();
 }
 
-function onThemeChanged(initial) {
+function onThemeChanged() {
     var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
 
     gridDiv.className = newTheme;
@@ -27,19 +27,6 @@ function onThemeChanged(initial) {
     }
 
     refreshGrid();
-
-    if (!initial) {
-        var newUrl;
-        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
-        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
-        if (attrRegex.test(location.href)) {
-            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
-        } else {
-            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
-            newUrl = location.href + sep + "theme=" + urlName;
-        }
-        history.replaceState(null, "", newUrl);
-    }
 }
 
 function axisLabelFormatter(params) {
@@ -87,37 +74,6 @@ function axisLabelFormatter(params) {
         return value;
     }
 };
-
-document.addEventListener('DOMContentLoaded', function() {
-    var select = document.getElementById('data-size');
-
-    if (select) {
-        var rowsCols = [
-            [100, defaultColCount],
-            [1000, defaultColCount]
-        ];
-
-        if (!isSmall) {
-            rowsCols.push(
-                [10000, 100],
-                [50000, defaultColCount],
-                [100000, defaultColCount]
-            );
-        }
-
-        for (var i = 0; i < rowsCols.length; i++) {
-            var option = document.createElement('option');
-            var rows = rowsCols[i][0];
-            var cols = rowsCols[i][1];
-
-            option.value = (rows / 1000) + 'x' + cols;
-            option.text = rows + ' Rows, ' + cols + ' Cols';
-            select.appendChild(option);
-        }
-    }
-
-    onThemeChanged(true);
-});
 
 // for easy access in the dev console, we put api and columnApi into global variables
 var docEl = document.documentElement;
@@ -232,19 +188,6 @@ var groupColumn = {
     }
 };
 
-//var aVisible = true;
-//setTimeout( function() {
-//    var start = new Date().getTime();
-//    console.log('start');
-//    aVisible = !aVisible;
-//    gridOptions.columnApi.setColumnsVisible(gridOptions.columnApi.getAllColumns(), aVisible);
-//    //gridOptions.columnApi.getAllColumns().forEach( function(column) {
-//    //    gridOptions.columnApi.setColumnVisible(column, aVisible);
-//    //});
-//    var end = new Date().getTime();
-//    console.log('end ' + (end - start));
-//}, 5000);
-
 // the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
 function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -255,7 +198,7 @@ function suppressColumnMoveAnimation() {
 }
 
 function toggleOptionsCollapsed() {
-    var optionsEl = document.querySelector('.example-toolbar');
+    var optionsEl = document.querySelector('#example-toolbar');
 
     optionsEl.classList.toggle('collapsed');
 }
@@ -776,7 +719,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
+            icon: '<img src="../images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function() {
                 var value = params.value ? params.value : '<empty>';
@@ -787,14 +730,6 @@ function getContextMenuItems(params) {
 
     return result;
 }
-
-//var groupColumn = {
-//    headerName: "Name", field: "name", headerGroup: 'Participant', width: 200, editable: true, filter: PersonFilter,
-//    cellRenderer: {
-//        renderer: "group",
-//        checkbox: true
-//    }
-//};
 
 var desktopDefaultCols = [
     // {
@@ -1164,14 +1099,8 @@ if (isSmall) {
 var dataSize;
 
 
-function filterDoubleClicked(event) {
-    setInterval(function() {
-        gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
-    }, 4000);
-}
-
-function onDataSizeChanged(newDataSize) {
-    dataSize = newDataSize;
+function onDataSizeChanged(event) {
+    dataSize = event.target.value;
     createData();
 }
 
@@ -1327,12 +1256,12 @@ function rowSelected(event) {
 
 var filterCount = 0;
 
-function onFilterChanged(newFilter) {
+function onFilterChanged(event) {
     filterCount++;
     var filterCountCopy = filterCount;
     window.setTimeout(function() {
         if (filterCount === filterCountCopy) {
-            gridOptions.api.setQuickFilter(newFilter);
+            gridOptions.api.setQuickFilter(event.target.value);
         }
     }, 300);
 }
@@ -1367,7 +1296,7 @@ PersonFilter.prototype.setupGui = function() {
         '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" aria-label="Full name search" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
-        '<div><img src="images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
+        '<div><img src="../images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
     this.eFilterText = this.gui.querySelector('#filterText');
@@ -1576,7 +1505,7 @@ function ratingRendererGeneral(value, forFilter) {
 
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
+            result += '<img src="../images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
         }
     }
 
@@ -1754,3 +1683,51 @@ function countryCellRenderer(params) {
     flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
     return flag + ' ' + params.value;
 }
+
+function start() {
+    if(document.getElementById('myGrid') && window.agGrid && !gridDiv) {
+        gridDiv = document.getElementById('myGrid');
+
+        document.getElementById('data-size').addEventListener('change', onDataSizeChanged);
+        document.getElementById('grid-theme').addEventListener('change', onThemeChanged);
+        document.getElementById('options-toggle').addEventListener('click', toggleOptionsCollapsed);
+        document.getElementById('global-filter').addEventListener('input', onFilterChanged);
+
+        var select = document.getElementById('data-size');
+
+        if (select) {
+            var rowsCols = [
+                [100, defaultColCount],
+                [1000, defaultColCount]
+            ];
+
+            if (!isSmall) {
+                rowsCols.push(
+                    [10000, 100],
+                    [50000, defaultColCount],
+                    [100000, defaultColCount]
+                );
+            }
+
+            for (var i = 0; i < rowsCols.length; i++) {
+                var option = document.createElement('option');
+                var rows = rowsCols[i][0];
+                var cols = rowsCols[i][1];
+
+                option.value = (rows / 1000) + 'x' + cols;
+                option.text = rows + ' Rows, ' + cols + ' Cols';
+                select.appendChild(option);
+            }
+        }
+
+        onThemeChanged(true);
+    } else {
+        setTimeout(() => start())
+    }
+}
+if (document.readyState == "complete") {
+    start();
+} else {
+    document.addEventListener("readystatechange", start);
+}
+

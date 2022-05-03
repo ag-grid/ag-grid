@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   suppressRowClickSelection: true,
   columnDefs: columnDefs,
   rowSelection: 'multiple',
-  onGridReady: function (params: GridReadyEvent) {
+  onGridReady: (params: GridReadyEvent) => {
     (document.getElementById('selectedOnly') as HTMLInputElement).checked = true
   },
 }

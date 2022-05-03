@@ -246,6 +246,8 @@ export class RowNode implements IEventEmitter {
 
     private checkAutoHeightsDebounced: () => void;
 
+    private onRowHeightChangedDebounced = debounce(this.onRowHeightChanged.bind(this), 100);
+
     constructor(beans: Beans) {
         this.beans = beans;
     }
@@ -605,8 +607,17 @@ export class RowNode implements IEventEmitter {
 
         this.setRowHeight(newRowHeight);
 
-        const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
+        this.onRowHeightChangedDebounced();
+    }
 
+    /** This method is debounced. It is used for row auto-height. If we don't debounce, 
+     * then the Row Models will end up recalculating each row position
+     * for each row height change and result in the Row Renderer laying out rows.
+     * This is particularly bad if using print layout, and showing eg 1,000 rows,
+     * each row will change it's height, causing Row Model to update 1,000 times.
+     */
+     private onRowHeightChanged(): void {
+        const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
         if (rowModel.onRowHeightChanged) {
             rowModel.onRowHeightChanged();
         }
@@ -632,7 +643,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setExpanded(expanded: boolean): void {
+    public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void {
         if (this.expanded === expanded) { return; }
 
         this.expanded = expanded;
@@ -642,7 +653,8 @@ export class RowNode implements IEventEmitter {
         }
 
         const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
-            expanded
+            expanded,
+            event: e || null
         });
 
         this.beans.rowNodeEventThrottle.dispatchExpanded(event);

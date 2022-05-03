@@ -8,6 +8,10 @@ import { PortalManager } from '../shared/portalManager';
 import GridComp from './gridComp';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
+function debug(msg: string, obj?: any) {
+    // console.log(msg, obj);
+}
+
 export class AgGridReactUi extends Component<AgReactUiProps, { context: Context | undefined }> {
 
     public api!: GridApi;
@@ -24,14 +28,23 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     private whenReadyFuncs: (()=>void)[] = [];
     private ready = false;
 
+    private renderedAfterMount = false;
+    private mounted = false;
+
     constructor(public props: any) {
         super(props);
+        debug('AgGridReactUi.constructor');
         this.state = {context: undefined};
         this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
         this.destroyFuncs.push(() => this.portalManager.destroy());
     }
 
     public render() {
+        debug('AgGridReactUi.render, context = ' + (this.state.context));
+        if (this.state.context) {
+            this.renderedAfterMount = true;
+        }
+
         return (
             <div style={ this.createStyleForDiv() } className={ this.props.className } ref={ this.eGui }>
                 { this.state.context && <GridComp context={ this.state.context }/> }
@@ -48,6 +61,13 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     public componentDidMount() {
+
+        if (this.mounted) {
+            debug('AgGridReactUi.componentDidMount - skipping');
+            return;
+        }
+        debug('AgGridReactUi.componentDidMount');
+        this.mounted = true;
 
         const modules = this.props.modules || [];
         const gridParams: GridParams = {
@@ -73,6 +93,8 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady( ()=> {
+                debug('AgGridReactUi.createUiCallback');
+
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
                 this.props.setGridApi(this.api, this.columnApi);
@@ -86,6 +108,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
         const acceptChangesCallback = (context: Context)=> {
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady( ()=> {
+                debug('AgGridReactUi.acceptChangesCallback');
                 this.whenReadyFuncs.forEach( f => f() );
                 this.whenReadyFuncs.length = 0;
                 this.ready = true;
@@ -98,7 +121,13 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     public componentWillUnmount() {
-        this.destroyFuncs.forEach(f => f());
+        if (this.renderedAfterMount) {
+            debug('AgGridReactUi.componentWillUnmount - executing');
+            this.destroyFuncs.forEach(f => f());
+            this.destroyFuncs.length = 0;
+        } else {
+            debug('AgGridReactUi.componentWillUnmount - skipping');
+        }
     }
 
     public componentDidUpdate(prevProps: any) {
@@ -191,8 +220,10 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
 
     private processWhenReady(func: ()=>void): void {
         if (this.ready) {
+            debug('AgGridReactUi.processWhenReady sync');
             func();
         } else {
+            debug('AgGridReactUi.processWhenReady async');
             this.whenReadyFuncs.push(func);
         }
     }
@@ -212,8 +243,10 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
     }
 
     private isImmutableDataActive() {
-        return (this.props.deltaRowDataMode || this.props.immutableData) ||
-            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
+        return (this.props.deltaRowDataMode || this.props.immutableData || this.props.getRowId != null) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode
+                || this.props.gridOptions.immutableData
+                || this.props.gridOptions.getRowId != null));
     }
 }
 

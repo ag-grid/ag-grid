@@ -8,11 +8,11 @@
             },
             {
                 "name": "Changelog",
-                "url": "/ag-grid-changelog/"
+                "url": "/changelog/"
             },
             {
                 "name": "Pipeline",
-                "url": "/ag-grid-pipeline/"
+                "url": "/pipeline/"
             },
             {
                 "name": "Documentation Archive",
@@ -30,7 +30,7 @@
             },
             {
                 "name": "License & Pricing",
-                "url": "/license-pricing.php"
+                "url": "/license-pricing"
             },
             {
                 "name": "Support via Zendesk",
@@ -44,7 +44,7 @@
         "links": [
             {
                 "name": "About",
-                "url": "/about.php"
+                "url": "/about"
             },
             {
                 "name": "Blog",
@@ -52,11 +52,11 @@
             },
             {
                 "name": "Privacy Policy",
-                "url": "/privacy.php"
+                "url": "/privacy"
             },
             {
                 "name": "Cookies Policy",
-                "url": "/cookies.php"
+                "url": "/cookies"
             }
         ]
     },
