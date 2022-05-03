@@ -162,10 +162,10 @@ $-ag-params: null !default;
     $-ag-params: $params !global;
 }
 
-$-theme-parameters-to-map-onto-variables: (grid-size icon-size widget-container-horizontal-padding widget-container-vertical-padding widget-horizontal-spacing widget-vertical-spacing cell-horizontal-padding cell-widget-spacing row-height header-height list-item-height column-select-indent-size row-group-indent-size filter-tool-panel-group-indent tab-min-width menu-min-width side-bar-panel-width border-radius card-radius checkbox-border-radius cell-horizontal-border toggle-button-border-width toggle-button-height toggle-button-width font-family font-size card-shadow popup-shadow);
+$-ag-theme-parameters-to-map-onto-variables: (grid-size icon-size widget-container-horizontal-padding widget-container-vertical-padding widget-horizontal-spacing widget-vertical-spacing cell-horizontal-padding cell-widget-spacing row-height header-height list-item-height column-select-indent-size row-group-indent-size filter-tool-panel-group-indent tab-min-width menu-min-width side-bar-panel-width border-radius card-radius checkbox-border-radius cell-horizontal-border toggle-button-border-width toggle-button-height toggle-button-width font-family font-size card-shadow popup-shadow);
 
 @mixin ag-theme-parameters-to-variable-expressions() {
-    @each $name in $-theme-parameters-to-map-onto-variables {
+    @each $name in $-ag-theme-parameters-to-map-onto-variables {
         $value: -ag-parameter-as-expression($name);
         --ag-#{$name}: #{$value};
     }
