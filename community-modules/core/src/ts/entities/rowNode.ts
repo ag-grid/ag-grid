@@ -818,26 +818,28 @@ export class RowNode implements IEventEmitter {
         let atLeastOneMixed = false;
         let newSelectedValue: boolean | undefined;
 
-        if (this.childrenAfterGroup) {
-            for (let i = 0; i < this.childrenAfterGroup.length; i++) {
-                const child = this.childrenAfterGroup[i];
+        if (!this.childrenAfterGroup?.length) {
+            return;
+        }
 
-                // skip non-selectable nodes to prevent inconsistent selection values
-                if (!child.selectable) { continue; }
+        for (let i = 0; i < this.childrenAfterGroup.length; i++) {
+            const child = this.childrenAfterGroup[i];
 
-                const childState = child.isSelected();
+            // skip non-selectable nodes to prevent inconsistent selection values
+            if (!child.selectable) { continue; }
 
-                switch (childState) {
-                    case true:
-                        atLeastOneSelected = true;
-                        break;
-                    case false:
-                        atLeastOneDeSelected = true;
-                        break;
-                    default:
-                        atLeastOneMixed = true;
-                        break;
-                }
+            const childState = child.isSelected();
+
+            switch (childState) {
+                case true:
+                    atLeastOneSelected = true;
+                    break;
+                case false:
+                    atLeastOneDeSelected = true;
+                    break;
+                default:
+                    atLeastOneMixed = true;
+                    break;
             }
         }
 
@@ -928,7 +930,7 @@ export class RowNode implements IEventEmitter {
             }
         }
 
-        if (groupSelectsChildren && this.group) {
+        if (groupSelectsChildren && this.childrenAfterGroup?.length) {
             updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered);
         }
 

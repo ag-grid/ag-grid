@@ -469,14 +469,7 @@ export class GridOptionsWrapper {
     }
 
     public isGroupSelectsChildren() {
-        const result = isTrue(this.gridOptions.groupSelectsChildren);
-
-        if (result && this.isTreeData()) {
-            console.warn('AG Grid: groupSelectsChildren does not work with tree data');
-            return false;
-        }
-
-        return result;
+        return isTrue(this.gridOptions.groupSelectsChildren);
     }
 
     public isSuppressRowHoverHighlight() {

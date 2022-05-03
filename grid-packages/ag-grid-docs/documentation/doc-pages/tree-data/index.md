@@ -186,12 +186,6 @@ If you are showing child counts for the groups, then the child count is a count 
 
 To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as normal. However there are some restrictions to be aware of.
 
-### Selecting Groups and Children
-
-The property `groupSelectsChildren` does not work with tree data. This is because groups in tree data are rows passed by the application that may or may not have children - a group is simply a normal row that has another row as a child. Given groups and leaf node are logically identical, it is not possible to treat them differently in selection.
-
-If you want to achieve something similar to `groupSelectsChildren` then you should listen on the selection events and do the selection yourself in your application. You will come across edge cases where only your application will understand what the best selection outcome is.
-
 ### Checkbox vs Click Selection
 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selecting and preferring checkbox selection instead.
@@ -216,6 +210,17 @@ Filler groups do not keep their selection state should the filler group be moved
 
 If keeping selection of groups is a priority, then arrange your data so that the grid does not need to create any filler groups.
 
+### Example: Selecting Groups and Children
+
+Below is an example demonstrating the property `groupSelectsChildren` used alongside tree data.
+
+In the example below, note the following:
+- Selecting all child rows will select the parent
+- Selecting only some of a rows children will mark it as partially selected
+- Selecting a row, and then selecting another while holding the shift key will select all rows between the two rows
+- Selecting a row with children will also select all of that rows children
+
+<grid-example title='Group Selects Children' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 525, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Filtering Aggregations
 
