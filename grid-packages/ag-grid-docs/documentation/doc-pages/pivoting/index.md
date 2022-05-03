@@ -255,6 +255,18 @@ To fix the pivot column groups without the ability to expand and collapse the co
 
 <grid-example title='Fixed Pivot Column Groups' name='fixed-pivot-column-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
+## Hiding Repeated Total Column Labels
+
+When pivoting with only one value column, it can appear redundant to have the value column label repeated for each pivot key. To address this, you can enable the grid option
+`removePivotHeaderRowWhenSingleValueColumn`, when set to `true` it will cause the value column labels to be skipped, instead using the pivot keys for the column label.
+
+The example below demonstrates this option:
+
+- It is pivoting with a single value column - Gold. Observe that no `'sum(Gold)'` column labels are generated.
+- If another value column is added, the option is disabled and the extra row of column labels are re-introduced.
+
+<grid-example title='Hiding Repeated Column Labels' name='hidden-single-value-column-header' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
 ## Pivot Row Totals
 
 When in pivot mode you can also include automatically calculated Row Total Columns. These total columns will use the provided aggregation function on the value columns to 'roll-up' each group level.
