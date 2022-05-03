@@ -7,6 +7,7 @@ import { RowComp } from "../../rendering/row/rowComp";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Beans } from "../../rendering/beans";
 import { getAllValuesInObject } from "../../utils/object";
+import { setAriaRole } from "../../utils/aria";
 
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
@@ -22,17 +23,17 @@ function templateFactory(): string {
         res = /* html */
             `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation">
                 <div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                    <div class="${cssClasses.container}" ref="eContainer" role="rowgroup"></div>
+                    <div class="${cssClasses.container}" ref="eContainer"></div>
                 </div>
             </div>`;
     } else if (template2) {
         res = /* html */
             `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                <div class="${cssClasses.container}" ref="eContainer" role="presentation"></div>
+                <div class="${cssClasses.container}" ref="eContainer"></div>
             </div>`;
     } else {
         res = /* html */
-            `<div class="${cssClasses.container}" ref="eContainer" role="presentation"></div>`;
+            `<div class="${cssClasses.container}" ref="eContainer"></div>`;
     }
 
     return res;
@@ -108,6 +109,8 @@ export class RowContainerComp extends Component {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
+
+        setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" :  "presentation");
     }
 
     public appendRow(element: HTMLElement) {
