@@ -5,9 +5,10 @@ enterprise: true
 
 This section covers areas of aggregation that don't fit within the other sections of the documentation.
 
-## Restricting Functions
+## Configuring Aggregation Functions
+### Restricting Functions
 
-By default, all functions are available to all value columns. To restrict the functions on a column, use the `allowedAggFuncs` column property.
+By default, all functions are available to all value columns. To restrict the aggregation functions available on a value column, use the `allowedAggFuncs` column property.
 
 <snippet>
 const gridOptions = {
@@ -23,23 +24,16 @@ const gridOptions = {
 }
 </snippet>
 
-## Default Aggregation Function
+### Default Aggregation Function
 
 When aggregation is enabled for a column via the GUI, it is initially set to the default aggregation function for that column, which if unspecified is the `sum` function. You can configure the default aggregation function for a column using the `defaultAggFunc` column property.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'silver',
-            // allow gui to set aggregations for this column
-            enableValue: true,
-            // Default to the avg function when aggregation is enabled
-            defaultAggFunc: 'avg'
-        }
-    ]
-}
-</snippet>
+The following example demonstrates restricting the aggregation functions and setting a default:
+
+- The Gold column has the available agg funcs restricted using `allowedAggFuncs` so if you try to change the function via the GUI, you will see that only `sum` `min` and `max` are available for this column.
+- The default column definition has the `defaultAggFunc` set to `avg`, so if you enable aggregation for the Silver or Bronze columns, you'll see they are initially aggregated using the `avg` function.
+
+<grid-example title='Configuring Aggregation Functions' name='configuring-aggregation-functions' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Aggregation API
 
