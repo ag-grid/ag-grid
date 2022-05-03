@@ -9425,13 +9425,6 @@
         "optional": false
       }
     },
-    "setAriaSort": {
-      "type": {
-        "arguments": { "sort": "ColumnSortState | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setColId": {
       "type": {
         "arguments": { "id": "string" },
@@ -9439,9 +9432,23 @@
         "optional": false
       }
     },
+    "setAriaLabel": {
+      "type": {
+        "arguments": { "id?": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setAriaDescribedBy": {
       "type": {
-        "arguments": { "id": "string | undefined" },
+        "arguments": { "id?": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setAriaSort": {
+      "type": {
+        "arguments": { "sort?": "ColumnSortState" },
         "returnType": "void",
         "optional": false
       }

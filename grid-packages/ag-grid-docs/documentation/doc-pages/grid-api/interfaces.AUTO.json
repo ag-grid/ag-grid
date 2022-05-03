@@ -5456,9 +5456,10 @@
     "type": {
       "setWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
-      "setAriaDescribedBy(id: string | undefined)": "void",
+      "setAriaLabel(id?: string)": "void",
+      "setAriaDescribedBy(id?: string)": "void",
+      "setAriaSort(sort?: ColumnSortState)": "void",
       "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "getUserCompInstance()": "IHeader | undefined",
       "setTitle(title: string | undefined)": "void"
