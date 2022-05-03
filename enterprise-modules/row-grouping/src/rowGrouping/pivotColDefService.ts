@@ -274,7 +274,7 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], valueCol, colIds, insertAfter);
+            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter);
         }
     }
 
@@ -298,33 +298,26 @@ export class PivotColDefService extends BeanStub {
 
     private createRowGroupTotal(parentChildren: (ColGroupDef | ColDef)[],
                                 pivotColumnDefs: ColDef[],
-                                pivotKeys: string[],
                                 valueColumn: Column,
                                 colIds: string[],
                                 insertAfter: boolean): void {
 
-        const newPivotKeys = pivotKeys.slice(0);
-
         const measureColumns = this.columnModel.getValueColumns();
-        const valueGroup: ColGroupDef = {
-            children: [],
-            pivotKeys: newPivotKeys,
-            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + '_' + this.generateColumnGroupId(newPivotKeys),
-        };
+
+        let colDef: ColDef;
 
         if (measureColumns.length === 0) {
-            const colDef = this.createColDef(null, '-', newPivotKeys);
-            valueGroup.children.push(colDef);
-            pivotColumnDefs.push(colDef);
+            colDef = this.createColDef(null, '-', []);
         } else {
             const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
-            const colDef = this.createColDef(valueColumn, columnName, newPivotKeys);
+            colDef = this.createColDef(valueColumn, columnName, []);
             colDef.pivotTotalColumnIds = colIds;
-            valueGroup.children.push(colDef);
-            pivotColumnDefs.push(colDef);
         }
 
-        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
+        colDef.colId = PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
+        pivotColumnDefs.push(colDef);
+
+        insertAfter ? parentChildren.push(colDef) : parentChildren.unshift(colDef);
     }
 
     private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, totalColumn: boolean = false): ColDef {
