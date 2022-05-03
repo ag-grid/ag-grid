@@ -1,4 +1,4 @@
-function getData() {
+export function getData(): any[] {
   return [
     {
       area: [-20, 30, 50, -18, 25, -50, 70],

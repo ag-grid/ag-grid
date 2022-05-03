@@ -1,4 +1,5 @@
 import { Grid, AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, GridOptions, LineSparklineOptions, BarSparklineOptions, BarFormatterParams, MarkerFormatterParams } from '@ag-grid-community/core'
+import { getData } from "./data";
 
 const palette = {
   blue: 'rgb(20,94,140)',
