@@ -323,6 +323,8 @@ export class PieSeries extends PolarSeries {
         // Process segments.
         let end = 0;
         angleDataRatios.forEach((start) => {
+            if (isNaN(start)) { return; } // No segments displayed - nothing to do.
+
             const radius = radiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
             const endAngle = angleScale.convert(end) + rotation;
@@ -339,7 +341,7 @@ export class PieSeries extends PolarSeries {
             // Split the circle into quadrants like so: ⊗
             const quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
             const quadrantOffset = midAngle180 - quadrantStart;
-            const quadrant = Math.floor(quadrantOffset / halfPi) || 0;
+            const quadrant = Math.floor(quadrantOffset / halfPi);
             const quadrantIndex = mod(quadrant, quadrantTextOpts.length);
 
             const { textAlign, textBaseline } = quadrantTextOpts[quadrantIndex];
