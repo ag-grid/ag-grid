@@ -339,7 +339,7 @@ export class PieSeries extends PolarSeries {
             // Split the circle into quadrants like so: ⊗
             const quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
             const quadrantOffset = midAngle180 - quadrantStart;
-            const quadrant = Math.floor(quadrantOffset / halfPi);
+            const quadrant = Math.floor(quadrantOffset / halfPi) || 0;
             const quadrantIndex = mod(quadrant, quadrantTextOpts.length);
 
             const { textAlign, textBaseline } = quadrantTextOpts[quadrantIndex];
