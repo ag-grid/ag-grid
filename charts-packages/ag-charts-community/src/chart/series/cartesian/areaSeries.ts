@@ -834,7 +834,7 @@ export class AreaSeries extends CartesianSeries {
         const { xKey } = this;
         const { yKey } = nodeDatum;
 
-        if (!(xKey && yKey)) {
+        if (!(xKey && yKey) || !this.seriesItemEnabled.get(yKey)) {
             return '';
         }
 
