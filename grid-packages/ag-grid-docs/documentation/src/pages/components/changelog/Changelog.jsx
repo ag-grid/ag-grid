@@ -315,6 +315,13 @@ const Changelog = ({location}) => {
         );
     };
 
+    const switchDisplayedFixVersion = (fixVersion) =>{
+        setFixVersion(fixVersion)
+        let url = new URL(window.location)
+        url.searchParams.set('fixVersion', fixVersion)
+        window.history.pushState({},'',url ) 
+    }
+
     return (
         <>
             {!IS_SSR && (
@@ -347,7 +354,7 @@ const Changelog = ({location}) => {
                                     Version:
                                     <VersionDropdownMenu
                                         versions={versions}
-                                        onChange={fixVersion => setFixVersion(fixVersion)}
+                                        onChange={switchDisplayedFixVersion}
                                         fixVersion={fixVersion}
                                     />
                                 </label>

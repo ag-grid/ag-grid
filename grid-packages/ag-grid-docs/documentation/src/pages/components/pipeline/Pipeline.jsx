@@ -52,18 +52,24 @@ const COLUMN_DEFS = [
         field: "status",
         width: 131,
         valueGetter: params => {
+            console.log(params)
             let fixVersionsArr = params.data.versions
             let hasFixVersion = fixVersionsArr.length > 0
             if (hasFixVersion) {
                 let latestFixVersion = fixVersionsArr.length - 1
                 let fixVersion = fixVersionsArr[latestFixVersion]
-                if (fixVersion === "Next" && params.data.status === "Backlog") {
+                if (fixVersion === "Next" && (params.data.status === "Backlog" || params.data.status === "Done") ) {
                     return "Next Release"
                 }
             }
-            if (params.data.status !== "Backlog") {
-                return "Next Release"
-            } else {
+            if(params.data.status === "Done" && params.data.resolution !== "Done"){
+                return params.data.resolution
+            }
+
+            if (params.data.status !== "Done" && params.data.status !== "Backlog") {
+                return "Scheduled"
+            }
+             else {
                 return "Backlog"
             }
         },
@@ -158,13 +164,13 @@ const detailCellRendererParams = params => {
     return res
 }
 
-const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("itemKey") : '';
+const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("searchQuery") : '';
 
 const Pipeline = ({ location }) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
     const searchBarEl = useRef(null)
-    const URLFilterItemKey = useState(extractFilterTerm(location))[0];
+    const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
 
 
     useEffect(() => {
@@ -177,8 +183,8 @@ const Pipeline = ({ location }) => {
 
     const gridReady = params => {
         setGridApi(params.api)
-        searchBarEl.current.value = URLFilterItemKey
-        params.api.setQuickFilter(URLFilterItemKey)
+        searchBarEl.current.value = URLFilterSearchQuery
+        params.api.setQuickFilter(URLFilterSearchQuery)
     }
 
     const onQuickFilterChange = event => {
