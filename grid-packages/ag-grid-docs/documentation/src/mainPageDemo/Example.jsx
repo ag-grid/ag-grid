@@ -3,7 +3,7 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
 import styles from "../pages/components/assets/homepage/homepage.module.scss";
 import isDevelopment from '../utils/is-development';
-import {localPrefix, rootLocalPrefix} from "../utils/consts";
+import {localPrefix} from "../utils/consts";
 import {AgGridReact} from "@ag-grid-community/react";
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model'
 import {CsvExportModule} from '@ag-grid-community/csv-export'
@@ -33,21 +33,12 @@ const IS_SSR = typeof window === "undefined"
 
 const helmet = [];
 
-if (isDevelopment()) {
-    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css`}
-                      crossOrigin="anonymous"/>);
-    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham.css`}
-                      crossOrigin="anonymous"/>);
-    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`}
-                      crossOrigin="anonymous"/>);
-    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`}
-                      crossOrigin="anonymous"/>);
-    helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`}
-                        type="text/javascript"/>);
-} else {
-    // helmet.push(<script key="enterprise-lib" src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.js" type="text/javascript"/>);
-}
-
+import "@ag-grid-community/core/dist/styles/ag-grid.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-balham.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-material.css"
 
 const groupColumn = {
     headerName: "Group",
@@ -72,7 +63,7 @@ const countryCellRenderer = (props) => {
     //get flags from here: http://www.freeflagicons.com/
     if (props.value === null || props.value === "" || props.value === '(Select All)') {
         return props.value;
-    } else if(props.value === undefined) {
+    } else if (props.value === undefined) {
         return null
     }
 
@@ -1060,7 +1051,7 @@ const Example = () => {
         loadInstance.current = loadInstance.current + 1;
         loadInstanceCopy.current = loadInstance.current;
 
-        if(gridRef.current && gridRef.current.api) {
+        if (gridRef.current && gridRef.current.api) {
             gridRef.current.api.showLoadingOverlay();
         }
 
@@ -1100,7 +1091,7 @@ const Example = () => {
                 setMessage('');
                 clearInterval(intervalId);
                 setColumnDefs(colDefs);
-                setRowData(data);
+                setRowData(data)
             }
         }, 0);
     }
@@ -1257,7 +1248,7 @@ const Example = () => {
                             height: 0;
                 }
             `}</style>
-                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"/>
                 {helmet.map(entry => entry)}
             </Helmet>
             <div className={`${styles['example-wrapper']} ${bodyClass}`}>
