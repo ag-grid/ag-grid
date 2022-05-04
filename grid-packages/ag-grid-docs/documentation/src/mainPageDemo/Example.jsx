@@ -2,8 +2,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
 import styles from "../pages/components/assets/homepage/homepage.module.scss";
-import isDevelopment from '../utils/is-development';
-import {localPrefix} from "../utils/consts";
 import {AgGridReact} from "@ag-grid-community/react";
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model'
 import {CsvExportModule} from '@ag-grid-community/csv-export'
@@ -22,16 +20,12 @@ import {SetFilterModule} from "@ag-grid-enterprise/set-filter";
 import {SideBarModule} from "@ag-grid-enterprise/side-bar";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {SparklinesModule} from "@ag-grid-enterprise/sparklines";
-import {Consts} from "./consts"
-import {Utils} from "./utils"
+import {booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months} from "./consts"
+import {pseudoRandom, suppressColumnMoveAnimation,sharedNumberParser, numberParser, booleanComparator, booleanCleaner, currencyFormatter, axisLabelFormatter, formatThousands} from "./utils";
 import {PersonFloatingFilterComponent} from "./PersonFloatingFilterComponent";
 import {PersonFilter} from "./PersonFilter";
 import {CountryFloatingFilterComponent} from "./CountryFloatingFilterComponent";
 import {WinningsFilter} from "./WinningsFilter";
-
-const IS_SSR = typeof window === "undefined"
-
-const helmet = [];
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css"
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css"
@@ -39,6 +33,10 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css"
 import "@ag-grid-community/core/dist/styles/ag-theme-balham.css"
 import "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css"
 import "@ag-grid-community/core/dist/styles/ag-theme-material.css"
+
+const IS_SSR = typeof window === "undefined"
+
+const helmet = [];
 
 const groupColumn = {
     headerName: "Group",
@@ -68,7 +66,7 @@ const countryCellRenderer = (props) => {
     }
 
     return <><img className="flag" alt="${props.value}" border="0" width="15" height="10"
-                  src={`https://flags.fmcdn.net/data/flags/mini/${Consts.COUNTRY_CODES[props.value]}.png`}/>{props.value}</>;
+                  src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/>{props.value}</>;
 }
 
 function ratingFilterRenderer(params) {
@@ -110,7 +108,7 @@ function ratingRenderer(params) {
 
 
 const booleanCellRenderer = (props) => {
-    const [valueCleaned] = useState(Utils.booleanCleaner(props.value));
+    const [valueCleaned] = useState(booleanCleaner(props.value));
     if (valueCleaned === true) {
         return <span title='true' className='ag-icon ag-icon-tick content-icon'/>;
     }
@@ -126,7 +124,7 @@ const booleanCellRenderer = (props) => {
 }
 
 const booleanFilterCellRenderer = (props) => {
-    const [valueCleaned] = useState(Utils.booleanCleaner(props.value));
+    const [valueCleaned] = useState(booleanCleaner(props.value));
     if (valueCleaned === true) {
         return <span title='true' className='ag-icon ag-icon-tick content-icon'/>;
     }
@@ -191,7 +189,7 @@ const mobileDefaultCols = [
     },
     {
         headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-        valueFormatter: Utils.currencyFormatter,
+        valueFormatter: currencyFormatter,
         type: 'numericColumn',
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
@@ -200,13 +198,13 @@ const mobileDefaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
-        editable: true, valueParser: Utils.numberParser, width: 170,
+        editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: Utils.currencyFormatter, cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -382,7 +380,7 @@ const desktopDefaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellClass: 'booleanType',
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"textAlign": "center"}, comparator: Utils.booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: {"textAlign": "center"}, comparator: booleanComparator,
                 // floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
@@ -399,7 +397,7 @@ const desktopDefaultCols = [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: 'winningsFilter',
-                valueFormatter: Utils.currencyFormatter,
+                valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 cellClassRules: {
                     'currencyCell': 'typeof x == "number"'
@@ -441,13 +439,13 @@ const desktopDefaultCols = [
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
         type: 'numericColumn',
-        editable: true, valueParser: Utils.numberParser, width: 200,
+        editable: true, valueParser: numberParser, width: 200,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: Utils.currencyFormatter, cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -459,13 +457,13 @@ function createDataSizeValue(rows, cols) {
     return `${rows / 1000}x${cols}`;
 }
 
-
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstanceCopy = useRef(0);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
     const [bodyClass, setBodyClass] = useState('');
+    const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -486,7 +484,7 @@ const Example = () => {
                 return {
                     image: {
                         id: value,
-                        base64: base64Flags[Consts.COUNTRY_CODES[value]],
+                        base64: base64Flags[COUNTRY_CODES[value]],
                         imageType: 'png',
                         width: 20,
                         height: 12,
@@ -617,7 +615,7 @@ const Example = () => {
         // alwaysShowHorizontalScroll: true,
         // alwaysShowVerticalScroll: true,
         // debounceVerticalScrollbar: true,
-        suppressColumnMoveAnimation: Utils.suppressColumnMoveAnimation(),
+        suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
         // suppressRowHoverHighlight: true,
         // suppressTouch: true,
         // suppressDragLeaveHidesColumns: true,
@@ -726,11 +724,11 @@ const Example = () => {
         },
         processCellFromClipboard: params => {
             const colIdUpperCase = params.column.getId().toUpperCase();
-            const monthsUpperCase = Consts.months.map(month => month.toUpperCase());
+            const monthsUpperCase = months.map(month => month.toUpperCase());
             const isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
 
             if (isMonth) {
-                return Utils.sharedNumberParser(params.value);
+                return sharedNumberParser(params.value);
             }
 
             return params.value;
@@ -826,7 +824,7 @@ const Example = () => {
                         },
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.angleKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.angleKey]))
                             })
                         }
                     }
@@ -836,7 +834,7 @@ const Example = () => {
                 axes: {
                     number: {
                         label: {
-                            formatter: Utils.axisLabelFormatter
+                            formatter: axisLabelFormatter
                         }
                     },
                     category: {
@@ -849,28 +847,28 @@ const Example = () => {
                     column: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     bar: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     line: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     area: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
@@ -878,11 +876,11 @@ const Example = () => {
                         tooltip: {
                             renderer: params => {
                                 const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                                const xValue = params.xName + ': $' + Utils.formatThousands(params.datum[params.xKey]);
-                                const yValue = params.yName + ': $' + Utils.formatThousands(params.datum[params.yKey]);
+                                const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
+                                const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
                                 let size = '';
                                 if (params.sizeKey) {
-                                    size = '<br>' + params.sizeName + ': $' + Utils.formatThousands(params.datum[params.sizeKey]);
+                                    size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
                                 }
                                 return {
                                     content: label + xValue + '<br>' + yValue + size
@@ -893,10 +891,10 @@ const Example = () => {
                     histogram: {
                         tooltip: {
                             renderer: params => ({
-                                title: (params.xName || params.xKey) + ': $' + Utils.formatThousands(params.datum.domain[0]) + ' - $' + Utils.formatThousands(params.datum.domain[1]),
+                                title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
                                 // With a yKey, the value is the total of the yKey value for the population of the bin.
                                 // Without a yKey, the value is a count of the population of the bin.
-                                content: params.yKey ? Utils.formatThousands(Math.round(params.datum.total)) : params.datum.frequency
+                                content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency
                             })
                         }
                     }
@@ -1010,27 +1008,27 @@ const Example = () => {
         const rowItem = {};
 
         //create data for the known columns
-        const countriesToPickFrom = Math.floor(Consts.countries.length * ((row % 3 + 1) / 3));
-        const countryData = Consts.countries[(row * 19) % countriesToPickFrom];
+        const countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
+        const countryData = countries[(row * 19) % countriesToPickFrom];
         rowItem.country = countryData.country;
         rowItem.continent = countryData.continent;
         rowItem.language = countryData.language;
 
-        const firstName = Consts.firstNames[row % Consts.firstNames.length];
-        const lastName = Consts.lastNames[row % Consts.lastNames.length];
+        const firstName = firstNames[row % firstNames.length];
+        const lastName = lastNames[row % lastNames.length];
         rowItem.name = firstName + " " + lastName;
 
         rowItem.game = {
-            name: Consts.games[Math.floor(row * 13 / 17 * 19) % Consts.games.length],
-            bought: Consts.booleanValues[row % Consts.booleanValues.length]
+            name: games[Math.floor(row * 13 / 17 * 19) % games.length],
+            bought: booleanValues[row % booleanValues.length]
         };
 
-        rowItem.bankBalance = (Math.round(Utils.pseudoRandom() * 100000)) - 3000;
-        rowItem.rating = (Math.round(Utils.pseudoRandom() * 5));
+        rowItem.bankBalance = (Math.round(pseudoRandom() * 100000)) - 3000;
+        rowItem.rating = (Math.round(pseudoRandom() * 5));
 
         let totalWinnings = 0;
-        Consts.months.forEach(month => {
-            const value = (Math.round(Utils.pseudoRandom() * 100000)) - 20;
+        months.forEach(month => {
+            const value = (Math.round(pseudoRandom() * 100000)) - 20;
             rowItem[month.toLocaleLowerCase()] = value;
             totalWinnings += value;
         });
@@ -1039,8 +1037,8 @@ const Example = () => {
         //create dummy data for the additional columns
         for (let col = defaultCols.length; col < colCount; col++) {
             var value;
-            const randomBit = Utils.pseudoRandom().toString().substring(2, 5);
-            value = Consts.colNames[col % Consts.colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
+            const randomBit = pseudoRandom().toString().substring(2, 5);
+            value = colNames[col % colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
             rowItem["col" + col] = value;
         }
 
@@ -1106,7 +1104,7 @@ const Example = () => {
             children: []
         };
 
-        Consts.months.forEach(month => {
+        months.forEach(month => {
             monthGroup.children.push({
                 headerName: month,
                 field: month.toLocaleLowerCase(),
@@ -1120,8 +1118,8 @@ const Example = () => {
                     'bad-score': 'typeof x === "number" && x < 10000',
                     'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
                 },
-                valueParser: Utils.numberParser,
-                valueFormatter: Utils.currencyFormatter,
+                valueParser: numberParser,
+                valueFormatter: currencyFormatter,
                 filterParams: {
                     buttons: ['reset'],
                     inRangeInclusive: true
@@ -1163,8 +1161,8 @@ const Example = () => {
 
     useEffect(() => {
         const flags = {};
-        const promiseArray = Consts.countries.map(country => {
-            const countryCode = Consts.COUNTRY_CODES[country.country];
+        const promiseArray = countries.map(country => {
+            const countryCode = COUNTRY_CODES[country.country];
 
             return fetch(`https://flagcdn.com/w20/${countryCode}.png`)
                 .then(response => response.blob())
@@ -1197,7 +1195,7 @@ const Example = () => {
         const columns = defaultCols.slice(0, colCount);
 
         for (let col = defaultColCount; col < colCount; col++) {
-            const colName = Consts.colNames[col % Consts.colNames.length];
+            const colName = colNames[col % colNames.length];
             const colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
             columns.push(colDef);
         }
@@ -1231,9 +1229,7 @@ const Example = () => {
     }
 
     function toggleOptionsCollapsed() {
-        // const optionsEl = document.querySelector('#example-toolbar');
-        //
-        // optionsEl.classList.toggle('collapsed');
+        setToolbarCollapsed(!toolbarCollapsed)
     }
 
     function onFilterChanged(event) {
@@ -1252,7 +1248,7 @@ const Example = () => {
                 {helmet.map(entry => entry)}
             </Helmet>
             <div className={`${styles['example-wrapper']} ${bodyClass}`}>
-                <div className={`${styles['example-toolbar']}`} id='example-toolbar'>
+                <div className={`${styles['example-toolbar']} ${toolbarCollapsed ? styles['collapsed'] : ''}`}>
                     <div className={styles['options-container']}>
                         <div>
                             <label htmlFor="data-size">Data Size:</label>
@@ -1327,7 +1323,7 @@ const Example = () => {
                             gridOptions={gridOptions}
                             columnDefs={columnDefs}
                             rowData={rowData}
-                        ></AgGridReact>
+                        />
                     </div>
                 </section>
             </div>
