@@ -2,6 +2,8 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
 import styles from "../pages/components/assets/homepage/homepage.module.scss";
+import isDevelopment from '../utils/is-development';
+import {localPrefix, rootLocalPrefix} from "../utils/consts";
 import {AgGridReact} from "@ag-grid-community/react";
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model'
 import {CsvExportModule} from '@ag-grid-community/csv-export'
@@ -31,6 +33,22 @@ const IS_SSR = typeof window === "undefined"
 
 const helmet = [];
 
+if (isDevelopment()) {
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css`}
+                      crossOrigin="anonymous"/>);
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham.css`}
+                      crossOrigin="anonymous"/>);
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`}
+                      crossOrigin="anonymous"/>);
+    helmet.push(<link key="live-streaming-theme" rel="stylesheet" href={`${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`}
+                      crossOrigin="anonymous"/>);
+    helmet.push(<script key="enterprise-lib" src={`${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`}
+                        type="text/javascript"/>);
+} else {
+    // helmet.push(<script key="enterprise-lib" src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.js" type="text/javascript"/>);
+}
+
+
 const groupColumn = {
     headerName: "Group",
     width: 250,
@@ -52,61 +70,53 @@ function currencyCssFunc(params) {
 
 const countryCellRenderer = (props) => {
     //get flags from here: http://www.freeflagicons.com/
-    if (props.value == null || props.value === "" || props.value === '(Select All)') {
+    if (props.value === null || props.value === "" || props.value === '(Select All)') {
         return props.value;
+    } else if(props.value === undefined) {
+        return null
     }
 
-    return <><img className="flag" alt="${props.value}" border="0" width="15" height="10" src={`https://flags.fmcdn.net/data/flags/mini/${Consts.COUNTRY_CODES[props.value]}.png`} />{props.value}</>;
+    return <><img className="flag" alt="${props.value}" border="0" width="15" height="10"
+                  src={`https://flags.fmcdn.net/data/flags/mini/${Consts.COUNTRY_CODES[props.value]}.png`}/>{props.value}</>;
 }
-
 
 function ratingFilterRenderer(params) {
-    return ratingRendererGeneral(params.value, true);
-}
-
-function ratingRenderer(params) {
-    return ratingRendererGeneral(params.value, false);
-}
-
-function ratingRendererGeneral(value, forFilter) {
+    const {value} = params;
     if (value === '(Select All)') {
         return value;
     }
 
-    let result = '<span>';
-
-    for (let i = 0; i < 5; i++) {
-        if (value > i) {
-            result += '<img src="../images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
-        }
-    }
-
-    if (forFilter && Number(value) === 0) {
-        result += '(No stars)';
-    }
-
-    result += '</span>';
-
-    return result;
+    return (
+        <span>
+            {[...Array(5)].map((x, i) => {
+                    return value > i ?
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        null
+                }
+            )}
+            (No stars)
+        </span>
+    )
 }
 
-function currencyRenderer(params) {
-    if (params.value === null || params.value === undefined) {
-        return null;
+function ratingRenderer(params) {
+    const {value} = params;
+    if (value === '(Select All)') {
+        return value;
     }
 
-    if (isNaN(params.value)) {
-        return 'NaN';
-    }
-
-    // if we are doing 'count', then we do not show pound sign
-    if (params.node.group && params.column.aggFunc === 'count') {
-        return params.value;
-    }
-
-    return '&pound;' + Utils.formatThousands(Math.floor(params.value));
-
+    return (
+        <span>
+            {[...Array(5)].map((x, i) => {
+                    return value > i ?
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        null
+                }
+            )}
+        </span>
+    )
 }
+
 
 const booleanCellRenderer = (props) => {
     const [valueCleaned] = useState(Utils.booleanCleaner(props.value));
@@ -178,7 +188,7 @@ const mobileDefaultCols = [
                 "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                 "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
         },
-        floatCell: true,
+        // floatCell: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
@@ -324,7 +334,7 @@ const desktopDefaultCols = [
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
                 // pinned: 'left',
-                floatCell: true,
+                // floatCell: true,
                 filter: 'agSetColumnFilter',
                 filterParams: {
                     cellRenderer: 'countryCellRenderer',
@@ -382,7 +392,7 @@ const desktopDefaultCols = [
                 enablePivot: true,
                 cellClass: 'booleanType',
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"textAlign": "center"}, comparator: Utils.booleanComparator,
-                floatCell: true,
+                // floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     buttons: ['reset'],
@@ -428,14 +438,14 @@ const desktopDefaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 120, editable: true,
-        // cellRenderer: 'ratingRenderer',
+        cellRenderer: 'ratingRenderer',
         cellClass: 'vAlign',
-        floatCell: true,
+        // floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
         chartDataType: 'category',
-        // filterParams: {cellRenderer: 'ratingFilterRenderer'}
+        filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
@@ -463,6 +473,8 @@ const Example = () => {
     const gridRef = useRef(null);
     const loadInstanceCopy = useRef(0);
     const loadInstance = useRef(0);
+    const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
+    const [bodyClass, setBodyClass] = useState('');
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -540,14 +552,13 @@ const Example = () => {
         components: {
             personFilter: PersonFilter,
             personFloatingFilterComponent: PersonFloatingFilterComponent,
-            // spl todo
             countryCellRenderer: countryCellRenderer,
             countryFloatingFilterComponent: CountryFloatingFilterComponent,
             booleanCellRenderer: booleanCellRenderer,
             booleanFilterCellRenderer: booleanFilterCellRenderer,
             winningsFilter: WinningsFilter,
-            // ratingRenderer: ratingRenderer,
-            // ratingFilterRenderer: ratingFilterRenderer
+            ratingRenderer: ratingRenderer,
+            ratingFilterRenderer: ratingFilterRenderer
         },
         defaultCsvExportParams: defaultExportParams,
         defaultExcelExportParams: defaultExportParams,
@@ -805,10 +816,9 @@ const Example = () => {
         onGridReady: event => {
             // console.log('Callback onGridReady: api = ' + event.api);
 
-            // spl todo
-            // if (docEl.clientWidth <= 1024) {
-            //     event.api.closeToolPanel();
-            // }
+            if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
+                event.api.closeToolPanel();
+            }
         },
         onRowGroupOpened: event => {
             // console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
@@ -1050,7 +1060,9 @@ const Example = () => {
         loadInstance.current = loadInstance.current + 1;
         loadInstanceCopy.current = loadInstance.current;
 
-        // gridOptions.api.showLoadingOverlay();
+        if(gridRef.current && gridRef.current.api) {
+            gridRef.current.api.showLoadingOverlay();
+        }
 
         const colDefs = createCols();
 
@@ -1061,6 +1073,9 @@ const Example = () => {
         const data = [];
 
         setMessageStyle({display: 'inline'})
+        setMessage(` Generating rows`);
+
+        const loopCount = rowCount > 10000 ? 10000 : 1000;
 
         const intervalId = setInterval(() => {
             if (loadInstanceCopy.current !== loadInstance.current) {
@@ -1068,22 +1083,24 @@ const Example = () => {
                 return;
             }
 
-            for (let i = 0; i < 1000; i++) {
+            for (let i = 0; i < loopCount; i++) {
                 if (row < rowCount) {
                     const rowItem = createRowItem(row, colCount);
                     data.push(rowItem);
                     row++;
+                } else {
+                    break;
                 }
             }
 
             setMessage(` Generating rows ${row}`);
 
             if (row >= rowCount) {
+                setMessageStyle({display: 'none'});
+                setMessage('');
                 clearInterval(intervalId);
                 setColumnDefs(colDefs);
                 setRowData(data);
-                setMessageStyle({display: 'none'});
-                setMessage('');
             }
         }, 0);
     }
@@ -1123,7 +1140,7 @@ const Example = () => {
 
         let defaultCols;
         let defaultColCount;
-        if (isSmall) {
+        if (small) {
             defaultCols = mobileDefaultCols;
             defaultCols = defaultCols.concat(monthGroup.children);
             defaultColCount = defaultCols.length;
@@ -1141,7 +1158,7 @@ const Example = () => {
             [1000, defaultColCount]
         ];
 
-        if (!isSmall) {
+        if (!small) {
             newRowsCols.push(
                 [10000, 100],
                 [50000, defaultColCount],
@@ -1207,22 +1224,19 @@ const Example = () => {
         setDataSize(event.target.value)
     }
 
-    function onThemeChanged() {
-        // const newTheme = IS_SSR ? 'ag-theme-none' : document.querySelector('#grid-theme').value || 'ag-theme-none';
-        //
-        // gridDiv.className = newTheme;
-        //
-        // const isDark = newTheme && newTheme.indexOf('dark') >= 0;
-        //
-        // if (isDark) {
-        //     document.body.classList.add('dark');
-        //     gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
-        // } else {
-        //     document.body.classList.remove('dark');
-        //     gridOptions.chartThemes = null;
-        // }
-        //
-        // refreshGrid();
+    function onThemeChanged(event) {
+        const newTheme = event.target.value || 'ag-theme-none';
+        setGridTheme(newTheme);
+
+        const isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+        if (isDark) {
+            setBodyClass(styles['dark']);
+            gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+        } else {
+            setBodyClass('');
+            gridOptions.chartThemes = null;
+        }
     }
 
     function toggleOptionsCollapsed() {
@@ -1232,13 +1246,7 @@ const Example = () => {
     }
 
     function onFilterChanged(event) {
-        // filterCount++;
-        // const filterCountCopy = filterCount;
-        // window.setTimeout(function() {
-        //     if (filterCount === filterCountCopy) {
-        //         gridOptions.api.setQuickFilter(event.target.value);
-        //     }
-        // }, 300);
+        gridRef.current.api.setQuickFilter(event.target.value);
     }
 
     return (
@@ -1249,9 +1257,10 @@ const Example = () => {
                             height: 0;
                 }
             `}</style>
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map(entry => entry)}
             </Helmet>
-            <div className={`${styles['example-wrapper']}`}>
+            <div className={`${styles['example-wrapper']} ${bodyClass}`}>
                 <div className={`${styles['example-toolbar']}`} id='example-toolbar'>
                     <div className={styles['options-container']}>
                         <div>
@@ -1266,9 +1275,6 @@ const Example = () => {
                                     return <option key={value} value={value}>{text}</option>
                                 })}
                             </select>
-                            <span style={{marginLeft: 10}}>
-                                {message}<i className="fa fa-spinner fa-pulse fa-fw margin-bottom"/>
-                            </span>
                         </div>
                         <div>
                             <label htmlFor="grid-theme">Theme:</label>
@@ -1296,13 +1302,16 @@ const Example = () => {
                         </div>
                     </div>
                 </div>
+                <span style={{marginLeft: 10, ...messageStyle}}>
+                                {message}<i className="fa fa-spinner fa-pulse fa-fw margin-bottom"/>
+                </span>
                 <div className={styles['options-expander']}>
                     <span id="messageText"/>
                     <div id="options-toggle" onClick={toggleOptionsCollapsed}><span>&nbsp;</span>OPTIONS</div>
                     <span>&nbsp;</span>
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
-                    <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className="ag-theme-alpine">
+                    <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
                         <AgGridReact
                             ref={gridRef}
                             modules={[
@@ -1328,7 +1337,6 @@ const Example = () => {
                             columnDefs={columnDefs}
                             rowData={rowData}
                         ></AgGridReact>
-
                     </div>
                 </section>
             </div>
