@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
-import styles from "../assets/homepage/homepage.module.scss";
+import styles from "../pages/components/assets/homepage/homepage.module.scss";
 import {AgGridReact} from "@ag-grid-community/react";
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model'
 import {CsvExportModule} from '@ag-grid-community/csv-export'
@@ -20,12 +20,14 @@ import {SetFilterModule} from "@ag-grid-enterprise/set-filter";
 import {SideBarModule} from "@ag-grid-enterprise/side-bar";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {SparklinesModule} from "@ag-grid-enterprise/sparklines";
-import Utils from "./utils"
-import Consts from "./consts"
-import PersonFloatingFilterComponent from "./PersonFloatingFilterComponent";
-import PersonFilter from "./PersonFilter";
-import CountryFloatingFilterComponent from "./CountryFloatingFilterComponent";
-import WinningsFilter from "./WinningsFilter";
+import {Consts} from "./consts"
+import {Utils} from "./utils"
+import {PersonFloatingFilterComponent} from "./PersonFloatingFilterComponent";
+import {PersonFilter} from "./PersonFilter";
+import {CountryFloatingFilterComponent} from "./CountryFloatingFilterComponent";
+import {WinningsFilter} from "./WinningsFilter";
+
+const IS_SSR = typeof window === "undefined"
 
 const helmet = [];
 
@@ -518,7 +520,8 @@ const Example = () => {
                 icon: `<img src="../images/lab.svg" style="width: 14px; height: 14px;"/>`,
                 //shortcut: 'Alt + M',
                 action: () => {
-                    window.alert(`You clicked a custom menu item on cell ${params.value ? params.value : '<empty>'}`);
+                    const message = `You clicked a custom menu item on cell ${params.value ? params.value : '<empty>'}`;
+                    IS_SSR ? console.log(message) : window.alert(message);
                 }
             }
         );
@@ -559,7 +562,7 @@ const Example = () => {
         rowDragManaged: true,
         // suppressMoveWhenRowDragging: true,
         rowDragMultiRow: true,
-        popupParent: document.querySelector('#example-wrapper'),
+        popupParent: IS_SSR ? null : document.querySelector('#example-wrapper'),
         // enableBrowserTooltips: true,
         // tooltipShowDelay: 200,
         // tooltipHideDelay: 2000,
@@ -618,7 +621,7 @@ const Example = () => {
         // suppressDragLeaveHidesColumns: true,
         // suppressMakeColumnVisibleAfterUnGroup: true,
         // unSortIcon: true,
-        enableRtl: /[?&]rtl=true/.test(window.location.search),
+        enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
         enableCharts: true,
         // multiSortKey: 'ctrl',
         animateRows: true,
@@ -1086,7 +1089,7 @@ const Example = () => {
     }
 
     useEffect(() => {
-        const small = document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768;
+        const small = IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768;
         setIsSmall(small);
 
         //put in the month cols
@@ -1205,7 +1208,7 @@ const Example = () => {
     }
 
     function onThemeChanged() {
-        // const newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
+        // const newTheme = IS_SSR ? 'ag-theme-none' : document.querySelector('#grid-theme').value || 'ag-theme-none';
         //
         // gridDiv.className = newTheme;
         //

@@ -1,4 +1,4 @@
-const Consts = {
+export const Consts = {
     colNames: ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"],
 
     countries: [
@@ -69,4 +69,3 @@ const Consts = {
 
     months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 }
-export default Consts;

@@ -1,6 +1,6 @@
-import Consts from "./consts";
+import {Consts} from "./consts"
 
-class CountryFloatingFilterComponent {
+export class CountryFloatingFilterComponent {
     init(params) {
         this.params = params;
         this.eGui = document.createElement('div');
@@ -48,4 +48,3 @@ class CountryFloatingFilterComponent {
     }
 }
 
-export default CountryFloatingFilterComponent;

@@ -1,4 +1,4 @@
-class PersonFloatingFilterComponent {
+export class PersonFloatingFilterComponent {
     init(params) {
         this.params = params;
         const eGui = this.eGui = document.createElement('div');
@@ -29,4 +29,3 @@ class PersonFloatingFilterComponent {
     }
 }
 
-export default PersonFloatingFilterComponent;

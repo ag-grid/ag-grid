@@ -1,4 +1,4 @@
-class PersonFilter {
+export class PersonFilter {
     init(params) {
         this.filterText = null;
         this.params = params;
@@ -88,5 +88,3 @@ class PersonFilter {
         this.eFilterText.removeEventListener("input", this.onFilterChanged);
     }
 }
-
-export default PersonFilter;

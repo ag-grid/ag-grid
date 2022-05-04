@@ -1,6 +1,6 @@
 import React from 'react';
 import Seo from './components/SEO';
-import Example from "./components/main-demo/Example";
+import Example from "../mainPageDemo/Example";
 
 const ExamplePage = () => {
     return (<>

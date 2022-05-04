@@ -1,4 +1,4 @@
-class WinningsFilter {
+export class WinningsFilter {
     init(params) {
         var uniqueId = Math.random();
         this.filterChangedCallback = params.filterChangedCallback;
@@ -74,9 +74,7 @@ class WinningsFilter {
         console.error('invalid checkbox selection');
     }
 
-// lazy, the example doesn't use setModel()
+    // lazy, the example doesn't use setModel()
     setModel() {
     }
 }
-
-export default WinningsFilter;
