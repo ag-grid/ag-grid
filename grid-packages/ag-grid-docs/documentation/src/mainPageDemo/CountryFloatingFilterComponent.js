@@ -1,4 +1,4 @@
-import {Consts} from "./consts"
+import {COUNTRY_CODES} from "./consts"
 
 export class CountryFloatingFilterComponent {
     init(params) {
@@ -33,9 +33,7 @@ export class CountryFloatingFilterComponent {
             }
 
             toPrint.forEach(function(country) {
-                flagsHtml.push('<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
-                    'src="https://flags.fmcdn.net/data/flags/mini/'
-                    + Consts.COUNTRY_CODES[country] + '.png">');
+                flagsHtml.push(`<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[country]}.png">`);
             });
 
             this.eGui.innerHTML = '(' + model.length + ') ' + flagsHtml.join('');

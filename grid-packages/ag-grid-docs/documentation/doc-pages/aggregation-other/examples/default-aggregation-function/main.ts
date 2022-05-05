@@ -5,20 +5,16 @@ const gridOptions: GridOptions = {
     { field: 'country', rowGroup: true, enableRowGroup: true, hide: true },
     {
         field: 'gold',
-        // allow gui to set aggregations for this column
+        // allows column to be dragged to the 'Values` section of the Columns Tool Panel
         enableValue: true,
-        // restrict aggregations to sum, min and max
-        allowedAggFuncs: ['sum', 'min', 'max'],
-        aggFunc: 'sum',
+        // use 'avg' as the default agg func instead of 'sum'
+        defaultAggFunc: 'avg',
     },
     { field: 'silver', enableValue: true },
-    // Default to using the 'min' aggregation function for this column
     { field: 'bronze', enableValue: true },
   ],
   defaultColDef: {
-    flex: 1,
-    // Default to using the 'avg' aggregation function for other columns
-    defaultAggFunc: 'avg',
+    flex: 1
   },
   autoGroupColumnDef: {
     minWidth: 180,

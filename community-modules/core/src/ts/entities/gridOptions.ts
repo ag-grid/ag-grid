@@ -453,7 +453,8 @@ export interface GridOptions {
     aggregateOnlyChangedColumns?: boolean;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */
     suppressAggFilteredOnly?: boolean;
-
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false` */
+    removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
     /** Set to `true` to enable Row Animation. Default: `false` */
     animateRows?: boolean;

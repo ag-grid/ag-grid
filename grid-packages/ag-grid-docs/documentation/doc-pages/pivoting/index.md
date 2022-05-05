@@ -279,13 +279,26 @@ To enable total columns set `gridOptions.pivotColumnGroupTotals = 'before' | 'af
 
 All value columns must use the same aggregation function for the total column to make sense, otherwise the total column will not be included.
 
-
 The example below demonstrates Pivot Column Group Totals as follows:
 
 - Pivot Column Group Totals added on ['sport', 'year'] columns.
 - Expanding pivot groups reveals columns that make up totals.
 
 <grid-example title='Pivot Column Group Totals' name='totals' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+## Hiding Repeated Total Column Labels
+
+When pivoting with only one value column, it can appear redundant to have the value column label repeated for each pivot 
+key. To address this, you can enable the grid option `removePivotHeaderRowWhenSingleValueColumn`, when set to `true` it
+will cause the value column labels to be skipped, instead using the pivot keys for the column label.
+
+The example below demonstrates hiding repeated column labels. Note the following:
+
+- The `removePivotHeaderRowWhenSingleValueColumn` grid option is enabled.
+- As <b>Gold</b> is the only value column, the `'sum(Gold)'` columns labels are hidden.
+- If another value column is added, the option is disabled and the extra row of column labels are re-introduced.
+
+<grid-example title='Hiding Repeated Column Labels' name='hidden-single-value-column-header' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Saving & Restoring Column State with Pivot
 

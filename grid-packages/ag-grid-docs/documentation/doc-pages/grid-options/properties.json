@@ -687,7 +687,13 @@
                 "url": "/aggregation/#filtering"
             }
         },
-        "groupAggFiltering": {}
+        "groupAggFiltering": {},
+        "removePivotHeaderRowWhenSingleValueColumn": {
+            "more": {
+                "name": "Configuring Aggregation Functions",
+                "url": "/aggregation-other"
+            }
+        }
     },
     "rendering": {
         "meta": {

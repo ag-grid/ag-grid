@@ -580,6 +580,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false`     */
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false`     */
+    @Input() public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined = undefined;
     /** Set to `true` to enable Row Animation. Default: `false`     */
     @Input() public animateRows: boolean | undefined = undefined;
     /** Set to `true` to have cells flash after data changes. Default: `false`     */
@@ -1245,6 +1247,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
+    static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     // @END@
 }
 

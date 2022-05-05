@@ -20,12 +20,19 @@ import {SetFilterModule} from "@ag-grid-enterprise/set-filter";
 import {SideBarModule} from "@ag-grid-enterprise/side-bar";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {SparklinesModule} from "@ag-grid-enterprise/sparklines";
-import {Consts} from "./consts"
-import {Utils} from "./utils"
+import {booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months} from "./consts"
+import {pseudoRandom, suppressColumnMoveAnimation,sharedNumberParser, numberParser, booleanComparator, booleanCleaner, currencyFormatter, axisLabelFormatter, formatThousands} from "./utils";
 import {PersonFloatingFilterComponent} from "./PersonFloatingFilterComponent";
 import {PersonFilter} from "./PersonFilter";
 import {CountryFloatingFilterComponent} from "./CountryFloatingFilterComponent";
 import {WinningsFilter} from "./WinningsFilter";
+
+import "@ag-grid-community/core/dist/styles/ag-grid.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-balham.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css"
+import "@ag-grid-community/core/dist/styles/ag-theme-material.css"
 
 const IS_SSR = typeof window === "undefined"
 
@@ -52,64 +59,56 @@ function currencyCssFunc(params) {
 
 const countryCellRenderer = (props) => {
     //get flags from here: http://www.freeflagicons.com/
-    if (props.value == null || props.value === "" || props.value === '(Select All)') {
+    if (props.value === null || props.value === "" || props.value === '(Select All)') {
         return props.value;
+    } else if (props.value === undefined) {
+        return null
     }
 
-    return <><img className="flag" alt="${props.value}" border="0" width="15" height="10" src={`https://flags.fmcdn.net/data/flags/mini/${Consts.COUNTRY_CODES[props.value]}.png`} />{props.value}</>;
+    return <><img className="flag" alt="${props.value}" border="0" width="15" height="10"
+                  src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/>{props.value}</>;
 }
-
 
 function ratingFilterRenderer(params) {
-    return ratingRendererGeneral(params.value, true);
-}
-
-function ratingRenderer(params) {
-    return ratingRendererGeneral(params.value, false);
-}
-
-function ratingRendererGeneral(value, forFilter) {
+    const {value} = params;
     if (value === '(Select All)') {
         return value;
     }
 
-    let result = '<span>';
-
-    for (let i = 0; i < 5; i++) {
-        if (value > i) {
-            result += '<img src="../images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
-        }
-    }
-
-    if (forFilter && Number(value) === 0) {
-        result += '(No stars)';
-    }
-
-    result += '</span>';
-
-    return result;
+    return (
+        <span>
+            {[...Array(5)].map((x, i) => {
+                    return value > i ?
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        null
+                }
+            )}
+            (No stars)
+        </span>
+    )
 }
 
-function currencyRenderer(params) {
-    if (params.value === null || params.value === undefined) {
-        return null;
+function ratingRenderer(params) {
+    const {value} = params;
+    if (value === '(Select All)') {
+        return value;
     }
 
-    if (isNaN(params.value)) {
-        return 'NaN';
-    }
-
-    // if we are doing 'count', then we do not show pound sign
-    if (params.node.group && params.column.aggFunc === 'count') {
-        return params.value;
-    }
-
-    return '&pound;' + Utils.formatThousands(Math.floor(params.value));
-
+    return (
+        <span>
+            {[...Array(5)].map((x, i) => {
+                    return value > i ?
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        null
+                }
+            )}
+        </span>
+    )
 }
+
 
 const booleanCellRenderer = (props) => {
-    const [valueCleaned] = useState(Utils.booleanCleaner(props.value));
+    const [valueCleaned] = useState(booleanCleaner(props.value));
     if (valueCleaned === true) {
         return <span title='true' className='ag-icon ag-icon-tick content-icon'/>;
     }
@@ -125,7 +124,7 @@ const booleanCellRenderer = (props) => {
 }
 
 const booleanFilterCellRenderer = (props) => {
-    const [valueCleaned] = useState(Utils.booleanCleaner(props.value));
+    const [valueCleaned] = useState(booleanCleaner(props.value));
     if (valueCleaned === true) {
         return <span title='true' className='ag-icon ag-icon-tick content-icon'/>;
     }
@@ -178,7 +177,7 @@ const mobileDefaultCols = [
                 "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                 "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
         },
-        floatCell: true,
+        // floatCell: true,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
@@ -190,7 +189,7 @@ const mobileDefaultCols = [
     },
     {
         headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-        valueFormatter: Utils.currencyFormatter,
+        valueFormatter: currencyFormatter,
         type: 'numericColumn',
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
@@ -199,13 +198,13 @@ const mobileDefaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
-        editable: true, valueParser: Utils.numberParser, width: 170,
+        editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: Utils.currencyFormatter, cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -324,7 +323,7 @@ const desktopDefaultCols = [
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
                 // pinned: 'left',
-                floatCell: true,
+                // floatCell: true,
                 filter: 'agSetColumnFilter',
                 filterParams: {
                     cellRenderer: 'countryCellRenderer',
@@ -381,8 +380,8 @@ const desktopDefaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellClass: 'booleanType',
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"textAlign": "center"}, comparator: Utils.booleanComparator,
-                floatCell: true,
+                cellRenderer: 'booleanCellRenderer', cellStyle: {"textAlign": "center"}, comparator: booleanComparator,
+                // floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     buttons: ['reset'],
@@ -398,7 +397,7 @@ const desktopDefaultCols = [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: 'winningsFilter',
-                valueFormatter: Utils.currencyFormatter,
+                valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 cellClassRules: {
                     'currencyCell': 'typeof x == "number"'
@@ -428,25 +427,25 @@ const desktopDefaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 120, editable: true,
-        // cellRenderer: 'ratingRenderer',
+        cellRenderer: 'ratingRenderer',
         cellClass: 'vAlign',
-        floatCell: true,
+        // floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
         chartDataType: 'category',
-        // filterParams: {cellRenderer: 'ratingFilterRenderer'}
+        filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
         type: 'numericColumn',
-        editable: true, valueParser: Utils.numberParser, width: 200,
+        editable: true, valueParser: numberParser, width: 200,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: Utils.currencyFormatter, cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -458,11 +457,12 @@ function createDataSizeValue(rows, cols) {
     return `${rows / 1000}x${cols}`;
 }
 
-
 const Example = () => {
     const gridRef = useRef(null);
-    const loadInstanceCopy = useRef(0);
     const loadInstance = useRef(0);
+    const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
+    const [bodyClass, setBodyClass] = useState('');
+    const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -483,7 +483,7 @@ const Example = () => {
                 return {
                     image: {
                         id: value,
-                        base64: base64Flags[Consts.COUNTRY_CODES[value]],
+                        base64: base64Flags[COUNTRY_CODES[value]],
                         imageType: 'png',
                         width: 20,
                         height: 12,
@@ -540,14 +540,13 @@ const Example = () => {
         components: {
             personFilter: PersonFilter,
             personFloatingFilterComponent: PersonFloatingFilterComponent,
-            // spl todo
             countryCellRenderer: countryCellRenderer,
             countryFloatingFilterComponent: CountryFloatingFilterComponent,
             booleanCellRenderer: booleanCellRenderer,
             booleanFilterCellRenderer: booleanFilterCellRenderer,
             winningsFilter: WinningsFilter,
-            // ratingRenderer: ratingRenderer,
-            // ratingFilterRenderer: ratingFilterRenderer
+            ratingRenderer: ratingRenderer,
+            ratingFilterRenderer: ratingFilterRenderer
         },
         defaultCsvExportParams: defaultExportParams,
         defaultExcelExportParams: defaultExportParams,
@@ -615,7 +614,7 @@ const Example = () => {
         // alwaysShowHorizontalScroll: true,
         // alwaysShowVerticalScroll: true,
         // debounceVerticalScrollbar: true,
-        suppressColumnMoveAnimation: Utils.suppressColumnMoveAnimation(),
+        suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
         // suppressRowHoverHighlight: true,
         // suppressTouch: true,
         // suppressDragLeaveHidesColumns: true,
@@ -724,11 +723,11 @@ const Example = () => {
         },
         processCellFromClipboard: params => {
             const colIdUpperCase = params.column.getId().toUpperCase();
-            const monthsUpperCase = Consts.months.map(month => month.toUpperCase());
+            const monthsUpperCase = months.map(month => month.toUpperCase());
             const isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
 
             if (isMonth) {
-                return Utils.sharedNumberParser(params.value);
+                return sharedNumberParser(params.value);
             }
 
             return params.value;
@@ -805,10 +804,9 @@ const Example = () => {
         onGridReady: event => {
             // console.log('Callback onGridReady: api = ' + event.api);
 
-            // spl todo
-            // if (docEl.clientWidth <= 1024) {
-            //     event.api.closeToolPanel();
-            // }
+            if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
+                event.api.closeToolPanel();
+            }
         },
         onRowGroupOpened: event => {
             // console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
@@ -825,7 +823,7 @@ const Example = () => {
                         },
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.angleKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.angleKey]))
                             })
                         }
                     }
@@ -835,7 +833,7 @@ const Example = () => {
                 axes: {
                     number: {
                         label: {
-                            formatter: Utils.axisLabelFormatter
+                            formatter: axisLabelFormatter
                         }
                     },
                     category: {
@@ -848,28 +846,28 @@ const Example = () => {
                     column: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     bar: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     line: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
                     area: {
                         tooltip: {
                             renderer: params => ({
-                                content: '$' + Utils.formatThousands(Math.round(params.datum[params.yKey]))
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
                             })
                         }
                     },
@@ -877,11 +875,11 @@ const Example = () => {
                         tooltip: {
                             renderer: params => {
                                 const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                                const xValue = params.xName + ': $' + Utils.formatThousands(params.datum[params.xKey]);
-                                const yValue = params.yName + ': $' + Utils.formatThousands(params.datum[params.yKey]);
+                                const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
+                                const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
                                 let size = '';
                                 if (params.sizeKey) {
-                                    size = '<br>' + params.sizeName + ': $' + Utils.formatThousands(params.datum[params.sizeKey]);
+                                    size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
                                 }
                                 return {
                                     content: label + xValue + '<br>' + yValue + size
@@ -892,10 +890,10 @@ const Example = () => {
                     histogram: {
                         tooltip: {
                             renderer: params => ({
-                                title: (params.xName || params.xKey) + ': $' + Utils.formatThousands(params.datum.domain[0]) + ' - $' + Utils.formatThousands(params.datum.domain[1]),
+                                title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
                                 // With a yKey, the value is the total of the yKey value for the population of the bin.
                                 // Without a yKey, the value is a count of the population of the bin.
-                                content: params.yKey ? Utils.formatThousands(Math.round(params.datum.total)) : params.datum.frequency
+                                content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency
                             })
                         }
                     }
@@ -1009,27 +1007,27 @@ const Example = () => {
         const rowItem = {};
 
         //create data for the known columns
-        const countriesToPickFrom = Math.floor(Consts.countries.length * ((row % 3 + 1) / 3));
-        const countryData = Consts.countries[(row * 19) % countriesToPickFrom];
+        const countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
+        const countryData = countries[(row * 19) % countriesToPickFrom];
         rowItem.country = countryData.country;
         rowItem.continent = countryData.continent;
         rowItem.language = countryData.language;
 
-        const firstName = Consts.firstNames[row % Consts.firstNames.length];
-        const lastName = Consts.lastNames[row % Consts.lastNames.length];
+        const firstName = firstNames[row % firstNames.length];
+        const lastName = lastNames[row % lastNames.length];
         rowItem.name = firstName + " " + lastName;
 
         rowItem.game = {
-            name: Consts.games[Math.floor(row * 13 / 17 * 19) % Consts.games.length],
-            bought: Consts.booleanValues[row % Consts.booleanValues.length]
+            name: games[Math.floor(row * 13 / 17 * 19) % games.length],
+            bought: booleanValues[row % booleanValues.length]
         };
 
-        rowItem.bankBalance = (Math.round(Utils.pseudoRandom() * 100000)) - 3000;
-        rowItem.rating = (Math.round(Utils.pseudoRandom() * 5));
+        rowItem.bankBalance = (Math.round(pseudoRandom() * 100000)) - 3000;
+        rowItem.rating = (Math.round(pseudoRandom() * 5));
 
         let totalWinnings = 0;
-        Consts.months.forEach(month => {
-            const value = (Math.round(Utils.pseudoRandom() * 100000)) - 20;
+        months.forEach(month => {
+            const value = (Math.round(pseudoRandom() * 100000)) - 20;
             rowItem[month.toLocaleLowerCase()] = value;
             totalWinnings += value;
         });
@@ -1038,8 +1036,8 @@ const Example = () => {
         //create dummy data for the additional columns
         for (let col = defaultCols.length; col < colCount; col++) {
             var value;
-            const randomBit = Utils.pseudoRandom().toString().substring(2, 5);
-            value = Consts.colNames[col % Consts.colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
+            const randomBit = pseudoRandom().toString().substring(2, 5);
+            value = colNames[col % colNames.length] + "-" + randomBit + " - (" + (row + 1) + "," + col + ")";
             rowItem["col" + col] = value;
         }
 
@@ -1048,9 +1046,11 @@ const Example = () => {
 
     const createData = () => {
         loadInstance.current = loadInstance.current + 1;
-        loadInstanceCopy.current = loadInstance.current;
+        const loadInstanceCopy = loadInstance.current;
 
-        // gridOptions.api.showLoadingOverlay();
+        if (gridRef.current && gridRef.current.api) {
+            gridRef.current.api.showLoadingOverlay();
+        }
 
         const colDefs = createCols();
 
@@ -1061,29 +1061,34 @@ const Example = () => {
         const data = [];
 
         setMessageStyle({display: 'inline'})
+        setMessage(` Generating rows`);
+
+        const loopCount = rowCount > 10000 ? 10000 : 1000;
 
         const intervalId = setInterval(() => {
-            if (loadInstanceCopy.current !== loadInstance.current) {
+            if (loadInstanceCopy !== loadInstance.current) {
                 clearInterval(intervalId);
                 return;
             }
 
-            for (let i = 0; i < 1000; i++) {
+            for (let i = 0; i < loopCount; i++) {
                 if (row < rowCount) {
                     const rowItem = createRowItem(row, colCount);
                     data.push(rowItem);
                     row++;
+                } else {
+                    break;
                 }
             }
 
             setMessage(` Generating rows ${row}`);
 
             if (row >= rowCount) {
-                clearInterval(intervalId);
-                setColumnDefs(colDefs);
-                setRowData(data);
                 setMessageStyle({display: 'none'});
                 setMessage('');
+                clearInterval(intervalId);
+                setColumnDefs(colDefs);
+                setRowData(data)
             }
         }, 0);
     }
@@ -1098,7 +1103,7 @@ const Example = () => {
             children: []
         };
 
-        Consts.months.forEach(month => {
+        months.forEach(month => {
             monthGroup.children.push({
                 headerName: month,
                 field: month.toLocaleLowerCase(),
@@ -1112,8 +1117,8 @@ const Example = () => {
                     'bad-score': 'typeof x === "number" && x < 10000',
                     'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
                 },
-                valueParser: Utils.numberParser,
-                valueFormatter: Utils.currencyFormatter,
+                valueParser: numberParser,
+                valueFormatter: currencyFormatter,
                 filterParams: {
                     buttons: ['reset'],
                     inRangeInclusive: true
@@ -1123,7 +1128,7 @@ const Example = () => {
 
         let defaultCols;
         let defaultColCount;
-        if (isSmall) {
+        if (small) {
             defaultCols = mobileDefaultCols;
             defaultCols = defaultCols.concat(monthGroup.children);
             defaultColCount = defaultCols.length;
@@ -1141,7 +1146,7 @@ const Example = () => {
             [1000, defaultColCount]
         ];
 
-        if (!isSmall) {
+        if (!small) {
             newRowsCols.push(
                 [10000, 100],
                 [50000, defaultColCount],
@@ -1155,8 +1160,8 @@ const Example = () => {
 
     useEffect(() => {
         const flags = {};
-        const promiseArray = Consts.countries.map(country => {
-            const countryCode = Consts.COUNTRY_CODES[country.country];
+        const promiseArray = countries.map(country => {
+            const countryCode = COUNTRY_CODES[country.country];
 
             return fetch(`https://flagcdn.com/w20/${countryCode}.png`)
                 .then(response => response.blob())
@@ -1189,7 +1194,7 @@ const Example = () => {
         const columns = defaultCols.slice(0, colCount);
 
         for (let col = defaultColCount; col < colCount; col++) {
-            const colName = Consts.colNames[col % Consts.colNames.length];
+            const colName = colNames[col % colNames.length];
             const colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
             columns.push(colDef);
         }
@@ -1207,38 +1212,27 @@ const Example = () => {
         setDataSize(event.target.value)
     }
 
-    function onThemeChanged() {
-        // const newTheme = IS_SSR ? 'ag-theme-none' : document.querySelector('#grid-theme').value || 'ag-theme-none';
-        //
-        // gridDiv.className = newTheme;
-        //
-        // const isDark = newTheme && newTheme.indexOf('dark') >= 0;
-        //
-        // if (isDark) {
-        //     document.body.classList.add('dark');
-        //     gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
-        // } else {
-        //     document.body.classList.remove('dark');
-        //     gridOptions.chartThemes = null;
-        // }
-        //
-        // refreshGrid();
+    function onThemeChanged(event) {
+        const newTheme = event.target.value || 'ag-theme-none';
+        setGridTheme(newTheme);
+
+        const isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+        if (isDark) {
+            setBodyClass(styles['dark']);
+            gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+        } else {
+            setBodyClass('');
+            gridOptions.chartThemes = null;
+        }
     }
 
     function toggleOptionsCollapsed() {
-        // const optionsEl = document.querySelector('#example-toolbar');
-        //
-        // optionsEl.classList.toggle('collapsed');
+        setToolbarCollapsed(!toolbarCollapsed)
     }
 
     function onFilterChanged(event) {
-        // filterCount++;
-        // const filterCountCopy = filterCount;
-        // window.setTimeout(function() {
-        //     if (filterCount === filterCountCopy) {
-        //         gridOptions.api.setQuickFilter(event.target.value);
-        //     }
-        // }, 300);
+        gridRef.current.api.setQuickFilter(event.target.value);
     }
 
     return (
@@ -1249,10 +1243,11 @@ const Example = () => {
                             height: 0;
                 }
             `}</style>
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"/>
                 {helmet.map(entry => entry)}
             </Helmet>
-            <div className={`${styles['example-wrapper']}`}>
-                <div className={`${styles['example-toolbar']}`} id='example-toolbar'>
+            <div className={`${styles['example-wrapper']} ${bodyClass}`}>
+                <div className={`${styles['example-toolbar']} ${toolbarCollapsed ? styles['collapsed'] : ''}`}>
                     <div className={styles['options-container']}>
                         <div>
                             <label htmlFor="data-size">Data Size:</label>
@@ -1266,9 +1261,6 @@ const Example = () => {
                                     return <option key={value} value={value}>{text}</option>
                                 })}
                             </select>
-                            <span style={{marginLeft: 10}}>
-                                {message}<i className="fa fa-spinner fa-pulse fa-fw margin-bottom"/>
-                            </span>
                         </div>
                         <div>
                             <label htmlFor="grid-theme">Theme:</label>
@@ -1296,13 +1288,16 @@ const Example = () => {
                         </div>
                     </div>
                 </div>
+                <span style={{marginLeft: 10, ...messageStyle}}>
+                                {message}<i className="fa fa-spinner fa-pulse fa-fw margin-bottom"/>
+                </span>
                 <div className={styles['options-expander']}>
                     <span id="messageText"/>
                     <div id="options-toggle" onClick={toggleOptionsCollapsed}><span>&nbsp;</span>OPTIONS</div>
                     <span>&nbsp;</span>
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
-                    <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className="ag-theme-alpine">
+                    <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
                         <AgGridReact
                             ref={gridRef}
                             modules={[
@@ -1327,8 +1322,7 @@ const Example = () => {
                             gridOptions={gridOptions}
                             columnDefs={columnDefs}
                             rowData={rowData}
-                        ></AgGridReact>
-
+                        />
                     </div>
                 </section>
             </div>

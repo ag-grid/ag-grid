@@ -22,17 +22,25 @@ export class PivotColDefService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
-
         // this is passed to the columnModel, to configure the columns and groups we show
-        const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = [];
-        // this is used by the aggregation stage, to do the aggregation based on the pivot columns
-        const pivotColumnDefs: ColDef[] = [];
 
         const pivotColumns = this.columnModel.getPivotColumns();
         const valueColumns = this.columnModel.getValueColumns();
         const levelsDeep = pivotColumns.length;
 
-        this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], levelsDeep, pivotColumns);
+        const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.recursiveBuildGroup(0, uniqueValues, [], levelsDeep, pivotColumns);
+
+        function extractColDefs(input: (ColDef | ColGroupDef)[], arr: ColDef[] = []): ColDef[] {
+            input.forEach((def: any) => {
+                if (def.children !== undefined) {
+                    extractColDefs(def.children, arr);
+                } else {
+                    arr.push(def);
+                }
+            });
+            return arr;
+        }
+        const pivotColumnDefs = extractColDefs(pivotColumnGroupDefs);
 
         // additional columns that contain the aggregated total for each value column per row
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns);
@@ -54,70 +62,71 @@ export class PivotColDefService extends BeanStub {
         };
     }
 
-    // parentChildren - the list of colDefs we are adding to
-    // @index - how far the column is from the top (also same as pivotKeys.length)
-    // @uniqueValues - the values for which we should create a col for
-    // @pivotKeys - the keys for the pivot, eg if pivoting on {Language,Country} then could be {English,Ireland}
-    private recursivelyAddGroup(
-        parentChildren: (ColGroupDef | ColDef)[],
-        pivotColumnDefs: ColDef[],
+    private recursiveBuildGroup(
         index: number,
-        uniqueValues: any,
+        uniqueValue: any,
         pivotKeys: string[],
-        levelsDeep: number,
+        maxDepth: number,
         primaryPivotColumns: Column[]
-    ): void {
-        _.iterateObject(uniqueValues, (key: string, value: any) => {
-            const newPivotKeys = [...pivotKeys, key];
-            const createGroup = index !== levelsDeep;
+    ): ColGroupDef[] | ColDef[]  {
+        const measureColumns = this.columnModel.getValueColumns();
 
-            if (createGroup) {
-                const groupDef: ColGroupDef = {
-                    children: [],
-                    headerName: key,
-                    pivotKeys: newPivotKeys,
-                    columnGroupShow: 'open',
-                    groupId: this.generateColumnGroupId(newPivotKeys),
-                };
+        if (index >= maxDepth) { // Base case - build the measure columns
+            return this.buildMeasureCols(pivotKeys);
+        }
 
-                parentChildren.push(groupDef);
-                this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index + 1, value, newPivotKeys, levelsDeep, primaryPivotColumns);
-            } else {
-                const measureColumns = this.columnModel.getValueColumns();
-                const valueGroup: ColGroupDef = {
-                    children: [],
-                    headerName: key,
-                    pivotKeys: newPivotKeys,
-                    columnGroupShow: 'open',
-                    groupId: this.generateColumnGroupId(newPivotKeys),
-                };
-                // if no value columns selected, then we insert one blank column, so the user at least sees columns
-                // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
-                // impression that the grid is broken
-                if (measureColumns.length === 0) {
-                    // this is the blank column, for when no value columns enabled.
-                    const colDef = this.createColDef(null, '-', newPivotKeys);
-                    valueGroup.children.push(colDef);
-                    pivotColumnDefs.push(colDef);
-                } else {
-                    measureColumns.forEach(measureColumn => {
-                        const columnName: string | null = this.columnModel.getDisplayNameForColumn(measureColumn, 'header');
-                        const colDef = this.createColDef(measureColumn, columnName, newPivotKeys);
-                        colDef.columnGroupShow = 'open';
-                        valueGroup.children.push(colDef);
-                        pivotColumnDefs.push(colDef);
-                    });
-                }
-                parentChildren.push(valueGroup);
-            }
-        });
         // sort by either user provided comparator, or our own one
-        const primaryPivotColumnDefs = primaryPivotColumns[index - 1].getColDef();
-        const userComparator = primaryPivotColumnDefs.pivotComparator;
-        const comparator = this.headerNameComparator.bind(this, userComparator);
+        const primaryPivotColumnDefs = primaryPivotColumns[index].getColDef();
+        const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
 
-        parentChildren.sort(comparator);
+        // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
+        if (measureColumns.length === 1 && this.gridOptionsWrapper.isRemovePivotHeaderRowWhenSingleValueColumn() && index === maxDepth - 1) {
+            const leafCols: ColDef[] = [];
+
+            _.iterateObject(uniqueValue, (key) => {
+                const newPivotKeys = [...pivotKeys, key];
+                leafCols.push({
+                    ...this.createColDef(measureColumns[0], key, newPivotKeys),
+                    columnGroupShow: 'open'
+                });
+            });
+            leafCols.sort(comparator);
+            return leafCols;
+        }
+        // Recursive case
+        const groups: ColGroupDef[] = [];
+        _.iterateObject(uniqueValue, (key, value) => {
+            const newPivotKeys = [...pivotKeys, key];
+            groups.push({
+                children: this.recursiveBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
+                headerName: key,
+                pivotKeys: newPivotKeys,
+                columnGroupShow: 'open',
+                groupId: this.generateColumnGroupId(newPivotKeys),
+            })
+        });
+        groups.sort(comparator);
+        return groups;
     }
+
+    private buildMeasureCols(
+        pivotKeys: string[],
+    ): ColDef[] {
+        const measureColumns = this.columnModel.getValueColumns();
+        if (measureColumns.length === 0) {
+            // if no value columns selected, then we insert one blank column, so the user at least sees columns
+            // rendered. otherwise the grid would render with no columns (just empty groups) which would give the
+            // impression that the grid is broken
+            return [this.createColDef(null, '-', pivotKeys)];
+        }
+        return measureColumns.map((measureCol) => {
+            const columnName = this.columnModel.getDisplayNameForColumn(measureCol, 'header');
+            return {
+                ...this.createColDef(measureCol, columnName, pivotKeys),
+                columnGroupShow: 'open'
+            };
+        });
+    };
 
     private addExpandablePivotGroups(
         pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
@@ -265,7 +274,7 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], valueCol, colIds, insertAfter);
+            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter);
         }
     }
 
@@ -289,33 +298,26 @@ export class PivotColDefService extends BeanStub {
 
     private createRowGroupTotal(parentChildren: (ColGroupDef | ColDef)[],
                                 pivotColumnDefs: ColDef[],
-                                pivotKeys: string[],
                                 valueColumn: Column,
                                 colIds: string[],
                                 insertAfter: boolean): void {
 
-        const newPivotKeys = pivotKeys.slice(0);
-
         const measureColumns = this.columnModel.getValueColumns();
-        const valueGroup: ColGroupDef = {
-            children: [],
-            pivotKeys: newPivotKeys,
-            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + '_' + this.generateColumnGroupId(newPivotKeys),
-        };
+
+        let colDef: ColDef;
 
         if (measureColumns.length === 0) {
-            const colDef = this.createColDef(null, '-', newPivotKeys);
-            valueGroup.children.push(colDef);
-            pivotColumnDefs.push(colDef);
+            colDef = this.createColDef(null, '-', []);
         } else {
             const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
-            const colDef = this.createColDef(valueColumn, columnName, newPivotKeys);
+            colDef = this.createColDef(valueColumn, columnName, []);
             colDef.pivotTotalColumnIds = colIds;
-            valueGroup.children.push(colDef);
-            pivotColumnDefs.push(colDef);
         }
 
-        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
+        colDef.colId = PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
+        pivotColumnDefs.push(colDef);
+
+        insertAfter ? parentChildren.push(colDef) : parentChildren.unshift(colDef);
     }
 
     private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, totalColumn: boolean = false): ColDef {

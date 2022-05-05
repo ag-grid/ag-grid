@@ -1067,6 +1067,10 @@ export class GridOptionsWrapper {
         return isGroupAggFiltering || isTrue(this.gridOptions.suppressAggFilteredOnly);
     }
 
+    public isRemovePivotHeaderRowWhenSingleValueColumn() {
+        return isTrue(this.gridOptions.removePivotHeaderRowWhenSingleValueColumn);
+    }
+
     public isShowOpenedGroup() {
         return isTrue(this.gridOptions.showOpenedGroup);
     }
