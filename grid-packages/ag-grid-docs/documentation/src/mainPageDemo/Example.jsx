@@ -67,8 +67,8 @@ const countryCellRenderer = (props) => {
         return null
     }
 
-    return <><img className="flag" alt="${props.value}" border="0" width="15" height="10"
-                  src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/>{props.value}</>;
+    return <><img className={styles['flag']} alt="${props.value}" border="0" width="15" height="10"
+                  src={`https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[props.value]}.png`}/> {props.value}</>;
 }
 
 function ratingFilterRenderer(params) {
@@ -81,7 +81,7 @@ function ratingFilterRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                     return value > i ?
-                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className={styles['star']} width="12" height="12"/> :
                         null
                 }
             )}
@@ -100,14 +100,13 @@ function ratingRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                     return value > i ?
-                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className="star" width="12" height="12"/> :
+                        <img key={i} src="../images/star.svg" alt={`${value} stars`} className={styles['star']} width="12" height="12"/> :
                         null
                 }
             )}
         </span>
     )
 }
-
 
 const booleanCellRenderer = (props) => {
     const [valueCleaned] = useState(booleanCleaner(props.value));
@@ -1299,7 +1298,7 @@ const Example = () => {
                             <label htmlFor="global-filter">Filter:</label>
                             <input
                                 placeholder="Filter any column..." type="text"
-                                className="hide-when-small"
+                                className={styles['hide-when-small']}
                                 onInput={onFilterChanged}
                                 id="global-filter"
                                 style={{flex: 1}}
