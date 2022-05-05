@@ -459,7 +459,6 @@ function createDataSizeValue(rows, cols) {
 
 const Example = () => {
     const gridRef = useRef(null);
-    const loadInstanceCopy = useRef(0);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
     const [bodyClass, setBodyClass] = useState('');
@@ -1047,7 +1046,7 @@ const Example = () => {
 
     const createData = () => {
         loadInstance.current = loadInstance.current + 1;
-        loadInstanceCopy.current = loadInstance.current;
+        const loadInstanceCopy = loadInstance.current;
 
         if (gridRef.current && gridRef.current.api) {
             gridRef.current.api.showLoadingOverlay();
@@ -1067,7 +1066,7 @@ const Example = () => {
         const loopCount = rowCount > 10000 ? 10000 : 1000;
 
         const intervalId = setInterval(() => {
-            if (loadInstanceCopy.current !== loadInstance.current) {
+            if (loadInstanceCopy !== loadInstance.current) {
                 clearInterval(intervalId);
                 return;
             }
