@@ -431,7 +431,7 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        this.group.visible = this.visible;
 
         const {
             fills, strokes, fillOpacity, strokeOpacity,
