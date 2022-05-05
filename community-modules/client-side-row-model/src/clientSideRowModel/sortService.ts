@@ -41,9 +41,9 @@ export class SortService extends BeanStub {
         const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
-        let dirtyNodes: { [key: string]: true } = {};
+        let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
-            dirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
+            allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
 
         const callback = (rowNode: RowNode) => {
@@ -68,7 +68,7 @@ export class SortService extends BeanStub {
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
             } else if (useDeltaSort) {
-                rowNode.childrenAfterSort = this.doDeltaSort(rowNode, dirtyNodes, changedPath!, sortOptions);
+                rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
                 rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
@@ -115,7 +115,7 @@ export class SortService extends BeanStub {
 
     private doDeltaSort(
         rowNode: RowNode,
-        touchedNodes: { [rowId: string]: true },
+        allTouchedNodes: { [rowId: string]: true },
         changedPath: ChangedPath,
         sortOptions: SortOption[],
     ) {
@@ -125,15 +125,14 @@ export class SortService extends BeanStub {
             return this.rowNodeSorter.doFullSort(unsortedRows, sortOptions);
         }
 
-
         const untouchedRowsMap: { [rowId: string]: true } = {};
         const touchedRows: RowNode[] = [];
 
-        unsortedRows.forEach(child => {
-            if(touchedNodes[child.id!] || !changedPath.canSkip(child)) {
-                touchedRows.push(child);
+        unsortedRows.forEach(row => {
+            if(allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
+                touchedRows.push(row);
             } else {
-                untouchedRowsMap[child.id!] = true;
+                untouchedRowsMap[row.id!] = true;
             }
         });
 
