@@ -1,7 +1,15 @@
 ---
 title: "Column Definitions"
 ---
-Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-javascript-or-angular-or-vue]]
+|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-react]]
+|<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
+|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+|</video-section>
+
 
 The following example shows a simple grid with 3 columns defined:
 

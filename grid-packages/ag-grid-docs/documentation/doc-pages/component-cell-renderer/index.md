@@ -2,6 +2,7 @@
 title: "Cell Renderer"
 ---
 
+
 [[only-javascript-or-angular-or-vue]]
 |By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
 
