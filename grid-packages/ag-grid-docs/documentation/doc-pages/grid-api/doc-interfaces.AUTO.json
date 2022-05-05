@@ -16130,8 +16130,18 @@
       "description": "/** Fail callback, tell the grid the call failed so it can adjust it's state. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "IServerSideDatasource": {
     "getRows": {
