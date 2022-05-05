@@ -394,8 +394,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
+        const parallelLabels = label.parallel;
         let labelAutoRotation = 0;
-        let parallelLabels = label.parallel;
 
         group.translationX = this.translation.x;
         group.translationY = this.translation.y;
@@ -421,9 +421,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         // Flip if the axis rotation angle is in the top hemisphere.
-        let regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
-
-        const alignFlag = labelRotation >= 0 && labelRotation <= Math.PI ? -1 : 1;
+        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
         const ticks = this.ticks || scale.ticks!(this.tick.count);
         const update = this.groupSelection.setData(ticks);
@@ -513,9 +511,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             if (parallelLabels && rotate) {
                 // When the labels are parallel to the axis line and no user rotation angle has been specified,
                 // If any of the labels exceed the bandwidth in the parallel orientation,
-                // display the labels perpendicular to the horizontal axis line
-                parallelLabels = false;
-                regularFlipFlag = 1;
+                // automatically rotate the labels
                 useWidth = false;
                 totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
                 labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : -45));
@@ -523,15 +519,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         const autoRotation = parallelLabels
-            ? parallelFlipFlag * Math.PI / 2
+            ? parallelFlipFlag * Math.PI / 2 + labelAutoRotation
             : (regularFlipFlag === -1 ? Math.PI + labelAutoRotation : 0 - labelAutoRotation);
 
         const labelTextBaseline = parallelLabels && !labelRotation
             ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
             : 'middle';
 
+        const alignFlag = (labelRotation > 0 && labelRotation <= Math.PI) || (labelAutoRotation > 0 && labelAutoRotation <= Math.PI) ? -1 : 1;
+
         const labelTextAlign = parallelLabels
-            ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
+            ? labelRotation || labelAutoRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
             : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
 
         labelSelection.each(label => {
