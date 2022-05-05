@@ -519,8 +519,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         const autoRotation = parallelLabels
-            ? parallelFlipFlag * Math.PI / 2 + labelAutoRotation
-            : (regularFlipFlag === -1 ? Math.PI + labelAutoRotation : 0 - labelAutoRotation);
+            ? parallelFlipFlag * Math.PI / 2
+            : (regularFlipFlag === -1 ? Math.PI : 0);
 
         const labelTextBaseline = parallelLabels && !labelRotation
             ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
@@ -537,7 +537,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.textAlign = labelTextAlign;
             label.x = labelX;
             label.rotationCenterX = labelX;
-            label.rotation = autoRotation + labelRotation;
+            label.rotation = autoRotation + labelRotation + labelAutoRotation;
         });
 
         if (availableRange >= 0) {
