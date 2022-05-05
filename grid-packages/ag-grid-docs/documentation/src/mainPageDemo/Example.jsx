@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {memo, useEffect, useMemo, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
 import styles from "../pages/components/assets/homepage/homepage.module.scss";
 import {AgGridReact} from "@ag-grid-community/react";
@@ -37,6 +37,8 @@ import "@ag-grid-community/core/dist/styles/ag-theme-material.css"
 const IS_SSR = typeof window === "undefined"
 
 const helmet = [];
+
+const AgGridReactMemo = memo(AgGridReact);
 
 const groupColumn = {
     headerName: "Group",
@@ -473,6 +475,26 @@ const Example = () => {
     const [messageStyle, setMessageStyle] = useState({display: 'inline'});
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
+
+    const modules = useMemo(() => [
+        ClientSideRowModelModule,
+        CsvExportModule,
+        ClipboardModule,
+        ColumnsToolPanelModule,
+        ExcelExportModule,
+        FiltersToolPanelModule,
+        GridChartsModule,
+        MasterDetailModule,
+        MenuModule,
+        MultiFilterModule,
+        RangeSelectionModule,
+        RichSelectModule,
+        RowGroupingModule,
+        SetFilterModule,
+        SideBarModule,
+        StatusBarModule,
+        SparklinesModule
+    ], []);
 
     const defaultExportParams = useMemo(() => ({
         headerRowHeight: 40,
@@ -1298,27 +1320,9 @@ const Example = () => {
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
                     <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
-                        <AgGridReact
+                        <AgGridReactMemo
                             ref={gridRef}
-                            modules={[
-                                ClientSideRowModelModule,
-                                CsvExportModule,
-                                ClipboardModule,
-                                ColumnsToolPanelModule,
-                                ExcelExportModule,
-                                FiltersToolPanelModule,
-                                GridChartsModule,
-                                MasterDetailModule,
-                                MenuModule,
-                                MultiFilterModule,
-                                RangeSelectionModule,
-                                RichSelectModule,
-                                RowGroupingModule,
-                                SetFilterModule,
-                                SideBarModule,
-                                StatusBarModule,
-                                SparklinesModule
-                            ]}
+                            modules={modules}
                             gridOptions={gridOptions}
                             columnDefs={columnDefs}
                             rowData={rowData}

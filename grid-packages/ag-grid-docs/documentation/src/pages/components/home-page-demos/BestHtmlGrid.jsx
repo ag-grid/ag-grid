@@ -16,7 +16,6 @@ const BestHtmlDemo = () => (
     <>
         <Helmet>
             <link rel="stylesheet" href={`${rootLocalPrefix}/example-rich-grid/styles.css`} crossOrigin="anonymous"/>
-            <script src={`${rootLocalPrefix}/example-rich-grid/data.js`} type="text/javascript"/>
             <script defer={true} src={`${rootLocalPrefix}/example-rich-grid/example.js`} type="text/javascript"/>
             {helmet.map(entry => entry)}
         </Helmet>
