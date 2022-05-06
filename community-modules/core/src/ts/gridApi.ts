@@ -2087,4 +2087,8 @@ export class GridApi {
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
     }
+
+    public setRowClass(className: string | undefined): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_ROW_CLASS, className);
+    }
 }
