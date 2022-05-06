@@ -113,17 +113,18 @@ const GettingStarted = ({framework, data}) => {
     );
 };
 
-const VideoPanel = ({framework}) => {
+const VideoPanel = ({framework, videos}) => {
+    const title = framework === 'javascript' ? 'JavaScript' : `${framework} Data Grid: Videos`;
     return (
         <div className={menuStyles['menu-view']}>
             <h2 className={menuStyles['menu-view__title']}>
-                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Videos
+                {title}
             </h2>
             <div className={menuStyles['menu-view__tile-row']}>
-                {featuredVideos.map(featuredVideo => (
-                        <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={featuredVideo.id}>
-                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}&list=${featuredVideo.list}`} target="_blank" rel="noreferrer">
-                                <img style={{height: "100%", width: "100%"}} alt={featuredVideo.title} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}/>
+                {videos.map(video => (
+                        <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={video.id}>
+                            <a href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`} target="_blank" rel="noreferrer">
+                                <img style={{height: "100%", width: "100%"}} alt={video.title || title} src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}/>
                             </a>
                         </div>
                     )
@@ -150,6 +151,8 @@ const HomePage = ({pageContext: {framework}}) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;
 
+    const frameworkVideos = featuredVideos[framework];
+
     return (
         <div className={styles['docs-home']}>
             {/*eslint-disable-next-line react/jsx-pascal-case*/}
@@ -160,7 +163,7 @@ const HomePage = ({pageContext: {framework}}) => {
                 pageName="home"
             />
             <GettingStarted framework={framework} data={gettingStartedItems}/>
-            {framework === 'react' && <VideoPanel framework={framework}></VideoPanel>}
+            {frameworkVideos && frameworkVideos.length > 0 && <VideoPanel framework={framework} videos={frameworkVideos}/>}
             <MenuView framework={framework} data={menuData}/>
         </div>
     );

@@ -41,21 +41,26 @@ const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
         </div>
     )
 }
-const LearningVideos = () => {
+const LearningVideos = ({framework}) => {
     const [videos, setVideos] = useState<VideoData[]>([]);
 
     useEffect(() => {
-        fetch(`${hostPrefix}/videos/videos.json`)
+        const controller = new AbortController();
+        const {signal} = controller;
+
+        fetch(`${hostPrefix}/videos/videos.json`, {signal})
             .then(response => response.json())
-            .then(resultData => {
-                setVideos(resultData);
+            .then(resultData => setVideos(resultData))
+            .catch(() => {
             })
+        return () => controller.abort();
     }, [])
 
+    const frameworkVideos = videos && videos[framework] && videos[framework].length > 0 ? videos[framework] : [];
 
     return (
         <div className={classnames(styles["learning-videos"])}>
-            {videos.map((video, index) => {
+            {frameworkVideos.map((video: {}, index: number) => {
                 return (<Video {...video} index={index + 1} key={video.url}/>)
             })}
         </div>
