@@ -496,26 +496,23 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
 
-        if (labelRotation) {
-            // If the specified label rotation angle results in a non-parallel orientation, use the height of the texts to calculate the total length of all labels
-            if (parallelLabels) {
-                useWidth = labelRotation === Math.PI || labelRotation === -Math.PI ? true : false;
-            } else {
-                useWidth = labelRotation === Math.PI / 2 || labelRotation === -Math.PI / 2 ? true : false;
-            }
-        }
-
         let totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
 
-        if (!labelRotation && label.autoRotate != null && label.autoRotate !== false) {
-            if (parallelLabels && rotate) {
-                // When the labels are parallel to the axis line and no user rotation angle has been specified,
-                // If any of the labels exceed the bandwidth in the parallel orientation,
-                // automatically rotate the labels
-                useWidth = false;
-                totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
-                labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : -45));
+        if (!labelRotation && label.autoRotate != null && label.autoRotate !== false && rotate) {
+            // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
+            // automatically rotate the labels
+            labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : -45));
+        }
+
+        if (labelRotation || labelAutoRotation) {
+            // If the label rotation angle results in a non-parallel orientation, use the height of the texts to calculate the total length of all labels
+            if (parallelLabels) {
+                useWidth = (labelRotation === Math.PI) || (labelAutoRotation === Math.PI) ? true : false;
+            } else {
+                useWidth = labelRotation === Math.PI / 2 || labelRotation === (Math.PI + Math.PI / 2) || labelAutoRotation === Math.PI / 2 || labelAutoRotation === (Math.PI + Math.PI / 2) ? true : false;
             }
+
+            totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
         }
 
         const autoRotation = parallelLabels
