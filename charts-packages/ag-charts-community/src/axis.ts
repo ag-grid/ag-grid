@@ -537,23 +537,20 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.rotation = autoRotation + labelRotation + labelAutoRotation;
         });
 
-        if (availableRange >= 0) {
-            let visible = true;
+        if (availableRange > 1 && totalLabelLength > availableRange) {
+            const numberOfLabels = ticks.length;
+            const averageLabelLength = totalLabelLength / numberOfLabels;
+            const labelsToShow = Math.floor(availableRange / averageLabelLength);
 
-            // Remove half the labels if they overlap
-            while (totalLabelLength > availableRange) {
-                labelSelection.each((label, _, index) => {
-                    if (label.visible !== true) { return; }
+            const showEvery = labelsToShow > 2 ? Math.ceil(numberOfLabels / labelsToShow) : numberOfLabels;
+            labelSelection.each((label, _, index) => {
+                if (label.visible !== true || index === 0 || index === numberOfLabels - 1) { return; }
 
-                    label.visible = visible;
-                    if (!label.visible) {
-                        labelBboxes.delete(index);
-                    }
-                    visible = !visible;
-                });
-
-                totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
-            }
+                label.visible = index % showEvery === 0 ? true : false;
+                if (!label.visible) {
+                    labelBboxes.delete(index);
+                }
+            });
         }
 
         groupSelection.selectByTag<Line>(Tags.Tick)
