@@ -34,26 +34,13 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
 
         const { changedPath } = params;
 
-        const preserveFilterStageConfig = (node: RowNode) => {
-            node.childrenAfterAggFilter = node.childrenAfterFilter;
-            const childCount = node.childrenAfterAggFilter!.reduce((acc: number, child: RowNode) => (
-                acc + (child.allChildrenCount || 1)
-            ), 0);
-            node.setAllChildrenCount(childCount);
-
-            if(node.sibling) {
-                node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
-            }
-        }
-
-        const preserveChildren = (node: RowNode) => {
+        const preserveChildren = (node: RowNode, recursive = false) => {
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
-                const childCount = node.childrenAfterAggFilter.reduce((acc: number, child: RowNode) => {
-                    preserveChildren(child);
-                    return acc + (child.allChildrenCount || 1);
-                }, 0);
-                node.setAllChildrenCount(childCount);
+                if (recursive) {
+                    node.childrenAfterAggFilter.forEach((child) => preserveChildren(child, recursive));
+                }
+                this.setAllChildrenCount(node);
             }
 
             if (node.sibling) {
@@ -62,35 +49,67 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
         }
 
         const filterChildren = (node: RowNode) => {
-            let childCount = 0;
             node.childrenAfterAggFilter = node.childrenAfterFilter?.filter((child: RowNode) => {
                 const shouldFilterRow = applyFilterToNode({ node: child });
                 if (shouldFilterRow) {
                     const doesNodePassFilter = this.filterManager.doesRowPassAggregateFilters({ rowNode: child });
                     if (doesNodePassFilter) {
                         // Node has passed, so preserve children
-                        preserveChildren(child);
-                        childCount += child.allChildrenCount || 1;
+                        preserveChildren(child, true);
                         return true;
                     }
                 }
                 const hasChildPassed = child.childrenAfterAggFilter?.length;
-                if (hasChildPassed) {
-                    childCount += child.allChildrenCount || 1;
-                    return true;
-                }
-                return false;
+                return hasChildPassed;
             }) || null;
 
-            node.setAllChildrenCount(childCount);
+            this.setAllChildrenCount(node);
             if (node.sibling) {
                 node.sibling.childrenAfterAggFilter = node.childrenAfterAggFilter;
             }
         };
 
         changedPath!.forEachChangedNodeDepthFirst(
-            isAggFilterActive ? filterChildren : preserveFilterStageConfig,
-            false,
+            isAggFilterActive ? filterChildren : preserveChildren,
+            true,
         );
+    }
+
+    private setAllChildrenCountTreeData(rowNode: RowNode) {
+        // for tree data, we include all children, groups and leafs
+        let allChildrenCount = 0;
+        rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
+            // include child itself
+            allChildrenCount++;
+            // include children of children
+            allChildrenCount += child.allChildrenCount as any;
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+        // for grid data, we only count the leafs
+        let allChildrenCount = 0;
+        rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
+            if (child.group) {
+                allChildrenCount += child.allChildrenCount as any;
+            } else {
+                allChildrenCount++;
+            }
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCount(rowNode: RowNode) {
+        if (!rowNode.hasChildren()) {
+            rowNode.setAllChildrenCount(null);
+            return;
+        }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            this.setAllChildrenCountTreeData(rowNode);
+        } else {
+            this.setAllChildrenCountGridGrouping(rowNode);
+        }
     }
 }
