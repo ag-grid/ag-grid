@@ -501,7 +501,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         if (!labelRotation && label.autoRotate != null && label.autoRotate !== false && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
-            labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : -45));
+            labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : 335));
         }
 
         if (labelRotation || labelAutoRotation) {
