@@ -127,30 +127,18 @@ const serveDist = (done) => {
     done();
 };
 
-// if local we serve from /dist, but once this is run entries will point to corresponding cdn entries instead
-const replaceAgReferencesWithCdnLinks = () => {
-    const gridVersion = require('../../community-modules/core/package.json').version;
-
-    return gulp
-        .src(`${distFolder}/config.php`)
-        .pipe(replace('$$GRID_VERSION$$', gridVersion))
-        .pipe(gulp.dest(distFolder));
-};
-
 gulp.task('generate-grid-examples', generateGridExamples.bind(null, '*', null));
 gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null));
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
-gulp.task('remove-index-html', () => fs.rm(`${distFolder}/index.html`));
 gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('process-src', processSource);
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
-gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
 gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
-gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'remove-index-html', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
+gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
