@@ -1223,6 +1223,10 @@
       "returnType": "RowNodeTransaction | null | undefined"
     }
   },
+  "setDeltaSort": {
+    "description": "/** Enable or disable the delta sort grid option. */",
+    "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
+  },
   "updateRowData": {
     "description": "/** @deprecated */",
     "type": {
