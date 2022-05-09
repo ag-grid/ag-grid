@@ -211,6 +211,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
+    private _labelAutoRotated: boolean = false;
+    get labelAutoRotated(): boolean {
+        return this._labelAutoRotated;
+    }
+
     /**
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
      * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
@@ -498,10 +503,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         let totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
 
+        this._labelAutoRotated = false;
         if (!labelRotation && label.autoRotate != null && label.autoRotate !== false && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : 335));
+            this._labelAutoRotated = true;
         }
 
         if (labelRotation || labelAutoRotation) {
