@@ -270,7 +270,7 @@ It is possible to force the grid to always refresh (reload data) after a sort ch
 When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on what store is used. How it behaves is as follows:
 
 - ### Full Store
-    The Full Store always filters inside the grid. The rows are never reloaded due to a filter change.
+    The Full Store always filters inside the grid. The rows are never reloaded due to a filter change. Filtering is only possible at the lowest level (ie not group levels).
 
 - ### Partial Store
     Changing the filter on any column will always refresh the Partial Store. Rows will be loaded again from the server with the new filter information.

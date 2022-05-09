@@ -1,4 +1,4 @@
-ErrorDocument 404 /404.php
+ErrorDocument 404 /404/index.html
 
 # add MIME types for serving example files
 AddType text/javascript ts jsx
@@ -2263,6 +2263,12 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-data-grid/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /react-data-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /cookies.php /cookies
+    Redirect 301 /privacy.php /privacy
+    Redirect 301 /about.php /about
+    Redirect 301 /license-pricing.php /license-pricing
+    Redirect 301 /example.php /example
+    Redirect 301 /ag-grid-jobs-board.php /ag-grid-jobs-board
 </IfModule>
 
 # CORS settings

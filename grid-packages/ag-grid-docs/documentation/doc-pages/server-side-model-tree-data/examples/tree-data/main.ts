@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     field: 'employeeName',
     cellRendererParams: {
-      innerRenderer: function (params: ICellRendererParams) {
+      innerRenderer: (params: ICellRendererParams) => {
         // display employeeName rather than group key (employeeId)
         return params.data.employeeName
       },
@@ -34,17 +34,17 @@ const gridOptions: GridOptions = {
   treeData: true,
   columnDefs: columnDefs,
   animateRows: true,
-  isServerSideGroupOpenByDefault: function (
+  isServerSideGroupOpenByDefault: (
     params: IsServerSideGroupOpenByDefaultParams
-  ) {
+  ) => {
     // open first two levels by default
     return params.rowNode.level < 2
   },
-  isServerSideGroup: function (dataItem: any) {
+  isServerSideGroup: (dataItem: any) => {
     // indicate if node is a group
     return dataItem.group
   },
-  getServerSideGroupKey: function (dataItem: any) {
+  getServerSideGroupKey: (dataItem: any) => {
     // specify which group key to use
     return dataItem.employeeId
   },
@@ -101,7 +101,7 @@ function createFakeServer(fakeServerData: any[]) {
 
 function createServerSideDatasource(fakeServer: any) {
   const dataSource: IServerSideDatasource = {
-    getRows: function (params: IServerSideGetRowsParams) {
+    getRows: (params: IServerSideGetRowsParams) => {
       console.log('ServerSideDatasource.getRows: params = ', params)
 
       var allRows = fakeServer.getData(params.request)

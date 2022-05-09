@@ -1,6 +1,7 @@
 import {
     _,
     AgChartThemeOverrides,
+    AgChartThemePalette,
     AgDialog,
     Autowired,
     CellRange,
@@ -52,6 +53,7 @@ export interface GridChartParams {
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
+    chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
 }
 
@@ -196,6 +198,7 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
             chartOptionsToRestore: this.params.chartOptionsToRestore,
+            chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes()
         };
 

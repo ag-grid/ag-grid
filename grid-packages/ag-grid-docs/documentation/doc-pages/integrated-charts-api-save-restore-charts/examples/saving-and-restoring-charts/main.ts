@@ -1,4 +1,6 @@
-import { Grid, ChartModel, ChartRef, GridOptions } from '@ag-grid-community/core'
+import { ChartModel, ChartRef, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

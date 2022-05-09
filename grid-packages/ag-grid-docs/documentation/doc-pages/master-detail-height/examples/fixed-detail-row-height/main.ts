@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params) {
+    getDetailRowData: (params) => {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,

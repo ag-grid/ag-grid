@@ -29,7 +29,7 @@ provided `values` to perform the custom aggregation. See [Aggregation API Refere
 learn more about the supplied `params`.
 
 This is the simplest way to supply custom functions, however it has limitations compared with 
-[Registering Custom Functions](/aggregation-custom/#registering-custom-functions).
+[Registering Custom Functions](/aggregation-custom-functions/#registering-custom-functions).
 
 [[note]]
 | Direct Functions will not appear in the [Columns Tool Panel](/tool-panel-columns/) or work when [Saving and Applying Column State](/column-state/#save-and-apply).

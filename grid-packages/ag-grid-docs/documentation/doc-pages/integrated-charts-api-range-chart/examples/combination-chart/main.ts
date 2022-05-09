@@ -1,11 +1,10 @@
 import {
-  CreateRangeChartParams,
   FirstDataRenderedEvent,
   Grid,
-  GridOptions,
-  ValueGetterParams,
-  ValueParserParams
-} from '@ag-grid-community/core'
+  GridOptions, ValueParserParams
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

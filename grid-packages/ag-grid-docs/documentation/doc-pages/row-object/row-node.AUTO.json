@@ -303,7 +303,13 @@
     "type": { "arguments": { "uiLevel": "number" }, "returnType": "void" }
   },
   "setExpanded": {
-    "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
+    "type": {
+      "arguments": {
+        "expanded": "boolean",
+        "e?": "MouseEvent | KeyboardEvent"
+      },
+      "returnType": "void"
+    }
   },
   "setDataValue": {
     "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n * the grid will refresh the rendered cell on the required row only.\n * @param colKey The column where the value should be updated\n * @param newValue The new value\n * @param eventSource The source of the event\n * @returns `True` if the value was changed, otherwise `False`.\n */",

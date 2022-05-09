@@ -51,7 +51,7 @@ function onBtExpandTopLevel() {
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
   return {
-    getRows: function (params: IServerSideGetRowsParams) {
+    getRows: (params: IServerSideGetRowsParams) => {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       var response = server.getData(params.request)

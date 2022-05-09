@@ -503,25 +503,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const copyParams = { includeHeaders, includeGroupHeaders };
 
-        const selectedRowsToCopy = !this.selectionService.isEmpty()
-            && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
+        const shouldCopyRows = !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
-        // default is copy range if exists, otherwise rows
-        if (this.rangeService && this.rangeService.isMoreThanOneCell()) {
+        // Copy priority is Range > Row > Focus
+        if (this.rangeService && !this.rangeService.isEmpty()) {
             this.copySelectedRangeToClipboard(copyParams);
-        } else if (selectedRowsToCopy) {
-            // otherwise copy selected rows if they exist
+        } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
             this.copySelectedRowsToClipboard(copyParams);
         } else if (this.focusService.isAnyCellFocused()) {
-            // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard(copyParams);
-        } else {
-            // lastly if no focused cell, try range again. this can happen
-            // if use has cellSelection turned off (so no focused cell)
-            // but has a cell clicked, so there exists a cell range
-            // of exactly one cell (hence the first 'if' above didn't
-            // get executed).
-            this.copySelectedRangeToClipboard(copyParams);
         }
     }
 

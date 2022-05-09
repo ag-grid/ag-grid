@@ -1,4 +1,6 @@
-import { Grid, AreaSparklineOptions, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { AreaSparklineOptions, Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -12,7 +14,7 @@ const gridOptions: GridOptions = {
           type: 'area',
         } as AreaSparklineOptions,
       },
-      valueGetter: function (params: ValueGetterParams) {
+      valueGetter: (params: ValueGetterParams) => {
         const formattedData: any = []
         const rateOfChange = params.data.rateOfChange
         const { x, y } = rateOfChange

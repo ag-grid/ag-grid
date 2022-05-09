@@ -4,6 +4,7 @@ import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
@@ -42,7 +43,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         return [...oldCtrlsWeAreKeeping, ...newCtrls];
     }, []);
 
-    useEffect(() => {
+    useEffectOnce(() => {
 
         const compProxy: IHeaderRowComp = {
             setTransform: transform => setTransform(transform),
@@ -55,7 +56,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
         ctrl.setComp(compProxy);
 
-    }, []);
+    }, 'headerRowComp.main');
 
     const style = useMemo( ()=> ({
         transform: transform,

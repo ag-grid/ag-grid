@@ -860,7 +860,7 @@ export class RowCtrl extends BeanStub {
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: !shiftKeyPressed, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;

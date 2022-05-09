@@ -2,10 +2,15 @@
 title: "Column State"
 ---
 
-[Column Definitions](/column-definitions/) contain both stateful and non-stateful attributes. Stateful attributes can
-have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header).
-Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as
-part of a Column Definition, it typically does not change).
+
+
+[[only-javascript-or-angular-or-vue]]
+|Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+
+[[only-react]]
+|<video-section id="d9Kohpbt42M" title="React Column State" header="true">
+|Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+|</video-section>
 
 [[note]]
 | The DOM also has stateful vs non-stateful attributes. For example consider a DOM element and setting 

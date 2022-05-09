@@ -19,7 +19,7 @@ const getRelativePath = path => path.replace(withPrefix('/'), '/');
  * that framework if so.
  */
 export const onRouteUpdate = ({ location }) => {
-    if (['/', '/documentation/'].includes(getRelativePath(location.pathname))) {
+    if (['/documentation/'].includes(getRelativePath(location.pathname))) {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
         navigate(`/${selectedFramework}-data-grid/`, { replace: true });

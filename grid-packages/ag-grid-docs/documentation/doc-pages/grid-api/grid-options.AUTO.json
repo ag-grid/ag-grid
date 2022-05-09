@@ -96,7 +96,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressFieldDotNotation": {
-    "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+    "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "deltaColumnMode": {
@@ -509,6 +509,10 @@
   },
   "suppressAggFilteredOnly": {
     "description": "/** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "removePivotHeaderRowWhenSingleValueColumn": {
+    "description": "/** Set to `true` to omit the value Column header when there is only a single value column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "animateRows": {
@@ -1199,6 +1203,10 @@
   "getRowId": {
     "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
     "type": { "returnType": "GetRowIdFunc" }
+  },
+  "resetRowDataOnUpdate": {
+    "description": "/** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */",
+    "type": { "returnType": "boolean" }
   },
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",

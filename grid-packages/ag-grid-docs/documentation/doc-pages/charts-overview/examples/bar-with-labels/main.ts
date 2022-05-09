@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -27,7 +28,7 @@ const options: AgChartOptions = {
       label: {
         fontWeight: 'bold',
         color: 'white',
-        formatter: function (params) {
+        formatter: (params) => {
           return (params.value > 0 ? '+' : '') + params.value
         },
       },

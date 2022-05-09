@@ -1,5 +1,5 @@
 export default {
-    template: `
+  template: `
       <div>
           <div class="year-filter">
             <label>
@@ -11,18 +11,18 @@ export default {
           </div>
       </div>
     `,
-    data: function () {
-        return {
-            isActive: false
-        };
+  data: function () {
+    return {
+      isActive: false
+    };
+  },
+  methods: {
+    toggleFilter(isFilterActive) {
+      this.isActive = isFilterActive;
+      this.params.parentFilterInstance(instance => instance.onFloatingFilterChanged(isFilterActive));
     },
-    methods: {
-        toggleFilter(isFilterActive) {
-            this.isActive = isFilterActive;
-            this.params.parentFilterInstance(instance => instance.onFloatingFilterChanged(isFilterActive));
-        },
-        onParentModelChanged(model) {
-            this.isActive = !!model;
-        }
+    onParentModelChanged(model) {
+      this.isActive = !!model;
     }
+  }
 };

@@ -26,45 +26,43 @@ const ChartExample = {
         theme: myTheme,
         autoSize: true,
         title: {
-          enabled: true,
           text: "Cartesian Chart Theming",
         },
         data,
         series: [
-            {
-                type: "column",
-                xKey: "label",
-                yKey: "v1",
-                stacked: true,
-                yName: "Reliability",
-              },
-              {
-                type: "column",
-                xKey: "label",
-                yKey: "v2",
-                stacked: true,
-                yName: "Ease of use",
-              },
-              {
-                type: "column",
-                xKey: "label",
-                yKey: "v3",
-                stacked: true,
-                yName: "Performance",
-              },
-              {
-                type: "line",
-                xKey: "label",
-                yKey: "v4",
-                yName: "Price",
-              },
-            ],
-        },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v1",
+            stacked: true,
+            yName: "Reliability",
+          },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v2",
+            stacked: true,
+            yName: "Ease of use",
+          },
+          {
+            type: "column",
+            xKey: "label",
+            yKey: "v3",
+            stacked: true,
+            yName: "Performance",
+          },
+          {
+            type: "line",
+            xKey: "label",
+            yKey: "v4",
+            yName: "Price",
+          },
+        ],
+      },
       chartOptions2: {
         theme: myTheme,
         autoSize: true,
         title: {
-          enabled: true,
           text: "Polar Chart Theming",
         },
         data,
@@ -113,7 +111,6 @@ var myTheme = {
         },
         column: {
           label: {
-            enabled: true,
             color: "white",
           },
         },

@@ -157,7 +157,7 @@ export interface GridOptions {
     columnTypes?: { [key: string]: ColDef; };
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
+    /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
     suppressFieldDotNotation?: boolean;
 
     /** @deprecated */
@@ -453,7 +453,8 @@ export interface GridOptions {
     aggregateOnlyChangedColumns?: boolean;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */
     suppressAggFilteredOnly?: boolean;
-
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false` */
+    removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
     /** Set to `true` to enable Row Animation. Default: `false` */
     animateRows?: boolean;
@@ -880,6 +881,8 @@ export interface GridOptions {
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
     getRowId?: GetRowIdFunc;
+    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */
+    resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */

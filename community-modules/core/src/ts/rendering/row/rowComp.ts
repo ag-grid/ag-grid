@@ -5,7 +5,7 @@ import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { getAllValuesInObject } from "../../utils/object";
-import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaRole } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";

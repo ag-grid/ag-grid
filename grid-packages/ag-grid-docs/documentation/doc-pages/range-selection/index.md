@@ -17,6 +17,8 @@ Ranges can be selected in the following ways:
 
 - **Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell.
 
+- **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Ctrl</kbd> + <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
+
 Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
 
 The example below demonstrates simple range selection. Ranges can be selected in all the ways described above.

@@ -1,4 +1,4 @@
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
@@ -32,11 +32,11 @@ export default {
     beforeMount() {
         this.gridOptions = {};
         this.colDefs = [
-            {field: 'callId'},
-            {field: 'direction'},
-            {field: 'number'},
-            {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-            {field: 'switchCode'}
+            { field: 'callId' },
+            { field: 'direction' },
+            { field: 'number' },
+            { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+            { field: 'switchCode' }
         ];
         this.defaultColDef = {
             flex: 1,

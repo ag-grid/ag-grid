@@ -9,6 +9,7 @@ import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
+import { useEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface GridCompProps {
@@ -38,17 +39,17 @@ const GridComp = ({ context }: GridCompProps) => {
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
-    useEffect(() => {
+    useEffectOnce(() => {
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
 
         return () => {
             context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    }, []);
+    }, 'gridComp.ctrl');
 
     // initialise the UI
-    useEffect(() => {
+    useEffectOnce(() => {
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
@@ -86,7 +87,7 @@ const GridComp = ({ context }: GridCompProps) => {
         gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    }, []);
+    }, 'gridComp.main');
 
     // initialise the extra components
     useEffect(() => {
@@ -175,7 +176,7 @@ const GridComp = ({ context }: GridCompProps) => {
         tabGuardRef.current = ref;
         setTabGuardReady(true);
     }, []);
-
+    
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>

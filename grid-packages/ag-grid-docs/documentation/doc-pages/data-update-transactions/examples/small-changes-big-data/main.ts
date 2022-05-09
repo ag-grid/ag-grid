@@ -1,13 +1,10 @@
 import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
 
-declare var LINUX_DISTROS: string[];
-declare var CITIES: string[];
-declare var LAPTOPS: string[];
+import { createDataItem, getData } from './data'
 
 var aggCallCount = 0
 var compareCallCount = 0
 var filterCallCount = 0
-var idCounter = 0
 
 function myAggFunc(params: IAggFuncParams) {
   aggCallCount++
@@ -108,9 +105,7 @@ function onBtDuplicate() {
 
   var newItems: any = []
   selectedRows.forEach(function (selectedRow) {
-    idCounter++
     var newItem = createDataItem(
-      idCounter,
       selectedRow.name,
       selectedRow.distro,
       selectedRow.laptop,
@@ -139,12 +134,12 @@ function onBtUpdate() {
   selectedRows.forEach(function (oldItem) {
     var newValue = Math.floor(Math.random() * 100) + 10
     var newItem = createDataItem(
-      oldItem.id,
       oldItem.name,
       oldItem.distro,
       oldItem.laptop,
       oldItem.city,
-      newValue
+      newValue,
+      oldItem.id,
     )
     updatedItems.push(newItem)
   })
@@ -218,7 +213,7 @@ const gridOptions: GridOptions = {
     field: 'name',
     cellRendererParams: { checkbox: true },
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
 
     params.api.setFilterModel({
       value: { value: '50' },
@@ -228,56 +223,9 @@ const gridOptions: GridOptions = {
       params.api.setRowData(getData())
     })
   },
-  isGroupOpenByDefault: function (params) {
-      return ['Delhi', 'Seoul'].includes(params.key);
+  isGroupOpenByDefault: (params) => {
+    return ['Delhi', 'Seoul'].includes(params.key);
   },
-}
-
-function letter(i: number) {
-  return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1)
-}
-
-function randomLetter() {
-  return letter(Math.floor(Math.random() * 26 + 1))
-}
-
-function getData() {
-  var myRowData = []
-  for (var i = 0; i < 10000; i++) {
-    var name =
-      'Mr ' +
-      randomLetter().toUpperCase() +
-      ' ' +
-      randomLetter().toUpperCase() +
-      randomLetter() +
-      randomLetter() +
-      randomLetter() +
-      randomLetter()
-    var city = CITIES[i % CITIES.length]
-    var distro =
-      LINUX_DISTROS[i % LINUX_DISTROS.length] +
-      ' v' +
-      Math.floor(Math.random() * 100 + 1) / 10
-    var university = LAPTOPS[i % LAPTOPS.length]
-    var value = Math.floor(Math.random() * 100) + 10 // between 10 and 110
-    idCounter++
-    myRowData.push(
-      createDataItem(idCounter, name, distro, university, city, value)
-    )
-  }
-  return myRowData;
-}
-
-
-function createDataItem(id: any, name: any, distro: any, laptop: any, city: any, value: any): any {
-  return {
-    id: id,
-    name: name,
-    city: city,
-    distro: distro,
-    laptop: laptop,
-    value: value,
-  }
 }
 
 // wait for the document to be loaded, otherwise

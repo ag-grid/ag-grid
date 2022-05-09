@@ -46,7 +46,7 @@ const gridOptions: GridOptions = {
   // set this to true, so only the column in question gets updated
   aggregateOnlyChangedColumns: true,
   aggFuncs: {
-    sum: function (params) {
+    sum: (params) => {
       var values = params && params.values ? params.values : []
       var result = 0
       if (values) {
@@ -66,10 +66,10 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     gridOptions.api!.setRowData(createRowData())
   },
 }

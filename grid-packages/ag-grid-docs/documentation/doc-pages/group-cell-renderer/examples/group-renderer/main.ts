@@ -1,5 +1,7 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
-import { SimpleCellRenderer } from './simpleCellRenderer_typescript'
+import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
+
 
 const columnDefs: ColDef[] = [
     // this column shows just the country group values, but has not group renderer, so there is no expand / collapse functionality

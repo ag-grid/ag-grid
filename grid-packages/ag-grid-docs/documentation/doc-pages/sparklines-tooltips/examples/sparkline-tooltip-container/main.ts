@@ -2,8 +2,10 @@ import {
   Grid,
   GridOptions,
   LineSparklineOptions,
-  TooltipRendererParams,
-} from '@ag-grid-community/core'
+  TooltipRendererParams
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const body = document.body;
 

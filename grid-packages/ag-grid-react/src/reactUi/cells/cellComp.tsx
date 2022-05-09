@@ -5,6 +5,7 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -300,7 +301,7 @@ const CellComp = (props: {
 
     }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
@@ -349,7 +350,7 @@ const CellComp = (props: {
 
         cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
 
-    }, []);
+    }, 'cellComp.main');
 
     const reactCellRendererStateless = useMemo( ()=> {
         const res = renderDetails && renderDetails.compDetails 

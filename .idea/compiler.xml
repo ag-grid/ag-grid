@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="TypeScriptCompiler">
+    <option name="typeScriptCompilerParams" value="-p ./grid-packages/ag-grid-docs/documentation/tsconfig.json" />
+    <option name="typeScriptServiceDirectory" value="$PROJECT_DIR$/grid-packages/ag-grid-docs/documentation/node_modules/typescript" />
+    <option name="versionType" value="SERVICE_DIRECTORY" />
+  </component>
+</project>

@@ -1,17 +1,36 @@
-[
-  {
-    "id": "Pr__B6HM_s4",
-    "title": "",
-    "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
-  },
-  {
-    "id": "pKUhYE1VTP4",
-    "title": "",
-    "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
-  },
-  {
-    "id": "9IbhW4z--mg",
-    "title": "",
-    "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
-  }
-]
+{
+  "react": [
+    {
+      "id": "Pr__B6HM_s4",
+      "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
+    },
+    {
+      "id": "pKUhYE1VTP4",
+      "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
+    },
+    {
+      "id": "9IbhW4z--mg",
+      "list": "PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW"
+    }
+  ],
+  "angular": [
+    {
+      "id": "_cRDVM6NlPk",
+      "list": ""
+    },
+    {
+      "id": "xe6i3W6qW5k",
+      "list": ""
+    }
+  ],
+  "vue": [
+    {
+      "id": "V14w_NFuZB4",
+      "list": "PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP"
+    },
+    {
+      "id": "9WnYqSxTuE8",
+      "list": "PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP"
+    }
+  ]
+}

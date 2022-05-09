@@ -16,7 +16,7 @@ The grid is fast. However, the grid can also be configured and extended in many 
 
 ## Setting Expectations
 
-The grid can be as fast as demonstrated in the demo application [Demo Application](../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
+The grid can be as fast as demonstrated in the demo application [Demo Application](../../example). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
 ## Check Cell Renderers
 

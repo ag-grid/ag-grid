@@ -1,4 +1,6 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const columnDefs: ColDef[] = [
   { valueGetter: "'Drag'", dndSource: true },

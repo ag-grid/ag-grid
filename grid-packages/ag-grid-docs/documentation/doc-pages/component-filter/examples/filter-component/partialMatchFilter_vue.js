@@ -40,7 +40,7 @@ export default {
         getModel() {
             if (!this.isFilterActive()) { return null; }
 
-            return {value: this.text};
+            return { value: this.text };
         },
 
         setModel(model) {
@@ -56,7 +56,7 @@ export default {
         },
     },
     watch: {
-        'text': function (val, oldVal) {
+        'text': (val, oldVal) => {
             if (val !== oldVal) {
                 this.params.filterChangedCallback();
             }

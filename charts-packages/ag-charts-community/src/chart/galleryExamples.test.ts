@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 import { AgChartOptions } from './agChartOptions';
-import { AgChartV2, AgChart } from './agChartV2';
+import { AgChartV2 } from './agChartV2';
 import { Chart } from './chart';
 import * as examples from './test/examples';
 import {
@@ -13,8 +13,8 @@ import {
     hierarchyChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
-    CANVAS_TO_BUFFER_DEFAULTS,
     toMatchImage,
+    extractImageData,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -154,7 +154,7 @@ describe('Gallery Examples', () => {
                 const compare = async () => {
                     await waitForChartStability(chart);
 
-                    const imageData = ctx.nodeCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+                    const imageData = extractImageData(ctx);
                     (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
                 };
 

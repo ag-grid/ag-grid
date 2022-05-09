@@ -3,8 +3,10 @@ import {
   GridOptions,
   ICellRendererParams,
   IFiltersToolPanel,
-  ISetFilter,
-} from '@ag-grid-community/core'
+  ISetFilter
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

@@ -194,14 +194,7 @@ const plugins = [
                 const allPaths = allSitePage.nodes
                     .map((node) => {
                         return node.path;
-                    }).concat(
-                        [
-                            '/about.php',
-                            '/ag-grid-jobs-board/',
-                            '/example.php',
-                            '/license-pricing.php'
-                        ]
-                    );
+                    });
 
                 return allPaths.map(path => ({
                     path,

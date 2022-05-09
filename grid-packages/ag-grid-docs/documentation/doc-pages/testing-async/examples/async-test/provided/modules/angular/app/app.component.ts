@@ -1,10 +1,10 @@
 
-import { getData } from './data';
 import { ColDef, ModelUpdatedEvent } from '@ag-grid-community/core';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
+import { getData } from './data';
 // Required feature modules are registered in app.module.ts
 
 @Component({

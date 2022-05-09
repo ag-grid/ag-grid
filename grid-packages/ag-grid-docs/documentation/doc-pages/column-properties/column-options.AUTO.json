@@ -87,7 +87,7 @@
     "type": { "returnType": "string" }
   },
   "field": {
-    "description": "/** The field of the row to get the cells data from */",
+    "description": "/** The field of the row object to get the cell's data from.\n * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`. */",
     "type": { "returnType": "string" }
   },
   "type": {
@@ -455,6 +455,10 @@
   "initialAggFunc": {
     "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "string | IAggFunc" }
+  },
+  "defaultAggFunc": {
+    "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n * Note that this does not immediately apply the aggregation function like `aggFunc`\n * Default: `sum` */",
+    "type": { "returnType": "string" }
   },
   "allowedAggFuncs": {
     "description": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",

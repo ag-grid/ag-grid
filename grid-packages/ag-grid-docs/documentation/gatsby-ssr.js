@@ -67,7 +67,7 @@ export const wrapPageElement = ({ element, props: { location: { pathname } } }) 
 /**
  * This allows us to customise the page before it is rendered.
  */
-export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents }) => {
+export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, pathname }) => {
     // Remove script that causes issues with scroll position when a page is first loaded
     const headComponents = getHeadComponents().filter(el => el.key !== 'gatsby-remark-autolink-headers-script');
 

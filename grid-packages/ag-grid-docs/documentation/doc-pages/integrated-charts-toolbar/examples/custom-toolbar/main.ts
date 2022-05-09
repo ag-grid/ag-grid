@@ -1,4 +1,6 @@
-import { Grid, ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },

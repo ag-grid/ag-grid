@@ -346,7 +346,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
+    /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
@@ -580,6 +580,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false`     */
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false`     */
+    @Input() public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined = undefined;
     /** Set to `true` to enable Row Animation. Default: `false`     */
     @Input() public animateRows: boolean | undefined = undefined;
     /** Set to `true` to have cells flash after data changes. Default: `false`     */
@@ -930,6 +932,8 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
+    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost.     */
+    @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
@@ -1242,6 +1246,8 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
+    static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
+    static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     // @END@
 }
 

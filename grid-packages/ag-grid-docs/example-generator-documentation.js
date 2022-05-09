@@ -219,6 +219,25 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         const createExamplePath = pattern => path.join(examplePath, pattern);
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
+        function addRawScripts(fileMap, convertToJs, fileExtension = '.ts') {
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3,typescript}.ts', '**/main.ts'] });
+            tsScripts.forEach(tsFile => {
+
+                let fileContents, fileName;
+                if (convertToJs) {
+                    fileContents = readAsJsFile(tsFile);
+                    fileName = path.parse(tsFile).base.replace('.ts', '.js');
+                } else {
+                    fileContents = getFileContents(tsFile);
+                    fileName = path.parse(tsFile).base.replace('.ts', fileExtension);
+                }
+
+                importTypes.forEach(importType => fileMap.set(importType, { ...fileMap.get(importType), [fileName]: fileContents }));
+            });
+
+            return fileMap;
+        }
+
         const providedExamples = {};
 
         if (type === 'mixed') {
@@ -243,7 +262,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
         }
 
         // get the rest of the scripts
-        const rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
+        const rawScripts = getMatchingPaths('*.js', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
 
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
@@ -319,11 +338,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
             } else {
                 const reactScripts = getMatchingPaths('*_react.*', { ignore: ['**/*.tsx'] });
-                const reactConfigs = new Map();
+                let reactConfigs = new Map();
 
                 try {
                     const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'));
                     importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
+                    reactConfigs = addRawScripts(reactConfigs, true)
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);
                     throw e;
@@ -336,7 +356,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
             } else {
                 let reactDeclarativeScripts = null;
-                const reactDeclarativeConfigs = new Map();
+                let reactDeclarativeConfigs = new Map();
 
                 if (vanillaToReactFunctional && options.reactFunctional !== false) {
                     const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*', { ignore: ['**/*.tsx'] }).length > 0;
@@ -347,6 +367,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     try {
                         const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
+                        reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, true)
                     } catch (e) {
                         console.error(`Failed to process React example in ${examplePath}`, e);
                         throw e;
@@ -360,7 +381,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctionalTs', providedExamples['reactFunctionalTs']));
             } else {
                 let reactDeclarativeScripts = null;
-                const reactDeclarativeConfigs = new Map();
+                let reactDeclarativeConfigs = new Map();
 
                 if (vanillaToReactFunctionalTs && options.reactFunctional !== false) {
                     const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.tsx').length > 0;
@@ -371,6 +392,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     try {
                         const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
+                        reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
                     } catch (e) {
                         console.error(`Failed to process React Typescript example in ${examplePath}`, e);
                         throw e;
@@ -384,7 +406,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
             } else {
                 const angularScripts = getMatchingPaths('*_angular*');
-                const angularConfigs = new Map();
+                let angularConfigs = new Map();
                 try {
                     const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
                     const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames);
@@ -395,6 +417,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                             'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
                         });
                     });
+                    angularConfigs = addRawScripts(angularConfigs, false);
                 } catch (e) {
                     console.error(`Failed to process Angular example in ${examplePath}`, e);
                     throw e;
@@ -407,11 +430,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
             } else {
                 const vueScripts = getMatchingPaths('*_vue*');
-                const vueConfigs = new Map();
+                let vueConfigs = new Map();
                 try {
                     const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
                     importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+                    vueConfigs = addRawScripts(vueConfigs, true);
                 } catch (e) {
                     console.error(`Failed to process Vue example in ${examplePath}`, e);
                     throw e;
@@ -427,11 +451,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             } else {
                 if (vanillaToVue3) {
                     const vueScripts = getMatchingPaths('*_vue*');
-                    const vueConfigs = new Map();
+                    let vueConfigs = new Map();
                     try {
                         const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
                         importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+                        vueConfigs = addRawScripts(vueConfigs, true);
                     } catch (e) {
                         console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
                         throw e;

@@ -3,7 +3,7 @@ import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 declare var PersonFilter: any;
 
 var dateFilterParams = {
-  comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
     var dateParts = dateAsString.split('/')

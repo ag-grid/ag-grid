@@ -9,7 +9,7 @@ Pivot Chart allow users to chart all grouped and pivoted data from inside the gr
 
 ## Using Pivot Chart
 
-Try it out on our [demo page](../../example.php) by doing the following:
+Try it out on our [demo page](../../example) by doing the following:
 
 - Enter [Pivot Mode](/pivoting/#pivot-mode) and select a combination of group, pivot and value columns.
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Pivot Chart' sub menu.

@@ -1,5 +1,7 @@
-import {CellValueChangedEvent, Grid, GridOptions, ICellRendererParams, ValueFormatterParams, ValueSetterParams} from '@ag-grid-community/core'
-import { ColourCellRenderer } from './colourCellRenderer_typescript'
+import { CellValueChangedEvent, Grid, GridOptions, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core';
+import { ColourCellRenderer } from './colourCellRenderer_typescript';
+import { getData } from "./data";
+
 
 const carMappings = {
     tyt: 'Toyota',
@@ -63,7 +65,7 @@ const gridOptions: GridOptions = {
             field: 'price',
             minWidth: 140,
             colId: 'retailPrice',
-            valueGetter: function (params) {
+            valueGetter: (params) => {
                 return params.data.price
             },
             valueFormatter: currencyFormatter,
@@ -73,7 +75,7 @@ const gridOptions: GridOptions = {
             headerName: 'Retail Price (incl Taxes)',
             minWidth: 205,
             editable: false,
-            valueGetter: function (params) {
+            valueGetter: (params) => {
                 // example of chaining value getters
                 return params.getValue('retailPrice') * 1.2
             },

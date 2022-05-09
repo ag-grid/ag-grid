@@ -1,4 +1,6 @@
-import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -65,7 +67,7 @@ const gridOptions: GridOptions = {
           blur: 8,
         },
         tooltip: {
-          renderer: function (params) {
+          renderer: (params) => {
             return {
               content:
                 '<b>' +

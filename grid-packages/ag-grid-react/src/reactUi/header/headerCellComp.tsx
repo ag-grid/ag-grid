@@ -3,6 +3,7 @@ import { BeansContext } from '../beansContext';
 import { ColumnSortState, CssClassManager, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
 import { isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { useEffectOnce } from '../useEffectOnce';
 
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
@@ -11,6 +12,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaSort, setAriaSort] = useState<ColumnSortState>();
+    const [ariaLabel, setAriaLabel] = useState<string>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
@@ -22,14 +24,15 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current!), []);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setAriaSort: sort => setAriaSort(sort),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
+            setAriaLabel: label => setAriaLabel(label),
             setAriaDescribedBy: value => setAriaDescribedBy(value),
+            setAriaSort: sort => setAriaSort(sort),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: ()=> userCompRef.current || undefined
         };
@@ -38,7 +41,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current!.insertAdjacentElement('afterend', selectAllGui);
-    }, []);
+    }, 'headerCell.main');
 
     // js comps
     useEffect(() => showJsComp(
@@ -49,7 +52,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     useEffect(() => {
         let userCompDomElement: HTMLElement | undefined = undefined;
         eGui.current!.childNodes.forEach( node => {
-            if (node!=null && node!==eResize.current) {
+            if (node != null && node !== eResize.current) {
                 userCompDomElement = node as HTMLElement;
             }
         });
@@ -78,6 +81,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             role="columnheader"
             tabIndex={-1}
             aria-describedby={ariaDescribedBy}
+            aria-label={ariaLabel}
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }

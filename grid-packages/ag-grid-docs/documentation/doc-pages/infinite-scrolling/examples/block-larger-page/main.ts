@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         headerName: 'ID',
         maxWidth: 100,
         valueGetter: 'node.id',
-        cellRenderer: function (params: ICellRendererParams) {
+        cellRenderer: (params: ICellRendererParams) => {
             if (params.value !== undefined) {
                 return params.value
             } else {
@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
     pagination: true,
     paginationAutoPageSize: true,
     // debug: true,
-    getRowId: function (params: GetRowIdParams) {
+    getRowId: (params: GetRowIdParams) => {
         return params.data.id
     },
 }
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const dataSource: IDatasource = {
                 rowCount: undefined, // behave as infinite scroll
-                getRows: function (params: IGetRowsParams) {
+                getRows: (params: IGetRowsParams) => {
                     console.log('asking for ' + params.startRow + ' to ' + params.endRow)
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning

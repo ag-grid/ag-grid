@@ -1,5 +1,6 @@
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import * as agCharts from "ag-charts-community";
+import { AgChartOptions } from "ag-charts-community";
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -200,7 +201,6 @@ const options: AgChartOptions = {
       type: "category",
       position: "bottom",
       title: {
-        enabled: true,
         text: "Week",
       },
       label: {
@@ -211,7 +211,6 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       title: {
-        enabled: true,
         text: "£ per kg",
       },
       nice: false,

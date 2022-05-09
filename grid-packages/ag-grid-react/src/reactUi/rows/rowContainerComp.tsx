@@ -1,9 +1,10 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
-import React, { useEffect, useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
+import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
+import { useEffectOnce } from '../useEffectOnce';
 
 const RowContainerComp = (params: {name: RowContainerName}) => {
 
@@ -52,7 +53,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         });
     }, [domOrder, rowCtrls]);
 
-    useEffect(() => {
+    useEffectOnce(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
@@ -70,7 +71,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             context.destroyBeans(beansToDestroy);
         };
 
-    }, []);
+    }, 'rowContainerComp.main');
 
     const viewportStyle = useMemo(() => ({
         height: viewportHeight
@@ -84,7 +85,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         <div
             className={ containerClasses }
             ref={ eContainer }
-            role="rowgroup" 
+            role={ rowCtrls.length ? "rowgroup" : "presentation" }
             style={ containerStyle }>
             {
                 rowCtrlsOrdered.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)

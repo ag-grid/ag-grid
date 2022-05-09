@@ -2,7 +2,7 @@ import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } 
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  isRowMaster: function (dataItem: any) {
+  isRowMaster: (dataItem: any) => {
     return dataItem ? dataItem.callRecords.length > 0 : false
   },
   columnDefs: [

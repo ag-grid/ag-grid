@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { Grid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [

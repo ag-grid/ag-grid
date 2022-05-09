@@ -9,6 +9,7 @@ import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
+import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
@@ -58,7 +59,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
     /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** 
+    /**
      * @deprecated as of v27, use innerRenderer for Framework components
      * Same as `innerRenderer` but for a framework component. */
     innerRendererFramework?: any;
@@ -94,6 +95,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
     private eCheckbox: HTMLElement;
+    private expandListener: (() => null) | null;
 
     // keep reference to this, so we can remove again when indent changes
     private indentClass: string;
@@ -142,6 +144,34 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
+        this.refreshAriaExpanded();
+    }
+
+    protected destroy(): void {
+        super.destroy();
+        // property cleanup to avoid memory leaks
+        this.expandListener = null;
+    }
+
+    private refreshAriaExpanded(): void {
+        const { node, eParentOfValue } = this.params;
+
+        if (this.expandListener) {
+            this.expandListener = this.expandListener();
+        }
+
+        if (!this.isExpandable()) {
+            removeAriaExpanded(eParentOfValue);
+            return;
+        }
+
+        const listener = () => {
+            // for react, we don't use JSX, as setting attributes via jsx is slower
+            setAriaExpanded(eParentOfValue, !!node.expanded);
+        };
+
+        this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
+        listener();
     }
 
     private isTopLevelFooter(): boolean {
@@ -460,20 +490,20 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
 
-    public onExpandClicked(mouseEvent: MouseEvent): void {
+    private onExpandClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // so if we expand a node, it does not also get selected.
         stopPropagationForAgGrid(mouseEvent);
 
-        this.onExpandOrContract();
+        this.onExpandOrContract(mouseEvent);
     }
 
-    public onExpandOrContract(): void {
+    private onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
-        rowNode.setExpanded(nextExpandState);
+        rowNode.setExpanded(nextExpandState, e);
     }
 
     private isExpandable(): boolean {
@@ -537,6 +567,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // if we have no children, this impacts the indent
         this.setIndent();
+
+        this.refreshAriaExpanded();
     }
 
     private setupIndent(): void {
@@ -624,10 +656,10 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (cellEditable) { return; }
 
-        this.onExpandOrContract();
+        this.onExpandOrContract(event);
     }
 
-    public onCellDblClicked(mouseEvent: MouseEvent): void {
+    private onCellDblClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // we want to avoid acting on double click events on the expand / contract icon,
@@ -639,7 +671,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             || isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
-            this.onExpandOrContract();
+            this.onExpandOrContract(mouseEvent);
         }
     }
 }

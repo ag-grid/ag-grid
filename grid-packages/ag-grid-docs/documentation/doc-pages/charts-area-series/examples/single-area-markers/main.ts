@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -20,7 +21,7 @@ const options: AgChartOptions = {
         enabled: true,
       },
       tooltip: {
-        renderer: function (params) {
+        renderer: (params) => {
           return {
             content: `${params.xValue}: ${params.yValue.toFixed(1)}%`,
           }

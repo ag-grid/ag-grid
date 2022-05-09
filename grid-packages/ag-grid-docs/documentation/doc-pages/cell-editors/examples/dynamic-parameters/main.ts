@@ -1,5 +1,7 @@
-import { Grid, CellValueChangedEvent, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
+import { CellValueChangedEvent, Grid, GridOptions, ICellEditorParams } from '@ag-grid-community/core';
+import { getData } from "./data";
 import { GenderCellRenderer } from "./genderCellRenderer_typescript";
+
 
 const cellCellEditorParams = (params: ICellEditorParams) => {
   const selectedCountry = params.data.country

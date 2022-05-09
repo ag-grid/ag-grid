@@ -45,10 +45,10 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   columnDefs: columnDefs,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.code
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     var mockServer = createMockServer(),
       initialLoad$ = mockServer.initialLoad(),
       updates$ = mockServer.byRowupdates()

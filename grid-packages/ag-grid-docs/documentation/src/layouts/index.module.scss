@@ -16,6 +16,7 @@ main {
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
 }
 
 .content-viewport {

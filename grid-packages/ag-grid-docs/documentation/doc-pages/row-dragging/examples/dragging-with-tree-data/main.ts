@@ -1,4 +1,6 @@
-import { Grid, GridOptions, RowDragEndEvent, RowNode, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { GetRowIdParams, Grid, GridOptions, RowDragEndEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 declare var FileCellRenderer: any;
 
 var valueFormatter = function (params: ValueFormatterParams) {
@@ -21,10 +23,10 @@ const gridOptions: GridOptions = {
   treeData: true,
   animateRows: true,
   groupDefaultExpanded: -1,
-  getDataPath: function (data: any) {
+  getDataPath: (data: any) => {
     return data.filePath
   },
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
   autoGroupColumnDef: {

@@ -29,7 +29,7 @@ const options: AgCartesianChartOptions = {
       type: 'number',
       position: 'left',
       label: {
-        formatter: function (params) {
+        formatter: (params) => {
           return params.value + ' °C'
         },
       },

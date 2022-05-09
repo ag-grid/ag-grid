@@ -1,5 +1,6 @@
 ---
 title: "Testing Async"
+frameworks: ["angular"]
 ---
 
  We will walk through an example that tests asynchronous grid code as part of your Angular application,
@@ -80,7 +81,7 @@ function validateState({ gridRows, displayedRows, templateRows }) {
     expect(component.displayedRows).toEqual(displayedRows)
 
     // Validate the rendered html content that the user would see 
-    expect(getTextValue(rowNumberDE)).toContain(templateRows)
+    expect(rowNumberDE.nativeElement.innerHTML).toContain(templateRows)
 }
 ```
  ## FakeAsync
