@@ -40,11 +40,8 @@ export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: st
             return nodeA.__objectId - nodeB.__objectId;
         }
 
-        if (aHasIndex) {
-            return 1;
-        }
-
-        return -1;
+        // If nodes are mixed, don't sort
+        return 0;
     };
 
     // check if the list first needs sorting
