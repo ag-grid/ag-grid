@@ -46,15 +46,20 @@ export class SortService extends BeanStub {
             allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
 
+        const isPivotMode = this.columnModel.isPivotMode();
+
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
+
+            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
+            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
-            if (!sortActive || skipSortingGroups) {
+            if (!sortActive || skipSortingGroups || skipSortingPivotLeafs) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (groupMaintainOrder && rowNode.childrenAfterSort) {
