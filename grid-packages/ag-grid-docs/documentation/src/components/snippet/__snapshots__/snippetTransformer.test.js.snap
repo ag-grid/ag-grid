@@ -923,8 +923,7 @@ exports[`Snippet Component given col defs with arrow function properties it shou
     },        
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets with space between properties 1`] = `
@@ -936,8 +935,7 @@ exports[`Snippet Component given col defs with arrow function properties it shou
     },        
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context 1`] = `
@@ -949,8 +947,7 @@ exports[`Snippet Component given col defs with arrow function properties it shou
     },        
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context and space between properties 1`] = `
@@ -962,8 +959,7 @@ exports[`Snippet Component given col defs with arrow function properties it shou
     },        
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'vue' snippets 1`] = `
@@ -1195,8 +1191,7 @@ exports[`Snippet Component given column definitions with functions it should cre
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets with space between properties 1`] = `
@@ -1216,8 +1211,7 @@ exports[`Snippet Component given column definitions with functions it should cre
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets without framework context 1`] = `
@@ -1237,8 +1231,7 @@ exports[`Snippet Component given column definitions with functions it should cre
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets without framework context and space between properties 1`] = `
@@ -1258,8 +1251,7 @@ exports[`Snippet Component given column definitions with functions it should cre
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'vue' snippets 1`] = `
@@ -1541,8 +1533,7 @@ const columnDefs = [
     },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets with space between properties 1`] = `
@@ -1564,8 +1555,7 @@ const columnDefs = [
     },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets without framework context 1`] = `
@@ -1587,8 +1577,7 @@ const columnDefs = [
     },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets without framework context and space between properties 1`] = `
@@ -1610,8 +1599,7 @@ const columnDefs = [
     },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'vue' snippets 1`] = `
@@ -1829,8 +1817,7 @@ exports[`Snippet Component given complex column definition with array property i
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'react' snippets with space between properties 1`] = `
@@ -1844,8 +1831,7 @@ exports[`Snippet Component given complex column definition with array property i
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context 1`] = `
@@ -1859,8 +1845,7 @@ exports[`Snippet Component given complex column definition with array property i
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context and space between properties 1`] = `
@@ -1874,8 +1859,7 @@ exports[`Snippet Component given complex column definition with array property i
     }
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets 1`] = `
@@ -2146,8 +2130,7 @@ const columnDefs = [
     { headerName: 'C', field: 'c' },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets with space between properties 1`] = `
@@ -2158,8 +2141,7 @@ const columnDefs = [
     { headerName: 'C', field: 'c' },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets without framework context 1`] = `
@@ -2170,8 +2152,7 @@ const columnDefs = [
     { headerName: 'C', field: 'c' },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets without framework context and space between properties 1`] = `
@@ -2182,8 +2163,7 @@ const columnDefs = [
     { headerName: 'C', field: 'c' },
 ];
 
-<AgGridReact columnDefs={columnDefs}>
-</AgGridReact>"
+<AgGridReact columnDefs={columnDefs}></AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'vue' snippets 1`] = `
