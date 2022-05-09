@@ -1223,6 +1223,13 @@
                 "name": "Post Sort",
                 "url": "/row-sorting/#post-sort"
             }
+        },
+        "deltaSort": {
+            "description": "When enabled, sorts only the transaction deltas.",
+            "more": {
+                "name": "Delta sorting",
+                "url": "/data-update-transactions/#delta-sorting"
+            }
         }
     },
     "styling": {
