@@ -46,6 +46,8 @@ export class SortService extends BeanStub {
             allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
 
+        const isPivotMode = this.columnModel.isPivotMode();
+
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
