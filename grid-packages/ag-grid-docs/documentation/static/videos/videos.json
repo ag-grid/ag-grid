@@ -158,7 +158,7 @@
   "angular": [
     {
       "title": "Getting Started with AG Grid Community",
-      "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk",
+      "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Getting Started with AG Grid Community"
@@ -173,7 +173,7 @@
     },
     {
       "title": "Getting Started with AG Grid Enterprise",
-      "url": "https://www.youtube.com/watch?v=xe6i3W6qW5k",
+      "url": "https://www.youtube.com/watch?v=xe6i3W6qW5k&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Getting Started with AG Grid Enterprise"
