@@ -932,7 +932,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
-    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.     */
+    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
