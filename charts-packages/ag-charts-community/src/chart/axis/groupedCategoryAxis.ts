@@ -324,12 +324,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
                 if (bbox && bbox.width > availableRange) {
                     label.visible = false;
+                } else if (isHorizontal) {
+                    label.rotation = autoRotation;
                 } else {
-                    if (isHorizontal) {
-                        label.rotation = autoRotation;
-                    } else {
-                        label.rotation = -Math.PI / 2;
-                    }
+                    label.rotation = -Math.PI / 2;
                 }
             }
             // Calculate positions of label separators for all nodes except the root.
