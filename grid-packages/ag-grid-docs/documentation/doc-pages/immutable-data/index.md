@@ -13,3 +13,5 @@ It was also a property we found poorly named.
 Instead we have now changed `getRowNodeId()` to be called [getRowId()](/row-ids/), and when `getRowId()` is implemented, `immutableData=true` is set behind the scenes.
 
 So going forward, if you want the old Immutable Data behaviour, just provide a `getRowId()` callback.
+
+`getRowNodeId()` is now deprecated. If you want this old behaviour (i.e. getRowId() but without Immutable Data) then set the grid property `resetRowDataOnUpdate=true`.
