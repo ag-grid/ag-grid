@@ -462,7 +462,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox> = new Map();
-        let rotate = false;
         let labelCount = 0;
 
         const labelSelection = groupSelection.selectByClass(Text)
@@ -491,6 +490,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
             let totalLength = 0;
+            let rotate = false;
             const padding = 15;
             for (let [_, bbox] of bboxes.entries()) {
                 const length = useWidth ? bbox.width : bbox.height;
@@ -501,12 +501,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     rotate = true;
                 }
             }
-            return totalLength;
+            return {totalLength, rotate};
         }
 
         let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
 
-        let totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
+        let {totalLength: totalLabelLength, rotate} = calculateLabelsLength(labelBboxes, useWidth);
 
         this._labelAutoRotated = false;
         if (!labelRotation && label.autoRotate != null && label.autoRotate !== false && rotate) {
@@ -524,7 +524,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 useWidth = labelRotation === Math.PI / 2 || labelRotation === (Math.PI + Math.PI / 2) || labelAutoRotation === Math.PI / 2 || labelAutoRotation === (Math.PI + Math.PI / 2) ? true : false;
             }
 
-            totalLabelLength = calculateLabelsLength(labelBboxes, useWidth);
+            totalLabelLength = calculateLabelsLength(labelBboxes, useWidth).totalLength;
         }
 
         const autoRotation = parallelLabels
@@ -554,10 +554,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const labelsToShow = Math.floor(availableRange / averageLabelLength);
 
             const showEvery = labelsToShow > 1 ? Math.ceil(labelCount / labelsToShow) : labelCount;
+            let visibleLabelIndex = 0;
             labelSelection.each((label, _, index) => {
-                if (label.visible !== true || index === 0) { return; } // always keep the first label
+                if (label.visible !== true || label.text === '' || label.text == undefined) { return; }
 
-                label.visible = index % showEvery === 0 ? true : false;
+                label.visible = visibleLabelIndex % showEvery === 0 ? true : false;
+                visibleLabelIndex++
+
                 if (!label.visible) {
                     labelBboxes.delete(index);
                 }
