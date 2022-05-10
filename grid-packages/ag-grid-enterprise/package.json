@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf dist main.d.ts .hash",
     "build": "npx gulp && npm run rollup && npm run hash",
+    "build-prod": "npm run build",
     "package": "npx gulp copy-umd-files",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"

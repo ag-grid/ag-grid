@@ -343,7 +343,8 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
                                                  runPackage = false,
                                                  runE2ETests = false,
                                                  cumulativeBuild = false,
-                                                 skipDocs = false) => {
+                                                 skipDocs = false,
+                                                 prodBuild = true) => {
     const buildChain = await getAgBuildChain(includeExamples, skipPackageExamples, skipDocs);
     const modulesState = readModulesState(buildChain);
 
@@ -383,7 +384,7 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
         const packagesToRun = Array.from(lernaPackagesToRebuild);
         try {
             console.log("Running 'build' on changed modules");
-            let result = await buildPackages(packagesToRun);
+            let result = prodBuild ? await buildPackages(packagesToRun, "build-prod") : await buildPackages(packagesToRun);
             buildFailed = result.exitCode !== 0 || result.failed === 1;
 
             if (runPackage && !buildFailed) {
