@@ -54,7 +54,7 @@ Transaction Updates refers to any of the following:
 
 - Updating data via [Transactions](/data-update-transactions/) API.
 - Updating data via [Async Transactions](/data-update-high-frequency/) API.
-- Changes when using [Immutable Data](/immutable-data/) (as this uses Transactions underneath the hood).
+- Changes to Row Data and providing [Row ID](/row-ids/) (as this uses Transactions underneath the hood).
 
 Filter values are refreshed when data is updated using any of these methods.
 
