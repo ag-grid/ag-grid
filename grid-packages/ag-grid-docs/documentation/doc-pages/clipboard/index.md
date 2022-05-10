@@ -7,19 +7,33 @@ You can copy and paste items to and from the grid using the system clipboard.
 
 ##  Copy to Clipboard
 
-Copy to clipboard operation can be done in the following ways:
+Users can copy to the clipboard:
+ - By pressing the keys <kbd>Ctrl</kbd>+<kbd>C</kbd> while focus is on the grid.
+ - Or Selecting 'Copy' from the context menu that appears when you right click over a cell.
 
-- Select 'Copy' from the context menu that appears when you right click over a cell.
-- Press keys <kbd>Ctrl</kbd>+<kbd>C</kbd> while focus is on the grid.
-- Use the API methods: copySelectedRowsToClipboard(includeHeaders) and copySelectedRangeToClipboard(includeHeaders)
+The copy operation will copy selected ranges, selected rows, or the currently focused cell, based on this order:
 
-The API calls take a boolean value `includeHeaders` which when true, will include column headers in what is copied.
+- If range selected (via range selection), copy range.
+- Else if rows selected (via row selection), copy rows.
+- Else copy focused cell.
 
-Headers can also be included when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> by setting: `gridOptions.copyHeadersToClipboard = true`.
+Headers can also be included when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> by setting: `gridOptions.copyHeadersToClipboard=true`.
+
+[[note]]
+| You can copy multiple ranges in range selection by holding down <kbd>Ctrl</kbd> to select multiple ranges and then copy.
 
 [[note]]
 | Performing multiple <kbd>Ctrl</kbd>+&lt;left click> operations followed by <kbd>Ctrl</kbd>+<kbd>C</kbd> will not preserve original cell layout
 | but rather copy them vertically to the clipboard.
+
+When row selection is enabled the copy shortcut will copy the selected row, instead of the focused cell. Depending on your use case, you may wish to
+ignore copying rows and copy the focused cell. To do this you can enable the option `gridOptions.suppressCopyRowToClipboard=true`.
+
+### Copy via the API
+You can use the Grid API methods: `copySelectedRowsToClipboard(...)` and `copySelectedRangeToClipboard(...)`
+to copy rows or ranges respectively, these API calls take optional parameters to enable copying column and group headers.
+
+<api-documentation source='grid-api/api.json' section='clipboard' names='["copySelectedRangeToClipboard", "copySelectedRowsToClipboard"]'  ></api-documentation>
 
 ##  Paste from Clipboard
 
@@ -37,14 +51,6 @@ Paste to clipboard can only be done in the following ways:
 | the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
 | the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
 
-The copy operation will copy selected ranges, selected rows, or the currently focused cell, based on this order:
-
-- If range selected (via range selection), copy range.
-- Else if rows selected (via row selection), copy rows.
-- Else copy focused cell.
-
-[[note]]
-| You can copy multiple ranges in range selection by holding down <kbd>Ctrl</kbd> to select multiple ranges and then copy.
 
 ## Toggle Paste On / Off
 
@@ -84,10 +90,6 @@ Below you can:
 
 The example has both row click selection and range selection enabled. You probably won't do
 this in your application as it's confusing, it's done below just to demonstrate them side by side.
-
-When row click selection and range selection are enabled the shortcut would copy the selected row, not the
-selected range, if you wish to let the range take precedence, then you can add this to your gridOptions
-`suppressCopyRowsToClipboard:true`
 
 <grid-example title='Clipboard example' name='simple' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
