@@ -1224,7 +1224,7 @@
     }
   },
   "setDeltaSort": {
-    "description": "/** Enable or disable the delta sort grid option. */",
+    "description": "/** Sets the `deltaSort` property */",
     "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
   },
   "updateRowData": {
@@ -1428,5 +1428,11 @@
   "paginationGoToPage": {
     "description": "/** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */",
     "type": { "arguments": { "page": "number" }, "returnType": "void" }
+  },
+  "setRowClass": {
+    "type": {
+      "arguments": { "className": "string | undefined" },
+      "returnType": "void"
+    }
   }
 }

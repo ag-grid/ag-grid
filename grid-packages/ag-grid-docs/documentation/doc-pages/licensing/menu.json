@@ -472,6 +472,11 @@
             ]
           },
           {
+            "title": "Immutable Data",
+            "url": "/immutable-data/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Data Stages",
             "url": "/client-side-row-stages/",
             "showInCollapsed": true
