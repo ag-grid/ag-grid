@@ -9245,7 +9245,8 @@
       "failCallback()": "void",
       "fail()": "void",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
       "request": "/** Details for the request. A simple object that can be converted to JSON. */",
@@ -9253,7 +9254,10 @@
       "successCallback(rowsThisPage: any[], lastRow: number)": "/** @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.\n */",
       "success(params: LoadSuccessParams)": "/** Success callback, pass the rows back to the grid that were requested. */",
       "failCallback()": "/** @deprecated Use `fail` instead.\n */",
-      "fail()": "/** Fail callback, tell the grid the call failed so it can adjust it's state. */"
+      "fail()": "/** Fail callback, tell the grid the call failed so it can adjust it's state. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "IServerSideDatasource": {

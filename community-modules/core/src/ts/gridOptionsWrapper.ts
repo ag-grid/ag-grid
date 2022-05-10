@@ -108,6 +108,7 @@ export class GridOptionsWrapper {
     public static PROP_POPUP_PARENT = 'popupParent';
 
     public static PROP_DOM_LAYOUT = 'domLayout';
+    public static PROP_ROW_CLASS = 'rowClass';
 
     public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
 

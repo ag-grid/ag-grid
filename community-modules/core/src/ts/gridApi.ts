@@ -1786,6 +1786,11 @@ export class GridApi {
         return res;
     }
 
+    /** Sets the `deltaSort` property */
+    public setDeltaSort(enable: boolean): void {
+        this.gridOptionsWrapper.setProperty('deltaSort', enable);
+    }
+
     /** @deprecated */
     public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null | undefined {
         const message = 'AG Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
@@ -2086,5 +2091,9 @@ export class GridApi {
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
+    }
+
+    public setRowClass(className: string | undefined): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_ROW_CLASS, className);
     }
 }

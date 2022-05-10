@@ -441,10 +441,12 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public isMoreThanOneCell(): boolean {
         const len = this.cellRanges.length;
-
-        if (len !== 1) {
-            // if range is not zero and not one, means more than one cell
-            return len !== 0;
+        
+        if (len === 0) {
+            return false;
+        }
+        if (len > 1) {
+            return true; // Assumes a cell range must contain at least one cell
         }
 
         // only one range, return true if range has more than one

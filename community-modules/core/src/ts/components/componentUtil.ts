@@ -105,6 +105,15 @@ export class ComponentUtil {
             delete changesToApply.groupAggFiltering;
         }
 
+        // we need to do this before the generic handling, otherwise value gets set before we
+        // try to set it, and the grid then doesn't refresh the rows as it doesn't see any change.
+        // also it's possible we use the generic code setXXX below and put it up there instead,
+        // cover all cases.
+        if (changesToApply.rowClass) {
+            api.setRowClass(changesToApply.rowClass.currentValue);
+            delete changesToApply.rowClass;
+        }
+
         // check if any change for the simple types, and if so, then just copy in the new value
         [
             ...ComponentUtil.ARRAY_PROPERTIES,

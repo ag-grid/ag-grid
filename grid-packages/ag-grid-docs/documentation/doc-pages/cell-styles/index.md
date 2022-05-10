@@ -100,18 +100,21 @@ The following snippet is cellClassRules using functions on a year column:
 
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    cellClassRules: {
-|        // apply green to 2008
-|        'rag-green-outer': params => params.value === 2008,
-|
-|        // apply amber 2004
-|        'rag-amber-outer': params => params.value === 2004,
-|
-|        // apply red to 2000
-|        'rag-red-outer': params => params.value === 2000,
-|    }
-|}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            cellClassRules: {
+                // apply green to 2008
+                'rag-green-outer': params => params.value === 2008,
+                // apply amber 2004
+                'rag-amber-outer': params => params.value === 2004,
+                // apply red to 2000
+                'rag-red-outer': params => params.value === 2000,
+            }
+        }
+    ]
+}
 </snippet>
 
 ## Cell Style, Cell Class & Cell Class Rules Params
@@ -141,11 +144,16 @@ The following snippet is cellClassRules using expressions on an age column:
 
 <snippet suppressFrameworkContext="true">
 const gridOptions = {
-    cellClassRules: {
-        'rag-green': 'x < 20',
-        'rag-amber': 'x >= 20 && x < 25',
-        'rag-red': 'x >= 25',
-    }
+    columnDefs: [
+        {
+            field: 'age',
+            cellClassRules: {
+                'rag-green': 'x < 20',
+                'rag-amber': 'x >= 20 && x < 25',
+                'rag-red': 'x >= 25',
+            }
+        }
+    ]
 }
 </snippet>
 
