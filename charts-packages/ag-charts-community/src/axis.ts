@@ -463,6 +463,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox> = new Map();
         let rotate = false;
+        let labelCount = 0;
 
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
@@ -477,22 +478,26 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 if (node.visible !== true) { return; }
 
                 labelBboxes.set(index, node.computeBBox());
+
+                if (node.text === '' || node.text == undefined) { return; }
+                labelCount++;
             });
 
         const labelX = sideFlag * (tick.size + label.padding);
 
         // Only consider a fraction of the total range to allow more space for each label
         const availableRange = requestedRangeMax - requestedRangeMin;
-        const step = availableRange / labelBboxes.size;
+        const step = availableRange / labelCount;
 
         const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
             let totalLength = 0;
             const padding = 15;
             for (let [_, bbox] of bboxes.entries()) {
-                const length = (useWidth ? bbox.width : bbox.height) + padding;
-                totalLength += length;
+                const length = useWidth ? bbox.width : bbox.height;
+                const lengthWithPadding = length <= 0 ? 0 : length + padding;
+                totalLength += lengthWithPadding;
 
-                if (length > step) {
+                if (lengthWithPadding > step) {
                     rotate = true;
                 }
             }
@@ -545,11 +550,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
 
         if (availableRange > 1 && totalLabelLength > availableRange) {
-            const numberOfLabels = ticks.length;
-            const averageLabelLength = totalLabelLength / numberOfLabels;
+            const averageLabelLength = totalLabelLength / labelCount;
             const labelsToShow = Math.floor(availableRange / averageLabelLength);
 
-            const showEvery = labelsToShow > 1 ? Math.ceil(numberOfLabels / labelsToShow) : numberOfLabels;
+            const showEvery = labelsToShow > 1 ? Math.ceil(labelCount / labelsToShow) : labelCount;
             labelSelection.each((label, _, index) => {
                 if (label.visible !== true || index === 0) { return; } // always keep the first label
 
