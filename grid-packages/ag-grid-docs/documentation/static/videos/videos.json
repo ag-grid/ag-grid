@@ -160,7 +160,7 @@
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
-        "image": "AgGridVideo.png",
+        "image": "AgGridVideo_SC.png",
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
@@ -175,13 +175,27 @@
       "title": "Getting Started with AG Grid Enterprise",
       "url": "https://www.youtube.com/watch?v=xe6i3W6qW5k&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
-        "image": "AgGridVideo.png",
+        "image": "AgGridVideo_SC.png",
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
         "Configure AG Grid Enterprise."
       ],
       "runningTime": "4:37"
+    },
+    {
+      "title": "Customising Cells - Cell Renderers",
+      "url": "https://www.youtube.com/watch?v=xsafnM77NVs&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Angular Cell Renderers"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "8:35"
     }
   ],
   "vue": [
@@ -189,7 +203,7 @@
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
       "thumbnail": {
-        "image": "AgGridVideo.png",
+        "image": "AgGridVideo_MS.png",
         "altText": "Getting Started with AG Grid Community"
       },
       "keyPoints": [
@@ -204,7 +218,7 @@
       "title": "Getting Started with AG Grid Enterprise",
       "url": "https://www.youtube.com/watch?v=9WnYqSxTuE8&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
       "thumbnail": {
-        "image": "AgGridVideo.png",
+        "image": "AgGridVideo_MS.png",
         "altText": "Getting Started with AG Grid Enterprise"
       },
       "keyPoints": [
