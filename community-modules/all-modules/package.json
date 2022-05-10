@@ -14,7 +14,7 @@
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "generate-doc-files": "node ./generate-code-reference-files.js",
     "build": "npm run build-cjs && npm run build-esm && npm run build-css && npm run generate-doc-files && npm run hash",
-    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run build-css && npm run generate-doc-files",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run build-css && npm run generate-doc-files && npm run hash",
     "watchWebpack": "npx webpack --watch",
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community --esmType complete",

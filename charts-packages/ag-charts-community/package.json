@@ -15,7 +15,7 @@
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
-    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
     "watch": "npx tsc -p tsconfig.json --watch",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
