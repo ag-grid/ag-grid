@@ -487,7 +487,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
             let totalLength = 0;
-            const padding = 10;
+            const padding = 15;
             for (let [_, bbox] of bboxes.entries()) {
                 const length = (useWidth ? bbox.width : bbox.height) + padding;
                 totalLength += length;
@@ -549,9 +549,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const averageLabelLength = totalLabelLength / numberOfLabels;
             const labelsToShow = Math.floor(availableRange / averageLabelLength);
 
-            const showEvery = labelsToShow > 2 ? Math.ceil(numberOfLabels / labelsToShow) : numberOfLabels;
+            const showEvery = labelsToShow > 1 ? Math.ceil(numberOfLabels / labelsToShow) : numberOfLabels;
             labelSelection.each((label, _, index) => {
-                if (label.visible !== true || index === 0 || index === numberOfLabels - 1) { return; }
+                if (label.visible !== true || index === 0) { return; } // always keep the first label
 
                 label.visible = index % showEvery === 0 ? true : false;
                 if (!label.visible) {
