@@ -54,8 +54,6 @@ export class AreaChartProxy extends CartesianChartProxy {
             areaSeries.fills = this.chartTheme.palette.fills;
             areaSeries.strokes = this.chartTheme.palette.strokes;
         }
-
-        this.updateLabelRotation(params.category.id);
     }
 
     private updateAreaChart(params: UpdateChartParams): void {

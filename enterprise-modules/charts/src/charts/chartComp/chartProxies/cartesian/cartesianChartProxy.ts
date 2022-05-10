@@ -45,17 +45,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
         }
     }
 
-    protected updateLabelRotation(categoryId: string) {
-        const chartXAxisLabel = this.chart.axes[0].label;
-        if (categoryId === ChartDataModel.DEFAULT_CATEGORY) {
-            chartXAxisLabel.rotation = 0;
-        } else {
-            const xAxisOptions = this.getAxesOptions()[this.xAxisType];
-            chartXAxisLabel.rotation = xAxisOptions.label.rotation;
-        }
-        this.chart.layoutPending = true;
-    }
-
     protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
         return this.chartOptions[chartSeriesType].axes;
     }
