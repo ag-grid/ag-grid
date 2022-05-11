@@ -10,9 +10,16 @@ const gridOptions: GridOptions = {
         // use 'avg' as the default agg func instead of 'sum'
         defaultAggFunc: 'avg',
     },
-    { field: 'silver', enableValue: true },
+    { field: 'silver', enableValue: true, defaultAggFunc: 'mySum' },
     { field: 'bronze', enableValue: true },
   ],
+  aggFuncs: {
+    'mySum': params => {
+      let sum = 0;
+      params.values.forEach(value => sum += value);
+      return sum;
+    }
+  },
   defaultColDef: {
     flex: 1
   },

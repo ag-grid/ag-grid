@@ -29,9 +29,14 @@ The following example demonstrates overriding the default agg function. Note the
 
 - The <b>Gold</b> column is configured with `defaultAggFunc` set to `avg`.
 - Drag the <b>Gold</b> column to the <b>Values</b> section of the Columns Tool Panel and note that it is assigned the 'avg' function. 
-- Dragging <b>Silver</b> or <b>Bronze</b> will use `sum` as the default. 
+- The <b>Silver</b> column is configured to use a custom aggregation function as it's default, note that when dragged to the <b>Values</b> section it will be assigned the function `mySum`.
+- Dragging the <b>Bronze</b> column will use `sum` as the default. 
 
 <grid-example title='Default Aggregation Function' name='default-aggregation-function' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+[[note]]
+| Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
+| as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](/aggregation-custom-functions#registering-custom-functions) for how to do this.
 
 ## Restricting Aggregation Functions
 
@@ -73,7 +78,7 @@ When aggregating, the column headers will include the aggregation function for t
 
 ## Empty Aggregation Calls
 
-When providing either [Custom Aggregation Functions](#custom-aggregation-functions) or [Custom Full Row Aggregation](#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
+When providing either [Custom Aggregation Functions](/aggregation-custom-functions#custom-aggregation-functions) or [Custom Full Row Aggregation](/aggregation-custom-functions#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
 
 The empty aggregation calls happen in the following two scenarios:
 
