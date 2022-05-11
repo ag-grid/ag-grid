@@ -49,7 +49,7 @@
     "not op_mini all",
     "not operamobile >= 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"

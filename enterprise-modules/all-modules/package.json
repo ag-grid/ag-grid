@@ -60,7 +60,7 @@
     "not ie_mob >= 0",
     "not blackberry > 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "@ag-grid-community/all-modules": "~27.2.0",
     "@ag-grid-enterprise/charts": "~27.2.0",

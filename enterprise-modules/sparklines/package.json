@@ -47,7 +47,7 @@
     "not ie_mob >= 0",
     "not blackberry > 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"
