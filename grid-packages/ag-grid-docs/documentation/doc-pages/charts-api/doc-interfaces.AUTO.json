@@ -1202,7 +1202,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "autoRotate": {
-      "description": "/** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 45 degrees. If the `rotation` property is specified, it takes precedence. */",
+      "description": "/** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 335 degrees. If the `rotation` property is specified, it takes precedence. */",
       "type": { "returnType": "boolean | number", "optional": true }
     },
     "format": {

@@ -454,7 +454,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attrFn('visible', function (node) {
                 const min = Math.floor(requestedRangeMin);
                 const max = Math.ceil(requestedRangeMax);
-                return node.translationY >= min && node.translationY <= max;
+                return (min !== max) && node.translationY >= min && node.translationY <= max;
             });
 
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
