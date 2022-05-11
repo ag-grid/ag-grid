@@ -251,6 +251,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const labelSelection = updateLabels.merge(enterLabels);
 
         const labelFormatter = label.formatter;
+
+        const labelBBoxes: Map<string, BBox> = new Map();
         let maxLeafLabelWidth = 0;
         labelSelection
             .each((node, datum, index) => {
@@ -290,7 +292,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                         datum.screenX <= requestedRange[1];
                 }
                 const bbox = node.computeBBox();
-                if (bbox && bbox.width > maxLeafLabelWidth) {
+                labelBBoxes.set(node.id, bbox);
+                if (bbox.width > maxLeafLabelWidth) {
                     maxLeafLabelWidth = bbox.width;
                 }
             });
@@ -309,9 +312,19 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 label.rotation = labelRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
+
+                const bbox = labelBBoxes.get(label.id);
+                if (bbox && bbox.height > bandwidth) {
+                    label.visible = false;
+                }
             } else {
                 label.translationX -= maxLeafLabelWidth - lineHeight + this.label.padding;
-                if (isHorizontal) {
+                const availableRange = datum.leafCount * bandwidth;
+                const bbox = labelBBoxes.get(label.id);
+
+                if (bbox && bbox.width > availableRange) {
+                    label.visible = false;
+                } else if (isHorizontal) {
                     label.rotation = autoRotation;
                 } else {
                     label.rotation = -Math.PI / 2;
