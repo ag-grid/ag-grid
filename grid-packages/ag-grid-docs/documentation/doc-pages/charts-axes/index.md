@@ -320,12 +320,11 @@ Three rotation approaches are available:
 - Setting an automatically applied rotation from the axis via the `autoRotate` property. Rotation is applied if any
   label will be wider than the gap between ticks.
 
-Label skipping is performed automatically if there is not enough space for a label to be displayed within the space
-allocated to an axis tick interval.
+Label skipping is performed automatically when we decide there is a high likelihood of collisions.
 
 [[note]]
 | Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
-| of this happening.
+| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
 
 If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
 Category axes have `autoRotate` enabled by default with a setting of `335`.
