@@ -601,7 +601,7 @@ export interface GridOptions {
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
-    rowModelType?: string;
+    rowModelType?: 'clientSide' | 'infinite' | 'viewport' | 'serverSide';
 
     // *** Row Model: Client-side *** //
     // changeable with impact

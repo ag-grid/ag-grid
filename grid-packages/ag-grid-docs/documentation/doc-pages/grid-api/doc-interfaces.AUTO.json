@@ -2943,7 +2943,10 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+        "optional": true
+      }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -22165,7 +22168,10 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+        "optional": true
+      }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -24861,7 +24867,10 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+        "optional": true
+      }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -27567,7 +27576,10 @@
     },
     "rowModelType": {
       "description": "/** Sets the row model type. Default: `clientSide` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'",
+        "optional": true
+      }
     },
     "rowData": {
       "description": "/** Set the data to be displayed as rows in the grid. */",

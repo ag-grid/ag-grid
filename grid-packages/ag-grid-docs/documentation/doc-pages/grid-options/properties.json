@@ -949,14 +949,7 @@
                 "url": "/row-models/"
             }
         },
-        "rowModelType": {
-            "options": [
-                "clientSide",
-                "infinite",
-                "viewport",
-                "serverSide"
-            ]
-        },
+        "rowModelType": {},
         "getRowId": {}
     },
     "clientRowModel": {

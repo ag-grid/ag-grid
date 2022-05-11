@@ -705,7 +705,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Data to be displayed as pinned bottom rows in the grid.     */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
-    @Input() public rowModelType: string | undefined = undefined;
+    @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
