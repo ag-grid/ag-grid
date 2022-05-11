@@ -25,6 +25,7 @@ const countries = [
     'Uruguay',
     'Belgium',
 ];
+countries.sort();
 
 export function getData(): any[] {
     return years.map((year, idx) => ({
