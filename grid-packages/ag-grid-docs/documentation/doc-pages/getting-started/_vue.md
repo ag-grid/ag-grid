@@ -82,21 +82,6 @@
 |</div>
 |</section>
 |
-|## Vue 2 vs Vue 3
-| There are two versions of Vue support, one for Vue 2 and one for Vue 3. The only difference
-| in use is how you import the dependency:
-|
-| | Version | Package Import          | Module Import          |
-| | ------- | ----------------------- | ----------------------- |
-| | Vue 2   | ag-grid-vue             | @ag-grid-community/vue  |
-| | Vue 3   | ag-grid-vue3            | @ag-grid-community/vue3 |
-|
-| If you are unsure between Package Import and Module Import, you should use the Package Import
-| (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
-| documentation [here.](/modules/)
-|
-| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/getting-started/)
-|
 | ## Getting Started with Community Video
 |
 | <video-section id="V14w_NFuZB4" title="Video Tutorial for Getting Started with AG Grid Community">
@@ -116,6 +101,23 @@
 | <br/>
 | </video-section>
 | <br/>
+| <br/>
+|
+|## Vue 2 vs Vue 3
+| There are two versions of Vue support, one for Vue 2 and one for Vue 3. The only difference
+| in use is how you import the dependency:
+|
+| | Version | Package Import          | Module Import          |
+| | ------- | ----------------------- | ----------------------- |
+| | Vue 2   | ag-grid-vue             | @ag-grid-community/vue  |
+| | Vue 3   | ag-grid-vue3            | @ag-grid-community/vue3 |
+|
+| If you are unsure between Package Import and Module Import, you should use the Package Import
+| (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
+| documentation [here.](/modules/)
+|
+| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/getting-started/)
+|
 | <br/>
 |
 | ## Getting Started with AG Grid Community
