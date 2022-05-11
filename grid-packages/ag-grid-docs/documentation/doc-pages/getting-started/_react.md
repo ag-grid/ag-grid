@@ -1,6 +1,4 @@
 [[only-react]]
-| AG Grid is the industry standard for React Enterprise Applications. Developers using AG Grid
-| are building applications that would not be possible if AG Grid did not exist.
 |
 |<section class="code-tab mb-3">
 |<div class="card">

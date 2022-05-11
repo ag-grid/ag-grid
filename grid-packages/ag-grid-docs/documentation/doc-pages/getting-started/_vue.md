@@ -1,6 +1,4 @@
 [[only-vue]]
-|AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
-|are building applications that would not be possible if AG Grid did not exist.
 |
 |<section class="code-tab mb-3">
 |<div class="card">
@@ -84,601 +82,347 @@
 |</div>
 |</section>
 |
-|[[note]]
-|| We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
-|| in use is how you import the dependency:
-||
-|| | Version | Package Imports         | Module Imports          |
-|| | ------- | ----------------------- | ----------------------- |
-|| | Vue 2   | ag-grid-vue             | @ag-grid-community/vue  |
-|| | Vue 3   | ag-grid-vue3            | @ag-grid-community/vue3 |
-||
-|| If you unsure what import type to use you should use the package import type
-|| (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
-||
-|| For more information on import types please refer to the documentation [here.](/modules/)
-||
-|| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/getting-started/)
-||
+|## Vue 2 vs Vue 3
+| There are two versions of Vue support, one for Vue 2 and one for Vue 3. The only difference
+| in use is how you import the dependency:
 |
-|## Add AG Grid to Your Project
+| | Version | Package Import          | Module Import          |
+| | ------- | ----------------------- | ----------------------- |
+| | Vue 2   | ag-grid-vue             | @ag-grid-community/vue  |
+| | Vue 3   | ag-grid-vue3            | @ag-grid-community/vue3 |
 |
-|For the purposes of this tutorial, we are going to scaffold an Vue app with
-|[Vue CLI](https://cli.vuejs.org/). Don't worry if your project has a different configuration.
-|Ag-Grid and its Vue wrapper are distributed as NPM packages, which should work with any common
-|Vue project module bundler setup. Let's follow the [Vue CLI instructions](https://cli.vuejs.org/) -
-|run the following in your terminal:
+| If you are unsure between Package Import and Module Import, you should use the Package Import
+| (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
+| documentation [here.](/modules/)
 |
-|```bash
-|npm install -g @vue/cli
-|vue create my-project
-|```
+| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/getting-started/)
 |
-|When prompted choose "Manually select features":
+| ## Getting Started with Community Video
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset:
-|   Default ([Vue 2] babel, eslint)
-|   Default (Vue 3) ([Vue 3] babel, eslint)
-|❯ Manually select features
-|```
+| <video-section id="V14w_NFuZB4" title="Video Tutorial for Getting Started with AG Grid Community">
+| <p>
+|     In this video we detail the steps to get an application working with Vue and AG Grid Community. We show how to set up Rows and Columns, set some Grid Properties, use the Grid's API and listen to Grid events.
+| </p>
+| </video-section>
+| <br/>
+| <br/>
 |
-|Next, select `Babel` and `CSS Pre-processors` (we've also deselected `Linter` here, but
-|this is optional):
+| ## Getting Started with Enterprise Video
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset: Manually select features
-|? Check the features needed for your project:
-|   ◉ Choose Vue version
-|   ◉ Babel
-|   ◯ TypeScript
-|   ◯ Progressive Web App (PWA) Support
-|   ◯ Router
-|   ◯ Vuex
-|❯ ◉ CSS Pre-processors
-|   ◯ Linter / Formatter
-|   ◯ Unit Testing
-|   ◯ E2E Testing
-|```
+| <video-section id="9WnYqSxTuE8" title="Getting Started with AG Grid Enterprise">
+| <p>
+|     The video then follows showing how to get started with <a href="../licensing/">AG Grid Enterprise</a>. Please take a look at Enterprise, you don't need a license to trial AG Grid Enterprise, you only need to get in touch if you decide to use it in your project.
+| </p>
+| <br/>
+| </video-section>
+| <br/>
+| <br/>
 |
-|Select version `3.x` when prompted:
+| ## Getting Started with AG Grid Community
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset: Manually select features
-|? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-|? Choose a version of Vue.js that you want to start the project with (Use arrow keys)
-|   2.x
-|> 3.x 
-|```
+| Below we provide code for a simple AG Grid Vue application. To get this working locally,
+| create a new Vue application as follows:
 |
-|Next select `Sass/SCSS (with dart-sass)` as the CSS Pre-processor:
+| ```bash
+| vue create this-place
+| cd this-place
+| npm install --save ag-grid-community
+| npm install --save ag-grid-vue3
+| npm run serve
+| ```
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset: Manually select features
-|? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-|? Choose a version of Vue.js that you want to start the project with 3.x
-|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default):
-|> Sass/SCSS (with dart-sass)
-|   Sass/SCSS (with node-sass)
-|   Less
-|   Stylus
-|```
+| If everything goes well, `npm run serve` has started the web server and conveniently opened a browser
+| pointing to [localhost:8080](http://localhost:8080).
 |
-|Now choose where to store the configuration data - we've opted for `dedicated config files`:
+| <br/>
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset: Manually select features
-|? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-|? Choose a version of Vue.js that you want to start the project with 3.x
-|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with dart-sass)
-|? Where do you prefer placing config for Babel, ESLint, etc.? (Use arrow keys)
-|❯ In dedicated config files
-|   In package.json
-|```
-|Finally you can choose to save this configuration for all future projects - what you choose here will depend on your development setup & standards, so
-|for the purposes of this tutorial we'll select `No`:
+| ### Grid Dependencies
 |
-|```shell
-|Vue CLI v4.5.13
-|? Please pick a preset: Manually select features
-|? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-|? Choose a version of Vue.js that you want to start the project with 3.x
-|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with dart-sass)
-|? Where do you prefer placing config for Babel, ESLint, etc.? In dedicated config files
-|? Save this as a preset for future projects? (y/N) N
-|```
+| Note the `package.json` has the following dependencies:
 |
-|After a few seconds the newly created `my-project` will be ready - let's start our application:
+| ```jsx
+|"dependencies": {
+|    "ag-grid-community": "^27.0.1",
+|    "ag-grid-vue3": "^27.0.1",
+|    ...
+| ```
 |
-|```bash
-|cd my-project
-|npm run serve
-|```
+| `ag-grid-community` is the core logic of the Grid, and `ag-grid-vue3` is the Vue Rendering Engine.
+| Both are needed for the grid to work with Vue and their versions <b>must</b> match.
 |
-|If everything goes well, `npm run serve` has started the web server. You can open the
-|default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.
+| <br/>
 |
-|Next let's add the AG Grid NPM packages. Run the following command in
-|`my-project`:
 |
-|```bash
-|npm install ag-grid-vue3 ag-grid-community 
-|```
+| ### Copy in Application Code
 |
-|After a few seconds of waiting, you should be good to go. Let's get to the actual coding!
-|As a first step, let's add the AG Grid styles - replace the `style` block in `src/App.vue` with the follow:
-|
-|```scss
-|<style lang="scss">
-|   @import "~ag-grid-community/dist/styles/ag-grid.css";
-|   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
-|</style>
-|```
-|
-|The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one of the
-|available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
-|matches your project design.
-|
-|[[note]]
-|| In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
-|| using SCSS, which is our recommended approach.
-|
-|As this will be a simple example we can delete the `src/components` directory - our example
-|application will live in `src/App.vue`.
-|
-|Let's add the component definition to our template. Edit `app/App.vue` and replace the scaffold code:
+| Copy the content below into the file `App.vue`:
 |
 |```html
 |<template>
-|     <ag-grid-vue style="width: 500px; height: 500px;"
-|         class="ag-theme-alpine"
-|         :columnDefs="columnDefs"
-|         :rowData="rowData">
-|     </ag-grid-vue>
-|</template>
-|```
-|
-|This is the ag-grid component definition, with two property bindings - `rowData` and `columnDefs`.
-|The component also accepts the standard DOM `style` and `class`. We have set the class to `ag-theme-alpine`,
-|which defines the grid theme. As you may have already noticed, the CSS class matches the name of CSS file
-|we imported earlier.
-|
-|Now let's replace the `script` section of`src/App.vue`:
-|
-|```js
-|import { AgGridVue } from "ag-grid-vue3";
-|
-|export default {
-|   name: "App",
-|   components: {
-|     AgGridVue,
-|   },
-|   setup() {
-|     return {
-|       columnDefs: [
-|         { headerName: "Make", field: "make" },
-|         { headerName: "Model", field: "model" },
-|         { headerName: "Price", field: "price" },
-|       ],
-|       rowData: [
-|         { make: "Toyota", model: "Celica", price: 35000 },
-|         { make: "Ford", model: "Mondeo", price: 32000 },
-|         { make: "Porsche", model: "Boxster", price: 72000 },
-|       ],
-|     };
-|   },
-|};
-|```
-|
-|The code above presents two essential configuration properties of the grid -
-|[the column definitions](/column-definitions/) (`columnDefs`) and the data (`rowData`).
-|In our case, the column definitions contain three columns; column entry specifies the header
-|label and the data field to be displayed in the body of the table.
-|
-|Finally, note that we've imported the `ag-grid-vue` component - this is actual component that will
-|provide the AG Grid functionality.
-|
-|If everything works as expected, you should see a simple grid like the one on the screenshot:
-|
-|![AG Grid hello world](resources/step1.png)
-|
-|## Enable Sorting And Filtering
-|
-|So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car
-|is the least/most expensive? Well, enabling sorting in AG Grid is actually quite simple -
-|all you need to do is set the `sortable` property to the column definitions.
-|
-|```js
-|columnDefs: [
-|     { field: 'make', sortable: true },
-|     { field: 'model', sortable: true },
-|     { field: 'price', sortable: true }
-|],
-|```
-|
-|After adding the `sortable` property you should be able to sort the grid by clicking on the column headers.
-|Clicking on a header toggles through ascending, descending and no-sort.
-|
-|Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to
-|imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows,
-|with many columns. In a data set like this [filtering](/filtering/)
-|is your friend.
-|
-|As with sorting, enabling filtering is as easy as setting the `filter` property:
-|
-|```js
-|columnDefs: [
-|     { field: 'make', sortable: true, filter: true },
-|     { field: 'model', sortable: true, filter: true },
-|     { field: 'price', sortable: true, filter: true }
-|],
-|```
-|
-|With this property set, the grid will display a small column menu icon when you hover the header.
-|Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and
-|the text that you want to filter by.
-|
-|![AG Grid sorting and filtering](resources/step2.png)
-|
-|## Fetch Remote Data
-|
-|Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of
-|the time, we are dealing with data that resides on a remote server. Thanks to Vue, implementing this
-|is actually quite simple. Notice that the actual data fetching is performed outside of the grid
-|component - We are using the HTML5 `fetch` API.
-|
-|Now, let's remove the hard-coded data and fetch it from a remote server. Edit the `src/App.vue` and
-|add the following fetch statement:
-|
-|```js
-|// at the top of <script>
-|import {reactive, onMounted} from "vue";
-|
-|// in the setup method
-|setup() {
-|     let rowData = reactive([]);
-|
-|     onMounted(() => {
-|         fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|           .then(result => result.json())
-|           .then(remoteRowData => rowData.value = remoteRowData);
-|     })
-|
-|     return {
-|         columnDefs: [
-|             { field: 'make', sortable: true, filter: true },
-|             { field: 'model', sortable: true, filter: true },
-|             { field: 'price', sortable: true, filter: true }
-|       ],
-|       rowData
-|     };
-|},
-|```
-|
-|We also need to update the template to access the `rowData` by `value` now, as we're using a `reactive` property:
-|
-|```html
-|<template>
-|     <ag-grid-vue style="width: 500px; height: 500px;"
-|         class="ag-theme-alpine"
-|         :columnDefs="columnDefs"
-|         :rowData="rowData.value">
-|     </ag-grid-vue>
-|</template>
-|```
-|The remote data is the same as the one we initially had, so you should not notice any actual
-|changes to the grid. However, you will see an additional HTTP request performed if you open
-|your developer tools.
-|
-|## Enable Selection
-|
-|Being a programmer is a hectic job - just when we thought that we are done with our assignment, the
-|manager shows up with a fresh set of requirements! It turned out that we need to allow the user to
-|select certain rows from the grid and to mark them as flagged in the system. We will leave the flag
-|toggle state and persistence to the backend team. On our side, we should enable the selection and,
-|afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.
-|
-|Fortunately the above task is quite simple with AG Grid. As you may have already guessed, it is
-|just a matter of adding and changing couple of properties.
-|
-|```diff
-|<template>
-|   <ag-grid-vue style="width: 500px; height: 500px;"
-|                class="ag-theme-alpine"
-|                :columnDefs="columnDefs"
-|                :rowData="rowData.value"
-|+              rowSelection="multiple">
-|   </ag-grid-vue>
+|  <button @click="deselectRows">deselect rows</button>
+|  <ag-grid-vue
+|    class="ag-theme-alpine"
+|    style="height: 500px"
+|    :columnDefs="columnDefs.value"
+|    :rowData="rowData.value"
+|    :defaultColDef="defaultColDef"
+|    rowSelection="multiple"
+|    animateRows="true"
+|    @cell-clicked="cellWasClicked"
+|    @grid-ready="onGridReady"
+|  >
+|  </ag-grid-vue>
 |</template>
 |
 |<script>
-|import {reactive, onMounted} from "vue";
-|import { AgGridVue } from "ag-grid-vue3";
+|import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
+|import { reactive, onMounted, ref } from "vue";
+|
+|import "ag-grid-community/dist/styles/ag-grid.css"; // Core grid CSS, always needed
+|import "ag-grid-community/dist/styles/ag-theme-alpine.css"; // Optional theme CSS
 |
 |export default {
-|   name: "App",
-|   components: {
-|     AgGridVue,
-|   },
-|   setup() {
-|     let rowData = reactive([]);
-| 
-|     onMounted(() => {
-|       fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|               .then(result => result.json())
-|               .then(remoteRowData => rowData.value = remoteRowData);
-|     })
+|  name: "App",
+|  components: {
+|    AgGridVue,
+|  },
+|  setup() {
+|    const gridApi = ref(null); // Optional - for accessing Grid's API
 |
-|     return {
-|       columnDefs: [
-|+       { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-|         { field: 'model', sortable: true, filter: true },
-|         { field: 'price', sortable: true, filter: true }
-|       ],
-|       rowData
-|     };
-|   },
+|    // Obtain API from grid's onGridReady event
+|    const onGridReady = (params) => {
+|      gridApi.value = params.api;
+|    };
+|
+|    const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
+|
+|    // Each Column Definition results in one Column.
+|    const columnDefs = reactive({
+|      value: [{ field: "make" }, { field: "model" }, { field: "price" }],
+|    });
+|
+|    // DefaultColDef sets props common to all Columns
+|    const defaultColDef = {
+|      sortable: true,
+|      filter: true,
+|    };
+|
+|    // Example load data from sever
+|    onMounted(() => {
+|      fetch("https://www.ag-grid.com/example-assets/row-data.json")
+|        .then((result) => result.json())
+|        .then((remoteRowData) => (rowData.value = remoteRowData));
+|    });
+|
+|    return {
+|      onGridReady,
+|      columnDefs,
+|      rowData,
+|      defaultColDef,
+|      cellWasClicked: (event) => { // Example of consuming Grid Event
+|        console.log("cell was clicked", event);
+|      },
+|      deselectRows: e =>{
+|        gridApi.value.deselectAll()
+|      }
+|    };
+|  },
 |};
 |</script>
 |
-|<style lang="scss">
-|   @import "~ag-grid-community/dist/styles/ag-grid.css";
-|   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
-|</style>
+|<style lang="scss"></style>
 |```
 |
-|We've enabled [multiple row selection](/row-selection/#example-multiple-row-selection) by adding `rowSelection="multiple"`, and we've
-|also added a checkbox to the `make` column with `checkboxSelection: true`.
+| If everything is correct, you should see a simple grid that looks like this:<br/><br/>
+| ![AG Grid in its simplest form](resources/step1.png)
 |
-|![Vue AG Grid Selection](resources/vue-grid-1.png)
+| We will now break this file down and explain the different parts...
 |
-|Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
-|we have to add is a button that gets the selected data and sends it to the server. To do this, we are
-|going to use the [AG Grid API](/grid-api/) - we will store a reference to both the grid and
-|column API's in the `gridReady` event
+| <br/>
 |
-|To test this we'll add a button that gets the selected data and sends it to the server.
-|Let's go ahead and make these changes:
+| ### Grid CSS and Themes
 |
-|```diff
-|<template>
-|+ <button @click="getSelectedRows()">Get Selected Rows</button>
+| Two CSS files were loaded as follows:
 |
-|   <ag-grid-vue style="width: 500px; height: 500px;"
-|                class="ag-theme-alpine"
-|                :columnDefs="columnDefs"
-|                :rowData="rowData.value"
-|                rowSelection="multiple"
-|                @grid-ready="onGridReady">
-|   </ag-grid-vue>
-|</template>
+| ```js
+|import 'ag-grid-community/dist/styles/ag-grid.css'; // Core grid CSS, always needed
+|import 'ag-grid-community/dist/styles/ag-theme-alpine.css'; // Optional theme CSS
+| ```
 |
-|<script>
-|+import {reactive, ref, onMounted} from "vue";
-|import { AgGridVue } from "ag-grid-vue3";
+| The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.
 |
-|export default {
-|   name: "App",
-|   components: {
-|     AgGridVue,
-|   },
-|   setup() {
-|     let rowData = reactive([]);
-|+   let gridApi = ref(null);
+| The second `ag-theme-alpine.css` is the chosen [Grid Theme](/themes/). This is then subsequently applied to the Grid by including the Theme's CSS Class in the Grid's element `class="ag-theme-alpine"`.
 |
-|     onMounted(() => {
-|       fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|               .then(result => result.json())
-|               .then(remoteRowData => rowData.value = remoteRowData);
-|     })
+| ```js
+| <ag-grid-vue
+|    class="ag-theme-alpine"
+| ```
 |
-|+   const onGridReady = params => {
-|+     gridApi.value = params.api;
-|+   };
+| You can select from any of the [Grid Provided Themes](/themes-provided/). If you don't like the provided themes you can [Customise the Provided Theme](/themes-customising/) or do not use a Theme and style the grid yourself from scratch.
 |
-|+   const getSelectedRows = () => {
-|+     const selectedNodes = gridApi.value.getSelectedNodes();
-|+     const selectedData = selectedNodes.map( node => node.data );
-|+     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
-|+     alert(`Selected nodes: ${selectedDataStringPresentation}`);
-|+   };
+| The dimension of the Grid is also set on the grid's element `style="height: 500px"`.
 |
-|     return {
-|       columnDefs: [
-|         { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-|         { field: 'model', sortable: true, filter: true },
-|         { field: 'price', sortable: true, filter: true }
-|       ], 
-|       rowData,
-|+     onGridReady,
-|+     getSelectedRows
-|     };
-|   },
-|};
-|</script>
+| <br/>
 |
-|<style lang="scss">
-|   @import "~ag-grid-community/dist/styles/ag-grid.css";
-|   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
-|</style>
-|```
+| ### Setting Row Data
 |
-|Well, we cheated a bit. Calling `alert` is not exactly a call to our backend. Hopefully
-|you will forgive us this shortcut for the sake of keeping the article short and simple.
-|Of course, you can substitute that bit with a real-world application logic after you are
-|done with the tutorial.
+| The Grid is provided Row Data via the `rowData` Grid Property. This is wired up using `reactive`
+| so that it can be updated to data loaded from the server.
 |
-|## Grouping
+| ```jsx
+|  <ag-grid-vue
+|    :rowData="rowData.value"
+|...
 |
-|[[note]]
-|| Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
-|| to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
-|| in a project intended for production.
+| const rowData = reactive({});
 |
-|In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user
-|to make sense out of large amounts of data.
+|...
 |
-|Our current data set is pretty small so let's switch to a larger one:
-|
-|```diff
-|- fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|+ fetch('https://www.ag-grid.com/example-assets/row-data.json')
-|```
-|
-|Let's enable the enterprise features of ag-grid. Install the additional package:
-|
-|```bash
-|npm install --save ag-grid-enterprise
-|```
-|
-|Then, add the import to `src/main.js`:
-|
-|```diff
-|   import { createApp } from 'vue'
-|   import App from './App.vue'
-|
-|+ import 'ag-grid-enterprise';
-|
-|   createApp(App).mount('#app')
-|```
-|
-|After restarting the application you should see a message in the console that tells you there is no
-|enterprise license key. You can ignore the message as we are trialing. In addition to that,
-|the grid got a few UI improvements - a custom context menu and fancier column menu popup -
-|feel free to look around:
-|
-|![AG Grid final](resources/step3.png)
-|
-|Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
-|the `columnDefs` with a `rowGroup`:
-|
-|```diff
-|<template>
-|   <button @click="getSelectedRows()">Get Selected Rows</button>
-|
-|   <ag-grid-vue style="width: 500px; height: 500px;"
-|                class="ag-theme-alpine"
-|                :columnDefs="columnDefs"
-|                :rowData="rowData.value"
-|                rowSelection="multiple"
-|+              :autoGroupColumnDef="autoGroupColumnDef"
-|                @grid-ready="onGridReady">
-|   </ag-grid-vue>
-|</template>
-|
-|<script>
-|import {reactive, ref, onMounted} from "vue";
-|import { AgGridVue } from "ag-grid-vue3";
-|
-|export default {
-|   name: "App",
-|   components: {
-|     AgGridVue,
-|   },
-|   setup() {
-|     let rowData = reactive([]);
-|     let gridApi = ref(null);
-|
-|     onMounted(() => {
-|+     fetch('https://www.ag-grid.com/example-assets/row-data.json')
-|               .then(result => result.json())
-|               .then(remoteRowData => rowData.value = remoteRowData);
-|     })
-|
-|     const onGridReady = params => {
-|       gridApi.value = params.api;
-|     };
-|
-|     const getSelectedRows = () => {
-|       const selectedNodes = gridApi.value.getSelectedNodes();
-|       const selectedData = selectedNodes.map( node => node.data );
-|       const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
-|       alert(`Selected nodes: ${selectedDataStringPresentation}`);
-|     };
-|
-|     return {
-|       columnDefs: [
-|+       { field: 'make', sortable: true, filter: true, rowGroup: true  },
-|         { field: 'model', sortable: true, filter: true },
-|         { field: 'price', sortable: true, filter: true }
-|       ],
-|       rowData,
-|+     autoGroupColumnDef: {
-|+       headerName: 'Model',
-|+       field: 'model',
-|+       cellRenderer: 'agGroupCellRenderer',
-|+       cellRendererParams: {
-|+         checkbox: true
-|+       }
-|+     },
-|       onGridReady,
-|       getSelectedRows
-|     };
-|   },
-|};
-|</script>
-|
-|<style lang="scss">
-|   @import "~ag-grid-community/dist/styles/ag-grid.css";
-|   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
-|</style>
+| // Example load data from sever
+| onMounted(() => {
+|   fetch("https://www.ag-grid.com/example-assets/row-data.json")
+|     .then((result) => result.json())
+|     .then((remoteRowData) => (rowData.value = remoteRowData));
+| });
 |
 |```
 |
-|There we go! The grid now groups the data by `make`, while listing the `model` field value when expanded.
-|Notice that grouping works with checkboxes as well - the `groupSelectsChildren` property adds a group-level
-|checkbox that selects/deselects all items in the group.
+| <br/>
 |
-|Note that we also removed `checkboxSelection: true` from the `make` column definition as the `autoGroupColumnDef` definition allows for checkbox selection
-|at both the group and leaf level.
+| ### Setting Column Definitions
 |
-|[[note]]
-|| Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
-|| supports complex interaction scenarios which you might not need initially. The grouping documentation
-|| section contains plenty of real-world runnable examples that can get you started for your particular case.
+| Columns are defined by setting [Column definitions](/column-definitions/). Each Column Definition
+| defines one Column. Properties can be set for all Columns using the Default Column Definition.
 |
-|## Customise the Theme Look
+| ```jsx
+|  <ag-grid-vue
+|    :columnDefs="columnDefs.value"
+|    :defaultColDef="defaultColDef"
 |
-|The last thing which we are going to do is to change the grid look and feel by modifying some
-|of the theme's Sass variables.
+| ...
 |
-|By default, AG Grid ships a set of
-|[pre-built theme stylesheets](/themes/). If we want to tweak the colors and the fonts of
-|theme, we should add a Sass preprocessor to our project, override the theme variable values,
-|and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable
-|overrides are applied.
+| // Each Column Definition results in one Column.
+| const columnDefs = reactive({
+|   value: [{ field: "make" }, { field: "model" }, { field: "price" }],
+| });
 |
-|The `vue cli` did a lot of for us including providing support for Sass. Let's switch to using
-|the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` with:
 |
-|```scss
-|<style lang="scss">
-|   @import "~ag-grid-community/src/styles/ag-grid.scss";
-|   @import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+| // DefaultColDef sets props common to all Columns
+| const defaultColDef = {
+|   sortable: true,
+|   filter: true,
+| };
 |
-|   .ag-theme-alpine {
-|     @include ag-theme-alpine((
-|       odd-row-background-color: #ACE
-|     ));
-|   }
-|</style>
+| ```
+|
+| <br/>
+|
+| ### Accessing the Grid's API
+|
+| The grid's API is provided in the ```onGridReady`` event. Save a reference to it and then use it later.
+|
+|```jsx
+| const gridApi = ref(null); // Optional - for accessing Grid's API
+| ...
+|
+| // Obtain API from grid's onGridReady event
+| const onGridReady = (params) => {
+|   gridApi.value = params.api;
+| };
+| ...
+|
+| // Example using Grid's API
+| deselectRows: e =>{
+|   gridApi.value.deselectAll()
+| }
+|
 |```
 |
-|If everything is configured correctly, the second row of the grid will be blue. Congratulations!
-|You now know now bend the grid look to your will - there are a few dozens more Sass variables that
-|let you control the font family and size, border color, header background color and even the amount
-|of spacing in the cells and columns. The full [Sass variable list](/themes-customising/#full-list-of-theme-parameters)
-|is available in the themes documentation section.
+| <br/>
 |
-|## Summary
+| ### Consuming Grid Events
 |
-|With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a
-|three row / column setup, we now have a grid that supports sorting, filtering, binding to remote
-|data, selection and even grouping! While doing so, we learned how to configure the grid, how to
-|access its API object, and how to change the styling of the component.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` property.
+| This example demonstrates consuming the `cellClicked` event.
 |
+|```jsx
+|  <ag-grid-vue
+|    @cell-clicked="cellWasClicked"
+|```
+|
+| <br/>
+|
+| ### Grid Properties
+|
+| Set other [Grid Options](/grid-options/) by adding parameters to `<ag-grid-vue/>` component.
+| This example demonstrates setting `animateRows` and `rowSelection`.
+|
+|```jsx
+|  <ag-grid-vue
+|    rowSelection="multiple"
+|    animateRows="true"
+|    ...
+|/>
+|```
+|
+| <br/>
+| <br/>
+|
+| ## Getting Started with AG Grid Enterprise
+|
+| We would love for you to try out AG Grid Enterprise. There is no cost to trial.
+| You only need to get in touch if you want to start using AG Grid Enterprise
+| in a project intended for production.
+|
+| The following steps continues from above and installs AG Grid Enterprise.
+|
+| <br/>
+|
+| ### Install Dependency
+|
+| In addition to `ag-grid-community` and `ag-grid-vue3`, AG Grid Enterprise also needs
+| `ag-grid-enterprise`.
+|
+| ```bash
+| npm install --save ag-grid-enterprise
+| ```
+|
+| The `package.json` should now contain the following dependencies:
+|
+| ```jsx
+|"dependencies": {
+|    "ag-grid-community": "^27.0.1",
+|    "ag-grid-enterprise": "^27.0.1",
+|    "ag-grid-vue3": "^27.0.1",
+|    ...
+| ```
+|
+| `ag-grid-enterprise` contains the Enterprise features only, it does not contain the core grid,
+| hence you still need `ag-grid-community` and `ag-grid-vue3`. Versions of all three <b>must</b> match.
+|
+| <br/>
+|
+| ### Import Enterprise
+|
+| Import AG Grid Enterprise intro your application as follows:
+|
+|```jsx
+|import 'ag-grid-enterprise';
+|```
+|
+| And that is all, you use the same `<ag-grid-vue/>` component, except this time it comes installed
+| with all the Enterprise features.
+|
+| For example, you can now Row Group (and Enterprise Feature) by a particular Column by
+| setting `rowGroup=true` on the Column Definition.
+|
+|```jsx
+|// Each Column Definition results in one Column.
+| const columnDefs = reactive({
+|   value: [
+|        { field: "make", rowGroup: true }, 
+|        { field: "model" }, 
+|        { field: "price" }
+|   ]});
+|
+|```
