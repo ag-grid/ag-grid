@@ -54,7 +54,7 @@ export interface ICellEditor {
     afterGuiAttached?(): void;
 }
 
-export interface ICellEditorParams extends AgGridCommon {
+export interface ICellEditorParams<TData = any> extends AgGridCommon {
     /** Current value of the cell */
     value: any;
     /** @deprecated Use `eventKey`. */
@@ -70,9 +70,9 @@ export interface ICellEditorParams extends AgGridCommon {
     /** Column definition */
     colDef: ColDef;
     /** Row node for the cell */
-    node: RowNode;
+    node: RowNode<TData>;
     /** Row data */
-    data: any;
+    data: TData;
     /** Editing row index */
     rowIndex: number;
     /** If doing full row edit, this is true if the cell is the one that started the edit
@@ -95,4 +95,4 @@ export interface ICellEditorParams extends AgGridCommon {
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp extends ICellEditor, IPopupComponent<ICellEditorParams> { }
+export interface ICellEditorComp<TData> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> { }

@@ -155,13 +155,13 @@ export interface GridSizeChangedEvent extends AgGridEvent {
     clientHeight: number;
 }
 
-export interface RowDragEvent extends AgGridEvent {
+export interface RowDragEvent<TData> extends AgGridEvent {
     /** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */
     type: string;
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
-    node: RowNode;
+    node: RowNode<TData>;
     /** The list of nodes being dragged. */
-    nodes: RowNode[];
+    nodes: RowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
@@ -169,7 +169,7 @@ export interface RowDragEvent extends AgGridEvent {
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
     /** The row node the mouse is dragging over or undefined if over no row. */
-    overNode?: RowNode;
+    overNode?: RowNode<TData>;
     /** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.
      * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.
      * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.
@@ -178,13 +178,13 @@ export interface RowDragEvent extends AgGridEvent {
     y: number;
 }
 
-export interface RowDragEnterEvent extends RowDragEvent { }
+export interface RowDragEnterEvent<TData> extends RowDragEvent<TData> { }
 
-export interface RowDragEndEvent extends RowDragEvent { }
+export interface RowDragEndEvent<TData> extends RowDragEvent<TData> { }
 
-export interface RowDragMoveEvent extends RowDragEvent { }
+export interface RowDragMoveEvent<TData> extends RowDragEvent<TData> { }
 
-export interface RowDragLeaveEvent extends RowDragEvent { }
+export interface RowDragLeaveEvent<TData> extends RowDragEvent<TData> { }
 
 export interface PasteStartEvent extends AgGridEvent {
     source: string;
@@ -266,8 +266,8 @@ export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: ProvidedColumnGroup;
 }
 
-export interface ItemsAddedEvent extends AgGridEvent {
-    items: RowNode[];
+export interface ItemsAddedEvent<TData> extends AgGridEvent {
+    items: RowNode<TData>[];
 }
 
 export type ScrollDirection = 'horizontal' | 'vertical';
@@ -380,10 +380,10 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 
 /** ROW EVENTS */
 /**------------*/
-export interface RowEvent extends AgGridEvent {
-    node: RowNode;
+export interface RowEvent<TData> extends AgGridEvent {
+    node: RowNode<TData>;
     /** The user provided data for the row */
-    data: any;
+    data: TData;
     /** The visible row index for the row */
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
@@ -394,73 +394,73 @@ export interface RowEvent extends AgGridEvent {
     event?: Event | null;
 }
 
-export interface RowGroupOpenedEvent extends RowEvent {
+export interface RowGroupOpenedEvent<TData> extends RowEvent<TData> {
     /** True if the group is expanded. */
     expanded: boolean;
 }
 
-export interface RowValueChangedEvent extends RowEvent { }
+export interface RowValueChangedEvent<TData> extends RowEvent<TData> { }
 
-export interface RowSelectedEvent extends RowEvent { }
+export interface RowSelectedEvent<TData> extends RowEvent<TData> { }
 
-export interface VirtualRowRemovedEvent extends RowEvent { }
+export interface VirtualRowRemovedEvent<TData> extends RowEvent<TData> { }
 
-export interface RowClickedEvent extends RowEvent { }
+export interface RowClickedEvent<TData> extends RowEvent<TData> { }
 
-export interface RowDoubleClickedEvent extends RowEvent { }
+export interface RowDoubleClickedEvent<TData> extends RowEvent<TData> { }
 
-export interface RowEditingStartedEvent extends RowEvent { }
+export interface RowEditingStartedEvent<TData> extends RowEvent<TData> { }
 
-export interface RowEditingStoppedEvent extends RowEvent { }
+export interface RowEditingStoppedEvent<TData> extends RowEvent<TData> { }
 
-export interface FullWidthCellKeyDownEvent extends RowEvent { }
+export interface FullWidthCellKeyDownEvent<TData> extends RowEvent<TData> { }
 
-export interface FullWidthCellKeyPressEvent extends RowEvent { }
+export interface FullWidthCellKeyPressEvent<TData> extends RowEvent<TData> { }
 
 /**------------*/
 
 /** CELL EVENTS */
 /**------------*/
-export interface CellEvent extends RowEvent {
+export interface CellEvent<TData> extends RowEvent<TData> {
     column: Column;
     colDef: ColDef;
     /** The value for the cell */
     value: any;
 }
 
-export interface CellKeyDownEvent extends CellEvent { }
+export interface CellKeyDownEvent<TData> extends CellEvent<TData> { }
 
-export interface CellKeyPressEvent extends CellEvent { }
+export interface CellKeyPressEvent<TData> extends CellEvent<TData> { }
 
 /** Cell is clicked */
-export interface CellClickedEvent extends CellEvent { }
+export interface CellClickedEvent<TData> extends CellEvent<TData> { }
 
-export interface CellMouseDownEvent extends CellEvent { }
+export interface CellMouseDownEvent<TData> extends CellEvent<TData> { }
 
-export interface CellDoubleClickedEvent extends CellEvent { }
+export interface CellDoubleClickedEvent<TData> extends CellEvent<TData> { }
 
-export interface CellMouseOverEvent extends CellEvent { }
+export interface CellMouseOverEvent<TData> extends CellEvent<TData> { }
 
-export interface CellMouseOutEvent extends CellEvent { }
+export interface CellMouseOutEvent<TData> extends CellEvent<TData> { }
 
-export interface CellContextMenuEvent extends CellEvent { }
+export interface CellContextMenuEvent<TData> extends CellEvent<TData> { }
 
-export interface CellEditingStartedEvent extends CellEvent { }
+export interface CellEditingStartedEvent<TData> extends CellEvent<TData> { }
 
-export interface CellEditingStoppedEvent extends CellEvent {
+export interface CellEditingStoppedEvent<TData> extends CellEvent<TData> {
     /** The old value before editing */
     oldValue: any;
     /** The new value after editing */
     newValue: any;
 }
 
-export interface CellValueChangedEvent extends CellEvent {
+export interface CellValueChangedEvent<TData> extends CellEvent<TData> {
     oldValue: any;
     newValue: any;
     source: string | undefined;
 }
 
-export interface CellEditRequestEvent extends CellEvent {
+export interface CellEditRequestEvent<TData> extends CellEvent<TData> {
     oldValue: any;
     newValue: any;
     source: string | undefined;

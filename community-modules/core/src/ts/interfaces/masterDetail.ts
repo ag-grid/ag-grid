@@ -11,17 +11,17 @@ export interface IDetailCellRenderer {
     setRowData(rowData: any[]): void;
 }
 
-export interface IDetailCellRendererParams extends ICellRendererParams {
+export interface IDetailCellRendererParams<TData = any> extends ICellRendererParams<TData> {
     /**
      * Provide Grid Options to use for the Detail Grid.
      */
     detailGridOptions: GridOptions;
     /** A function that provides what rows to display in the Detail Grid. */
-    getDetailRowData: GetDetailRowData;
+    getDetailRowData: GetDetailRowData<TData>;
     /** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */
     refreshStrategy: 'rows' | 'everything' | 'nothing';
     /** Allows changing the template used around the Detail Grid. */
-    template: string | TemplateFunc;
+    template: string | TemplateFunc<TData>;
 
     agGridReact: any;
     frameworkComponentWrapper: any;
@@ -32,21 +32,21 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     suppressRefresh: boolean;
 }
 
-export interface GetDetailRowData {
-    (params: GetDetailRowDataParams): void;
+export interface GetDetailRowData<TData> {
+    (params: GetDetailRowDataParams<TData>): void;
 }
 
-export interface GetDetailRowDataParams {
+export interface GetDetailRowDataParams<TData> {
     /** Row node for the details request. */
-    node: RowNode;
+    node: RowNode<TData>;
     /** Data for the current row. */
-    data: any;
+    data: TData;
     /** Success callback: pass the rows back for the grid request.  */
     successCallback(rowData: any[]): void;
 }
 
-interface TemplateFunc {
-    (params: ICellRendererParams): string;
+interface TemplateFunc<TData> {
+    (params: ICellRendererParams<TData>): string;
 }
 
 export interface IDetailCellRendererCtrl {
