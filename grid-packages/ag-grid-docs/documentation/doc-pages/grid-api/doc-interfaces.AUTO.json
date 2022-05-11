@@ -6688,6 +6688,38 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "FullWidthRowFocusedEvent": {
+    "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "forceBrowserFocus": {
+      "description": "/** Whether browser focus is also set (false when editing) */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "floating": {
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -17951,6 +17983,13 @@
       "type": {
         "arguments": { "rowData": "any[]" },
         "returnType": "void",
+        "optional": false
+      }
+    },
+    "getGui": {
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
         "optional": false
       }
     }

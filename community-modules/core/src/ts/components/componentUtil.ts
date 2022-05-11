@@ -273,6 +273,7 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
     Events.EVENT_FILL_START,
     Events.EVENT_FILL_END,
+    Events.EVENT_FULL_WIDTH_ROW_FOCUSED
 ];
 
 /** EVENTS that should be exposed via code generation for the framework components.  */

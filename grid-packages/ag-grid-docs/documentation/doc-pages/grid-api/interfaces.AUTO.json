@@ -3625,6 +3625,29 @@
       "type": "/** Event identifier */"
     }
   },
+  "FullWidthRowFocusedEvent": {
+    "meta": {},
+    "type": {
+      "fromBelow": "boolean",
+      "rowIndex": "number | null",
+      "column": "Column | null",
+      "rowPinned?": "string | null",
+      "isFullWidthCell": "boolean",
+      "forceBrowserFocus?": "boolean",
+      "floating": "string | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "rowIndex": "/** Row index of the focused cell */",
+      "column": "/** Column of the focused cell */",
+      "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "isFullWidthCell": "/** Whether the cell a full width cell or a regular cell */",
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "type": "/** Event identifier */"
+    }
+  },
   "ExpandCollapseAllEvent": {
     "meta": {},
     "type": {
@@ -10261,7 +10284,8 @@
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveDetailGridCssClass(cssClassName: string, on: boolean)": "void",
       "setDetailGrid(gridOptions: GridOptions)": "void",
-      "setRowData(rowData: any[])": "void"
+      "setRowData(rowData: any[])": "void",
+      "getGui()": "HTMLElement"
     }
   },
   "IDetailCellRendererParams": {
