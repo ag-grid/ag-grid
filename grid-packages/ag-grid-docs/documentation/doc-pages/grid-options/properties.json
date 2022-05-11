@@ -690,8 +690,8 @@
         "groupAggFiltering": {},
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
-                "name": "Configuring Aggregation Functions",
-                "url": "/aggregation-other"
+                "name": "Hiding Repeated Total Column Labels",
+                "url": "/pivoting/#hiding-repeated-total-column-labels"
             }
         }
     },
