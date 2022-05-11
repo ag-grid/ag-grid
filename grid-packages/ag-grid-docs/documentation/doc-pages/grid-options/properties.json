@@ -1218,7 +1218,7 @@
             }
         },
         "deltaSort": {
-            "description": "When enabled, sorts only the transaction deltas.",
+            "description": "When enabled, sorts only the rows added/updated by a transaction. Default: `false`",
             "more": {
                 "name": "Delta sorting",
                 "url": "/data-update-transactions/#delta-sorting"
