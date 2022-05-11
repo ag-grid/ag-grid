@@ -83,12 +83,15 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
+const g: GridOptions = {
+    params : {api: 1}
+}
 export interface GridOptions {
 
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
-
+    params: Partial<DragStartedEvent> & { [key: string]: any }
     // *** Accessories *** //
     /** Specifies the status bar components to use in the status bar. */
     statusBar?: { statusPanels: StatusPanelDef[]; };
@@ -1112,50 +1115,50 @@ export interface GridOptions {
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface GetDataPath {
-    (data: any): string[];
+export interface GetDataPath<TData> {
+    (data: TData): string[];
 }
 
-export interface IsServerSideGroup {
-    (dataItem: any): boolean;
+export interface IsServerSideGroup<TData> {
+    (dataItem: TData): boolean;
 }
 
-export interface IsRowFilterable {
-    (params: GetGroupAggFilteringParams): boolean;
+export interface IsRowFilterable<TData> {
+    (params: GetGroupAggFilteringParams<TData>): boolean;
 }
-export interface IsApplyServerSideTransaction {
-    (params: IsApplyServerSideTransactionParams): boolean;
+export interface IsApplyServerSideTransaction<TData> {
+    (params: IsApplyServerSideTransactionParams<TData>): boolean;
 }
-export interface GetServerSideGroupKey {
-    (dataItem: any): string;
-}
-
-export interface IsRowMaster {
-    (dataItem: any): boolean;
+export interface GetServerSideGroupKey<TData> {
+    (dataItem: TData): string;
 }
 
-export interface IsRowSelectable {
-    (node: RowNode): boolean;
+export interface IsRowMaster<TData> {
+    (dataItem: TData): boolean;
 }
 
-export interface RowClassRules {
-    [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
+export interface IsRowSelectable<TData> {
+    (node: RowNode<TData>): boolean;
+}
+
+export interface RowClassRules<TData> {
+    [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
 }
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams extends AgGridCommon {
+export interface RowClassParams<TData> extends AgGridCommon {
     /** The data associated with this row from rowData */
-    data: any;
+    data: TData;
     /** The RowNode associated with this row */
-    node: RowNode;
+    node: RowNode<TData>;
     /** The index of the row */
     rowIndex: number;
 }
 
 
-export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+export interface GetContextMenuItems<TData> {
+    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
 }
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
@@ -1191,8 +1194,8 @@ export interface GetRowNodeIdFunc {
     (data: any): string;
 }
 
-export interface GetRowIdFunc {
-    (params: GetRowIdParams): string;
+export interface GetRowIdFunc<TData> {
+    (params: GetRowIdParams<TData>): string;
 }
 
 export interface ChartRef {
@@ -1230,8 +1233,8 @@ export interface ServerSideStoreParams {
     cacheBlockSize?: number;
 }
 
-export interface LoadingCellRendererSelectorFunc {
-    (params: ILoadingCellRendererParams): LoadingCellRendererSelectorResult | undefined;
+export interface LoadingCellRendererSelectorFunc<TData> {
+    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
