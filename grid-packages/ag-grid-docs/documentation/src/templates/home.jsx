@@ -35,21 +35,29 @@ const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.
 const urlMap = {
     javascript: {
         'video-tutorial': 'https://youtu.be/KS-wg5zfCXc',
-        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview'
+        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     angular: {
         'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
         'example': 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular'
+        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     react: {
         'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
         'example': 'https://stackblitz.com/edit/ag-grid-react-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started'
+        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     vue: {
         'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
-        'example': 'https://stackblitz.com/edit/ag-grid-vue-hello-world'
+        'example': 'https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue',
+        'example-title': 'CodeSandbox Example',
+        'example-icon': 'codesandbox'
     }
 };
 
@@ -77,6 +85,8 @@ const GettingStartedPane = ({framework, data}) => {
     return (
         <div className={styles['docs-home__getting-started__item_pane']}>
             {linksToRender.map(link => {
+                const title = link.title.includes('{example-title}') ? urlMap[framework]['example-title'] : link.title;
+                const icon = link.icon.includes('{example-icon}') ? urlMap[framework]['example-icon'] : link.icon;
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
                 const alt = `${frameworkCapitalised} Grid: ${link.title}`;
@@ -85,10 +95,10 @@ const GettingStartedPane = ({framework, data}) => {
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink}
                        className={styles['docs-home__getting-started__item']}>
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(link.icon, framework)} alt={alt} style={{height: 64, width: 64}}/>
+                            <img src={getLogo(icon, framework)} alt={alt} style={{height: 64, width: 64}}/>
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
-                            {link.title}
+                            {title}
                         </div>
                     </a>
                 );
