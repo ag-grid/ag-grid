@@ -415,7 +415,7 @@
 | And that is all, you use the same `<ag-grid-vue/>` component, except this time it comes installed
 | with all the Enterprise features.
 |
-| For example, you can now Row Group (and Enterprise Feature) by a particular Column by
+| For example, you can now Row Group (an Enterprise Feature) by a particular Column by
 | setting `rowGroup=true` on the Column Definition.
 |
 |```jsx
