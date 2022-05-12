@@ -308,6 +308,10 @@ export interface CellFocusedEvent extends AgGridEvent {
     floating: string | null;
 }
 
+export interface FullWidthRowFocusedEvent extends CellFocusedEvent {
+    fromBelow: boolean;
+}
+
 export interface ExpandCollapseAllEvent extends AgGridEvent {
     source: string;
 }

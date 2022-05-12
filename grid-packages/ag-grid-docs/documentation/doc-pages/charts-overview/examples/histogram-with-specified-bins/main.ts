@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -27,7 +28,7 @@ const options: AgChartOptions = {
       ],
       areaPlot: true,
       tooltip: {
-        renderer: function (params) {
+        renderer: (params) => {
           var paramsMax = params.datum.domain[1]
           var sizeName =
             paramsMax === 2000
@@ -55,7 +56,6 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Curb weight (pounds)',
       },
     },
@@ -63,7 +63,7 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       label: {
-        formatter: function () {
+        formatter: () => {
           return ''
         },
       },

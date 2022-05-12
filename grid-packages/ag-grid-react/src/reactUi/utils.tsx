@@ -8,6 +8,12 @@ export class CssClasses {
 
     private classesMap: {[name: string]: boolean} = {};
 
+    constructor(...initialClasses: string[]) {
+        initialClasses.forEach(className => {
+            this.classesMap[className] = true;
+        });
+    }
+
     public setClass(className: string, on: boolean): CssClasses {
         // important to not make a copy if nothing has changed, so react
         // won't trigger a render cycle on new object instance

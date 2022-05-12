@@ -26,7 +26,7 @@ var leftGridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: function(params) { return params.data.id; },
+    getRowId: (params) => { return params.data.id; },
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
@@ -45,7 +45,7 @@ var rightGridOptions = {
         'green-row': 'data.color == "Green"',
         'blue-row': 'data.color == "Blue"',
     },
-    getRowId: function(params) { return params.data.id; },
+    getRowId: (params) => { return params.data.id; },
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
@@ -53,7 +53,7 @@ var rightGridOptions = {
 };
 
 function createLeftRowData() {
-    return ['Red', 'Green', 'Blue'].map(function(color) {
+    return ['Red', 'Green', 'Blue'].map(function (color) {
         return createDataItem(color);
     });
 }
@@ -142,7 +142,7 @@ function gridDrop(event, grid) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var leftGridDiv = document.querySelector('#eLeftGrid');
     new agGrid.Grid(leftGridDiv, leftGridOptions);
 

@@ -49,7 +49,7 @@ export class StoreUtils extends BeanStub {
             sortModel: storeParams.sortModel
         };
 
-        const getRowsParams = {
+        const getRowsParams: IServerSideGetRowsParams = {
             successCallback: p.successCallback,
             success: p.success,
             failCallback: p.failCallback,
@@ -57,8 +57,9 @@ export class StoreUtils extends BeanStub {
             request: request,
             parentNode: p.parentNode,
             api: this.gridApi,
-            columnApi: this.columnApi
-        } as IServerSideGetRowsParams;
+            columnApi: this.columnApi,
+            context : this.gridOptionsWrapper.getContext()
+        };
 
         window.setTimeout(() => {
             if (!storeParams.datasource || !parentBlock.isAlive()) {

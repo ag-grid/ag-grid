@@ -1,15 +1,15 @@
 'use strict';
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MasterDetailModule} from '@ag-grid-enterprise/master-detail';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ColumnsToolPanelModule} from '@ag-grid-enterprise/column-tool-panel';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])
@@ -23,44 +23,44 @@ class GridExample extends Component {
         this.state = {
             columnDefs: [
                 // group cell renderer needed for expand / collapse icons
-                {field: 'name', cellRenderer: 'agGroupCellRenderer'},
-                {field: 'account'},
-                {field: 'calls'},
-                {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"},
+                { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+                { field: 'account' },
+                { field: 'calls' },
+                { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
             ],
             defaultColDef: {
                 flex: 1,
             },
-            getRowId: function (params) {
+            getRowId: (params) => {
                 return params.data.account;
             },
             detailCellRendererParams: {
                 refreshStrategy: 'rows',
                 template: (props) => (
-                     <div class="ag-details-row ag-details-row-fixed-height">
+                    <div class="ag-details-row ag-details-row-fixed-height">
                         <div style="padding: 4px; font-weight: bold;">{props.data.name} {props.data.calls} calls</div>
-                        <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
+                        <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height" />
                     </div>
                 ),
                 detailGridOptions: {
                     rowSelection: 'multiple',
                     enableCellChangeFlash: true,
-                    getRowId: function (params) {
+                    getRowId: (params) => {
                         return params.data.callId;
                     },
                     columnDefs: [
-                        {field: 'callId', checkboxSelection: true},
-                        {field: 'direction'},
-                        {field: 'number', minWidth: 150},
-                        {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                        {field: 'switchCode', minWidth: 150},
+                        { field: 'callId', checkboxSelection: true },
+                        { field: 'direction' },
+                        { field: 'number', minWidth: 150 },
+                        { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                        { field: 'switchCode', minWidth: 150 },
                     ],
                     defaultColDef: {
                         flex: 1,
                         sortable: true,
                     },
                 },
-                getDetailRowData: function (params) {
+                getDetailRowData: (params) => {
                     // params.successCallback([]);
                     params.successCallback(params.data.callRecords);
                 },
@@ -77,7 +77,7 @@ class GridExample extends Component {
 
         const updateData = (data) => {
             allRowData = data;
-            this.setState({rowData: data});
+            this.setState({ rowData: data });
         };
 
         fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
@@ -117,7 +117,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
 
                     style={{

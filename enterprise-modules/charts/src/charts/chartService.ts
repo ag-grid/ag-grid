@@ -1,5 +1,6 @@
 import {
     AgChartThemeOverrides,
+    AgChartThemePalette,
     Autowired,
     Bean,
     BeanStub,
@@ -22,7 +23,7 @@ import {
     SeriesChartType
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
-import { upgradeChartModel, CURRENT_VERSION } from "./chartModelMigration";
+import { CURRENT_VERSION, upgradeChartModel } from "./chartModelMigration";
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
@@ -158,6 +159,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.unlinkChart,
             false,
             model.chartOptions,
+            model.chartPalette,
             params.seriesChartTypes);
     }
 
@@ -181,6 +183,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.aggFunc,
             params.chartThemeOverrides,
             params.unlinkChart,
+            undefined,
             undefined,
             undefined,
             params.seriesChartTypes);
@@ -260,6 +263,7 @@ export class ChartService extends BeanStub implements IChartService {
         unlinkChart = false,
         crossFiltering  = false,
         chartOptionsToRestore?: AgChartThemeOverrides,
+        chartPaletteToRestore?: AgChartThemePalette,
         seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
@@ -278,6 +282,7 @@ export class ChartService extends BeanStub implements IChartService {
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
             chartOptionsToRestore,
+            chartPaletteToRestore,
             seriesChartTypes
         };
 

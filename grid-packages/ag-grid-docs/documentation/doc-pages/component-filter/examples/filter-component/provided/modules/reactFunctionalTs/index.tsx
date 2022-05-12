@@ -9,6 +9,7 @@ import { ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { getData } from "./data";
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])

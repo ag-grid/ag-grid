@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     minWidth: 200,
   },
   groupDisplayType: 'groupRows',
-  initialGroupOrderComparator: function (params: InitialGroupOrderComparatorParams) {
+  initialGroupOrderComparator: (params: InitialGroupOrderComparatorParams) => {
     const a = params.nodeA.key || ''
     const b = params.nodeB.key || ''
     return a < b ? -1 : a > b ? 1 : 0

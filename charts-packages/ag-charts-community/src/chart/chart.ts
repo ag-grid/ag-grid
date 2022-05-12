@@ -1001,7 +1001,7 @@ export abstract class Chart extends Observable {
         let node: Node | undefined = undefined;
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
-            if (!series.visible) {
+            if (!series.visible || !series.group.visible) {
                 continue;
             }
             node = series.pickGroup.pickNode(x, y);
@@ -1040,7 +1040,7 @@ export abstract class Chart extends Observable {
 
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
-            if (!series.visible) {
+            if (!series.visible || !series.group.visible) {
                 continue;
             }
             const hitPoint = series.group.transformPoint(x, y);

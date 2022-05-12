@@ -30,7 +30,7 @@ const leftColumnDefs: ColDef[] = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function (params, dragItemCount) {
+        rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -53,7 +53,7 @@ const rightColumnDefs: ColDef[] = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function (params, dragItemCount) {
+        rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -80,14 +80,14 @@ const leftGridOptions: GridOptions = {
     rowSelection: 'multiple',
     rowDragMultiRow: true,
     suppressRowClickSelection: true,
-    getRowId: function (params: GetRowIdParams) {
+    getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
     animateRows: true,
-    onGridReady: function (params) {
+    onGridReady: (params) => {
         addGridDropZone(params);
     }
 };
@@ -100,7 +100,7 @@ const rightGridOptions: GridOptions = {
         filter: true,
         resizable: true
     },
-    getRowId: function (params: GetRowIdParams) {
+    getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
@@ -110,7 +110,7 @@ const rightGridOptions: GridOptions = {
 
 function addGridDropZone(params: GridReadyEvent) {
     const dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
-        onDragStop: function (params) {
+        onDragStop: (params) => {
             const deselectCheck = (document.querySelector('input#deselect') as HTMLInputElement).checked;
             const moveCheck = (document.querySelector('input#move') as HTMLInputElement).checked;
             const nodes = params.nodes;

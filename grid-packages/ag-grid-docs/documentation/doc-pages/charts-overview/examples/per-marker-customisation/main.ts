@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 var minSize = 5
 var maxSize = 100
@@ -66,7 +67,7 @@ const options: AgChartOptions = {
       marker: {
         size: minSize,
         maxSize: maxSize,
-        formatter: function (params) {
+        formatter: (params) => {
           return {
             fill: params.highlighted
               ? params.fill
@@ -83,7 +84,6 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Depth (m)',
       },
     },
@@ -91,7 +91,6 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Minimum distance (km)',
       },
     },

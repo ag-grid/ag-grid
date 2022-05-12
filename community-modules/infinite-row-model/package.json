@@ -9,8 +9,11 @@
     "clean": "rimraf dist .hash",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
+    "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -42,7 +45,7 @@
     "not ie_mob >= 0",
     "not blackberry > 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "@ag-grid-community/core": "~27.2.0"
   },

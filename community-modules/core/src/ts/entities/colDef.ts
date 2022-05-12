@@ -117,7 +117,10 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
     colId?: string;
-    /** The field of the row to get the cells data from */
+    /** 
+     * The field of the row object to get the cell's data from.
+     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.
+     */
     field?: string;
     /**
      * A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
@@ -383,6 +386,12 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     aggFunc?: string | IAggFunc | null;
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialAggFunc?: string | IAggFunc;
+    /**
+     * The name of the aggregation function to use for this column when it is enabled via the GUI.
+     * Note that this does not immediately apply the aggregation function like `aggFunc`
+     * Default: `sum`
+     */
+    defaultAggFunc?: string;
     /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.

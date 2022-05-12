@@ -25,6 +25,16 @@ export function log10(x: number): number {
     return Math.log(x) * Math.LOG10E;
 }
 
+/**
+ * Returns the mathematically correct n modulus of m. For context, the JS % operator is remainder
+ * NOT modulus, which is why this is needed.
+ */
+export function mod(n: number, m: number) {
+    // https://stackoverflow.com/a/13163436
+    const remain = n % m;
+    return remain >= 0 ? remain : (remain + m);
+}
+
 export const EPSILON = Number.EPSILON || Math.pow(2, -52);
 
 export function toReadableNumber(value: number, fractionDigits: number = 2): string {

@@ -1,4 +1,5 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
 
 const gridOptions: GridOptions = {
   rowData: getData(),
@@ -8,7 +9,7 @@ const gridOptions: GridOptions = {
   ],
   rowClassRules: {
     // row style function
-    'sick-days-warning': function (params) {
+    'sick-days-warning': (params) => {
       var numSickDays = params.data.sickDays
       return numSickDays > 5 && numSickDays <= 7
     },

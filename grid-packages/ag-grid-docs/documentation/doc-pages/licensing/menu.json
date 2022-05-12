@@ -37,9 +37,7 @@
             "menuHide": true,
             "pane": "left",
             "frameworks": [
-              "javascript",
-              "angular",
-              "vue"
+              "javascript"
             ]
           },
           {
@@ -53,9 +51,9 @@
             "pane": "left"
           },
           {
-            "title": "Stackblitz Example",
+            "title": "{example-title}",
             "url": "{example}",
-            "icon": "stackblitz",
+            "icon": "{example-icon}",
             "menuHide": true,
             "frameworks": [
               "angular",
@@ -76,9 +74,9 @@
             "pane": "left"
           },
           {
-            "title": "Vue 3 Tutorial",
+            "title": "Vue 2 Tutorial",
             "icon": "vue",
-            "url": "/vue3/",
+            "url": "/vue2/",
             "frameworks": [
               "vue"
             ],
@@ -88,7 +86,9 @@
             "title": "Videos",
             "url": "/videos/",
             "frameworks": [
-              "react"
+              "angular",
+              "react",
+              "vue"
             ]
           }
         ]
@@ -470,6 +470,11 @@
                 "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Immutable Data",
+            "url": "/immutable-data/",
+            "showInCollapsed": true
           },
           {
             "title": "Data Stages",

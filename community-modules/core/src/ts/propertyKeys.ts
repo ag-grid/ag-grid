@@ -61,7 +61,8 @@ export class PropertyKeys {
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
-        'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation'
+        'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation',
+        'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

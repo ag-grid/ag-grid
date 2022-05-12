@@ -1,13 +1,15 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartLegendPosition, AgChartOptions, AgAreaSeriesOptions } from "ag-charts-community"
+import * as agCharts from "ag-charts-community";
+import { AgAreaSeriesOptions, AgChartLegendPosition, AgChartOptions } from "ag-charts-community";
+import { getData } from "./data";
+
 
 function buildSeries(name: string): AgAreaSeriesOptions {
   return {
-      type: "area",
-      xKey: "year",
-      yKey: name.toLowerCase(),
-      yName: name,
-      fillOpacity: 0.5,
+    type: "area",
+    xKey: "year",
+    yKey: name.toLowerCase(),
+    yName: name,
+    fillOpacity: 0.5,
   };
 }
 

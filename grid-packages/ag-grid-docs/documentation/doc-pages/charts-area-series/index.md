@@ -55,7 +55,6 @@ For example, to show bold labels on top of each data point (and in this case a m
 series: [{
     ...
     label: {
-        enabled: true,
         fontWeight: 'bold'
     }
 }]

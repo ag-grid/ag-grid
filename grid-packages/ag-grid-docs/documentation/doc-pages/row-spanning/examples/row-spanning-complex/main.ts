@@ -1,4 +1,6 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, RowSpanParams, ICellRendererComp } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowSpanParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 function rowSpan(params: RowSpanParams) {
     if (params.data.show) {

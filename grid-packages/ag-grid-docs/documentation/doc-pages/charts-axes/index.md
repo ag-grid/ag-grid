@@ -146,7 +146,9 @@ The example below demonstrates how the `count` property of the number axis can b
 
 ## Axis Labels
 
-The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding` and `rotation` properties respectively.
+The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding`, `rotation` and `autoRotate` properties respectively.
+
+### Label Formatting
 
 A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision, for example.
 
@@ -156,8 +158,6 @@ A label formatter function receives a single `params` object which contains:
 - the `index` of the label in the data array
 - the number of `fractionDigits`, if the value is a number
 - the default label `formatter`, if the axis is a time axis
-
-### Example: Label Formatter
 
 For example, to add `'%'` units next to number values, you can use the following formatter function:
 
@@ -169,7 +169,7 @@ formatter: function(params) {
 
 <chart-example title='Axis Label Formatter' name='axis-label-formatter' type='generated'></chart-example>
 
-### Number Label Format String
+#### Number Label Format String
 
 For number axes, a format string can be provided, which will be used to format the numbers for display as axis labels.
 The format string may contain the following directives, which reflect those from Python's <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language" target="_blank">format specification</a>:
@@ -216,8 +216,6 @@ Where:
 |If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
 | so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
 
-### Example: Number Label Format
-
 The `label` config of the left axis in the example below uses the `'🌧️ #{0>2.1f} °C'` specifier string for the `format` property to format numbers as integers padded to left with zeros to achieve a consistent 2-digit width.
 
 Notice that we wrapped the number format in `#{}` since we want to prepend the formatted value with the weather icon
@@ -225,7 +223,7 @@ and to append the units used at the end.
 
 <chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
 
-### Example: Number Currency Format
+#### Number Currency Format
 
 Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
 - the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
@@ -248,7 +246,7 @@ and replace the SI units with the currency ones `.replace('k', 'K').replace('G',
 
 <chart-example title='Number Axis Currency Format' name='number-axis-currency-format' type='generated'></chart-example>
 
-### Time Label Format String
+#### Time Label Format String
 
 For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 
@@ -289,7 +287,7 @@ For `%W`, all days in a new year preceding the first Monday are considered to be
 
 For `%V`, per the strftime man page:
 
-| In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week. Week 1 is the first week where four or more days fall within the new year (or, synonymously, week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).
+In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week. Week 1 is the first week where four or more days fall within the new year (or, synonymously, week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).
 
 The `%` sign indicating a directive may be immediately followed by a padding modifier:
 
@@ -298,8 +296,6 @@ The `%` sign indicating a directive may be immediately followed by a padding mod
 1. (nothing) - disable padding
 
 If no padding modifier is specified, the default is `0` for all directives except `%e`, which defaults to `_`.
-
-### Example: Time Label Format
 
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 
@@ -312,6 +308,36 @@ from the default `agCharts.time.month` interval by using its `every` method. Swi
 will make the time axis place ticks every other month.
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
+
+### Label Rotation & Skipping
+
+Label rotation allows a trade-off to be made between space occupied by the axis, series area, and readability of the axis
+labels.
+
+Three rotation approaches are available:
+- No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
+- Setting a fixed rotation from the axis via the `rotation` property.
+- Setting an automatically applied rotation from the axis via the `autoRotate` property. Rotation is applied if any
+  label will be wider than the gap between ticks.
+
+Label skipping is performed automatically when we decide there is a high likelihood of collisions.
+
+[[note]]
+| Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
+| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
+
+If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
+Category axes have `autoRotate` enabled by default with a setting of `335`.
+
+The following example demonstrates label rotation and skipping:
+- There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available
+  space.
+- Initially both axes have defaults applied. The X-axis is a category axis so `autoRotate` is enabled by default.
+- The first row of buttons at the top change the configuration of both axes to allow all rotation behaviours to be
+  viewed.
+- The second row of buttons allow switching between X-axis types and labels.
+
+<chart-example title='Axis Label Rotation & Skipping' name='axis-label-rotation' type='generated'></chart-example>
 
 ## Axis Grid Lines
 

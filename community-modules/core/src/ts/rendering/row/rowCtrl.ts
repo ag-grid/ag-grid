@@ -860,7 +860,7 @@ export class RowCtrl extends BeanStub {
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: !shiftKeyPressed, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
@@ -1109,7 +1109,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowSelected(): void {
-        const selected = this.rowNode.isSelected()!;
+        // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
+        // setting the required value
+        const selected = !!this.rowNode.isSelected();
         this.allRowGuis.forEach(gui => {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
             setAriaSelected(gui.element, selected ? true : undefined);

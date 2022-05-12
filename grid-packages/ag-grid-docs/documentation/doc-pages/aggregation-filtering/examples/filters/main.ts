@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

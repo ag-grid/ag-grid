@@ -1,4 +1,6 @@
-import { Grid, GridOptions, RowNodeTransaction } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowNodeTransaction } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

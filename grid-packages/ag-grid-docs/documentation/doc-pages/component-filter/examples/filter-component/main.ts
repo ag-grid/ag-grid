@@ -1,5 +1,7 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
-import { PartialMatchFilter } from './partialMatchFilter_typescript'
+import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { PartialMatchFilter } from './partialMatchFilter_typescript';
+
 
 const columnDefs: ColDef[] = [
     { field: 'row' },

@@ -35,21 +35,29 @@ const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.
 const urlMap = {
     javascript: {
         'video-tutorial': 'https://youtu.be/KS-wg5zfCXc',
-        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview'
+        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     angular: {
         'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
         'example': 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular'
+        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     react: {
         'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
         'example': 'https://stackblitz.com/edit/ag-grid-react-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started'
+        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
+        'example-title': 'StackBlitz Example',
+        'example-icon': 'stackblitz'
     },
     vue: {
         'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
-        'example': 'https://stackblitz.com/edit/ag-grid-vue-hello-world'
+        'example': 'https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue',
+        'example-title': 'CodeSandbox Example',
+        'example-icon': 'codesandbox'
     }
 };
 
@@ -77,6 +85,8 @@ const GettingStartedPane = ({framework, data}) => {
     return (
         <div className={styles['docs-home__getting-started__item_pane']}>
             {linksToRender.map(link => {
+                const title = link.title.includes('{example-title}') ? urlMap[framework]['example-title'] : link.title;
+                const icon = link.icon.includes('{example-icon}') ? urlMap[framework]['example-icon'] : link.icon;
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
                 const alt = `${frameworkCapitalised} Grid: ${link.title}`;
@@ -85,10 +95,10 @@ const GettingStartedPane = ({framework, data}) => {
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink}
                        className={styles['docs-home__getting-started__item']}>
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(link.icon, framework)} alt={alt} style={{height: 64, width: 64}}/>
+                            <img src={getLogo(icon, framework)} alt={alt} style={{height: 64, width: 64}}/>
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
-                            {link.title}
+                            {title}
                         </div>
                     </a>
                 );
@@ -113,17 +123,18 @@ const GettingStarted = ({framework, data}) => {
     );
 };
 
-const VideoPanel = ({framework}) => {
+const VideoPanel = ({framework, videos}) => {
+    const title = framework === 'javascript' ? 'JavaScript' : `${framework} Data Grid: Videos`;
     return (
         <div className={menuStyles['menu-view']}>
             <h2 className={menuStyles['menu-view__title']}>
-                {framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Videos
+                {title}
             </h2>
             <div className={menuStyles['menu-view__tile-row']}>
-                {featuredVideos.map(featuredVideo => (
-                        <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={featuredVideo.id}>
-                            <a href={`https://www.youtube.com/watch?v=${featuredVideo.id}&list=${featuredVideo.list}`} target="_blank" rel="noreferrer">
-                                <img style={{height: "100%", width: "100%"}} alt={featuredVideo.title} src={`https://i.ytimg.com/vi/${featuredVideo.id}/mqdefault.jpg`}/>
+                {videos.map(video => (
+                        <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={video.id}>
+                            <a href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`} target="_blank" rel="noreferrer">
+                                <img style={{height: "100%", width: "100%"}} alt={video.title || title} src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}/>
                             </a>
                         </div>
                     )
@@ -150,6 +161,8 @@ const HomePage = ({pageContext: {framework}}) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;
 
+    const frameworkVideos = featuredVideos[framework];
+
     return (
         <div className={styles['docs-home']}>
             {/*eslint-disable-next-line react/jsx-pascal-case*/}
@@ -160,7 +173,7 @@ const HomePage = ({pageContext: {framework}}) => {
                 pageName="home"
             />
             <GettingStarted framework={framework} data={gettingStartedItems}/>
-            {framework === 'react' && <VideoPanel framework={framework}></VideoPanel>}
+            {frameworkVideos && frameworkVideos.length > 0 && <VideoPanel framework={framework} videos={frameworkVideos}/>}
             <MenuView framework={framework} data={menuData}/>
         </div>
     );

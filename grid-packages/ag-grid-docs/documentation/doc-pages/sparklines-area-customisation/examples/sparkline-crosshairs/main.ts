@@ -1,4 +1,6 @@
-import { Grid, AreaSparklineOptions, GridOptions, TooltipRendererParams } from '@ag-grid-community/core';
+import { AreaSparklineOptions, Grid, GridOptions, TooltipRendererParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
     columnDefs: [

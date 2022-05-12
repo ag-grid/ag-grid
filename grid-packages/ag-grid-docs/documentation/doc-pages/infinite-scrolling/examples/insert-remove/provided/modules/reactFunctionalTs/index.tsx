@@ -81,7 +81,7 @@ const GridExample = () => {
     const datasource = useMemo<IDatasource>(() => {
         return {
             rowCount: undefined,
-            getRows: function (params) {
+            getRows: (params) => {
                 console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                 // At this point in your code, you would call the server.
                 // To make the demo look real, wait for 500ms before returning

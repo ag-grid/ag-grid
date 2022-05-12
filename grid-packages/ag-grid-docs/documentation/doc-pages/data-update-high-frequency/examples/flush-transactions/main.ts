@@ -1,6 +1,5 @@
 import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams, AsyncTransactionsFlushed } from '@ag-grid-community/core'
-// defined and updated in data.js
-declare var globalRowData: any[];
+import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 20
 
@@ -152,7 +151,7 @@ const gridOptions: GridOptions = {
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   asyncTransactionWaitMillis: 4000,
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.trade
   },
   defaultColDef: {
@@ -163,12 +162,12 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     width: 250,
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     getData()
     params.api.setRowData(globalRowData)
     startFeed(params.api)
   },
-  onAsyncTransactionsFlushed: function (e: AsyncTransactionsFlushed) {
+  onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushed) => {
     console.log(
       '========== onAsyncTransactionsFlushed: applied ' +
       e.results.length +

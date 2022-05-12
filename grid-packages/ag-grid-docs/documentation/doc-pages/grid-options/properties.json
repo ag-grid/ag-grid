@@ -122,7 +122,12 @@
                 "url": "/column-updating-definitions/#maintain-column-order"
             }
         },
-        "suppressFieldDotNotation": {}
+        "suppressFieldDotNotation": {
+            "more": {
+                "name": "Accessing Row Data Values",
+                "url": "/column-definitions/#accessing-row-data-values"
+            }
+        }
     },
     "headers": {
         "meta": {
@@ -682,7 +687,13 @@
                 "url": "/aggregation/#filtering"
             }
         },
-        "groupAggFiltering": {}
+        "groupAggFiltering": {},
+        "removePivotHeaderRowWhenSingleValueColumn": {
+            "more": {
+                "name": "Hiding Repeated Total Column Labels",
+                "url": "/pivoting/#hiding-repeated-total-column-labels"
+            }
+        }
     },
     "rendering": {
         "meta": {
@@ -938,14 +949,7 @@
                 "url": "/row-models/"
             }
         },
-        "rowModelType": {
-            "options": [
-                "clientSide",
-                "infinite",
-                "viewport",
-                "serverSide"
-            ]
-        },
+        "rowModelType": {},
         "getRowId": {}
     },
     "clientRowModel": {
@@ -957,6 +961,7 @@
             }
         },
         "rowData": {},
+        "resetRowDataOnUpdate": {},
         "asyncTransactionWaitMillis": {
             "more": {
                 "name": "Async transactions",
@@ -1210,6 +1215,13 @@
             "more": {
                 "name": "Post Sort",
                 "url": "/row-sorting/#post-sort"
+            }
+        },
+        "deltaSort": {
+            "description": "When enabled, sorts only the rows added/updated by a transaction. Default: `false`",
+            "more": {
+                "name": "Delta sorting",
+                "url": "/data-update-transactions/#delta-sorting"
             }
         }
     },

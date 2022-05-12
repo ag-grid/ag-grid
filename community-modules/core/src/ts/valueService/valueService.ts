@@ -26,6 +26,14 @@ export class ValueService extends BeanStub {
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
+
+        // We listen to our own event and use it to call the columnSpecific callback,
+        // this way the handler calls are correctly interleaved with other global events
+        this.eventService.addEventListener(
+            Events.EVENT_CELL_VALUE_CHANGED,
+            (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
+            this.gridOptionsWrapper.useAsyncEvents(),
+        );
     }
 
     public getValue(column: Column,
@@ -185,12 +193,6 @@ export class ValueService extends BeanStub {
 
         params.newValue = this.getValue(column, rowNode);
 
-        const onCellValueChanged = column.getColDef().onCellValueChanged;
-        if (typeof onCellValueChanged === 'function') {
-            // to make callback async, do in a timeout
-            setTimeout(() => onCellValueChanged(params), 0);
-        }
-
         const event: CellValueChangedEvent = {
             type: Events.EVENT_CELL_VALUE_CHANGED,
             event: null,
@@ -212,6 +214,23 @@ export class ValueService extends BeanStub {
         this.eventService.dispatchEvent(event);
 
         return true;
+    }
+
+    private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
+        const onCellValueChanged = event.colDef.onCellValueChanged;
+        if (typeof onCellValueChanged === 'function') {
+            onCellValueChanged({
+                node: event.node,
+                data: event.data,
+                oldValue: event.oldValue,
+                newValue: event.newValue,
+                colDef: event.colDef,
+                column: event.column,
+                api: event.api,
+                columnApi: event.columnApi,
+                context: event.context
+            });
+        }
     }
 
     private setValueUsingField(data: any, field: string | undefined, newValue: any, isFieldContainsDots: boolean): boolean {

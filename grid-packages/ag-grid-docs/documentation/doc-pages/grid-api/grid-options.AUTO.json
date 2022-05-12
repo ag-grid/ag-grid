@@ -96,7 +96,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressFieldDotNotation": {
-    "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
+    "description": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "deltaColumnMode": {
@@ -511,6 +511,10 @@
     "description": "/** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "removePivotHeaderRowWhenSingleValueColumn": {
+    "description": "/** Set to `true` to omit the value Column header when there is only a single value column. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "animateRows": {
     "description": "/** Set to `true` to enable Row Animation. Default: `false` */",
     "type": { "returnType": "boolean" }
@@ -709,7 +713,9 @@
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",
-    "type": { "returnType": "string" }
+    "type": {
+      "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'"
+    }
   },
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -1197,8 +1203,12 @@
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
-    "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
+    "description": "/** Allows setting the ID for a particular row node based on the data. */",
     "type": { "returnType": "GetRowIdFunc" }
+  },
+  "resetRowDataOnUpdate": {
+    "description": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
+    "type": { "returnType": "boolean" }
   },
   "processRowPostCreate": {
     "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -2082,7 +2092,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "onRowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
+    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"
@@ -2090,7 +2100,7 @@
     "meta": { "isEvent": true, "name": "onRowDataUpdated" }
   },
   "rowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
+    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"

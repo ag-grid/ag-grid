@@ -27,13 +27,13 @@ var leftGridOptions = {
         "green-row": 'data.color == "Green"',
         "blue-row": 'data.color == "Blue"',
     },
-    getRowId: function(params) { return params.data.id },
+    getRowId: (params) => { return params.data.id },
     rowData: createLeftRowData(),
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
     animateRows: true,
-    onGridReady: function(params) {
+    onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Right');
     }
@@ -52,20 +52,20 @@ var rightGridOptions = {
         "green-row": 'data.color == "Green"',
         "blue-row": 'data.color == "Blue"',
     },
-    getRowId: function(params) {return params.data.id },
+    getRowId: (params) => { return params.data.id },
     rowData: [],
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
     animateRows: true,
-    onGridReady: function(params) {
+    onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Left');
     }
 };
 
 function createLeftRowData() {
-    return ['Red', 'Green', 'Blue'].map(function(color) {
+    return ['Red', 'Green', 'Blue'].map(function (color) {
         return createDataItem(color);
     });
 }
@@ -117,7 +117,7 @@ function binDrop(data) {
         remove: [data]
     };
 
-    [leftGridOptions, rightGridOptions].forEach(function(option) {
+    [leftGridOptions, rightGridOptions].forEach(function (option) {
         var rowsInGrid = !!option.api.getRowNode(data.id);
 
         if (rowsInGrid) {
@@ -130,16 +130,16 @@ function addBinZone(params) {
     var eBin = document.querySelector('.bin'),
         icon = eBin.querySelector('i'),
         dropZone = {
-            getContainer: function() { return eBin; },
-            onDragEnter: function() {
+            getContainer: () => { return eBin; },
+            onDragEnter: () => {
                 eBin.style.color = 'blue';
                 icon.style.transform = 'scale(1.5)';
             },
-            onDragLeave: function() {
+            onDragLeave: () => {
                 eBin.style.color = 'black';
                 icon.style.transform = 'scale(1)';
             },
-            onDragStop: function(params) {
+            onDragStop: (params) => {
                 binDrop(params.node.data);
                 eBin.style.color = 'black';
                 icon.style.transform = 'scale(1)';
@@ -152,8 +152,8 @@ function addBinZone(params) {
 function addGridDropZone(params, side) {
     var grid = document.querySelector('#e' + side + 'Grid'),
         dropZone = {
-            getContainer: function() { return grid; },
-            onDragStop: function(params) {
+            getContainer: () => { return grid; },
+            onDragStop: (params) => {
                 addRecordToGrid(side.toLowerCase(), params.node.data);
             }
         };
@@ -167,7 +167,7 @@ function loadGrid(side) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var buttons = document.querySelectorAll('button.factory');
 
     for (var i = 0; i < buttons.length; i++) {

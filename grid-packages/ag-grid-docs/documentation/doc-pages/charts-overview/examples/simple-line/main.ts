@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -56,7 +57,6 @@ const options: AgChartOptions = {
         count: agCharts.time.month.every(2),
       },
       title: {
-        enabled: true,
         text: 'Date',
       },
     },
@@ -64,7 +64,6 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Price in pence',
       },
     },

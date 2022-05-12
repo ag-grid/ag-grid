@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, ValueGetterParams, ICellRendererFunc } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, ICellRendererFunc, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { headerName: 'Product', field: 'product' },

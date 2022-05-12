@@ -1,5 +1,6 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import * as agCharts from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -30,7 +31,6 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Weight (pounds)',
       },
     },
@@ -38,7 +38,6 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
-        enabled: true,
         text: 'Height (inches)',
       },
     },

@@ -4,11 +4,10 @@ import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
     const filters = [/^import .*/, /.*AgChart\.(update|create)/, /.* container\: .*/ /*, /.* data/*/];
-    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.js`;
+    const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
     const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
 
-    const dataFileContent = readFileSync(dataFile).toString();
-    const exampleFileLines = readFileSync(exampleFile)
+    const cleanTs = (content: Buffer) => content
         .toString()
         .split('\n')
         // Remove grossly unsupported lines.
@@ -20,9 +19,14 @@ function loadExampleOptions(name: string, evalFn = 'options'): any {
         // Remove sugars.
         .map((line) => line.replace(/[a-z]!/g, ''))
         // Remove primitives + primitive arrays.
-        .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''));
+        .map((line) => line.replace(/: (number|string|any)(\[\]){0,}/g, ''))
+        // Remove unsupported keywords.
+        .map((line) => line.replace(/export /g, ''));
 
-    let evalExpr = `${dataFileContent} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const dataFileContent = cleanTs(readFileSync(dataFile));
+    const exampleFileLines = cleanTs(readFileSync(exampleFile));
+
+    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     try {
         const agCharts = require('../../main');
         return eval(evalExpr);

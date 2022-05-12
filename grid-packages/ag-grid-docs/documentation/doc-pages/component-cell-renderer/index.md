@@ -2,11 +2,20 @@
 title: "Cell Renderer"
 ---
 
-[[only-javascript-or-angular-or-vue]]
+
+[[only-javascript]]
+|By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
+
+[[only-vue]]
 |By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
 
 [[only-react]]
 |<video-section id="9IbhW4z--mg" title="React Cell Renderers" header="true">
+|By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
+|</video-section>
+
+[[only-angular]]
+|<video-section id="xsafnM77NVs" title="Angular Cell Renderers" header="true">
 |By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using Cell Renderers.
 |</video-section>
 

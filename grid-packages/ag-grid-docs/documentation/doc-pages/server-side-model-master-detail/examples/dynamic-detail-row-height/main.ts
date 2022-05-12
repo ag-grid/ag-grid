@@ -35,13 +35,13 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params: GetDetailRowDataParams) {
+    getDetailRowData: (params: GetDetailRowDataParams) => {
       // supply details records to detail cell renderer (i.e. detail grid)
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
 
-  getRowHeight: function (params: RowHeightParams) {
+  getRowHeight: (params: RowHeightParams) => {
     if (params.node && params.node.detail) {
       var offset = 60
       var sizes = params.api.getSizesForCurrentTheme() || {};
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
       return allDetailRowHeight + (sizes.headerHeight || 0) + offset
     }
   },
-  onGridReady: function (params: GridReadyEvent) {
+  onGridReady: (params: GridReadyEvent) => {
     setTimeout(function () {
       // expand some master row
       var someRow = params.api.getRowNode('1')
@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
   return {
-    getRows: function (params) {
+    getRows: (params) => {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       var response = server.getData(params.request)

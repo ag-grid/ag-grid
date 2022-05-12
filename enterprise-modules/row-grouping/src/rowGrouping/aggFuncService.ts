@@ -46,19 +46,26 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
         this.initialised = true;
     }
+    
+    private isAggFuncPossible(column: Column, func: string): boolean {
+        const allKeys = this.getFuncNames(column);
+        const allowed = _.includes(allKeys, func);
+        const funcExists = _.exists(this.aggFuncsMap[func]);
+        return allowed && funcExists;
+    }
 
     public getDefaultAggFunc(column: Column): string | null {
-        const allKeys = this.getFuncNames(column);
+        const defaultAgg = column.getColDef().defaultAggFunc;
 
-        // use 'sum' if it's a) allowed for the column and b) still registered
-        // (ie not removed by user)
-        const sumInKeysList = _.includes(allKeys, AggFuncService.AGG_SUM);
-        const sumInFuncs = _.exists(this.aggFuncsMap[AggFuncService.AGG_SUM]);
+        if (_.exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
+            return defaultAgg;
+        }
 
-        if (sumInKeysList && sumInFuncs) {
+        if (this.isAggFuncPossible(column, AggFuncService.AGG_SUM)) {
             return AggFuncService.AGG_SUM;
         }
 
+        const allKeys = this.getFuncNames(column);
         return _.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     }
 

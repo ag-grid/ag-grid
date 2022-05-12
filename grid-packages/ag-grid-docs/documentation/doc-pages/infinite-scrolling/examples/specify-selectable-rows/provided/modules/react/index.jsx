@@ -50,7 +50,7 @@ class GridExample extends Component {
             },
             rowBuffer: 0,
             rowSelection: 'multiple',
-            isRowSelectable: function (rowNode) {
+            isRowSelectable: (rowNode) => {
                 return rowNode.data ? rowNode.data.country === 'United States' : false;
             },
             rowModelType: 'infinite',
@@ -71,7 +71,7 @@ class GridExample extends Component {
         const updateData = (data) => {
             const dataSource = {
                 rowCount: undefined,
-                getRows: function (params) {
+                getRows: (params) => {
                     // console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning

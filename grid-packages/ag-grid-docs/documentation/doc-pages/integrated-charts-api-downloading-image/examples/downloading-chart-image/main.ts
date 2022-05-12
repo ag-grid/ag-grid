@@ -1,4 +1,6 @@
-import { Grid, ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, GetChartImageDataUrlParams, GridOptions } from '@ag-grid-community/core'
+import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, GetChartImageDataUrlParams, Grid, GridOptions } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 const gridOptions: GridOptions = {
   columnDefs: [

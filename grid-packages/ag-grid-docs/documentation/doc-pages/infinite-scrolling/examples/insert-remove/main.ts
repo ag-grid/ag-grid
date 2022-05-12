@@ -25,7 +25,7 @@ const columnDefs: ColDef[] = [
         headerName: 'Item ID',
         field: 'id',
         valueGetter: 'node.id',
-        cellRenderer: function (params: ICellRendererParams) {
+        cellRenderer: (params: ICellRendererParams) => {
             if (params.value !== undefined) {
                 return params.value
             } else {
@@ -43,7 +43,7 @@ const columnDefs: ColDef[] = [
 
 const datasource: IDatasource = {
     rowCount: undefined, // behave as infinite scroll
-    getRows: function (params: IGetRowsParams) {
+    getRows: (params: IGetRowsParams) => {
         console.log('asking for ' + params.startRow + ' to ' + params.endRow)
         // At this point in your code, you would call the server.
         // To make the demo look real, wait for 500ms before returning
@@ -81,11 +81,11 @@ const gridOptions: GridOptions = {
     infiniteInitialRowCount: 500,
     maxConcurrentDatasourceRequests: 2,
 
-    getRowId: function (params: GetRowIdParams) {
+    getRowId: (params: GetRowIdParams) => {
         return params.data.id.toString()
     },
 
-    onGridReady: function (params: GridReadyEvent) {
+    onGridReady: (params: GridReadyEvent) => {
         sequenceId = 1
         allOfTheData = []
         for (let i = 0; i < 1000; i++) {
@@ -93,11 +93,11 @@ const gridOptions: GridOptions = {
         }
     },
 
-    onFirstDataRendered: function (params: FirstDataRenderedEvent) {
+    onFirstDataRendered: (params: FirstDataRenderedEvent) => {
         params.api.sizeColumnsToFit()
     },
 
-    getRowStyle: function (params: RowClassParams): RowStyle | undefined {
+    getRowStyle: (params: RowClassParams): RowStyle | undefined => {
         if (params.data && params.data.make === 'Honda') {
             return {
                 fontWeight: 'bold',

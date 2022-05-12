@@ -1,9 +1,11 @@
-import { Grid, ColDef, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, RowEditingStartedEvent, RowEditingStoppedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, } from '@ag-grid-community/core'
+import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, Grid, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core';
+import { getData } from "./data";
+import { GenderRenderer } from './genderRenderer_typescript';
+import { MoodEditor } from './moodEditor_typescript';
+import { MoodRenderer } from './moodRenderer_typescript';
+import { NumericEditor } from './numericEditor_typescript';
 
-import { GenderRenderer } from './genderRenderer_typescript'
-import { NumericEditor } from './numericEditor_typescript'
-import { MoodRenderer } from './moodRenderer_typescript'
-import { MoodEditor } from './moodEditor_typescript'
+
 
 class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -59,7 +61,7 @@ const columnDefs: ColDef[] = [
         cellEditor: 'agRichSelectCellEditor',
         cellEditorPopup: true,
         cellRenderer: CountryCellRenderer,
-        keyCreator: function (params: KeyCreatorParams) {
+        keyCreator: (params: KeyCreatorParams) => {
             return params.value.name
         },
         cellEditorParams: {

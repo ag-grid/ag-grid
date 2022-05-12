@@ -1,21 +1,14 @@
 const fs = require('fs-extra');
-const path = require('path');
-const glob = require('glob');
 const gulp = require('gulp');
 const { series } = require('gulp');
 const postcss = require('gulp-postcss');
 const uncss = require('postcss-uncss');
 const inlinesource = require('gulp-inline-source');
 const cp = require('child_process');
-const webpack = require('webpack-stream');
-const named = require('vinyl-named');
 const filter = require('gulp-filter');
 const gulpIf = require('gulp-if');
 const replace = require('gulp-replace');
 const merge = require('merge-stream');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const PurgecssPlugin = require('purgecss-webpack-plugin');
 const { getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
@@ -104,51 +97,6 @@ const processSource = () => {
     );
 };
 
-const bundleSite = (production) => {
-    const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-    const webpackConfig = require('./webpack-config/webpack.site.config.js');
-
-    // css deduplication - we do this for both archive & release (to enable testing)
-    const CSS_SRC_PATHS = {
-        src: path.join(__dirname, '/src')
-    };
-    const cssWhitelist = () => {
-        // ie: ['whitelisted']
-        return [];
-    };
-    const cssWhitelistPatterns = () => {
-        // ie: [/^whitelisted-/]
-        return [
-            /runner-item.*/,
-            /level-*/,
-            /algolia.*/,
-            /aa-.*/
-        ];
-    };
-    webpackConfig.plugins.push(
-        new PurgecssPlugin({
-            paths: glob.sync(`${CSS_SRC_PATHS.src}/**/*.{php,js,ts,html}`, { nodir: true }),
-            whitelist: cssWhitelist,
-            whitelistPatterns: cssWhitelistPatterns
-        })
-    );
-
-    if (production) {
-        webpackConfig.plugins.push(new UglifyJSPlugin({ sourceMap: true }));
-        webpackConfig.devtool = false;
-        webpackConfig.mode = 'production';
-        webpackConfig.optimization = {
-            minimizer: [new TerserPlugin({}), new OptimizeCSSAssetsPlugin({})],
-        };
-    }
-
-    return gulp
-        .src('./src/_assets/homepage/homepage.ts')
-        .pipe(named())
-        .pipe(webpack(webpackConfig))
-        .pipe(gulp.dest(`${distFolder}/dist`));
-};
-
 const copyFromDistFolder = () => merge(
     gulp.src(['../../community-modules/all-modules/dist/ag-grid-community.js']).pipe(gulp.dest(`${distFolder}/@ag-grid-community/all-modules/dist/`)),
     gulp
@@ -179,32 +127,18 @@ const serveDist = (done) => {
     done();
 };
 
-// if local we serve from /dist, but once this is run entries will point to corresponding cdn entries instead
-const replaceAgReferencesWithCdnLinks = () => {
-    const gridVersion = require('../../community-modules/core/package.json').version;
-
-    return gulp
-        .src(`${distFolder}/config.php`)
-        .pipe(replace('$$GRID_VERSION$$', gridVersion))
-        .pipe(gulp.dest(distFolder));
-};
-
 gulp.task('generate-grid-examples', generateGridExamples.bind(null, '*', null));
 gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null));
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
-gulp.task('remove-index-html', () => fs.rm(`${distFolder}/index.html`));
 gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('process-src', processSource);
-gulp.task('bundle-site-archive', bundleSite.bind(null, false));
-gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
-gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
 gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
-gulp.task('release-archive', series('clean-dist', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
-gulp.task('release', series('clean-dist', 'process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'remove-index-html', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
+gulp.task('release-archive', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
+gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 

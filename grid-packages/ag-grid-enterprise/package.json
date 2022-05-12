@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf dist main.d.ts .hash",
     "build": "npx gulp && npm run rollup && npm run hash",
+    "build-prod": "npm run build",
     "package": "npx gulp copy-umd-files",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
@@ -47,7 +48,7 @@
     "not ie_mob >= 0",
     "not blackberry > 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "dependencies": {},
   "devDependencies": {
     "@ag-grid-enterprise/all-modules": "~27.2.0",

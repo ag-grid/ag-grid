@@ -99,6 +99,7 @@ export class Events {
     public static EVENT_CELL_EDIT_REQUEST = 'cellEditRequest';
     public static EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
     public static EVENT_CELL_FOCUSED = 'cellFocused';
+    public static EVENT_FULL_WIDTH_ROW_FOCUSED = 'fullWidthRowFocused';
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
 

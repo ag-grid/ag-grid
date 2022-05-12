@@ -9,7 +9,8 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 
-export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: 0.5, failureThresholdType: "percent" };
+const FAILURE_THRESHOLD = Number(process.env.SNAPSHOT_FAILURE_THRESHOLD ?? 0.05);
+export const IMAGE_SNAPSHOT_DEFAULTS = { failureThreshold: FAILURE_THRESHOLD, failureThresholdType: "percent" };
 export const CANVAS_TO_BUFFER_DEFAULTS: PngConfig = { compressionLevel: 0, filters: (Canvas as any).PNG_NO_FILTERS };
 
 // process.env.FC_DEBUG = String(0xffff);
@@ -25,6 +26,31 @@ export function repeat<T>(value: T, count: number): T[] {
     for (let idx = 0; idx < count; idx++) {
         result[idx] = value;
     }
+    return result;
+}
+
+export function range(start: number, end: number, step = 1): number[] {
+    const result = new Array(Math.floor((end - start) / step));
+
+    let resultIndex = 0;
+    for (let index = start ; index <= end; index += step) {
+        result[resultIndex++] = index;
+    }
+
+    return result;
+}
+
+export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
+    const result = [];
+    
+    let next = start.getTime();
+    const endTime = end.getTime();
+    while (next <= endTime) {
+        result.push(new Date(next));
+
+        next += step;
+    }
+
     return result;
 }
 
@@ -103,6 +129,18 @@ export function combineAssertions(...assertions: ((chart: Chart) => void)[]) {
             await assertion(chart);
         }
     }
+}
+
+export function extractImageData({ nodeCanvas, bbox }: { nodeCanvas?: Canvas, bbox?: { x: number, y: number, width: number, height: number }}) {
+    let sourceCanvas = nodeCanvas;
+    if (bbox) {
+        const { x, y, width, height } = bbox;
+        sourceCanvas = createCanvas(width, height);
+        sourceCanvas.getContext("2d")
+            .drawImage(nodeCanvas, Math.round(x), Math.round(y), Math.round(width), Math.round(height), 0, 0, Math.round(width), Math.round(height));
+    }
+
+    return sourceCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
 }
 
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {

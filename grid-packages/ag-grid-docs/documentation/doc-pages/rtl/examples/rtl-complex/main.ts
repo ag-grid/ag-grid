@@ -195,7 +195,7 @@ const autoGroupColumnDef: ColDef = {
     headerName: 'Group',
     width: 200,
     field: 'name',
-    valueGetter: function (params) {
+    valueGetter: (params) => {
         if (params.node && params.node.group) {
             return params.node.key
         } else {
@@ -235,7 +235,7 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: autoGroupColumnDef,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
-    getBusinessKeyForNode: function (node) {
+    getBusinessKeyForNode: (node) => {
         if (node.data) {
             return node.data.name
         } else {
@@ -252,7 +252,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
         icon:
             '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />',
         //shortcut: 'Alt + M',
-        action: function () {
+        action: () => {
             const value = params.value ? params.value : '<empty>';
             window.alert('You clicked a custom menu item on cell ' + value)
         },
@@ -269,11 +269,11 @@ const firstColumn: ColDef = {
     enableRowGroup: true,
     // enablePivot: true,
     filter: PersonFilter,
-    checkboxSelection: function (params) {
+    checkboxSelection: (params) => {
         // we put checkbox on the name if we are not doing no grouping
         return params.columnApi.getRowGroupColumns().length === 0
     },
-    headerCheckboxSelection: function (params) {
+    headerCheckboxSelection: (params) => {
         // we put checkbox on the name if we are not doing grouping
         return params.columnApi.getRowGroupColumns().length === 0
     },
@@ -374,7 +374,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 editable: true,
                 filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
-                cellClass: function () {
+                cellClass: () => {
                     return 'alphabet'
                 },
                 enableRowGroup: true,
@@ -434,7 +434,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 sortable: false,
                 suppressMenu: true,
                 cellStyle: { 'text-align': 'right' },
-                cellRenderer: function () {
+                cellRenderer: () => {
                     return 'Abra...'
                 },
             },
@@ -446,7 +446,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 sortable: false,
                 suppressMenu: true,
                 cellStyle: { 'text-align': 'left' },
-                cellRenderer: function () {
+                cellRenderer: () => {
                     return '...cadabra!'
                 },
             },

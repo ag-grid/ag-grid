@@ -1,7 +1,15 @@
 ---
 title: "Column Definitions"
 ---
-Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-javascript-or-angular-or-vue]]
+|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-react]]
+|<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
+|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+|</video-section>
+
 
 The following example shows a simple grid with 3 columns defined:
 
@@ -85,6 +93,39 @@ Groups are explained in more detail in the section [Column Groups](/column-group
 |
 | A full working example of defining a grid declaratively can be found in the
 | [Vue Playground Repo](https://github.com/seanlandsman/ag-grid-vue-playground).
+
+## Accessing Row Data Values
+
+The `colDef.field` property is used to access values from the row data object. In most cases the `field` will be a property name from the row data object.
+If, however, the row data contains nested objects, you can use dot notation to reference deep property values. 
+
+For example, if the row data has an object property `medals` that contains the individual medal counts, then to display gold medals won use the field value `'medals.gold'`.
+
+<snippet>
+const gridOptions = {
+    rowData: [
+        {
+            athlete: 'Michael Phelps',
+            medals: {
+                gold: 8, silver: 1, bronze: 0
+            }
+        }
+    ],
+    columnDefs: [
+        { field: 'athlete' },
+        // Using dot notation to access nested property
+        { field: 'medals.gold', headerName: 'Gold' },
+    ],
+}
+</snippet>
+
+For alternative ways to provide cell data, such as value getters, see the documentation on [Cell Content](/cell-content/).
+
+### Suppress Field Dot Notation
+
+If your row data objects have dots in their property names, that should not be treated as deep references, then set the grid property `suppressFieldDotNotation` to `true`. This prevents the dots being interpreted as deep references across all column definitions.
+
+<grid-example title='Nested Row Data Example' name='column-fields' type='generated'></grid-example>
 
 ## Custom Column Types {#default-column-definitions}
 

@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent,  ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -48,7 +48,7 @@ const GridExample = () => {
             detailGridOptions: {
                 rowSelection: 'multiple',
                 enableCellChangeFlash: true,
-                getRowId: function (params: GetRowIdParams) {
+                getRowId: (params: GetRowIdParams) => {
                     return params.data.callId;
                 },
                 columnDefs: [
@@ -63,7 +63,7 @@ const GridExample = () => {
                     sortable: true,
                 },
             },
-            getDetailRowData: function (params: GetDetailRowDataParams) {
+            getDetailRowData: (params: GetDetailRowDataParams) => {
                 // params.successCallback([]);
                 params.successCallback(params.data.callRecords);
             },

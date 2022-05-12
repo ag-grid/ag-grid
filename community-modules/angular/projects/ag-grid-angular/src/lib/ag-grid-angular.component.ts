@@ -346,7 +346,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
+    /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
@@ -580,6 +580,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false`     */
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false`     */
+    @Input() public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined = undefined;
     /** Set to `true` to enable Row Animation. Default: `false`     */
     @Input() public animateRows: boolean | undefined = undefined;
     /** Set to `true` to have cells flash after data changes. Default: `false`     */
@@ -703,7 +705,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Data to be displayed as pinned bottom rows in the grid.     */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
-    @Input() public rowModelType: string | undefined = undefined;
+    @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
@@ -928,8 +930,10 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
+    /** Allows setting the ID for a particular row node based on the data.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
+    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
+    @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
@@ -1066,7 +1070,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent> = new EventEmitter<PinnedRowDataChangedEvent>();
     /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property.     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent> = new EventEmitter<RowDataChangedEvent>();
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`.     */
+    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood).     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed> = new EventEmitter<AsyncTransactionsFlushed>();
@@ -1242,6 +1246,8 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
+    static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
+    static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     // @END@
 }
 

@@ -1,5 +1,5 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
-import React, { useEffect, useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
+import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
@@ -85,7 +85,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         <div
             className={ containerClasses }
             ref={ eContainer }
-            role="rowgroup" 
+            role={ rowCtrls.length ? "rowgroup" : "presentation" }
             style={ containerStyle }>
             {
                 rowCtrlsOrdered.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)

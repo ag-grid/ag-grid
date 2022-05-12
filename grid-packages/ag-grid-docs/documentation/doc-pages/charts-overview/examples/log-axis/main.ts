@@ -1,3 +1,5 @@
+import { getData } from "./data";
+
 import { AgCartesianChartOptions } from 'ag-charts-community'
 import * as agCharts from 'ag-charts-community'
 
@@ -22,7 +24,6 @@ const options: AgCartesianChartOptions = {
       type: 'log',
       position: 'left',
       title: {
-        enabled: true,
         text: 'Population',
       },
       label: {
@@ -34,7 +35,6 @@ const options: AgCartesianChartOptions = {
       type: 'number',
       position: 'bottom',
       title: {
-        enabled: true,
         text: 'Year',
       },
       label: {
@@ -57,7 +57,6 @@ function useNumberAxis() {
     type: 'number',
     position: 'left',
     title: {
-      enabled: true,
       text: 'Population',
     },
     label: {
@@ -76,7 +75,6 @@ function useLogAxis() {
     type: 'log',
     position: 'left',
     title: {
-      enabled: true,
       text: 'Population',
     },
     label: {

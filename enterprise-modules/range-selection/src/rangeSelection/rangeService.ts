@@ -300,10 +300,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     // returns true if successful, false if not successful
-    public extendLatestRangeInDirection(key: string): CellPosition | undefined {
-        if (this.isEmpty() || !this.newestRangeStartCell) {
-            return;
-        }
+    public extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined {
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+
+        const key = event.key;
+        const ctrlKey = event.ctrlKey || event.metaKey;
 
         const lastRange = _.last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
@@ -316,12 +317,10 @@ export class RangeService extends BeanStub implements IRangeService {
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
-        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell);
+        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell, ctrlKey);
 
         // if user is at end of grid, so no cell to extend to, we return false
-        if (!newEndCell) {
-            return;
-        }
+        if (!newEndCell) { return; }
 
         this.setCellRange({
             rowStartIndex: startCell.rowIndex,
@@ -370,6 +369,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
         let columns: Column[] | undefined;
+        let startsOnTheRight: boolean = false;
 
         if (params.columns) {
             columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
@@ -382,6 +382,10 @@ export class RangeService extends BeanStub implements IRangeService {
             }
 
             columns = this.calculateColumnsBetween(columnStart, columnEnd);
+
+            if (columns && columns.length) {
+                startsOnTheRight = columns[0] !== columnStart;
+            }
         }
 
         if (!columns) {
@@ -402,7 +406,7 @@ export class RangeService extends BeanStub implements IRangeService {
             startRow,
             endRow,
             columns,
-            startColumn: columns[0]
+            startColumn: startsOnTheRight ? _.last(columns) : columns[0]
         };
     }
 
@@ -418,7 +422,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,
-                    column: newRange.columns[0]
+                    column: newRange.startColumn
                 });
             }
             
@@ -437,10 +441,12 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public isMoreThanOneCell(): boolean {
         const len = this.cellRanges.length;
-
-        if (len !== 1) {
-            // if range is not zero and not one, means more than one cell
-            return len !== 0;
+        
+        if (len === 0) {
+            return false;
+        }
+        if (len > 1) {
+            return true; // Assumes a cell range must contain at least one cell
         }
 
         // only one range, return true if range has more than one

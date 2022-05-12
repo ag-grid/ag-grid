@@ -89,8 +89,6 @@ export class LineChartProxy extends CartesianChartProxy {
 
             previousSeries = lineSeries;
         });
-
-        this.updateLabelRotation(params.category.id);
     }
 
     private getAxes() {

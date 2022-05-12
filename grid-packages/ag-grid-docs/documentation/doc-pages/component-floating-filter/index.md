@@ -2,10 +2,14 @@
 title: "Floating Filter Component"
 ---
 
-Floating Filter components allow you to add your own floating filter types to AG Grid. Use them:
+[[only-javascript-or-angular-or-vue]]
+|Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
 
-- When the provided floating filter for a provided filter does not meet your requirements and you want to replace it with one of your own
-- When you have a custom filter and want to provide a floating filter for your custom filter
+[[only-react]]
+|<video-section id="CxwfX4KodaM" title="React Floating Filters" header="true">
+|Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
+|</video-section>
+
 
 This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
 

@@ -22,11 +22,43 @@ export class CellNavigationService extends BeanStub {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // returns null if no cell to focus on, ie at the end of the grid
-    public getNextCellToFocus(key: string, lastCellToFocus: CellPosition): CellPosition | null {
+    public getNextCellToFocus(key: string, focusedCell: CellPosition, ctrlPressed: boolean = false): CellPosition | null {
+        if (ctrlPressed) {
+            return this.getNextCellToFocusWithCtrlPressed(key, focusedCell);
+        }
 
+        return this.getNextCellToFocusWithoutCtrlPressed(key, focusedCell);
+    }
+
+    private getNextCellToFocusWithCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
+        const upKey = key === KeyCode.UP;
+        const downKey = key === KeyCode.DOWN;
+        const leftKey = key === KeyCode.LEFT;
+
+        let column: Column;
+        let rowIndex: number;
+
+        if (upKey || downKey) {
+            rowIndex = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+            column = focusedCell.column;
+        } else {
+            const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            rowIndex = focusedCell.rowIndex;
+            column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
+        }
+
+        return {
+            rowIndex,
+            rowPinned: null,
+            column
+        };
+    }
+
+    private getNextCellToFocusWithoutCtrlPressed(key: string, focusedCell: CellPosition): CellPosition | null {
         // starting with the provided cell, we keep moving until we find a cell we can
         // focus on.
-        let pointer: CellPosition | null = lastCellToFocus;
+        let pointer: CellPosition | null = focusedCell;
         let finished = false;
 
         // finished will be true when either:

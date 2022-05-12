@@ -9,6 +9,7 @@ export interface IDetailCellRenderer {
     addOrRemoveDetailGridCssClass(cssClassName: string, on: boolean): void;
     setDetailGrid(gridOptions: GridOptions): void;
     setRowData(rowData: any[]): void;
+    getGui(): HTMLElement;
 }
 
 export interface IDetailCellRendererParams extends ICellRendererParams {

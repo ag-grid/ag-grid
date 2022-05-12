@@ -120,7 +120,7 @@ export class ChartDatasource extends BeanStub {
                             }
                         };
 
-                        // keep track of group node indexes so they can be padded when other groups are expanded
+                        // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
                             groupNodeIndexes[labels.toString()] = i;
                         }
@@ -254,16 +254,18 @@ export class ChartDatasource extends BeanStub {
 
                 if (params.crossFiltering) {
                     params.valueCols.forEach(valueCol => {
+                        const colId = valueCol.getColId();
+
                         // filtered data
                         const dataToAgg = groupItem.__children
-                            .filter((child: any) => typeof child[valueCol.getColId()] !== 'undefined')
-                            .map((child: any) => child[valueCol.getColId()]);
+                            .filter((child: any) => typeof child[colId] !== 'undefined')
+                            .map((child: any) => child[colId]);
 
                         let aggResult: any = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
                         groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                         // filtered out data
-                        const filteredOutColId = valueCol.getId()+'-filtered-out';
+                        const filteredOutColId = `${colId}-filtered-out`;
                         const dataToAggFiltered = groupItem.__children
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
@@ -296,7 +298,7 @@ export class ChartDatasource extends BeanStub {
         // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
         const pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
 
-        // 'pivotKeys' is not used by the SSRM for pivoting so it is safe to reuse this colDef property, this way
+        // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         secondaryColumns.forEach(col => {
             const keys = col.getColId().split(pivotKeySeparator);
@@ -304,7 +306,7 @@ export class ChartDatasource extends BeanStub {
         });
     }
 
-    private extractPivotKeySeparator(secondaryColumns: any) {
+    private extractPivotKeySeparator(secondaryColumns: Column[]) {
         if (secondaryColumns.length === 0) { return ""; }
 
         const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {

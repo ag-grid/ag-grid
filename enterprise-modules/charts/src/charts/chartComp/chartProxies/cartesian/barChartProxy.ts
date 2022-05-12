@@ -44,8 +44,6 @@ export class BarChartProxy extends CartesianChartProxy {
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
-
-        this.updateLabelRotation(params.category.id);
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {

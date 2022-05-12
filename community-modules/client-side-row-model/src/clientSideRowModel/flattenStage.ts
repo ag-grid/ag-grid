@@ -82,7 +82,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
-            const isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
+
+            const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
 
             const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
                 !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;

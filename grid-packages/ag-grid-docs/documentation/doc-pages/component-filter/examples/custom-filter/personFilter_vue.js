@@ -40,7 +40,7 @@ export default {
                     getValue: (field) => node.data[field],
                     node,
                 });
-    
+
                 if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                     passed = false;
                 }
@@ -56,7 +56,7 @@ export default {
         getModel() {
             if (!this.isFilterActive()) { return null; }
 
-            return {value: this.filterText};
+            return { value: this.filterText };
         },
 
         setModel(model) {

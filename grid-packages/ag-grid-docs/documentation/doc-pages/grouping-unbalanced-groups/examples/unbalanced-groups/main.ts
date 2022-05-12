@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core';
+import { getData } from "./data";
+
 
 
 const gridOptions: GridOptions = {

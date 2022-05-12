@@ -12,6 +12,7 @@ export const agChartsReactVersion = require('../../../../../charts-packages/ag-c
 export const agChartsAngularVersion = require('../../../../../charts-packages/ag-charts-angular/package.json').version;
 export const agChartsVueVersion = require('../../../../../charts-packages/ag-charts-vue/package.json').version;
 
+export const rootLocalPrefix = `//${isDevelopment() && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 export const localPrefix = `//${isDevelopment() && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}/dev`;
 export const hostPrefix = `https://${isDevelopment() && window.location ? `${window.location.hostname}:8000` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 

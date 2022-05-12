@@ -85,7 +85,7 @@ const DocPageTemplate = ({data, pageContext: {framework, pageName}}) => {
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
             'charts-api-explorer': props => ChartsApiExplorer({...props, framework}),
-            'learning-videos': LearningVideos
+            'learning-videos': props => LearningVideos({framework})
         },
     }).Compiler;
 

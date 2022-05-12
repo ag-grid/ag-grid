@@ -1,6 +1,6 @@
-import { Grid, GridOptions, ValueFormatterParams, RowClassParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { getData, createNewRowData } from "./data";
 
-declare function createNewRowData(category: string): any;
 
 function poundFormatter(params: ValueFormatterParams) {
   return (
@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true,
   // this allows the different colors per group, by assigning a different
   // css class to each group level based on the key
-  getRowClass: function (params: RowClassParams) {
+  getRowClass: (params: RowClassParams) => {
     var rowNode = params.node
     if (rowNode.group) {
       switch (rowNode.key) {

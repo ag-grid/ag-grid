@@ -25,7 +25,8 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             addOrRemoveCssClass: (cssClassName: string, on: boolean) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveDetailGridCssClass: (cssClassName: string, on: boolean) => this.eDetailGrid.classList.toggle(cssClassName, on),
             setDetailGrid: gridOptions => this.setDetailGrid(gridOptions),
-            setRowData: rowData => this.setRowData(rowData)
+            setRowData: rowData => this.setRowData(rowData),
+            getGui: () => this.eDetailGrid
         };
 
         this.ctrl = this.createManagedBean(new DetailCellRendererCtrl());
@@ -41,6 +42,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     public destroy(): void {
         super.destroy();
     }
+
 
     private selectAndSetTemplate(): void {
 

@@ -1,5 +1,6 @@
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import * as agCharts from "ag-charts-community";
+import { AgChartOptions } from "ag-charts-community";
+import { getData } from "./data";
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -72,7 +73,6 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       title: {
-        enabled: true,
         text: "Thousand tonnes of oil equivalent",
       },
     },

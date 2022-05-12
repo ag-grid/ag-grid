@@ -19,9 +19,9 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const [childCount, setChildCount] = useState<string>();
     const [value, setValue] = useState<any>();
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(new CssClasses());
-    const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(new CssClasses());
-    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses());
+    const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
+    const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
+    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses('ag-invisible'));
 
     useImperativeHandle(ref, () => {
         return {
@@ -45,17 +45,13 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setContractedDisplayed: displayed => setContractedCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
             setExpandedDisplayed: displayed => setExpandedCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
-            setCheckboxVisible: visible => {
-                setCheckboxCssClasses(prev => prev.setClass('ag-invisible', !visible))
-            }
+            setCheckboxVisible: visible => setCheckboxCssClasses(prev => prev.setClass('ag-invisible', !visible))
         };
 
         const ctrl = context.createBean(new GroupCellRendererCtrl());
         ctrl.init(compProxy, eGui.current!, eCheckboxRef.current!, eExpandedRef.current!, eContractedRef.current!, GroupCellRenderer, props);
 
-        return () => {
-            context.destroyBean(ctrl);
-        };
+        return () => { context.destroyBean(ctrl);};
     }, 'groupCellRenderer.main');
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
@@ -65,7 +61,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
-    const useValue = innerCompDetails==null && value!=null;
+    const useValue = innerCompDetails == null && value != null;
 
     return (
         <span className={className} ref={eGui} {...(!props.colDef ? { role: 'gridcell' } : {})}>

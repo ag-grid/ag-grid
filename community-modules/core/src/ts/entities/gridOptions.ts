@@ -157,7 +157,7 @@ export interface GridOptions {
     columnTypes?: { [key: string]: ColDef; };
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
+    /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
     suppressFieldDotNotation?: boolean;
 
     /** @deprecated */
@@ -453,7 +453,8 @@ export interface GridOptions {
     aggregateOnlyChangedColumns?: boolean;
     /** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */
     suppressAggFilteredOnly?: boolean;
-
+    /** Set to `true` to omit the value Column header when there is only a single value column. Default: `false` */
+    removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
     /** Set to `true` to enable Row Animation. Default: `false` */
     animateRows?: boolean;
@@ -600,7 +601,7 @@ export interface GridOptions {
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
-    rowModelType?: string;
+    rowModelType?: 'clientSide' | 'infinite' | 'viewport' | 'serverSide';
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -878,8 +879,10 @@ export interface GridOptions {
      * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
-    /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
+    /** Allows setting the ID for a particular row node based on the data. */
     getRowId?: GetRowIdFunc;
+    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
+    resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
@@ -1054,7 +1057,7 @@ export interface GridOptions {
     // *** Row Model: Client Side *** //
     /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */
     onRowDataChanged?(event: RowDataChangedEvent): void;
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */
+    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;

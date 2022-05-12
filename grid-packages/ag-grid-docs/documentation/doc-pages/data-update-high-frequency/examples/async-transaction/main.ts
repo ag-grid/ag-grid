@@ -1,7 +1,5 @@
 import { Grid, ColDef, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
-
-// defined and updated in data.js
-declare var globalRowData: any[];
+import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 200
 
@@ -146,7 +144,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  getRowId: function (params: GetRowIdParams) {
+  getRowId: (params: GetRowIdParams) => {
     return params.data.trade
   },
   defaultColDef: {
@@ -157,7 +155,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     width: 250,
   },
-  onGridReady: function (params) {
+  onGridReady: (params) => {
     getData();
     params.api.setRowData(globalRowData)
   },

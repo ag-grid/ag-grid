@@ -26,10 +26,10 @@ import { SelectAllFeature } from "./selectAllFeature";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setAriaSort(sort: ColumnSortState | undefined): void;
     setColId(id: string): void;
-    setAriaDescribedBy(id: string | undefined): void;
-
+    setAriaLabel(id?: string): void;
+    setAriaDescribedBy(id?: string): void;
+    setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
 }
@@ -92,6 +92,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addActiveHeaderMouseListeners();
         this.setupSelectAll();
         this.setupUserComp();
+        this.refreshAria();
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
         this.createManagedBean(new HoverFeature([this.column], eGui));
@@ -320,6 +321,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private refresh(): void {
         this.updateState();
         this.refreshHeaderComp();
+        this.refreshAria();
         this.refreshFunctions.forEach(f => f());
     }
 
@@ -424,21 +426,43 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.comp.addOrRemoveCssClass('ag-header-cell-sortable', !!this.sortable);
         };
 
-        const updateAriaSort = () => {
-            if (this.sortable) {
-                this.comp.setAriaSort(getAriaSortState(this.column));
-            } else {
-                this.comp.setAriaSort(undefined);
-            }
-        };
-
         updateSortableCssClass();
-        updateAriaSort();
 
         this.addRefreshFunction(updateSortableCssClass);
-        this.addRefreshFunction(updateAriaSort);
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
+    }
 
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort);
+    private refreshAriaSort(): void {
+        if (this.sortable) {
+            this.comp.setAriaSort(getAriaSortState(this.column));
+        } else {
+            this.comp.setAriaSort();
+        }
+    }
+
+    private refreshAriaLabel(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        const label: string[] = [];
+
+        if (this.sortable) {
+            label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
+        }
+
+        if (this.menuEnabled) {
+            label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+        }
+
+        if (label.length) {
+            this.comp.setAriaLabel(label.join(' '));
+        } else {
+            this.comp.setAriaLabel();
+        }
+    }
+
+    private refreshAria(): void {
+        this.refreshAriaSort();
+        this.refreshAriaLabel();
     }
 
     private addColumnHoverListener(): void {

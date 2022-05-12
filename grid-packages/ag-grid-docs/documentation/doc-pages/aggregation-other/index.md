@@ -5,23 +5,63 @@ enterprise: true
 
 This section covers areas of aggregation that don't fit within the other sections of the documentation.
 
-## Restricting Functions
+## Default Aggregation Function
 
-By default, all functions are available to all value columns. To restrict the functions on a column, use the `allowedAggFuncs` column property.
+When columns are dragged to the <b>Values</b> section of the [Columns Tool Panel](/tool-panel-columns/) they are
+assigned the `sum` aggregation function by default. The default aggregation function can be overridden on a per-column
+basis using the `defaultAggFunc` column property.
 
 <snippet>
 const gridOptions = {
     columnDefs: [
         {
             field: 'gold',
-            // allow gui to set aggregations for this column
+            // allows column to be dragged to the 'Values` section of the Columns Tool Panel 
             enableValue: true,
-            // restrict aggregations to sum, min and max
+            // use 'avg' as the default agg func instead of 'sum'  
+            defaultAggFunc: 'avg',
+        },
+    ]
+}
+</snippet>
+
+The following example demonstrates overriding the default agg function. Note the following:
+
+- The <b>Gold</b> column is configured with `defaultAggFunc` set to `avg`.
+- Drag the <b>Gold</b> column to the <b>Values</b> section of the Columns Tool Panel and note that it is assigned the 'avg' function. 
+- The <b>Silver</b> column is configured to use a custom aggregation function as it's default, note that when dragged to the <b>Values</b> section it will be assigned the function `mySum`.
+- Dragging the <b>Bronze</b> column will use `sum` as the default. 
+
+<grid-example title='Default Aggregation Function' name='default-aggregation-function' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
+[[note]]
+| Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
+| as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](/aggregation-custom-functions#registering-custom-functions) for how to do this.
+
+## Restricting Aggregation Functions
+
+By default, all functions are available to all value columns. To restrict the aggregation functions available on a value
+column, use the `allowedAggFuncs` column property as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'gold', 
+            aggFunc: 'sum',
+            // restricts agg functions to be: `sum`, `min` and `max`
             allowedAggFuncs: ['sum', 'min', 'max'],
         }
     ]
 }
 </snippet>
+
+The following example demonstrates restricting the aggregation functions. Note the following:
+
+- The <b>Gold</b> column is configured with `allowedAggFuncs` set to `['sum', 'min', 'max']` and only displays these functions in the drop-down list in the <b>Values</b> section column to the of the Columns Tool Panel.
+- The <b>Silver</b> column shows all available agg functions as it hasn't been restricted.
+ 
+<grid-example title='Restricting Aggregation Functions' name='restricting-aggregation-functions' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Aggregation API
 
@@ -38,7 +78,7 @@ When aggregating, the column headers will include the aggregation function for t
 
 ## Empty Aggregation Calls
 
-When providing either [Custom Aggregation Functions](#custom-aggregation-functions) or [Custom Full Row Aggregation](#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
+When providing either [Custom Aggregation Functions](/aggregation-custom-functions#custom-aggregation-functions) or [Custom Full Row Aggregation](/aggregation-custom-functions#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
 
 The empty aggregation calls happen in the following two scenarios:
 

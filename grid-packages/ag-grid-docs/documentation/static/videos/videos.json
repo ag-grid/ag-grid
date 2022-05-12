@@ -1,129 +1,230 @@
-[
-  {
-    "title": "Getting Started with AG Grid Community",
-    "url": "https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Getting Started with AG Grid Community"
+{
+  "react": [
+    {
+      "title": "Getting Started with AG Grid Community",
+      "url": "https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Community"
+      },
+      "keyPoints": [
+        "Set up Rows and Columns.",
+        "Simple Grid Properties.",
+        "Use Grid's API.",
+        "Listen to Grid Events."
+      ],
+      "runningTime": "7:24"
     },
-    "keyPoints": [
-      "Set up Rows and Columns.",
-      "Simple Grid Properties.",
-      "Use Grid's API.",
-      "Listen to Grid Events."
-    ],
-    "runningTime": "7:24"
-  },
-  {
-    "title": "Getting Started with AG Grid Enterprise",
-    "url": "https://www.youtube.com/watch?v=pKUhYE1VTP4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Getting Started with AG Grid Enterprise"
+    {
+      "title": "Getting Started with AG Grid Enterprise",
+      "url": "https://www.youtube.com/watch?v=pKUhYE1VTP4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Enterprise"
+      },
+      "keyPoints": [
+        "Configure AG Grid Enterprise."
+      ],
+      "runningTime": "4:42"
     },
-    "keyPoints": [
-      "Configure AG Grid Enterprise."
-    ],
-    "runningTime": "4:42"
-  },
-  {
-    "title": "Customising Cells - Cell Renderers",
-    "url": "https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "React Cell Renderers"
+    {
+      "title": "Customising Cells - Cell Renderers",
+      "url": "https://www.youtube.com/watch?v=9IbhW4z--mg&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "React Cell Renderers"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "7:53"
     },
-    "keyPoints": [
-      "Cell Renderers.",
-      "Cell Renderer Params.",
-      "Cell Renderer Selector."
-    ],
-    "runningTime": "7:53"
-  },
-  {
-    "title": "React Rendering",
-    "url": "https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "React Rendering"
+    {
+      "title": "React Rendering",
+      "url": "https://www.youtube.com/watch?v=oAQ5vavDupU&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "React Rendering"
+      },
+      "keyPoints": [
+        "React Rendering.",
+        "React Developer Tools.",
+        "Grid Component Hierarchy."
+      ],
+      "runningTime": "4:09"
     },
-    "keyPoints": [
-      "React Rendering.",
-      "React Developer Tools.",
-      "Grid Component Hierarchy."
-    ],
-    "runningTime": "4:09"
-  },
-  {
-    "title": "Column Filters",
-    "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Column Filters"
+    {
+      "title": "Column Definitions",
+      "url": "https://www.youtube.com/watch?v=aDCepyF_DUY&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Configuring AG Grid Column Definitions Using React"
+      },
+      "keyPoints": [
+        "Column Width, Column Pinning",
+        "Value Getter, Value Formatter",
+        "Column Groups",
+        "Column IDs, Column API"
+      ],
+      "runningTime": "22:17"
     },
-    "keyPoints": [
-      "Configuring Filters",
-      "Filter Models",
-      "Text, Number & Date Filters",
-      "Set Filter, Multi Filter"
-    ],
-    "runningTime": "14:32"
-  },
-  {
-    "title": "Custom Column Filter Components",
-    "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Custom Column Filter Components"
+    {
+      "title": "Column Filters",
+      "url": "https://www.youtube.com/watch?v=pebXUHUdlos&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Column Filters"
+      },
+      "keyPoints": [
+        "Configuring Filters",
+        "Filter Models",
+        "Text, Number & Date Filters",
+        "Set Filter, Multi Filter"
+      ],
+      "runningTime": "14:32"
     },
-    "keyPoints": [
-      "Creating Filter Components",
-      "Custom Filter Models"
-    ],
-    "runningTime": "18:04"
-  },
-  {
-    "title": "Custom Floating Filter Components",
-    "url": "https://www.youtube.com/watch?v=CxwfX4KodaM&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Custom Floating Filter Components"
+    {
+      "title": "Custom Column Filter Components",
+      "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Custom Column Filter Components"
+      },
+      "keyPoints": [
+        "Creating Filter Components",
+        "Custom Filter Models"
+      ],
+      "runningTime": "18:04"
     },
-    "keyPoints": [
-      "Creating Floating Components"
-    ],
-    "runningTime": "11:03"
-  },
-  {
-    "title": "Custom Components",
-    "url": "https://www.youtube.com/watch?v=eglfpHRpcu0&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Custom Components"
+    {
+      "title": "Custom Floating Filter Components",
+      "url": "https://www.youtube.com/watch?v=CxwfX4KodaM&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Custom Floating Filter Components"
+      },
+      "keyPoints": [
+        "Creating Floating Components"
+      ],
+      "runningTime": "11:03"
     },
-    "keyPoints": [
-      "Configuring Components",
-      "Component Params",
-      "Component Selectors",
-      "React & JavaScript Components"
-    ],
-    "runningTime": "15;21"
-  },
-  {
-    "title": "Updating Row Data",
-    "url": "https://www.youtube.com/watch?v=_V5qFr62uhY&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
-    "thumbnail": {
-      "image": "AgGridVideo.png",
-      "altText": "Updating Row Data"
+    {
+      "title": "Custom Components",
+      "url": "https://www.youtube.com/watch?v=eglfpHRpcu0&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Custom Components"
+      },
+      "keyPoints": [
+        "Configuring Components",
+        "Component Params",
+        "Component Selectors",
+        "React & JavaScript Components"
+      ],
+      "runningTime": "15:21"
     },
-    "keyPoints": [
-      "Updating Row Data",
-      "High Frequency Updates",
-      "Transaction Updates"
-    ],
-    "runningTime": "19:11"
-  }
-]
-
-
-
+    {
+      "title": "Updating Row Data",
+      "url": "https://www.youtube.com/watch?v=_V5qFr62uhY&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Updating Row Data"
+      },
+      "keyPoints": [
+        "Updating Row Data",
+        "High Frequency Updates",
+        "Transaction Updates"
+      ],
+      "runningTime": "19:11"
+    },
+    {
+      "title": "Column State",
+      "url": "https://youtu.be/d9Kohpbt42M&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Column State"
+      },
+      "keyPoints": [
+        "State Attributes",
+        "State via Column Defs",
+        "get / applyColumnState()",
+        "State via API"
+      ],
+      "runningTime": "22:46"
+    }
+  ],
+  "angular": [
+    {
+      "title": "Getting Started with AG Grid Community",
+      "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Getting Started with AG Grid Community"
+      },
+      "keyPoints": [
+        "Set up Rows and Columns.",
+        "Simple Grid Properties.",
+        "Use Grid's API.",
+        "Listen to Grid Events."
+      ],
+      "runningTime": "8:01"
+    },
+    {
+      "title": "Getting Started with AG Grid Enterprise",
+      "url": "https://www.youtube.com/watch?v=xe6i3W6qW5k&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Getting Started with AG Grid Enterprise"
+      },
+      "keyPoints": [
+        "Configure AG Grid Enterprise."
+      ],
+      "runningTime": "4:37"
+    },
+    {
+      "title": "Customising Cells - Cell Renderers",
+      "url": "https://www.youtube.com/watch?v=xsafnM77NVs&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Angular Cell Renderers"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "8:35"
+    }
+  ],
+  "vue": [
+    {
+      "title": "Getting Started with AG Grid Community",
+      "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Getting Started with AG Grid Community"
+      },
+      "keyPoints": [
+        "Set up Rows and Columns.",
+        "Simple Grid Properties.",
+        "Use Grid's API.",
+        "Listen to Grid Events."
+      ],
+      "runningTime": "6:54"
+    },
+    {
+      "title": "Getting Started with AG Grid Enterprise",
+      "url": "https://www.youtube.com/watch?v=9WnYqSxTuE8&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Getting Started with AG Grid Enterprise"
+      },
+      "keyPoints": [
+        "Configure AG Grid Enterprise."
+      ],
+      "runningTime": "3:54"
+    }
+  ]
+}

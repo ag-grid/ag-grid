@@ -24,6 +24,10 @@ import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { Events } from "../eventKeys";
+import { FullWidthRowFocusedEvent } from "../events";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columns/columnApi";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -40,6 +44,8 @@ interface NavigateParams {
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
 
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
@@ -72,6 +78,7 @@ export class NavigationService extends BeanStub {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
+        const rangeServiceShouldHandleShift = !!this.rangeService && event.shiftKey;
 
         const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
@@ -89,17 +96,12 @@ export class NavigationService extends BeanStub {
                 break;
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                // handle left and right when ctrl is pressed only
-                if (ctrl && !alt) {
-                    this.onCtrlLeftOrRight(key, currentCell);
-                    processed = true;
-                }
-                break;
             case KeyCode.UP:
             case KeyCode.DOWN:
-                // handle up and down when ctrl is pressed only
-                if (ctrl && !alt) {
-                    this.onCtrlUpOrDown(key, currentCell);
+                // handle when ctrl is pressed only, if shift is pressed
+                // it will be handled by the rangeService
+                if (ctrl && !alt && !rangeServiceShouldHandleShift) {
+                    this.onCtrlUpDownLeftRight(key, currentCell);
                     processed = true;
                 }
                 break;
@@ -190,8 +192,8 @@ export class NavigationService extends BeanStub {
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
 
-        const rowPixelDiff = up 
-            ? (currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset) 
+        const rowPixelDiff = up
+            ? (currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset)
             : (pixelsInOnePage - pagingPixelOffset);
 
         const nextCellPixel = currentRowNode?.rowTop! + rowPixelDiff;
@@ -210,7 +212,7 @@ export class NavigationService extends BeanStub {
             if (focusIndex < firstRow) { focusIndex = firstRow; }
             if (scrollIndex < firstRow) { scrollIndex = firstRow; }
         } else {
-            scrollType = 'top'
+            scrollType = 'top';
             if (focusIndex > lastRow) { focusIndex = lastRow; }
             if (scrollIndex > lastRow) { scrollIndex = lastRow; }
         }
@@ -231,7 +233,7 @@ export class NavigationService extends BeanStub {
 
     private navigateToNextPageWithAutoHeight(gridCell: CellPosition, scrollIndex: number, up: boolean = false): void {
         // because autoHeight will calculate the height of rows after scroll
-        // first we scroll towards the required point, then we add a small 
+        // first we scroll towards the required point, then we add a small
         // delay to allow the height to be recalculated, check which index
         // should be focused and then finally navigate to that index.
         // TODO: we should probably have an event fired once to scrollbar has
@@ -305,33 +307,16 @@ export class NavigationService extends BeanStub {
         return rowHeight > this.getViewportHeight();
     }
 
-    // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
-    private onCtrlUpOrDown(key: string, gridCell: CellPosition): void {
-        const upKey = key === KeyCode.UP;
-        const rowIndexToScrollTo = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+    private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
+        const cellToFocus = this.cellNavigationService.getNextCellToFocus(key, gridCell, true)!;
+        const { rowIndex, column } = cellToFocus;
 
         this.navigateTo({
-            scrollIndex: rowIndexToScrollTo,
+            scrollIndex: rowIndex,
             scrollType: null,
-            scrollColumn: gridCell.column,
-            focusIndex: rowIndexToScrollTo,
-            focusColumn: gridCell.column
-        });
-    }
-
-    // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
-    private onCtrlLeftOrRight(key: string, gridCell: CellPosition): void {
-        const leftKey = key === KeyCode.LEFT;
-        const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
-        const isRtl = this.gridOptionsWrapper.isEnableRtl();
-        const columnToSelect: Column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
-
-        this.navigateTo({
-            scrollIndex: gridCell.rowIndex,
-            scrollType: null,
-            scrollColumn: columnToSelect,
-            focusIndex: gridCell.rowIndex,
-            focusColumn: columnToSelect
+            scrollColumn: column,
+            focusIndex: rowIndex,
+            focusColumn: column
         });
     }
 
@@ -753,6 +738,8 @@ export class NavigationService extends BeanStub {
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) { return false; }
 
+        const currentCellFocused = this.focusService.getFocusedCell();
+
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
             rowPinned: position.rowPinned,
@@ -760,6 +747,22 @@ export class NavigationService extends BeanStub {
         };
 
         this.focusPosition(cellPosition);
+
+        const fromBelow = currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
+
+        const focusEvent: FullWidthRowFocusedEvent = {
+            type: Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            rowIndex: cellPosition.rowIndex,
+            rowPinned: cellPosition.rowPinned,
+            column: cellPosition.column,
+            isFullWidthCell: true,
+            floating: cellPosition.rowPinned,
+            fromBelow
+        };
+
+        this.eventService.dispatchEvent(focusEvent);
 
         return true;
     }

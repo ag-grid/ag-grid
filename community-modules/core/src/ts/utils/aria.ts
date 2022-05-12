@@ -51,7 +51,7 @@ export function getAriaDescribedBy(element: HTMLElement): string {
 }
 
 // ARIA ATTRIBUTE SETTERS
-export function setAriaLabel(element: HTMLElement, label: string): void {
+export function setAriaLabel(element: HTMLElement, label?: string): void {
     const key = 'label';
     if (label) {
         setAriaAttribute(element, key, label);

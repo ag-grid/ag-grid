@@ -1,4 +1,6 @@
 import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { getData } from "./data";
+
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {
@@ -39,7 +41,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   suppressAggFuncInHeader: true,
 
-  onGridReady: function () {
+  onGridReady: (params) => {
     // generate data for example
     var data = getData()
 
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
   return {
-    getRows: function (params) {
+    getRows: (params) => {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       var response = server.getData(params.request)

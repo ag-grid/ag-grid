@@ -3,10 +3,9 @@
 // over the wire
 import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 import { SortModelItem } from "../sortController";
+import { AgGridCommon } from "./iCommon";
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
@@ -29,7 +28,7 @@ export interface IServerSideGetRowsRequest {
     sortModel: SortModelItem[];
 }
 
-export interface IServerSideGetRowsParams {
+export interface IServerSideGetRowsParams extends AgGridCommon {
     /**
      * Details for the request. A simple object that can be converted to JSON.
      */
@@ -59,8 +58,6 @@ export interface IServerSideGetRowsParams {
      */
     fail(): void;
 
-    api: GridApi;
-    columnApi: ColumnApi;
 }
 
 // datasource for Server Side Row Model

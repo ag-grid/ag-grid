@@ -11,7 +11,6 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
-import { ContinuousScale } from "./scale/continuousScale";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -92,9 +91,16 @@ export class AxisLabel {
     rotation: number = 0;
 
     /**
+     * If specified and axis labels collide, they are rotated so that they are positioned at the
+     * supplied angle. This is enabled by default for category axes at an angle of 45 degrees.
+     * If the `rotation` property is specified, it takes precedence.
+     */
+    autoRotate: boolean | number | undefined = undefined;
+
+    /**
      * By default labels and ticks are positioned to the left of the axis line.
      * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, its easier to think in terms
+     * However, if the axis is rotated, it's easier to think in terms
      * of this side or the opposite side, rather than left and right.
      * We use the term `mirror` for conciseness, although it's not
      * true mirroring - for example, when a label is rotated, so that
@@ -204,6 +210,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
+
+    private _labelAutoRotated: boolean = false;
+    get labelAutoRotated(): boolean {
+        return this._labelAutoRotated;
+    }
 
     /**
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
@@ -387,8 +398,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
-        const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
+        const parallelLabels = label.parallel;
+        let labelAutoRotation = 0;
 
         group.translationX = this.translation.x;
         group.translationY = this.translation.y;
@@ -416,8 +428,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
-        const alignFlag = labelRotation >= 0 && labelRotation <= Math.PI ? -1 : 1;
-
         const ticks = this.ticks || scale.ticks!(this.tick.count);
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
@@ -444,13 +454,124 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attrFn('visible', function (node) {
                 const min = Math.floor(requestedRangeMin);
                 const max = Math.ceil(requestedRangeMax);
-                return node.translationY >= min && node.translationY <= max;
+                return (min !== max) && node.translationY >= min && node.translationY <= max;
             });
 
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
+
+        // Update properties that affect the size of the axis labels and measure the labels
+        const labelBboxes: Map<number, BBox> = new Map();
+        let labelCount = 0;
+
+        const labelSelection = groupSelection.selectByClass(Text)
+            .each((node, datum, index) => {
+                node.fontStyle = label.fontStyle;
+                node.fontWeight = label.fontWeight;
+                node.fontSize = label.fontSize;
+                node.fontFamily = label.fontFamily;
+                node.fill = label.color;
+                node.text = this.formatTickDatum(datum, index);
+
+                node.visible = node.parent!.visible;
+                if (node.visible !== true) { return; }
+
+                labelBboxes.set(index, node.computeBBox());
+
+                if (node.text === '' || node.text == undefined) { return; }
+                labelCount++;
+            });
+
+        const labelX = sideFlag * (tick.size + label.padding);
+
+        // Only consider a fraction of the total range to allow more space for each label
+        const availableRange = requestedRangeMax - requestedRangeMin;
+        const step = availableRange / labelCount;
+
+        const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
+            let totalLength = 0;
+            let rotate = false;
+            const padding = 15;
+            for (let [_, bbox] of bboxes.entries()) {
+                const length = useWidth ? bbox.width : bbox.height;
+                const lengthWithPadding = length <= 0 ? 0 : length + padding;
+                totalLength += lengthWithPadding;
+
+                if (lengthWithPadding > step) {
+                    rotate = true;
+                }
+            }
+            return {totalLength, rotate};
+        }
+
+        let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
+
+        let {totalLength: totalLabelLength, rotate} = calculateLabelsLength(labelBboxes, useWidth);
+
+        this._labelAutoRotated = false;
+        if (!labelRotation && label.autoRotate != null && label.autoRotate !== false && rotate) {
+            // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
+            // automatically rotate the labels
+            labelAutoRotation = normalizeAngle360(toRadians(typeof label.autoRotate === 'number' ? label.autoRotate : 335));
+            this._labelAutoRotated = true;
+        }
+
+        if (labelRotation || labelAutoRotation) {
+            // If the label rotation angle results in a non-parallel orientation, use the height of the texts to calculate the total length of all labels
+            if (parallelLabels) {
+                useWidth = (labelRotation === Math.PI) || (labelAutoRotation === Math.PI) ? true : false;
+            } else {
+                useWidth = labelRotation === Math.PI / 2 || labelRotation === (Math.PI + Math.PI / 2) || labelAutoRotation === Math.PI / 2 || labelAutoRotation === (Math.PI + Math.PI / 2) ? true : false;
+            }
+
+            totalLabelLength = calculateLabelsLength(labelBboxes, useWidth).totalLength;
+        }
+
+        const autoRotation = parallelLabels
+            ? parallelFlipFlag * Math.PI / 2
+            : (regularFlipFlag === -1 ? Math.PI : 0);
+
+        const labelTextBaseline = parallelLabels && !labelRotation
+            ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
+            : 'middle';
+
+        const alignFlag = (labelRotation > 0 && labelRotation <= Math.PI) || (labelAutoRotation > 0 && labelAutoRotation <= Math.PI) ? -1 : 1;
+
+        const labelTextAlign = parallelLabels
+            ? labelRotation || labelAutoRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
+            : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
+
+        labelSelection.each(label => {
+            label.textBaseline = labelTextBaseline;
+            label.textAlign = labelTextAlign;
+            label.x = labelX;
+            label.rotationCenterX = labelX;
+            label.rotation = autoRotation + labelRotation + labelAutoRotation;
+        });
+
+        if (availableRange > 1 && totalLabelLength > availableRange) {
+            const averageLabelLength = totalLabelLength / labelCount;
+            const labelsToShow = Math.floor(availableRange / averageLabelLength);
+
+            const showEvery = labelsToShow > 1 ? Math.ceil(labelCount / labelsToShow) : labelCount;
+            let visibleLabelIndex = 0;
+            labelSelection.each((label, _, index) => {
+                if (label.visible !== true || label.text === '' || label.text == undefined) { return; }
+
+                label.visible = visibleLabelIndex % showEvery === 0 ? true : false;
+                visibleLabelIndex++
+
+                if (!label.visible) {
+                    labelBboxes.delete(index);
+                }
+            });
+        }
+
         groupSelection.selectByTag<Line>(Tags.Tick)
-            .each(line => {
+            .each((line, _, index) => {
                 line.strokeWidth = tick.width;
                 line.stroke = tick.color;
+                line.visible = labelBboxes.has(index);
             })
             .attr('x1', sideFlag * tick.size)
             .attr('x2', 0)
@@ -465,7 +586,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
 
                 gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
-                    .each((arc, datum) => {
+                    .each((arc, datum, index) => {
                         const radius = Math.round(scale.convert(datum) + halfBandwidth);
 
                         arc.centerX = 0;
@@ -473,15 +594,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         arc.endAngle = angularGridLength;
                         arc.radiusX = radius;
                         arc.radiusY = radius;
+                        arc.visible = labelBboxes.has(index);
                     });
             } else {
                 gridLines = groupSelection.selectByTag<Line>(Tags.GridLine)
-                    .each(line => {
+                    .each((line, _, index) => {
                         line.x1 = 0;
                         line.x2 = -sideFlag * this.gridLength;
                         line.y1 = 0;
                         line.y2 = 0;
-                        line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
+                        line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1 && labelBboxes.has(index);
                     });
             }
 
@@ -493,74 +615,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 gridLine.lineDash = style.lineDash;
                 gridLine.fill = undefined;
             });
-        }
-
-        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
-        this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
-
-        // Update properties that affect the size of the axis labels and measure the labels
-        const labelSelection = groupSelection.selectByClass(Text)
-            .each((node, datum, index) => {
-                node.fontStyle = label.fontStyle;
-                node.fontWeight = label.fontWeight;
-                node.fontSize = label.fontSize;
-                node.fontFamily = label.fontFamily;
-                node.fill = label.color;
-                node.textBaseline = parallelLabels && !labelRotation
-                    ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
-                    : 'middle';
-                node.text = this.formatTickDatum(datum, index);
-
-                node.textAlign = parallelLabels
-                    ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
-                    : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
-            });
-
-        const labelX = sideFlag * (tick.size + label.padding);
-        const autoRotation = parallelLabels
-            ? parallelFlipFlag * Math.PI / 2
-            : (regularFlipFlag === -1 ? Math.PI : 0);
-
-        const labelBboxes: Map<string, BBox> = new Map();
-        labelSelection.each(label => {
-            label.x = labelX;
-            label.rotationCenterX = labelX;
-            label.rotation = autoRotation + labelRotation;
-            label.visible = true;
-
-            labelBboxes.set(label.id, label.computeBBox());
-        });
-
-        // Only consider a fraction of the total range to allow more space for each label
-        const fractionOfRange = 0.8;
-        const availableRange = (requestedRangeMax - requestedRangeMin) * fractionOfRange;
-
-        const calculateLabelsLength = (bboxes: Map<string, BBox>, parallel: boolean) => {
-            let totalLength = 0;
-            for (let [labelId, bbox] of bboxes.entries()) {
-                totalLength += (parallel ? bbox.width : bbox.height);
-            }
-            return totalLength;
-        }
-
-        if (availableRange >= 0) {
-            let totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
-            let visible = true;
-
-            // Remove half the labels if they overlap
-            while (totalLabelLength > availableRange) {
-                labelSelection.each(label => {
-                    if (label.visible !== true) { return; }
-
-                    label.visible = visible;
-                    if (!label.visible) {
-                        labelBboxes.delete(label.id);
-                    }
-                    visible = !visible;
-                });
-
-                totalLabelLength = calculateLabelsLength(labelBboxes, parallelLabels);
-            }
         }
 
         this.groupSelection = groupSelection;
