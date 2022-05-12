@@ -9,11 +9,11 @@
     --ag-chip-background-color: rgba(#2196f3, 0.07);
     --ag-input-focus-border-color: rgba(#2196f3, 0.4);
 
-    
     // main colours (overridden by alpine-dark)
     --ag-background-color: #fff;
     --ag-foreground-color: #181d1f;
     --ag-border-color: #babfc7;
+    --ag-secondary-border-color: #dde2eb;
     --ag-header-background-color: #f8f8f8;
     --ag-odd-row-background-color: #fcfcfc;
     --ag-control-panel-background-color: #f8f8f8;
@@ -34,9 +34,10 @@
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
 
     // BORDERS
-    --ag-borders: solid 1px var(--ag-border-color);
-    --ag-borders-secondary: solid 1px #dde2eb;
+    --ag-borders: solid 1px;
     --ag-border-radius: 3px;
+    --ag-cell-border-style: dashed;
+    --ag-cell-border-color: red;
     --ag-header-column-resize-handle-display: block;
     --ag-header-column-resize-handle-width: 2px;
     --ag-header-column-resize-handle-height: 30%;

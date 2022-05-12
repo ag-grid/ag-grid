@@ -33,15 +33,16 @@
     @import "";
 }
 
-// data types:
-//    "color": CSS color e.g. red or #fff
-//    "size": 0 or number and unit e.g. 4px or percentage e.g. 50%
-//    "border": CSS border spec e.g. `solid 1px red`
-//    "border-style": A valid CSS border style e.g. `dotted` or `solid`
-//    "duration": number with time duration e.g. 3s or 250ms
-//    "style-and-size": either `none` or 2-element list of a size and a border-style
-//    "display": `block` or `none` or a boolean
-//    "any": allows any value
+$-ag-param-type-descriptions: (
+    "color": "a CSS color (e.g. `red` or `#fff`)",
+    "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
+    "border": "a 3-part border spec in the form `style width color` (e.g. `solid 1px red`)",
+    "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
+    "border-style-not-none": "a CSS border style (e.g. `dotted` or `solid` but not `none`)",
+    "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
+    "border-style-and-size": "either `none` or 2-element list of a border-style and size (e.g. `solid 1px`)",
+    "display": "`true`, `false`, `block` (equivalent to `true`) or `none` (equivalent to `false`)"
+);
 
 $-ag-param-types: (
     foreground-color: "color",
@@ -61,6 +62,7 @@ $-ag-param-types: (
     row-hover-color: "color",
     column-hover-color: "color",
     range-selection-border-color: "color",
+    range-selection-border-style: "border-style",
     range-selection-background-color: "color",
     range-selection-background-color-2: "color",
     range-selection-background-color-3: "color",
@@ -77,16 +79,16 @@ $-ag-param-types: (
     value-change-delta-up-color: "color",
     value-change-delta-down-color: "color",
     chip-background-color: "color",
-    borders: "style-and-size",
+    borders: "border-style-and-size",
     border-color: "color",
-    borders-critical: "style-and-size",
-    borders-secondary: "style-and-size",
+    borders-critical: "border-style-and-size",
+    borders-secondary: "border-style-and-size",
     secondary-border-color: "color",
-    borders-row: "style-and-size",
+    borders-row: "border-style-and-size",
     row-border-color: "color",
-    borders-cell: "style-and-size",
     cell-border-color: "color",
-    borders-side-button: "style-and-size",
+    cell-border-style: "border-style",
+    borders-side-button: "border-style-and-size",
     border-radius: "size",
     header-column-separator-display: "display",
     header-column-separator-height: "size",
@@ -175,15 +177,6 @@ $-ag-param-types: (
     }
 }
 
-$-ag-param-type-descriptions: (
-    "color": "a CSS color (e.g. `red` or `#fff`)",
-    "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
-    "border": "a 3-part border spec in the form `style width color` (e.g. `solid 1px red`)",
-    "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
-    "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
-    "style-and-size": "either `none` or 2-element list of a border-style and size (e.g. `solid 1px`)",
-    "display": "`true`, `false`, `block` (equivalent to `true`) or `none` (equivalent to `false`)"
-);
 
 @function -ag-validate-color($name, $value) {
     @return meta.type-of($value) == "color";
@@ -205,7 +198,7 @@ $-ag-param-type-descriptions: (
     @return true;
 }
 
-@function -ag-validate-style-and-size($name, $value) {
+@function -ag-validate-border-style-and-size($name, $value) {
     @return true;
 }
 

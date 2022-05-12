@@ -65,6 +65,10 @@
     // Color to draw around selected cell ranges
     --ag-range-selection-border-color: var(--ag-foreground-color);
 
+    // Border style for range selections, e.g. `solid` or `dashed`. Do not set to `none`,
+    // if you need to hide the border set the color to transparent
+    --ag-range-selection-border-style: solid;
+
     // Background colour of selected cell ranges. By default, setting this to
     // a semi-transparent color (opacity of 0.1 to 0.5 works well) will generate
     // appropriate values for the range-selection-background-color-{1..4} colours
@@ -150,18 +154,17 @@
     // Draw borders between rows.
     // Set this to a border style and thickness, e.g. `solid 1px` to enable borders,
     // or `none` to disable borders.
-    --ag-borders-row: none;
+    --ag-borders-row: var(--ag-borders-secondary);
 
     // Colour for borders between rows, if enabled with --ag-borders-row
     --ag-row-border-color: var(--ag-secondary-border-color);
 
-    // Draw borders separating cells within a row.
-    // Set this to a border style and thickness, e.g. `solid 1px` to enable borders,
-    // or `none` to disable borders.
-    --ag-borders-cell: none;
+    // The style of borders separating cells within a row, e.g. `solid` or `dashed`. Do
+    // not set to `none`, if you need to hide the border set the color to transparent
+    --ag-cell-border-style: solid;
 
-    // The colour of cell borders, if they are enabled with --ag-borders-cell
-    --ag-cell-border-color: var(--ag-secondary-border-color);
+    // The colour of cell borders, or `transparent` to hide them
+    --ag-cell-border-color: transparent;
 
     // Draw borders around the vertical tabs on the side of the control panel
     // Set this to a border style and thickness, e.g. `solid 1px` to enable borders,

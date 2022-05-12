@@ -1,7 +1,7 @@
 @use "ag";
 
 .ag-cell {
-    @include ag.unthemed-rtl(( border-right: var(--ag-borders-cell) var(--ag-cell-border-color) ));
+    @include ag.unthemed-rtl(( border-right: var(--ag-cell-border-style) 1px var(--ag-cell-border-color) ));
 }
 
 .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
@@ -53,15 +53,19 @@
 .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
     &.ag-cell-range-top {
         border-top-color: var(--ag-range-selection-border-color);
+        border-top-style: var(--ag-range-selection-border-style);
     }
     &.ag-cell-range-right {
         border-right-color: var(--ag-range-selection-border-color);
+        border-right-style: var(--ag-range-selection-border-style);
     }
     &.ag-cell-range-bottom {
         border-bottom-color: var(--ag-range-selection-border-color);
+        border-bottom-style: var(--ag-range-selection-border-style);
     }
     &.ag-cell-range-left {
         border-left-color: var(--ag-range-selection-border-color);
+        border-left-style: var(--ag-range-selection-border-style);
     }
 }
 
@@ -74,6 +78,7 @@
     .ag-cell-range-single-cell.ag-cell-range-handle {
         border: 1px solid;
         border-color: var(--ag-range-selection-border-color);
+        border-style: var(--ag-range-selection-border-style);
         outline: initial;
     }
 }
