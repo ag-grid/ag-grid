@@ -56,7 +56,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         if (!(this.scale instanceof ContinuousScale)) { return; } // Discrete axes do not require a tick count, the tick count will be the number of categories
 
         const tickInterval = 70; // Approximate number of pixels to allocate for each tick
-        this._calculatedTickCount = this.tick.count || Math.min(Math.max(2, Math.floor(availableRange / tickInterval)), 5); // We don't want less than 2 ticks or more than 5 ticks (this will be a hint, the actual tick count after `nice` is applied might be different)
+        this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
     }
 
     protected _position: ChartAxisPosition = ChartAxisPosition.Left;
