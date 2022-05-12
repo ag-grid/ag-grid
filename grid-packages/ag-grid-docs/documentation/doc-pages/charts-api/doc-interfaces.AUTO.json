@@ -1202,8 +1202,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "autoRotate": {
-      "description": "/** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 335 degrees. If the `rotation` property is specified, it takes precedence. */",
-      "type": { "returnType": "boolean | number", "optional": true }
+      "description": "/** If specified and axis labels may collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category. If the `rotation` property is specified, it takes precedence. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "autoRotateAngle": {
+      "description": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
+      "type": { "returnType": "number", "optional": true }
     },
     "format": {
       "description": "/** Format string used when rendering labels for time axes. */",
