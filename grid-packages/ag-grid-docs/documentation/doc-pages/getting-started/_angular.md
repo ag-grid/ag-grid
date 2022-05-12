@@ -304,7 +304,7 @@
 |
 | ### Setting Row Data
 |
-| The Grid is provided Row Data via the `rowData` Grid Property. This is wired up using an Angular `Observable`.
+| The Grid is provided Row Data via the `rowData` Grid Property. This is wired up using an `Observable`.
 |
 | ```js
 | // Data that gets displayed in the grid
@@ -372,7 +372,7 @@
 |
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `(eventName)` property.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `(eventName)` output property.
 | This example demonstrates consuming the `cellClicked` event.
 |
 |```html
