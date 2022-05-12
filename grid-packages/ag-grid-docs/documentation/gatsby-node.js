@@ -320,7 +320,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     const frameworkRequest = request => {
         return frameworks.some(framework => request.includes(framework))
     }
-    class AgEs5CjsResolveer {
+    class AgEs5CjsResolver {
         constructor(source, target) {
             this.source = source || 'resolve';
             this.target = target || 'resolve';
@@ -328,7 +328,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
 
         apply(resolver) {
             var target = resolver.ensureHook(this.target);
-            resolver.getHook(this.source).tapAsync('AgEs5CjsResolveer', function (request, resolveContext, callback) {
+            resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
                 const req = request.request;
                 if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
                     !req.includes('css') &&
@@ -336,6 +336,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
 
                     // point the request to the commonjs es5 dir - this is what gets updated on local build changes
                     const newRequest = `${__dirname}/node_modules/${req}/dist/cjs/es5/main.js`;
+
                     const obj = {
                         path: request.path,
                         request: newRequest,
@@ -356,14 +357,13 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             fs: 'empty',
         },
         resolve: {
-            plugins: [new AgEs5CjsResolveer()],
             // add src folder as default root for imports
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     };
     if(isDevelopment()) {
         // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
-        newConfig.resolve['plugins'] = [new AgEs5CjsResolveer()];
+        newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
     }
     actions.setWebpackConfig(newConfig);
 
