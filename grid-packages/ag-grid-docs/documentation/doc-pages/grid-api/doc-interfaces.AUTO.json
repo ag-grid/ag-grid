@@ -2272,7 +2272,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
-      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCopySingleCellRanges": {
+      "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
@@ -21501,7 +21505,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
-      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCopySingleCellRanges": {
+      "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
@@ -24200,7 +24208,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
-      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCopySingleCellRanges": {
+      "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
@@ -26909,7 +26921,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
-      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCopySingleCellRanges": {
+      "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
