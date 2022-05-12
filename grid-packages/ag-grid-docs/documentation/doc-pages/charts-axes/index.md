@@ -317,8 +317,8 @@ labels.
 Three rotation approaches are available:
 - No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
 - Setting a fixed rotation from the axis via the `rotation` property.
-- Setting an automatically applied rotation from the axis via the `autoRotate` property. Rotation is applied if any
-  label will be wider than the gap between ticks.
+- Enabling automatic rotation via the `autoRotate` property, and optionally specifying an angle from the axis via the 
+  `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
 
 Label skipping is performed automatically when we decide there is a high likelihood of collisions.
 
@@ -327,7 +327,7 @@ Label skipping is performed automatically when we decide there is a high likelih
 | of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
 
 If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
-Category axes have `autoRotate` enabled by default with a setting of `335`.
+Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
 
 The following example demonstrates label rotation and skipping:
 - There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available
