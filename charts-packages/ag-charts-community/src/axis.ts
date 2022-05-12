@@ -486,6 +486,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const labelBboxes: Map<number, BBox> = new Map();
         let labelCount = 0;
 
+        let halfFirstLabelLength = false;
+        let halfLastLabelLength = false;
+        const availableRange = requestedRangeMax - requestedRangeMin;
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
                 node.fontStyle = label.fontStyle;
@@ -502,20 +505,26 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
                 if (node.text === '' || node.text == undefined) { return; }
                 labelCount++;
+
+                if (index === 0 && (node.translationY === scale.range[0])) {
+                    halfFirstLabelLength = true; // first label protrudes axis line
+                } else if (index === ticks.length - 1 && (node.translationY === scale.range[1])) {
+                    halfLastLabelLength = true; // last label protrudes axis line
+                }
             });
 
         const labelX = sideFlag * (tick.size + label.padding);
 
-        // Only consider a fraction of the total range to allow more space for each label
-        const availableRange = requestedRangeMax - requestedRangeMin;
         const step = availableRange / labelCount;
 
         const calculateLabelsLength = (bboxes: Map<number, BBox>, useWidth: boolean) => {
             let totalLength = 0;
             let rotate = false;
-            const padding = 15;
-            for (let [_, bbox] of bboxes.entries()) {
-                const length = useWidth ? bbox.width : bbox.height;
+            const lastIdx = bboxes.size - 1;
+            const padding = 10;
+            for (let [i, bbox] of bboxes.entries()) {
+                const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
+                const length = useWidth ? bbox.width / divideBy : bbox.height / divideBy;
                 const lengthWithPadding = length <= 0 ? 0 : length + padding;
                 totalLength += lengthWithPadding;
 
