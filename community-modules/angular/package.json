@@ -12,13 +12,11 @@
     "lint": "./node_modules/.bin/ng lint",
     "update-properties": "node updateGridAndColumnProperties.js",
     "verify-properties": "node agGridPropertiesCheck.js",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "prepublishOnly": "node --eval \"console.error('ERROR: Trying to publish a package that has been compiled by NGCC. This is not allowed.\\nPlease delete and rebuild the package, without compiling with NGCC, before attempting to publish.\\nNote that NGCC may have been run by importing this package into another project that is being built with Ivy enabled.\\n')\" && exit 1"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "private": true,
   "license": "MIT",
   "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
-  "module_ivy_ngcc": "__ivy_ngcc__/dist/ag-grid-angular/fesm5/ag-grid-community-angular.js",
   "module": "./dist/ag-grid-angular/fesm5/ag-grid-community-angular.js",
   "typings": "./dist/ag-grid-angular/ag-grid-community-angular.d.ts",
   "dependencies": {
@@ -59,9 +57,5 @@
     "typescript": "~3.7.7",
     "replace-in-file": "4.1.0",
     "rimraf": "3.0.2"
-  },
-  "__processed_by_ivy_ngcc__": {
-    "module": "13.3.6",
-    "typings": "13.3.6"
   }
 }
