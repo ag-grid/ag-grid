@@ -87,9 +87,28 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        this.sortGroupsWithComparator(details.rootNode);
+        this.positionLeafsAboveGroups(params.changedPath!);
+        this.orderGroups(details.rootNode);
 
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
+    }
+
+    private positionLeafsAboveGroups(changedPath: ChangedPath) {
+        changedPath.forEachChangedNodeDepthFirst(group => {
+            if (group.childrenAfterGroup) {
+                const leafNodes: RowNode[] = [];
+                const groupNodes: RowNode[] = [];
+
+                group.childrenAfterGroup.forEach(row => {
+                    if (!row.childrenAfterGroup?.length) {
+                        leafNodes.push(row);
+                    } else {
+                        groupNodes.push(row);
+                    }
+                });
+                group.childrenAfterGroup = [...leafNodes, ...groupNodes];
+            }
+        }, false);
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
@@ -160,7 +179,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private sortGroupsWithComparator(rootNode: RowNode): void {
+    private orderGroups(rootNode: RowNode): void {
         // we don't do group sorting for tree data
         if (this.usingTreeData) { return; }
 

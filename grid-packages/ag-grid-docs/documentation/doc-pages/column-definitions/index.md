@@ -119,7 +119,7 @@ const gridOptions = {
 }
 </snippet>
 
-For alternative ways to provide cell data, such as value getters, see the documentation on [Cell Content](/cell-content/).
+For alternative ways to provide cell data, such as value getters, see the documentation on [Value Getters](/value-getters/).
 
 ### Suppress Field Dot Notation
 
