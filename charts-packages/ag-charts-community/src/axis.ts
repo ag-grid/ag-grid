@@ -596,7 +596,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             labelSelection.each((label, _, index) => {
                 if (label.visible !== true) { return; }
 
-                const forceVisible = isContinuous && this.tick.count === undefined ? index === 0 || index === labelCount - 1 : false; // always show first and last labels for a continuous axis when tick count has not been specified by the user
+                const forceVisible = isContinuous ? index === 0 || index === labelCount - 1 : false; // always show first and last labels for a continuous axis
                 label.visible = forceVisible || visibleLabelIndex % showEvery === 0 ? true : false;
                 visibleLabelIndex++
 
