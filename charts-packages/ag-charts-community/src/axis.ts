@@ -11,6 +11,8 @@ import { Caption } from "./caption";
 import { createId } from "./util/id";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { doOnce } from "./util/function";
+import { ContinuousScale } from "./scale/continuousScale";
+import { CountableTimeInterval } from "./util/time/interval";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -23,6 +25,7 @@ export interface GridStyle {
     lineDash?: number[];
 }
 
+type TickCount = number | CountableTimeInterval;
 export class AxisTick {
     /**
      * The line width to be used by axis ticks.
@@ -49,7 +52,7 @@ export class AxisTick {
      *     axis.tick.count = year;
      *     axis.tick.count = month.every(6);
      */
-    count: any = 10;
+    count?: TickCount = undefined;
 }
 
 export interface AxisLabelFormatterParams {
@@ -221,6 +224,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     /**
+     * This will be assigned a value when `this.calculateTickCount` is invoked.
+     * If the user has specified a tick count, it will be used, otherwise a tick count will be calculated based on the available range.
+     */
+    protected _calculatedTickCount?: TickCount = undefined;
+    get calculatedTickCount() {
+        return this._calculatedTickCount ?? this.tick.count;
+    }
+
+    /**
+     * Overridden in ChartAxis subclass.
+     * Sets an appropriate tick count based on the available range.
+     */
+    calculateTickCount(availableRange: number): void { }
+
+    /**
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
      * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
      */
@@ -304,7 +322,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     protected onLabelFormatChange(format?: string) {
         if (format && this.scale && this.scale.tickFormat) {
             try {
-                this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
+                this.labelFormatter = this.scale.tickFormat(this.calculatedTickCount, format);
             } catch (e) {
                 this.labelFormatter = undefined;
                 doOnce(() => console.warn(`AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`), `invalid axis label format string ${format}`);
@@ -432,7 +450,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
-        const ticks = this.ticks || scale.ticks!(this.tick.count);
+        const ticks = this.ticks || scale.ticks!(this.calculatedTickCount);
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
 
@@ -505,12 +523,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     rotate = true;
                 }
             }
-            return {totalLength, rotate};
+            return { totalLength, rotate };
         }
 
         let useWidth = parallelLabels; // When the labels are parallel to the axis line, use the width of the text to calculate the total length of all labels
 
-        let {totalLength: totalLabelLength, rotate} = calculateLabelsLength(labelBboxes, useWidth);
+        let { totalLength: totalLabelLength, rotate } = calculateLabelsLength(labelBboxes, useWidth);
 
         this._labelAutoRotated = false;
         if (!labelRotation && label.autoRotate === true && rotate) {
@@ -546,6 +564,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
             : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
 
         labelSelection.each(label => {
+            if (label.text === '' || label.text == undefined) {
+                label.visible = false; // hide empty labels
+                return;
+            }
+
             label.textBaseline = labelTextBaseline;
             label.textAlign = labelTextAlign;
             label.x = labelX;
@@ -554,15 +577,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
         });
 
         if (availableRange > 1 && totalLabelLength > availableRange) {
+            const isContinuous = scale instanceof ContinuousScale;
+
             const averageLabelLength = totalLabelLength / labelCount;
             const labelsToShow = Math.floor(availableRange / averageLabelLength);
+            const showEvery = labelsToShow > 2 ? Math.ceil(labelCount / labelsToShow) : labelCount;
 
-            const showEvery = labelsToShow > 1 ? Math.ceil(labelCount / labelsToShow) : labelCount;
             let visibleLabelIndex = 0;
             labelSelection.each((label, _, index) => {
-                if (label.visible !== true || label.text === '' || label.text == undefined) { return; }
+                if (label.visible !== true) { return; }
 
-                label.visible = visibleLabelIndex % showEvery === 0 ? true : false;
+                const forceVisible = isContinuous && this.tick.count === undefined ? index === 0 || index === labelCount - 1 : false; // always show first and last labels for a continuous axis when tick count has not been specified by the user
+                label.visible = forceVisible || visibleLabelIndex % showEvery === 0 ? true : false;
                 visibleLabelIndex++
 
                 if (!label.visible) {

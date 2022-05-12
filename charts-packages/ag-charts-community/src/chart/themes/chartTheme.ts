@@ -102,7 +102,6 @@ export class ChartTheme {
                 width: 1,
                 size: 6,
                 color: 'rgb(195, 195, 195)',
-                count: 10
             },
             gridStyle: [{
                 stroke: 'rgb(219, 219, 219)',
