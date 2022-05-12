@@ -1,4 +1,33 @@
 {
+  "javascript": [
+    {
+      "title": "Getting Started with AG Grid Community",
+      "url": "https://www.youtube.com/watch?v=j-Odsb0EjVo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Community"
+      },
+      "keyPoints": [
+        "Set up Rows and Columns.",
+        "Simple Grid Properties.",
+        "Use Grid's API.",
+        "Listen to Grid Events."
+      ],
+      "runningTime": "6:43"
+    },
+    {
+      "title": "Getting Started with AG Grid Enterprise",
+      "url": "https://www.youtube.com/watch?v=EIkxDliHFYw&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Enterprise"
+      },
+      "keyPoints": [
+        "Configure AG Grid Enterprise."
+      ],
+      "runningTime": "3:21"
+    }
+  ],
   "react": [
     {
       "title": "Getting Started with AG Grid Community",

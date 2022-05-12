@@ -84,12 +84,7 @@
           },
           {
             "title": "Videos",
-            "url": "/videos/",
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ]
+            "url": "/videos/"
           }
         ]
       },
