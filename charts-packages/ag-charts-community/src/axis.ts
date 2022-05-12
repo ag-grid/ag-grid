@@ -91,7 +91,7 @@ export class AxisLabel {
      * The value of this config is used as the angular offset/deflection
      * from the default rotation.
      */
-    rotation: number = 0;
+    rotation?: number = undefined;
 
     /**
      * If specified and axis labels may collide, they are rotated to reduce collisions. If the
@@ -420,7 +420,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
-        const labelRotation = normalizeAngle360(toRadians(label.rotation));
+        const labelRotation = label.rotation ? normalizeAngle360(toRadians(label.rotation)) : 0;
         const parallelLabels = label.parallel;
         let labelAutoRotation = 0;
 
@@ -521,7 +521,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             let totalLength = 0;
             let rotate = false;
             const lastIdx = bboxes.size - 1;
-            const padding = 10;
+            const padding = 12;
             for (let [i, bbox] of bboxes.entries()) {
                 const divideBy = (i === 0 && halfFirstLabelLength) || (i === lastIdx && halfLastLabelLength) ? 2 : 1;
                 const length = useWidth ? bbox.width / divideBy : bbox.height / divideBy;
@@ -540,7 +540,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let { totalLength: totalLabelLength, rotate } = calculateLabelsLength(labelBboxes, useWidth);
 
         this._labelAutoRotated = false;
-        if (labelRotation === undefined && label.autoRotate === true && rotate) {
+        if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
