@@ -16,3 +16,6 @@
 @use "./parts/charts";
 @use "./parts/native-inputs";
 @use "./parts/date-time";
+@use "ag";
+
+@include ag.icon-classes();

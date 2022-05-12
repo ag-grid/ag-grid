@@ -24,15 +24,28 @@
     @return $glyph;
 }
 
-@mixin embed-icon-font($font-name) {
-    @if ag-param(icons-data) {
-        @at-root {
-            @font-face {
-                font-family: '#{ag-param(icon-font-family)}';
-                src: ag-param(icons-data);
-                font-weight: normal;
-                font-style: normal;
+@mixin icon-classes() {
+    .ag-icon {
+        @include icon();
+    }
+
+    @each $icon in map.keys($icon-font-codes) {
+        .ag-icon-#{$icon} {
+            &::before {
+                content: icon-char($icon);
             }
         }
     }
-}
+
+    .ag-icon-row-drag::before {
+        content: icon-char('grip');
+    }
+
+    .ag-left-arrow::before {
+        content: icon-char('left');
+    }
+
+    .ag-right-arrow::before {
+        content: icon-char('right');
+    }
+}  
