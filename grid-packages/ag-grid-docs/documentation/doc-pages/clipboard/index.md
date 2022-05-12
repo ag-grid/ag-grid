@@ -29,6 +29,11 @@ Headers can also be included when copying to clipboard using <kbd>Ctrl</kbd>+<kb
 When row selection is enabled the copy shortcut will copy the selected row, instead of the focused cell. Depending on your use case, you may wish to
 ignore copying rows and copy the focused cell. To do this you can enable the option `gridOptions.suppressCopyRowToClipboard=true`.
 
+When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it
+impossible for users to copy rows. Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` will make it possible
+to copy rows when only a single cell is selected via range selection. This behaviour is not enabled by default since it can
+be confusing for the copy behaviour to change depending on how much is selected.
+
 ### Copy via the API
 You can use the Grid API methods: `copySelectedRowsToClipboard(...)` and `copySelectedRangeToClipboard(...)`
 to copy rows or ranges respectively, these API calls take optional parameters to enable copying column and group headers.
