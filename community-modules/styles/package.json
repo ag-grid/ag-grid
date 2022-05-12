@@ -1,0 +1,45 @@
+{
+  "name": "@ag-grid-community/styles",
+  "version": "27.2.1",
+  "description": "AG Grid Styles and Themes",
+  "main": "main.scss",
+  "files": [
+    "*.css",
+    "*.scss",
+    "*.woff2"
+  ],
+  "scripts": {
+    "build": "sass --no-source-map --load-path src/internal src:.",
+    "build-prod": "npm run build -- --no-error-css",
+    "test": "npm run lint:scss && npm run build-prod && npm run lint:css",
+    "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
+    "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
+    "watch": "npm run build; npm run build -- --watch",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "update-icon-fonts": "cd icon-fonts && npm i && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "style",
+    "theme"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
+  "devDependencies": {
+    "@vusion/webfonts-generator": "^0.8.0",
+    "postcss-scss": "^4.0.4",
+    "sass": "^1.51.0",
+    "stylelint": "^14.8.2",
+    "stylelint-csstree-validator": "^2.0.0",
+    "stylelint-scss": "^4.2.0"
+  }
+}

@@ -1,0 +1,38 @@
+@use "sass:string";
+@use "sass:map";
+@use "./icon-font-codes" as *;
+
+@mixin icon() {
+    font-family: var(--ag-icon-font-family);
+    font-size: var(--ag-icon-size);
+    line-height: var(--ag-icon-size);
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    
+    // Better Font Rendering
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@function icon-char($name) {
+    $glyph: map.get($icon-font-codes, $name);
+    @if not $glyph {
+        @error "No such icon: #{$name}";
+    }
+    @return $glyph;
+}
+
+@mixin embed-icon-font($font-name) {
+    @if ag-param(icons-data) {
+        @at-root {
+            @font-face {
+                font-family: '#{ag-param(icon-font-family)}';
+                src: ag-param(icons-data);
+                font-weight: normal;
+                font-style: normal;
+            }
+        }
+    }
+}
