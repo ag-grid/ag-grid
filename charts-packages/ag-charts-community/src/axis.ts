@@ -576,7 +576,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.rotation = autoRotation + labelRotation + labelAutoRotation;
         });
 
-        if (availableRange > 1 && totalLabelLength > availableRange) {
+        if (totalLabelLength > availableRange) {
             const isContinuous = scale instanceof ContinuousScale;
 
             const averageLabelLength = totalLabelLength / labelCount;
