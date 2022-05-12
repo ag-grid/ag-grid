@@ -1,21 +1,26 @@
-@use "./base-variables";
-@use "./parts/wrapper";
-@use "./parts/common-structural";
-@use "./parts/print-structural";
-@use "./parts/reset";
-@use "./parts/widgets";
-@use "./parts/grid-layout";
-@use "./parts/grid-borders";
-@use "./parts/menu";
-@use "./parts/sidebar";
-@use "./parts/filter-tool-panel";
-@use "./parts/columns-tool-panel";
-@use "./parts/header";
-@use "./parts/footer";
-@use "./parts/column-drop";
-@use "./parts/charts";
-@use "./parts/native-inputs";
-@use "./parts/date-time";
-@use "ag";
 
-@include ag.icon-classes();
+@use "ag";
+@use "sass:meta";
+@use "sass:color";
+
+@mixin emit-styles() {
+    @include ag.icon-styles();
+    @include meta.load-css("./base-variables");
+    @include meta.load-css("./parts/wrapper");
+    @include meta.load-css("./parts/common-structural");
+    @include meta.load-css("./parts/print-structural");
+    @include meta.load-css("./parts/reset");
+    @include meta.load-css("./parts/widgets");
+    @include meta.load-css("./parts/grid-layout");
+    @include meta.load-css("./parts/grid-borders");
+    @include meta.load-css("./parts/menu");
+    @include meta.load-css("./parts/sidebar");
+    @include meta.load-css("./parts/filter-tool-panel");
+    @include meta.load-css("./parts/columns-tool-panel");
+    @include meta.load-css("./parts/header");
+    @include meta.load-css("./parts/footer");
+    @include meta.load-css("./parts/column-drop");
+    @include meta.load-css("./parts/charts");
+    @include meta.load-css("./parts/native-inputs");
+    @include meta.load-css("./parts/date-time");
+}

@@ -16,6 +16,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+// Get the glyph for a named icon
 @function icon-char($name) {
     $glyph: map.get($icon-font-codes, $name);
     @if not $glyph {
@@ -24,7 +25,8 @@
     @return $glyph;
 }
 
-@mixin icon-classes() {
+// Emit styles for icons e.g. <span class="ag-icon ag-icon-grip">
+@mixin icon-styles() {
     .ag-icon {
         @include icon();
     }

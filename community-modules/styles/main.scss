@@ -5,32 +5,101 @@
 //
 
 @use "sass:map";
+@use "sass:list";
 @use "sass:meta";
 
 // Note: some customers may @import rather than @use this file, which will
 // cause all definitions to be merged into their global namespace,
 // so prefix all definitions with "ag-" or "-ag-" for private items
 
-@mixin ag-theme-alpine($params) {
+// Emit styles for the grid. This mixin validates the parameters passed to it,
+// converts the parameters to CSS variables, and combines all the necessary CSS
+// files for the grid and selected theme.
+// See TODO: get URL
+@mixin ag-grid-styles($params) {
+    $theme: map.get($params, "theme");
+    $theme: "alpine" !default;
+    $params: map.remove($params, "theme");
+    
     @include meta.load-css("./ag-grid.css");
-    @include meta.load-css("./ag-theme-alpine.css");
-    @include ag-validate-params($params, (alpine-active-color: "color"));
-    .ag-theme-alpine {
-        @include ag-params-variables($params);
+    @include meta.load-css("./ag-theme-#{$theme}.css");
+    
+    .ag-theme-#{$theme} {
+        @include ag-grid-variables($params, $theme);
     }
 }
 
-@mixin ag-theme-alpine-dark($params) {
-    @include meta.load-css("./ag-grid.css");
-    @include meta.load-css("./ag-theme-alpine.css");
-    @include ag-validate-params($params, (alpine-active-color: "color"));
-    .ag-theme-alpine-dark {
-        @include ag-params-variables($params);
+@mixin ag-grid-variables($params, $theme: null) {
+    @include -ag-validate-params($params, $theme);
+    
+    @if $theme {
+        $theme-color-blends: meta.get-function("-ag-theme-#{$theme}-color-blends");
+        @if $theme-color-blends {
+            $params: meta.call($theme-color-blends, $params);
+        }
+    }
+    $params: ag-base-color-blends($params);
+
+    @each $name, $value in $params {
+
     }
 }
 
-@mixin ag-theme-material($params) {
-    @import "";
+//
+// PRIVATE IMPLEMENTATION
+//
+
+$-ag-theme-variables: (
+    alpine: (alpine-active-color: "color"),
+    balham: (balham-active-color: "color"),
+    material: (material-primary-color: "color", material-accent-color: "color"),
+    classic: (),
+);
+
+$-ag-themes: map.keys($-ag-theme-variables);
+
+@mixin -ag-validate-theme($theme) {
+    @if list.index($-ag-themes, $theme) {
+        @error "Invalid theme #{$theme}, expected one of #{$-ag-themes}";
+    }
+}
+
+@function -ag-base-color-blends($params) {
+    $params: -ag-param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
+    $params: -ag-param-default($params, modal-overlay-background-color,     background-color,                 $opacity: 0.66);
+    $params: -ag-param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.5);
+    $params: -ag-param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
+    $params: -ag-param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
+    $params: -ag-param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
+    $params: -ag-param-default($params, border-color,                       foreground-color,                 $opacity: 0.25);
+    $params: -ag-param-default($params, header-column-separator-color,      border-color,                     $opacity: 0.5);
+    $params: -ag-param-default($params, header-column-resize-handle-color,  border-color,                     $opacity: 0.5);
+    $params: -ag-param-default($params, input-disabled-border-color,        input-border-color,               $opacity: 0.3);
+    @return $params;
+}
+
+@function -ag-theme-alpine-color-blends($params) {
+    $params: -ag-param-default($params, alpine-active-color,          alpine-active-color,                 $opacity: 0.5);
+
+
+    @return $params;
+}
+
+@function -ag-param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
+    Next up: allow $source to be a color
+    @if map.has-key($params, $target) or not map.has-key($params, $source) {
+        @return $params;
+    }
+    $value: map.get($params, $source);
+    @if $opacity != null {
+        $value: color.change($value, $alpha: color.alpha($value) * $opacity);
+    }
+    @if $self-overlay != null {
+        // this formula produces the same opacity value as overlaying the color on top
+        // of itself $self-overlay times
+        $value: color.change($value, $alpha: 1-(math.pow(1 - color.alpha($value), $self-overlay)));
+    }
+    @return map.set($params, $target, $value);
 }
 
 $-ag-param-type-descriptions: (
@@ -149,8 +218,14 @@ $-ag-param-types: (
     material-accent-color: "color",
 );
 
-@mixin ag-validate-params($params, $extra-param-types: ()) {
-    $param-types: map.merge($-ag-param-types, $extra-param-types);
+@mixin -ag-validate-params($params, $theme: null) {
+    $theme-variables: ();
+    @if $theme {
+        @include -ag-validate-theme($theme);
+        $theme-variables: map.get($-ag-theme-variables, $theme);
+    }
+
+    $param-types: map.merge($-ag-param-types, $theme-variables);
     $errors: ();
     @each $name, $value in $params {
         $expected-type: map.get($param-types, $name);
@@ -177,28 +252,34 @@ $-ag-param-types: (
     }
 }
 
-
 @function -ag-validate-color($name, $value) {
     @return meta.type-of($value) == "color";
 }
 
 @function -ag-validate-size($name, $value) {
+    // TODO implement me
     @return true;
 }
 
 @function -ag-validate-border($name, $value) {
+    // TODO implement me
     @return true;
 }
 
 @function -ag-validate-border-style($name, $value) {
+    // TODO implement me
+    // Note: check for style, number and color in any order
     @return true;
 }
 
 @function -ag-validate-duration($name, $value) {
+    // TODO implement me
     @return true;
 }
 
 @function -ag-validate-border-style-and-size($name, $value) {
+    // TODO implement me
+    // Note: check for style and number in any order
     @return true;
 }
 
