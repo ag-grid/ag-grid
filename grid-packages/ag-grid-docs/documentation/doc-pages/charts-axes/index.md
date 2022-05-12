@@ -148,6 +148,37 @@ The example below demonstrates how the `count` property of the number axis can b
 
 The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding`, `rotation` and `autoRotate` properties respectively.
 
+### Label Rotation & Skipping
+
+Label rotation allows a trade-off to be made between space occupied by the axis, series area, and readability of the axis
+labels.
+
+Three rotation approaches are available:
+- No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
+- Setting a fixed rotation from the axis via the `rotation` property.
+- Enabling automatic rotation via the `autoRotate` property, and optionally specifying a rotation angle via the
+  `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
+
+Label skipping is performed automatically when there is a high likelihood of collisions.
+
+[[note]]
+| Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
+| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
+
+If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
+Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
+
+The following example demonstrates label rotation and skipping:
+- There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available
+  space.
+- Initially both axes have defaults applied. The X-axis is a category axis so `autoRotate` is enabled by default.
+- The first row of buttons at the top change the configuration of both axes to allow all rotation behaviours to be
+  viewed.
+- The second row of buttons allow switching between X-axis types and labels.
+
+<chart-example title='Axis Label Rotation & Skipping' name='axis-label-rotation' type='generated'></chart-example>
+
+
 ### Label Formatting
 
 A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision, for example.
@@ -308,36 +339,6 @@ from the default `agCharts.time.month` interval by using its `every` method. Swi
 will make the time axis place ticks every other month.
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
-
-### Label Rotation & Skipping
-
-Label rotation allows a trade-off to be made between space occupied by the axis, series area, and readability of the axis
-labels.
-
-Three rotation approaches are available:
-- No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
-- Setting a fixed rotation from the axis via the `rotation` property.
-- Enabling automatic rotation via the `autoRotate` property, and optionally specifying a rotation angle via the 
-  `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
-
-Label skipping is performed automatically when we decide there is a high likelihood of collisions.
-
-[[note]]
-| Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
-| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
-
-If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
-Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
-
-The following example demonstrates label rotation and skipping:
-- There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available
-  space.
-- Initially both axes have defaults applied. The X-axis is a category axis so `autoRotate` is enabled by default.
-- The first row of buttons at the top change the configuration of both axes to allow all rotation behaviours to be
-  viewed.
-- The second row of buttons allow switching between X-axis types and labels.
-
-<chart-example title='Axis Label Rotation & Skipping' name='axis-label-rotation' type='generated'></chart-example>
 
 ## Axis Grid Lines
 
