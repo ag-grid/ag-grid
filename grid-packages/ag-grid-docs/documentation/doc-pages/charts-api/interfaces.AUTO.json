@@ -8,6 +8,10 @@
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
+  "TickCount": {
+    "meta": { "isTypeAlias": true },
+    "type": "number | CountableTimeInterval"
+  },
   "AxisLabelFormatterParams": {
     "meta": {},
     "type": {

@@ -4,6 +4,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } }
   },
+  "TickCount": {},
   "AxisLabelFormatterParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
     "index": { "type": { "returnType": "number", "optional": false } },
