@@ -328,8 +328,10 @@ export class AgGridAngular implements AfterViewInit {
     /** Specify the delimiter to use when copying to clipboard. 
      * Default: `\t`     */
     @Input() public clipboardDelimiter: string | undefined = undefined;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
+    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false`     */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
+    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false`     */
+    @Input() public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false`     */
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     /** Set to `true` to turn off paste operations within the grid.     */
@@ -1248,6 +1250,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
+    static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     // @END@
 }
 

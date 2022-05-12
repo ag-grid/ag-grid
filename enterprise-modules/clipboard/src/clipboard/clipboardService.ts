@@ -506,13 +506,17 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const shouldCopyRows = !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // Copy priority is Range > Row > Focus
-        if (this.rangeService && !this.rangeService.isEmpty()) {
+        if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange()) {
             this.copySelectedRangeToClipboard(copyParams);
         } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
             this.copySelectedRowsToClipboard(copyParams);
         } else if (this.focusService.isAnyCellFocused()) {
             this.copyFocusedCellToClipboard(copyParams);
         }
+    }
+
+    private shouldSkipSingleCellRange(): boolean {
+        return this.gridOptionsWrapper.isSuppressCopySingleCellRanges() && !this.rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {

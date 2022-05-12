@@ -1001,6 +1001,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressCopyRowsToClipboard);
     }
 
+    public isSuppressCopySingleCellRanges() {
+        return isTrue(this.gridOptions.suppressCopySingleCellRanges);
+    }
+
     public isCopyHeadersToClipboard() {
         return isTrue(this.gridOptions.copyHeadersToClipboard);
     }

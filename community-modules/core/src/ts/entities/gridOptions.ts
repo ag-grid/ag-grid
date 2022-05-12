@@ -137,8 +137,10 @@ export interface GridOptions {
      * Default: `\t`
     */
     clipboardDelimiter?: string;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
+    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */
     suppressCopyRowsToClipboard?: boolean;
+    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */
+    suppressCopySingleCellRanges?: boolean;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */
     suppressLastEmptyLineOnPaste?: boolean;
     /** Set to `true` to turn off paste operations within the grid. */
