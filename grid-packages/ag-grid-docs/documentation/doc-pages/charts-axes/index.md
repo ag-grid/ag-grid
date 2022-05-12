@@ -317,7 +317,7 @@ labels.
 Three rotation approaches are available:
 - No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
 - Setting a fixed rotation from the axis via the `rotation` property.
-- Enabling automatic rotation via the `autoRotate` property, and optionally specifying an angle from the axis via the 
+- Enabling automatic rotation via the `autoRotate` property, and optionally specifying a rotation angle via the 
   `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
 
 Label skipping is performed automatically when we decide there is a high likelihood of collisions.
