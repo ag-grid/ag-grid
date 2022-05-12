@@ -89,7 +89,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 padding: 5,
-                rotation: 0,
+                rotation: undefined,
                 color: 'rgb(87, 87, 87)',
                 formatter: undefined,
                 autoRotate: false
