@@ -540,7 +540,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let { totalLength: totalLabelLength, rotate } = calculateLabelsLength(labelBboxes, useWidth);
 
         this._labelAutoRotated = false;
-        if (!labelRotation && label.autoRotate === true && rotate) {
+        if (labelRotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
