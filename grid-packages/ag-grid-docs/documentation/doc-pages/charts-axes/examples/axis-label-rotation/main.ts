@@ -2,21 +2,19 @@ import { AgCartesianChartOptions, AgBarSeriesOptions } from 'ag-charts-community
 import * as agCharts from 'ag-charts-community'
 import { getData } from './data';
 
-const byYearData = getData();
-
-let columnSeries: AgBarSeriesOptions = {
-  type: 'column',
-  xKey: 'year',
-  yKey: 'value',
-};
 const options: AgCartesianChartOptions = {
   container: document.getElementById('myChart'),
-  data: byYearData,
-  series: [columnSeries],
+  data: getData(),
+  series: [{
+    type: 'column',
+    xKey: 'year',
+    yKey: 'value',
+  }],
   axes: [
     {
       type: 'category',
       position: 'bottom',
+      label: {},
     },
     {
       type: 'number',
@@ -36,60 +34,52 @@ const options: AgCartesianChartOptions = {
 const chart = agCharts.AgChart.create(options);
 
 function reset() {
-  const element = document.getElementById('myChart')!;
-  element.style.width = '';
-  element.style.height = '';
+  const element = document.getElementsByClassName('ag-chart-wrapper')![0]! as HTMLElement;
+  element.style.width = '100%';
+  element.style.height = '100%';
 
-  options.axes?.forEach((axis) => {
-    axis.label = {
-      ...(axis.label || {}),
-    };
-    delete axis.label['rotation'];
-    delete axis.label['autoRotate'];
-  });
-  columnSeries.xKey = 'year';
+  delete options.axes![0].label!.rotation;
+  delete options.axes![0].label!.autoRotate;
+  delete options.axes![1].label!.rotation;
+  delete options.axes![1].label!.autoRotate;
+
+  options.series![0].xKey = 'year';
   agCharts.AgChart.update(chart, options);
 }
 
 function disableRotation() {
-  options.axes?.forEach((axis) => {
-    axis.label = {
-      ...(axis.label || {}),
-      autoRotate: false,
-    };
-    delete axis.label['rotation'];
-  });
+  delete options.axes![0].label!.rotation;
+  delete options.axes![1].label!.rotation;
+  options.axes![0].label!.autoRotate = false;
+  options.axes![1].label!.autoRotate = false;
+
   agCharts.AgChart.update(chart, options);
 }
 
 function fixedRotation() {
-  options.axes?.forEach((axis) => {
-    axis.label = {
-      ...(axis.label || {}),
-      rotation: 45,
-      autoRotate: false,
-    };
-  });
+  options.axes![0].label!.rotation = 45;
+  options.axes![1].label!.rotation = 45;
+  options.axes![0].label!.autoRotate = false;
+  options.axes![1].label!.autoRotate = false;
+
   agCharts.AgChart.update(chart, options);
 }
 
 function autoRotation() {
-  options.axes?.forEach((axis) => {
-    axis.label = {
-      ...(axis.label || {}),
-      autoRotate: true,
-    };
-    delete axis.label['rotation'];
-  });
+  delete options.axes![0].label!.rotation;
+  delete options.axes![1].label!.rotation;
+  options.axes![0].label!.autoRotate = true;
+  options.axes![1].label!.autoRotate = true;
+
   agCharts.AgChart.update(chart, options);
 }
 
 function uniformLabels() {
-  columnSeries.xKey = 'year';
+  options.series![0].xKey = 'year';
   agCharts.AgChart.update(chart, options);
 }
 
 function irregularLabels() {
-  columnSeries.xKey = 'country';
+  options.series![0].xKey = 'country';
   agCharts.AgChart.update(chart, options);
 }

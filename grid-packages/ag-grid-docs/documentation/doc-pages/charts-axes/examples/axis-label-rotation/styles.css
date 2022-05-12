@@ -15,6 +15,9 @@
 
 #myChart {
     height: 100%;
+}
+
+.ag-chart-wrapper {
     resize: both;
     overflow: auto;
     padding: 20px;
