@@ -82,7 +82,7 @@
 |
 | ## Getting Started with Community Video
 |
-| <video-section id="Pr__B6HM_s4" title="Video Tutorial for Getting Started with AG Grid Community">
+| <video-section id="j-Odsb0EjVo" title="Video Tutorial for Getting Started with AG Grid Community">
 | <p>
 |     In this video we detail the steps to get an application working with AG Grid Community. We show how to set up Rows and Columns, set some Grid Properties, use the Grid's API and listen to Grid events.
 | </p>
@@ -92,7 +92,7 @@
 |
 | ## Getting Started with Enterprise Video
 |
-| <video-section id="pKUhYE1VTP4" title="Getting Started with AG Grid Enterprise">
+| <video-section id="EIkxDliHFYw" title="Getting Started with AG Grid Enterprise">
 | <p>
 |     The video then follows showing how to get started with <a href="../licensing/">AG Grid Enterprise</a>. Please take a look at Enterprise, you don't need a license to trial AG Grid Enterprise, you only need to get in touch if you decide to use it in your project.
 | </p>
