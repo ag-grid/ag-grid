@@ -20,12 +20,12 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
 
 type VersionParts = { major: number, minor: number, patch: number };
 function versionParts(version: string): VersionParts {
-    if (!/^([:digits:]{1,2}\.){2}[:digits:]{1}$/.test(version)) {
+    const split = typeof version === 'string' ?
+        version.split('.').map(v => Number(v)) : 
+        [];
+    if (split.length !== 3 || split.some((v) => isNaN(v))) {
         throw new Error('AG Grid - Illegal version string: ' + version);
     }
-
-    const split = version.split('.')
-        .map(v => Number(v));
 
     return {
         major: split[0],
