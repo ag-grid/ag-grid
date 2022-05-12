@@ -89,7 +89,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 padding: 5,
-                rotation: 0,
+                rotation: undefined,
                 color: 'rgb(87, 87, 87)',
                 formatter: undefined,
                 autoRotate: false
@@ -102,7 +102,6 @@ export class ChartTheme {
                 width: 1,
                 size: 6,
                 color: 'rgb(195, 195, 195)',
-                count: 10
             },
             gridStyle: [{
                 stroke: 'rgb(219, 219, 219)',

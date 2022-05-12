@@ -199,7 +199,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        const labelRotation = normalizeAngle360(toRadians(this.label.rotation));
+        const labelRotation = this.label.rotation? normalizeAngle360(toRadians(this.label.rotation)) : 0;
 
         group.translationX = this.translation.x;
         group.translationY = this.translation.y;
