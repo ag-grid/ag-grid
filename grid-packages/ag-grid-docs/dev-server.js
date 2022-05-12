@@ -777,8 +777,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             launchGatsby();
 
-            console.log("PHP available on: https://localhost:8080 (example: https://localhost:8080/example.php)");
-
             done();
         });
 };
