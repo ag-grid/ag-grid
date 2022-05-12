@@ -84,7 +84,7 @@ Object {
         "fontWeight": "bold",
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "#326baf",
@@ -419,7 +419,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -429,7 +429,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -473,7 +472,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -483,7 +482,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -526,7 +524,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -536,7 +534,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -842,7 +839,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -882,7 +878,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -892,7 +888,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -1435,7 +1430,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -1445,7 +1440,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -1485,7 +1479,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -1495,7 +1489,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -1746,7 +1739,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -1756,7 +1749,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -1796,7 +1788,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -1806,7 +1798,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -2017,7 +2008,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -2057,7 +2047,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -2067,7 +2057,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -2446,7 +2435,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -2456,7 +2445,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -2496,7 +2484,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -2506,7 +2494,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3012,7 +2999,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3022,7 +3009,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3062,7 +3048,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3072,7 +3058,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3292,7 +3277,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3302,7 +3287,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3342,7 +3326,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3352,7 +3336,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3564,7 +3547,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": undefined,
@@ -3574,7 +3557,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "black",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3606,7 +3588,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": undefined,
@@ -3616,7 +3598,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "black",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3816,7 +3797,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3829,7 +3810,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -3869,7 +3849,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -3882,7 +3862,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4082,7 +4061,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4092,7 +4071,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4132,7 +4110,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4142,7 +4120,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4382,7 +4359,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4392,7 +4369,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4432,7 +4408,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4442,7 +4418,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4685,7 +4660,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4695,7 +4670,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -4735,7 +4709,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -4745,7 +4719,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -5005,7 +4978,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -5015,7 +4988,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -5055,7 +5027,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -5065,7 +5037,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -5279,7 +5250,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -5289,7 +5260,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -5329,7 +5299,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -5342,7 +5312,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -6366,7 +6335,7 @@ Object {
         "format": ",.0f",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -6376,7 +6345,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -6416,7 +6384,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -6426,7 +6394,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -6789,7 +6756,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -6799,7 +6766,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -6840,7 +6806,7 @@ Object {
         "format": "#{.0f}%",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -6850,7 +6816,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7113,7 +7078,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7154,7 +7118,7 @@ Object {
         "format": ".0%",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -7164,7 +7128,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7411,7 +7374,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -7421,7 +7384,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7462,7 +7424,7 @@ Object {
         "format": "#{.0f}%",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -7472,7 +7434,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7735,7 +7696,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -7745,7 +7706,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -7785,7 +7745,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -7795,7 +7755,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -8202,7 +8161,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8212,7 +8171,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -8252,7 +8210,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8262,7 +8220,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -8643,7 +8600,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8653,7 +8610,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -8693,7 +8649,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8703,7 +8659,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -8904,7 +8859,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8957,7 +8912,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -8967,7 +8922,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -9402,7 +9356,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9412,7 +9366,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -9452,7 +9405,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9462,7 +9415,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -9663,7 +9615,7 @@ Object {
         "format": "%b",
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9673,7 +9625,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -9713,7 +9664,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9723,7 +9674,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -9984,7 +9934,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -9994,7 +9944,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -10034,7 +9983,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -10044,7 +9993,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -10293,7 +10241,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -10333,7 +10280,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -10343,7 +10290,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -10602,7 +10548,7 @@ Object {
         "fontWeight": undefined,
         "formatter": undefined,
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -10612,7 +10558,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },
@@ -10652,7 +10597,7 @@ Object {
         "fontWeight": undefined,
         "formatter": [Function],
         "padding": 5,
-        "rotation": 0,
+        "rotation": undefined,
       },
       "line": Object {
         "color": "rgb(195, 195, 195)",
@@ -10662,7 +10607,6 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
-        "count": 10,
         "size": 6,
         "width": 1,
       },

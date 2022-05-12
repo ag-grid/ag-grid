@@ -5,6 +5,7 @@
     "clean": "rimraf dist .hash",
     "ng": "npx @angular/cli",
     "build": "npx @angular/cli build --prod && npm run hash",
+    "build-prod": "npm run build",
     "test:e2e": "npx @angular/cli test --watch false --browsers ChromeHeadless",
     "lint": "npx @angular/cli lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"

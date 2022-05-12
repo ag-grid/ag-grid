@@ -1,10 +1,21 @@
-import { _, Autowired, Bean, BeanStub, ColumnModel, GridApi, RowNode } from "@ag-grid-community/core";
+import {
+    _,
+    Autowired,
+    Bean,
+    BeanStub,
+    Column,
+    ColumnModel,
+    GridApi,
+    RowNode,
+    ValueService
+} from "@ag-grid-community/core";
 
 @Bean("chartCrossFilterService")
 export class ChartCrossFilterService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('valueService') private readonly valueService: ValueService;
 
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
@@ -18,7 +29,7 @@ export class ChartCrossFilterService extends BeanStub {
         let colId = ChartCrossFilterService.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
-            this.updateFilters(filterModel, event);
+            this.updateFilters(filterModel, event, colId);
         } else {
             console.warn("AG Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
                 "to be defined on the column with id: '" + colId + "'");
@@ -34,7 +45,7 @@ export class ChartCrossFilterService extends BeanStub {
         }
     }
 
-    private updateFilters(filterModel: any, event: any) {
+    private updateFilters(filterModel: any, event: any, colId: string) {
         let dataKey = ChartCrossFilterService.extractFilterColId(event);
         let rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
@@ -43,9 +54,8 @@ export class ChartCrossFilterService extends BeanStub {
 
         let selectedValue = rawValue.toString();
 
-        let filterColId = dataKey.replace('-filtered-out', '');
         if (event.event.metaKey || event.event.ctrlKey) {
-            const existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
+            const existingGridValues = this.getCurrentGridValuesForCategory(colId);
             const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
 
             let updatedValues;
@@ -56,10 +66,10 @@ export class ChartCrossFilterService extends BeanStub {
                 updatedValues.push(selectedValue);
             }
 
-            filterModel[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues);
+            filterModel[colId] = this.getUpdatedFilterModel(colId, updatedValues);
         } else {
             const updatedValues = [selectedValue];
-            filterModel = {[filterColId]: this.getUpdatedFilterModel(filterColId, updatedValues)};
+            filterModel = {[colId]: this.getUpdatedFilterModel(colId, updatedValues)};
         }
 
         this.gridApi.setFilterModel(filterModel);
@@ -73,13 +83,13 @@ export class ChartCrossFilterService extends BeanStub {
         return {filterType: 'set', values: updatedValues};
     }
 
-    private getCurrentGridValuesForCategory(dataKey: any) {
+    private getCurrentGridValuesForCategory(colId: string) {
         let filteredValues: any[] = [];
-        const gridContainsValue = _.includes;
+        const column = this.getColumnById(colId);
         this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (!rowNode.group) {
-                const value = rowNode.data[dataKey] + '';
-                if (!gridContainsValue(filteredValues, value)) {
+                const value = this.valueService.getValue(column, rowNode) + '';
+                if (!filteredValues.includes(value)) {
                     filteredValues.push(value);
                 }
             }
@@ -105,11 +115,14 @@ export class ChartCrossFilterService extends BeanStub {
     }
 
     private getColumnFilterType(colId: any) {
-        let gridColumn = this.columnModel.getGridColumn(colId);
-        if (!gridColumn) { return; }
+        let gridColumn = this.getColumnById(colId);
+        if (gridColumn) {
+            const colDef = gridColumn.getColDef();
+            return colDef.filter != null ? colDef.filter : colDef.filterFramework;
+        }
+    }
 
-        const colDef = gridColumn.getColDef();
-
-        return colDef.filter!=null ? colDef.filter : colDef.filterFramework;
+    private getColumnById(colId: string) {
+        return this.columnModel.getGridColumn(colId) as Column;
     }
 }

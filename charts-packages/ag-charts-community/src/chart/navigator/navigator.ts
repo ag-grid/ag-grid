@@ -98,7 +98,11 @@ export class Navigator {
                     clipSeries = true;
                 }
                 axis.visibleRange = [min, max];
+                const oldLabelAutoRotated = axis.labelAutoRotated;
                 axis.update();
+                if (axis.labelAutoRotated !== oldLabelAutoRotated) {
+                    this.chart.layoutPending = true;
+                }
             }
         });
         chart.seriesRoot.enabled = clipSeries;

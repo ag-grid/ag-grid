@@ -237,7 +237,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         const space = this.inlineProperties.length > 0 ? ' ' : '';
-        return externalSnippet + `<AgGridReact${space}${this.inlineProperties.join(' ')}>${colDefs}\n</AgGridReact>`;
+        return externalSnippet + `<AgGridReact${space}${this.inlineProperties.join(' ')}>${colDefs}</AgGridReact>`;
     }
 
     addComment() {

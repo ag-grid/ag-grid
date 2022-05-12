@@ -46,8 +46,6 @@ export class ComboChartProxy extends CartesianChartProxy {
         }
 
         AgChart.update(this.chart as CartesianChart, options);
-
-        this.updateLabelRotation(params.category.id);
     }
 
     private seriesChanged(params: UpdateChartParams): boolean {

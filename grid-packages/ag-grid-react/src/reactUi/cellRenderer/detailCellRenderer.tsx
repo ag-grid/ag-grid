@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useMemo, useRef, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
 import { CssClasses } from "../utils";
 import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi } from "ag-grid-community";
 import { BeansContext } from "../beansContext";
@@ -17,27 +17,28 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
     const ctrlRef = useRef<IDetailCellRendererCtrl>();
     const eGuiRef = useRef<HTMLDivElement>(null);
 
-    const topClassName = useMemo( ()=> cssClasses.toString() + ' ag-details-row', [cssClasses]);
-    const gridClassName = useMemo( ()=> gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
+    const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
+    const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 
     if (ref) {
-        useImperativeHandle(ref, ()=> ({
-            refresh() {return ctrlRef.current!.refresh();}
-        }));    
+        useImperativeHandle(ref, () => ({
+            refresh() { return ctrlRef.current!.refresh(); }
+        }));
     }
     
-    useEffectOnce( ()=> {
+    useEffectOnce(() => {
         if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
     }, 'propsCheck');
 
-    useEffectOnce( ()=> {
+    useEffectOnce(() => {
         const compProxy: IDetailCellRenderer = {
             addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveDetailGridCssClass: (name: string, on: boolean) => setGridCssClasses(prev => prev.setClass(name, on)),
             setDetailGrid: gridOptions => setDetailGridOptions(gridOptions),
-            setRowData: rowData => setDetailRowData(rowData)
+            setRowData: rowData => setDetailRowData(rowData),
+            getGui: () => eGuiRef.current!
         };
 
         const ctrl = ctrlsFactory.getInstance('detailCellRenderer') as IDetailCellRendererCtrl;
@@ -48,9 +49,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         ctrlRef.current = ctrl;
 
-
-
-        let resizeObserverDestroyFunc: ()=>void;
+        let resizeObserverDestroyFunc: () => void;
 
         if (gridOptionsWrapper.isDetailRowAutoHeight()) {
             const checkRowSizeFunc = () => {
@@ -83,12 +82,9 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
             checkRowSizeFunc();
         }
 
-
-
-
-        
         return () => {
             context.destroyBean(ctrl);
+            resizeObserverDestroyFunc();
         };
     }, 'detailCellRenderer.main');
 
@@ -98,8 +94,8 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
     return (
         <div className={topClassName} ref={eGuiRef}>
-            { 
-                detailGridOptions && 
+            {
+                detailGridOptions &&
                 <AgGridReactUi className={gridClassName} {...detailGridOptions} rowData={detailRowData} setGridApi={ setGridApi }></AgGridReactUi> 
             }
         </div>

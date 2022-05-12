@@ -21,7 +21,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
     const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
-    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses('ag-hidden'));
+    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses('ag-invisible'));
 
     useImperativeHandle(ref, () => {
         return {

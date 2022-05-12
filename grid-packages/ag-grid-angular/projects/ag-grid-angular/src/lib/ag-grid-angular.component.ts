@@ -328,8 +328,10 @@ export class AgGridAngular implements AfterViewInit {
     /** Specify the delimiter to use when copying to clipboard. 
      * Default: `\t`     */
     @Input() public clipboardDelimiter: string | undefined = undefined;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
+    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false`     */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
+    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false`     */
+    @Input() public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false`     */
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     /** Set to `true` to turn off paste operations within the grid.     */
@@ -705,7 +707,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Data to be displayed as pinned bottom rows in the grid.     */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
     /** Sets the row model type. Default: `clientSide`     */
-    @Input() public rowModelType: string | undefined = undefined;
+    @Input() public rowModelType: 'clientSide' | 'infinite' | 'viewport' | 'serverSide' | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
@@ -930,9 +932,9 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    /** Allows you to set the ID for a particular row based on the data and enables immutableData.     */
+    /** Allows setting the ID for a particular row node based on the data.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
-    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost.     */
+    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false`     */
     @Input() public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
@@ -1070,7 +1072,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent> = new EventEmitter<PinnedRowDataChangedEvent>();
     /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property.     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent> = new EventEmitter<RowDataChangedEvent>();
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`.     */
+    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood).     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent> = new EventEmitter<RowDataUpdatedEvent>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed> = new EventEmitter<AsyncTransactionsFlushed>();
@@ -1248,6 +1250,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
+    static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     // @END@
 }
 

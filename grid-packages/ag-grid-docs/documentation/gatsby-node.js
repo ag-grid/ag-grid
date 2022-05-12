@@ -6,9 +6,9 @@
  */
 
 const path = require('path');
-const { createFilePath } = require('gatsby-source-filesystem');
-const { CODES, prefixId } = require('gatsby-source-filesystem/error-utils');
-const { GraphQLString } = require('gatsby/graphql');
+const {createFilePath} = require('gatsby-source-filesystem');
+const {CODES, prefixId} = require('gatsby-source-filesystem/error-utils');
+const {GraphQLString} = require('gatsby/graphql');
 const fs = require('fs-extra');
 const publicIp = require('public-ip');
 const gifFrames = require('gif-frames');
@@ -29,7 +29,7 @@ const showHideEsLintConfigFile = (reporter, hide) => {
 
     if (hide && fs.existsSync(originalFileName)) {
         reporter.info(`Hiding IDE ESLint file...`);
-        fs.moveSync(originalFileName, hiddenFileName, { overwrite: true });
+        fs.moveSync(originalFileName, hiddenFileName, {overwrite: true});
     }
 
     if (!hide && fs.existsSync(hiddenFileName)) {
@@ -41,7 +41,7 @@ const showHideEsLintConfigFile = (reporter, hide) => {
 /**
  * This runs very early in the build lifecycle, to print out information about configuration.
  */
-exports.onPreInit = ({ reporter }) => {
+exports.onPreInit = ({reporter}) => {
     reporter.info("---[ Initial configuration ]----------------------------------------------------");
 
     Object.keys(process.env).filter(key => key.startsWith('GATSBY_')).forEach(key => {
@@ -55,7 +55,7 @@ exports.onPreInit = ({ reporter }) => {
  * Once the bootstrap is finished, move the IDE ESLint file before the Gatsby build, so that Gatsby will use its defaults.
  * See .eslintrc.js for more information.
  */
-exports.onPostBootstrap = ({ reporter }) => {
+exports.onPostBootstrap = ({reporter}) => {
     showHideEsLintConfigFile(reporter, true);
 };
 
@@ -64,7 +64,7 @@ exports.onPostBootstrap = ({ reporter }) => {
  * or a production build.
  * See .eslintrc.js for more information.
  */
-exports.onPostBuild = exports.onCreateDevServer = ({ reporter }) => {
+exports.onPostBuild = exports.onCreateDevServer = ({reporter}) => {
     showHideEsLintConfigFile(reporter, false);
 
     // gatsby-plugin-sitemap generates sitemap-index.xml, but most tools expect sitemap.xml
@@ -82,7 +82,7 @@ exports.onPostBuild = exports.onCreateDevServer = ({ reporter }) => {
  * problems if we included it. It does mean that example files could be held in a browser cache though. We also use
  * this hook to produce still images for GIFs, which are loaded before the GIF is played.
  */
-exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = ``, reporter }) => {
+exports.setFieldsOnGraphQLNodeType = ({type, getNodeAndSavePathDependency, pathPrefix = ``, reporter}) => {
     if (type.name !== `File`) {
         return {};
     }
@@ -114,7 +114,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                     fs.copySync(
                         details.absolutePath,
                         publicPath,
-                        { dereference: true },
+                        {dereference: true},
                         err => {
                             if (err) {
                                 reporter.panic(
@@ -167,9 +167,9 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
  * This is called when nodes are created. We add the path field onto Markdown nodes which allows us to then find the
  * relevant file when generating pages. We also load content for JSON files so that it can be accessed.
  */
-exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { createNodeField } }) => {
+exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createNodeField}}) => {
     if (node.internal.type === 'MarkdownRemark') {
-        const filePath = createFilePath({ node, getNode });
+        const filePath = createFilePath({node, getNode});
 
         createNodeField({
             node,
@@ -185,7 +185,7 @@ exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { creat
 /**
  * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
  */
-exports.onCreatePage = ({ page, actions: { createPage } }) => {
+exports.onCreatePage = ({page, actions: {createPage}}) => {
     if (page.path.match(/example-runner/)) {
         page.context.layout = 'bare'; // used in layouts/index.js
         createPage(page);
@@ -217,7 +217,7 @@ const createHomePages = createPage => {
         createPage({
             path: `/${framework}-data-grid/`,
             component: homePage,
-            context: { frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid` }
+            context: {frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid`}
         });
     });
 
@@ -256,7 +256,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
     }
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
-        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
+        const {frontmatter: {frameworks: specifiedFrameworks}, fields: {path: srcPath}} = node;
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
         const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
@@ -265,7 +265,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
             createPage({
                 path: convertToFrameworkUrl(srcPath, framework),
                 component: docPageTemplate,
-                context: { frameworks, framework, srcPath, pageName }
+                context: {frameworks, framework, srcPath, pageName}
             });
         });
     });
@@ -279,11 +279,11 @@ const createChartGalleryPages = createPage => {
     const categories = Object.keys(chartGallery);
 
     const namesByCategory = categories.reduce(
-        (names, c) => names.concat(Object.keys(chartGallery[c]).map(k => ({ category: c, name: k }))),
+        (names, c) => names.concat(Object.keys(chartGallery[c]).map(k => ({category: c, name: k}))),
         []);
 
-    namesByCategory.forEach(({ category, name }, i) => {
-        const { description } = chartGallery[category][name];
+    namesByCategory.forEach(({category, name}, i) => {
+        const {description} = chartGallery[category][name];
 
         let previous = i > 0 ? namesByCategory[i - 1].name : null;
         let next = i < namesByCategory.length - 1 ? namesByCategory[i + 1].name : null;
@@ -292,7 +292,7 @@ const createChartGalleryPages = createPage => {
             createPage({
                 path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
-                context: { frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview' }
+                context: {frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview'}
             });
         });
     });
@@ -301,7 +301,7 @@ const createChartGalleryPages = createPage => {
 /**
  * This allows us to generate pages for the website.
  */
-exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
+exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
     if (!process.env.GATSBY_HOST) {
         process.env.GATSBY_HOST =
             process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
@@ -315,8 +315,42 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
 /**
  * This allows us to customise the webpack configuration.
  */
-exports.onCreateWebpackConfig = ({ actions, getConfig }) => {
-    actions.setWebpackConfig({
+exports.onCreateWebpackConfig = ({actions, getConfig}) => {
+    const frameworks = ['angular', 'react', 'vue'];
+    const frameworkRequest = request => {
+        return frameworks.some(framework => request.includes(framework))
+    }
+    class AgEs5CjsResolver {
+        constructor(source, target) {
+            this.source = source || 'resolve';
+            this.target = target || 'resolve';
+        }
+
+        apply(resolver) {
+            var target = resolver.ensureHook(this.target);
+            resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
+                const req = request.request;
+                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+                    !req.includes('css') &&
+                    !frameworkRequest(req)) {
+
+                    // point the request to the commonjs es5 dir - this is what gets updated on local build changes
+                    const newRequest = `${__dirname}/node_modules/${req}/dist/cjs/es5/main.js`;
+
+                    const obj = {
+                        path: request.path,
+                        request: newRequest,
+                        query: request.query,
+                        directory: request.directory
+                    };
+                    return resolver.doResolve(target, obj, null, resolveContext, callback);
+                }
+                callback();
+            });
+        }
+    }
+
+    const newConfig = {
         /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
          * site to load at runtime by providing a dummy fs */
         node: {
@@ -326,10 +360,15 @@ exports.onCreateWebpackConfig = ({ actions, getConfig }) => {
             // add src folder as default root for imports
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
-    });
+    };
+    if(isDevelopment()) {
+        // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
+        newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
+    }
+    actions.setWebpackConfig(newConfig);
 
     const config = getConfig();
-    const { rules } = config.module;
+    const {rules} = config.module;
 
     rules.forEach(rule => {
         const urlLoaders = Array.isArray(rule.use) ? rule.use.filter(use => use.loader.indexOf('/url-loader/') >= 0) : [];

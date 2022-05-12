@@ -1,6 +1,7 @@
 import { Scale } from "../scale/scale";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
+import { ContinuousScale } from "../scale/continuousScale";
 
 export enum ChartAxisDirection {
     X = 'x', // means 'angle' in polar charts
@@ -46,6 +47,16 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
             direction: this.direction,
             boundSeries: this.boundSeries,
         };
+    }
+
+    /**
+     * For continuous axes, if tick count has not been specified, set the number of ticks based on the available range
+     */
+    calculateTickCount(availableRange: number): void {
+        if (!(this.scale instanceof ContinuousScale)) { return; } // Discrete axes do not require a tick count, the tick count will be the number of categories
+
+        const tickInterval = 70; // Approximate number of pixels to allocate for each tick
+        this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
     }
 
     protected _position: ChartAxisPosition = ChartAxisPosition.Left;

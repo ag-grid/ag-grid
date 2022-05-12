@@ -11,7 +11,8 @@ import {
     RowNode,
     BeanStub,
     WithoutGridCommon,
-    PostSortRowsParams
+    PostSortRowsParams,
+    RowNodeTransaction
 } from "@ag-grid-community/core";
 
 import { RowNodeMap } from "./clientSideRowModel";
@@ -32,24 +33,33 @@ export class SortService extends BeanStub {
     public sort(
         sortOptions: SortOption[],
         sortActive: boolean,
-        deltaSort: boolean,
-        dirtyLeafNodes: { [nodeId: string]: boolean } | null,
+        useDeltaSort: boolean,
+        rowNodeTransactions: RowNodeTransaction[] | null | undefined,
         changedPath: ChangedPath | undefined,
-        noAggregations: boolean,
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
+        let allDirtyNodes: { [key: string]: true } = {};
+        if (useDeltaSort && rowNodeTransactions) {
+            allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
+        }
+
+        const isPivotMode = this.columnModel.isPivotMode();
+
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
+
+            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
+            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
-            if (!sortActive || skipSortingGroups) {
+            if (!sortActive || skipSortingGroups || skipSortingPivotLeafs) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (groupMaintainOrder && rowNode.childrenAfterSort) {
@@ -62,10 +72,10 @@ export class SortService extends BeanStub {
                     childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] || 0) - (indexedOrders[row2.id!] || 0));
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
+            } else if (useDeltaSort) {
+                rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
-                rowNode.childrenAfterSort = deltaSort ?
-                    this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                    : this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
 
             if (rowNode.sibling) {
@@ -87,63 +97,65 @@ export class SortService extends BeanStub {
         this.updateGroupDataForHideOpenParents(changedPath);
     }
 
-    private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
-        return { currentPos: pos, rowNode: rowNode };
+    private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: true } {
+        const dirtyNodes: { [nodeId: string]: true } = {};
+
+        const addNodesFunc = (rowNodes: RowNode[]) => {
+            if (rowNodes) {
+                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
+            }
+        };
+
+        // all leaf level nodes in the transaction were impacted
+        if (rowNodeTransactions) {
+            rowNodeTransactions.forEach(tran => {
+                addNodesFunc(tran.add);
+                addNodesFunc(tran.update);
+                addNodesFunc(tran.remove);
+            });
+        }
+
+        return dirtyNodes;
     }
 
     private doDeltaSort(
         rowNode: RowNode,
+        allTouchedNodes: { [rowId: string]: true },
+        changedPath: ChangedPath,
         sortOptions: SortOption[],
-        dirtyLeafNodes: { [nodeId: string]: boolean } | null,
-        changedPath: ChangedPath | undefined,
-        noAggregations: boolean
-    ): RowNode[] {
-        // clean nodes will be a list of all row nodes that remain in the set
-        // and ordered. we start with the old sorted set and take out any nodes
-        // that were removed or changed (but not added, added doesn't make sense,
-        // if a node was added, there is no way it could be here from last time).
-        const cleanNodes: SortedRowNode[] = rowNode.childrenAfterSort!
-            .filter(node => {
-                // take out all nodes that were changed as part of the current transaction.
-                // a changed node could a) be in a different sort position or b) may
-                // no longer be in this set as the changed node may not pass filtering,
-                // or be in a different group.
-                const passesDirtyNodesCheck = !dirtyLeafNodes![node.id!];
-                // also remove group nodes in the changed path, as they can have different aggregate
-                // values which could impact the sort order.
-                // note: changed path is not active if a) no value columns or b) no transactions. it is never
-                // (b) in deltaSort as we only do deltaSort for transactions. for (a) if no value columns, then
-                // there is no value in the group that could of changed (ie no aggregate values)
-                const passesChangedPathCheck = noAggregations || (changedPath && changedPath.canSkip(node));
-                return passesDirtyNodesCheck && passesChangedPathCheck;
-            })
-            .map(this.mapNodeToSortedNode.bind(this));
-
-        // for fast access below, we map them
-        const cleanNodesMapped: RowNodeMap = {};
-        cleanNodes.forEach(sortedRowNode => cleanNodesMapped[sortedRowNode.rowNode.id!] = sortedRowNode.rowNode);
-
-        // these are all nodes that need to be placed
-        const changedNodes: SortedRowNode[] = rowNode.childrenAfterAggFilter!
-            // ignore nodes in the clean list
-            .filter(node => !cleanNodesMapped[node.id!])
-            .map(this.mapNodeToSortedNode.bind(this));
-
-        // sort changed nodes. note that we don't need to sort cleanNodes as they are
-        // already sorted from last time.
-        changedNodes.sort(this.rowNodeSorter.compareRowNodes.bind(this, sortOptions));
-
-        let result: SortedRowNode[];
-
-        if (changedNodes.length === 0) {
-            result = cleanNodes;
-        } else if (cleanNodes.length === 0) {
-            result = changedNodes;
-        } else {
-            result = this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
+    ) {
+        const unsortedRows = rowNode.childrenAfterAggFilter!;
+        const oldSortedRows = rowNode.childrenAfterSort;
+        if (!oldSortedRows) {
+            return this.rowNodeSorter.doFullSort(unsortedRows, sortOptions);
         }
 
-        return result.map(item => item.rowNode);
+        const untouchedRowsMap: { [rowId: string]: true } = {};
+        const touchedRows: RowNode[] = [];
+
+        unsortedRows.forEach(row => {
+            if(allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
+                touchedRows.push(row);
+            } else {
+                untouchedRowsMap[row.id!] = true;
+            }
+        });
+
+        const sortedUntouchedRows = oldSortedRows.filter(child => untouchedRowsMap[child.id!]);
+        
+        const mapNodeToSortedNode = (rowNode: RowNode, pos: number): SortedRowNode => (
+            { currentPos: pos, rowNode: rowNode }
+        );
+
+        const sortedChangedRows = touchedRows
+            .map(mapNodeToSortedNode)
+            .sort((a, b) => this.rowNodeSorter.compareRowNodes(sortOptions, a, b));
+
+        return this.mergeSortedArrays(
+            sortOptions,
+            sortedChangedRows,
+            sortedUntouchedRows.map(mapNodeToSortedNode)
+        ).map(({ rowNode }) => rowNode);
     }
 
     // Merge two sorted arrays into each other

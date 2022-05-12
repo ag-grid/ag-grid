@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "keywords": [
     "grid",
     "data",
@@ -26,6 +26,7 @@
     "bundle": "npx cross-env vue-cli-service build --target lib src/AgGridVue.ts && rm ./dist/demo.html",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npx gulp copy-from-module-source && npm run npm && npm run bundle && npm run hash",
+    "build-prod": "npm run build",
     "lint": "npx cross-env vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },

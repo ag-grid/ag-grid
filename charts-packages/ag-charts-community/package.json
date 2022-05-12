@@ -11,8 +11,11 @@
     "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0 ; npm run test -- -u",
     "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
+    "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
     "build": "npm run build-cjs && npm run build-esm && npm run hash",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
     "watch": "npx tsc -p tsconfig.json --watch",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
@@ -46,7 +49,7 @@
     "not op_mini all",
     "not operamobile >= 0"
   ],
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"

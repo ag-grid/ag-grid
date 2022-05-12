@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf bundles lib .hash",
     "build": "npx gulp && npm run hash",
+    "build-prod": "npm run build",
     "umd": "npx rollup -c",
     "testx": "npx jest",
     "test:e2ex": "npx gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",

@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
     "build": "npm run generate-examples",
+    "build-prod": "npm run build",
     "clean-examples-dir": "cd documentation/doc-pages && git clean -fxd",
     "generate-examples": "node dev-server.js generate-examples",
     "start": "npx gulp serve --max_old_space_size=6144",
@@ -44,7 +45,7 @@
     "url": "https://github.com/ag-grid/ag-grid-docs/issues"
   },
   "private": true,
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "chokidar": "3.5.1",
     "escodegen": "1.11.0",

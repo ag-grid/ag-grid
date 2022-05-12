@@ -520,6 +520,15 @@
       "max": 359,
       "unit": "&deg;"
     },
+    "autoRotate": {
+      "default": false
+    },
+    "autoRotateAngle": {
+      "default": 335,
+      "min": -359,
+      "max": 359,
+      "unit": "&deg;"
+    },
     "format": {
       "type": "string",
       "more": {

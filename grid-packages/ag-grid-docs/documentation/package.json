@@ -11,6 +11,7 @@
     "generate-cypress-config": "node generate-cypress-config.js",
     "customise": "node customise.js",
     "build": "npm run clean && npm run customise && npm run generate-examples && npm run generate-cypress-config",
+    "build-prod": "npm run build",
     "package": "npm run build && npm run publish",
     "publish": "npx gatsby build --prefix-paths",
     "develop": "NODE_ENV=development npx gatsby develop --https --key-file ${AG_DOCS_KEY:-../selfsigned.key} --cert-file ${AG_DOCS_CRT:-../selfsigned.crt} --ca-file ${AG_DOCS_CRT:-../selfsigned.crt} -H 0.0.0.0",

@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "rimraf lib umd .hash",
     "build": "npx gulp && npm run hash",
+    "build-prod": "npm run build",
     "umd": "npx rollup -c",
     "test": "npx jest --passWithNoTests",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
