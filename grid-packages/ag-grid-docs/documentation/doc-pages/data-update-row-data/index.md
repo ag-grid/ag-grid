@@ -95,7 +95,7 @@ There are however some differences with updating Row Data (with Row IDs) and Tra
 
 - When setting Row Data, the grid stores the data in the same order as the data was provided. For example if you provide a new list with data added in the middle of the list, the grid will also put the data into the middle of the list rather than just appending to the end. This decides the order of data when there is no grid sort applied. If this is not required by your application, then you can suppress this behaviour for a performance boost by setting `suppressMaintainUnsortedOrder=true`.
 
-- There is no equivalent of [Async Transactions](/data-update-high-frequency/) when it comes to updating Row Data. If you want a grid that manages high frequency data changes, do not update Row Data directly, instead use [Async Transactions](/data-update-high-frequency/) instead.
+- There is no equivalent of [Async Transactions](/data-update-high-frequency/) when it comes to updating Row Data. If you want a grid that manages high frequency data changes, do not update Row Data directly, use [Async Transactions](/data-update-high-frequency/) instead.
 
 For the reasons mentioned above, if you have large data sets (thousands of rows) and are looking for ways to make things go faster, consider using [Transaction Update](/data-update-transactions/).
 
