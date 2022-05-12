@@ -82,6 +82,7 @@
         },
         "clipboardDelimiter": {},
         "suppressCopyRowsToClipboard": {},
+        "suppressCopySingleCellRanges": {},
         "suppressLastEmptyLineOnPaste": {},
         "suppressClipboardPaste": {},
         "suppressClipboardApi": {},
