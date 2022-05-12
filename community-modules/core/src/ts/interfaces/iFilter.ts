@@ -123,7 +123,7 @@ export interface IFilterParams<TData> extends AgGridCommon {
     /** The column this filter is for. */
     column: Column;
     /** The column definition for the column. */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /**
      * The row model, helpful for looking up data values if needed.
      * If the filter needs to know which rows are

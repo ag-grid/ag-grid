@@ -68,7 +68,7 @@ export interface ICellEditorParams<TData = any> extends AgGridCommon {
     /** Grid column */
     column: Column;
     /** Column definition */
-    colDef: ColDef;
+    colDef: ColDef<TData>;
     /** Row node for the cell */
     node: RowNode<TData>;
     /** Row data */
@@ -95,4 +95,4 @@ export interface ICellEditorParams<TData = any> extends AgGridCommon {
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp<TData> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> { }
+export interface ICellEditorComp<TData = any> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> { }
