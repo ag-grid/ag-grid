@@ -1206,12 +1206,7 @@
                 "url": "/row-sorting/#multi-column-sorting"
             }
         },
-        "suppressMaintainUnsortedOrder": {
-            "more": {
-                "name": "Big Data Small Transactions",
-                "url": "/immutable-data/"
-            }
-        },
+        "suppressMaintainUnsortedOrder": {},
         "postSortRows": {
             "more": {
                 "name": "Post Sort",
