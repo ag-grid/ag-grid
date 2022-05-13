@@ -1,7 +1,7 @@
 import { Scale } from "../scale/scale";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
-import { ContinuousScale } from "../scale/continuousScale";
+import { LinearScale } from "../scale/linearScale";
 
 export enum ChartAxisDirection {
     X = 'x', // means 'angle' in polar charts
@@ -49,11 +49,18 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         };
     }
 
+    protected useCalculatedTickCount() {
+        // We only want to use the new algorithm for number axes. Category axes don't use a
+        // calculated or user-supplied tick-count, and time axes need special handling depending on
+        // the time-range involved.
+        return this.scale instanceof LinearScale;
+    }
+
     /**
      * For continuous axes, if tick count has not been specified, set the number of ticks based on the available range
      */
     calculateTickCount(availableRange: number): void {
-        if (!(this.scale instanceof ContinuousScale)) { return; } // Discrete axes do not require a tick count, the tick count will be the number of categories
+        if (!this.useCalculatedTickCount()) { return; }
 
         const tickInterval = 70; // Approximate number of pixels to allocate for each tick
         this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
