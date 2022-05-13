@@ -17,7 +17,7 @@
         font-size: calc(var(--ag-font-size) + 1px);
     }
 
-    %ag-text-input {
+    @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
 

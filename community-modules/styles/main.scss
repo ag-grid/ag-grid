@@ -15,7 +15,6 @@
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
-// See TODO: get URL
 @mixin ag-grid-styles($params) {
     $theme: map.get($params, "theme");
     $theme: "alpine" !default;
@@ -41,7 +40,19 @@
     $params: ag-base-color-blends($params);
 
     @each $name, $value in $params {
+        --ag-#{$name}: #{$value};
+    }
+}
 
+@mixin ag-text-input {
+    input[class^='ag-']:not([type]),
+    input[class^='ag-'][type='text'],
+    input[class^='ag-'][type='number'],
+    input[class^='ag-'][type='tel'],
+    input[class^='ag-'][type='date'],
+    input[class^='ag-'][type='datetime-local'],
+    textarea[class^='ag-'] {
+        @content;
     }
 }
 
@@ -65,9 +76,16 @@ $-ag-themes: map.keys($-ag-theme-variables);
 }
 
 @function -ag-base-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending below
+    $params: -ag-param-default($params, foreground-color, #000);
+    $params: -ag-param-default($params, background-color, #fff);
+    $params: -ag-param-default($params, range-selection-border-color,       foreground-color);
+
+    // Blended defaults.
     $params: -ag-param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
     $params: -ag-param-default($params, modal-overlay-background-color,     background-color,                 $opacity: 0.66);
-    $params: -ag-param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.5);
+    $params: -ag-param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.2);
     $params: -ag-param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
     $params: -ag-param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
     $params: -ag-param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
@@ -78,19 +96,41 @@ $-ag-themes: map.keys($-ag-theme-variables);
     @return $params;
 }
 
-@function -ag-theme-alpine-color-blends($params) {
-    $params: -ag-param-default($params, alpine-active-color,          alpine-active-color,                 $opacity: 0.5);
+@function -ag-theme-alpine-color-blends($params, $dark) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    @if $dark {
+        $params: -ag-param-default($params, background-color, #181d1f);
+        $params: -ag-param-default($params, foreground-color, #fff);
+        $params: -ag-param-default($params, subheader-background-color, #fff);
+    } @else {
+        $params: -ag-param-default($params, background-color, #fff);
+        $params: -ag-param-default($params, foreground-color, #181d1f);
+        $params: -ag-param-default($params, subheader-background-color, #000);
+    }
+    $params: -ag-param-default($params, alpine-active-color, #2196f3);
+    $params: -ag-param-default($params, range-selection-border-color, alpine-active-color);
 
-
+    // Blended defaults
+    $params: -ag-param-default($params, subheader-toolbar-background-color, subheader-background-color, $opacity: 0.5);
+    $params: -ag-param-default($params, selected-row-background-color, alpine-active-color, $opacity: 0.1);
+    $params: -ag-param-default($params, row-hover-color, alpine-active-color, $opacity: 0.1);
+    $params: -ag-param-default($params, column-hover-color, alpine-active-color, $opacity: 0.1);
+    $params: -ag-param-default($params, chip-background-color, foreground-color, $opacity: 0.07);
+    $params: -ag-param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
+    $params: -ag-param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
     @return $params;
 }
 
 @function -ag-param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
-    Next up: allow $source to be a color
-    @if map.has-key($params, $target) or not map.has-key($params, $source) {
+    @if type-of($source) == "color" {
+        $value: $source;
+    } @else {
+        $value: map.get($params, $source);
+    }
+    @if map.has-key($params, $target) or $value == null {
         @return $params;
     }
-    $value: map.get($params, $source);
     @if $opacity != null {
         $value: color.change($value, $alpha: color.alpha($value) * $opacity);
     }
@@ -109,8 +149,9 @@ $-ag-param-type-descriptions: (
     "border-style": "a CSS border style (e.g. `dotted` or `solid`)",
     "border-style-not-none": "a CSS border style (e.g. `dotted` or `solid` but not `none`)",
     "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
-    "border-style-and-size": "either `none` or 2-element list of a border-style and size (e.g. `solid 1px`)",
-    "display": "`true`, `false`, `block` (equivalent to `true`) or `none` (equivalent to `false`)"
+    "border-style-and-size": "either `none`, or a border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
+    "border-style-and-color": "a border-style and color (e.g. `solid red`)",
+    "display": "`block` or `true` to show, `none` or `false` to hide"
 );
 
 $-ag-param-types: (
@@ -155,8 +196,11 @@ $-ag-param-types: (
     secondary-border-color: "color",
     borders-row: "border-style-and-size",
     row-border-color: "color",
-    cell-border-color: "color",
-    cell-border-style: "border-style",
+    cell-horizontal-border: "border-style-and-color",
+    borders-input: "border-style-and-size",
+    input-border-color: "color",
+    borders-input-invalid: "border-style-and-size",
+    input-border-color-invalid: "color",
     borders-side-button: "border-style-and-size",
     border-radius: "size",
     header-column-separator-display: "display",
@@ -164,12 +208,10 @@ $-ag-param-types: (
     header-column-separator-width: "size",
     header-column-separator-color: "color",
     header-column-resize-handle-display: none,
-    header-column-resize-handle-height: 50"size",
+    header-column-resize-handle-height: "size",
     header-column-resize-handle-width: "size",
     header-column-resize-handle-color: "color",
     invalid-color: "color",
-    input-border: "border",
-    input-border-invalid: "border",
     input-disabled-border-color: "color",
     input-disabled-background-color: "color",
     checkbox-background-color: "color",

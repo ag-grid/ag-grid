@@ -1,3 +1,11 @@
 @forward "rtl";
 @forward "general";
 @forward "icons";
+@use "../../../main";
+
+// Rename this namespaced public API method so that it can be used internally as ag.text-input
+@mixin text-input {
+    @include main.ag-text-input {
+        @content;
+    }
+}

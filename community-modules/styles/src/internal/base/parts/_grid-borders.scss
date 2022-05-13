@@ -1,7 +1,8 @@
 @use "ag";
 
 .ag-cell {
-    @include ag.unthemed-rtl(( border-right: var(--ag-cell-border-style) 1px var(--ag-cell-border-color) ));
+    @include ag.unthemed-rtl(( border-right: var(--ag-cell-horizontal-border) ));
+    @include ag.unthemed-rtl(( border-right-width: 1px ));
 }
 
 .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
