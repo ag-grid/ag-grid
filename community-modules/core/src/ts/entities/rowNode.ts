@@ -25,20 +25,20 @@ export interface SetSelectedParams {
     groupSelectsFiltered?: boolean;
 }
 
-export interface RowNodeEvent<TData> extends AgEvent {
+export interface RowNodeEvent<TData = any> extends AgEvent {
     node: RowNode<TData>;
 }
 
-export interface DataChangedEvent<TData> extends RowNodeEvent<TData> {
-    oldData: TData;
-    newData: TData;
+export interface DataChangedEvent<TData = any> extends RowNodeEvent<TData> {
+    oldData: TData | undefined;
+    newData: TData | undefined;
     update: boolean;
 }
 
-export interface CellChangedEvent<TData> extends RowNodeEvent<TData> {
+export interface CellChangedEvent<TData = any> extends RowNodeEvent<TData> {
     column: Column;
-    newValue: TData;
-    oldValue: TData;
+    newValue: TData | undefined;
+    oldValue: TData | undefined;
 }
 
 export enum RowHighlightPosition { Above, Below }
@@ -288,7 +288,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         }
     }
 
-    private createDataChangedEvent(newData: TData, oldData: TData, update: boolean): DataChangedEvent<TData> {
+    private createDataChangedEvent(newData: TData, oldData: TData | undefined, update: boolean): DataChangedEvent<TData> {
         return {
             type: RowNode.EVENT_DATA_CHANGED,
             node: this,

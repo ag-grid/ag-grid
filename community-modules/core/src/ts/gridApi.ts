@@ -204,7 +204,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData> {
+export class GridApi<TData = any> {
 
     @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;

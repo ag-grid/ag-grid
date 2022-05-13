@@ -5,7 +5,7 @@ import { Component, ContentChildren, Input, QueryList } from "@angular/core";
     selector: 'ag-grid-column',
     template: ''
 })
-export class AgGridColumn {
+export class AgGridColumn<TData = any> {
     @ContentChildren(AgGridColumn) public childColumns: QueryList<AgGridColumn>;
 
     public hasChildColumns(): boolean {

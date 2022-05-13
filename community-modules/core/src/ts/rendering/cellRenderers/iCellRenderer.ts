@@ -4,7 +4,7 @@ import { RowNode } from "../../entities/rowNode";
 import { AgGridCommon } from "../../interfaces/iCommon";
 import { IComponent } from "../../interfaces/iComponent";
 
-export interface ICellRendererParams<TData> extends AgGridCommon {
+export interface ICellRendererParams<TData = any> extends AgGridCommon {
     /** Value to be rendered. */
     value: any;
     /** Formatted value to be rendered. */
@@ -55,7 +55,7 @@ export interface ISetFilterCellRendererParams extends AgGridCommon {
     column?: Column;
 }
 
-export interface ICellRenderer<TData> {
+export interface ICellRenderer<TData = any> {
     /**
      * Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you.

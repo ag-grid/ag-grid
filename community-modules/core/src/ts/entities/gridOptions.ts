@@ -83,9 +83,6 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { RowNode } from "./rowNode";
 import { SideBarDef } from "./sideBar";
 
-const g: GridOptions = {
-    params : {api: 1}
-}
 export interface GridOptions {
 
     // ******************************************************************************************************
@@ -1117,39 +1114,39 @@ export interface GridOptions {
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface GetDataPath<TData> {
+export interface GetDataPath<TData = any> {
     (data: TData): string[];
 }
 
-export interface IsServerSideGroup<TData> {
+export interface IsServerSideGroup<TData = any> {
     (dataItem: TData): boolean;
 }
 
-export interface IsRowFilterable<TData> {
+export interface IsRowFilterable<TData = any> {
     (params: GetGroupAggFilteringParams<TData>): boolean;
 }
-export interface IsApplyServerSideTransaction<TData> {
+export interface IsApplyServerSideTransaction<TData = any> {
     (params: IsApplyServerSideTransactionParams<TData>): boolean;
 }
-export interface GetServerSideGroupKey<TData> {
+export interface GetServerSideGroupKey<TData = any> {
     (dataItem: TData): string;
 }
 
-export interface IsRowMaster<TData> {
+export interface IsRowMaster<TData = any> {
     (dataItem: TData): boolean;
 }
 
-export interface IsRowSelectable<TData> {
+export interface IsRowSelectable<TData = any> {
     (node: RowNode<TData>): boolean;
 }
 
-export interface RowClassRules<TData> {
+export interface RowClassRules<TData = any> {
     [cssClassName: string]: (((params: RowClassParams<TData>) => boolean) | string);
 }
 
 export interface RowStyle { [cssProperty: string]: string | number; }
 
-export interface RowClassParams<TData> extends AgGridCommon {
+export interface RowClassParams<TData = any> extends AgGridCommon {
     /** The data associated with this row from rowData */
     data: TData;
     /** The RowNode associated with this row */
@@ -1159,7 +1156,7 @@ export interface RowClassParams<TData> extends AgGridCommon {
 }
 
 
-export interface GetContextMenuItems<TData> {
+export interface GetContextMenuItems<TData = any> {
     (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
 }
 export interface GetChartToolbarItems {
@@ -1196,7 +1193,7 @@ export interface GetRowNodeIdFunc {
     (data: any): string;
 }
 
-export interface GetRowIdFunc<TData> {
+export interface GetRowIdFunc<TData = any> {
     (params: GetRowIdParams<TData>): string;
 }
 
@@ -1235,7 +1232,7 @@ export interface ServerSideStoreParams {
     cacheBlockSize?: number;
 }
 
-export interface LoadingCellRendererSelectorFunc<TData> {
+export interface LoadingCellRendererSelectorFunc<TData = any> {
     (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {

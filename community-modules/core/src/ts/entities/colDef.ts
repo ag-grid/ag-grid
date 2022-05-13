@@ -456,7 +456,7 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
 }
-export interface ColumnFunctionCallbackParams<TData> extends AgGridCommon {
+export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon {
     /** Row node for the given row */
     node: RowNode<TData>;
     /** Data associated with the node */
@@ -467,17 +467,17 @@ export interface ColumnFunctionCallbackParams<TData> extends AgGridCommon {
     colDef: ColDef;
 }
 
-export interface CheckboxSelectionCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface CheckboxSelectionCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 export interface CheckboxSelectionCallback<TData> {
     (params: CheckboxSelectionCallbackParams<TData>): boolean;
 }
-export interface RowDragCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface RowDragCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 export interface RowDragCallback<TData> {
     (params: RowDragCallbackParams<TData>): boolean;
 }
-export interface DndSourceCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface DndSourceCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface DndSourceOnRowDragParams<TData> extends AgGridCommon {
+export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon {
     /** Row node for the given row */
     rowNode: RowNode<TData>;
     /** The DOM event that represents a drag and drop interaction */
@@ -486,19 +486,19 @@ export interface DndSourceOnRowDragParams<TData> extends AgGridCommon {
 export interface DndSourceCallback<TData> {
     (params: DndSourceCallbackParams<TData>): boolean;
 }
-export interface EditableCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface EditableCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 export interface EditableCallback<TData> {
     (params: EditableCallbackParams<TData>): boolean;
 }
-export interface SuppressPasteCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface SuppressPasteCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 export interface SuppressPasteCallback<TData> {
     (params: SuppressPasteCallbackParams<TData>): boolean;
 }
-export interface SuppressNavigableCallbackParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface SuppressNavigableCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 export interface SuppressNavigableCallback<TData> {
     (params: SuppressNavigableCallbackParams<TData>): boolean;
 }
-export interface HeaderCheckboxSelectionCallbackParams<TData> extends AgGridCommon {
+export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon {
     column: Column;
     colDef: ColDef;
 }
@@ -518,9 +518,9 @@ export interface IsColumnFunc<TData> {
  * @deprecated
  * Replaced with ColumnFunctionCallbackParams
  */
-export interface IsColumnFuncParams<TData> extends ColumnFunctionCallbackParams<TData> { }
+export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
-export interface GetQuickFilterTextParams<TData> extends AgGridCommon {
+export interface GetQuickFilterTextParams<TData = any> extends AgGridCommon {
     value: any;
     node: RowNode<TData>;
     data: TData;
@@ -542,7 +542,7 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
 }
 
-export interface BaseColDefParams<TData> extends AgGridCommon {
+export interface BaseColDefParams<TData = any> extends AgGridCommon {
     /** Row node for the given row */
     node: RowNode<TData> | null;
     /** Data associated with the node */
@@ -553,12 +553,12 @@ export interface BaseColDefParams<TData> extends AgGridCommon {
     colDef: ColDef;
 }
 
-export interface BaseWithValueColDefParams<TData> extends BaseColDefParams<TData> {
+export interface BaseWithValueColDefParams<TData = any> extends BaseColDefParams<TData> {
     /** Value for the cell. */
     value: any;
 }
 
-export interface ValueGetterParams<TData> extends BaseColDefParams<TData> {
+export interface ValueGetterParams<TData = any> extends BaseColDefParams<TData> {
     /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
@@ -580,40 +580,40 @@ export interface HeaderValueGetterFunc {
     (params: HeaderValueGetterParams): any;
 }
 
-export interface NewValueParams<TData> extends BaseColDefParams<TData> {
+export interface NewValueParams<TData = any> extends BaseColDefParams<TData> {
     /** The value before the change */
     oldValue: any;
     /** The value after the change */
     newValue: any;
 }
 
-export interface ValueSetterParams<TData> extends NewValueParams<TData> {
+export interface ValueSetterParams<TData = any> extends NewValueParams<TData> {
 }
 export interface ValueSetterFunc<TData> {
     (params: ValueSetterParams<TData>): boolean;
 }
-export interface ValueParserParams<TData> extends NewValueParams<TData> {
+export interface ValueParserParams<TData = any> extends NewValueParams<TData> {
 }
 export interface ValueParserFunc<TData> {
     (params: ValueParserParams<TData>): any;
 }
 
-export interface ValueFormatterParams<TData> extends BaseWithValueColDefParams<TData> {
+export interface ValueFormatterParams<TData = any> extends BaseWithValueColDefParams<TData> {
 }
 
 export interface ValueFormatterFunc<TData> {
     (params: ValueFormatterParams<TData>): string;
 }
 
-export interface KeyCreatorParams<TData> extends BaseWithValueColDefParams<TData> { }
+export interface KeyCreatorParams<TData = any> extends BaseWithValueColDefParams<TData> { }
 
-export interface ColSpanParams<TData> extends BaseColDefParams<TData> {
+export interface ColSpanParams<TData = any> extends BaseColDefParams<TData> {
 }
 
-export interface RowSpanParams<TData> extends BaseColDefParams<TData> {
+export interface RowSpanParams<TData = any> extends BaseColDefParams<TData> {
 }
 
-export interface SuppressKeyboardEventParams<TData> extends ColumnFunctionCallbackParams<TData> {
+export interface SuppressKeyboardEventParams<TData = any> extends ColumnFunctionCallbackParams<TData> {
     /** The keyboard event the grid received */
     event: KeyboardEvent;
     /** Whether the cell is editing or not */
@@ -629,29 +629,29 @@ export interface SuppressHeaderKeyboardEventParams extends AgGridCommon {
     event: KeyboardEvent;
 }
 
-export interface CellClassParams<TData> extends RowClassParams<TData> {
+export interface CellClassParams<TData = any> extends RowClassParams<TData> {
     /** The colDef associated with the column for this cell */
     colDef: ColDef;
     /** The value to be rendered */
     value: any;
 }
-export interface CellClassFunc<TData> {
+export interface CellClassFunc<TData = any> {
     (cellClassParams: CellClassParams<TData>): string | string[] | null | undefined;
 }
-export interface CellStyleFunc<TData> {
+export interface CellStyleFunc<TData = any> {
     (cellClassParams: CellClassParams<TData>): CellStyle | null | undefined;
 }
 
 export interface CellStyle { [cssProperty: string]: string | number; }
-export interface CellClassRules<TData> {
+export interface CellClassRules<TData = any> {
     [cssClassName: string]: (((params: CellClassParams<TData>) => boolean) | string);
 }
 
-export interface CellRendererSelectorFunc<TData> {
+export interface CellRendererSelectorFunc<TData = any> {
     (params: ICellRendererParams<TData>): CellRendererSelectorResult | undefined;
 }
 
-export interface CellEditorSelectorFunc<TData> {
+export interface CellEditorSelectorFunc<TData = any> {
     (params: ICellEditorParams<TData>): CellEditorSelectorResult | undefined;
 }
 export interface CellRendererSelectorResult {
