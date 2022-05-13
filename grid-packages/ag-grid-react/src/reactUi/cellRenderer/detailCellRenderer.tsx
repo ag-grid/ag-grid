@@ -30,7 +30,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
-    }, 'propsCheck');
+    });
 
     useEffectOnce(() => {
         const compProxy: IDetailCellRenderer = {
@@ -86,7 +86,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
             context.destroyBean(ctrl);
             resizeObserverDestroyFunc();
         };
-    }, 'detailCellRenderer.main');
+    });
 
     const setGridApi = useCallback( (api: GridApi, columnApi: ColumnApi) => {
         ctrlRef.current!.registerDetailWithMaster(api, columnApi)

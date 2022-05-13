@@ -27,7 +27,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         userCompPromise.current = new AgPromise<IFloatingFilter>( resolve => {
             userCompResolve.current = resolve;
         });
-    }, 'headerFilterCellComp.userCompPromise');
+    });
     
     const userCompRef = (value: IFloatingFilter) => {
         // i don't know why, but react was calling this method multiple
@@ -58,7 +58,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
 
-    }, 'headerFilterCellComp.main');
+    });
 
     // js comps
     useEffect(() => {

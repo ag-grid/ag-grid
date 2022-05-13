@@ -41,7 +41,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current!.insertAdjacentElement('afterend', selectAllGui);
-    }, 'headerCell.main');
+    });
 
     // js comps
     useEffect(() => showJsComp(

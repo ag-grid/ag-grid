@@ -71,7 +71,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             context.destroyBeans(beansToDestroy);
         };
 
-    }, 'rowContainerComp.main');
+    });
 
     const viewportStyle = useMemo(() => ({
         height: viewportHeight

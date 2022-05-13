@@ -52,7 +52,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         ctrl.init(compProxy, eGui.current!, eCheckboxRef.current!, eExpandedRef.current!, eContractedRef.current!, GroupCellRenderer, props);
 
         return () => { context.destroyBean(ctrl);};
-    }, 'groupCellRenderer.main');
+    });
 
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
     const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);

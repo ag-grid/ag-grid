@@ -46,7 +46,7 @@ const GridComp = ({ context }: GridCompProps) => {
             context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    }, 'gridComp.ctrl');
+    });
 
     // initialise the UI
     useEffectOnce(() => {
@@ -87,7 +87,7 @@ const GridComp = ({ context }: GridCompProps) => {
         gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    }, 'gridComp.main');
+    });
 
     // initialise the extra components
     useEffect(() => {

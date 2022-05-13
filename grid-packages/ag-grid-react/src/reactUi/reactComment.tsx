@@ -12,7 +12,7 @@ const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLEl
         return () => {
             eParent.removeChild(eComment);
         };
-    }, 'reactComment');
+    });
 };
 
 export default useReactCommentEffect;
