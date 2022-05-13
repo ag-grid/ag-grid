@@ -7,6 +7,9 @@
 @use "sass:map";
 @use "sass:list";
 @use "sass:meta";
+@use "sass:string";
+@use "sass:color";
+@use "sass:math";
 
 // Note: some customers may @import rather than @use this file, which will
 // cause all definitions to be merged into their global namespace,
@@ -37,8 +40,9 @@
             $params: meta.call($theme-color-blends, $params);
         }
     }
-    $params: ag-base-color-blends($params);
+    $params: -ag-base-color-blends($params);
 
+    /* NoiSY! */
     @each $name, $value in $params {
         --ag-#{$name}: #{$value};
     }
@@ -70,7 +74,7 @@ $-ag-theme-variables: (
 $-ag-themes: map.keys($-ag-theme-variables);
 
 @mixin -ag-validate-theme($theme) {
-    @if list.index($-ag-themes, $theme) {
+    @if not list.index($-ag-themes, $theme) {
         @error "Invalid theme #{$theme}, expected one of #{$-ag-themes}";
     }
 }
@@ -96,18 +100,20 @@ $-ag-themes: map.keys($-ag-theme-variables);
     @return $params;
 }
 
-@function -ag-theme-alpine-color-blends($params, $dark) {
+@function -ag-theme-alpine-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-    @if $dark {
-        $params: -ag-param-default($params, background-color, #181d1f);
-        $params: -ag-param-default($params, foreground-color, #fff);
-        $params: -ag-param-default($params, subheader-background-color, #fff);
-    } @else {
+
+    // TODO: get dark themes working
+    // @if $dark {
+    //     $params: -ag-param-default($params, background-color, #181d1f);
+    //     $params: -ag-param-default($params, foreground-color, #fff);
+    //     $params: -ag-param-default($params, subheader-background-color, #fff);
+    // } @else {
         $params: -ag-param-default($params, background-color, #fff);
         $params: -ag-param-default($params, foreground-color, #181d1f);
         $params: -ag-param-default($params, subheader-background-color, #000);
-    }
+    // }
     $params: -ag-param-default($params, alpine-active-color, #2196f3);
     $params: -ag-param-default($params, range-selection-border-color, alpine-active-color);
 
@@ -123,6 +129,7 @@ $-ag-themes: map.keys($-ag-theme-variables);
 }
 
 @function -ag-param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
+    $value: null;
     @if type-of($source) == "color" {
         $value: $source;
     } @else {
@@ -268,63 +275,67 @@ $-ag-param-types: (
     }
 
     $param-types: map.merge($-ag-param-types, $theme-variables);
-    $errors: ();
+    $error-count: 0;
     @each $name, $value in $params {
-        $expected-type: map.get($param-types, $name);
-        @if $expected-type {
-            $validator-name: "-ag-validate-#{$expected-type}";
-            $validator: meta.get-function($validator-name);
-            @if not $validator {
-                @error "Internal error: no validator function #{$validator-name}";
-            }
-            $is-valid: meta.call($validator);
-            @if not $is-valid {
-                $expected: map.get($-ag-param-type-descriptions, $expected-type);
-                $expected: $expected-type !default;
-                @warn "Invalid value for parameter '#{$name}': #{meta.inspect($value)} -- expected #{$expected}";
-                $has-error: true
-            }
+        @if string.index(meta.inspect($value), "var(") {
+            // var expressions always OK
         } @else {
-            @warn "Unrecognised parameter '#{$name}'";
-            $has-error: true
+            $expected-type: map.get($param-types, $name);
+            @if $expected-type {
+                $validator-name: "-ag-validate-#{$expected-type}";
+                $validator: meta.get-function($validator-name);
+                @if not $validator {
+                    @error "Internal error: no validator function #{$validator-name}";
+                }
+                $is-valid: meta.call($validator, $value);
+                @if not $is-valid {
+                    $expected: map.get($-ag-param-type-descriptions, $expected-type);
+                    $expected: $expected-type !default;
+                    @warn "Invalid value for parameter '#{$name}': #{meta.inspect($value)} -- expected #{$expected}";
+                    $error-count: $error-count + 1;
+                }
+            } @else {
+                @warn "Unrecognised parameter '#{$name}'";
+                $error-count: $error-count + 1;
+            }
         }
     }
-    @if $has-error {
-        @error "Stopping compilation due to errors, see lines above for details";
+    @if $error-count > 0 {
+        @error "#{$error-count} errors in theme params see warnings above for details";
     }
 }
 
-@function -ag-validate-color($name, $value) {
+@function -ag-validate-color($value) {
     @return meta.type-of($value) == "color";
 }
 
-@function -ag-validate-size($name, $value) {
+@function -ag-validate-size($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border($name, $value) {
+@function -ag-validate-border($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border-style($name, $value) {
+@function -ag-validate-border-style($value) {
     // TODO implement me
     // Note: check for style, number and color in any order
     @return true;
 }
 
-@function -ag-validate-duration($name, $value) {
+@function -ag-validate-duration($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border-style-and-size($name, $value) {
+@function -ag-validate-border-style-and-size($value) {
     // TODO implement me
     // Note: check for style and number in any order
     @return true;
 }
 
-@function -ag-validate-any($name, $value) {
+@function -ag-validate-any($value) {
     @return true;
 }
