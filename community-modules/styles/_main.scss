@@ -27,11 +27,12 @@
     @include meta.load-css("./ag-theme-#{$theme}.css");
     
     .ag-theme-#{$theme} {
-        @include ag-grid-variables($params, $theme);
+        @include -ag-grid-variables($params, $theme);
     }
 }
 
-@mixin ag-grid-variables($params, $theme: null) {
+// Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
+@mixin -ag-grid-variables($params, $theme: null) {
     @include -ag-validate-params($params, $theme);
     
     @if $theme {
@@ -42,12 +43,13 @@
     }
     $params: -ag-base-color-blends($params);
 
-    /* NoiSY! */
     @each $name, $value in $params {
         --ag-#{$name}: #{$value};
     }
 }
 
+// Apply styles to all text fields
+// @include ag-text-input { border: solid dashed red; }
 @mixin ag-text-input {
     input[class^='ag-']:not([type]),
     input[class^='ag-'][type='text'],
@@ -79,12 +81,13 @@ $-ag-themes: map.keys($-ag-theme-variables);
     }
 }
 
+// Return a version of $params with colour blending applied
 @function -ag-base-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending below
     $params: -ag-param-default($params, foreground-color, #000);
     $params: -ag-param-default($params, background-color, #fff);
-    $params: -ag-param-default($params, range-selection-border-color,       foreground-color);
+    $params: -ag-param-default($params, range-selection-border-color, foreground-color);
 
     // Blended defaults.
     $params: -ag-param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
@@ -128,6 +131,10 @@ $-ag-themes: map.keys($-ag-theme-variables);
     @return $params;
 }
 
+// Apply a default value to a parameter
+//  $params: -ag-param-default($params, x, #f08) - default x to a specific color value
+//  $params: -ag-param-default($params, x, y) - default x to the value of y (if y is set)
+//  $params: -ag-param-default($params, x, y, $opacity: 0.5) - default x to the value of y made 50% transparent
 @function -ag-param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
     $value: null;
     @if type-of($source) == "color" {
@@ -278,7 +285,8 @@ $-ag-param-types: (
     $error-count: 0;
     @each $name, $value in $params {
         @if string.index(meta.inspect($value), "var(") {
-            // var expressions always OK
+            // You can pass variable expressions as values and we'll just trust
+            // that it's an appropriate value because we can't check at compile time
         } @else {
             $expected-type: map.get($param-types, $name);
             @if $expected-type {
