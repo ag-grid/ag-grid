@@ -44,7 +44,7 @@ const HeaderRowContainerComp = (props: {pinned: string | null}) => {
             context.destroyBean(ctrl);
         };
 
-    }, 'headerRowContainerComp.main');
+    });
 
     const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
 

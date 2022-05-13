@@ -94,7 +94,7 @@ const GridBodyComp = () => {
             destroyFuncs.forEach(f => f());
         };
 
-    }, 'gridBodyComp.main');
+    });
 
     const rootClasses = useMemo( ()=> 
         classesList('ag-root','ag-unselectable', movingCss, layoutClass), 
