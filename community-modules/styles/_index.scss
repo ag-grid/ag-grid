@@ -19,15 +19,22 @@
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
 @mixin ag-grid-styles($params) {
-    $theme: map.get($params, "theme");
-    $theme: "alpine" !default;
-    $params: map.remove($params, "theme");
+    $themes: -get-themes($params);
+    $params: map.remove($params, "theme", "themes");
     
     @include meta.load-css("./ag-grid.css");
-    @include meta.load-css("./ag-theme-#{$theme}.css");
-    
-    .ag-theme-#{$theme} {
-        @include -ag-grid-variables($params, $theme);
+
+    @each $theme-name, $extra-params in $themes {
+        @include -ag-validate-theme($theme-name);
+        $css-file: map.get($-ag-theme-css-files, $theme-name);
+        @include meta.load-css($css-file);
+    }
+
+    @each $theme-name, $extra-params in $themes {
+        $theme-params: map.merge($params, $extra-params);
+        .ag-theme-#{$theme-name} {
+            @include -ag-grid-variables($theme-params, $theme-name);
+        }
     }
 }
 
@@ -50,7 +57,7 @@
 //
 
 // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
-@mixin -ag-grid-variables($params, $theme: null) {
+@mixin -ag-grid-variables($params, $theme) {
     @include -ag-validate-params($params, $theme);
     
     @if $theme {
@@ -68,9 +75,20 @@
 
 $-ag-theme-variables: (
     alpine: (alpine-active-color: "color"),
+    alpine-dark: (alpine-active-color: "color"),
     balham: (balham-active-color: "color"),
+    balham-dark: (balham-active-color: "color"),
     material: (material-primary-color: "color", material-accent-color: "color"),
     classic: (),
+);
+
+$-ag-theme-css-files: (
+    alpine: "./ag-theme-alpine.css",
+    alpine-dark: "./ag-theme-alpine.css",
+    balham: "./ag-theme-balham.css",
+    balham-dark: "./ag-theme-balham.css",
+    material: "./ag-theme-material.css",
+    classic: "./ag-theme-classic.css",
 );
 
 $-ag-themes: map.keys($-ag-theme-variables);
@@ -79,6 +97,38 @@ $-ag-themes: map.keys($-ag-theme-variables);
     @if not list.index($-ag-themes, $theme) {
         @error "Invalid theme #{$theme}, expected one of #{$-ag-themes}";
     }
+}
+
+@function -get-themes($params) {
+    $themes: map.get($params, "themes");
+    $themes: () !default;
+    
+    @if meta.type-of($themes) == string {
+        $themes: ($themes,) // comma makes this a single element list
+    }
+    
+    // treat ("alpine", "balham") as (alpine: (), "balham": ())
+    @if meta.type-of($themes) == list {
+        $themes-list: $themes;
+        $themes: ();
+        @each $theme in $themes-list {
+            $themes: map.set($themes, $theme, ());
+        }
+    }
+    
+    @if map.has-key($params, "theme") {
+        $theme: map.get($params, "theme");
+        @if meta.type-of($theme) != string {
+            @error "Expected theme to be a string, got #{meta.inspect($theme)}";
+        }
+        $themes: map.set($themes, $theme, ());
+    }
+    
+    @if list.length($themes) == 0 {
+        @return ("alpine": true);
+    }
+    
+    @return $themes;
 }
 
 // Return a version of $params with colour blending applied
@@ -106,17 +156,9 @@ $-ag-themes: map.keys($-ag-theme-variables);
 @function -ag-theme-alpine-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-
-    // TODO: get dark themes working
-    // @if $dark {
-    //     $params: -ag-param-default($params, background-color, #181d1f);
-    //     $params: -ag-param-default($params, foreground-color, #fff);
-    //     $params: -ag-param-default($params, subheader-background-color, #fff);
-    // } @else {
-        $params: -ag-param-default($params, background-color, #fff);
-        $params: -ag-param-default($params, foreground-color, #181d1f);
-        $params: -ag-param-default($params, subheader-background-color, #000);
-    // }
+    $params: -ag-param-default($params, background-color, #fff);
+    $params: -ag-param-default($params, foreground-color, #181d1f);
+    $params: -ag-param-default($params, subheader-background-color, #000);
     $params: -ag-param-default($params, alpine-active-color, #2196f3);
     $params: -ag-param-default($params, range-selection-border-color, alpine-active-color);
 
@@ -129,6 +171,14 @@ $-ag-themes: map.keys($-ag-theme-variables);
     $params: -ag-param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
     $params: -ag-param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
     @return $params;
+}
+
+@function -ag-theme-alpine-dark-color-blends($params) {
+    $params: -ag-param-default($params, background-color, #181d1f);
+    $params: -ag-param-default($params, foreground-color, #fff);
+    $params: -ag-param-default($params, subheader-background-color, #fff);
+
+    @return  -ag-theme-alpine-color-blends($params);
 }
 
 // Apply a default value to a parameter
