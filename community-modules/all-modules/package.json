@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/all-modules",
-  "version": "27.2.1",
+  "version": "27.3.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
@@ -58,10 +58,10 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~27.2.0",
-    "@ag-grid-community/core": "~27.2.0",
-    "@ag-grid-community/csv-export": "~27.2.0",
-    "@ag-grid-community/infinite-row-model": "~27.2.0"
+    "@ag-grid-community/client-side-row-model": "~27.3.0",
+    "@ag-grid-community/core": "~27.3.0",
+    "@ag-grid-community/csv-export": "~27.3.0",
+    "@ag-grid-community/infinite-row-model": "~27.3.0"
   },
   "devDependencies": {
     "css-loader": "^3.2.0",

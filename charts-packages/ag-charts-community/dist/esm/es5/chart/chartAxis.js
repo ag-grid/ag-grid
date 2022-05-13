@@ -1,0 +1,119 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import { Axis } from "../axis";
+import { LinearScale } from "../scale/linearScale";
+export var ChartAxisDirection;
+(function (ChartAxisDirection) {
+    ChartAxisDirection["X"] = "x";
+    ChartAxisDirection["Y"] = "y"; // means 'radius' in polar charts
+})(ChartAxisDirection || (ChartAxisDirection = {}));
+export function flipChartAxisDirection(direction) {
+    if (direction === ChartAxisDirection.X) {
+        return ChartAxisDirection.Y;
+    }
+    else {
+        return ChartAxisDirection.X;
+    }
+}
+export var ChartAxisPosition;
+(function (ChartAxisPosition) {
+    ChartAxisPosition["Top"] = "top";
+    ChartAxisPosition["Right"] = "right";
+    ChartAxisPosition["Bottom"] = "bottom";
+    ChartAxisPosition["Left"] = "left";
+    ChartAxisPosition["Angle"] = "angle";
+    ChartAxisPosition["Radius"] = "radius";
+})(ChartAxisPosition || (ChartAxisPosition = {}));
+var ChartAxis = /** @class */ (function (_super) {
+    __extends(ChartAxis, _super);
+    function ChartAxis() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.keys = [];
+        _this.direction = ChartAxisDirection.Y;
+        _this.boundSeries = [];
+        _this._position = ChartAxisPosition.Left;
+        return _this;
+    }
+    Object.defineProperty(ChartAxis.prototype, "type", {
+        get: function () {
+            return this.constructor.type || '';
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ChartAxis.prototype.getMeta = function () {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
+    };
+    ChartAxis.prototype.useCalculatedTickCount = function () {
+        // We only want to use the new algorithm for number axes. Category axes don't use a
+        // calculated or user-supplied tick-count, and time axes need special handling depending on
+        // the time-range involved.
+        return this.scale instanceof LinearScale;
+    };
+    /**
+     * For continuous axes, if tick count has not been specified, set the number of ticks based on the available range
+     */
+    ChartAxis.prototype.calculateTickCount = function (availableRange) {
+        if (!this.useCalculatedTickCount()) {
+            return;
+        }
+        var tickInterval = 70; // Approximate number of pixels to allocate for each tick
+        this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
+    };
+    Object.defineProperty(ChartAxis.prototype, "position", {
+        get: function () {
+            return this._position;
+        },
+        set: function (value) {
+            if (this._position !== value) {
+                this._position = value;
+                switch (value) {
+                    case ChartAxisPosition.Top:
+                        this.direction = ChartAxisDirection.X;
+                        this.rotation = -90;
+                        this.label.mirrored = true;
+                        this.label.parallel = true;
+                        break;
+                    case ChartAxisPosition.Right:
+                        this.direction = ChartAxisDirection.Y;
+                        this.rotation = 0;
+                        this.label.mirrored = true;
+                        this.label.parallel = false;
+                        break;
+                    case ChartAxisPosition.Bottom:
+                        this.direction = ChartAxisDirection.X;
+                        this.rotation = -90;
+                        this.label.mirrored = false;
+                        this.label.parallel = true;
+                        break;
+                    case ChartAxisPosition.Left:
+                        this.direction = ChartAxisDirection.Y;
+                        this.rotation = 0;
+                        this.label.mirrored = false;
+                        this.label.parallel = false;
+                        break;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ChartAxis;
+}(Axis));
+export { ChartAxis };
+//# sourceMappingURL=chartAxis.js.map
