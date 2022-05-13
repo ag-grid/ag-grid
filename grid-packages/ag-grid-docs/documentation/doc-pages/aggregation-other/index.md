@@ -29,7 +29,7 @@ The following example demonstrates overriding the default agg function. Note the
 
 - The <b>Gold</b> column is configured with `defaultAggFunc` set to `avg`.
 - Drag the <b>Gold</b> column to the <b>Values</b> section of the Columns Tool Panel and note that it is assigned the 'avg' function. 
-- The <b>Silver</b> column is configured to use a custom aggregation function as it's default, note that when dragged to the <b>Values</b> section it will be assigned the function `mySum`.
+- The <b>Silver</b> column is configured to use a custom aggregation function as its default. Drag the <b>Silver</b> column to the <b>Values</b> section and note that it is assigned the function `mySum`.
 - Dragging the <b>Bronze</b> column will use `sum` as the default. 
 
 <grid-example title='Default Aggregation Function' name='default-aggregation-function' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
