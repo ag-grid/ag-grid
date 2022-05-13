@@ -139,9 +139,9 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
                 if (!isFilteredOutYKey) {
                     // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                        series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
+                    // chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                    //     series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    // });
                 }
 
                 if (dataDomain) {

@@ -4,6 +4,7 @@ import { ChartAxisDirection } from "../chartAxis";
 import { BBox } from "../../scene/bbox";
 import { NavigatorMask } from "./navigatorMask";
 import { NavigatorHandle } from "./navigatorHandle";
+import { ChartUpdateType } from "../chart";
 
 interface Offset {
     offsetX: number;
@@ -24,7 +25,6 @@ export class Navigator {
 
     set enabled(value: boolean) {
         this.rs.visible = value;
-        this.chart.layoutPending = true;
     }
     get enabled(): boolean {
         return this.rs.visible;
@@ -53,7 +53,6 @@ export class Navigator {
 
     set height(value: number) {
         this.rs.height = value;
-        this.chart.layoutPending = true;
     }
     get height(): number {
         return this.rs.height;
@@ -62,7 +61,6 @@ export class Navigator {
     private _margin = 10;
     set margin(value: number) {
         this._margin = value;
-        this.chart.layoutPending = true;
     }
     get margin(): number {
         return this._margin;
@@ -98,15 +96,11 @@ export class Navigator {
                     clipSeries = true;
                 }
                 axis.visibleRange = [min, max];
-                const oldLabelAutoRotated = axis.labelAutoRotated;
                 axis.update();
-                if (axis.labelAutoRotated !== oldLabelAutoRotated) {
-                    this.chart.layoutPending = true;
-                }
             }
         });
         chart.seriesRoot.enabled = clipSeries;
-        chart.series.forEach(s => s.nodeDataPending = true);
+        chart.update(ChartUpdateType.SERIES_UPDATE, { forceNodeDataRefresh: true });
     }
 
     onDragStart(offset: Offset) {

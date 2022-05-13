@@ -1,4 +1,4 @@
-import { Node } from "../node";
+import { Node, RedrawType } from "../node";
 import { chainObjects } from "../../util/object";
 import { DropShadow } from "../dropShadow";
 
@@ -94,7 +94,7 @@ export abstract class Shape extends Node {
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get fillOpacity(): number {
@@ -105,7 +105,7 @@ export abstract class Shape extends Node {
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get strokeOpacity(): number {
@@ -116,7 +116,7 @@ export abstract class Shape extends Node {
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get fill(): string | undefined {
@@ -137,7 +137,7 @@ export abstract class Shape extends Node {
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get stroke(): string | undefined {
@@ -148,7 +148,7 @@ export abstract class Shape extends Node {
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get strokeWidth(): number {
@@ -187,7 +187,7 @@ export abstract class Shape extends Node {
                 }
             }
             this._lineDash = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get lineDash(): number[] | undefined {
@@ -198,7 +198,7 @@ export abstract class Shape extends Node {
     set lineDashOffset(value: number) {
         if (this._lineDashOffset !== value) {
             this._lineDashOffset = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get lineDashOffset(): number {
@@ -209,7 +209,7 @@ export abstract class Shape extends Node {
     set lineCap(value: ShapeLineCap) {
         if (this._lineCap !== value) {
             this._lineCap = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get lineCap(): ShapeLineCap {
@@ -220,7 +220,7 @@ export abstract class Shape extends Node {
     set lineJoin(value: ShapeLineJoin) {
         if (this._lineJoin !== value) {
             this._lineJoin = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get lineJoin(): ShapeLineJoin {
@@ -232,7 +232,7 @@ export abstract class Shape extends Node {
         value = Math.min(1, Math.max(0, value));
         if (this._opacity !== value) {
             this._opacity = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get opacity(): number {
@@ -240,7 +240,7 @@ export abstract class Shape extends Node {
     }
 
     private readonly onShadowChange = () => {
-        this.dirty = true;
+        this.markDirty(RedrawType.MINOR);
     }
 
     protected _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
@@ -254,7 +254,7 @@ export abstract class Shape extends Node {
                 value.addEventListener('change', this.onShadowChange);
             }
             this._fillShadow = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get fillShadow(): DropShadow | undefined {
@@ -272,7 +272,7 @@ export abstract class Shape extends Node {
                 value.addEventListener('change', this.onShadowChange);
             }
             this._strokeShadow = value;
-            this.dirty = true;
+            this.markDirty(RedrawType.MINOR);
         }
     }
     get strokeShadow(): DropShadow | undefined {

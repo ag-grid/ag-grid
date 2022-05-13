@@ -13,10 +13,10 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import { TooltipRendererResult, toTooltipHtml } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml, ChartUpdateType } from "../../chart";
 import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
-import { reactive, TypedEvent } from "../../../util/observable";
+import { TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
@@ -71,8 +71,8 @@ export enum BarLabelPlacement {
 }
 
 export class BarSeriesLabel extends Label {
-    @reactive('change') formatter?: (params: { value: number }) => string;
-    @reactive('change') placement = BarLabelPlacement.Inside;
+    formatter?: (params: { value: number }) => string = undefined;
+    placement = BarLabelPlacement.Inside;
 }
 
 export interface BarSeriesFormatterParams {
@@ -92,7 +92,7 @@ export interface BarSeriesFormat {
 }
 
 export class BarSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 function flat(arr: any[], target: any[] = []): any[] {
@@ -122,7 +122,7 @@ export class BarSeries extends CartesianSeries {
     private rectGroup = this.pickGroup.appendChild(new Group);
     private labelGroup = this.group.appendChild(new Group);
 
-    private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
+    private rectSelection: Selection<Group, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Group>();
     private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
     private nodeData: BarNodeDatum[] = [];
@@ -140,9 +140,9 @@ export class BarSeries extends CartesianSeries {
 
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
-    @reactive('dataChange') flipXY = false;
+    flipXY = false;
 
-    @reactive('dataChange') fills: string[] = [
+    fills: string[] = [
         '#c16068',
         '#a2bf8a',
         '#ebcc87',
@@ -151,7 +151,7 @@ export class BarSeries extends CartesianSeries {
         '#85c0d1'
     ];
 
-    @reactive('dataChange') strokes: string[] = [
+    strokes: string[] = [
         '#874349',
         '#718661',
         '#a48f5f',
@@ -160,21 +160,18 @@ export class BarSeries extends CartesianSeries {
         '#5d8692'
     ];
 
-    @reactive('update') fillOpacity = 1;
-    @reactive('update') strokeOpacity = 1;
+    fillOpacity = 1;
+    strokeOpacity = 1;
 
-    @reactive('update') lineDash?: number[] = [0];
-    @reactive('update') lineDashOffset: number = 0;
+    lineDash?: number[] = [0];
+    lineDashOffset: number = 0;
 
-    @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
+    formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat = undefined;
 
     constructor() {
         super();
 
-        this.addEventListener('update', this.scheduleUpdate);
-
         this.label.enabled = false;
-        this.label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     /**
@@ -211,31 +208,19 @@ export class BarSeries extends CartesianSeries {
 
     protected _xKey: string = '';
     set xKey(value: string) {
-        if (this._xKey !== value) {
-            this._xKey = value;
-            this.xData = [];
-            this.scheduleData();
-        }
+        this._xKey = value;
+        this.xData = [];
     }
     get xKey(): string {
         return this._xKey;
     }
 
-    protected _xName: string = '';
-    set xName(value: string) {
-        if (this._xName !== value) {
-            this._xName = value;
-            this.scheduleUpdate();
-        }
-    }
-    get xName(): string {
-        return this._xName;
-    }
+    xName: string = '';
 
     private cumYKeyCount: number[] = [];
     private flatYKeys: string[] | undefined = undefined; // only set when a user used a flat array for yKeys
 
-    @reactive('layoutChange') hideInLegend: string[] = [];
+    hideInLegend: string[] = [];
 
     /**
      * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
@@ -279,8 +264,6 @@ export class BarSeries extends CartesianSeries {
             groupScale.domain = visibleStacks;
             groupScale.padding = 0.1;
             groupScale.round = true;
-
-            this.scheduleData();
         }
     }
     get yKeys(): string[][] {
@@ -314,7 +297,6 @@ export class BarSeries extends CartesianSeries {
             values = map;
         }
         this._yNames = values;
-        this.scheduleData();
     }
     get yNames(): { [key in string]: string } {
         return this._yNames;
@@ -334,36 +316,15 @@ export class BarSeries extends CartesianSeries {
     set normalizedTo(value: number | undefined) {
         const absValue = value ? Math.abs(value) : undefined;
 
-        if (this._normalizedTo !== absValue) {
-            this._normalizedTo = absValue;
-            this.scheduleData();
-        }
+        this._normalizedTo = absValue;
     }
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
 
-    private _strokeWidth: number = 1;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.scheduleUpdate();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
+    strokeWidth: number = 1;
 
-    private _shadow?: DropShadow;
-    set shadow(value: DropShadow | undefined) {
-        if (this._shadow !== value) {
-            this._shadow = value;
-            this.scheduleUpdate();
-        }
-    }
-    get shadow(): DropShadow | undefined {
-        return this._shadow;
-    }
+    shadow?: DropShadow = undefined;
 
     onHighlightChange() {
         this.updateRectNodes();
@@ -437,8 +398,6 @@ export class BarSeries extends CartesianSeries {
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', this.yAxis);
 
-        this.fireEvent({ type: 'dataProcessed' });
-
         return true;
     }
 
@@ -495,7 +454,7 @@ export class BarSeries extends CartesianSeries {
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
-        if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
+        if (!(chart && data && visible && xAxis && yAxis)) {
             return [];
         }
 
@@ -639,17 +598,15 @@ export class BarSeries extends CartesianSeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         this.updateSelections();
         this.updateNodes();
     }
 
     private updateSelections() {
-        if (!this.nodeDataPending) {
+        if (!this.nodeDataRefresh) {
             return;
         }
-        this.nodeDataPending = false;
+        this.nodeDataRefresh = false;
 
         this.createNodeData();
         this.updateRectSelection();
@@ -663,13 +620,16 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateRectSelection(): void {
-        const updateRects = this.rectSelection.setData(this.nodeData);
-        updateRects.exit.remove();
-        const enterRects = updateRects.enter.append(Rect).each(rect => {
+        const updateSelection = this.rectSelection.setData(this.nodeData);
+        updateSelection.exit.remove();
+
+        const enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
             rect.crisp = true;
         });
-        this.rectSelection = updateRects.merge(enterRects);
+
+        this.rectSelection = updateSelection.merge(enterSelection);
     }
 
     private updateRectNodes(): void {
@@ -693,7 +653,10 @@ export class BarSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((rect, datum, index) => {
+        this.rectSelection.each((group, datum, index) => {
+            const rect = group.children[0] as Rect;
+            rect.datum = datum; // Keep Group and Rect in sync.
+
             let colorIndex = 0;
             let i = 0;
             for (let j = 0; j < yKeys.length; j++) {
@@ -904,7 +867,6 @@ export class BarSeries extends CartesianSeries {
 
         const yKeys = this.yKeys.map(stack => stack.slice()); // deep clone
 
-
         seriesItemEnabled.forEach((enabled, yKey) => {
             if (!enabled) {
                 yKeys.forEach(stack => {
@@ -924,6 +886,6 @@ export class BarSeries extends CartesianSeries {
         });
         this.groupScale.domain = visibleStacks;
 
-        this.scheduleData();
+        this.nodeDataRefresh = true;
     }
 }

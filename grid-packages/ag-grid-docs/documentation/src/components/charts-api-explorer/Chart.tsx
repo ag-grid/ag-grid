@@ -15,7 +15,6 @@ import { faCompress } from '@fortawesome/free-solid-svg-icons';
 export class Chart extends React.Component<{ options: AgChartOptions, fullScreen: boolean, setFullScreen(o: boolean) }> {
     chart: React.RefObject<HTMLDivElement>;
     chartInstance = undefined;
-    animationFrameId = 0;
     AgChart = undefined;
 
     constructor(props) {
@@ -30,19 +29,20 @@ export class Chart extends React.Component<{ options: AgChartOptions, fullScreen
         });
     }
 
+    componentWillUnmount() {
+        this.chartInstance?.destroy();
+        this.chartInstance = undefined;
+    }
+
     componentDidUpdate(prevProps) {
         const oldSeriesType = prevProps.options.series[0].type;
         const newSeriesType = this.props.options.series[0].type;
         const hasChangedType = newSeriesType !== oldSeriesType;
 
         if (this.chartInstance && !hasChangedType) {
-            cancelAnimationFrame(this.animationFrameId);
-
-            this.animationFrameId = requestAnimationFrame(() => {
-                this.AgChart.update(this.chartInstance, this.createOptionsJson());
-            });
+            this.AgChart.update(this.chartInstance, this.createOptionsJson());
         } else {
-            this.chartInstance && this.chartInstance.destroy();
+            this.chartInstance?.destroy();
             this.createChart();
         }
     }

@@ -1,6 +1,6 @@
 import { Group } from "../../scene/group";
 import { LegendDatum } from "../legend";
-import { Observable, reactive } from "../../util/observable";
+import { Observable } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
@@ -82,11 +82,12 @@ export class HighlightStyle {
     readonly series = new SeriesHighlightStyle();
 }
 
-export class SeriesTooltip extends Observable {
-    @reactive('change') enabled = true;
+export class SeriesTooltip {
+    enabled = true;
 }
 
 export abstract class Series extends Observable {
+    protected static highlightedZIndex = 1000000000000;
 
     readonly id = createId(this);
 
@@ -108,15 +109,24 @@ export abstract class Series extends Observable {
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {};
 
-    protected static highlightedZIndex = 1000000000000;
+    // Flag to determine if we should recalculate node data.
+    protected nodeDataRefresh = true;
 
     readonly label = new Label();
 
     abstract tooltip: SeriesTooltip;
 
-    @reactive('dataChange') data?: any[] = undefined;
-    @reactive('dataChange') visible = true;
-    @reactive('layoutChange') showInLegend = true;
+    protected _data?: any[] = undefined;
+    set data(input: any[] | undefined) {
+        this._data = input;
+        this.nodeDataRefresh = true;
+    }
+    get data() {
+        return this._data;
+    }
+
+    visible = true;
+    showInLegend = true;
 
     cursor = 'default';
 
@@ -159,45 +169,15 @@ export abstract class Series extends Observable {
     // Using processed data, create data that backs visible nodes.
     createNodeData(): SeriesNodeDatum[] { return []; }
 
+    // Indicate that something external changed and we should recalculate nodeData.
+    markNodeDataDirty() {
+        this.nodeDataRefresh = true;
+    }
+
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
     getLabelData(): readonly PointLabelDatum[] { return []; }
-
-    private _nodeDataPending = true;
-    set nodeDataPending(value: boolean) {
-        if (this._nodeDataPending !== value) {
-            this._nodeDataPending = value;
-            this.updatePending = true;
-            if (value && this.chart) {
-                this.chart.updatePending = value;
-            }
-        }
-    }
-    get nodeDataPending(): boolean {
-        return this._nodeDataPending;
-    }
-
-    scheduleNodeDate() {
-        this.nodeDataPending = true;
-    }
-
-    private _updatePending = false;
-    set updatePending(value: boolean) {
-        if (this._updatePending !== value) {
-            this._updatePending = value;
-            if (value && this.chart) {
-                this.chart.updatePending = value;
-            }
-        }
-    }
-    get updatePending(): boolean {
-        return this._updatePending;
-    }
-
-    scheduleUpdate() {
-        this.updatePending = true;
-    }
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
@@ -233,6 +213,7 @@ export abstract class Series extends Observable {
 
     toggleSeriesItem(itemId: any, enabled: boolean): void {
         this.visible = enabled;
+        this.nodeDataRefresh = true;
     }
 
     readonly highlightStyle = new HighlightStyle();
@@ -240,14 +221,6 @@ export abstract class Series extends Observable {
     // Each series is expected to have its own logic to efficiently update its nodes
     // on hightlight changes.
     onHighlightChange() { }
-
-    readonly scheduleLayout = () => {
-        this.fireEvent({ type: 'layoutChange' });
-    }
-
-    readonly scheduleData = () => {
-        this.fireEvent({ type: 'dataChange' });
-    }
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string, axis?: ChartAxis): [number, number] {
         if (!extent) {

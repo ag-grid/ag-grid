@@ -109,11 +109,11 @@ export class PieChartProxy extends PolarChartProxy {
                 pieSeries.callout.colors = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
-                chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                    if (opaqueSeries) {
-                        opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
-                    }
-                });
+                // chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                //     if (opaqueSeries) {
+                //         opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
+                //     }
+                // });
             }
             chart.tooltip.delay = 500;
 
