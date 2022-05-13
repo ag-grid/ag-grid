@@ -2,7 +2,7 @@
   "name": "@ag-grid-community/styles",
   "version": "27.2.1",
   "description": "AG Grid Styles and Themes",
-  "main": "main.scss",
+  "main": "_index.scss",
   "files": [
     "*.css",
     "*.scss",

@@ -31,23 +31,6 @@
     }
 }
 
-// Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
-@mixin -ag-grid-variables($params, $theme: null) {
-    @include -ag-validate-params($params, $theme);
-    
-    @if $theme {
-        $theme-color-blends: meta.get-function("-ag-theme-#{$theme}-color-blends");
-        @if $theme-color-blends {
-            $params: meta.call($theme-color-blends, $params);
-        }
-    }
-    $params: -ag-base-color-blends($params);
-
-    @each $name, $value in $params {
-        --ag-#{$name}: #{$value};
-    }
-}
-
 // Apply styles to all text fields
 // @include ag-text-input { border: solid dashed red; }
 @mixin ag-text-input {
@@ -65,6 +48,23 @@
 //
 // PRIVATE IMPLEMENTATION
 //
+
+// Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
+@mixin -ag-grid-variables($params, $theme: null) {
+    @include -ag-validate-params($params, $theme);
+    
+    @if $theme {
+        $theme-color-blends: meta.get-function("-ag-theme-#{$theme}-color-blends");
+        @if $theme-color-blends {
+            $params: meta.call($theme-color-blends, $params);
+        }
+    }
+    $params: -ag-base-color-blends($params);
+
+    @each $name, $value in $params {
+        --ag-#{$name}: #{$value};
+    }
+}
 
 $-ag-theme-variables: (
     alpine: (alpine-active-color: "color"),
