@@ -22,7 +22,7 @@ Each type is tailored to be used with certain types of data. An axis can be posi
 
 The category axis is meant to be used with relatively small datasets of discrete values or categories, such as sales per product, person or quarter, where _product_, _person_ and _quarter_ are categories.
 
-The category axis renders a [tick](#axis-ticks), a [label](#axis-labels) and a [grid line](#axis-grid-lines) for each category, and spaces out all ticks evenly.
+The category axis attempts to render a [tick](#axis-ticks), a [label](#axis-labels) and a [grid line](#axis-grid-lines) for each category, and spaces out all ticks evenly.
 
 The category axis is used as the x-axis by default, positioned at the bottom of a chart.
 
@@ -39,7 +39,7 @@ The simplest category axis config looks like this:
 
 The number axis is meant to be used as a value axis. While categories are spaced out evenly, the distance between values depends on their magnitude.
 
-Instead of using one tick per value, the number axis will determine the range of all values, round it up and try to segment the rounded range with 10 evenly spaced ticks (unless you configure it differently).
+Instead of using one tick per value, the number axis will determine the range of all values, round it up and try to segment the rounded range with evenly spaced ticks.
 
 The number axis is used as the y-axis by default, positioned to the left a chart.
 
@@ -66,9 +66,9 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, the `log` axis renders 10 ticks (and grid lines) per order of magnitude. If your range is wide
-enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
-config might be necessary:
+By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
+on available space. If your range is wide enough, you may start getting too many ticks, in which case
+using a smaller value for the `tick: { count: xxx }` config might be necessary:
 
 ```js
 {
@@ -129,18 +129,17 @@ Please see the [API reference](#reference-axis.title) for axis title styling opt
 
 ## Axis Ticks
 
-Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals (10 by default, giving 11 ticks in total).
+Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals depending on the available rendering space.
 
 The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-axis.tick) below. These configs apply to all axis types.
 
-With number and time axes you can additionally set the `count` property:
+With number and time axes you can additionally set the `count` property - this will override the dynamic
+calculation based upon available rendering space:
 
 - In number axes the `count` means the desired number of ticks for the axis to use. Note that this value only serves as a hint and doesn't guarantee that this number of ticks is going to be used.
 - In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
 
 The example below demonstrates how the `count` property of the number axis can be used to reduce or increase the amount of ticks.
-
-### Example: Axis Ticks
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 

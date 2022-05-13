@@ -15,6 +15,4 @@ In this example the grid only receives the updated rows and uses the [Transactio
 
 A simple example where the grid receives the initial data from a subscription, and updates via another.
 
-In this example the grid only receives the the full row data via the 2nd subscription but makes uses of the [Immutable Data](/immutable-data/) method of row updates for improved performance.
-
 <grid-example title='RxJS - With full data set supplied to the grid' name='rxjs-bulk' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 435, "showResult": true }'></grid-example>
