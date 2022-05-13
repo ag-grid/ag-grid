@@ -431,8 +431,8 @@ export class GridBodyScrollFeature extends BeanStub {
             }
 
             if (newScrollPosition !== null) {
+                // This should trigger an EVENT_BODY_SCROLL event, causing rowRenderer.redrawAfterScroll() to trigger
                 this.eBodyViewport.scrollTop = newScrollPosition;
-                this.rowRenderer.redrawAfterScroll();
             }
 
             // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
