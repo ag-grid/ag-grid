@@ -440,29 +440,32 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         }
     }
 
-    private refreshAriaLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+    // TODO - Find a fix for AG-4392 that doesn't get
+    // announced every time a cell is focused.
 
-        const label: string[] = [];
+    // private refreshAriaLabel(): void {
+    //     const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        if (this.sortable) {
-            label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
-        }
+    //     const label: string[] = [];
 
-        if (this.menuEnabled) {
-            label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
-        }
+    //     if (this.sortable) {
+    //         label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
+    //     }
 
-        if (label.length) {
-            this.comp.setAriaLabel(label.join(' '));
-        } else {
-            this.comp.setAriaLabel();
-        }
-    }
+    //     if (this.menuEnabled) {
+    //         label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+    //     }
+
+    //     if (label.length) {
+    //         this.comp.setAriaLabel(label.join(' '));
+    //     } else {
+    //         this.comp.setAriaLabel();
+    //     }
+    // }
 
     private refreshAria(): void {
         this.refreshAriaSort();
-        this.refreshAriaLabel();
+        // this.refreshAriaLabel();
     }
 
     private addColumnHoverListener(): void {
