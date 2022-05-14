@@ -27,8 +27,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setColId(id: string): void;
-    setAriaLabel(id?: string): void;
-    setAriaDescribedBy(id?: string): void;
+    setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
@@ -67,6 +66,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private userCompDetails: UserCompDetails;
 
     private userHeaderClasses: Set<string> = new Set();
+    private ariaDescriptionProperties = new Map<string, string>();
 
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
         super(column, parentRowCtrl);
@@ -159,7 +159,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupSelectAll(): void {
         this.selectAllFeature = this.createManagedBean(new SelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this.comp);
+        this.selectAllFeature.setComp(this);
     }
 
     public getSelectAllGui(): HTMLElement {
@@ -434,38 +434,42 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshAriaSort(): void {
         if (this.sortable) {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
             this.comp.setAriaSort(getAriaSortState(this.column));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         } else {
             this.comp.setAriaSort();
+            this.setAriaDescriptionProperty('sort', null);
         }
     }
 
-    // TODO - Find a fix for AG-4392 that doesn't get
-    // announced every time a cell is focused.
+    private refreshAriaMenu(): void {
+        if (this.menuEnabled) {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+        } else {
+            this.setAriaDescriptionProperty('menu', null);
+        }
+    }
 
-    // private refreshAriaLabel(): void {
-    //     const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+    public setAriaDescriptionProperty(property: string, value: string | null): void {
+        if (value != null) {
+            this.ariaDescriptionProperties.set(property, value);
+        } else {
+            this.ariaDescriptionProperties.delete(property);
+        }
+    }
 
-    //     const label: string[] = [];
+    public refreshAriaDescription(): void {
+        const descriptionArray = Array.from(this.ariaDescriptionProperties.values());
 
-    //     if (this.sortable) {
-    //         label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
-    //     }
-
-    //     if (this.menuEnabled) {
-    //         label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
-    //     }
-
-    //     if (label.length) {
-    //         this.comp.setAriaLabel(label.join(' '));
-    //     } else {
-    //         this.comp.setAriaLabel();
-    //     }
-    // }
+        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
+    }
 
     private refreshAria(): void {
         this.refreshAriaSort();
-        // this.refreshAriaLabel();
+        this.refreshAriaMenu();
+        this.refreshAriaDescription();
     }
 
     private addColumnHoverListener(): void {
