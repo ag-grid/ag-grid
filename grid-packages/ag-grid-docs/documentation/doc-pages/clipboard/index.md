@@ -32,8 +32,10 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 
 When [Row Selection](/row-selection) is enabled by setting `gridOptions.rowSelection` to either `"single"` or `"multiple"`, then copying while a row is selected will add the whole row's contents to your clipboard.
 
-If you want to use row selection for another purpose and still wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
-`gridOptions.suppressCopyRowToClipboard=true`.
+If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
+`gridOptions.suppressCopyRowsToClipboard=true`.
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["suppressCopyRowsToClipboard"]'  ></api-documentation>
 
 The below example demonstrates copying rows.
 
