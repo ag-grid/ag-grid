@@ -70,7 +70,7 @@ md-include:component-lifecycle-vue.md
 
 ## Cell Rendering Flow
 
-The diagram below (which is taken from the section [Value Getters & Formatters](/value-getters/)) summarises the steps the grid takes while working out what to render and how to render.
+The diagram below (which is taken from the section [Cell Content](/cell-content/)) summarises the steps the grid takes while working out what to render and how to render.
 
 In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRenderer`.
 
