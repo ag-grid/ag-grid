@@ -55,8 +55,7 @@ var HeaderCellComp = /** @class */ (function (_super) {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setColId: function (id) { return setAttribute('col-id', id); },
             setTitle: function (title) { return setAttribute('title', title); },
-            setAriaLabel: function (label) { return aria_1.setAriaLabel(eGui, label); },
-            setAriaDescribedBy: function (value) { return aria_1.setAriaDescribedBy(eGui, value); },
+            setAriaDescription: function (label) { return aria_1.setAriaDescription(eGui, label); },
             setAriaSort: function (sort) { return sort ? aria_1.setAriaSort(eGui, sort) : aria_1.removeAriaSort(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return _this.headerComp; }

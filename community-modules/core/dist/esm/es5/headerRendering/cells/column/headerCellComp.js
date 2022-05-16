@@ -24,7 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { PostConstruct, PreDestroy } from "../../../context/context";
-import { removeAriaSort, setAriaDescribedBy, setAriaLabel, setAriaSort } from "../../../utils/aria";
+import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 var HeaderCellComp = /** @class */ (function (_super) {
@@ -53,8 +53,7 @@ var HeaderCellComp = /** @class */ (function (_super) {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setColId: function (id) { return setAttribute('col-id', id); },
             setTitle: function (title) { return setAttribute('title', title); },
-            setAriaLabel: function (label) { return setAriaLabel(eGui, label); },
-            setAriaDescribedBy: function (value) { return setAriaDescribedBy(eGui, value); },
+            setAriaDescription: function (label) { return setAriaDescription(eGui, label); },
             setAriaSort: function (sort) { return sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return _this.headerComp; }

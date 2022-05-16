@@ -31,6 +31,7 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
         super(column, parentRowCtrl);
         this.refreshFunctions = [];
         this.userHeaderClasses = new Set();
+        this.ariaDescriptionProperties = new Map();
         this.column = column;
     }
     setComp(comp, eGui, eResize) {
@@ -104,7 +105,7 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
     }
     setupSelectAll() {
         this.selectAllFeature = this.createManagedBean(new selectAllFeature_1.SelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this.comp);
+        this.selectAllFeature.setComp(this);
     }
     getSelectAllGui() {
         return this.selectAllFeature.getCheckboxGui();
@@ -332,31 +333,40 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
     }
     refreshAriaSort() {
         if (this.sortable) {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
             this.comp.setAriaSort(aria_1.getAriaSortState(this.column));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         }
         else {
             this.comp.setAriaSort();
+            this.setAriaDescriptionProperty('sort', null);
         }
     }
-    refreshAriaLabel() {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = [];
-        if (this.sortable) {
-            label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
-        }
+    refreshAriaMenu() {
         if (this.menuEnabled) {
-            label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
-        }
-        if (label.length) {
-            this.comp.setAriaLabel(label.join(' '));
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
         }
         else {
-            this.comp.setAriaLabel();
+            this.setAriaDescriptionProperty('menu', null);
         }
+    }
+    setAriaDescriptionProperty(property, value) {
+        if (value != null) {
+            this.ariaDescriptionProperties.set(property, value);
+        }
+        else {
+            this.ariaDescriptionProperties.delete(property);
+        }
+    }
+    refreshAriaDescription() {
+        const descriptionArray = Array.from(this.ariaDescriptionProperties.values());
+        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
     }
     refreshAria() {
         this.refreshAriaSort();
-        this.refreshAriaLabel();
+        this.refreshAriaMenu();
+        this.refreshAriaDescription();
     }
     addColumnHoverListener() {
         const listener = () => {

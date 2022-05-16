@@ -31,9 +31,8 @@ var HeaderCellComp = function (props) {
     var _b = react_1.useState(), title = _b[0], setTitle = _b[1];
     var _c = react_1.useState(), colId = _c[0], setColId = _c[1];
     var _d = react_1.useState(), ariaSort = _d[0], setAriaSort = _d[1];
-    var _e = react_1.useState(), ariaLabel = _e[0], setAriaLabel = _e[1];
-    var _f = react_1.useState(), ariaDescribedBy = _f[0], setAriaDescribedBy = _f[1];
-    var _g = react_1.useState(), userCompDetails = _g[0], setUserCompDetails = _g[1];
+    var _e = react_1.useState(), ariaDescription = _e[0], setAriaDescription = _e[1];
+    var _f = react_1.useState(), userCompDetails = _f[0], setUserCompDetails = _f[1];
     var eGui = react_1.useRef(null);
     var eResize = react_1.useRef(null);
     var userCompRef = react_1.useRef();
@@ -45,8 +44,7 @@ var HeaderCellComp = function (props) {
             addOrRemoveCssClass: function (name, on) { return cssClassManager.addOrRemoveCssClass(name, on); },
             setColId: function (id) { return setColId(id); },
             setTitle: function (title) { return setTitle(title); },
-            setAriaLabel: function (label) { return setAriaLabel(label); },
-            setAriaDescribedBy: function (value) { return setAriaDescribedBy(value); },
+            setAriaDescription: function (description) { return setAriaDescription(description); },
             setAriaSort: function (sort) { return setAriaSort(sort); },
             setUserCompDetails: function (compDetails) { return setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return userCompRef.current || undefined; }
@@ -75,7 +73,7 @@ var HeaderCellComp = function (props) {
     }, [userCompDetails]);
     var reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     var UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: eGui, className: "ag-header-cell", style: style, title: title, "col-id": colId, "aria-sort": ariaSort, role: "columnheader", tabIndex: -1, "aria-describedby": ariaDescribedBy, "aria-label": ariaLabel },
+    return (react_1.default.createElement("div", { ref: eGui, className: "ag-header-cell", style: style, title: title, "col-id": colId, "aria-sort": ariaSort, role: "columnheader", tabIndex: -1, "aria-description": ariaDescription },
         react_1.default.createElement("div", { ref: eResize, className: "ag-header-cell-resize", role: "presentation" }),
         reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params)),
         reactUserComp && !userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params, { ref: userCompRef }))));

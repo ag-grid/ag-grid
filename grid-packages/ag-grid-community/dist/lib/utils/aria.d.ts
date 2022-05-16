@@ -7,6 +7,7 @@ export declare function getAriaPosInSet(element: HTMLElement): number;
 export declare function getAriaDescribedBy(element: HTMLElement): string;
 export declare function setAriaLabel(element: HTMLElement, label?: string): void;
 export declare function setAriaLabelledBy(element: HTMLElement, labelledBy: string): void;
+export declare function setAriaDescription(element: HTMLElement, description?: string): void;
 export declare function setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void;
 export declare function setAriaLevel(element: HTMLElement, level: number): void;
 export declare function setAriaDisabled(element: HTMLElement, disabled: boolean): void;

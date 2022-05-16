@@ -39,8 +39,7 @@ class HeaderCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),
-            setAriaLabel: label => aria_1.setAriaLabel(eGui, label),
-            setAriaDescribedBy: value => aria_1.setAriaDescribedBy(eGui, value),
+            setAriaDescription: label => aria_1.setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? aria_1.setAriaSort(eGui, sort) : aria_1.removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp

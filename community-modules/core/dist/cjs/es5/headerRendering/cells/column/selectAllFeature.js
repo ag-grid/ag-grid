@@ -53,8 +53,8 @@ var SelectAllFeature = /** @class */ (function (_super) {
     SelectAllFeature.prototype.getCheckboxGui = function () {
         return this.cbSelectAll.getGui();
     };
-    SelectAllFeature.prototype.setComp = function (comp) {
-        this.comp = comp;
+    SelectAllFeature.prototype.setComp = function (ctrl) {
+        this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new agCheckbox_1.AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
         aria_1.setAriaRole(this.cbSelectAll.getGui(), 'presentation');
@@ -76,11 +76,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
-    };
-    SelectAllFeature.prototype.refreshHeaderAriaDescribedBy = function (isSelectAllVisible) {
-        var describedBy = isSelectAllVisible ? this.cbSelectAll.getInputElement().id : undefined;
-        this.comp.setAriaDescribedBy(describedBy);
+        this.refreshSelectAllLabel();
     };
     SelectAllFeature.prototype.onModelChanged = function () {
         if (!this.cbSelectAllVisible) {
@@ -122,11 +118,17 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.refreshSelectAllLabel = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var checked = this.cbSelectAll.getValue();
-        var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-        var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
-        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
+        if (!this.cbSelectAllVisible) {
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
+        }
+        else {
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            var checked = this.cbSelectAll.getValue();
+            var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+            var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', ariaLabel + " (" + ariaStatus + ")");
+        }
+        this.headerCellCtrl.refreshAriaDescription();
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
         var _this = this;

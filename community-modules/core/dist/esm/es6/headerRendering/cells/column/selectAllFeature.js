@@ -36,8 +36,8 @@ export class SelectAllFeature extends BeanStub {
     getCheckboxGui() {
         return this.cbSelectAll.getGui();
     }
-    setComp(comp) {
-        this.comp = comp;
+    setComp(ctrl) {
+        this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
         setAriaRole(this.cbSelectAll.getGui(), 'presentation');
@@ -59,11 +59,7 @@ export class SelectAllFeature extends BeanStub {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
-    }
-    refreshHeaderAriaDescribedBy(isSelectAllVisible) {
-        const describedBy = isSelectAllVisible ? this.cbSelectAll.getInputElement().id : undefined;
-        this.comp.setAriaDescribedBy(describedBy);
+        this.refreshSelectAllLabel();
     }
     onModelChanged() {
         if (!this.cbSelectAllVisible) {
@@ -105,11 +101,17 @@ export class SelectAllFeature extends BeanStub {
         this.processingEventFromCheckbox = false;
     }
     refreshSelectAllLabel() {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const checked = this.cbSelectAll.getValue();
-        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-        const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
-        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
+        if (!this.cbSelectAllVisible) {
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
+        }
+        else {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const checked = this.cbSelectAll.getValue();
+            const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+            const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
+        }
+        this.headerCellCtrl.refreshAriaDescription();
     }
     getSelectionCount() {
         let selectedCount = 0;

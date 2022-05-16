@@ -9264,6 +9264,15 @@ function setAriaLabelledBy(element, labelledBy) {
         removeAriaAttribute(element, key);
     }
 }
+function setAriaDescription(element, description) {
+    var key = 'description';
+    if (description) {
+        setAriaAttribute(element, key, description);
+    }
+    else {
+        removeAriaAttribute(element, key);
+    }
+}
 function setAriaDescribedBy(element, describedby) {
     var key = 'describedby';
     if (describedby) {
@@ -9337,6 +9346,7 @@ var AriaUtils = /*#__PURE__*/Object.freeze({
     getAriaDescribedBy: getAriaDescribedBy,
     setAriaLabel: setAriaLabel,
     setAriaLabelledBy: setAriaLabelledBy,
+    setAriaDescription: setAriaDescription,
     setAriaDescribedBy: setAriaDescribedBy,
     setAriaLevel: setAriaLevel,
     setAriaDisabled: setAriaDisabled,
@@ -29382,8 +29392,7 @@ var HeaderCellComp = /** @class */ (function (_super) {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setColId: function (id) { return setAttribute('col-id', id); },
             setTitle: function (title) { return setAttribute('title', title); },
-            setAriaLabel: function (label) { return setAriaLabel(eGui, label); },
-            setAriaDescribedBy: function (value) { return setAriaDescribedBy(eGui, value); },
+            setAriaDescription: function (label) { return setAriaDescription(eGui, label); },
             setAriaSort: function (sort) { return sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return _this.headerComp; }
@@ -32261,8 +32270,8 @@ var SelectAllFeature = /** @class */ (function (_super) {
     SelectAllFeature.prototype.getCheckboxGui = function () {
         return this.cbSelectAll.getGui();
     };
-    SelectAllFeature.prototype.setComp = function (comp) {
-        this.comp = comp;
+    SelectAllFeature.prototype.setComp = function (ctrl) {
+        this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
         setAriaRole(this.cbSelectAll.getGui(), 'presentation');
@@ -32284,11 +32293,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
-    };
-    SelectAllFeature.prototype.refreshHeaderAriaDescribedBy = function (isSelectAllVisible) {
-        var describedBy = isSelectAllVisible ? this.cbSelectAll.getInputElement().id : undefined;
-        this.comp.setAriaDescribedBy(describedBy);
+        this.refreshSelectAllLabel();
     };
     SelectAllFeature.prototype.onModelChanged = function () {
         if (!this.cbSelectAllVisible) {
@@ -32330,11 +32335,17 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.refreshSelectAllLabel = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var checked = this.cbSelectAll.getValue();
-        var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-        var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
-        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
+        if (!this.cbSelectAllVisible) {
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
+        }
+        else {
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            var checked = this.cbSelectAll.getValue();
+            var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+            var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', ariaLabel + " (" + ariaStatus + ")");
+        }
+        this.headerCellCtrl.refreshAriaDescription();
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
         var _this = this;
@@ -32462,6 +32473,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this, column, parentRowCtrl) || this;
         _this.refreshFunctions = [];
         _this.userHeaderClasses = new Set();
+        _this.ariaDescriptionProperties = new Map();
         _this.column = column;
         return _this;
     }
@@ -32538,7 +32550,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     };
     HeaderCellCtrl.prototype.setupSelectAll = function () {
         this.selectAllFeature = this.createManagedBean(new SelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this.comp);
+        this.selectAllFeature.setComp(this);
     };
     HeaderCellCtrl.prototype.getSelectAllGui = function () {
         return this.selectAllFeature.getCheckboxGui();
@@ -32773,31 +32785,40 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     };
     HeaderCellCtrl.prototype.refreshAriaSort = function () {
         if (this.sortable) {
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
             this.comp.setAriaSort(getAriaSortState(this.column));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         }
         else {
             this.comp.setAriaSort();
+            this.setAriaDescriptionProperty('sort', null);
         }
     };
-    HeaderCellCtrl.prototype.refreshAriaLabel = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var label = [];
-        if (this.sortable) {
-            label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
-        }
+    HeaderCellCtrl.prototype.refreshAriaMenu = function () {
         if (this.menuEnabled) {
-            label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
-        }
-        if (label.length) {
-            this.comp.setAriaLabel(label.join(' '));
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
         }
         else {
-            this.comp.setAriaLabel();
+            this.setAriaDescriptionProperty('menu', null);
         }
+    };
+    HeaderCellCtrl.prototype.setAriaDescriptionProperty = function (property, value) {
+        if (value != null) {
+            this.ariaDescriptionProperties.set(property, value);
+        }
+        else {
+            this.ariaDescriptionProperties.delete(property);
+        }
+    };
+    HeaderCellCtrl.prototype.refreshAriaDescription = function () {
+        var descriptionArray = Array.from(this.ariaDescriptionProperties.values());
+        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
     };
     HeaderCellCtrl.prototype.refreshAria = function () {
         this.refreshAriaSort();
-        this.refreshAriaLabel();
+        this.refreshAriaMenu();
+        this.refreshAriaDescription();
     };
     HeaderCellCtrl.prototype.addColumnHoverListener = function () {
         var _this = this;

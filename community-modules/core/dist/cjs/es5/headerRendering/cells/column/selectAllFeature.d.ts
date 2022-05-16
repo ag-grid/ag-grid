@@ -3,7 +3,7 @@
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../../context/beanStub";
 import { Column } from "../../../entities/column";
-import { IHeaderCellComp } from "./headerCellCtrl";
+import { HeaderCellCtrl } from "./headerCellCtrl";
 export declare class SelectAllFeature extends BeanStub {
     private gridApi;
     private columnApi;
@@ -12,15 +12,14 @@ export declare class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible;
     private processingEventFromCheckbox;
     private column;
-    private comp;
+    private headerCellCtrl;
     private filteredOnly;
     private cbSelectAll;
     constructor(column: Column);
     onSpaceKeyPressed(e: KeyboardEvent): void;
     getCheckboxGui(): HTMLElement;
-    setComp(comp: IHeaderCellComp): void;
+    setComp(ctrl: HeaderCellCtrl): void;
     private showOrHideSelectAll;
-    private refreshHeaderAriaDescribedBy;
     private onModelChanged;
     private onSelectionChanged;
     private getNextCheckboxState;

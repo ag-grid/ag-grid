@@ -194,6 +194,7 @@ export declare const _: {
     getAriaDescribedBy(element: HTMLElement): string;
     setAriaLabel(element: HTMLElement, label?: string | undefined): void;
     setAriaLabelledBy(element: HTMLElement, labelledBy: string): void;
+    setAriaDescription(element: HTMLElement, description?: string | undefined): void;
     setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void;
     setAriaLevel(element: HTMLElement, level: number): void;
     setAriaDisabled(element: HTMLElement, disabled: boolean): void;

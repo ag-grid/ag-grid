@@ -45,6 +45,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this, column, parentRowCtrl) || this;
         _this.refreshFunctions = [];
         _this.userHeaderClasses = new Set();
+        _this.ariaDescriptionProperties = new Map();
         _this.column = column;
         return _this;
     }
@@ -121,7 +122,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     };
     HeaderCellCtrl.prototype.setupSelectAll = function () {
         this.selectAllFeature = this.createManagedBean(new selectAllFeature_1.SelectAllFeature(this.column));
-        this.selectAllFeature.setComp(this.comp);
+        this.selectAllFeature.setComp(this);
     };
     HeaderCellCtrl.prototype.getSelectAllGui = function () {
         return this.selectAllFeature.getCheckboxGui();
@@ -356,31 +357,40 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
     };
     HeaderCellCtrl.prototype.refreshAriaSort = function () {
         if (this.sortable) {
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
             this.comp.setAriaSort(aria_1.getAriaSortState(this.column));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
         }
         else {
             this.comp.setAriaSort();
+            this.setAriaDescriptionProperty('sort', null);
         }
     };
-    HeaderCellCtrl.prototype.refreshAriaLabel = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var label = [];
-        if (this.sortable) {
-            label.push(translate('ariaSortableColumn', 'Press ENTER to sort.'));
-        }
+    HeaderCellCtrl.prototype.refreshAriaMenu = function () {
         if (this.menuEnabled) {
-            label.push(translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
-        }
-        if (label.length) {
-            this.comp.setAriaLabel(label.join(' '));
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
         }
         else {
-            this.comp.setAriaLabel();
+            this.setAriaDescriptionProperty('menu', null);
         }
+    };
+    HeaderCellCtrl.prototype.setAriaDescriptionProperty = function (property, value) {
+        if (value != null) {
+            this.ariaDescriptionProperties.set(property, value);
+        }
+        else {
+            this.ariaDescriptionProperties.delete(property);
+        }
+    };
+    HeaderCellCtrl.prototype.refreshAriaDescription = function () {
+        var descriptionArray = Array.from(this.ariaDescriptionProperties.values());
+        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
     };
     HeaderCellCtrl.prototype.refreshAria = function () {
         this.refreshAriaSort();
-        this.refreshAriaLabel();
+        this.refreshAriaMenu();
+        this.refreshAriaDescription();
     };
     HeaderCellCtrl.prototype.addColumnHoverListener = function () {
         var _this = this;

@@ -11,7 +11,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { PostConstruct, PreDestroy } from "../../../context/context";
-import { removeAriaSort, setAriaDescribedBy, setAriaLabel, setAriaSort } from "../../../utils/aria";
+import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 export class HeaderCellComp extends AbstractHeaderCellComp {
@@ -37,8 +37,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),
-            setAriaLabel: label => setAriaLabel(eGui, label),
-            setAriaDescribedBy: value => setAriaDescribedBy(eGui, value),
+            setAriaDescription: label => setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp

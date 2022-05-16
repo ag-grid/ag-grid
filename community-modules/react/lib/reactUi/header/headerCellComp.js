@@ -20,8 +20,7 @@ const HeaderCellComp = (props) => {
     const [title, setTitle] = react_1.useState();
     const [colId, setColId] = react_1.useState();
     const [ariaSort, setAriaSort] = react_1.useState();
-    const [ariaLabel, setAriaLabel] = react_1.useState();
-    const [ariaDescribedBy, setAriaDescribedBy] = react_1.useState();
+    const [ariaDescription, setAriaDescription] = react_1.useState();
     const [userCompDetails, setUserCompDetails] = react_1.useState();
     const eGui = react_1.useRef(null);
     const eResize = react_1.useRef(null);
@@ -34,8 +33,7 @@ const HeaderCellComp = (props) => {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
-            setAriaLabel: label => setAriaLabel(label),
-            setAriaDescribedBy: value => setAriaDescribedBy(value),
+            setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: () => userCompRef.current || undefined
@@ -64,7 +62,7 @@ const HeaderCellComp = (props) => {
     }, [userCompDetails]);
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: eGui, className: "ag-header-cell", style: style, title: title, "col-id": colId, "aria-sort": ariaSort, role: "columnheader", tabIndex: -1, "aria-describedby": ariaDescribedBy, "aria-label": ariaLabel },
+    return (react_1.default.createElement("div", { ref: eGui, className: "ag-header-cell", style: style, title: title, "col-id": colId, "aria-sort": ariaSort, role: "columnheader", tabIndex: -1, "aria-description": ariaDescription },
         react_1.default.createElement("div", { ref: eResize, className: "ag-header-cell-resize", role: "presentation" }),
         reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
         reactUserComp && !userCompStateless && react_1.default.createElement(UserCompClass, Object.assign({}, userCompDetails.params, { ref: userCompRef }))));

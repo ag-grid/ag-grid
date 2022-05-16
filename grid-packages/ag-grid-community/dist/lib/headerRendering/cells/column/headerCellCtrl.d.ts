@@ -10,8 +10,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setColId(id: string): void;
-    setAriaLabel(id?: string): void;
-    setAriaDescribedBy(id?: string): void;
+    setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
@@ -39,6 +38,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private dragSourceElement;
     private userCompDetails;
     private userHeaderClasses;
+    private ariaDescriptionProperties;
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement): void;
     private setupUserComp;
@@ -74,7 +74,9 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupMenuClass;
     private setupSortableClass;
     private refreshAriaSort;
-    private refreshAriaLabel;
+    private refreshAriaMenu;
+    setAriaDescriptionProperty(property: string, value: string | null): void;
+    refreshAriaDescription(): void;
     private refreshAria;
     private addColumnHoverListener;
     private setupFilterCss;
