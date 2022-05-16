@@ -18,8 +18,9 @@ When [Cell Ranges](/range-selection) are enabled by setting `gridOptions.enableR
 
 Multiple cell ranges can be selected at once using <kbd>Ctrl</kbd> and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
-The column headers can be copied to the clipboard in addition to the cell contents by enabling the option: 
-`gridOptions.copyHeadersToClipboard=true`
+The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["copyHeadersToClipboard"]'  ></api-documentation>
 
 In the below example `copyHeadersToClipboard` has been enabled, try:
 - Select a cell range with click & drag
