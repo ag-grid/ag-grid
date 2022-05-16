@@ -168,8 +168,8 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        this.toggleButtonDisabled(this.btFirst, !this.previousAndFirstButtonsDisabled);
-        this.toggleButtonDisabled(this.btPrevious, !this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
