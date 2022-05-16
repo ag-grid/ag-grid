@@ -30,6 +30,11 @@
     }
 }
 
+.ag-input-field-input {
+    width: 100%;
+    min-width: 0;
+}
+
 .ag-checkbox-input-wrapper {
     @include -check-button-base();
 

@@ -13,7 +13,7 @@
     }
     @font-face {
         font-family: "agGridAlpine";
-        src: url(#{data});
+        src: url(#{$data});
         font-weight: normal;
         font-style: normal;
     }

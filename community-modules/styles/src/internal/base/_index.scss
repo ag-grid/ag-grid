@@ -3,7 +3,7 @@
 @use "sass:meta";
 @use "sass:color";
 
-@mixin emit-styles() {
+@mixin general-styles() {
     @include ag.icon-styles();
     @include meta.load-css("./base-variables");
     @include meta.load-css("./parts/wrapper");
@@ -21,6 +21,9 @@
     @include meta.load-css("./parts/footer");
     @include meta.load-css("./parts/column-drop");
     @include meta.load-css("./parts/charts");
-    @include meta.load-css("./parts/native-inputs");
     @include meta.load-css("./parts/date-time");
+}
+
+@mixin native-input-styles() {
+    @include meta.load-css("./parts/native-inputs");
 }

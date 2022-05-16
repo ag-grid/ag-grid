@@ -17,8 +17,15 @@
 @mixin grid-styles($params) {
     $themes: -get-themes($params);
     $params: map.remove($params, "theme", "themes");
-    
-    @include meta.load-css("./ag-grid.css");
+
+    $no-native-widgets: map.get($params, "suppress-native-widget-styling");
+    $params: map.remove($params, "suppress-native-widget-styling");
+
+    @if $no-native-widgets {
+        @include meta.load-css("./ag-grid-no-native-widgets.css");
+    } @else {
+        @include meta.load-css("./ag-grid.css");
+    }
 
     @each $theme-name, $extra-params in $themes {
         @include -validate-theme($theme-name);
@@ -26,6 +33,7 @@
         @include meta.load-css($css-file);
     }
 
+    /* NOISY */
     @each $theme-name, $extra-params in $themes {
         $theme-params: map.merge($params, $extra-params);
         .ag-theme-#{$theme-name} {
@@ -65,7 +73,9 @@
     $params: -base-color-blends($params);
 
     @each $name, $value in $params {
-        --ag-#{$name}: #{$value};
+        // @if map.has-key($-variable-param-types, $name) {
+            --ag-#{$name}: #{$value};
+        // }
     }
 }
 
@@ -214,7 +224,8 @@ $-param-type-descriptions: (
     "display": "`block` or `true` to show, `none` or `false` to hide"
 );
 
-$-param-types: (
+// params that are copied to --ag-param-name variables
+$-variable-param-types: (
     foreground-color: "color",
     data-color: "color",
     secondary-foreground-color: "color",
@@ -320,6 +331,11 @@ $-param-types: (
     material-accent-color: "color",
 );
 
+// params that are not copied to CSS variables
+$-non-variable-param-types: (
+    suppress-native-widget-styling: "bool"
+);
+
 @mixin -validate-params($params, $theme: null) {
     $theme-variables: ();
     @if $theme {
@@ -327,7 +343,7 @@ $-param-types: (
         $theme-variables: map.get($-theme-variables, $theme);
     }
 
-    $param-types: map.merge($-param-types, $theme-variables);
+    $param-types: map.merge($-variable-param-types, $theme-variables);
     $error-count: 0;
     @each $name, $value in $params {
         @if string.index(meta.inspect($value), "var(") {
@@ -348,7 +364,7 @@ $-param-types: (
                     @warn "Invalid value for parameter '#{$name}': #{meta.inspect($value)} -- expected #{$expected}";
                     $error-count: $error-count + 1;
                 }
-            } @else {
+            } @else if not map.has-key($-non-variable-param-types, $name) {
                 @warn "Unrecognised parameter '#{$name}'";
                 $error-count: $error-count + 1;
             }
@@ -388,6 +404,10 @@ $-param-types: (
     // TODO implement me
     // Note: check for style and number in any order
     @return true;
+}
+
+@function -validate-bool($value) {
+    @return meta.type-of($value) == "bool";
 }
 
 @function -validate-any($value) {
