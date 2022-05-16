@@ -47,8 +47,6 @@ If you want your editor to appear in a popup (such as a dropdown list), then you
 
 From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impact on the editor. You can create a cell editor and change this property and observe how your editor behaves in each way.
 
-To have an editor appear in a popup, have the `isPopup()` method return `true`. If you want editing to be done within a cell, either return `false` or don't provide this method at all.
-
 ### Configure Popup
 
 [[only-react]]
