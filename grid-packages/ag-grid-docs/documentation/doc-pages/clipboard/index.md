@@ -18,8 +18,9 @@ When [Cell Ranges](/range-selection) are enabled by setting `gridOptions.enableR
 
 Multiple cell ranges can be selected at once using <kbd>Ctrl</kbd> and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
-The column headers can be copied to the clipboard in addition to the cell contents by enabling the option: 
-`gridOptions.copyHeadersToClipboard=true`
+The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["copyHeadersToClipboard"]'  ></api-documentation>
 
 In the below example `copyHeadersToClipboard` has been enabled, try:
 - Select a cell range with click & drag
@@ -32,25 +33,38 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 
 When [Row Selection](/row-selection) is enabled by setting `gridOptions.rowSelection` to either `"single"` or `"multiple"`, then copying while a row is selected will add the whole row's contents to your clipboard.
 
-If you want to use row selection for another purpose and still wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
-`gridOptions.suppressCopyRowToClipboard=true`.
-
-The below example demonstrates copying rows.
+The below example demonstrates copying rows:
+- Please select one or more rows in the example below and press CTRL+C
+- Paste copied content in a text editor
+- Note pasted content includes all selected rows
 
 <grid-example title='Copying Rows' name='copy-row' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] }'></grid-example>
 
+If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
+`gridOptions.suppressCopyRowsToClipboard=true`.
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["suppressCopyRowsToClipboard"]'  ></api-documentation>
+
+The below example demonstrates copying the focused cell only when using row selection:
+- Please select one or more rows in the example below and press CTRL+C
+- Paste copied content in a text editor
+- Note pasted content includes focused cell only
+
+<grid-example title='Suppress Copying Rows' name='suppress-copy-row' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] }'></grid-example>
+
 ## Mixed Copying Cell Ranges & Rows
 
-The copy operation has the following order of precedence for what selection it checks for:
+The copy operation copies the selected content in the following order of precedence:
 
-1. Cell Ranges
-2. Row Selection
+1. Cell Ranges (if [Range Selection](/range-selection) is enabled)
+2. Row Selection (if [Row Selection](/row-selection) is enabled and `suppressCopyRowsToClipboard` is <b>not</b> enabled)
 3. Focused Cell
 
-When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it
-impossible for users to copy rows. Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` will make it possible
-to copy rows when only a single cell is selected via range selection. This behaviour is not enabled by default since it can
-be confusing for the copy behaviour to change depending on how much is selected.
+When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection. 
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["suppressCopySingleCellRanges"]'  ></api-documentation>
+
+In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
 
 The below example has range selection, row selection and `suppressCopySingleCellRanges` enabled.
 Observe that if only a single cell is selected, the row is copied, otherwise the range is copied.

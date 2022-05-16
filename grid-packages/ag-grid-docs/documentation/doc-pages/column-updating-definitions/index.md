@@ -172,7 +172,7 @@ If the Columns are cleared out (clicking Clear) then when columns are set again 
 If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
 present), then these new Column will always be added at the end.
 
-In order for the Column Order to be maintained, the grid needs to match the Columns. This can be doing by ensuring
+In order for the Column Order to be maintained, the grid needs to match the Columns. This can be done by ensuring
 each Column has a `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and
 placed at the end.
 

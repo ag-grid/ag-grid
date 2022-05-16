@@ -1,8 +1,8 @@
 import React from 'react';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
-export default (props: ICellRendererParams) => (
+export default ({data, context}: ICellRendererParams) => (
     <React.Fragment>
-        <img alt={props.data.country} src={props.context.base64flags[props.context.countryCodes[props.data.country]]} />
+        <img alt={data.country} src={context.base64flags[context.countryCodes[data.country]]} /> {data.country}
     </React.Fragment>
 )
