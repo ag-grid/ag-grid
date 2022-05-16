@@ -202,11 +202,8 @@ function applyChartOptions<
         registerListeners(chart, options.listeners);
     }
 
-    // RTI-907 - Force processing for scatter series with labels enabled for correct label rendering.
-    const forceProcessData = chart.series.some((s) => s.type === 'scatter' && s.label.enabled);
-
     chart.layoutPending = true;
-    if (performProcessData || forceProcessData) {
+    if (performProcessData) {
         chart.processData();
     }
     chart.performLayout();

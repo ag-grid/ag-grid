@@ -65,7 +65,6 @@ export class ScatterSeries extends CartesianSeries {
     private nodeData: ScatterNodeDatum[] = [];
     private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
 
-    private labelData: MeasuredLabel[] = [];
     private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.group).selectAll<Text>();
 
     readonly marker = new CartesianSeriesMarker();
@@ -210,16 +209,6 @@ export class ScatterSeries extends CartesianSeries {
 
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 
-        const font = label.getFont();
-        this.labelData = labelKey ? this.validData.map((d) => {
-            const text = String(d[labelKey]);
-            const size = HdpiCanvas.getTextSize(text, font);
-            return {
-                text,
-                ...size
-            };
-        }) : [];
-
         this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
@@ -264,7 +253,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     createNodeData(): ScatterNodeDatum[] {
-        const { chart, data, visible, xAxis, yAxis } = this;
+        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
 
         if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
             return [];
@@ -281,6 +270,7 @@ export class ScatterSeries extends CartesianSeries {
 
         sizeScale.range = [marker.size, marker.maxSize];
 
+        const font = label.getFont();
         for (let i = 0; i < xData.length; i++) {
             const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
 
@@ -295,12 +285,18 @@ export class ScatterSeries extends CartesianSeries {
                 continue;
             }
 
+            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const size = HdpiCanvas.getTextSize(text, font);
+
             nodeData.push({
                 series: this,
                 datum: validData[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
-                label: this.labelData[i]
+                label: {
+                    text,
+                    ...size,
+                },
             });
         }
 
