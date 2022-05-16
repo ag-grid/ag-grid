@@ -1,0 +1,20 @@
+@use "sass:meta";
+@use "sass:map";
+
+@use "./generated/agGridAlpine";
+@use "./generated/agGridBalham";
+@use "./generated/agGridMaterial";
+@use "./generated/agGridClassic";
+
+@mixin font-face($name) {
+    $data: map.get(meta.module-variables($name), "data");
+    @if not $data {
+        @error "No $data for #{$name} font";
+    }
+    @font-face {
+        font-family: "agGridAlpine";
+        src: url(#{data});
+        font-weight: normal;
+        font-style: normal;
+    }
+}

@@ -83,27 +83,21 @@ function generateFontFile(fontName) {
                 console.log(err);
                 process.exit(1);
             }
-            const woffFile = path.join(__dirname, "..", `${fontName}Font.woff2`);
-            fs.writeFileSync(woffFile, res.woff2);
-            console.log(`Generated ${woffFile}`);
-            const cssFile = path.join(__dirname, "..", `${fontName}Font.css`);
-            fs.writeFileSync(cssFile, getIconFontFaceCSS(fontName, res.woff2), "utf8");
+            const cssFile = path.join(__dirname, `../src/internal/fonts/generated/${fontName}.scss`);
+            fs.writeFileSync(cssFile, getIconDataFileContent(res.woff2), "utf8");
             console.log(`Generated ${cssFile}`);
         }
     );
 }
 
-const getIconFontFaceCSS = (name, buffer) => `
-@font-face {
-    font-family: "${name}";
-    src: url("data:font/woff2;charset=utf-8;base64,${Buffer.from(buffer).toString('base64')}");
-    font-weight: normal;
-    font-style: normal;
-}
+const getIconDataFileContent = (buffer) => `
+${generatedFileWarning}
+
+$data: "data:font/woff2;charset=utf-8;base64,${Buffer.from(buffer).toString('base64')}";
 `;
 
 const generateScssIconMap = () => {
-    const outputFile = path.join(__dirname, "../src/internal/ag/_icon-font-codes.scss");
+    const outputFile = path.join(__dirname, "../src/internal/fonts/generated/_icon-font-codes.scss");
     if (!fs.existsSync(outputFile)) {
         console.error(`Could not find icon map file to replace: ${outputFile}`);
         process.exit(1);
@@ -112,9 +106,13 @@ const generateScssIconMap = () => {
     fs.writeFileSync(outputFile, getIconFontCodeScss(), "utf8");
 }
 
-const getIconFontCodeScss = () => `
+const generatedFileWarning = `
 // THIS FILE IS GENERATED, DO NOT EDIT IT!
-// To change the icon font code map, edit ${path.basename(__filename)}
+// To change the icon font code map, edit ${path.basename(__filename)}`;
+
+
+const getIconFontCodeScss = () => `
+${generatedFileWarning}
 
 @use "sass:string";
 

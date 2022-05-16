@@ -11,36 +11,32 @@
 @use "sass:color";
 @use "sass:math";
 
-// Note: some customers may @import rather than @use this file, which will
-// cause all definitions to be merged into their global namespace,
-// so prefix all definitions with "ag-" or "-ag-" for private items
-
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
-@mixin ag-grid-styles($params) {
+@mixin grid-styles($params) {
     $themes: -get-themes($params);
     $params: map.remove($params, "theme", "themes");
     
     @include meta.load-css("./ag-grid.css");
 
     @each $theme-name, $extra-params in $themes {
-        @include -ag-validate-theme($theme-name);
-        $css-file: map.get($-ag-theme-css-files, $theme-name);
+        @include -validate-theme($theme-name);
+        $css-file: map.get($-theme-css-files, $theme-name);
         @include meta.load-css($css-file);
     }
 
     @each $theme-name, $extra-params in $themes {
         $theme-params: map.merge($params, $extra-params);
         .ag-theme-#{$theme-name} {
-            @include -ag-grid-variables($theme-params, $theme-name);
+            @include -grid-variables($theme-params, $theme-name);
         }
     }
 }
 
 // Apply styles to all text fields
-// @include ag-text-input { border: solid dashed red; }
-@mixin ag-text-input {
+// @include ag.text-input { border: solid dashed red; }
+@mixin text-input {
     input[class^='ag-']:not([type]),
     input[class^='ag-'][type='text'],
     input[class^='ag-'][type='number'],
@@ -57,23 +53,23 @@
 //
 
 // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
-@mixin -ag-grid-variables($params, $theme) {
-    @include -ag-validate-params($params, $theme);
+@mixin -grid-variables($params, $theme) {
+    @include -validate-params($params, $theme);
     
     @if $theme {
-        $theme-color-blends: meta.get-function("-ag-theme-#{$theme}-color-blends");
+        $theme-color-blends: meta.get-function("-theme-#{$theme}-color-blends");
         @if $theme-color-blends {
             $params: meta.call($theme-color-blends, $params);
         }
     }
-    $params: -ag-base-color-blends($params);
+    $params: -base-color-blends($params);
 
     @each $name, $value in $params {
         --ag-#{$name}: #{$value};
     }
 }
 
-$-ag-theme-variables: (
+$-theme-variables: (
     alpine: (alpine-active-color: "color"),
     alpine-dark: (alpine-active-color: "color"),
     balham: (balham-active-color: "color"),
@@ -82,7 +78,7 @@ $-ag-theme-variables: (
     classic: (),
 );
 
-$-ag-theme-css-files: (
+$-theme-css-files: (
     alpine: "./ag-theme-alpine.css",
     alpine-dark: "./ag-theme-alpine.css",
     balham: "./ag-theme-balham.css",
@@ -91,11 +87,11 @@ $-ag-theme-css-files: (
     classic: "./ag-theme-classic.css",
 );
 
-$-ag-themes: map.keys($-ag-theme-variables);
+$-themes: map.keys($-theme-variables);
 
-@mixin -ag-validate-theme($theme) {
-    @if not list.index($-ag-themes, $theme) {
-        @error "Invalid theme #{$theme}, expected one of #{$-ag-themes}";
+@mixin -validate-theme($theme) {
+    @if not list.index($-themes, $theme) {
+        @error "Invalid theme #{$theme}, expected one of #{$-themes}";
     }
 }
 
@@ -132,60 +128,60 @@ $-ag-themes: map.keys($-ag-theme-variables);
 }
 
 // Return a version of $params with colour blending applied
-@function -ag-base-color-blends($params) {
+@function -base-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending below
-    $params: -ag-param-default($params, foreground-color, #000);
-    $params: -ag-param-default($params, background-color, #fff);
-    $params: -ag-param-default($params, range-selection-border-color, foreground-color);
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, range-selection-border-color, foreground-color);
 
     // Blended defaults.
-    $params: -ag-param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
-    $params: -ag-param-default($params, modal-overlay-background-color,     background-color,                 $opacity: 0.66);
-    $params: -ag-param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.2);
-    $params: -ag-param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
-    $params: -ag-param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
-    $params: -ag-param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
-    $params: -ag-param-default($params, border-color,                       foreground-color,                 $opacity: 0.25);
-    $params: -ag-param-default($params, header-column-separator-color,      border-color,                     $opacity: 0.5);
-    $params: -ag-param-default($params, header-column-resize-handle-color,  border-color,                     $opacity: 0.5);
-    $params: -ag-param-default($params, input-disabled-border-color,        input-border-color,               $opacity: 0.3);
+    $params: -param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
+    $params: -param-default($params, modal-overlay-background-color,     background-color,                 $opacity: 0.66);
+    $params: -param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.2);
+    $params: -param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
+    $params: -param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
+    $params: -param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
+    $params: -param-default($params, border-color,                       foreground-color,                 $opacity: 0.25);
+    $params: -param-default($params, header-column-separator-color,      border-color,                     $opacity: 0.5);
+    $params: -param-default($params, header-column-resize-handle-color,  border-color,                     $opacity: 0.5);
+    $params: -param-default($params, input-disabled-border-color,        input-border-color,               $opacity: 0.3);
     @return $params;
 }
 
-@function -ag-theme-alpine-color-blends($params) {
+@function -theme-alpine-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
-    $params: -ag-param-default($params, background-color, #fff);
-    $params: -ag-param-default($params, foreground-color, #181d1f);
-    $params: -ag-param-default($params, subheader-background-color, #000);
-    $params: -ag-param-default($params, alpine-active-color, #2196f3);
-    $params: -ag-param-default($params, range-selection-border-color, alpine-active-color);
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, #181d1f);
+    $params: -param-default($params, subheader-background-color, #000);
+    $params: -param-default($params, alpine-active-color, #2196f3);
+    $params: -param-default($params, range-selection-border-color, alpine-active-color);
 
     // Blended defaults
-    $params: -ag-param-default($params, subheader-toolbar-background-color, subheader-background-color, $opacity: 0.5);
-    $params: -ag-param-default($params, selected-row-background-color, alpine-active-color, $opacity: 0.1);
-    $params: -ag-param-default($params, row-hover-color, alpine-active-color, $opacity: 0.1);
-    $params: -ag-param-default($params, column-hover-color, alpine-active-color, $opacity: 0.1);
-    $params: -ag-param-default($params, chip-background-color, foreground-color, $opacity: 0.07);
-    $params: -ag-param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
-    $params: -ag-param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $opacity: 0.5);
+    $params: -param-default($params, selected-row-background-color, alpine-active-color, $opacity: 0.1);
+    $params: -param-default($params, row-hover-color, alpine-active-color, $opacity: 0.1);
+    $params: -param-default($params, column-hover-color, alpine-active-color, $opacity: 0.1);
+    $params: -param-default($params, chip-background-color, foreground-color, $opacity: 0.07);
+    $params: -param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
     @return $params;
 }
 
-@function -ag-theme-alpine-dark-color-blends($params) {
-    $params: -ag-param-default($params, background-color, #181d1f);
-    $params: -ag-param-default($params, foreground-color, #fff);
-    $params: -ag-param-default($params, subheader-background-color, #fff);
+@function -theme-alpine-dark-color-blends($params) {
+    $params: -param-default($params, background-color, #181d1f);
+    $params: -param-default($params, foreground-color, #fff);
+    $params: -param-default($params, subheader-background-color, #fff);
 
-    @return  -ag-theme-alpine-color-blends($params);
+    @return  -theme-alpine-color-blends($params);
 }
 
 // Apply a default value to a parameter
-//  $params: -ag-param-default($params, x, #f08) - default x to a specific color value
-//  $params: -ag-param-default($params, x, y) - default x to the value of y (if y is set)
-//  $params: -ag-param-default($params, x, y, $opacity: 0.5) - default x to the value of y made 50% transparent
-@function -ag-param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
+//  $params: -param-default($params, x, #f08) - default x to a specific color value
+//  $params: -param-default($params, x, y) - default x to the value of y (if y is set)
+//  $params: -param-default($params, x, y, $opacity: 0.5) - default x to the value of y made 50% transparent
+@function -param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
     $value: null;
     @if type-of($source) == "color" {
         $value: $source;
@@ -206,7 +202,7 @@ $-ag-themes: map.keys($-ag-theme-variables);
     @return map.set($params, $target, $value);
 }
 
-$-ag-param-type-descriptions: (
+$-param-type-descriptions: (
     "color": "a CSS color (e.g. `red` or `#fff`)",
     "size": "a CSS size (e.g. `0`, `4px` or `50%`)",
     "border": "a 3-part border spec in the form `style width color` (e.g. `solid 1px red`)",
@@ -218,7 +214,7 @@ $-ag-param-type-descriptions: (
     "display": "`block` or `true` to show, `none` or `false` to hide"
 );
 
-$-ag-param-types: (
+$-param-types: (
     foreground-color: "color",
     data-color: "color",
     secondary-foreground-color: "color",
@@ -324,14 +320,14 @@ $-ag-param-types: (
     material-accent-color: "color",
 );
 
-@mixin -ag-validate-params($params, $theme: null) {
+@mixin -validate-params($params, $theme: null) {
     $theme-variables: ();
     @if $theme {
-        @include -ag-validate-theme($theme);
-        $theme-variables: map.get($-ag-theme-variables, $theme);
+        @include -validate-theme($theme);
+        $theme-variables: map.get($-theme-variables, $theme);
     }
 
-    $param-types: map.merge($-ag-param-types, $theme-variables);
+    $param-types: map.merge($-param-types, $theme-variables);
     $error-count: 0;
     @each $name, $value in $params {
         @if string.index(meta.inspect($value), "var(") {
@@ -340,14 +336,14 @@ $-ag-param-types: (
         } @else {
             $expected-type: map.get($param-types, $name);
             @if $expected-type {
-                $validator-name: "-ag-validate-#{$expected-type}";
+                $validator-name: "-validate-#{$expected-type}";
                 $validator: meta.get-function($validator-name);
                 @if not $validator {
                     @error "Internal error: no validator function #{$validator-name}";
                 }
                 $is-valid: meta.call($validator, $value);
                 @if not $is-valid {
-                    $expected: map.get($-ag-param-type-descriptions, $expected-type);
+                    $expected: map.get($-param-type-descriptions, $expected-type);
                     $expected: $expected-type !default;
                     @warn "Invalid value for parameter '#{$name}': #{meta.inspect($value)} -- expected #{$expected}";
                     $error-count: $error-count + 1;
@@ -363,37 +359,37 @@ $-ag-param-types: (
     }
 }
 
-@function -ag-validate-color($value) {
+@function -validate-color($value) {
     @return meta.type-of($value) == "color";
 }
 
-@function -ag-validate-size($value) {
+@function -validate-size($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border($value) {
+@function -validate-border($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border-style($value) {
+@function -validate-border-style($value) {
     // TODO implement me
     // Note: check for style, number and color in any order
     @return true;
 }
 
-@function -ag-validate-duration($value) {
+@function -validate-duration($value) {
     // TODO implement me
     @return true;
 }
 
-@function -ag-validate-border-style-and-size($value) {
+@function -validate-border-style-and-size($value) {
     // TODO implement me
     // Note: check for style and number in any order
     @return true;
 }
 
-@function -ag-validate-any($value) {
+@function -validate-any($value) {
     @return true;
 }
