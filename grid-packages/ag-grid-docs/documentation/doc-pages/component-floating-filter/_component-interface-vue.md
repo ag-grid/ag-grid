@@ -1,7 +1,7 @@
 [[only-vue]]
 |## Custom Floating Filter Interface
 |
-|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
+|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
 |row values available to you via `this.params`.
 |
 |The interface for a custom filter component is as follows:
@@ -35,7 +35,7 @@
 |
 |### Custom Filter Parameters
 |
-|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell & 
+|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
 |row values available to you via `this.params` - the interface for what is provided is documented below.  
 |
 |If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
