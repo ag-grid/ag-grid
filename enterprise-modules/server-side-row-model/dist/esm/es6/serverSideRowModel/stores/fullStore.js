@@ -319,7 +319,9 @@ export class FullStore extends RowNodeBlock {
     }
     getChildStore(keys) {
         return this.storeUtils.getChildStore(keys, this, (key) => {
-            const rowNode = this.allRowNodes.find(currentRowNode => currentRowNode.key === key);
+            const rowNode = this.allRowNodes.find(currentRowNode => {
+                return currentRowNode.key == key;
+            });
             return rowNode;
         });
     }

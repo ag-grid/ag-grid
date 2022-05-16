@@ -15,6 +15,7 @@ var Navigator = /** @class */ (function () {
         this.minHandleDragging = false;
         this.maxHandleDragging = false;
         this.panHandleOffset = NaN;
+        this.changedCursor = false;
         this._margin = 10;
         this.chart = chart;
         chart.scene.root.append(this.rs);
@@ -158,15 +159,19 @@ var Navigator = /** @class */ (function () {
             return Math.min(Math.max((offsetX - x) / width, 0), 1);
         }
         if (minHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         }
         else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         }
         else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'grab';
         }
-        else {
+        else if (this.changedCursor) {
+            this.changedCursor = false;
             style.cursor = 'default';
         }
         if (this.minHandleDragging) {

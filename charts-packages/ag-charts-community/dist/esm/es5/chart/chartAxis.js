@@ -72,7 +72,11 @@ var ChartAxis = /** @class */ (function (_super) {
         if (!this.useCalculatedTickCount()) {
             return;
         }
-        var tickInterval = 70; // Approximate number of pixels to allocate for each tick
+        // Approximate number of pixels to allocate for each tick.
+        var optimalRangePx = 600;
+        var optimalTickInteralPx = 70;
+        var tickIntervalRatio = Math.pow(Math.log(availableRange) / Math.log(optimalRangePx), 2);
+        var tickInterval = optimalTickInteralPx * tickIntervalRatio;
         this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
     };
     Object.defineProperty(ChartAxis.prototype, "position", {

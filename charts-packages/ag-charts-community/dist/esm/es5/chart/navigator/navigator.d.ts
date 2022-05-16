@@ -14,6 +14,7 @@ export declare class Navigator {
     private minHandleDragging;
     private maxHandleDragging;
     private panHandleOffset;
+    private changedCursor;
     set enabled(value: boolean);
     get enabled(): boolean;
     set x(value: number);

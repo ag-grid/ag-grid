@@ -7562,7 +7562,11 @@ var ChartAxis = /** @class */ (function (_super) {
         if (!this.useCalculatedTickCount()) {
             return;
         }
-        var tickInterval = 70; // Approximate number of pixels to allocate for each tick
+        // Approximate number of pixels to allocate for each tick.
+        var optimalRangePx = 600;
+        var optimalTickInteralPx = 70;
+        var tickIntervalRatio = Math.pow(Math.log(availableRange) / Math.log(optimalRangePx), 2);
+        var tickInterval = optimalTickInteralPx * tickIntervalRatio;
         this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
     };
     Object.defineProperty(ChartAxis.prototype, "position", {
@@ -12613,16 +12617,16 @@ var Chart = /** @class */ (function (_super) {
         var pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             this.dehighlightDatum();
             return;
         }
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'pointer';
+            this.element.style.cursor = 'pointer';
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
         }
         this.pointerInsideLegend = pointerInsideLegend;
         this.pointerOverLegendDatum = pointerOverLegendDatum;
@@ -12668,7 +12672,7 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
-        this.scene.canvas.element.style.cursor = datum.series.cursor;
+        this.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
         this.series.forEach(function (s) { return s.updatePending = true; });
     };
@@ -13434,6 +13438,7 @@ var Navigator = /** @class */ (function () {
         this.minHandleDragging = false;
         this.maxHandleDragging = false;
         this.panHandleOffset = NaN;
+        this.changedCursor = false;
         this._margin = 10;
         this.chart = chart;
         chart.scene.root.append(this.rs);
@@ -13577,15 +13582,19 @@ var Navigator = /** @class */ (function () {
             return Math.min(Math.max((offsetX - x) / width, 0), 1);
         }
         if (minHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         }
         else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         }
         else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'grab';
         }
-        else {
+        else if (this.changedCursor) {
+            this.changedCursor = false;
             style.cursor = 'default';
         }
         if (this.minHandleDragging) {
@@ -29457,7 +29466,7 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
         var filteredValues = [];
         var column = this.getColumnById(colId);
         this.gridApi.forEachNodeAfterFilter(function (rowNode) {
-            if (!rowNode.group) {
+            if (column && !rowNode.group) {
                 var value = _this.valueService.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {
                     filteredValues.push(value);

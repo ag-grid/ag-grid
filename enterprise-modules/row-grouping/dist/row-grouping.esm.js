@@ -391,6 +391,10 @@ var GroupStage = /** @class */ (function (_super) {
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     };
     GroupStage.prototype.positionLeafsAboveGroups = function (changedPath) {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) {
+            return;
+        }
         changedPath.forEachChangedNodeDepthFirst(function (group) {
             if (group.childrenAfterGroup) {
                 var leafNodes_1 = [];

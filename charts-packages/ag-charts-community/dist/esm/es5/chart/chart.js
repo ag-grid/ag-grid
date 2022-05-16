@@ -1033,16 +1033,16 @@ var Chart = /** @class */ (function (_super) {
         var pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             this.dehighlightDatum();
             return;
         }
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'pointer';
+            this.element.style.cursor = 'pointer';
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
         }
         this.pointerInsideLegend = pointerInsideLegend;
         this.pointerOverLegendDatum = pointerOverLegendDatum;
@@ -1088,7 +1088,7 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
-        this.scene.canvas.element.style.cursor = datum.series.cursor;
+        this.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
         this.series.forEach(function (s) { return s.updatePending = true; });
     };

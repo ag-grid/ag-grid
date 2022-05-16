@@ -36,6 +36,10 @@ let GroupStage = class GroupStage extends core_1.BeanStub {
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     }
     positionLeafsAboveGroups(changedPath) {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) {
+            return;
+        }
         changedPath.forEachChangedNodeDepthFirst(group => {
             if (group.childrenAfterGroup) {
                 const leafNodes = [];

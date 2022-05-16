@@ -89,7 +89,7 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
         var filteredValues = [];
         var column = this.getColumnById(colId);
         this.gridApi.forEachNodeAfterFilter(function (rowNode) {
-            if (!rowNode.group) {
+            if (column && !rowNode.group) {
                 var value = _this.valueService.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {
                     filteredValues.push(value);

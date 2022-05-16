@@ -349,7 +349,9 @@ var FullStore = /** @class */ (function (_super) {
     FullStore.prototype.getChildStore = function (keys) {
         var _this = this;
         return this.storeUtils.getChildStore(keys, this, function (key) {
-            var rowNode = _this.allRowNodes.find(function (currentRowNode) { return currentRowNode.key === key; });
+            var rowNode = _this.allRowNodes.find(function (currentRowNode) {
+                return currentRowNode.key == key;
+            });
             return rowNode;
         });
     };

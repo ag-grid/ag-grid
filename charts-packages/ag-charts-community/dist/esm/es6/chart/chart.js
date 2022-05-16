@@ -1004,16 +1004,16 @@ export class Chart extends Observable {
         const pointerOverLegendDatum = pointerInsideLegend && datum !== undefined;
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             this.dehighlightDatum();
             return;
         }
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'pointer';
+            this.element.style.cursor = 'pointer';
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
         }
         this.pointerInsideLegend = pointerInsideLegend;
         this.pointerOverLegendDatum = pointerOverLegendDatum;
@@ -1059,7 +1059,7 @@ export class Chart extends Observable {
         }
     }
     highlightDatum(datum) {
-        this.scene.canvas.element.style.cursor = datum.series.cursor;
+        this.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
         this.series.forEach(s => s.updatePending = true);
     }

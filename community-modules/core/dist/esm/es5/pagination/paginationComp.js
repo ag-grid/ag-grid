@@ -132,8 +132,8 @@ var PaginationComp = /** @class */ (function (_super) {
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        this.toggleButtonDisabled(this.btFirst, !this.previousAndFirstButtonsDisabled);
-        this.toggleButtonDisabled(this.btPrevious, !this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
         var onLastPage = maxRowFound && currentPage === (totalPages - 1);
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;

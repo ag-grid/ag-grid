@@ -71,7 +71,7 @@ let ChartCrossFilterService = ChartCrossFilterService_1 = class ChartCrossFilter
         let filteredValues = [];
         const column = this.getColumnById(colId);
         this.gridApi.forEachNodeAfterFilter((rowNode) => {
-            if (!rowNode.group) {
+            if (column && !rowNode.group) {
                 const value = this.valueService.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {
                     filteredValues.push(value);

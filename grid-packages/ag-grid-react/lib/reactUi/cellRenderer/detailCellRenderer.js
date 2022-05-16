@@ -92,7 +92,9 @@ var DetailCellRenderer = function (props, ref) {
         }
         return function () {
             context.destroyBean(ctrl);
-            resizeObserverDestroyFunc();
+            if (resizeObserverDestroyFunc) {
+                resizeObserverDestroyFunc();
+            }
         };
     });
     var setGridApi = react_1.useCallback(function (api, columnApi) {

@@ -53,7 +53,11 @@ export class ChartAxis extends Axis {
         if (!this.useCalculatedTickCount()) {
             return;
         }
-        const tickInterval = 70; // Approximate number of pixels to allocate for each tick
+        // Approximate number of pixels to allocate for each tick.
+        const optimalRangePx = 600;
+        const optimalTickInteralPx = 70;
+        const tickIntervalRatio = Math.pow(Math.log(availableRange) / Math.log(optimalRangePx), 2);
+        const tickInterval = optimalTickInteralPx * tickIntervalRatio;
         this._calculatedTickCount = this.tick.count || Math.max(2, Math.floor(availableRange / tickInterval));
     }
     set position(value) {
