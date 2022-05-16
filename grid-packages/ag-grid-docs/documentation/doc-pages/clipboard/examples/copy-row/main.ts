@@ -21,40 +21,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
 
-  enableRangeSelection: true,
   rowSelection: 'multiple',
-
-  onCellValueChanged: onCellValueChanged,
-  onPasteStart: onPasteStart,
-  onPasteEnd: onPasteEnd,
-}
-
-function onCellValueChanged(params: CellValueChangedEvent) {
-  console.log('Callback onCellValueChanged:', params)
-}
-
-function onPasteStart(params: PasteStartEvent) {
-  console.log('Callback onPasteStart:', params)
-}
-
-function onPasteEnd(params: PasteEndEvent) {
-  console.log('Callback onPasteEnd:', params)
-}
-
-function onBtCopyRows() {
-  gridOptions.api!.copySelectedRowsToClipboard()
-}
-
-function onBtCopyRange() {
-  gridOptions.api!.copySelectedRangeToClipboard()
-}
-
-function onPasteOff() {
-  gridOptions.api!.setSuppressClipboardPaste(true)
-}
-
-function onPasteOn() {
-  gridOptions.api!.setSuppressClipboardPaste(false)
 }
 
 // setup the grid after the page has finished loading

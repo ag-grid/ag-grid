@@ -9475,16 +9475,9 @@
         "optional": false
       }
     },
-    "setAriaLabel": {
+    "setAriaDescription": {
       "type": {
-        "arguments": { "id?": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setAriaDescribedBy": {
-      "type": {
-        "arguments": { "id?": "string" },
+        "arguments": { "description?": "string" },
         "returnType": "void",
         "optional": false
       }
