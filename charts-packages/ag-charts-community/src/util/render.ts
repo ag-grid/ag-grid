@@ -19,3 +19,21 @@ export function debouncedAnimationFrame(cb: (params: { count: number}) => void):
         }
     };
 }
+
+export function debouncedCallback(cb: (params: { count: number}) => void): { schedule(): void } {
+    let scheduleCount = 0;
+
+    return {
+        schedule() {
+            if (scheduleCount === 0) {
+                setTimeout(() => {
+                    const count = scheduleCount;
+                    scheduleCount = 0;
+                    cb({ count });
+                }, 0);
+            }
+            scheduleCount++;
+        }
+    };
+}
+

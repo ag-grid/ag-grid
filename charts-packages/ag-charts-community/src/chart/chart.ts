@@ -15,7 +15,7 @@ import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { createId } from "../util/id";
 import { PlacedLabel, placeLabels, PointLabelDatum } from "../util/labelPlacement";
 import { AgChartOptions } from "./agChartOptions";
-import { debouncedAnimationFrame } from "../util/render";
+import { debouncedAnimationFrame, debouncedCallback } from "../util/render";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -492,7 +492,7 @@ export abstract class Chart extends Observable {
     private performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
     private firstRenderComplete = false;
     private firstResizeReceived = false;
-    private performUpdateTrigger = debouncedAnimationFrame(({ count }) => {
+    private performUpdateTrigger = debouncedCallback(({ count }) => {
         this.performUpdate(count);
     });
     public update(type = ChartUpdateType.FULL, opts?: { forceNodeDataRefresh: boolean }) {
