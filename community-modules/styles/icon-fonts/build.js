@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const webfontsGenerator = require('@vusion/webfonts-generator');
 
+const destFolder = path.join(__dirname, "../src/internal/ag/generated");
+
 const fonts = fs.readdirSync(path.join(__dirname, 'fonts'));
 
 // NOTE: this map of icon names to codepoints is documented and customers may
@@ -83,7 +85,7 @@ function generateFontFile(fontName) {
                 console.log(err);
                 process.exit(1);
             }
-            const cssFile = path.join(__dirname, `../src/internal/fonts/generated/${fontName}.scss`);
+            const cssFile = path.join(destFolder,  `_${fontName}.scss`);
             fs.writeFileSync(cssFile, getIconDataFileContent(res.woff2), "utf8");
             console.log(`Generated ${cssFile}`);
         }
@@ -97,11 +99,7 @@ $data: "data:font/woff2;charset=utf-8;base64,${Buffer.from(buffer).toString('bas
 `;
 
 const generateScssIconMap = () => {
-    const outputFile = path.join(__dirname, "../src/internal/fonts/generated/_icon-font-codes.scss");
-    if (!fs.existsSync(outputFile)) {
-        console.error(`Could not find icon map file to replace: ${outputFile}`);
-        process.exit(1);
-    }
+    const outputFile = path.join(destFolder, "_icon-font-codes.scss");
     console.log(`Generating ${outputFile}`);
     fs.writeFileSync(outputFile, getIconFontCodeScss(), "utf8");
 }
@@ -124,6 +122,10 @@ ${
 }
 )
 `
+
+if (!fs.existsSync(destFolder)) {
+    fs.mkdirSync(destFolder);
+}
 
 generateScssIconMap();
 fonts.forEach(generateFontFile);

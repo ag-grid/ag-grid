@@ -5,13 +5,12 @@
   "main": "_index.scss",
   "files": [
     "*.css",
-    "*.scss",
-    "*.woff2"
+    "*.scss"
   ],
   "scripts": {
     "build": "sass --no-source-map --load-path src/internal src:.",
     "build-tmp-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
-    "build-prod": "npm run build -- --no-error-css",
+    "build-prod": "npm run build -- --no-error-css && node build-css-content.js",
     "test": "npm run lint:scss && npm run build-prod && npm run lint:css",
     "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
     "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",

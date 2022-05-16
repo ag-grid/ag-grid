@@ -11,6 +11,8 @@
 @use "sass:color";
 @use "sass:math";
 
+@use "./css-content";
+
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
@@ -22,9 +24,9 @@
     $params: map.remove($params, "suppress-native-widget-styling");
 
     @if $no-native-widgets {
-        @include meta.load-css("./ag-grid-no-native-widgets.css");
+        @include meta.load-css("ag-grid-no-native-widgets.css");
     } @else {
-        @include meta.load-css("./ag-grid.css");
+        @include meta.load-css("ag-grid.css");
     }
 
     @each $theme-name, $extra-params in $themes {
@@ -59,6 +61,21 @@
 //
 // PRIVATE IMPLEMENTATION
 //
+
+Next up: need a way of implementing css-content.scss to enable this mixin. Maybe a chain of 
+@if $file == "ag-grid.css" {
+    ... content
+}
+
+// Fulfils the same role as meta.load-css, which we can't use due to this issue:
+// https://github.com/sass/dart-sass/issues/1627
+@mixin -include-css($file) {
+    @if not map.has-key($css-content, $file) {
+        @error "No content for \"#{$file}\"";
+    }
+    $content: map.get($css-content, $file);
+
+}
 
 // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
 @mixin -grid-variables($params, $theme) {

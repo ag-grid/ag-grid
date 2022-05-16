@@ -1,2 +1,5 @@
 # compiled CSS files
 ag-*.css
+
+# compiled css files as SCSS
+css-content.scss
