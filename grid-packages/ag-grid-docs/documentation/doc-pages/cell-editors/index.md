@@ -65,7 +65,7 @@ To have an editor appear in a popup, have the `isPopup()` method return `true`. 
 
 It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorSelector` to a function that returns alternative values for `cellEditor` and `cellEditorParams`.
 
-The `params` passed to `cellEditorSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
+The `params` passed to `cellEditorSelector` are the same as those passed to the [Cell Editor Component](/component-cell-editor/). Typically the selector will use this to check the rows contents and choose an editor accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellEditor` and `cellEditorParams`.
 

@@ -5,11 +5,11 @@
 |```js
 |// cell renderer component  
 |@Component({
-|    selector: 'my-app',
+|    selector: 'cell-renderer',
 |    template: `<span>{{params?.data?.theBoldValue}}</span>`
 |})
 |class CellRendererComponent implements ICellRendererAngularComp {
-|    params: ICellRendererParams;
+|    params!: ICellRendererParams;
 |
 |    agInit(ICellRendererParams) {
 |        this.params = params;

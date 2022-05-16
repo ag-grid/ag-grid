@@ -10,8 +10,8 @@
 |    template: `<input type="number" [value]="value" #input style="width: 100%" />`
 |})
 |export class DoublingEditor implements ICellEditorAngularComp, AfterViewInit {
-|    private params: any;
-|    private value: number;
+|    private params!: ICellEditorParams; 
+|    public value!: number;
 |
 |    @ViewChild('input', { read: ViewContainerRef }) public input: ViewContainerRef;
 |
@@ -20,7 +20,7 @@
 |        setTimeout(() => this.input.element.nativeElement.focus());
 |    }
 |
-|    agInit(params: any): void {
+|    agInit(params: ICellEditorParams): void {
 |        this.params = params;
 |
 |        this.value = parseInt(this.params.value);
