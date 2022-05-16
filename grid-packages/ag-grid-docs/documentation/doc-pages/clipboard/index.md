@@ -67,7 +67,11 @@ When both range selection and row selection are enabled, the default behaviour o
 In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
 
 The below example has range selection, row selection and `suppressCopySingleCellRanges` enabled.
-Observe that if only a single cell is selected, the row is copied, otherwise the range is copied.
+- Select a range by clicking & dragging on a cell.
+- Copy with <kbd>Ctrl</kbd>+<kbd>C</kbd>, paste into a text editor, observe that the range was copied.
+- Deselect this range by clicking on any cell
+- Select one or more rows by moving focus with the arrow keys and pressing the <kbd>SPACE</kbd> key to toggle the row's selection.
+- Copy with <kbd>Ctrl</kbd>+<kbd>C</kbd>, paste into a text editor and observe that the rows were copied.
 
 <grid-example title='Copying Mixed Ranges & Rows' name='copy-mixed' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
