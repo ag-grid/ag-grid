@@ -6412,6 +6412,7 @@
             }
             enter.append(Text);
             var groupSelection = update.merge(enter);
+            var anyVisible = false;
             groupSelection
                 .attrFn('translationY', function (_, datum) {
                 return Math.round(scale.convert(datum) + halfBandwidth);
@@ -6419,8 +6420,15 @@
                 .attrFn('visible', function (node) {
                 var min = Math.floor(requestedRangeMin);
                 var max = Math.ceil(requestedRangeMax);
-                return (min !== max) && node.translationY >= min && node.translationY <= max;
+                var visible = (min !== max) && node.translationY >= min && node.translationY <= max;
+                anyVisible = visible || anyVisible;
+                return visible;
             });
+            this.group.visible = anyVisible;
+            if (!anyVisible) {
+                this.groupSelection = groupSelection;
+                return;
+            }
             // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
             this.fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
             // Update properties that affect the size of the axis labels and measure the labels
@@ -16241,7 +16249,6 @@
             _this.sizeScale = new LinearScale();
             _this.nodeData = [];
             _this.markerSelection = Selection.select(_this.pickGroup).selectAll();
-            _this.labelData = [];
             _this.labelSelection = Selection.select(_this.group).selectAll();
             _this.marker = new CartesianSeriesMarker();
             _this.label = new Label();
@@ -16377,12 +16384,6 @@
             this.xData = this.validData.map(function (d) { return d[xKey]; });
             this.yData = this.validData.map(function (d) { return d[yKey]; });
             this.sizeData = sizeKey ? this.validData.map(function (d) { return d[sizeKey]; }) : [];
-            var font = label.getFont();
-            this.labelData = labelKey ? this.validData.map(function (d) {
-                var text = String(d[labelKey]);
-                var size = HdpiCanvas.getTextSize(text, font);
-                return __assign$2({ text: text }, size);
-            }) : [];
             this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
             if (xAxis.scale instanceof ContinuousScale) {
                 this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
@@ -16424,7 +16425,7 @@
             });
         };
         ScatterSeries.prototype.createNodeData = function () {
-            var _a = this, chart = _a.chart, data = _a.data, visible = _a.visible, xAxis = _a.xAxis, yAxis = _a.yAxis;
+            var _a = this, chart = _a.chart, data = _a.data, visible = _a.visible, xAxis = _a.xAxis, yAxis = _a.yAxis, label = _a.label, labelKey = _a.labelKey;
             if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
                 return [];
             }
@@ -16437,6 +16438,7 @@
             var _b = this, xData = _b.xData, yData = _b.yData, validData = _b.validData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
             var nodeData = [];
             sizeScale.range = [marker.size, marker.maxSize];
+            var font = label.getFont();
             for (var i = 0; i < xData.length; i++) {
                 var xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
                 if (!xy) {
@@ -16447,12 +16449,14 @@
                 if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                     continue;
                 }
+                var text = labelKey ? String(validData[i][labelKey]) : '';
+                var size = HdpiCanvas.getTextSize(text, font);
                 nodeData.push({
                     series: this,
                     datum: validData[i],
                     point: { x: x, y: y },
                     size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
-                    label: this.labelData[i]
+                    label: __assign$2({ text: text }, size),
                 });
             }
             return this.nodeData = nodeData;

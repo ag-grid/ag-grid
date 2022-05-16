@@ -466,6 +466,7 @@ var Axis = /** @class */ (function () {
         }
         enter.append(text_1.Text);
         var groupSelection = update.merge(enter);
+        var anyVisible = false;
         groupSelection
             .attrFn('translationY', function (_, datum) {
             return Math.round(scale.convert(datum) + halfBandwidth);
@@ -473,8 +474,15 @@ var Axis = /** @class */ (function () {
             .attrFn('visible', function (node) {
             var min = Math.floor(requestedRangeMin);
             var max = Math.ceil(requestedRangeMax);
-            return (min !== max) && node.translationY >= min && node.translationY <= max;
+            var visible = (min !== max) && node.translationY >= min && node.translationY <= max;
+            anyVisible = visible || anyVisible;
+            return visible;
         });
+        this.group.visible = anyVisible;
+        if (!anyVisible) {
+            this.groupSelection = groupSelection;
+            return;
+        }
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         // Update properties that affect the size of the axis labels and measure the labels

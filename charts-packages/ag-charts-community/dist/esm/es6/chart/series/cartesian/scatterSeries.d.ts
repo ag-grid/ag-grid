@@ -44,7 +44,6 @@ export declare class ScatterSeries extends CartesianSeries {
     private sizeScale;
     private nodeData;
     private markerSelection;
-    private labelData;
     private labelSelection;
     readonly marker: CartesianSeriesMarker;
     readonly label: Label;

@@ -388,6 +388,7 @@ class Axis {
         }
         enter.append(text_1.Text);
         const groupSelection = update.merge(enter);
+        let anyVisible = false;
         groupSelection
             .attrFn('translationY', function (_, datum) {
             return Math.round(scale.convert(datum) + halfBandwidth);
@@ -395,8 +396,15 @@ class Axis {
             .attrFn('visible', function (node) {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
-            return (min !== max) && node.translationY >= min && node.translationY <= max;
+            const visible = (min !== max) && node.translationY >= min && node.translationY <= max;
+            anyVisible = visible || anyVisible;
+            return visible;
         });
+        this.group.visible = anyVisible;
+        if (!anyVisible) {
+            this.groupSelection = groupSelection;
+            return;
+        }
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         // Update properties that affect the size of the axis labels and measure the labels

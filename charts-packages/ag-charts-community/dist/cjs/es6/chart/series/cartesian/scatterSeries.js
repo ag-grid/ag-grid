@@ -39,7 +39,6 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         this.sizeScale = new linearScale_1.LinearScale();
         this.nodeData = [];
         this.markerSelection = selection_1.Selection.select(this.pickGroup).selectAll();
-        this.labelData = [];
         this.labelSelection = selection_1.Selection.select(this.group).selectAll();
         this.marker = new cartesianSeries_1.CartesianSeriesMarker();
         this.label = new label_1.Label();
@@ -153,12 +152,6 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         this.xData = this.validData.map((d) => d[xKey]);
         this.yData = this.validData.map((d) => d[yKey]);
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
-        const font = label.getFont();
-        this.labelData = labelKey ? this.validData.map((d) => {
-            const text = String(d[labelKey]);
-            const size = hdpiCanvas_1.HdpiCanvas.getTextSize(text, font);
-            return Object.assign({ text }, size);
-        }) : [];
         this.sizeScale.domain = marker.domain ? marker.domain : array_1.extent(this.sizeData, value_1.isContinuous) || [1, 1];
         if (xAxis.scale instanceof continuousScale_1.ContinuousScale) {
             this.xDomain = this.fixNumericExtent(array_1.extent(this.xData, value_1.isContinuous), 'x', xAxis);
@@ -200,7 +193,7 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         });
     }
     createNodeData() {
-        const { chart, data, visible, xAxis, yAxis } = this;
+        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
         if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
             return [];
         }
@@ -213,6 +206,7 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
         const { xData, yData, validData, sizeData, sizeScale, marker } = this;
         const nodeData = [];
         sizeScale.range = [marker.size, marker.maxSize];
+        const font = label.getFont();
         for (let i = 0; i < xData.length; i++) {
             const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
             if (!xy) {
@@ -223,12 +217,14 @@ class ScatterSeries extends cartesianSeries_1.CartesianSeries {
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
+            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const size = hdpiCanvas_1.HdpiCanvas.getTextSize(text, font);
             nodeData.push({
                 series: this,
                 datum: validData[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
-                label: this.labelData[i]
+                label: Object.assign({ text }, size),
             });
         }
         return this.nodeData = nodeData;

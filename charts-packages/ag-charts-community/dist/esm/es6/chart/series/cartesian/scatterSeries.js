@@ -36,7 +36,6 @@ export class ScatterSeries extends CartesianSeries {
         this.sizeScale = new LinearScale();
         this.nodeData = [];
         this.markerSelection = Selection.select(this.pickGroup).selectAll();
-        this.labelData = [];
         this.labelSelection = Selection.select(this.group).selectAll();
         this.marker = new CartesianSeriesMarker();
         this.label = new Label();
@@ -150,12 +149,6 @@ export class ScatterSeries extends CartesianSeries {
         this.xData = this.validData.map((d) => d[xKey]);
         this.yData = this.validData.map((d) => d[yKey]);
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
-        const font = label.getFont();
-        this.labelData = labelKey ? this.validData.map((d) => {
-            const text = String(d[labelKey]);
-            const size = HdpiCanvas.getTextSize(text, font);
-            return Object.assign({ text }, size);
-        }) : [];
         this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
@@ -197,7 +190,7 @@ export class ScatterSeries extends CartesianSeries {
         });
     }
     createNodeData() {
-        const { chart, data, visible, xAxis, yAxis } = this;
+        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
         if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
             return [];
         }
@@ -210,6 +203,7 @@ export class ScatterSeries extends CartesianSeries {
         const { xData, yData, validData, sizeData, sizeScale, marker } = this;
         const nodeData = [];
         sizeScale.range = [marker.size, marker.maxSize];
+        const font = label.getFont();
         for (let i = 0; i < xData.length; i++) {
             const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
             if (!xy) {
@@ -220,12 +214,14 @@ export class ScatterSeries extends CartesianSeries {
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
+            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const size = HdpiCanvas.getTextSize(text, font);
             nodeData.push({
                 series: this,
                 datum: validData[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
-                label: this.labelData[i]
+                label: Object.assign({ text }, size),
             });
         }
         return this.nodeData = nodeData;
