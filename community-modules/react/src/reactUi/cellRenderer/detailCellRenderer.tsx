@@ -84,7 +84,9 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         return () => {
             context.destroyBean(ctrl);
-            resizeObserverDestroyFunc();
+            if (resizeObserverDestroyFunc) {
+                resizeObserverDestroyFunc();
+            }
         };
     });
 

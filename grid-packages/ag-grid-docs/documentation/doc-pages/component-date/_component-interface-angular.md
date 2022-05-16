@@ -5,6 +5,6 @@
 |
 | <interface-documentation interfaceName='IDateAngularComp' config='{"asCode":true }' ></interface-documentation>
 |
-|### Custom Filter Parameters
+|### Custom Date Parameters
 |
 |The `agInit(params)` method takes a params object with the items listed below:

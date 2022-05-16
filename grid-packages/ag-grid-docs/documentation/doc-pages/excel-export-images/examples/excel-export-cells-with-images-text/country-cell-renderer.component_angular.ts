@@ -7,7 +7,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 // display purposes.
 @Component({
     selector: 'simple-component',
-    template: `<img alt="{{params.data.country}}" src="{{params.context.base64flags[params.context.countryCodes[params.data.country]]}}">`
+    template: `<div><img alt="{{params.data.country}}" src="{{params.context.base64flags[params.context.countryCodes[params.data.country]]}}"> {{params.data.country}}</div>`
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
