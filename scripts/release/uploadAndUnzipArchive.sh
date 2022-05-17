@@ -19,8 +19,8 @@ function checkFileExists {
 VERSION=$1
 ARCHIVE=$2
 
-CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
-SSH_LOCATION=$HOME/$SSH_FILE
+export CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
+export SSH_LOCATION=$HOME/$SSH_FILE
 
 # a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
@@ -55,15 +55,15 @@ if [ "$3" != "skipWarning" ]; then
 fi
 
 # delete dir if it exists - can ignore dir not found error
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -xf $ARCHIVE"
+ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -xf $ARCHIVE"
 
 
 #update folder permissions (default is 777 - change to 755)
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
+ssh -i $SSH_LOCATION -p 2022 ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
 
