@@ -4,7 +4,7 @@ import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import * as fs from 'fs';
 
-import { Chart } from "../chart";
+import { Chart, ChartUpdateType } from "../chart";
 import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
@@ -59,13 +59,21 @@ export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Pro
         let retryMs = 10;
         let startMs = Date.now();
         const cb = () => {
-            if (!chart.layoutPending && !chart.dataPending && !chart.scene.dirty) {
+            if (chart.lastPerformUpdateError) {
+                reject(chart.lastPerformUpdateError);
+                return;
+            }
+
+            console.log({id: chart.id, performUpdateType: ChartUpdateType[chart.performUpdateType] });
+            if (!chart.updatePending) {
                 resolve();
+                return;
             }
 
             const timeMs = Date.now() - startMs;
             if (timeMs >= timeoutMs) {
                 reject('timeout reached');
+                return;
             }
 
             retryMs *= 2;

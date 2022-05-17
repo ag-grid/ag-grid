@@ -479,7 +479,7 @@ export abstract class Chart extends Observable {
     }
 
     destroy() {
-        this.performUpdateType = ChartUpdateType.NONE;
+        this._performUpdateType = ChartUpdateType.NONE;
 
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
@@ -489,11 +489,29 @@ export abstract class Chart extends Observable {
         this.scene.container = undefined;
     }
 
-    private performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
+    private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
+    get performUpdateType() {
+        return this._performUpdateType;
+    }
+    get updatePending(): boolean {
+        return this._performUpdateType !== ChartUpdateType.NONE;
+    }
+    private _lastPerformUpdateError?: Error;
+    get lastPerformUpdateError() {
+        return this._lastPerformUpdateError;
+    }
+
     private firstRenderComplete = false;
     private firstResizeReceived = false;
     private performUpdateTrigger = debouncedCallback(({ count }) => {
-        this.performUpdate(count);
+        try {
+            this.performUpdate(count);
+        } catch (error) {
+            this._lastPerformUpdateError = error;
+            if (this.debug) {
+                console.error(error);
+            }
+        }
     });
     public update(type = ChartUpdateType.FULL, opts?: { forceNodeDataRefresh: boolean }) {
         const { forceNodeDataRefresh = false } = opts || {};
@@ -502,13 +520,13 @@ export abstract class Chart extends Observable {
             this.series.forEach(series => series.markNodeDataDirty());
         }
 
-        if (type < this.performUpdateType) {
-            this.performUpdateType = type;
+        if (type < this._performUpdateType) {
+            this._performUpdateType = type;
             this.performUpdateTrigger.schedule();
         }
     }
     private performUpdate(count: number) {
-        const { performUpdateType, firstRenderComplete, firstResizeReceived } = this;
+        const { _performUpdateType: performUpdateType, firstRenderComplete, firstResizeReceived } = this;
         const start = performance.now();
 
         switch (performUpdateType) {
@@ -518,7 +536,7 @@ export abstract class Chart extends Observable {
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
-                    this.performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                    this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
                     break;
                 }
