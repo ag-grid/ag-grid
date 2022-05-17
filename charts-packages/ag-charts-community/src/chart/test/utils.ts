@@ -64,7 +64,6 @@ export async function waitForChartStability(chart: Chart, timeoutMs = 5000): Pro
                 return;
             }
 
-            console.log({id: chart.id, performUpdateType: ChartUpdateType[chart.performUpdateType] });
             if (!chart.updatePending) {
                 resolve();
                 return;
