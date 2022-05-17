@@ -1,8 +1,0 @@
-@import "../../ag-theme-alpine/sass/ag-theme-alpine-mixin";
-@import "./ag-theme-alpine-dark-default-params";
-
-@mixin ag-theme-alpine-dark($params: ()) {
-    $params: ag-process-theme-variables($params, $ag-theme-alpine-dark-default-params);
-    color-scheme: dark;
-    @include ag-theme-alpine($params);
-}
