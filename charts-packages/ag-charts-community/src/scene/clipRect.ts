@@ -126,12 +126,12 @@ export class ClipRect extends Node {
         const n = children.length;
 
         for (let i = 0; i < n; i++) {
-            ctx.save();
             const child = children[i];
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
+                ctx.save();
                 child.render(ctx, forceRender);
+                ctx.restore();
             }
-            ctx.restore();
         }
 
         super.render(ctx, forceRender);

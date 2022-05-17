@@ -137,11 +137,11 @@ export class Scene {
         if (root) {
             console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
 
-            ctx.save();
             if (root.visible) {
+                ctx.save();
                 root.render(ctx, canvasCleared);
+                ctx.restore();
             }
-            ctx.restore();
         }
 
         this._frameIndex++;
