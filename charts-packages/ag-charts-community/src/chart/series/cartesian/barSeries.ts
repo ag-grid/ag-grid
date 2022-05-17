@@ -122,7 +122,7 @@ export class BarSeries extends CartesianSeries {
     private rectGroup = this.pickGroup.appendChild(new Group);
     private labelGroup = this.group.appendChild(new Group);
 
-    private rectSelection: Selection<Group, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Group>();
+    private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
     private nodeData: BarNodeDatum[] = [];
@@ -620,16 +620,13 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateRectSelection(): void {
-        const updateSelection = this.rectSelection.setData(this.nodeData);
-        updateSelection.exit.remove();
-
-        const enterSelection = updateSelection.enter.append(Group);
-        enterSelection.append(Rect).each(rect => {
+        const updateRects = this.rectSelection.setData(this.nodeData);
+        updateRects.exit.remove();
+        const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
             rect.crisp = true;
         });
-
-        this.rectSelection = updateSelection.merge(enterSelection);
+        this.rectSelection = updateRects.merge(enterRects);
     }
 
     private updateRectNodes(): void {
@@ -653,10 +650,7 @@ export class BarSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((group, datum, index) => {
-            const rect = group.children[0] as Rect;
-            rect.datum = datum; // Keep Group and Rect in sync.
-
+        this.rectSelection.each((rect, datum, index) => {
             let colorIndex = 0;
             let i = 0;
             for (let j = 0; j < yKeys.length; j++) {
