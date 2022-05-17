@@ -94,6 +94,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private positionLeafsAboveGroups(changedPath: ChangedPath) {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) { return; }
+        
         changedPath.forEachChangedNodeDepthFirst(group => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];

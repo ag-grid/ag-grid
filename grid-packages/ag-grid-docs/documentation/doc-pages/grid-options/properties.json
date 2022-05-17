@@ -691,8 +691,8 @@
         "groupAggFiltering": {},
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
-                "name": "Hiding Repeated Total Column Labels",
-                "url": "/pivoting/#hiding-repeated-total-column-labels"
+                "name": "Hiding Repeated Value Column Labels",
+                "url": "/pivoting/#hiding-repeated-value-column-labels"
             }
         }
     },

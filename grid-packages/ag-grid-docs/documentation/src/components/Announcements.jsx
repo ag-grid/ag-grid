@@ -10,6 +10,29 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
+    <Announcement date="May 17th" version="27.3.0">
+        <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-3/">What's new in AG Grid 27.3.0</a><br/><br/>
+            Minor release with new features and bug fixes.
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                Getting Started Videos: <br/>
+                <a href="https://www.ag-grid.com/react-data-grid/videos/">React</a>,
+                <a href="https://www.ag-grid.com/angular-data-grid/videos/"> Angular</a>,
+                <a href="https://www.ag-grid.com/vue-data-grid/videos/"> Vue</a>,
+                <a href="https://www.ag-grid.com/javascript-data-grid/videos/"> JS</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                Chart Axis Label Improvements
+            </li>
+            <li className={styles['announcement__list-item']}>
+                Accessibility Enhancements
+            </li>
+        </ul>
+    </Announcement>
+
+
     <Announcement date="Apr 19" version="27.2.0">
         <p className="card-text">
             <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-2/">What's new in AG Grid 27.2.0</a><br/><br/>
@@ -45,24 +68,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         <ul>
             <li className={styles['announcement__list-item']}>
                 <a href="https://www.ag-grid.com/javascript-charts/api/">Chart Option Enhancements</a>
-            </li>
-        </ul>
-    </Announcement>
-
-    <Announcement date="Feb 8" version="27.0.0">
-        <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27/">What's new in AG Grid 27.0.0</a><br/><br/>
-            Major release with new features and bug fixes.
-        </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <a href="https://www.ag-grid.com/react-data-grid/reactui/">100% React Rendering</a>
-            </li>
-            <li className={styles['announcement__list-item']}>
-                Typescript Example Support
-            </li>
-            <li className={styles['announcement__list-item']}>
-                Accessibility Enhancements
             </li>
         </ul>
     </Announcement>

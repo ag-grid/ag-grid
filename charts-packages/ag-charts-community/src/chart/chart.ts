@@ -1171,17 +1171,17 @@ export abstract class Chart extends Observable {
 
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             this.dehighlightDatum();
             return;
         }
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'pointer';
+            this.element.style.cursor = 'pointer';
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
         }
 
         this.pointerInsideLegend = pointerInsideLegend;
@@ -1242,7 +1242,7 @@ export abstract class Chart extends Observable {
     highlightedDatum?: SeriesNodeDatum;
 
     highlightDatum(datum: SeriesNodeDatum): void {
-        this.scene.canvas.element.style.cursor = datum.series.cursor;
+        this.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
 
         const { series } = this.highlightedDatum;

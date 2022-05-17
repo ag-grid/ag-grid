@@ -5,47 +5,99 @@ enterprise: true
 
 You can copy and paste items to and from the grid using the system clipboard.
 
-##  Copy to Clipboard
+## How to copy
 
-Users can copy to the clipboard:
- - By pressing the keys <kbd>Ctrl</kbd>+<kbd>C</kbd> while focus is on the grid.
- - Or Selecting 'Copy' from the context menu that appears when you right click over a cell.
+Copying from the grid is <b>enabled by default</b> for enterprise users. To copy your selection to the system clipboard, you can use the keybind <kbd>Ctrl</kbd>+<kbd>C</kbd>, or right click on a cell and select 'Copy' from the context menu. Unless [Range Selection](/range-selection) or [Row Selection](/row-selection) is enabled, you will only be copying from the currently focused cell.
 
-The copy operation will copy selected ranges, selected rows, or the currently focused cell, based on this order:
+When copying multiple cells, the contents will be copied in an Excel compatible format, with fields
+separated by a `\t` (tab) character.
 
-- If range selected (via range selection), copy range.
-- Else if rows selected (via row selection), copy rows.
-- Else copy focused cell.
+## Copying Cell Ranges
 
-Headers can also be included when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> by setting: `gridOptions.copyHeadersToClipboard=true`.
+When [Cell Ranges](/range-selection) are enabled by setting `gridOptions.enableRangeSelection=true`, copying will copy the Cell Range's content to your clipboard. Select a range by clicking on a cell and dragging with the mouse, then copy with the <kbd>Ctrl</kbd>+<kbd>C</kbd> keybind.
 
-[[note]]
-| You can copy multiple ranges in range selection by holding down <kbd>Ctrl</kbd> to select multiple ranges and then copy.
+Multiple cell ranges can be selected at once using <kbd>Ctrl</kbd> and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
-[[note]]
-| Performing multiple <kbd>Ctrl</kbd>+&lt;left click> operations followed by <kbd>Ctrl</kbd>+<kbd>C</kbd> will not preserve original cell layout
-| but rather copy them vertically to the clipboard.
+The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
 
-When row selection is enabled the copy shortcut will copy the selected row, instead of the focused cell. Depending on your use case, you may wish to
-ignore copying rows and copy the focused cell. To do this you can enable the option `gridOptions.suppressCopyRowToClipboard=true`.
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["copyHeadersToClipboard"]'  ></api-documentation>
 
-When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it
-impossible for users to copy rows. Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` will make it possible
-to copy rows when only a single cell is selected via range selection. This behaviour is not enabled by default since it can
-be confusing for the copy behaviour to change depending on how much is selected.
+In the below example `copyHeadersToClipboard` has been enabled, try:
+- Select a cell range with click & drag
+- Copy with <kbd>Ctrl</kbd>+<kbd>C</kbd>
+- Paste into an external program / text editor, note that the column headers were also copied.
 
-### Copy via the API
+<grid-example title='Copying Cell Ranges' name='copy-range' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+## Copying Rows
+
+When [Row Selection](/row-selection) is enabled by setting `gridOptions.rowSelection` to either `"single"` or `"multiple"`, then copying while a row is selected will add the whole row's contents to your clipboard.
+
+The below example demonstrates copying rows:
+- Please select one or more rows in the example below and press CTRL+C
+- Paste copied content in a text editor
+- Note pasted content includes all selected rows
+
+<grid-example title='Copying Rows' name='copy-row' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] }'></grid-example>
+
+If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
+`gridOptions.suppressCopyRowsToClipboard=true`.
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["suppressCopyRowsToClipboard"]'  ></api-documentation>
+
+The below example demonstrates copying the focused cell only when using row selection:
+- Please select one or more rows in the example below and press CTRL+C
+- Paste copied content in a text editor
+- Note pasted content includes focused cell only
+
+<grid-example title='Suppress Copying Rows' name='suppress-copy-row' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] }'></grid-example>
+
+## Mixed Copying Cell Ranges & Rows
+
+The copy operation copies the selected content in the following order of precedence:
+
+1. Cell Ranges (if [Range Selection](/range-selection) is enabled)
+2. Row Selection (if [Row Selection](/row-selection) is enabled and `suppressCopyRowsToClipboard` is <b>not</b> enabled)
+3. Focused Cell
+
+When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection. 
+
+<api-documentation source='grid-options/properties.json' section='clipboard' names='["suppressCopySingleCellRanges"]'  ></api-documentation>
+
+In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
+
+The below example has range selection, row selection and `suppressCopySingleCellRanges` enabled.
+- Select a range by clicking & dragging on a cell.
+- Copy with <kbd>Ctrl</kbd>+<kbd>C</kbd>, paste into a text editor, observe that the range was copied.
+- Deselect this range by clicking on any cell
+- Select one or more rows by moving focus with the arrow keys and pressing the <kbd>SPACE</kbd> key to toggle the row's selection.
+- Copy with <kbd>Ctrl</kbd>+<kbd>C</kbd>, paste into a text editor and observe that the rows were copied.
+
+<grid-example title='Copying Mixed Ranges & Rows' name='copy-mixed' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+## Custom clipboard interaction
+
+If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
+
+The example below shows using `sendToClipboard(params)`, but rather than using the clipboard, demonstrates the callback by just printing the data to the console.
+
+<grid-example title='Controlling Clipboard Copy' name='custom' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+## Copying via the API
+
 You can use the Grid API methods: `copySelectedRowsToClipboard(...)` and `copySelectedRangeToClipboard(...)`
 to copy rows or ranges respectively, these API calls take optional parameters to enable copying column and group headers.
 
 <api-documentation source='grid-api/api.json' section='clipboard' names='["copySelectedRangeToClipboard", "copySelectedRowsToClipboard"]'  ></api-documentation>
 
-##  Paste from Clipboard
+## How to Paste
 
-Paste to clipboard can only be done in the following ways:
+Paste is enabled by default in the enterprise version and is possible as long as the cells you're pasting into are [editable](/cell-editing) (non-editable cells cannot be modified, even with a paste operation). You can paste using the keybind <kbd>Ctrl</kbd>+<kbd>V</kbd> while focus is on the grid.
 
-- Press keys <kbd>Ctrl</kbd>+<kbd>V</kbd> while focus in on the grid with a **single cell selected**. The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
-- Press keys <kbd>Ctrl</kbd>+<kbd>V</kbd> while focus in on the grid with a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
+The behaviour of paste changes depending whether you have a single cell or a range selected:
+
+- When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
+- When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
 [[note]]
 | The 'paste' operation in the context menu is not possible and hence always disabled.
@@ -56,57 +108,15 @@ Paste to clipboard can only be done in the following ways:
 | the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
 | the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
 
+## Disabling Paste
 
-## Toggle Paste On / Off
+You can turn paste operations off for the entire grid, by setting the grid property `suppressClipboardPaste=true`.
 
-Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation). To turn paste operations off, set grid property `suppressClipboardPaste=true`.
-
-The colDef has a property `suppressPaste` where you can specify to not allowing clipboard paste for a particular cell. This can be a boolean or a function (use a function to specify for a particular cell, or boolean for the whole column).
+Or you can disable pasting for a specific column or cell by setting the property `suppressPaste` on the column definition. This can be a boolean or a function (use a function to specify for a particular cell, or boolean for the whole column).
 
 <api-documentation source='column-properties/properties.json' section='columns' names='["suppressPaste"]'></api-documentation>
 
-## Clipboard Events
-
-The following events are relevant to clipboard operations:
-
-- `pasteStart`: Paste event has started.
-- `pasteEnd`: Paste event has ended.
-- `cellValueChanged`: A cells value has changed. Typically happens after editing but also if cell value is changed as a result of paste operation.
-
-For a paste operation the events will be fired as:
-
-1. One `pasteStart` event.
-1. Many `cellValueChanged` events.
-1. One `pasteEnd` event.
-
-If the application is doing work each time it receives a `cellValueChanged`, you can use the `pasteStart` and `pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the paste operation after the paste operation.
-
-There are no events for paste to clipboard as this does not update the grids data.
-
-## Clipboard Example
-
-Below you can:
-
-- Copy with the Context Menu or <kbd>Ctrl</kbd>+<kbd>C</kbd>.
-- Paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>.
-- Copy with the provided buttons.
-- Notice for paste that events `pasteStart`, `pasteEnd` and `cellValueChanged` are logged to the console.
-- Buttons 'Toggle Paste On' and 'Toggle Paste Off' turn pasting on and off.
-
-The example has both row click selection and range selection enabled. You probably won't do
-this in your application as it's confusing, it's done below just to demonstrate them side by side.
-
-<grid-example title='Clipboard example' name='simple' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
-
-## Controlling Clipboard Copy
-
-If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
-
-The example below shows using `sendToClipboard(params)`, but rather than using the clipboard, demonstrates the callback by just printing the data to the console.
-
-<grid-example title='Controlling Clipboard Copy' name='custom' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
-
-## Processing Clipboard Data
+## Processing Pasted Data
 
 It is possible to process clipboard data before pasting it into the grid. This can be done either on individual cells or the whole paste operation.
 
@@ -125,44 +135,35 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
-### Processing Whole Paste Operation
+## Changing the Delimiter for Copy & Paste
 
-The interface and parameters for processing the whole paste operation is as follows:
+By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then you can set the property `gridOptions.clipboardDelimiter` to a value of your choosing.
 
-<api-documentation source='grid-options/properties.json' section='clipboard' names='["processDataFromClipboard"]'  ></api-documentation>
+## Using the browser's text selection
 
-In summary the `processDataFromClipboard` takes a 2d array of data that was taken from the clipboard and the method returns a 2d array of data to be used. For the method to have no impact, it should return the 2d array it was provided. The method is free to return back anything it wants, as long as it is a 2d array of strings.
-
-The example below demonstrates `processDataFromClipboard`. Note the following:
-
-
-- Pasting data that is copied from cells in the 'Green' highlighted column works as normal. Note that it uses `processDataFromClipboard` returning the 2d array it was provided with.
-
-- Pasting any data from cells in the 'Red' highlighted column will result in 2x2 cells getting pasted with contents `[ ['Orange', 'Orange'], ['Grey', 'Grey'] ]`. To see this, copy and paste some 'Red' cells from column F. This is achieved by `processDataFromClipboard` returning the same 2d array always regardless of the data from the clipboard.
-
-- Pasting any data where a cell starts with 'Yellow' will result in the paste operation getting cancelled. To see this, copy and paste some 'Yellow' cells from column G. This is achieved by `processDataFromClipboard` returning null.
-
-<grid-example title='Example Process All' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
-
-## Changing the Delimiter
-
-By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then use the property `clipboardDelimiter`.
-
-## Using enableCellTextSelection
-
-If instead of using the Clipboard service to copy/paste the contents from a cell, you just want to manually select the text and use the operating system copy/paste. You should set `enableCellTextSelection=true` in the gridOptions. It's important to mention that this config should be combined with `ensureDomOrder=true` also in the gridOptions.
+The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. It's important to mention that this config should be combined with `ensureDomOrder=true` also in the gridOptions.
 
 [[note]]
 | This is not an enterprise config and can be used at any time to enable cell text selection.
 
-<grid-example title='Using enableCellTextSelection' name='cellTextSelection' type='generated'></grid-example>
+<grid-example title='Using Browser text selection' name='cellTextSelection' type='generated'></grid-example>
 
-## More Complex Example
+## Clipboard Events
 
-The example below demonstrates:
+The following events are relevant to clipboard operations:
 
-- Uses CSV by setting `clipboardDelimiter=','`. To test, copy to clipboard, then paste into a text editor.
-- Does not allow paste into the 'silver' column by setting `colDef.suppressPaste=true`.
+- `pasteStart`: A Paste operation has started.
+- `pasteEnd`: A Paste operation has ended.
+- `cellValueChanged`: A cells value has changed. Typically happens after editing but also if cell value is changed as a result of paste operation.
 
-<grid-example title='Complex Example' name='complex' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+For a paste operation the events will be fired as:
 
+1. One `pasteStart` event.
+1. Many `cellValueChanged` events.
+1. One `pasteEnd` event.
+
+If the application is doing work each time it receives a `cellValueChanged`, you can use the `pasteStart` and `pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the paste operation after the paste operation.
+
+There are no events triggered by copy to clipboard as this does not change the grids data.
+
+<grid-example title='Clipboard Events' name='clipboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>

@@ -451,7 +451,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public getChildStore(keys: string[]): IServerSideStore | null {
         return this.storeUtils.getChildStore(keys, this, (key: string) => {
-            const rowNode = this.allRowNodes.find(currentRowNode => currentRowNode.key === key);
+            const rowNode = this.allRowNodes.find(currentRowNode => {
+                return currentRowNode.key == key;
+            });
 
             return rowNode!;
         });

@@ -13,7 +13,7 @@ export default {
         };
     },
     watch: {
-        filterText: (newFilterText, oldFilterText) => {
+        filterText (newFilterText, oldFilterText) {
             this.params.filterChangedCallback();
         }
     },

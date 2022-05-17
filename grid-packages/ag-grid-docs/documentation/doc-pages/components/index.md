@@ -225,8 +225,58 @@ It is also possible to override components. Where the grid uses a default value,
 - **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
 - **agLoadingOverlay**: To change the default 'loading' overlay.
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
-- **agTextCellEditor**: To change the default text cell editor.
+- **agCellEditor**: To change the default cell editor.
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
+
+To override the default component, register the custom component in the GridOptions `components` property under the above name.
+
+[[only-javascript]]
+|```js
+|const gridOptions = {
+|    // Here is where we specify the components to be used instead of the default
+|    components: {
+|        agDateInput: CustomDateComponent,
+|        agColumnHeader: CustomHeaderComponent
+|    }
+|};
+|```
+[[only-angular]]
+|```ts
+|@Component({
+|    selector: 'my-app',
+|    template: `
+|      <ag-grid-angular
+|          class="ag-theme-alpine"
+|          [components]="components"
+|          ...other properties...  
+|      ></ag-grid-angular>
+|    `
+|})
+|export class AppComponent {
+|    // Here is where we specify the components to be used instead of the default
+|    public components = {
+|        agDateInput: CustomDateComponent,
+|        agColumnHeader: CustomHeaderComponent
+|    };
+|```
+[[only-react]]
+|```jsx
+|<AgGridReact
+|    components={{ agDateInput: CustomDateComponent, agColumnHeader: CustomHeaderComponent }}
+|    ...other properties...
+|/>
+|```
+[[only-vue]]
+|```js
+|const MyApp = {
+|    // Here is where we specify the components to be used instead of the default
+|    components: {
+|        'ag-grid-vue': AgGridVue
+|        agDateInput: CustomDateComponent,
+|        agColumnHeader: CustomHeaderComponent
+|    },
+|```
+|
  
 [[only-vue]]
 |[[note]]

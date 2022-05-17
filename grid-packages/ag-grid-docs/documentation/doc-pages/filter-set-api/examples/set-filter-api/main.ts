@@ -5,9 +5,6 @@ const gridOptions: GridOptions = {
         {
             field: 'athlete',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                cellHeight: 20,
-            },
         },
         {
             field: 'country',

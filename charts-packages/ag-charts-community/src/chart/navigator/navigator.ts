@@ -23,6 +23,8 @@ export class Navigator {
     private maxHandleDragging = false;
     private panHandleOffset = NaN;
 
+    private changedCursor = false;
+
     set enabled(value: boolean) {
         this.rs.visible = value;
     }
@@ -142,12 +144,16 @@ export class Navigator {
         }
 
         if (minHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         } else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'grab';
-        } else {
+        } else if (this.changedCursor) {
+            this.changedCursor = false;
             style.cursor = 'default';
         }
 
