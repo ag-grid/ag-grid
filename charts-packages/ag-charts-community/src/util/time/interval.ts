@@ -98,8 +98,11 @@ export class TimeInterval {
     filter(test: (date: Date) => boolean): TimeInterval {
         const floor = (date: Date): Date => {
             if (date >= date) {
-                while (this._floor(date), !test(date)) {
+                this._floor(date);
+
+                while (!test(date)) {
                     date.setTime(date.getTime() - 1);
+                    this._floor(date);
                 }
             }
             return date;
