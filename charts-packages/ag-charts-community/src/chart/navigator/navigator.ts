@@ -92,17 +92,24 @@ export class Navigator {
     updateAxes(min: number, max: number) {
         const { chart } = this;
         let clipSeries = false;
+        let layoutRequired = false;
         chart.axes.forEach(axis => {
             if (axis.direction === ChartAxisDirection.X) {
                 if (!clipSeries && (min > 0 || max < 1)) {
                     clipSeries = true;
                 }
                 axis.visibleRange = [min, max];
+                const oldLabelAutoRotated = axis.labelAutoRotated;
                 axis.update();
+                if (axis.labelAutoRotated !== oldLabelAutoRotated) {
+                    layoutRequired = true;
+                }
             }
         });
         chart.seriesRoot.enabled = clipSeries;
-        chart.update(ChartUpdateType.SERIES_UPDATE, { forceNodeDataRefresh: true });
+
+        const updateType = layoutRequired ? ChartUpdateType.PERFORM_LAYOUT : ChartUpdateType.SERIES_UPDATE;
+        chart.update(updateType, { forceNodeDataRefresh: true });
     }
 
     onDragStart(offset: Offset) {

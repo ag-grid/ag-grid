@@ -212,6 +212,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
+    private _labelAutoRotated: boolean = false;
+    get labelAutoRotated(): boolean {
+        return this._labelAutoRotated;
+    }
+
     /**
      * This will be assigned a value when `this.calculateTickCount` is invoked.
      * If the user has specified a tick count, it will be used, otherwise a tick count will be calculated based on the available range.
@@ -537,10 +542,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         let { totalLength: totalLabelLength, rotate } = calculateLabelsLength(labelBboxes, useWidth);
 
+        this._labelAutoRotated = false;
         if (label.rotation === undefined && label.autoRotate === true && rotate) {
             // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
             // automatically rotate the labels
             labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
+            this._labelAutoRotated = true;
         }
 
         if (labelRotation || labelAutoRotation) {
