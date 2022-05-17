@@ -129,6 +129,7 @@ export class AxisPanel extends Component {
             if (font.size) { this.chartOptionsService.setAxisProperty("label.fontSize", font.size); }
             if (font.color) { this.chartOptionsService.setAxisProperty("label.color", font.color); }
 
+            // @todo(AG-6790): Revisit approach here?
             // this.chartController.getChartProxy().getChart().layoutPending = true;
         };
 

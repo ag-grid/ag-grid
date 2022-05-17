@@ -170,6 +170,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 pieSeries.strokes = updateParams.strokes.map(stroke => hexToRGBA(stroke, '0.3'));
                 pieSeries.showInLegend = false;
             } else {
+                // @todo(AG-6790): Revisit approach here?
                 // updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
                 //     if (updateParams.opaqueSeries) {
                 //         updateParams.opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);

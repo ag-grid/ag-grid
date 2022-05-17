@@ -80,6 +80,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const colIds = params.fields.map(f => f.colId);
         barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
 
+        // @todo(AG-6790): Revisit approach here?
         // sync toggling of legend item with hidden 'filtered out' item
         // this.chart.legend.addEventListener('click', (event: LegendClickEvent) => {
         //     barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
