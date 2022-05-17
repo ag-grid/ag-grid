@@ -288,6 +288,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new AreaSeries(), seriesOptions, {path, skip}));
                 break;
             case 'bar':
+                // fall-through - bar and column are synonyms.
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, {path, skip}));
                 break;
