@@ -313,6 +313,15 @@ export abstract class Chart extends Observable {
 
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
 
+    private _debug = false;
+    set debug(value: boolean) {
+        this._debug = value;
+        this.scene.debug.consoleLog = value;
+    }
+    get debug() {
+        return this._debug;
+    }
+
     private _container: HTMLElement | undefined | null = undefined;
     set container(value: HTMLElement | undefined | null) {
         if (this._container !== value) {
@@ -443,10 +452,10 @@ export abstract class Chart extends Observable {
         const element = this.element = document.createElement('div');
         element.setAttribute('class', 'ag-chart-wrapper');
 
-        const scene = new Scene(document);
-        this.scene = scene;
-        scene.root = root;
-        scene.container = element;
+        this.scene = new Scene(document);
+        this.scene.debug.consoleLog = this._debug;
+        this.scene.root = root;
+        this.scene.container = element;
         this.autoSize = true;
 
         SizeMonitor.observe(this.element, size => {
@@ -475,7 +484,7 @@ export abstract class Chart extends Observable {
             Chart.tooltipDocuments.push(document);
         }
 
-        this.setupDomListeners(scene.canvas.element);
+        this.setupDomListeners(this.scene.canvas.element);
     }
 
     destroy() {
@@ -535,6 +544,9 @@ export abstract class Chart extends Observable {
                 this.processData();
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
+                    if (this.debug) {
+                        console.log({firstRenderComplete, firstResizeReceived});
+                    }
                     // Reschedule if canvas size hasn't been set yet to avoid a race.
                     this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
                     this.performUpdateTrigger.schedule();
@@ -551,14 +563,17 @@ export abstract class Chart extends Observable {
                 this.firstRenderComplete = true;
             case ChartUpdateType.NONE:
                 // Do nothing.
-                this.performUpdateType = ChartUpdateType.NONE;
+                this._performUpdateType = ChartUpdateType.NONE;
         }
         const end = performance.now();
-        console.log({
-            durationMs: Math.round((end - start)*100) / 100,
-            count,
-            performUpdateType: ChartUpdateType[performUpdateType],
-        });
+
+        if (this.debug) {
+            console.log({
+                durationMs: Math.round((end - start)*100) / 100,
+                count,
+                performUpdateType: ChartUpdateType[performUpdateType],
+            });
+        }
     }
 
     readonly element: HTMLElement;

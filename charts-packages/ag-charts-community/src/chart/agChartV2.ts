@@ -120,7 +120,12 @@ export abstract class AgChartV2 {
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
-        const mergedOptions = prepareOptions(userOptions);
+        const mixinOpts: any = {};
+        if (AgChartV2.DEBUG) {
+            mixinOpts['debug'] = true;
+        }
+
+        const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
             isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
@@ -137,7 +142,12 @@ export abstract class AgChartV2 {
 
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
-        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
+        const mixinOpts: any = {};
+        if (AgChartV2.DEBUG) {
+            mixinOpts['debug'] = true;
+        }
+
+        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
             chart.destroy();

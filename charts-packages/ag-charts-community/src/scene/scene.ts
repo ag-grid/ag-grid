@@ -5,6 +5,7 @@ import { createId } from "../util/id";
 interface DebugOptions {
     renderFrameIndex: boolean;
     renderBoundingBoxes: boolean;
+    consoleLog: boolean;
 }
 
 export class Scene {
@@ -103,6 +104,7 @@ export class Scene {
     readonly debug: DebugOptions = {
         renderFrameIndex: false,
         renderBoundingBoxes: false,
+        consoleLog: false,
     };
 
     private _frameIndex = 0;
@@ -135,7 +137,9 @@ export class Scene {
         }
 
         if (root) {
-            console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
+            if (this.debug.consoleLog) {
+                console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
+            }
 
             if (root.visible) {
                 ctx.save();
