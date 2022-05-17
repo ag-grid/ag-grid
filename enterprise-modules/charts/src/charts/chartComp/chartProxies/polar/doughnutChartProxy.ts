@@ -170,11 +170,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 pieSeries.strokes = updateParams.strokes.map(stroke => hexToRGBA(stroke, '0.3'));
                 pieSeries.showInLegend = false;
             } else {
-                updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                    if (updateParams.opaqueSeries) {
-                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
-                    }
-                });
+                // updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                //     if (updateParams.opaqueSeries) {
+                //         updateParams.opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
+                //     }
+                // });
                 pieSeries.fills = updateParams.fills;
                 pieSeries.strokes = updateParams.strokes;
                 pieSeries.callout.colors = updateParams.strokes;

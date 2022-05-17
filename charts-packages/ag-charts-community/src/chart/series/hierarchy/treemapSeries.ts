@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
-import { reactive, TypedEvent } from "../../../util/observable";
+import { TypedEvent } from "../../../util/observable";
 import { Label } from "../../label";
 import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
@@ -41,7 +41,7 @@ export interface TreemapTooltipRendererParams extends TooltipRendererParams {
 }
 
 export class TreemapSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export interface TreemapSeriesNodeClickEvent extends TypedEvent {
@@ -55,7 +55,7 @@ export interface TreemapSeriesNodeClickEvent extends TypedEvent {
 }
 
 export class TreemapSeriesLabel extends Label {
-    @reactive('change') padding = 10;
+    padding = 10;
 }
 
 enum TextNodeTag {
@@ -73,18 +73,6 @@ export class TreemapSeries extends HierarchySeries {
     private labelMap = new Map<number, Text>();
     private layout = new Treemap();
     private dataRoot?: TreemapNodeDatum;
-
-    constructor() {
-        super();
-
-        this.shadow.addEventListener('change', this.scheduleUpdate, this);
-        this.title.addEventListener('change', this.scheduleUpdate, this);
-        this.subtitle.addEventListener('change', this.scheduleUpdate, this);
-        this.labels.small.addEventListener('change', this.scheduleUpdate, this);
-        this.labels.medium.addEventListener('change', this.scheduleUpdate, this);
-        this.labels.large.addEventListener('change', this.scheduleUpdate, this);
-        this.labels.color.addEventListener('change', this.scheduleUpdate, this);
-    }
 
     readonly title: TreemapSeriesLabel = (() => {
         const label = new TreemapSeriesLabel();
@@ -139,40 +127,30 @@ export class TreemapSeries extends HierarchySeries {
         if (this._nodePadding !== value) {
             this._nodePadding = value;
             this.updateLayoutPadding();
-            this.scheduleUpdate();
         }
     }
     get nodePadding(): number {
         return this._nodePadding;
     }
 
-    @reactive('dataChange') labelKey: string = 'label';
-    @reactive('dataChange') sizeKey?: string = 'size';
-    @reactive('dataChange') colorKey?: string = 'color';
-    @reactive('dataChange') colorDomain: number[] = [-5, 5];
-    @reactive('dataChange') colorRange: string[] = ['#cb4b3f', '#6acb64'];
-    @reactive('dataChange') colorParents: boolean = false;
-    @reactive('update') gradient: boolean = true;
+    labelKey: string = 'label';
+    sizeKey?: string = 'size';
+    colorKey?: string = 'color';
+    colorDomain: number[] = [-5, 5];
+    colorRange: string[] = ['#cb4b3f', '#6acb64'];
+    colorParents: boolean = false;
+    gradient: boolean = true;
 
     colorName: string = 'Change';
     rootName: string = 'Root';
 
-    protected _shadow: DropShadow = (() => {
+    shadow: DropShadow = (() => {
         const shadow = new DropShadow();
         shadow.color = 'rgba(0, 0, 0, 0.4)';
         shadow.xOffset = 1.5;
         shadow.yOffset = 1.5;
         return shadow;
     })();
-    set shadow(value: DropShadow) {
-        if (this._shadow !== value) {
-            this._shadow = value;
-            this.scheduleUpdate();
-        }
-    }
-    get shadow(): DropShadow {
-        return this._shadow;
-    }
 
     readonly tooltip = new TreemapSeriesTooltip();
 
@@ -256,17 +234,15 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         this.updateSelections();
         this.updateNodes();
     }
 
     updateSelections() {
-        if (!this.nodeDataPending) {
+        if (!this.nodeDataRefresh) {
             return;
         }
-        this.nodeDataPending = false;
+        this.nodeDataRefresh = false;
 
         const { chart, dataRoot } = this;
 
@@ -426,7 +402,7 @@ export class TreemapSeries extends HierarchySeries {
         });
     }
 
-    getDomain(direction: ChartAxisDirection): any[] {
+    getDomain(_direction: ChartAxisDirection): any[] {
         return [0, 1];
     }
 
@@ -478,6 +454,6 @@ export class TreemapSeries extends HierarchySeries {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    listSeriesItems(_legendData: LegendDatum[]): void {
     }
 }

@@ -3145,6 +3145,7 @@
     "color": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
   },
+  "ChartUpdateType": {},
   "Point": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
@@ -3675,6 +3676,7 @@
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "PointerEvents": {},
+  "RedrawType": {},
   "DebugOptions": {
     "renderFrameIndex": {
       "type": { "returnType": "boolean", "optional": false }

@@ -162,7 +162,11 @@ describe('AgChartV2', () => {
 
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
-                const options: AgChartOptions = example.options;
+                const options: AgChartOptions = { ...example.options };
+                options.autoSize = false;
+                options.width = 800;
+                options.height = 600;
+
                 const chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
             });

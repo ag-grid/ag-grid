@@ -187,13 +187,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    protected _ticks: any[];
-    set ticks(values: any[]) {
-        this._ticks = values;
-    }
-    get ticks(): any[] {
-        return this._ticks;
-    }
+    ticks: any[];
 
     readonly group = new Group();
 
