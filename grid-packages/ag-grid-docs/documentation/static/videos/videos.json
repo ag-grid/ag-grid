@@ -254,6 +254,20 @@
         "Configure AG Grid Enterprise."
       ],
       "runningTime": "3:54"
+    },
+    {
+      "title": "Customising Cells - Cell Renderer",
+      "url": "https://www.youtube.com/watch?v=ZJga2421b2w&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Customising Cells - Cell Renderer"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "6:00"
     }
   ]
 }

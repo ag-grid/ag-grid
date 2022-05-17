@@ -10,7 +10,7 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
-    <Announcement date="May 17th" version="27.3.0">
+    <Announcement date="May 17" version="27.3.0">
         <p className="card-text">
             <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-27-3/">What's new in AG Grid 27.3.0</a><br/><br/>
             Minor release with new features and bug fixes.
@@ -104,23 +104,23 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 /**
  * A simpler MailChimp sign up form - no extra JS dependencies. Note form was not a direct copy and paste from mailchimp, amended due to jsx templating
  */
- const SimpleMailingListSignup = () => {
+const SimpleMailingListSignup = () => {
     return <>
         <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css"/>
         <div id="mc_embed_signup" style={{background:'#fff', clear:'left', font:'14px Helvetica,Arial,sans-serif'}}>
-        <form 
-            action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=9353cf87ce" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate" target="_blank" validate="true">
-            <div id="mc_embed_signup_scroll">
-                <label htmlFor="mce-EMAIL">Join AG Grid Mailing List</label>
-                <input style={{width: '100%'}} type="email" defaultValue="" name="EMAIL" className="email" id="mce-EMAIL" placeholder="email address" required/>
-                <div style={{position: 'absolute', left: '-5000px'}} aria-hidden="true">
-                    <input type="text" name="b_9b44b788c97fa5b498fbbc9b5_9353cf87ce" tabIndex="-1" defaultValue=""/>                
+            <form
+                action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=9353cf87ce" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate" target="_blank" validate="true">
+                <div id="mc_embed_signup_scroll">
+                    <label htmlFor="mce-EMAIL">Join AG Grid Mailing List</label>
+                    <input style={{width: '100%'}} type="email" defaultValue="" name="EMAIL" className="email" id="mce-EMAIL" placeholder="email address" required/>
+                    <div style={{position: 'absolute', left: '-5000px'}} aria-hidden="true">
+                        <input type="text" name="b_9b44b788c97fa5b498fbbc9b5_9353cf87ce" tabIndex="-1" defaultValue=""/>
+                    </div>
+                    <div className="clear">
+                        <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" className="button"/>
+                    </div>
                 </div>
-                <div className="clear">
-                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" className="button"/>
-                </div>
-            </div>
-        </form>
+            </form>
         </div>
     </>;
 };
