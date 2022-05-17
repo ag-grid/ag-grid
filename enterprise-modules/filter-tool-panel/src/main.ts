@@ -1,1 +1,0 @@
-export { FiltersToolPanelModule } from "./filtersToolPanelModule";
