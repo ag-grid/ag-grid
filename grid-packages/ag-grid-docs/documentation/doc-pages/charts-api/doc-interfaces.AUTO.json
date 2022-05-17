@@ -3683,13 +3683,12 @@
     },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
-    }
+    },
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
-  "NodeCallback": { "meta": { "typeParams": ["G", "GDatum"] } },
   "NodeSelector": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
-  "NodeSelectorAll": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},
   "RectSizing": {},
   "ShapeLineCap": {},

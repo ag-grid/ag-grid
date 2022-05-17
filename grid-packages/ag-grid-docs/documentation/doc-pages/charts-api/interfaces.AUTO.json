@@ -2771,7 +2771,11 @@
   },
   "DebugOptions": {
     "meta": {},
-    "type": { "renderFrameIndex": "boolean", "renderBoundingBoxes": "boolean" }
+    "type": {
+      "renderFrameIndex": "boolean",
+      "renderBoundingBoxes": "boolean",
+      "consoleLog": "boolean"
+    }
   },
   "ValueFn": {
     "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
@@ -2781,17 +2785,9 @@
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
   },
-  "NodeCallback": {
-    "meta": { "isTypeAlias": true, "typeParams": ["G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void"
-  },
   "NodeSelector": {
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N"
-  },
-  "NodeSelectorAll": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[]"
   },
   "ArcType": {
     "meta": { "isEnum": true },
