@@ -30583,17 +30583,15 @@ var TimeInterval$1 = /** @class */ (function () {
     TimeInterval.prototype.filter = function (test) {
         var _this = this;
         var floor = function (date) {
-            if (date instanceof Date) {
-                _this._floor(date);
-                while (!test(date)) {
+            if (date >= date) {
+                while (_this._floor(date), !test(date)) {
                     date.setTime(date.getTime() - 1);
-                    _this._floor(date);
                 }
             }
             return date;
         };
         var offset = function (date, step) {
-            if (date instanceof Date) {
+            if (date >= date) {
                 if (step < 0) {
                     while (++step <= 0) {
                         do {

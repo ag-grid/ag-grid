@@ -76,17 +76,15 @@ export class TimeInterval {
     // day.filter(date => (date.getDate() - 1) % 10 === 0)
     filter(test) {
         const floor = (date) => {
-            if (date instanceof Date) {
-                this._floor(date);
-                while (!test(date)) {
+            if (date >= date) {
+                while (this._floor(date), !test(date)) {
                     date.setTime(date.getTime() - 1);
-                    this._floor(date);
                 }
             }
             return date;
         };
         const offset = (date, step) => {
-            if (date instanceof Date) {
+            if (date >= date) {
                 if (step < 0) {
                     while (++step <= 0) {
                         do {
