@@ -185,46 +185,56 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
     return <div className={styles['example-runner']}>
         <div className={`form-inline ${styles['example-runner__header']}`}>
             <a id={linkId} href={`#${linkId}`} className={`anchor ${styles['example-runner__title']}`}>
-                {anchorIcon}&nbsp;Example: {title}
+                {anchorIcon}Example: {title}
             </a>
-            {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
-            {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
-                <ReactStyleSelector
-                    useFunctionalReact={useFunctionalReact}
-                    useTypescript={useTypescript}
-                    onChange={event => {
-                        switch (event.target.value) {
-                            case 'classes':
-                                set({ useFunctionalReact: false, useTypescript: false });
-                                break;
-                            case 'hooks':
-                                set({ useFunctionalReact: true, useTypescript: false });
-                                break;
-                            case 'hooksTs':
-                                set({ useFunctionalReact: true, useTypescript: true });
-                                break;
-                            default:
-                                set({ useFunctionalReact: true, useTypescript: true });
-                                break;
-                        }
-                    }} />
-            }
-            {enableVue3 && exampleInfo.framework === 'vue' &&
-                <VueStyleSelector
-                    useVue3={useVue3}
-                    onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
-            }
-            {(exampleInfo.framework === 'javascript') && (isGenerated || type === 'multi') &&
-                (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript') &&
-                <TypscriptStyleSelector
-                    useTypescript={useTypescript}
-                    onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
-            }
+            <div></div>
+            <div className={`anchor ${styles['example-runner__options']}`}>
+                {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
+                {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
+                    <ReactStyleSelector
+                        useFunctionalReact={useFunctionalReact}
+                        useTypescript={useTypescript}
+                        onChange={event => {
+                            switch (event.target.value) {
+                                case 'classes':
+                                    set({ useFunctionalReact: false, useTypescript: false });
+                                    break;
+                                case 'hooks':
+                                    set({ useFunctionalReact: true, useTypescript: false });
+                                    break;
+                                case 'hooksTs':
+                                    set({ useFunctionalReact: true, useTypescript: true });
+                                    break;
+                                default:
+                                    set({ useFunctionalReact: true, useTypescript: true });
+                                    break;
+                            }
+                        }} />
+                }
+                {enableVue3 && exampleInfo.framework === 'vue' &&
+                    <VueStyleSelector
+                        useVue3={useVue3}
+                        onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
+                }
+                {(exampleInfo.framework === 'javascript') && (isGenerated || type === 'multi') &&
+                    (exampleInfo.internalFramework === 'vanilla' || exampleInfo.internalFramework === 'typescript') &&
+                    <TypscriptStyleSelector
+                        useTypescript={useTypescript}
+                        onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
+                }
+                {library === 'grid' && (exampleInfo.framework !== 'javascript' || exampleInfo.internalFramework === 'typescript') && isGenerated &&
+                    <ImportTypeSelector
+                        framework={exampleInfo.framework}
+                        importType={exampleImportType}
+                        onChange={event => set({ exampleImportType: event.target.value })} />
+                }
+            </div>
             {library === 'grid' && (exampleInfo.framework !== 'javascript' || exampleInfo.internalFramework === 'typescript') && isGenerated &&
-                <ImportTypeSelector
-                    framework={exampleInfo.framework}
-                    importType={exampleImportType}
-                    onChange={event => set({ exampleImportType: event.target.value })} />
+                <DocumentationLink framework={framework} target="_blank" href={`/packages-modules`} role="tooltip" title={exampleImportType === 'packages'
+                ? "Example is using AG Grid packages where all the grid features are included by default. Click for more info."
+                : "Example is using AG Grid modules to minimise application bundle size and only includes the modules required to demonstrate the given feature. Click for more info."}>
+                <FontAwesomeIcon style={{ marginLeft: '5px' }} icon={faQuestionCircle} inverse />
+                </DocumentationLink>
             }
         </div>
         <div className={styles['example-runner__body']} style={exampleStyle}>
@@ -281,13 +291,6 @@ const ImportTypeSelector = ({ importType, onChange, framework }) => {
                     <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
                 )}
             </select>}
-
-        <DocumentationLink framework={framework} target="_blank" href={`/packages-modules`} role="tooltip" title={importType === 'packages'
-            ? "Example is using AG Grid packages where all the grid features are included by default. Click for more info."
-            : "Example is using AG Grid modules to minimise application bundle size and only includes the modules required to demonstrate the given feature. Click for more info."}>
-            <FontAwesomeIcon style={{ marginLeft: '5px' }} icon={faQuestionCircle} inverse />
-        </DocumentationLink>
-
     </div>;
 };
 
