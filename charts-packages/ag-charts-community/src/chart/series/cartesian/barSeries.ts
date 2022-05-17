@@ -396,7 +396,7 @@ export class BarSeries extends CartesianSeries {
             yMax = yLargestMinMax.max;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', this.yAxis);
+        this.yDomain = this.fixNumericExtent([yMin, yMax], this.yAxis);
 
         return true;
     }

@@ -196,14 +196,6 @@ export class CartesianChart extends Chart {
         this.axes.forEach(axis => axis.update());
     }
 
-    protected initSeries(series: Series) {
-        super.initSeries(series);
-    }
-
-    protected freeSeries(series: Series) {
-        super.freeSeries(series);
-    }
-
     private _onTouchStart: any;
     private _onTouchMove: any;
     private _onTouchEnd: any;

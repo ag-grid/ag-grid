@@ -20,7 +20,7 @@ import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous, isDiscrete } from "../../../util/value";
+import { isContinuous } from "../../../util/value";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -167,8 +167,8 @@ export class LineSeries extends CartesianSeries {
             yData.push(yDatum);
         }
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x', xAxis) : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), 'y', yAxis) : yData;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), xAxis) : xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), yAxis) : yData;
 
         return true;
     }

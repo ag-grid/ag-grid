@@ -1099,10 +1099,10 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(event: MouseEvent) { }
-    protected onMouseUp(event: MouseEvent) { }
+    protected onMouseDown(_event: MouseEvent) { }
+    protected onMouseUp(_event: MouseEvent) { }
 
-    protected onMouseOut(event: MouseEvent) {
+    protected onMouseOut(_event: MouseEvent) {
         this.tooltip.toggle(false);
     }
 
@@ -1142,7 +1142,7 @@ export abstract class Chart extends Observable {
 
         if (datum) {
             const { id, itemId, enabled } = datum;
-            const series = find(this.series, series => series.id === id);
+            const series = find(this.series, (s) => s.id === id);
 
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);

@@ -139,8 +139,7 @@ export class ScatterSeries extends CartesianSeries {
     constructor() {
         super();
 
-        const { marker, label } = this;
-
+        const { label } = this;
 
         label.enabled = false;
     }
@@ -153,7 +152,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey, sizeKey, labelKey, xAxis, yAxis, marker, label } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 
         if (!xAxis || !yAxis) {
             return false;
@@ -173,12 +172,12 @@ export class ScatterSeries extends CartesianSeries {
 
         this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
+            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), xAxis);
         } else {
             this.xDomain = this.xData;
         }
         if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), 'y', yAxis);
+            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), yAxis);
         } else {
             this.yDomain = this.yData;
         }
@@ -480,7 +479,7 @@ export class ScatterSeries extends CartesianSeries {
             title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
-    if (data && data.length && xKey && yKey) {
+        if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
                 itemId: undefined,

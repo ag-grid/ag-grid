@@ -288,7 +288,7 @@ export class AreaSeries extends CartesianSeries {
         this.yData = yData;
         this.xData = xData;
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xValues, isContinuous), 'x', xAxis) : xValues;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xValues, isContinuous), xAxis) : xValues;
 
         // xData: ['Jan', 'Feb', undefined]
         //
@@ -351,7 +351,7 @@ export class AreaSeries extends CartesianSeries {
             yMax = yMax > (normalizedTo * domainWhitespaceAdjustment) ? normalizedTo : yMax;
         }
 
-        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y', yAxis);
+        this.yDomain = this.fixNumericExtent([yMin, yMax], yAxis);
 
         return true;
     }
@@ -417,7 +417,6 @@ export class AreaSeries extends CartesianSeries {
             markerSelectionData,
             strokeSelectionData,
             fillSelectionData,
-            xKey
         } = this;
 
         if (!data || !xAxis || !yAxis || !xData.length || !yData.length) {

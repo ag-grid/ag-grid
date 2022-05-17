@@ -32,5 +32,8 @@
     "[scss]": {
         "editor.detectIndentation": false,
         "editor.tabSize": 4
+    },
+    "sonarlint.connectedMode.project": {
+        "projectKey": "ag-grid-community"
     }
 }

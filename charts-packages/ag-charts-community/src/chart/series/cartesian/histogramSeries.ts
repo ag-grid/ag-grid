@@ -214,7 +214,7 @@ export class HistogramSeries extends CartesianSeries {
     // During processData phase, used to unify different ways of the user specifying
     // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     private deriveBins(): [number, number][] {
-        const { bins, binCount } = this;
+        const { bins } = this;
 
         if (!this.data) {
             return [];
@@ -225,7 +225,7 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const xData = this.data.map(datum => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(extent(xData, isContinuous), 'x');
+        const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
         const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
@@ -291,7 +291,7 @@ export class HistogramSeries extends CartesianSeries {
         const yData = this.binnedData.map(b => b.getY(this.areaPlot));
         const yMinMax = extent(yData, isContinuous);
 
-        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
+        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
 
         const firstBin = this.binnedData[0];
         const lastBin = this.binnedData[this.binnedData.length - 1];

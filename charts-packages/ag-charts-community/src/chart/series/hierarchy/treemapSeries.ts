@@ -402,7 +402,7 @@ export class TreemapSeries extends HierarchySeries {
         });
     }
 
-    getDomain(direction: ChartAxisDirection): any[] {
+    getDomain(_direction: ChartAxisDirection): any[] {
         return [0, 1];
     }
 
@@ -454,6 +454,6 @@ export class TreemapSeries extends HierarchySeries {
         return toTooltipHtml(defaults);
     }
 
-    listSeriesItems(legendData: LegendDatum[]): void {
+    listSeriesItems(_legendData: LegendDatum[]): void {
     }
 }

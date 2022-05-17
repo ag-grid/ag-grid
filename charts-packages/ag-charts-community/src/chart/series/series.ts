@@ -136,7 +136,7 @@ export abstract class Series extends Observable {
         }
     }
 
-    setColors(fills: string[], strokes: string[]) { }
+    setColors(_fills: string[], _strokes: string[]) { }
 
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
@@ -222,7 +222,7 @@ export abstract class Series extends Observable {
     // on hightlight changes.
     onHighlightChange() { }
 
-    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string, axis?: ChartAxis): [number, number] {
+    protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {
             return [0, 1];
         }
