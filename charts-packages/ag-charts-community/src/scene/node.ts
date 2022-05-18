@@ -24,10 +24,10 @@ export enum RedrawType {
 export function SceneChangeDetection(opts?: {
     redraw?: RedrawType,
     type?: 'normal' | 'transform' | 'path' | 'font',
-    transform?: (o: any) => any,
+    convertor?: (o: any) => any,
     changeCb?: (o: any) => any,
 }) {
-    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, transform } = opts || {};
+    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -37,8 +37,8 @@ export function SceneChangeDetection(opts?: {
             Object.defineProperty(target, key, {
                 set: function (value: any) {
                     const oldValue = this[privateKey];
-                    if (transform) {
-                        value = transform(value);
+                    if (convertor) {
+                        value = convertor(value);
                     }
                     if (value !== oldValue) {
                         this[privateKey] = value;

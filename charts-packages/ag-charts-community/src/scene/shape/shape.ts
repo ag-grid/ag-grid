@@ -142,7 +142,7 @@ export abstract class Shape extends Node {
 
     @SceneChangeDetection({
         redraw: RedrawType.MINOR,
-        transform: (v: number) => Math.min(1, Math.max(0, v)),
+        convertor: (v: number) => Math.min(1, Math.max(0, v)),
     })
     opacity: number = Shape.defaultStyles.opacity;
 

@@ -13,11 +13,11 @@ export class Group extends Node {
         super.markDirty(type, parentType);
     }
 
-    @SceneChangeDetection({ transform: (v: number) => Math.min(1, Math.max(0, v)) })
+    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
     opacity: number = 1;
 
     // We consider a group to be boundless, thus any point belongs to it.
-    containsPoint(x: number, y: number): boolean {
+    containsPoint(_x: number, _y: number): boolean {
         return true;
     }
 
