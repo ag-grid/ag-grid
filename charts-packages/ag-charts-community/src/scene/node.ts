@@ -21,6 +21,47 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
+export function SceneChangeDetection(opts?: {
+    redraw?: RedrawType,
+    type?: 'normal' | 'transform' | 'path' | 'font',
+    convertor?: (o: any) => any,
+    changeCb?: (o: any) => any,
+}) {
+    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
+
+    return function (target: any, key: string) {
+        // `target` is either a constructor (static member) or prototype (instance member)
+        const privateKey = `__${key}`;
+
+        if (!target[key]) {
+            Object.defineProperty(target, key, {
+                set: function (value: any) {
+                    const oldValue = this[privateKey];
+                    if (convertor) {
+                        value = convertor(value);
+                    }
+                    if (value !== oldValue) {
+                        this[privateKey] = value;
+                        if (type === 'normal') {
+                            this.markDirty(redraw);
+                        } else if (type === 'transform') {
+                            this.markDirtyTransform(redraw);
+                        }
+                        if (changeCb) {
+                            changeCb(this);
+                        }
+                    }
+                },
+                get: function (): any {
+                    return this[privateKey];
+                },
+                enumerable: true,
+                configurable: true
+            });
+        }
+    }
+}
+
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -78,9 +119,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     private _parent?: Node;
-    _setParent(value?: Node) {
-        this._parent = value;
-    }
     get parent(): Node | undefined {
         return this._parent;
     }
@@ -152,7 +190,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             this._children.push(node);
             this.childSet[node.id] = true;
 
-            node._setParent(this);
+            node._parent = this;
             node._setScene(this.scene);
         }
 
@@ -174,7 +212,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         this._children.push(node);
         this.childSet[node.id] = true;
 
-        node._setParent(this);
+        node._parent = this;
         node._setScene(this.scene);
 
         this.markDirty(RedrawType.MAJOR);
@@ -189,7 +227,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent();
+                node._parent = undefined;
                 node._setScene();
                 this.markDirty(RedrawType.MINOR);
 
@@ -220,7 +258,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (i >= 0) {
                 this._children.splice(i, 0, node);
                 this.childSet[node.id] = true;
-                node._setParent(this);
+                node._parent = this;
                 node._setScene(this.scene);
             } else {
                 throw new Error(`${nextNode} has ${parent} as the parent, `
@@ -283,27 +321,11 @@ export abstract class Node { // Don't confuse with `window.Node`.
         this.markDirty(RedrawType.MAJOR);
     }
 
-    private _scalingX: number = 1;
-    set scalingX(value: number) {
-        if (this._scalingX !== value) {
-            this._scalingX = value;
-            this.markDirtyTransform();
-        }
-    }
-    get scalingX(): number {
-        return this._scalingX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingX: number = 1;
 
-    private _scalingY: number = 1;
-    set scalingY(value: number) {
-        if (this._scalingY !== value) {
-            this._scalingY = value;
-            this.markDirtyTransform();
-        }
-    }
-    get scalingY(): number {
-        return this._scalingY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingY: number = 1;
 
     /**
      * The center of scaling.
@@ -311,65 +333,25 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * determined automatically, as the center of the bounding box
      * of a node.
      */
-    private _scalingCenterX: number | null = null;
-    set scalingCenterX(value: number | null) {
-        if (this._scalingCenterX !== value) {
-            this._scalingCenterX = value;
-            this.markDirtyTransform();
-        }
-    }
-    get scalingCenterX(): number | null {
-        return this._scalingCenterX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingCenterX: number | null = null;
 
-    private _scalingCenterY: number | null = null;
-    set scalingCenterY(value: number | null) {
-        if (this._scalingCenterY !== value) {
-            this._scalingCenterY = value;
-            this.markDirtyTransform();
-        }
-    }
-    get scalingCenterY(): number | null {
-        return this._scalingCenterY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingCenterY: number | null = null;
 
-    private _rotationCenterX: number | null = null;
-    set rotationCenterX(value: number | null) {
-        if (this._rotationCenterX !== value) {
-            this._rotationCenterX = value;
-            this.markDirtyTransform();
-        }
-    }
-    get rotationCenterX(): number | null {
-        return this._rotationCenterX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotationCenterX: number | null = null;
 
-    private _rotationCenterY: number | null = null;
-    set rotationCenterY(value: number | null) {
-        if (this._rotationCenterY !== value) {
-            this._rotationCenterY = value;
-            this.markDirtyTransform();
-        }
-    }
-    get rotationCenterY(): number | null {
-        return this._rotationCenterY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotationCenterY: number | null = null;
 
     /**
      * Rotation angle in radians.
      * The value is set as is. No normalization to the [-180, 180) or [0, 360)
      * interval is performed.
      */
-    private _rotation: number = 0;
-    set rotation(value: number) {
-        if (this._rotation !== value) {
-            this._rotation = value;
-            this.markDirtyTransform();
-        }
-    }
-    get rotation(): number {
-        return this._rotation;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotation: number = 0;
 
     /**
      * For performance reasons the rotation angle's internal representation
@@ -390,27 +372,11 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this.rotation / Math.PI * 180;
     }
 
-    private _translationX: number = 0;
-    set translationX(value: number) {
-        if (this._translationX !== value) {
-            this._translationX = value;
-            this.markDirtyTransform();
-        }
-    }
-    get translationX(): number {
-        return this._translationX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    translationX: number = 0;
 
-    private _translationY: number = 0;
-    set translationY(value: number) {
-        if (this._translationY !== value) {
-            this._translationY = value;
-            this.markDirtyTransform();
-        }
-    }
-    get translationY(): number {
-        return this._translationY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    translationY: number = 0;
 
     containsPoint(x: number, y: number): boolean {
         return false;
@@ -565,32 +531,20 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    private _visible: boolean = true;
-    set visible(value: boolean) {
-        if (this._visible !== value) {
-            this._visible = value;
-            this.markDirty(RedrawType.MINOR);
-        }
-    }
-    get visible(): boolean {
-        return this._visible;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    visible: boolean = true;
 
     protected dirtyZIndex: boolean = false;
 
-    private _zIndex: number = 0;
-    set zIndex(value: number) {
-        if (this._zIndex !== value) {
-            this._zIndex = value;
-            if (this.parent) {
-                this.parent.dirtyZIndex = true;
+    @SceneChangeDetection({
+        redraw: RedrawType.MINOR,
+        changeCb: (o) => {
+            if (o.parent) {
+                o.parent.dirtyZIndex = true;
             }
-            this.markDirty(RedrawType.MINOR);
-        }
-    }
-    get zIndex(): number {
-        return this._zIndex;
-    }
+        },
+    })
+    zIndex: number = 0;
 
     pointerEvents: PointerEvents = PointerEvents.All;
 }
