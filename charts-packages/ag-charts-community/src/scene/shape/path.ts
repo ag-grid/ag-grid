@@ -1,6 +1,25 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { RedrawType } from "../node";
+import { RedrawType, SceneChangeDetection } from "../node";
+
+export function ScenePathChangeDetection(opts?: {
+    redraw?: RedrawType,
+    changeCb?: (t: any) => any,
+}) {
+    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
+
+    const changeCb = (o: any) => {
+        if (!o._dirtyPath) {
+            o._dirtyPath = true;
+            o.markDirty(redraw);
+        }
+        if (optChangeCb) {
+            optChangeCb(o);
+        }
+    };
+
+    return SceneChangeDetection({ redraw, type: 'path', changeCb });
+}
 
 export class Path extends Shape {
 
@@ -53,10 +72,12 @@ export class Path extends Shape {
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 
-    isPointInStroke(x: number, y: number): boolean {
+    isPointInStroke(_x: number, _y: number): boolean {
         return false;
     }
 
+    /** Override point for more expensive dirty checks. */
+    protected isDirtyPath() {}
     protected updatePath() {}
 
     render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
@@ -65,15 +86,9 @@ export class Path extends Shape {
         }
 
         this.computeTransformMatrix();
-        // if (scene.debug.renderBoundingBoxes) {
-        //     const bbox = this.computeBBox();
-        //     if (bbox) {
-        //         this.matrix.transformBBox(bbox).render(ctx);
-        //     }
-        // }
         this.matrix.toContext(ctx);
 
-        if (this.dirtyPath) {
+        if (this.dirtyPath || this.isDirtyPath()) {
             this.updatePath();
             this.dirtyPath = false;
         }

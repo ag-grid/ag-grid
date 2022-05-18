@@ -1,6 +1,4 @@
-import { Observable } from "../util/observable";
-
-export class DropShadow extends Observable {
+export class DropShadow {
     enabled = true;
     color = 'rgba(0, 0, 0, 0.5)';
     xOffset = 0;

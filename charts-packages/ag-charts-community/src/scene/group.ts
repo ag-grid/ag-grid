@@ -1,4 +1,4 @@
-import { Node, RedrawType } from "./node";
+import { Node, RedrawType, SceneChangeDetection } from "./node";
 import { BBox } from "./bbox";
 import { Matrix } from "./matrix";
 
@@ -13,17 +13,8 @@ export class Group extends Node {
         super.markDirty(type, parentType);
     }
 
-    protected _opacity: number = 1;
-    set opacity(value: number) {
-        value = Math.min(1, Math.max(0, value));
-        if (this._opacity !== value) {
-            this._opacity = value;
-            this.markDirty(RedrawType.MINOR);
-        }
-    }
-    get opacity(): number {
-        return this._opacity;
-    }
+    @SceneChangeDetection({ transform: (v) => Math.min(1, Math.max(0, v)) })
+    opacity: number = 1;
 
     // We consider a group to be boundless, thus any point belongs to it.
     containsPoint(x: number, y: number): boolean {
