@@ -29,8 +29,8 @@ function checkFileExists {
 checkFileExists $SSH_LOCATION
 checkFileExists $CREDENTIALS_LOCATION
 
-# $2 is optional skipWarning argument
-if [ "$2" != "skipWarning" ]; then
+# $1 is optional skipWarning argument
+if [ "$1" != "skipWarning" ]; then
     while true; do
       echo    ""
       echo    "*********************************** ******* ************************************************"
