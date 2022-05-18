@@ -1,9 +1,4 @@
 {
-  "params": {
-    "type": {
-      "returnType": "Partial<DragStartedEvent> & { [key: string]: any }"
-    }
-  },
   "statusBar": {
     "description": "/** Specifies the status bar components to use in the status bar. */",
     "type": { "returnType": "{ statusPanels: StatusPanelDef[]; }" }

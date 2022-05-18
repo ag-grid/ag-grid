@@ -2265,12 +2265,6 @@
     }
   },
   "GridOptions": {
-    "params": {
-      "type": {
-        "returnType": "Partial<DragStartedEvent> & { [key: string]: any }",
-        "optional": false
-      }
-    },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
       "type": {
@@ -21634,12 +21628,6 @@
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
     },
-    "params": {
-      "type": {
-        "returnType": "Partial<DragStartedEvent> & { [key: string]: any }",
-        "optional": false
-      }
-    },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
       "type": {
@@ -24342,12 +24330,6 @@
     },
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
-    },
-    "params": {
-      "type": {
-        "returnType": "Partial<DragStartedEvent> & { [key: string]: any }",
-        "optional": false
-      }
     },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -27061,12 +27043,6 @@
     },
     "maxComponentCreationTimeMs": {
       "type": { "returnType": "number", "optional": true }
-    },
-    "params": {
-      "type": {
-        "returnType": "Partial<DragStartedEvent> & { [key: string]: any }",
-        "optional": false
-      }
     },
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",

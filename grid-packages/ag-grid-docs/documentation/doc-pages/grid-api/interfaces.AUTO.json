@@ -1453,7 +1453,6 @@
   "GridOptions": {
     "meta": {},
     "type": {
-      "params": "Partial<DragStartedEvent> & { [key: string]: any; }",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
       "sideBar?": "SideBarDef | string | string[] | boolean | null",
       "suppressContextMenu?": "boolean",
@@ -12301,7 +12300,6 @@
       "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
-      "params": "Partial<DragStartedEvent> & { [key: string]: any; }",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
       "sideBar?": "SideBarDef | string | string[] | boolean | null",
       "suppressContextMenu?": "boolean",
@@ -13052,7 +13050,6 @@
       "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
-      "params": "Partial<DragStartedEvent> & { [key: string]: any; }",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
       "sideBar?": "SideBarDef | string | string[] | boolean | null",
       "suppressContextMenu?": "boolean",
@@ -13807,7 +13804,6 @@
       "setGridApi?": "(gridApi: GridApi, columnApi: ColumnApi) => void",
       "componentWrappingElement?": "string",
       "maxComponentCreationTimeMs?": "number",
-      "params": "Partial<DragStartedEvent> & { [key: string]: any; }",
       "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
       "sideBar?": "SideBarDef | string | string[] | boolean | null",
       "suppressContextMenu?": "boolean",

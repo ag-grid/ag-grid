@@ -88,7 +88,7 @@ export interface GridOptions {
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
-    params: Partial<DragStartedEvent> & { [key: string]: any }
+
     // *** Accessories *** //
     /** Specifies the status bar components to use in the status bar. */
     statusBar?: { statusPanels: StatusPanelDef[]; };
