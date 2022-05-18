@@ -89,7 +89,7 @@ const LicensePricing = () => {
                                 </h4>
                                 <div>
                                     <a className="btn" style={{color: "#009ede", borderColor: "#009ede"}}
-                                       href="/ecommerce/#/ecommerce/?licenseType=single">BUY</a>
+                                       href="/ecommerce/#/ecommerce/?licenseType=single" target="_blank" rel="noreferrer">BUY</a>
                                 </div>
                             </div>
                             <div className={styles['license-pricing__licenses__license']} style={{borderColor: "#009d70"}}>
@@ -106,7 +106,7 @@ const LicensePricing = () => {
                                 </h4>
                                 <div>
                                     <a className="btn" style={{color: "#009d70", borderColor: "#009d70"}}
-                                       href="/ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
+                                       href="/ecommerce/#/ecommerce/?licenseType=multi" target="_blank" rel="noreferrer">BUY</a>
                                 </div>
                             </div>
                             <div className={styles['license-pricing__licenses__license']} style={{borderColor: "#fbad18"}}>
