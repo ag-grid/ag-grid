@@ -45,12 +45,11 @@ export class Text extends Shape {
     y: number = 0;
 
     private lines: string[] = [];
-    private splitText() {
-        console.log(this);
+    private _splitText() {
         this.lines = this.text.split(/\r?\n/g);
     }
 
-    @SceneChangeDetection({ changeCb: (o) => o.splitText() })
+    @SceneChangeDetection({ changeCb: (o) => o._splitText() })
     text: string = '';
 
     private _dirtyFont: boolean = true;

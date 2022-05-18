@@ -140,7 +140,7 @@ export abstract class Shape extends Node {
     @SceneChangeDetection()
     lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
 
-    @SceneChangeDetection({ transform: (v) => Math.min(1, Math.max(0, v)) })
+    @SceneChangeDetection({ transform: (v: number) => Math.min(1, Math.max(0, v)) })
     opacity: number = Shape.defaultStyles.opacity;
 
     @SceneChangeDetection()
