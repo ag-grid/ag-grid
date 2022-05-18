@@ -38,10 +38,10 @@ export class Text extends Shape {
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     x: number = 0;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
     y: number = 0;
 
     private lines: string[] = [];
@@ -49,7 +49,7 @@ export class Text extends Shape {
         this.lines = this.text.split(/\r?\n/g);
     }
 
-    @SceneChangeDetection({ changeCb: (o) => o._splitText() })
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o._splitText() })
     text: string = '';
 
     private _dirtyFont: boolean = true;

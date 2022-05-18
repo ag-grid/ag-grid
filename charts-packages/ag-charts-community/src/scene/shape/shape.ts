@@ -90,13 +90,13 @@ export abstract class Shape extends Node {
         }
     }
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     fillOpacity: number = 1;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeOpacity: number = 1;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     fill: string | undefined = Shape.defaultStyles.fill;
 
     /**
@@ -109,10 +109,10 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     stroke: string | undefined = Shape.defaultStyles.stroke;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     // An offset value to align to the pixel grid.
@@ -128,25 +128,28 @@ export abstract class Shape extends Node {
         return Math.floor(start) + alignment;
     }
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
 
-    @SceneChangeDetection({ transform: (v: number) => Math.min(1, Math.max(0, v)) })
+    @SceneChangeDetection({
+        redraw: RedrawType.MINOR,
+        transform: (v: number) => Math.min(1, Math.max(0, v)),
+    })
     opacity: number = Shape.defaultStyles.opacity;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    @SceneChangeDetection()
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
 
     protected fillStroke(ctx: CanvasRenderingContext2D) {
