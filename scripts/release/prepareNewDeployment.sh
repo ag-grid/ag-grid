@@ -2,10 +2,15 @@
 
 if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release filename "
-    echo "For example: ./scripts/release/deployAgGridRelease.sh release_20191210.zip"
+    echo "You must supply a release version number"
+    echo "For example: ./scripts/release/prepareNewDeployment.sh 19.1.2"
     exit 1
 fi
+
+RAW_VERSION=$1
+TIMESTAMP=`date +%Y%m%d`
+VERSION=""${RAW_VERSION//./}""
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
@@ -33,8 +38,6 @@ function checkFileExists {
 
 checkFileExists $SSH_LOCATION
 checkFileExists $CREDENTIALS_LOCATION
-
-FILENAME=$1
 
 # copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
 curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/prepareNewDeploymentRemote.sh" ftp://ag-grid.com/

@@ -1,11 +1,16 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release file to upload"
-    echo "For example: ./scripts/release/uploadReleaseZip.sh release_20190222_v2010.zip"
+    echo "You must supply a release version number"
+    echo "For example: ./scripts/release/uploadReleaseZip.sh 19.1.2"
     exit 1
 fi
+
+TIMESTAMP=`date +%Y%m%d`
+RAW_VERSION=$1
+VERSION=""${RAW_VERSION//./}""
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 function checkFileExists {
     file=$1
@@ -16,7 +21,6 @@ function checkFileExists {
     fi
 }
 
-FILENAME=$1
 CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
 
