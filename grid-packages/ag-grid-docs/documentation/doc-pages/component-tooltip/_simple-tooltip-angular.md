@@ -41,9 +41,9 @@
 |    ]
 |})
 |export class CustomTooltip implements ITooltipAngularComp {
-|    private params: {color: string} & ITooltipParams;
-|    public data: any[];
-|    public color: string;
+|    private params!: {color: string} & ITooltipParams;
+|    public data!: any;
+|    public color!: string;
 |
 |    agInit(params: {color: string} & ITooltipParams): void {
 |        this.params = params;

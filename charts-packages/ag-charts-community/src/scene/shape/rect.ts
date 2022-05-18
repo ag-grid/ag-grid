@@ -3,6 +3,7 @@ import { Shape } from "./shape";
 import { BBox } from "../bbox";
 import { LinearGradient } from "../gradient/linearGradient";
 import { Color } from "../../util/color";
+import { RedrawType } from "../node";
 
 export enum RectSizing {
     Content,
@@ -89,7 +90,7 @@ export class Rect extends Path {
         if (this._gradient !== value) {
             this._gradient = value;
             this.updateGradientInstance();
-            this.dirty = true;
+            this.markDirty(RedrawType.TRIVIAL);
         }
     }
     get gradient(): boolean {
@@ -121,7 +122,7 @@ export class Rect extends Path {
         if (this._fill !== value) {
             this._fill = value;
             this.updateGradientInstance();
-            this.dirty = true;
+            this.markDirty(RedrawType.TRIVIAL);
         }
     }
     get fill(): string | undefined {
@@ -141,7 +142,7 @@ export class Rect extends Path {
                 this.dirtyPath = true;
             } else {
                 this.effectiveStrokeWidth = value;
-                this.dirty = true;
+                this.markDirty(RedrawType.MINOR);
             }
         }
     }

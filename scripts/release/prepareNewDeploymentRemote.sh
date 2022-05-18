@@ -41,9 +41,6 @@ cp -R ./public_html/__shared public_html_tmp/
 
 # jira stuff
 echo "Copying JIRA stuff"
-cp -R public_html/jira_reports/prod public_html_tmp/jira_reports/
-cp -R public_html/jira_reports/cache/changelog.json public_html_tmp/jira_reports/cache/changelog.json
-cp -R public_html/jira_reports/jira_config.json public_html_tmp/jira_reports/
 cp -R public_html/dist/aui public_html_tmp/dist
 
 #update folder permissions (default is 777 - change to 755)

@@ -26,10 +26,6 @@ export class HierarchyChart extends Chart {
     }
 
     performLayout(): void {
-        if (this.dataPending) {
-            return;
-        }
-
         this.scene.root!!.visible = true;
 
         const { width, height, legend } = this;

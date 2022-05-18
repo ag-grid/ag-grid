@@ -9,7 +9,7 @@ import { Constants } from "../../../constants/constants";
 import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
-import { IHeaderCellComp } from "./headerCellCtrl";
+import { HeaderCellCtrl } from "./headerCellCtrl";
 import { setAriaRole } from "../../../utils/aria";
 import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
 
@@ -23,7 +23,7 @@ export class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private column: Column;
-    private comp: IHeaderCellComp;
+    private headerCellCtrl: HeaderCellCtrl;
 
     private filteredOnly: boolean;
     private cbSelectAll: AgCheckbox;
@@ -50,8 +50,8 @@ export class SelectAllFeature extends BeanStub {
         return this.cbSelectAll.getGui();
     }
 
-    public setComp(comp: IHeaderCellComp): void {
-        this.comp = comp;
+    public setComp(ctrl: HeaderCellCtrl): void {
+        this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
         setAriaRole(this.cbSelectAll.getGui(), 'presentation');
@@ -76,12 +76,7 @@ export class SelectAllFeature extends BeanStub {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
-    }
-
-    private refreshHeaderAriaDescribedBy(isSelectAllVisible: boolean): void {
-        const describedBy = isSelectAllVisible ? this.cbSelectAll.getInputElement().id : undefined;
-        this.comp.setAriaDescribedBy(describedBy);
+        this.refreshSelectAllLabel();
     }
 
     private onModelChanged(): void {
@@ -129,12 +124,18 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const checked = this.cbSelectAll.getValue();
-        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
-        const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+        if (!this.cbSelectAllVisible) {
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
+        } else {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const checked = this.cbSelectAll.getValue();
+            const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+            const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
 
-        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
+        }
+
+        this.headerCellCtrl.refreshAriaDescription();
     }
 
     private getSelectionCount(): SelectionCount {
@@ -199,7 +200,7 @@ export class SelectAllFeature extends BeanStub {
                 columnApi: this.columnApi,
                 api: this.gridApi,
                 context: this.gridOptionsWrapper.getContext()
-            }
+            };
             result = func(params);
         }
 

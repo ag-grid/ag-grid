@@ -12,7 +12,7 @@ import { normalizeAngle180, toRadians } from "../../../util/angle";
 import { toFixed, mod } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
-import { reactive, Observable, TypedEvent } from "../../../util/observable";
+import { Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
@@ -75,13 +75,13 @@ export interface PieSeriesFormat {
 }
 
 class PieSeriesLabel extends Label {
-    @reactive('change') offset = 3; // from the callout line
-    @reactive('dataChange') minAngle = 20; // in degrees
-    @reactive('dataChange') formatter?: (params: { value: any }) => string;
+    offset = 3; // from the callout line
+    minAngle = 20; // in degrees
+    formatter?: (params: { value: any }) => string = undefined;
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors: string[] = [
+    colors: string[] = [
         '#874349',
         '#718661',
         '#a48f5f',
@@ -89,16 +89,16 @@ class PieSeriesCallout extends Observable {
         '#7f637a',
         '#5d8692'
     ];
-    @reactive('change') length: number = 10;
-    @reactive('change') strokeWidth: number = 1;
+    length: number = 10;
+    strokeWidth: number = 1;
 }
 
 export class PieSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export class PieTitle extends Caption {
-    @reactive() showInLegend = false;
+    showInLegend = false;
 }
 
 export class PieSeries extends PolarSeries {
@@ -130,26 +130,17 @@ export class PieSeries extends PolarSeries {
     set title(value: PieTitle | undefined) {
         const oldTitle = this._title;
 
-        function updateLegend(this: PieSeries) {
-            this.fireEvent({ type: 'legendChange' });
-        }
-
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeEventListener('change', this.scheduleUpdate, this);
-                oldTitle.removePropertyListener('showInLegend', updateLegend, this);
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addEventListener('change', this.scheduleUpdate, this);
-                value.addPropertyListener('showInLegend', updateLegend, this);
                 this.group.appendChild(value.node);
             }
 
             this._title = value;
-            this.scheduleUpdate();
         }
     }
     get title(): PieTitle | undefined {
@@ -161,42 +152,35 @@ export class PieSeries extends PolarSeries {
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
-    constructor() {
-        super();
-
-        this.addEventListener('update', this.scheduleUpdate, this);
-        this.label.addEventListener('change', this.scheduleUpdate, this);
-        this.label.addEventListener('dataChange', this.scheduleData, this);
-        this.callout.addEventListener('change', this.scheduleLayout, this);
-
-        this.addPropertyListener('data', event => {
-            if (event.value) {
-                event.source.seriesItemEnabled = event.value.map(() => true);
-            }
-        });
+    set data(input: any[] | undefined) {
+        this._data = input;
+        this.seriesItemEnabled = input?.map(() => true) || [];
+    }
+    get data() {
+        return this._data;
     }
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    @reactive('dataChange') angleKey = '';
-    @reactive('update') angleName = '';
+    angleKey = '';
+    angleName = '';
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
      * proportionally smaller radii.
      */
-    @reactive('dataChange') radiusKey?: string;
-    @reactive('update') radiusName?: string;
-    @reactive('dataChange') radiusMin?: number;
-    @reactive('dataChange') radiusMax?: number;
+    radiusKey?: string = undefined;
+    radiusName?: string = undefined;
+    radiusMin?: number = undefined;
+    radiusMax?: number = undefined;
 
-    @reactive('dataChange') labelKey?: string;
-    @reactive('update') labelName?: string;
+    labelKey?: string = undefined;
+    labelName?: string = undefined;
 
-    private _fills: string[] = [
+    fills: string[] = [
         '#c16068',
         '#a2bf8a',
         '#ebcc87',
@@ -204,15 +188,8 @@ export class PieSeries extends PolarSeries {
         '#b58dae',
         '#85c0d1'
     ];
-    set fills(values: string[]) {
-        this._fills = values;
-        this.scheduleUpdate();
-    }
-    get fills(): string[] {
-        return this._fills;
-    }
 
-    private _strokes: string[] = [
+    strokes: string[] = [
         '#874349',
         '#718661',
         '#a48f5f',
@@ -220,34 +197,27 @@ export class PieSeries extends PolarSeries {
         '#7f637a',
         '#5d8692'
     ];
-    set strokes(values: string[]) {
-        this._strokes = values;
-        this.scheduleUpdate();
-    }
-    get strokes(): string[] {
-        return this._strokes;
-    }
 
-    @reactive('layoutChange') fillOpacity = 1;
-    @reactive('layoutChange') strokeOpacity = 1;
+    fillOpacity = 1;
+    strokeOpacity = 1;
 
-    @reactive('update') lineDash?: number[] = [0];
-    @reactive('update') lineDashOffset: number = 0;
+    lineDash?: number[] = [0];
+    lineDashOffset: number = 0;
 
-    @reactive('update') formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
+    formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat = undefined;
 
     /**
      * The series rotation in degrees.
      */
-    @reactive('dataChange') rotation = 0;
+    rotation = 0;
 
-    @reactive('layoutChange') outerRadiusOffset = 0;
+    outerRadiusOffset = 0;
 
-    @reactive('dataChange') innerRadiusOffset = 0;
+    innerRadiusOffset = 0;
 
-    @reactive('layoutChange') strokeWidth = 1;
+    strokeWidth = 1;
 
-    @reactive('layoutChange') shadow?: DropShadow;
+    shadow?: DropShadow = undefined;
 
     readonly highlightStyle = new PieHighlightStyle();
 
@@ -372,8 +342,6 @@ export class PieSeries extends PolarSeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
 
         this.radiusScale.range = [
@@ -400,11 +368,6 @@ export class PieSeries extends PolarSeries {
     }
 
     private updateSelections() {
-        if (!this.nodeDataPending) {
-            return;
-        }
-        this.nodeDataPending = false;
-
         this.updateGroupSelection();
     }
 
@@ -642,6 +605,5 @@ export class PieSeries extends PolarSeries {
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
-        this.scheduleData();
     }
 }

@@ -26,18 +26,10 @@ export class CartesianChart extends Chart {
         this.navigator.enabled = false;
     }
 
-    private _seriesRoot = new ClipRect();
-    get seriesRoot(): ClipRect {
-        return this._seriesRoot;
-    }
-
+    readonly seriesRoot = new ClipRect();
     readonly navigator = new Navigator(this);
 
     performLayout(): void {
-        if (this.dataPending) {
-            return;
-        }
-
         this.scene.root!!.visible = true;
 
         const { width, height, axes, legend, navigator } = this;
@@ -202,14 +194,6 @@ export class CartesianChart extends Chart {
         }
 
         this.axes.forEach(axis => axis.update());
-    }
-
-    protected initSeries(series: Series) {
-        super.initSeries(series);
-    }
-
-    protected freeSeries(series: Series) {
-        super.freeSeries(series);
     }
 
     private _onTouchStart: any;

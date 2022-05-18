@@ -47,6 +47,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
 
     switch (input.type) {
         case 'hierarchy':
+            // fall-through - hierarchy and treemap are synonyms.
         case 'treemap':
             return true;
 
@@ -63,6 +64,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
 
     switch (input.type) {
         case 'polar':
+            // fall-through - polar and pie are synonyms.
         case 'pie':
             return true;
 
@@ -104,8 +106,8 @@ interface PreparationContext {
     palette: AgChartThemePalette;
 }
 
-export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T {
-    let options: T = fallbackOptions == null ? newOptions : jsonMerge(fallbackOptions, newOptions);
+export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallbackOptions: T[]): T {
+    let options: T = fallbackOptions == null ? newOptions : jsonMerge(...fallbackOptions, newOptions);
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -207,6 +209,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
+            // fall-through - only colourCount varies for `pie`.
         case 'area':
         case 'bar':
         case 'column':
@@ -219,6 +222,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
             break;
         case 'scatter':
             paletteOptions.fill = takeColours(context, fills, 1)[0];
+            // fall-through - only fills varies for `scatter`.
         case 'line':
             paletteOptions.stroke = takeColours(context, fills, 1)[0];
             paletteOptions.marker = {

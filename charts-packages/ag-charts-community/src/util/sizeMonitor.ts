@@ -16,7 +16,6 @@ export class SizeMonitor {
     static init() {
         const NativeResizeObserver = (window as any).ResizeObserver;
 
-        
         if (NativeResizeObserver) {
             this.resizeObserver = new NativeResizeObserver((entries: any) => {
                 for (const entry of entries) {

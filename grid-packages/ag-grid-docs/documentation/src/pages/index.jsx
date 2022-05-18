@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './components/assets/homepage/homepage.module.scss';
 import Footer from '../components/footer/Footer';
 import Seo from "./components/SEO";
+import {agGridVersion} from "../utils/consts";
 
 const IS_SSR = typeof window === "undefined"
 
@@ -14,7 +15,7 @@ const Default = () => {
     return (
         <>
             <Seo title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
-                 description="AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version 25 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise."/>
+                 description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}/>
             <div className={styles['root-page-content']}>
                 <div className={`${styles['stage-scenarios']} ${styles['main']}`}>
                     <h1 className={styles['heading-scenarios']}>The Best JavaScript Grid in the World</h1>

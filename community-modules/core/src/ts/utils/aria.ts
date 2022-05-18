@@ -69,6 +69,16 @@ export function setAriaLabelledBy(element: HTMLElement, labelledBy: string): voi
     }
 }
 
+export function setAriaDescription(element: HTMLElement, description?: string) {
+    const key = 'description';
+
+    if (description) {
+        setAriaAttribute(element, key, description);
+    } else {
+        removeAriaAttribute(element, key);
+    }
+}
+
 export function setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void {
     const key = 'describedby';
     if (describedby) {

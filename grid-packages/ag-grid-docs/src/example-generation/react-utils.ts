@@ -74,6 +74,7 @@ export function convertFunctionalTemplate(template: string) {
     template = template
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
+        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=')
         .replace(/ for=/g, ' htmlFor=')
         // when using fontawesome just use "class" instead - it's always the case that we're treating it as a raw value
@@ -102,9 +103,5 @@ export const convertFunctionToConstCallback = (code: string, callbackDependencie
 }
 export const convertFunctionToConstCallbackTs = (code: string, callbackDependencies: {}) => {
     const functionName = getFunctionName(code); //:(\s+[^\{]*)
-
-    // function isFullWidthRow(params: IsFullWidthRowParams): boolean {
-    // const isFullWidthRow = useCallback((params: IsFullWidthRowParams): boolean => {
-
     return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)(:?\s+[^\{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 }

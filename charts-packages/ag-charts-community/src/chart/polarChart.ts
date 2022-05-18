@@ -14,7 +14,6 @@ export class PolarChart extends Chart {
         super(document);
 
         this.scene.root!.append(this.legend.group);
-        this.padding.addEventListener('layoutChange', this.scheduleLayout, this);
     }
 
     get seriesRoot(): Node {

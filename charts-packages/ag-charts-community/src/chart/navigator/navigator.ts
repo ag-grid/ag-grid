@@ -4,6 +4,7 @@ import { ChartAxisDirection } from "../chartAxis";
 import { BBox } from "../../scene/bbox";
 import { NavigatorMask } from "./navigatorMask";
 import { NavigatorHandle } from "./navigatorHandle";
+import { ChartUpdateType } from "../chart";
 
 interface Offset {
     offsetX: number;
@@ -22,9 +23,10 @@ export class Navigator {
     private maxHandleDragging = false;
     private panHandleOffset = NaN;
 
+    private changedCursor = false;
+
     set enabled(value: boolean) {
         this.rs.visible = value;
-        this.chart.layoutPending = true;
     }
     get enabled(): boolean {
         return this.rs.visible;
@@ -53,7 +55,6 @@ export class Navigator {
 
     set height(value: number) {
         this.rs.height = value;
-        this.chart.layoutPending = true;
     }
     get height(): number {
         return this.rs.height;
@@ -62,7 +63,6 @@ export class Navigator {
     private _margin = 10;
     set margin(value: number) {
         this._margin = value;
-        this.chart.layoutPending = true;
     }
     get margin(): number {
         return this._margin;
@@ -92,6 +92,7 @@ export class Navigator {
     updateAxes(min: number, max: number) {
         const { chart } = this;
         let clipSeries = false;
+        let layoutRequired = false;
         chart.axes.forEach(axis => {
             if (axis.direction === ChartAxisDirection.X) {
                 if (!clipSeries && (min > 0 || max < 1)) {
@@ -101,12 +102,14 @@ export class Navigator {
                 const oldLabelAutoRotated = axis.labelAutoRotated;
                 axis.update();
                 if (axis.labelAutoRotated !== oldLabelAutoRotated) {
-                    this.chart.layoutPending = true;
+                    layoutRequired = true;
                 }
             }
         });
         chart.seriesRoot.enabled = clipSeries;
-        chart.series.forEach(s => s.nodeDataPending = true);
+
+        const updateType = layoutRequired ? ChartUpdateType.PERFORM_LAYOUT : ChartUpdateType.SERIES_UPDATE;
+        chart.update(updateType, { forceNodeDataRefresh: true });
     }
 
     onDragStart(offset: Offset) {
@@ -148,12 +151,16 @@ export class Navigator {
         }
 
         if (minHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'ew-resize';
         } else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            this.changedCursor = true;
             style.cursor = 'grab';
-        } else {
+        } else if (this.changedCursor) {
+            this.changedCursor = false;
             style.cursor = 'default';
         }
 

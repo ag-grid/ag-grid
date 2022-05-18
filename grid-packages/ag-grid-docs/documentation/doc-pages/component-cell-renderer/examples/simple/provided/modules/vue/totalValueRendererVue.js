@@ -11,7 +11,7 @@ export default {
         };
     },
     beforeMount() {
-        // this.params contains the cell & row information and is made available to this component at creation time
+        // this.params contains the cell and row information and is made available to this component at creation time
         // see ICellRendererParams for more details
         this.cellValue = this.getValueToDisplay(this.params);
     },

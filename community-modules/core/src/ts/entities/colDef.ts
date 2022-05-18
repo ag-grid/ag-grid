@@ -243,7 +243,7 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
     // *** Column Headers *** //
 
     /**  */
-    /** 
+    /**
     * The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
     */

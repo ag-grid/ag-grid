@@ -97,7 +97,7 @@ export class TimeInterval {
     // day.filter(date => (date.getDate() - 1) % 10 === 0)
     filter(test: (date: Date) => boolean): TimeInterval {
         const floor = (date: Date): Date => {
-            if (date instanceof Date) {
+            if (date >= date) {
                 this._floor(date);
 
                 while (!test(date)) {
@@ -108,7 +108,7 @@ export class TimeInterval {
             return date;
         };
         const offset = (date: Date, step: number): Date => {
-            if (date instanceof Date) {
+            if (date >= date) {
                 if (step < 0) {
                     while (++step <= 0) {
                         do {

@@ -104,8 +104,11 @@ const gridOptions: GridOptions = {
 
   onGridReady: (params: GridReadyEvent) => {
     (document.getElementById('fontSize') as HTMLInputElement).checked = true;
+    (document.getElementById('fontSizeValue') as HTMLInputElement).value = "14";
     (document.getElementById('rowHeight') as HTMLInputElement).checked = true;
+    (document.getElementById('rowHeightValue') as HTMLInputElement).value = "30";
     (document.getElementById('headerRowHeight') as HTMLInputElement).checked = true;
+    (document.getElementById('headerRowHeightValue') as HTMLInputElement).value = "30";
   },
 
   pinnedTopRowData: [

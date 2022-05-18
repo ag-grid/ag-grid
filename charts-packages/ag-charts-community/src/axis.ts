@@ -187,13 +187,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
-    protected _ticks: any[];
-    set ticks(values: any[]) {
-        this._ticks = values;
-    }
-    get ticks(): any[] {
-        return this._ticks;
-    }
+    ticks: any[];
 
     readonly group = new Group();
 
@@ -469,6 +463,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const groupSelection = update.merge(enter);
 
+        let anyVisible = false;
         groupSelection
             .attrFn('translationY', function (_, datum) {
                 return Math.round(scale.convert(datum) + halfBandwidth);
@@ -476,8 +471,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attrFn('visible', function (node) {
                 const min = Math.floor(requestedRangeMin);
                 const max = Math.ceil(requestedRangeMax);
-                return (min !== max) && node.translationY >= min && node.translationY <= max;
+                const visible = (min !== max) && node.translationY >= min && node.translationY <= max;
+                anyVisible = visible || anyVisible;
+                return visible;
             });
+
+        this.group.visible = anyVisible;
+        if (!anyVisible) {
+            this.groupSelection = groupSelection;
+            return;
+        }
 
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;

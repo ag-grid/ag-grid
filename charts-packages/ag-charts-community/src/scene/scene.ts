@@ -1,10 +1,11 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Node } from "./node";
+import { Node, RedrawType } from "./node";
 import { createId } from "../util/id";
 
 interface DebugOptions {
     renderFrameIndex: boolean;
     renderBoundingBoxes: boolean;
+    consoleLog: boolean;
 }
 
 export class Scene {
@@ -49,30 +50,26 @@ export class Scene {
     }
 
     private pendingSize?: [number, number];
-    resize(width: number, height: number) {
+    resize(width: number, height: number): boolean {
         width = Math.round(width);
         height = Math.round(height);
 
         if (width === this.width && height === this.height) {
-            return;
+            return false;
+        } else if (width <= 0 || height <= 0) {
+            // HdpiCanvas doesn't allow width/height <= 0.
+            return false;
         }
 
         this.pendingSize = [width, height];
-        this.dirty = true;
+        this.markDirty();
+        
+        return true;
     }
 
     private _dirty = false;
-    private animationFrameId = 0;
-    set dirty(dirty: boolean) {
-        if (dirty) {
-            if (!this._dirty) {
-                this.animationFrameId = requestAnimationFrame(this.render);
-            }
-        } else if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = 0;
-        }
-        this._dirty = dirty;
+    markDirty() {
+        this._dirty = true;
     }
     get dirty(): boolean {
         return this._dirty;
@@ -98,7 +95,7 @@ export class Scene {
             node._setScene(this);
         }
 
-        this.dirty = true;
+        this.markDirty();
     }
     get root(): Node | null {
         return this._root;
@@ -106,7 +103,8 @@ export class Scene {
 
     readonly debug: DebugOptions = {
         renderFrameIndex: false,
-        renderBoundingBoxes: false
+        renderBoundingBoxes: false,
+        consoleLog: false,
     };
 
     private _frameIndex = 0;
@@ -114,10 +112,8 @@ export class Scene {
         return this._frameIndex;
     }
 
-    readonly render = () => {
+    render() {
         const { ctx, root, pendingSize } = this;
-
-        this.animationFrameId = 0;
 
         if (pendingSize) {
             this.canvas.resize(...pendingSize);
@@ -125,19 +121,31 @@ export class Scene {
         }
 
         if (root && !root.visible) {
-            this.dirty = false;
+            this._dirty = false;
             return;
         }
 
-        // start with a blank canvas, clear previous drawing
-        ctx.clearRect(0, 0, this.width, this.height);
+        if (!this.dirty) {
+            return;
+        }
+
+        let canvasCleared = false;
+        if (!root || root.dirty >= RedrawType.TRIVIAL) {
+            // start with a blank canvas, clear previous drawing
+            canvasCleared = true;
+            ctx.clearRect(0, 0, this.width, this.height);
+        }
 
         if (root) {
-            ctx.save();
-            if (root.visible) {
-                root.render(ctx);
+            if (this.debug.consoleLog) {
+                console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
             }
-            ctx.restore();
+
+            if (root.visible) {
+                ctx.save();
+                root.render(ctx, canvasCleared);
+                ctx.restore();
+            }
         }
 
         this._frameIndex++;
@@ -149,6 +157,6 @@ export class Scene {
             ctx.fillText(this.frameIndex.toString(), 2, 10);
         }
 
-        this.dirty = false;
+        this._dirty = false;
     }
 }
