@@ -37,7 +37,7 @@
   },
   "data": {
     "description": "/** The data as provided by the application. */",
-    "type": { "returnType": "any" }
+    "type": { "returnType": "TData | undefined" }
   },
   "parent": {
     "description": "/** The parent node to this node, or empty if top level */",
@@ -215,15 +215,15 @@
   "highlighted": { "type": { "returnType": "RowHighlightPosition | null" } },
   "setData": {
     "description": "/** Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing. */",
-    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+    "type": { "arguments": { "data": "TData" }, "returnType": "void" }
   },
   "updateData": {
-    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+    "type": { "arguments": { "data": "TData" }, "returnType": "void" }
   },
   "getRowIndexString": { "type": { "arguments": {}, "returnType": "string" } },
   "setDataAndId": {
     "type": {
-      "arguments": { "data": "any", "id": "string | undefined" },
+      "arguments": { "data": "TData", "id": "string | undefined" },
       "returnType": "void"
     }
   },
