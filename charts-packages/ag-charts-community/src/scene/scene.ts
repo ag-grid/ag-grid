@@ -20,7 +20,7 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
-    readonly layers: { zIndex: number, canvas: HdpiCanvas }[] = [];
+    readonly layers: { name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
 
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -86,13 +86,15 @@ export class Scene {
     }
 
     private _nextZIndex = 0;
-    addLayer(zIndex: number = this._nextZIndex++): HdpiCanvas | undefined {
+    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
         if (this.opts.mode !== 'composite') {
             return undefined;
         }
 
+        const { zIndex = this._nextZIndex++, name } = opts || {};
         const { width, height } = this;
         const newLayer = {
+            name,
             zIndex,
             canvas: new HdpiCanvas({ document: this.canvas.document, width, height }),
         };

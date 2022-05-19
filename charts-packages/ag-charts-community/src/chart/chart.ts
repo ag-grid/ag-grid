@@ -443,7 +443,7 @@ export abstract class Chart extends Observable {
     protected constructor(document = window.document) {
         super();
 
-        const root = new Group();
+        const root = new Group({ name: 'root' });
         const background = this.background;
 
         background.fill = 'white';

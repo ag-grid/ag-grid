@@ -96,7 +96,7 @@ export abstract class Series extends Observable {
     }
 
     // The group node that contains all the nodes used to render this series.
-    readonly group: Group = new Group({ layer: true, zIndex: 100 });
+    readonly group: Group = new Group({ name: this.id, layer: true, zIndex: 100 });
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group = this.group.appendChild(new Group());

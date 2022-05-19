@@ -17,6 +17,7 @@ export class Group extends Node {
         private readonly opts?: {
             layer?: boolean,
             zIndex?: number,
+            name?: string,
         }
     ) {
         super();
@@ -33,7 +34,8 @@ export class Group extends Node {
         super._setScene(scene);
 
         if (scene && this.opts?.layer) {
-            this.canvas = scene.addLayer(this.opts?.zIndex);
+            const { zIndex, name } = this.opts || {};
+            this.canvas = scene.addLayer({ zIndex, name });
         }
     }
 
@@ -101,7 +103,14 @@ export class Group extends Node {
     }
 
     render(renderCtx: RenderContext) {
-        let { ctx, forceRender } = renderCtx;
+        const { name } = this.opts || {};
+        let { ctx, forceRender, clipBBox } = renderCtx;
+
+        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex;
+
+        if (name && this.scene?.debug?.consoleLog) {
+            console.log({ name, group: this, isDirty, forceRender });
+        }
 
         if (this.canvas) {
             // Dy default there is no need to force redraw a group which has it's own canvas layer
@@ -109,7 +118,6 @@ export class Group extends Node {
             forceRender = false;
         }
 
-        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex;
         if (!isDirty && !forceRender) {
             // Nothing to do.
             return;
@@ -122,14 +130,16 @@ export class Group extends Node {
             ctx.save();
             ctx.resetTransform();
 
+            if (clipBBox) {
+                const { width, height, x, y } = clipBBox;
+                ctx.rect(x, y, width, height);
+                ctx.clip()
+            }
+
             if (isDirty) {
                 forceRender = true;
                 this.canvas?.clear();
             }
-        }
-
-        if (this.scene?.debug?.consoleLog) {
-            console.log({ group: this, isDirty, forceRender });
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -137,6 +147,7 @@ export class Group extends Node {
         // so all children can be transformed at once.
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
+        clipBBox = clipBBox ? this.matrix.transformBBox(clipBBox) : undefined;
 
         const { children } = this;
         if (this.dirtyZIndex) {
@@ -147,6 +158,15 @@ export class Group extends Node {
 
         ctx.globalAlpha *= this.opacity;
 
+        // Reduce churn if renderCtx is identical.
+        const renderContextChanged = forceRender !== renderCtx.forceRender ||
+             clipBBox !== renderCtx.clipBBox ||
+             ctx !== renderCtx.ctx;
+        const childRenderContext =  renderContextChanged ?
+            { ...renderCtx, ctx, forceRender, clipBBox } :
+            renderCtx;
+
+        // Render visible children.
         for (const child of children) {
             if (!child.visible) {
                 // Skip invisible children.
@@ -159,7 +179,7 @@ export class Group extends Node {
             }
 
             ctx.save();
-            child.render({ ...renderCtx, ctx, forceRender });
+            child.render(childRenderContext);
             ctx.restore();
         }
 

@@ -78,14 +78,13 @@ export class ClipRect extends Node {
             this.clearBBox(ctx);
         }
 
-        const children = this.children;
-        const n = children.length;
-
-        for (let i = 0; i < n; i++) {
-            const child = children[i];
+        const clipBBox = this.computeBBox();
+        const childRenderContext = { ...renderCtx, clipBBox };
+        const { children } = this;
+        for (const child of children) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(renderCtx);
+                child.render(childRenderContext);
                 ctx.restore();
             }
         }

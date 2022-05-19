@@ -24,6 +24,7 @@ export enum RedrawType {
 export type RenderContext = {
     ctx: CanvasRenderingContext2D;
     forceRender: boolean;
+    clipBBox?: BBox;
 }
 
 export function SceneChangeDetection(opts?: {

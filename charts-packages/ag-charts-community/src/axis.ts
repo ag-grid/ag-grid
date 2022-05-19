@@ -176,11 +176,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     ticks: any[];
 
-    readonly axisGroup = new Group({ layer: true, zIndex: 200 });
+    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 200 });
     private axisGroupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 
-    readonly gridlineGroup = new Group({ layer: true, zIndex: 0 });
+    readonly gridlineGroup = new Group({ name: `${this.id}-gridline`, layer: true, zIndex: 0 });
     private gridlineGroupSelection: Selection<Group, Group, D, D>;
 
     readonly line: {

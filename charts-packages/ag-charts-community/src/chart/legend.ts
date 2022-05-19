@@ -106,7 +106,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group({ layer: true, zIndex: 300 });
+    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
