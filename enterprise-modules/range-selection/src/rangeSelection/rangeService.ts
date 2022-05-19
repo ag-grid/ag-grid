@@ -174,7 +174,6 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
-        console.log('setRangeToCell');
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
@@ -564,8 +563,6 @@ export class RangeService extends BeanStub implements IRangeService {
     public onDragStart(mouseEvent: MouseEvent): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
-        console.log('drag start');
-
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
@@ -596,7 +593,6 @@ export class RangeService extends BeanStub implements IRangeService {
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
         this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
-        console.log('Actually Dragging, intersecting:', this.intersectionRange)
 
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
@@ -694,11 +690,6 @@ export class RangeService extends BeanStub implements IRangeService {
         this.cellRanges = newRanges;
     }
     
-    // TODO:
-    // - SINGLE CELL RANGES
-    // - EVENTS
-    // - DOCS
-
     private updateValuesOnMove(mouseEvent: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
 
@@ -742,14 +733,12 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStop(): void {
-        console.log('drag stop');
         if (this.cellHoverListener) {
             this.cellHoverListener();
             this.cellHoverListener = undefined;
         }
 
         if (!this.dragging) { return; }
-        console.log('drag stop2');
 
         const { id } = this.draggingRange!;
 
@@ -762,7 +751,6 @@ export class RangeService extends BeanStub implements IRangeService {
         this.lastCellHovered = undefined;
         
         if (this.intersectionRange) {
-            console.log('is intersection range!')
             this.intersectionRange = false;
             this.intersectLastRange();
         }
