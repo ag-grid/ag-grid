@@ -2,7 +2,7 @@ import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
 import { HdpiCanvas } from "../../canvas/hdpiCanvas";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
 export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
@@ -155,7 +155,9 @@ export class Text extends Shape {
         return false;
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean): void {
+    render(renderCtx: RenderContext): void {
+        let { ctx, forceRender } = renderCtx;
+
         if (this.dirty === RedrawType.NONE && !forceRender) {
             return;
         }
@@ -165,7 +167,6 @@ export class Text extends Shape {
         }
 
         this.computeTransformMatrix();
-        // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
         const { fill, stroke, strokeWidth } = this;
@@ -226,7 +227,7 @@ export class Text extends Shape {
             ctx.strokeText(text, x, y);
         }
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }
 

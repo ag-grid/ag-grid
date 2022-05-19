@@ -3,6 +3,7 @@ import { Text, FontStyle, FontWeight } from "../scene/shape/text";
 import { Square } from "./marker/square";
 import { Marker } from "./marker/marker";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { RenderContext } from "../scene/node";
 
 export class MarkerLabel extends Group {
 
@@ -146,12 +147,12 @@ export class MarkerLabel extends Group {
         this.label.x = markerSize / 2 + this.spacing;
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean): void {
+    render(renderCtx: RenderContext): void {
         // Cannot override field Group.opacity with get/set pair, so
         // propagate opacity changes here.
         this.marker.opacity = this.opacity;
         this.label.opacity = this.opacity;
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }

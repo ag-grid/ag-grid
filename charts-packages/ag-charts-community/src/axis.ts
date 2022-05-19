@@ -162,16 +162,6 @@ export class AxisLabel {
  */
 export class Axis<S extends Scale<D, number>, D = any> {
 
-    // debug (bbox)
-    // private bboxRect = (() => {
-    //     const rect = new Rect();
-    //     rect.fill = undefined;
-    //     rect.stroke = 'red';
-    //     rect.strokeWidth = 1;
-    //     rect.strokeOpacity = 0.2;
-    //     return rect;
-    // })();
-
     readonly id = createId(this);
 
     private groupSelection: Selection<Group, Group, D, D>;

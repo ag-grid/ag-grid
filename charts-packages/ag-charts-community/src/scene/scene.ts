@@ -143,7 +143,7 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                root.render(ctx, canvasCleared);
+                root.render({ ctx, forceRender: true });
                 ctx.restore();
             }
         }

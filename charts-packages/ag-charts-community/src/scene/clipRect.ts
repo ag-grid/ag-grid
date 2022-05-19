@@ -1,4 +1,4 @@
-import { Node, RedrawType, SceneChangeDetection } from "./node";
+import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
 import { Path2D } from "./path2D";
 import { BBox } from "./bbox";
 import { ScenePathChangeDetection } from "./shape/path";
@@ -53,7 +53,9 @@ export class ClipRect extends Node {
         return new BBox(x, y, width, height);
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender } = renderCtx;
+
         if (this.dirty === RedrawType.NONE && !forceRender) {
             return;
         }
@@ -79,18 +81,11 @@ export class ClipRect extends Node {
             const child = children[i];
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(ctx, forceRender);
+                child.render(renderCtx);
                 ctx.restore();
             }
         }
 
-        super.render(ctx, forceRender);
-
-        // debug
-        // this.computeBBox().render(ctx, {
-        //     label: this.id,
-        //     resetTransform: true,
-        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
-        // });
+        super.render(renderCtx);
     }
 }

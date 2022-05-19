@@ -74,8 +74,8 @@ export class Group extends Node {
         );
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
-        if (this.dirty === RedrawType.NONE && !forceRender) {
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender } = renderCtx;
             return;
         }
 
@@ -101,16 +101,23 @@ export class Group extends Node {
 
         ctx.globalAlpha *= this.opacity;
 
-        for (let i = 0; i < n; i++) {
-            const child = children[i];
-            if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
-                ctx.save();
-                child.render(ctx, forceRender);
-                ctx.restore();
+        for (const child of children) {
+            if (!child.visible) {
+                // Skip invisible children.
+                continue;
             }
+
+            if (!forceRender && child.dirty === RedrawType.NONE) {
+                // Skip children that don't need to be redrawn.
+                continue;
+            }
+
+            ctx.save();
+            child.render({ ...renderCtx, ctx, forceRender });
+            ctx.restore();
         }
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
 
         // debug
         // this.computeBBox().render(ctx, {

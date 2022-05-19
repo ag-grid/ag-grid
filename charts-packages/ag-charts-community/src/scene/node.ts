@@ -21,6 +21,11 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
+export type RenderContext = {
+    ctx: CanvasRenderingContext2D;
+    forceRender: boolean;
+}
+
 export function SceneChangeDetection(opts?: {
     redraw?: RedrawType,
     type?: 'normal' | 'transform' | 'path' | 'font',
@@ -496,7 +501,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean): void {
+    render(_renderCtx: RenderContext): void {
         this._dirty = RedrawType.NONE;
     }
 
