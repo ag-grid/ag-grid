@@ -13,9 +13,9 @@ Note the following:
 
 - You can check and uncheck the checkboxes to add extra content before and after the grid via the `prependContent` and `appendContent` properties.
 
-- With `prependContent=ExcelCell[][]` or `appendContent=ExcelCell[][]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
+- With `prependContent=ExcelRow[]` or `appendContent=ExcelRow[]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
   
-<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Prepend and Append Content' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ## Adding Header and Footer Content
 

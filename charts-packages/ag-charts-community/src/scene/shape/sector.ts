@@ -1,5 +1,4 @@
-import { Path } from "./path";
-import { Path2D } from "../path2D";
+import { Path, ScenePathChangeDetection } from "./path";
 import { normalizeAngle360 } from "../../util/angle";
 import { isEqual } from "../../util/number";
 import { BBox } from "../bbox";
@@ -8,93 +7,29 @@ export class Sector extends Path {
 
     static className = 'Sector';
 
-    private _centerX: number = 0;
-    set centerX(value: number) {
-        if (this._centerX !== value) {
-            this._centerX = value;
-            this.dirtyPath = true;
-        }
-    }
-    get centerX(): number {
-        return this._centerX;
-    }
+    @ScenePathChangeDetection()
+    centerX: number = 0;
 
-    private _centerY: number = 0;
-    set centerY(value: number) {
-        if (this._centerY !== value) {
-            this._centerY = value;
-            this.dirtyPath = true;
-        }
-    }
-    get centerY(): number {
-        return this._centerY;
-    }
+    @ScenePathChangeDetection()
+    centerY: number = 0;
 
-    private _centerOffset: number = 0;
-    set centerOffset(value: number) {
-        if (this._centerOffset !== value) {
-            this._centerOffset = Math.max(0, value);
-            this.dirtyPath = true;
-        }
-    }
-    get centerOffset(): number {
-        return this._centerOffset;
-    }
+    @ScenePathChangeDetection()
+    centerOffset: number = 0;
 
-    private _innerRadius: number = 10;
-    set innerRadius(value: number) {
-        if (this._innerRadius !== value) {
-            this._innerRadius = value;
-            this.dirtyPath = true;
-        }
-    }
-    get innerRadius(): number {
-        return this._innerRadius;
-    }
+    @ScenePathChangeDetection()
+    innerRadius: number = 10;
 
-    private _outerRadius: number = 20;
-    set outerRadius(value: number) {
-        if (this._outerRadius !== value) {
-            this._outerRadius = value;
-            this.dirtyPath = true;
-        }
-    }
-    get outerRadius(): number {
-        return this._outerRadius;
-    }
+    @ScenePathChangeDetection()
+    outerRadius: number = 20;
 
-    private _startAngle: number = 0;
-    set startAngle(value: number) {
-        if (this._startAngle !== value) {
-            this._startAngle = value;
-            this.dirtyPath = true;
-        }
-    }
-    get startAngle(): number {
-        return this._startAngle;
-    }
+    @ScenePathChangeDetection()
+    startAngle: number = 0;
 
-    private _endAngle: number = Math.PI * 2;
-    set endAngle(value: number) {
-        if (this._endAngle !== value) {
-            this._endAngle = value;
-            this.dirtyPath = true;
-        }
-    }
-    get endAngle(): number {
-        return this._endAngle;
-    }
+    @ScenePathChangeDetection()
+    endAngle: number = Math.PI * 2;
 
-    private _angleOffset: number = 0;
-    set angleOffset(value: number) {
-        if (this._angleOffset !== value) {
-            this._angleOffset = value;
-            this.dirtyPath = true;
-        }
-    }
-    get angleOffset(): number {
-        return this._angleOffset;
-    }
+    @ScenePathChangeDetection()
+    angleOffset: number = 0;
 
     computeBBox(): BBox {
         const radius = this.outerRadius;

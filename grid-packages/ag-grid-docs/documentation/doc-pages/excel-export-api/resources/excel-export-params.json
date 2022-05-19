@@ -43,12 +43,12 @@
             "type": "string"
         },
         "appendContent": {
-            "description": "Content to put at the top of the exported sheet. A 2D array of ExcelCell objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
-            "type": "ExcelCell[][]"
+            "description": "Content to put at the top of the exported sheet. An array of ExcelRow objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
+            "type": "ExcelRow[]"
         },
         "prependContent": {
-            "description": "Content to put at the bottom of the exported sheet. A 2D array of ExcelCell objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
-            "type": "ExcelCell[][]"
+            "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
+            "type": "ExcelRow[]"
         },
         "allColumns": {
             "default": false,
@@ -124,7 +124,7 @@
                     "columnApi": "ColumnApi",
                     "context": "object"
                 },
-                "returnType": "ExcelCell"
+                "returnType": "ExcelRow[]"
             }
         },
         "shouldRowBeSkipped": {
@@ -251,6 +251,20 @@
             "default": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "description": "The mimeType of the Excel file",
             "type": "string"
+        }
+    },
+    "excelRow": {
+        "height": {
+            "description": "The height of the row",
+            "type": "number"
+        },
+        "outlineLevel": {
+            "description": "The indentation level if the current row is part of a row group",
+            "type": "number"
+        },
+        "cells": {
+            "description": "An array of ExcelCells",
+            "type": "ExcelCell[]"
         }
     },
     "excelCell": {

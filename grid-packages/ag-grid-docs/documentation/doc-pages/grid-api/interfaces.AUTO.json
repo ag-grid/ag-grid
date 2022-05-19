@@ -8471,7 +8471,7 @@
     "type": {
       "ref?": "string",
       "styleId?": "string",
-      "data": "ExcelData",
+      "data?": "ExcelData",
       "mergeAcross?": "number",
       "collapsibleRanges?": "number[][]"
     }
@@ -8560,11 +8560,11 @@
       "suppressTextAsCDATA?": "boolean",
       "mimeType?": "string",
       "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined",
-      "prependContent?": "ExcelCell[][]",
-      "appendContent?": "ExcelCell[][]",
-      "customHeader?": "ExcelCell[][]",
-      "customFooter?": "ExcelCell[][]",
-      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelCell[][] | undefined",
+      "prependContent?": "ExcelRow[]",
+      "appendContent?": "ExcelRow[]",
+      "customHeader?": "ExcelRow[]",
+      "customFooter?": "ExcelRow[]",
+      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelRow[] | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
       "rowNodes?": "RowPosition[]",

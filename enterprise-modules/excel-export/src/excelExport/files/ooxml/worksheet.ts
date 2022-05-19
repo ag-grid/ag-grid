@@ -309,6 +309,46 @@ const addDrawingRel = (currentSheet: number) => {
     };
 };
 
+const addSheetPr = () => {
+    return (children: XmlElement[]) => {
+        children.push({
+            name: 'sheetPr',
+            children: [{
+                name: 'outlinePr',
+                properties: {
+                    rawMap: {
+                        summaryBelow: 0
+                    }
+                }
+            }]
+        });
+        return children;
+    }
+}
+
+const addSheetFormatPr = (rows: ExcelRow[]) => {
+    return (children: XmlElement[]) => {
+        const maxOutline = rows.reduce((prev: number, row: ExcelRow) => {
+            if (row.outlineLevel && row.outlineLevel > prev) {
+                return row.outlineLevel;
+            }
+            return prev;
+        }, 0);
+
+        children.push({
+            name: 'sheetFormatPr',
+            properties: {
+                rawMap: {
+                    baseColWidth: 10,
+                    defaultRowHeight: 16,
+                    outlineLevelRow: maxOutline ? maxOutline : undefined
+                }
+            }
+        });
+        return children;
+    }
+}
+
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: {
         worksheet: ExcelWorksheet,
@@ -323,6 +363,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns) : [];
 
         const createWorksheetChildren = _.compose(
+            addSheetPr(),
+            addSheetFormatPr(rows),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),
             addMergeCells(mergedCells),

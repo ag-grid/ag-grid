@@ -22,15 +22,15 @@ const gridOptions: GridOptions = {
   },
   defaultExcelExportParams: {
     prependContent: [
-      [
-        {
+      {
+        cells: [{
           data: {
             type: 'String',
             value: logos.AgGrid, // see imageUtils
           },
           mergeAcross: 1,
-        },
-      ],
+        }],
+      },
     ],
     rowHeight: params => (params.rowIndex === 1 ? 82 : 20),
     addImageToCell: (rowIndex, col, value) => {

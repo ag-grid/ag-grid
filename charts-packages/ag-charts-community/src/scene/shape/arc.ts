@@ -1,5 +1,5 @@
 import { Shape } from "./shape";
-import { Path } from "./path";
+import { Path, ScenePathChangeDetection } from "./path";
 import { BBox } from "../bbox";
 import { normalizeAngle360 } from "../../util/angle";
 import { chainObjects } from "../../util/object";
@@ -28,86 +28,30 @@ export class Arc extends Path {
         this.restoreOwnStyles();
     }
 
-    private _centerX: number = 0;
-    set centerX(value: number) {
-        if (this._centerX !== value) {
-            this._centerX = value;
-            this.dirtyPath = true;
-        }
-    }
-    get centerX(): number {
-        return this._centerX;
-    }
+    @ScenePathChangeDetection()
+    centerX: number = 0;
 
-    private _centerY: number = 0;
-    set centerY(value: number) {
-        if (this._centerY !== value) {
-            this._centerY = value;
-            this.dirtyPath = true;
-        }
-    }
-    get centerY(): number {
-        return this._centerY;
-    }
+    @ScenePathChangeDetection()
+    centerY: number = 0;
 
-    private _radiusX: number = 10;
-    set radiusX(value: number) {
-        if (this._radiusX !== value) {
-            this._radiusX = value;
-            this.dirtyPath = true;
-        }
-    }
-    get radiusX(): number {
-        return this._radiusX;
-    }
+    @ScenePathChangeDetection()
+    radiusX: number = 10;
 
-    private _radiusY: number = 10;
-    set radiusY(value: number) {
-        if (this._radiusY !== value) {
-            this._radiusY = value;
-            this.dirtyPath = true;
-        }
-    }
-    get radiusY(): number {
-        return this._radiusY;
-    }
+    @ScenePathChangeDetection()
+    radiusY: number = 10;
 
-    private _startAngle: number = 0;
-    set startAngle(value: number) {
-        if (this._startAngle !== value) {
-            this._startAngle = value;
-            this.dirtyPath = true;
-        }
-    }
-    get startAngle(): number {
-        return this._startAngle;
-    }
+    @ScenePathChangeDetection()
+    startAngle: number = 0;
 
-    private _endAngle: number = Math.PI * 2;
-    set endAngle(value: number) {
-        if (this._endAngle !== value) {
-            this._endAngle = value;
-            this.dirtyPath = true;
-        }
-    }
-    get endAngle(): number {
-        return this._endAngle;
-    }
+    @ScenePathChangeDetection()
+    endAngle: number = Math.PI * 2;
 
     private get fullPie(): boolean {
         return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
     }
 
-    private _counterClockwise: boolean = false;
-    set counterClockwise(value: boolean) {
-        if (this._counterClockwise !== value) {
-            this._counterClockwise = value;
-            this.dirtyPath = true;
-        }
-    }
-    get counterClockwise(): boolean {
-        return this._counterClockwise;
-    }
+    @ScenePathChangeDetection()
+    counterClockwise: boolean = false;
 
     /**
      * The type of arc to render:
@@ -121,16 +65,8 @@ export class Arc extends Path {
      * doesn't seem to be a compelling reason to do that, when one can just use {@link ArcType.Chord}
      * to create a closed path.
      */
-    private _type: ArcType = ArcType.Open;
-    set type(value: ArcType) {
-        if (this._type !== value) {
-            this._type = value;
-            this.dirtyPath = true;
-        }
-    }
-    get type(): ArcType {
-        return this._type;
-    }
+    @ScenePathChangeDetection()
+    type: ArcType = ArcType.Open;
 
     updatePath(): void {
         const path = this.path;

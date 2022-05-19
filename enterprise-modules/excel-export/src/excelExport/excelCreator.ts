@@ -16,6 +16,7 @@ import {
     StylingService,
     ValueService,
     ExcelExportMultipleSheetParams,
+    ExcelRow,
 } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
@@ -108,7 +109,7 @@ const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
 };
 
 @Bean('excelCreator')
-export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
+export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, ExcelExportParams> implements IExcelCreator {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
