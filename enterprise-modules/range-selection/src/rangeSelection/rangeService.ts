@@ -192,47 +192,18 @@ export class RangeService extends BeanStub implements IRangeService {
             rowPinned: cell.rowPinned
         };
 
-        // if there is already a range for this cell, then we reuse the same range, otherwise the user
-        // can ctrl & click a cell many times and hit ctrl+c, which would result in the cell getting copied
-        // many times to the clipboard.
-        let cellRange: CellRange | undefined;
+        const cellRange = {
+            startRow: rowForCell,
+            endRow: rowForCell,
+            columns,
+            startColumn: cell.column
+        };
 
-        for (let i = 0; i < this.cellRanges.length; i++) {
-            const range = this.cellRanges[i];
-            const matches =
-                // check cols are same
-                (range.columns && range.columns.length === 1 && range.columns[0] === cell.column) &&
-                // check rows are same
-                this.rowPositionUtils.sameRow(rowForCell, range.startRow) &&
-                this.rowPositionUtils.sameRow(rowForCell, range.endRow);
-
-            if (matches) {
-                cellRange = range;
-                break;
-            }
-        }
-
-        if (cellRange) {
-            // we need it at the end of the list, as the dragStart picks the last created
-            // range as the start point for the drag
-            if (_.last(this.cellRanges) !== cellRange) {
-                _.removeFromArray(this.cellRanges, cellRange);
-                this.cellRanges.push(cellRange);
-            }
-        } else {
-            cellRange = {
-                startRow: rowForCell,
-                endRow: rowForCell,
-                columns,
-                startColumn: cell.column
-            };
-
-            this.cellRanges.push(cellRange);
-        }
+        this.cellRanges.push(cellRange);
 
         this.setNewestRangeStartCell(cell);
         this.onDragStop();
-        this.dispatchChangedEvent(true, true, cellRange.id);
+        this.dispatchChangedEvent(true, true);
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
