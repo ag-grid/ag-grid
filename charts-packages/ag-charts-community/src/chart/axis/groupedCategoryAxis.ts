@@ -33,7 +33,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     constructor() {
         super(new BandScale<string | number>());
 
-        const { group, tickScale, scale } = this;
+        const { axisGroup: group, tickScale, scale } = this;
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
@@ -180,7 +180,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, label, tickScale, requestedRange } = this;
+        const { axisGroup: group, scale, label, tickScale, requestedRange } = this;
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);

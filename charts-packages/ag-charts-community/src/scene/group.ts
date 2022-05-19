@@ -115,6 +115,7 @@ export class Group extends Node {
             return;
         }
 
+        const originalTransform = ctx.getTransform();
         if (this.canvas) {
             // Switch context to the canvas layer we use for this group.
             ctx = this.canvas.context;
@@ -137,9 +138,7 @@ export class Group extends Node {
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
-        const children = this.children;
-        const n = children.length;
-
+        const { children } = this;
         if (this.dirtyZIndex) {
             this.dirtyZIndex = false;
             children.sort((a, b) => a.zIndex - b.zIndex);
@@ -169,5 +168,6 @@ export class Group extends Node {
         if (this.canvas) {
             ctx.restore();
         }
+        ctx.setTransform(originalTransform);
     }
 }

@@ -592,11 +592,13 @@ export abstract class Chart extends Observable {
     }
 
     protected attachAxis(axis: ChartAxis) {
-        this.scene.root!.insertBefore(axis.group, this.seriesRoot);
+        this.scene.root!.insertBefore(axis.gridlineGroup, this.seriesRoot);
+        this.scene.root!.insertBefore(axis.axisGroup, this.seriesRoot);
     }
 
     protected detachAxis(axis: ChartAxis) {
-        this.scene.root!.removeChild(axis.group);
+        this.scene.root!.removeChild(axis.axisGroup);
+        this.scene.root!.removeChild(axis.gridlineGroup);
     }
 
     protected _series: Series[] = [];

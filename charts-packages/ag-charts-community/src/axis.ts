@@ -164,9 +164,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     readonly id = createId(this);
 
-    private groupSelection: Selection<Group, Group, D, D>;
-    private lineNode = new Line();
-
     protected _scale!: S;
     set scale(value: S) {
         this._scale = value;
@@ -179,7 +176,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     ticks: any[];
 
-    readonly group = new Group({ layer: true, zIndex: 200 });
+    readonly axisGroup = new Group({ layer: true, zIndex: 200 });
+    private axisGroupSelection: Selection<Group, Group, D, D>;
+    private lineNode = new Line();
+
+    readonly gridlineGroup = new Group({ layer: true, zIndex: 0 });
+    private gridlineGroupSelection: Selection<Group, Group, D, D>;
 
     readonly line: {
         /**
@@ -220,7 +222,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Overridden in ChartAxis subclass.
      * Sets an appropriate tick count based on the available range.
      */
-    calculateTickCount(availableRange: number): void { }
+    calculateTickCount(_availableRange: number): void { }
 
     /**
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
@@ -230,10 +232,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     constructor(scale: S) {
         this.scale = scale;
-        this.groupSelection = Selection.select(this.group).selectAll<Group>();
+
+        this.axisGroupSelection = Selection.select(this.axisGroup).selectAll<Group>();
+        this.axisGroup.append(this.lineNode);
+
+        this.gridlineGroupSelection = Selection.select(this.gridlineGroup).selectAll<Group>();
+
         this.label.onFormatChange = this.onLabelFormatChange.bind(this);
-        this.group.append(this.lineNode);
-        // this.group.append(this.bboxRect); // debug (bbox)
     }
 
     protected updateRange() {
@@ -321,12 +326,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
-                this.group.removeChild(oldTitle.node);
+                this.axisGroup.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.rotation = -Math.PI / 2;
-                this.group.appendChild(value.node);
+                this.axisGroup.appendChild(value.node);
             }
 
             this._title = value;
@@ -348,7 +353,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
         if (this._gridLength && !value || !this._gridLength && value) {
-            this.groupSelection = this.groupSelection.remove().setData([]);
+            this.gridlineGroupSelection = this.gridlineGroupSelection.remove().setData([]);
         }
 
         this._gridLength = value;
@@ -377,7 +382,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     set radialGrid(value: boolean) {
         if (this._radialGrid !== value) {
             this._radialGrid = value;
-            this.groupSelection = this.groupSelection.remove().setData([]);
+            this.gridlineGroupSelection = this.gridlineGroupSelection.remove().setData([]);
         }
     }
     get radialGrid(): boolean {
@@ -400,7 +405,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, tick, label, gridStyle, requestedRange } = this;
+        const { axisGroup, gridlineGroup, scale, tick, label, gridStyle, requestedRange } = this;
         const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
         const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
@@ -408,9 +413,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const parallelLabels = label.parallel;
         let labelAutoRotation = 0;
 
-        group.translationX = this.translation.x;
-        group.translationY = this.translation.y;
-        group.rotation = rotation;
+        axisGroup.translationX = this.translation.x;
+        axisGroup.translationY = this.translation.y;
+        axisGroup.rotation = rotation;
+
+        gridlineGroup.translationX = this.translation.x;
+        gridlineGroup.translationY = this.translation.y;
+        gridlineGroup.rotation = rotation;
 
         const halfBandwidth = (scale.bandwidth || 0) / 2;
 
@@ -435,40 +444,52 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
         const ticks = this.ticks || scale.ticks!(this.calculatedTickCount);
-        const update = this.groupSelection.setData(ticks);
-        update.exit.remove();
+        const updateAxis = this.axisGroupSelection.setData(ticks);
+        updateAxis.exit.remove();
 
-        const enter = update.enter.append(Group);
+        const enterAxis = updateAxis.enter.append(Group);
         // Line auto-snaps to pixel grid if vertical or horizontal.
-        enter.append(Line).each(node => node.tag = Tags.Tick);
+        enterAxis.append(Line).each(node => node.tag = Tags.Tick);
+        enterAxis.append(Text);
 
+        const axisGroupSelection = updateAxis.merge(enterAxis);
+
+        const updateGridlines = this.gridlineGroupSelection.setData(this.gridLength ? ticks : []);
+        updateGridlines.exit.remove();
+        let gridlineGroupSelection = updateGridlines;
         if (this.gridLength) {
+            const tagFn = (node: Line | Arc) => node.tag = Tags.GridLine;
+            const enterGridline = updateGridlines.enter.append(Group);
             if (this.radialGrid) {
-                enter.append(Arc).each(node => node.tag = Tags.GridLine);
+                enterGridline.append(Arc).each(tagFn);
             } else {
-                enter.append(Line).each(node => node.tag = Tags.GridLine);
+                enterGridline.append(Line).each(tagFn);
             }
+            gridlineGroupSelection = updateGridlines.merge(enterGridline);
         }
-        enter.append(Text);
-
-        const groupSelection = update.merge(enter);
 
         let anyVisible = false;
-        groupSelection
-            .attrFn('translationY', function (_, datum) {
-                return Math.round(scale.convert(datum) + halfBandwidth);
-            })
-            .attrFn('visible', function (node) {
-                const min = Math.floor(requestedRangeMin);
-                const max = Math.ceil(requestedRangeMax);
-                const visible = (min !== max) && node.translationY >= min && node.translationY <= max;
-                anyVisible = visible || anyVisible;
-                return visible;
-            });
+        const translationYFn = (_: unknown, datum: any) => Math.round(scale.convert(datum) + halfBandwidth);
+        const visibleFn = (node: Group) => {
+            const min = Math.floor(requestedRangeMin);
+            const max = Math.ceil(requestedRangeMax);
+            const visible = (min !== max) && node.translationY >= min && node.translationY <= max;
+            anyVisible = visible || anyVisible;
+            return visible;
+        };
 
-        this.group.visible = anyVisible;
+        axisGroupSelection
+            .attrFn('translationY', translationYFn)
+            .attrFn('visible', visibleFn);
+        gridlineGroupSelection
+            .attrFn('translationY', translationYFn)
+            .attrFn('visible', visibleFn);
+
+        this.axisGroup.visible = anyVisible;
+        this.gridlineGroup.visible = anyVisible;
         if (!anyVisible) {
-            this.groupSelection = groupSelection;
+            this.axisGroupSelection = axisGroupSelection;
+            this.gridlineGroupSelection = gridlineGroupSelection;
             return;
         }
 
@@ -482,7 +503,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let halfFirstLabelLength = false;
         let halfLastLabelLength = false;
         const availableRange = requestedRangeMax - requestedRangeMin;
-        const labelSelection = groupSelection.selectByClass(Text)
+        const labelSelection = axisGroupSelection.selectByClass(Text)
             .each((node, datum, index) => {
                 node.fontStyle = label.fontStyle;
                 node.fontWeight = label.fontWeight;
@@ -599,7 +620,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         }
 
-        groupSelection.selectByTag<Line>(Tags.Tick)
+        axisGroupSelection.selectByTag<Line>(Tags.Tick)
             .each((line, _, index) => {
                 line.strokeWidth = tick.width;
                 line.stroke = tick.color;
@@ -617,7 +638,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
 
-                gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
+                gridLines = gridlineGroupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum, index) => {
                         const radius = Math.round(scale.convert(datum) + halfBandwidth);
 
@@ -629,7 +650,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         arc.visible = labelBboxes.has(index);
                     });
             } else {
-                gridLines = groupSelection.selectByTag<Line>(Tags.GridLine)
+                gridLines = gridlineGroupSelection.selectByTag<Line>(Tags.GridLine)
                     .each((line, _, index) => {
                         line.x1 = 0;
                         line.x2 = -sideFlag * this.gridLength;
@@ -649,7 +670,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         }
 
-        this.groupSelection = groupSelection;
+        this.axisGroupSelection = axisGroupSelection;
+        this.gridlineGroupSelection = gridlineGroupSelection;
 
         // Render axis line.
         const lineNode = this.lineNode;
@@ -662,14 +684,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         lineNode.visible = ticks.length > 0;
 
         this.positionTitle();
-
-        // debug (bbox)
-        // const bbox = this.computeBBox();
-        // const bboxRect = this.bboxRect;
-        // bboxRect.x = bbox.x;
-        // bboxRect.y = bbox.y;
-        // bboxRect.width = bbox.width;
-        // bboxRect.height = bbox.height;
     }
 
     private positionTitle(): void {
@@ -739,7 +753,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     computeBBox(options?: { excludeTitle: boolean }): BBox {
         const { title, lineNode } = this;
-        const labels = this.groupSelection.selectByClass(Text);
+        const labels = this.axisGroupSelection.selectByClass(Text);
 
         let left = Infinity;
         let right = -Infinity;

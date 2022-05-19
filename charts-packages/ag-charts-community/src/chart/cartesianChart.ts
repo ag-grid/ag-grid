@@ -108,7 +108,8 @@ export class CartesianChart extends Chart {
         }
 
         axes.forEach(axis => {
-            axis.group.visible = true;
+            axis.axisGroup.visible = true;
+            axis.gridlineGroup.visible = true;
             let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
 
             // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
