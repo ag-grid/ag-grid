@@ -112,7 +112,7 @@ export interface ExcelRow {
 export interface ExcelCell {
     ref?: string;
     styleId?: string;
-    data: ExcelData;
+    data?: ExcelData;
     mergeAcross?: number;
     collapsibleRanges?: number[][];
 }
@@ -192,7 +192,7 @@ export interface RowHeightCallbackParams {
     rowIndex: number;
 }
 
-export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
+export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     author?: string;
     autoConvertFormulas?: boolean;
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);

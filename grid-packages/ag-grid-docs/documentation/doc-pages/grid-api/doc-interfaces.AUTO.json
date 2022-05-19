@@ -14413,7 +14413,7 @@
   "ExcelCell": {
     "ref": { "type": { "returnType": "string", "optional": true } },
     "styleId": { "type": { "returnType": "string", "optional": true } },
-    "data": { "type": { "returnType": "ExcelData", "optional": false } },
+    "data": { "type": { "returnType": "ExcelData", "optional": true } },
     "mergeAcross": { "type": { "returnType": "number", "optional": true } },
     "collapsibleRanges": {
       "type": { "returnType": "number[][]", "optional": true }
@@ -14561,23 +14561,23 @@
       }
     },
     "prependContent": {
-      "type": { "returnType": "ExcelCell[][]", "optional": true }
+      "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "appendContent": {
-      "type": { "returnType": "ExcelCell[][]", "optional": true }
+      "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "customHeader": {
       "description": "/** @deprecated Use prependContent\n */",
-      "type": { "returnType": "ExcelCell[][]", "optional": true }
+      "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "customFooter": {
       "description": "/** @deprecated Use appendContent\n */",
-      "type": { "returnType": "ExcelCell[][]", "optional": true }
+      "type": { "returnType": "ExcelRow[]", "optional": true }
     },
     "getCustomContentBelowRow": {
       "type": {
         "arguments": { "params": "ProcessRowGroupForExportParams" },
-        "returnType": "ExcelCell[][] | undefined",
+        "returnType": "ExcelRow[] | undefined",
         "optional": true
       }
     },

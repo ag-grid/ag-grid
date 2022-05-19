@@ -1,4 +1,4 @@
-import { Grid, ExcelCell, ExcelExportParams, GridOptions } from '@ag-grid-community/core'
+import { Grid, ExcelRow, ExcelExportParams, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -22,32 +22,34 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
 }
 
-const getRows: () => ExcelCell[][] = () => [
-  [],
-  [
-    {
+const getRows: () => ExcelRow[] = () => [
+  { cells: [] },
+  {
+    cells: [{
       data: { value: 'Here is a comma, and a some "quotes".', type: 'String' },
-    },
-  ],
-  [
-    {
+    }],
+  },
+  {
+    cells: [{
       data: {
         value:
           'They are visible when the downloaded file is opened in Excel because custom content is properly escaped.',
         type: 'String',
       },
-    },
-  ],
-  [
-    { data: { value: 'this cell:', type: 'String' }, mergeAcross: 1 },
-    {
-      data: {
-        value: 'is empty because the first cell has mergeAcross=1',
-        type: 'String',
+    }],
+  },
+  {
+    cells: [
+      { data: { value: 'this cell:', type: 'String' }, mergeAcross: 1 },
+      {
+        data: {
+          value: 'is empty because the first cell has mergeAcross=1',
+          type: 'String',
+        },
       },
-    },
-  ],
-  [],
+    ],
+  },
+  { cells: [] }
 ]
 
 const getBoolean = (inputSelector: string) =>
