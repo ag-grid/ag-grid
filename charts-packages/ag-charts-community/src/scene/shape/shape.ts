@@ -1,4 +1,4 @@
-import { Node } from "../node";
+import { Node, RedrawType, SceneChangeDetection } from "../node";
 import { chainObjects } from "../../util/object";
 import { DropShadow } from "../dropShadow";
 
@@ -90,38 +90,14 @@ export abstract class Shape extends Node {
         }
     }
 
-    protected _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.dirty = true;
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    fillOpacity: number = 1;
 
-    protected _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.dirty = true;
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    strokeOpacity: number = 1;
 
-    protected _fill: string | undefined = Shape.defaultStyles.fill;
-    set fill(value: string | undefined) {
-        if (this._fill !== value) {
-            this._fill = value;
-            this.dirty = true;
-        }
-    }
-    get fill(): string | undefined {
-        return this._fill;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    fill: string | undefined = Shape.defaultStyles.fill;
 
     /**
      * Note that `strokeStyle = null` means invisible stroke,
@@ -133,27 +109,11 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    protected _stroke: string | undefined = Shape.defaultStyles.stroke;
-    set stroke(value: string | undefined) {
-        if (this._stroke !== value) {
-            this._stroke = value;
-            this.dirty = true;
-        }
-    }
-    get stroke(): string | undefined {
-        return this._stroke;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    stroke: string | undefined = Shape.defaultStyles.stroke;
 
-    protected _strokeWidth: number = Shape.defaultStyles.strokeWidth;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.dirty = true;
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    strokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     // An offset value to align to the pixel grid.
     get alignment(): number {
@@ -168,116 +128,29 @@ export abstract class Shape extends Node {
         return Math.floor(start) + alignment;
     }
 
-    protected _lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
-    set lineDash(value: number[] | undefined) {
-        const oldValue = this._lineDash;
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
 
-        if (oldValue !== value) {
-            if (oldValue && value && oldValue.length === value.length) {
-                let identical = true;
-                const n = value.length;
-                for (let i = 0; i < n; i++) {
-                    if (oldValue[i] !== value[i]) {
-                        identical = false;
-                        break;
-                    }
-                }
-                if (identical) {
-                    return;
-                }
-            }
-            this._lineDash = value;
-            this.dirty = true;
-        }
-    }
-    get lineDash(): number[] | undefined {
-        return this._lineDash;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
 
-    protected _lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
-    set lineDashOffset(value: number) {
-        if (this._lineDashOffset !== value) {
-            this._lineDashOffset = value;
-            this.dirty = true;
-        }
-    }
-    get lineDashOffset(): number {
-        return this._lineDashOffset;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
 
-    protected _lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
-    set lineCap(value: ShapeLineCap) {
-        if (this._lineCap !== value) {
-            this._lineCap = value;
-            this.dirty = true;
-        }
-    }
-    get lineCap(): ShapeLineCap {
-        return this._lineCap;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
 
-    protected _lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
-    set lineJoin(value: ShapeLineJoin) {
-        if (this._lineJoin !== value) {
-            this._lineJoin = value;
-            this.dirty = true;
-        }
-    }
-    get lineJoin(): ShapeLineJoin {
-        return this._lineJoin;
-    }
+    @SceneChangeDetection({
+        redraw: RedrawType.MINOR,
+        convertor: (v: number) => Math.min(1, Math.max(0, v)),
+    })
+    opacity: number = Shape.defaultStyles.opacity;
 
-    protected _opacity: number = Shape.defaultStyles.opacity;
-    set opacity(value: number) {
-        value = Math.min(1, Math.max(0, value));
-        if (this._opacity !== value) {
-            this._opacity = value;
-            this.dirty = true;
-        }
-    }
-    get opacity(): number {
-        return this._opacity;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    private readonly onShadowChange = () => {
-        this.dirty = true;
-    }
-
-    protected _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
-    set fillShadow(value: DropShadow | undefined) {
-        const oldValue = this._fillShadow;
-        if (oldValue !== value) {
-            if (oldValue) {
-                oldValue.removeEventListener('change', this.onShadowChange);
-            }
-            if (value) {
-                value.addEventListener('change', this.onShadowChange);
-            }
-            this._fillShadow = value;
-            this.dirty = true;
-        }
-    }
-    get fillShadow(): DropShadow | undefined {
-        return this._fillShadow;
-    }
-
-    protected _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
-    set strokeShadow(value: DropShadow | undefined) {
-        const oldValue = this._strokeShadow;
-        if (oldValue !== value) {
-            if (oldValue) {
-                oldValue.removeEventListener('change', this.onShadowChange);
-            }
-            if (value) {
-                value.addEventListener('change', this.onShadowChange);
-            }
-            this._strokeShadow = value;
-            this.dirty = true;
-        }
-    }
-    get strokeShadow(): DropShadow | undefined {
-        return this._strokeShadow;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
 
     protected fillStroke(ctx: CanvasRenderingContext2D) {
         if (!this.scene) {

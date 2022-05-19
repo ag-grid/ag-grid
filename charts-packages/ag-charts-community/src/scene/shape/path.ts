@@ -1,5 +1,25 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
+import { RedrawType, SceneChangeDetection } from "../node";
+
+export function ScenePathChangeDetection(opts?: {
+    redraw?: RedrawType,
+    changeCb?: (t: any) => any,
+}) {
+    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
+
+    const changeCb = (o: any) => {
+        if (!o._dirtyPath) {
+            o._dirtyPath = true;
+            o.markDirty(redraw);
+        }
+        if (optChangeCb) {
+            optChangeCb(o);
+        }
+    };
+
+    return SceneChangeDetection({ redraw, type: 'path', changeCb });
+}
 
 export class Path extends Shape {
 
@@ -23,7 +43,7 @@ export class Path extends Shape {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;
             if (value) {
-                this.dirty = true;
+                this.markDirty(RedrawType.MAJOR);
             }
         }
     }
@@ -40,7 +60,7 @@ export class Path extends Shape {
         if (this._svgPath !== value) {
             this._svgPath = value;
             this.path.setFromString(value);
-            this.dirty = true;
+            this.markDirty(RedrawType.MAJOR);
         }
     }
     get svgPath(): string {
@@ -52,25 +72,23 @@ export class Path extends Shape {
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 
-    isPointInStroke(x: number, y: number): boolean {
+    isPointInStroke(_x: number, _y: number): boolean {
         return false;
     }
 
+    /** Override point for more expensive dirty checks. */
+    protected isDirtyPath() {}
     protected updatePath() {}
 
-    render(ctx: CanvasRenderingContext2D): void {
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
+    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
+        if (this.dirty === RedrawType.NONE && !forceRender) {
+            return;
         }
-        // if (scene.debug.renderBoundingBoxes) {
-        //     const bbox = this.computeBBox();
-        //     if (bbox) {
-        //         this.matrix.transformBBox(bbox).render(ctx);
-        //     }
-        // }
+
+        this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
-        if (this.dirtyPath) {
+        if (this.dirtyPath || this.isDirtyPath()) {
             this.updatePath();
             this.dirtyPath = false;
         }
@@ -78,6 +96,6 @@ export class Path extends Shape {
 
         this.fillStroke(ctx);
 
-        this.dirty = false;
+        super.render(ctx, forceRender);
     }
 }

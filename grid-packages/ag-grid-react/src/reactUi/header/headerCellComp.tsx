@@ -12,8 +12,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaSort, setAriaSort] = useState<ColumnSortState>();
-    const [ariaLabel, setAriaLabel] = useState<string>();
-    const [ariaDescribedBy, setAriaDescribedBy] = useState<string>();
+    const [ariaDescription, setAriaDescription] = useState<string>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
     const eGui = useRef<HTMLDivElement>(null);
@@ -30,18 +29,18 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
-            setAriaLabel: label => setAriaLabel(label),
-            setAriaDescribedBy: value => setAriaDescribedBy(value),
+
+            setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
-            getUserCompInstance: ()=> userCompRef.current || undefined
+            getUserCompInstance: () => userCompRef.current || undefined
         };
 
         ctrl.setComp(compProxy, eGui.current!, eResize.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current!.insertAdjacentElement('afterend', selectAllGui);
-    }, 'headerCell.main');
+    });
 
     // js comps
     useEffect(() => showJsComp(
@@ -77,11 +76,10 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             style={ style }
             title={ title }
             col-id={ colId }
-            aria-sort={ariaSort}
+            aria-sort={ ariaSort }
             role="columnheader"
             tabIndex={-1}
-            aria-describedby={ariaDescribedBy}
-            aria-label={ariaLabel}
+            aria-description={ ariaDescription }
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }

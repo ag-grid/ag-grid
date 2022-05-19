@@ -1,10 +1,11 @@
 {
   "name": "ag-charts-angular",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "npx @angular/cli",
     "build": "npx @angular/cli build --prod && npm run hash",
+    "build-prod": "npm run build",
     "test:e2e": "npx @angular/cli test --watch false --browsers ChromeHeadless",
     "lint": "npx @angular/cli lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
@@ -42,7 +43,7 @@
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2",
-    "ag-charts-community": "~5.2.0"
+    "ag-charts-community": "~5.3.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.15",

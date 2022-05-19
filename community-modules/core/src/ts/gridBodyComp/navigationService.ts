@@ -24,6 +24,10 @@ import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { Events } from "../eventKeys";
+import { FullWidthRowFocusedEvent } from "../events";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columns/columnApi";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -40,6 +44,8 @@ interface NavigateParams {
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
 
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
@@ -732,6 +738,8 @@ export class NavigationService extends BeanStub {
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) { return false; }
 
+        const currentCellFocused = this.focusService.getFocusedCell();
+
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
             rowPinned: position.rowPinned,
@@ -739,6 +747,22 @@ export class NavigationService extends BeanStub {
         };
 
         this.focusPosition(cellPosition);
+
+        const fromBelow = currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
+
+        const focusEvent: FullWidthRowFocusedEvent = {
+            type: Events.EVENT_FULL_WIDTH_ROW_FOCUSED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            rowIndex: cellPosition.rowIndex,
+            rowPinned: cellPosition.rowPinned,
+            column: cellPosition.column,
+            isFullWidthCell: true,
+            floating: cellPosition.rowPinned,
+            fromBelow
+        };
+
+        this.eventService.dispatchEvent(focusEvent);
 
         return true;
     }

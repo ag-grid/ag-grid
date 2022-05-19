@@ -80,7 +80,7 @@
                     "columnApi": "ColumnApi",
                     "context": "any"
                 },
-                "returnType": "CsvCell"
+                "returnType": "CsvCell[][]"
             }
         },
         "shouldRowBeSkipped": {

@@ -1,8 +1,26 @@
-import { Autowired, BeanStub, ColumnApi, DetailGridInfo, Environment, GridApi, IDetailCellRendererCtrl, GridOptions, RowNode, IDetailCellRendererParams, IDetailCellRenderer, _ } from "@ag-grid-community/core";
+import {
+    Autowired,
+    BeanStub,
+    ColumnApi,
+    DetailGridInfo,
+    Environment,
+    GridApi,
+    IDetailCellRendererCtrl,
+    RowNode,
+    IDetailCellRendererParams,
+    IDetailCellRenderer,
+    Events,
+    RowPositionUtils,
+    FullWidthRowFocusedEvent,
+    FocusService,
+    _
+} from "@ag-grid-community/core";
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
 
     @Autowired('environment') private environment: Environment;
+    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     private params: IDetailCellRendererParams;
 
@@ -30,6 +48,19 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
+
+        this.addManagedListener(this.eventService, Events.EVENT_FULL_WIDTH_ROW_FOCUSED, this.onFullWidthRowFocused.bind(this));
+    }
+
+    private onFullWidthRowFocused(e: FullWidthRowFocusedEvent): void {
+        const params = this.params;
+        const row = { rowIndex: params.node.rowIndex!, rowPinned: params.node.rowPinned! };
+        const eventRow = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned! };
+        const isSameRow = this.rowPositionUtils.sameRow(row, eventRow);
+
+        if (!isSameRow) { return; }
+
+        this.focusService.focusInto(this.comp.getGui(), e.fromBelow);
     }
 
     private setAutoHeightClasses(): void {
@@ -52,7 +83,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const providedStrategy = this.params.refreshStrategy;
 
-        const validSelection = providedStrategy=='everything' || providedStrategy=='nothing' || providedStrategy=='rows';
+        const validSelection = providedStrategy == 'everything' || providedStrategy == 'nothing' || providedStrategy == 'rows';
         if (validSelection) {
             this.refreshStrategy = providedStrategy;
             return;

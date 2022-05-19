@@ -26,18 +26,10 @@ export class CartesianChart extends Chart {
         this.navigator.enabled = false;
     }
 
-    private _seriesRoot = new ClipRect();
-    get seriesRoot(): ClipRect {
-        return this._seriesRoot;
-    }
-
+    readonly seriesRoot = new ClipRect();
     readonly navigator = new Navigator(this);
 
     performLayout(): void {
-        if (this.dataPending) {
-            return;
-        }
-
         this.scene.root!!.visible = true;
 
         const { width, height, axes, legend, navigator } = this;
@@ -76,8 +68,6 @@ export class CartesianChart extends Chart {
 
         const { captionAutoPadding, padding } = this;
 
-        this.updateAxes();
-
         shrinkRect.x += padding.left;
         shrinkRect.width -= padding.left + padding.right;
 
@@ -88,8 +78,26 @@ export class CartesianChart extends Chart {
             shrinkRect.height -= navigator.height + navigator.margin;
         }
 
-        let bottomAxesHeight = 0;
+        // Set the number of ticks for continuous axes based on the available range
+        // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
+        axes.forEach(axis => {
+            let availableRange = 0;
+            switch (axis.position) {
+                case ChartAxisPosition.Top:
+                case ChartAxisPosition.Bottom:
+                    availableRange = shrinkRect.width;
+                    break;
+                case ChartAxisPosition.Left:
+                case ChartAxisPosition.Right:
+                    availableRange = shrinkRect.height;
+                    break;
+            }
+            axis.calculateTickCount(availableRange);
+        });
 
+        this.updateAxes();
+
+        let bottomAxesHeight = 0;
         const axisPositionVisited: { [key in ChartAxisPosition]: boolean } = {
             top: false,
             right: false,
@@ -186,14 +194,6 @@ export class CartesianChart extends Chart {
         }
 
         this.axes.forEach(axis => axis.update());
-    }
-
-    protected initSeries(series: Series) {
-        super.initSeries(series);
-    }
-
-    protected freeSeries(series: Series) {
-        super.freeSeries(series);
     }
 
     private _onTouchStart: any;
@@ -315,7 +315,7 @@ export class CartesianChart extends Chart {
                 if (axis instanceof NumberAxis && isYAxis) {
                     // the `primaryTickCount` is used to align the secondary axis tick count with the primary
                     axis.setDomain(domain, primaryTickCount);
-                    primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.tick.count).length;
+                    primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.calculatedTickCount).length;
                 } else {
                     axis.domain = domain;
                 }

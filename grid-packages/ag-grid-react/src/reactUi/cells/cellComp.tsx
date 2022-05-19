@@ -155,7 +155,7 @@ const CellComp = (props: {
     // when setting the ref, we also update the state item to force a re-render
     const eCellWrapper = useRef<HTMLDivElement>();
     const [cellWrapperVersion, setCellWrapperVersion] = useState(0);
-    const setCellWrapperRef = useCallback(ref => {
+    const setCellWrapperRef = useCallback((ref: HTMLDivElement) => {
         eCellWrapper.current = ref;
         setCellWrapperVersion( v => v+1 );
     }, []);
@@ -163,7 +163,7 @@ const CellComp = (props: {
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement>();
     const [cellValueVersion, setCellValueVersion] = useState(0);
-    const setCellValueRef = useCallback(ref => {
+    const setCellValueRef = useCallback( (ref: HTMLDivElement) => {
         eCellValue.current = ref;
         setCellValueVersion( v => v+1 );
     }, []);
@@ -350,7 +350,7 @@ const CellComp = (props: {
 
         cellCtrl.setComp(compProxy, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
 
-    }, 'cellComp.main');
+    });
 
     const reactCellRendererStateless = useMemo( ()=> {
         const res = renderDetails && renderDetails.compDetails 

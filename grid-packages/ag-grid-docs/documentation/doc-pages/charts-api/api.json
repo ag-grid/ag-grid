@@ -470,9 +470,8 @@
       "default": "rgba(195, 195, 195, 1)"
     },
     "count": {
-      "default": 10,
       "min": 0,
-      "max": 50
+      "max": 20
     }
   },
   "AgAxisTimeTickOptions": {
@@ -516,6 +515,15 @@
     },
     "rotation": {
       "default": 0,
+      "min": -359,
+      "max": 359,
+      "unit": "&deg;"
+    },
+    "autoRotate": {
+      "default": false
+    },
+    "autoRotateAngle": {
+      "default": 335,
       "min": -359,
       "max": 359,
       "unit": "&deg;"

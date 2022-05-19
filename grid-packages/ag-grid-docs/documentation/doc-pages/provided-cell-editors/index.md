@@ -13,7 +13,7 @@ The grid comes with some cell editors provided out of the box. These cell editor
 
 ## Text Cell Editor
 
-Simple text editors that use the standard HTML `input`. This editor is the default if none other specified.
+Simple text editor that uses the standard HTML `input`. This editor is the default if none other specified.
 
 Specified with `agTextCellEditor`.
 

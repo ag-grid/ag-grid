@@ -98,7 +98,7 @@ export class PaginationComp extends Component {
         const userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
 
         if (userFunc) {
-            const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value }
+            const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value: value };
             return userFunc(params);
         }
 
@@ -130,16 +130,16 @@ export class PaginationComp extends Component {
                     <span id="ag-${compId}-row-count" ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel" role="presentation">
-                    <div ref="btFirst" class="ag-paging-button" role="button" aria-label="${strFirst}" tabindex="0"></div>
-                    <div ref="btPrevious" class="ag-paging-button" role="button" aria-label="${strPrevious}" tabindex="0"></div>
+                    <div ref="btFirst" class="ag-paging-button" role="button" aria-label="${strFirst}"></div>
+                    <div ref="btPrevious" class="ag-paging-button" role="button" aria-label="${strPrevious}"></div>
                     <span class="ag-paging-description" role="status">
                         <span id="ag-${compId}-start-page">${strPage}</span>
                         <span id="ag-${compId}-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>
                         <span id="ag-${compId}-of-page-number" ref="lbTotal" class="ag-paging-number"></span>
                     </span>
-                    <div ref="btNext" class="ag-paging-button" role="button" aria-label="${strNext}" tabindex="0"></div>
-                    <div ref="btLast" class="ag-paging-button" role="button" aria-label="${strLast}" tabindex="0"></div>
+                    <div ref="btNext" class="ag-paging-button" role="button" aria-label="${strNext}"></div>
+                    <div ref="btLast" class="ag-paging-button" role="button" aria-label="${strLast}"></div>
                 </span>
             </div>`;
     }
@@ -168,22 +168,28 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        this.btFirst.classList.toggle('ag-disabled', this.previousAndFirstButtonsDisabled);
-        setAriaDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
-
-        this.btPrevious.classList.toggle('ag-disabled', this.previousAndFirstButtonsDisabled);
-        setAriaDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
+        this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        this.btNext.classList.toggle('ag-disabled', this.nextButtonDisabled);
-        setAriaDisabled(this.btNext, this.nextButtonDisabled);
-
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        this.btLast.classList.toggle('ag-disabled', this.lastButtonDisabled);
-        setAriaDisabled(this.btLast, this.lastButtonDisabled);
+
+        this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
+        this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
+    }
+
+    private toggleButtonDisabled(button: HTMLElement, disabled: boolean) {
+        setAriaDisabled(button, disabled);
+        button.classList.toggle('ag-disabled', disabled);
+
+        if (disabled) {
+            button.removeAttribute('tabindex');
+        } else {
+            button.setAttribute('tabindex', '0');
+        }
     }
 
     private updateRowLabels() {

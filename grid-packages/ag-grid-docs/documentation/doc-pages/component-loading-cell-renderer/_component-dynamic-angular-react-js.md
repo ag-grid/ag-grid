@@ -6,7 +6,7 @@
 |            component: CustomLoadingCellRenderer,
 |            params: {
 |                // parameters to supply to the custom loading cell renderer
-|                loadingMessage: '--- CUSTOM ERROR MESSAGE ---',
+|                loadingMessage: '--- CUSTOM LOADING MESSAGE ---',
 |            },
 |        };
 |        } else {

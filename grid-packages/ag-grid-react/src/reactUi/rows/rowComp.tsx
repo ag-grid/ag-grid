@@ -129,7 +129,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
         };
         rowCtrl.setComp(compProxy, eGui.current!, containerType);
-    }, 'rowComp.main');
+    });
 
     useEffect(() => showJsComp(
         fullWidthCompDetails, context, eGui.current!, fullWidthCompRef

@@ -1,4 +1,14 @@
 {
+  "javascript": [
+    {
+      "id": "j-Odsb0EjVo",
+      "list": "PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK"
+    },
+    {
+      "id": "EIkxDliHFYw",
+      "list": "PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK"
+    }
+  ],
   "react": [
     {
       "id": "Pr__B6HM_s4",
@@ -16,11 +26,15 @@
   "angular": [
     {
       "id": "_cRDVM6NlPk",
-      "list": ""
+      "list": "PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x"
     },
     {
       "id": "xe6i3W6qW5k",
-      "list": ""
+      "list": "PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x"
+    },
+    {
+      "id": "xsafnM77NVs",
+      "list": "PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x"
     }
   ],
   "vue": [

@@ -16,7 +16,7 @@
 |})
 |export class MyCellEditor implements ICellEditorAngularComp {
 |    /* Component Editor Lifecycle method */
-|    agInit(params) {
+|    agInit(params: ICellEditorParams) {
 |        this.params = params;
 |    }
 |

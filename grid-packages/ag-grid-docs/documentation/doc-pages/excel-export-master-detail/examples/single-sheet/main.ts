@@ -1,36 +1,51 @@
-import { Grid, CsvCell, CsvExportParams, ExcelCell, ExcelExportParams, GetDetailRowDataParams, GridOptions, IDetailCellRendererParams, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
+import {
+  Grid,
+  CsvCell,
+  CsvExportParams,
+  ExcelCell,
+  ExcelRow,
+  ExcelExportParams,
+  GridOptions,
+  IDetailCellRendererParams,
+  ProcessRowGroupForExportParams
+} from '@ag-grid-community/core'
 
-var getCells = (params: ProcessRowGroupForExportParams) => {
-  const cells: ExcelCell[][] = [
-    [
+var getRows = (params: ProcessRowGroupForExportParams) => {
+  const rows = [{
+    outlineLevel: 1,
+    cells: [
       cell(''),
       cell('Call Id', 'header'),
       cell('Direction', 'header'),
       cell('Number', 'header'),
       cell('Duration', 'header'),
       cell('Switch Code', 'header'),
-    ],
-  ].concat(
-    params.node.data.callRecords.map(function (record: any) {
-      return [
-        cell(''),
-        cell(record.callId, 'body'),
-        cell(record.direction, 'body'),
-        cell(record.number, 'body'),
-        cell(record.duration, 'body'),
-        cell(record.switchCode, 'body'),
-      ]
-    }),
-    [[]]
+    ]
+  }].concat(
+    ...params.node.data.callRecords.map((record: any) => [{
+        outlineLevel: 1,
+        cells: [
+          cell(''),
+          cell(record.callId, 'body'),
+          cell(record.direction, 'body'),
+          cell(record.number, 'body'),
+          cell(record.duration, 'body'),
+          cell(record.switchCode, 'body'),
+        ]
+      }])
   )
-  return cells;
+  return rows;
 }
 
 var defaultCsvExportParams: CsvExportParams = {
-  getCustomContentBelowRow: (params) => getCells(params) as CsvCell[][],
+  getCustomContentBelowRow: (params) => {
+    const rows = getRows(params);
+
+    return rows.map(row => row.cells) as CsvCell[][];
+  }
 }
 var defaultExcelExportParams: ExcelExportParams = {
-  getCustomContentBelowRow: (params) => getCells(params),
+  getCustomContentBelowRow: (params) => getRows(params) as ExcelRow[],
   columnWidth: 120,
 }
 

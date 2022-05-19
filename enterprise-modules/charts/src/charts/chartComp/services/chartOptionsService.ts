@@ -76,8 +76,9 @@ export class ChartOptionsService extends BeanStub {
             _.set(axis, expression, value)
         });
 
+        // @todo(AG-6790): Revisit approach here?
         // chart axis properties are not reactive, need to schedule a layout
-        chart.layoutPending = true;
+        // chart.layoutPending = true;
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -94,8 +95,9 @@ export class ChartOptionsService extends BeanStub {
         const chartAxis = this.getAxis(axisType);
         _.set(chartAxis, expression, value);
 
+        // @todo(AG-6790): Revisit approach here?
         // chart axis properties are not reactive, need to schedule a layout
-        this.getChart().layoutPending = true;
+        // this.getChart().layoutPending = true;
 
         // do not update axis options when the default category is selected
         if (chartAxis && !this.chartController.isDefaultCategorySelected()) {

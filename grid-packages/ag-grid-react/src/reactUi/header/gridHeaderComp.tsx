@@ -30,7 +30,7 @@ const GridHeaderComp = () => {
             context.destroyBean(ctrl);
         };
 
-    }, 'gridHeaderComp.main');
+    });
 
     const className = useMemo( ()=> {
         let res = cssClasses.toString();

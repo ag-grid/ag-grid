@@ -1,4 +1,4 @@
-import { Node } from "./node";
+import { Node, RedrawType, SceneChangeDetection } from "./node";
 import { BBox } from "./bbox";
 import { Matrix } from "./matrix";
 
@@ -8,20 +8,16 @@ export class Group extends Node {
 
     protected isContainerNode: boolean = true;
 
-    protected _opacity: number = 1;
-    set opacity(value: number) {
-        value = Math.min(1, Math.max(0, value));
-        if (this._opacity !== value) {
-            this._opacity = value;
-            this.dirty = true;
-        }
-    }
-    get opacity(): number {
-        return this._opacity;
+    markDirty(type = RedrawType.TRIVIAL) {
+        const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
+        super.markDirty(type, parentType);
     }
 
+    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
+    opacity: number = 1;
+
     // We consider a group to be boundless, thus any point belongs to it.
-    containsPoint(x: number, y: number): boolean {
+    containsPoint(_x: number, _y: number): boolean {
         return true;
     }
 
@@ -31,9 +27,7 @@ export class Group extends Node {
         let top = Infinity;
         let bottom = -Infinity;
 
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
+        this.computeTransformMatrix();
 
         this.children.forEach(child => {
             if (!child.visible) {
@@ -45,9 +39,7 @@ export class Group extends Node {
             }
 
             if (!(child instanceof Group)) {
-                if (child.dirtyTransform) {
-                    child.computeTransformMatrix();
-                }
+                child.computeTransformMatrix();
                 const matrix = Matrix.flyweight(child.matrix);
                 let parent = child.parent;
                 while (parent) {
@@ -82,33 +74,43 @@ export class Group extends Node {
         );
     }
 
-    render(ctx: CanvasRenderingContext2D) {
+    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
+        if (this.dirty === RedrawType.NONE && !forceRender) {
+            return;
+        }
+
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
+        this.computeTransformMatrix();
         this.matrix.toContext(ctx);
+
+        const clearNeeded = this.dirty >= RedrawType.MINOR;
+        if (!forceRender && clearNeeded) {
+            forceRender = true;
+            this.clearBBox(ctx);
+        }
 
         const children = this.children;
         const n = children.length;
-
-        ctx.globalAlpha *= this.opacity;
 
         if (this.dirtyZIndex) {
             this.dirtyZIndex = false;
             children.sort((a, b) => a.zIndex - b.zIndex);
         }
 
+        ctx.globalAlpha *= this.opacity;
+
         for (let i = 0; i < n; i++) {
             const child = children[i];
-            if (child.visible) {
+            if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(ctx);
+                child.render(ctx, forceRender);
                 ctx.restore();
             }
         }
+
+        super.render(ctx, forceRender);
 
         // debug
         // this.computeBBox().render(ctx, {

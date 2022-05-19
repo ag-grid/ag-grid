@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "AG Grid Vue 2 Component",
-  "version": "27.2.1",
+  "version": "27.3.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "keywords": [
     "grid",
     "data",
@@ -26,6 +26,7 @@
     "bundle": "npx cross-env vue-cli-service build --target lib src/AgGridVue.ts && rm ./dist/demo.html",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npx gulp copy-from-module-source && npm run npm && npm run bundle && npm run hash",
+    "build-prod": "npm run build",
     "lint": "npx cross-env vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
@@ -34,8 +35,8 @@
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "ag-grid-community": "~27.2.0",
-    "@ag-grid-community/vue": "~27.2.0",
+    "ag-grid-community": "~27.3.0",
+    "@ag-grid-community/vue": "~27.3.0",
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-typescript": "^5.0.0",
@@ -48,7 +49,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "ag-grid-community": "~27.2.0",
+    "ag-grid-community": "~27.3.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },

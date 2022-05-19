@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue3",
   "description": "AG Charts Vue 3 Component",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://www.ag-grid.com/",
   "keywords": [
     "chart",
     "data",
@@ -27,11 +27,12 @@
     "bundle": "npx vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npm run npm && npm run bundle && npm run hash",
+    "build-prod": "npm run build",
     "lint": "npx vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "ag-charts-community": "~5.2.0",
+    "ag-charts-community": "~5.3.0",
     "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -45,7 +46,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "ag-charts-community": "~5.2.0",
+    "ag-charts-community": "~5.3.0",
     "vue": "^3.0.0",
     "vue-class-component": ">= ^8.0.0-beta.3"
   },

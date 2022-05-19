@@ -4,7 +4,7 @@ import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, Series 
 import { extent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
-import { reactive, TypedEvent } from "../../../util/observable";
+import { TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
@@ -46,7 +46,7 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
 }
 
 export class ScatterSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export class ScatterSeries extends CartesianSeries {
@@ -65,123 +65,83 @@ export class ScatterSeries extends CartesianSeries {
     private nodeData: ScatterNodeDatum[] = [];
     private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
 
-    private labelData: MeasuredLabel[] = [];
     private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.group).selectAll<Text>();
 
     readonly marker = new CartesianSeriesMarker();
 
     readonly label = new Label();
 
-    private _fill: string | undefined = '#c16068';
     /**
      * @deprecated Use {@link marker.fill} instead.
      */
-    set fill(value: string | undefined) {
-        if (this._fill !== value) {
-            this._fill = value;
-            this.scheduleUpdate();
-        }
-    }
-    get fill(): string | undefined {
-        return this._fill;
-    }
+    fill: string | undefined = '#c16068';
 
-    private _stroke: string | undefined = '#874349';
     /**
      * @deprecated Use {@link marker.stroke} instead.
      */
-    set stroke(value: string | undefined) {
-        if (this._stroke !== value) {
-            this._stroke = value;
-            this.scheduleUpdate();
-        }
-    }
+    stroke: string | undefined = '#874349';
 
-    get stroke(): string | undefined {
-        return this._stroke;
-    }
-
-    private _strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.strokeWidth} instead.
      */
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.scheduleUpdate();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
-    private _fillOpacity: number = 1;
+    strokeWidth: number = 2;
     /**
      * @deprecated Use {@link marker.fillOpacity} instead.
      */
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleUpdate();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
+    fillOpacity: number = 1;
 
-    private _strokeOpacity: number = 1;
     /**
      * @deprecated Use {@link marker.strokeOpacity} instead.
      */
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleUpdate();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
+    strokeOpacity: number = 1;
 
     onHighlightChange() {
         this.updateMarkerNodes();
     }
 
-    @reactive('layoutChange') title?: string;
-    @reactive('dataChange') xKey: string = '';
-    @reactive('dataChange') yKey: string = '';
-    @reactive('dataChange') sizeKey?: string;
-    @reactive('dataChange') labelKey?: string;
+    title?: string = undefined;
+    labelKey?: string = undefined;
 
     xName: string = '';
     yName: string = '';
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
+    protected _xKey: string = '';
+    set xKey(value: string) {
+        this._xKey = value;
+        this.xData = [];
+    }
+    get xKey(): string {
+        return this._xKey;
+    }
+
+    protected _yKey: string = '';
+    set yKey(value: string) {
+        this._yKey = value;
+        this.yData = [];
+    }
+    get yKey(): string {
+        return this._yKey;
+    }
+
+    protected _sizeKey?: string = undefined;
+    set sizeKey(value: string | undefined) {
+        this._sizeKey = value;
+        this.sizeData = [];
+    }
+    get sizeKey(): string | undefined {
+        return this._sizeKey;
+    }
+
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
         super();
 
-        const { marker, label } = this;
-
-        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        marker.addEventListener('change', this.scheduleUpdate, this);
-
-        this.addPropertyListener('xKey', () => this.xData = []);
-        this.addPropertyListener('yKey', () => this.yData = []);
-        this.addPropertyListener('sizeKey', () => this.sizeData = []);
+        const { label } = this;
 
         label.enabled = false;
-        label.addEventListener('change', this.scheduleUpdate, this);
-        label.addEventListener('dataChange', this.scheduleData, this);
-    }
-
-    onMarkerShapeChange() {
-        this.markerSelection = this.markerSelection.setData([]);
-        this.markerSelection.exit.remove();
-
-        this.fireEvent({ type: 'legendChange' });
     }
 
     setColors(fills: string[], strokes: string[]) {
@@ -192,7 +152,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey, sizeKey, labelKey, xAxis, yAxis, marker, label } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 
         if (!xAxis || !yAxis) {
             return false;
@@ -210,24 +170,14 @@ export class ScatterSeries extends CartesianSeries {
 
         this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
 
-        const font = label.getFont();
-        this.labelData = labelKey ? this.validData.map((d) => {
-            const text = String(d[labelKey]);
-            const size = HdpiCanvas.getTextSize(text, font);
-            return {
-                text,
-                ...size
-            };
-        }) : [];
-
         this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x', xAxis);
+            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), xAxis);
         } else {
             this.xDomain = this.xData;
         }
         if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), 'y', yAxis);
+            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), yAxis);
         } else {
             this.yDomain = this.yData;
         }
@@ -264,9 +214,9 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     createNodeData(): ScatterNodeDatum[] {
-        const { chart, data, visible, xAxis, yAxis } = this;
+        const { chart, data, visible, xAxis, yAxis, label, labelKey } = this;
 
-        if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
+        if (!(chart && data && visible && xAxis && yAxis)) {
             return [];
         }
 
@@ -281,6 +231,7 @@ export class ScatterSeries extends CartesianSeries {
 
         sizeScale.range = [marker.size, marker.maxSize];
 
+        const font = label.getFont();
         for (let i = 0; i < xData.length; i++) {
             const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
 
@@ -295,12 +246,18 @@ export class ScatterSeries extends CartesianSeries {
                 continue;
             }
 
+            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const size = HdpiCanvas.getTextSize(text, font);
+
             nodeData.push({
                 series: this,
                 datum: validData[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
-                label: this.labelData[i]
+                label: {
+                    text,
+                    ...size,
+                },
             });
         }
 
@@ -308,17 +265,15 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         this.updateSelections();
         this.updateNodes();
     }
 
     private updateSelections() {
-        if (!this.nodeDataPending) {
+        if (!this.nodeDataRefresh) {
             return;
         }
-        this.nodeDataPending = false;
+        this.nodeDataRefresh = false;
 
         this.createNodeData();
         this.updateMarkerSelection();
@@ -524,7 +479,7 @@ export class ScatterSeries extends CartesianSeries {
             title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
-    if (data && data.length && xKey && yKey) {
+        if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
                 itemId: undefined,

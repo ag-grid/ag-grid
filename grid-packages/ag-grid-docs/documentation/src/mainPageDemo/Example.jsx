@@ -21,7 +21,17 @@ import {SideBarModule} from "@ag-grid-enterprise/side-bar";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {SparklinesModule} from "@ag-grid-enterprise/sparklines";
 import {booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months} from "./consts"
-import {pseudoRandom, suppressColumnMoveAnimation,sharedNumberParser, numberParser, booleanComparator, booleanCleaner, currencyFormatter, axisLabelFormatter, formatThousands} from "./utils";
+import {
+    pseudoRandom,
+    suppressColumnMoveAnimation,
+    sharedNumberParser,
+    numberParser,
+    booleanComparator,
+    booleanCleaner,
+    currencyFormatter,
+    axisLabelFormatter,
+    formatThousands
+} from "./utils";
 import {PersonFloatingFilterComponent} from "./PersonFloatingFilterComponent";
 import {PersonFilter} from "./PersonFilter";
 import {CountryFloatingFilterComponent} from "./CountryFloatingFilterComponent";
@@ -171,6 +181,7 @@ const mobileDefaultCols = [
         headerName: "Country", field: "country", width: 150, editable: true,
         cellRenderer: 'countryCellRenderer',
         cellClass: 'vAlign',
+        cellEditorPopup: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
@@ -282,6 +293,7 @@ const desktopDefaultCols = [
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: 'countryCellRenderer',
+                cellEditorPopup: true,
                 suppressFillHandle: true,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
@@ -569,8 +581,6 @@ const Example = () => {
             ratingRenderer: ratingRenderer,
             ratingFilterRenderer: ratingFilterRenderer
         },
-        defaultCsvExportParams: defaultExportParams,
-        defaultExcelExportParams: defaultExportParams,
         defaultColDef: {
             minWidth: 50,
             sortable: true,
@@ -1325,6 +1335,8 @@ const Example = () => {
                             gridOptions={gridOptions}
                             columnDefs={columnDefs}
                             rowData={rowData}
+                            defaultCsvExportParams={defaultExportParams}
+                            defaultExcelExportParams={defaultExportParams}
                         />
                     </div>
                 </section>

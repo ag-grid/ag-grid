@@ -60,7 +60,11 @@
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
-    "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+    "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "suppressCopySingleCellRanges": {
+    "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressLastEmptyLineOnPaste": {
@@ -713,7 +717,9 @@
   },
   "rowModelType": {
     "description": "/** Sets the row model type. Default: `clientSide` */",
-    "type": { "returnType": "string" }
+    "type": {
+      "returnType": "'clientSide' | 'infinite' | 'viewport' | 'serverSide'"
+    }
   },
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",
@@ -1201,11 +1207,11 @@
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
-    "description": "/** Allows you to set the ID for a particular row based on the data and enables immutableData. */",
+    "description": "/** Allows setting the ID for a particular row node based on the data. */",
     "type": { "returnType": "GetRowIdFunc" }
   },
   "resetRowDataOnUpdate": {
-    "description": "/** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */",
+    "description": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "processRowPostCreate": {
@@ -2090,7 +2096,7 @@
     "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "onRowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
+    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"
@@ -2098,7 +2104,7 @@
     "meta": { "isEvent": true, "name": "onRowDataUpdated" }
   },
   "rowDataUpdated": {
-    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
+    "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"

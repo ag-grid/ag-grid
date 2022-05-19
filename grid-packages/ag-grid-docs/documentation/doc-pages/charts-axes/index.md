@@ -22,7 +22,7 @@ Each type is tailored to be used with certain types of data. An axis can be posi
 
 The category axis is meant to be used with relatively small datasets of discrete values or categories, such as sales per product, person or quarter, where _product_, _person_ and _quarter_ are categories.
 
-The category axis renders a [tick](#axis-ticks), a [label](#axis-labels) and a [grid line](#axis-grid-lines) for each category, and spaces out all ticks evenly.
+The category axis attempts to render a [tick](#axis-ticks), a [label](#axis-labels) and a [grid line](#axis-grid-lines) for each category, and spaces out all ticks evenly.
 
 The category axis is used as the x-axis by default, positioned at the bottom of a chart.
 
@@ -39,7 +39,7 @@ The simplest category axis config looks like this:
 
 The number axis is meant to be used as a value axis. While categories are spaced out evenly, the distance between values depends on their magnitude.
 
-Instead of using one tick per value, the number axis will determine the range of all values, round it up and try to segment the rounded range with 10 evenly spaced ticks (unless you configure it differently).
+Instead of using one tick per value, the number axis will determine the range of all values, round it up and try to segment the rounded range with evenly spaced ticks.
 
 The number axis is used as the y-axis by default, positioned to the left a chart.
 
@@ -66,9 +66,9 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, the `log` axis renders 10 ticks (and grid lines) per order of magnitude. If your range is wide
-enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
-config might be necessary:
+By default, the `log` axis attempts to render 10 ticks (and grid lines) per order of magnitude, depending
+on available space. If your range is wide enough, you may start getting too many ticks, in which case
+using a smaller value for the `tick: { count: xxx }` config might be necessary:
 
 ```js
 {
@@ -129,24 +129,56 @@ Please see the [API reference](#reference-axis.title) for axis title styling opt
 
 ## Axis Ticks
 
-Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals (10 by default, giving 11 ticks in total).
+Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals depending on the available rendering space.
 
 The `width`, `size` and `color` of chart axis ticks can be configured as explained in the [API reference](#reference-axis.tick) below. These configs apply to all axis types.
 
-With number and time axes you can additionally set the `count` property:
+With number and time axes you can additionally set the `count` property - this will override the dynamic
+calculation based upon available rendering space:
 
 - In number axes the `count` means the desired number of ticks for the axis to use. Note that this value only serves as a hint and doesn't guarantee that this number of ticks is going to be used.
 - In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
 
 The example below demonstrates how the `count` property of the number axis can be used to reduce or increase the amount of ticks.
 
-### Example: Axis Ticks
-
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 
 ## Axis Labels
 
-The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding` and `rotation` properties respectively.
+The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding`, `rotation` and `autoRotate` properties respectively.
+
+### Label Rotation & Skipping
+
+Label rotation allows a trade-off to be made between space occupied by the axis, series area, and readability of the axis
+labels.
+
+Three rotation approaches are available:
+- No rotation. X-axis labels are parallel to the axis, Y-axis labels are perpendicular.
+- Setting a fixed rotation from the axis via the `rotation` property.
+- Enabling automatic rotation via the `autoRotate` property, and optionally specifying a rotation angle via the
+  `autoRotateAngle` property. Rotation is applied if any label will be wider than the gap between ticks.
+
+Label skipping is performed automatically when there is a high likelihood of collisions.
+
+[[note]]
+| Label skipping isn't guaranteed to avoid overlapping labels, but will significantly reduce the chance
+| of this happening out-of-the-box. The more uniform the size of labels, the more accurate it will be.
+
+If `autoRotate` is enabled, rotation will be attempted first to find a label fit, before label skipping applies.
+Category axes have `autoRotate` enabled by default with the default `autoRotateAngle` of `335`.
+
+The following example demonstrates label rotation and skipping:
+- There is a grab handle in the bottom right to allow resizing of the chart to see how labels change with available
+  space.
+- Initially both axes have defaults applied. The X-axis is a category axis so `autoRotate` is enabled by default.
+- The first row of buttons at the top change the configuration of both axes to allow all rotation behaviours to be
+  viewed.
+- The second row of buttons allow switching between X-axis types and labels.
+
+<chart-example title='Axis Label Rotation & Skipping' name='axis-label-rotation' type='generated'></chart-example>
+
+
+### Label Formatting
 
 A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision, for example.
 
@@ -156,8 +188,6 @@ A label formatter function receives a single `params` object which contains:
 - the `index` of the label in the data array
 - the number of `fractionDigits`, if the value is a number
 - the default label `formatter`, if the axis is a time axis
-
-### Example: Label Formatter
 
 For example, to add `'%'` units next to number values, you can use the following formatter function:
 
@@ -169,7 +199,7 @@ formatter: function(params) {
 
 <chart-example title='Axis Label Formatter' name='axis-label-formatter' type='generated'></chart-example>
 
-### Number Label Format String
+#### Number Label Format String
 
 For number axes, a format string can be provided, which will be used to format the numbers for display as axis labels.
 The format string may contain the following directives, which reflect those from Python's <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language" target="_blank">format specification</a>:
@@ -216,8 +246,6 @@ Where:
 |If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
 | so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
 
-### Example: Number Label Format
-
 The `label` config of the left axis in the example below uses the `'🌧️ #{0>2.1f} °C'` specifier string for the `format` property to format numbers as integers padded to left with zeros to achieve a consistent 2-digit width.
 
 Notice that we wrapped the number format in `#{}` since we want to prepend the formatted value with the weather icon
@@ -225,7 +253,7 @@ and to append the units used at the end.
 
 <chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
 
-### Example: Number Currency Format
+#### Number Currency Format
 
 Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
 - the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
@@ -248,7 +276,7 @@ and replace the SI units with the currency ones `.replace('k', 'K').replace('G',
 
 <chart-example title='Number Axis Currency Format' name='number-axis-currency-format' type='generated'></chart-example>
 
-### Time Label Format String
+#### Time Label Format String
 
 For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 
@@ -289,7 +317,7 @@ For `%W`, all days in a new year preceding the first Monday are considered to be
 
 For `%V`, per the strftime man page:
 
-| In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week. Week 1 is the first week where four or more days fall within the new year (or, synonymously, week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).
+In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week. Week 1 is the first week where four or more days fall within the new year (or, synonymously, week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).
 
 The `%` sign indicating a directive may be immediately followed by a padding modifier:
 
@@ -298,8 +326,6 @@ The `%` sign indicating a directive may be immediately followed by a padding mod
 1. (nothing) - disable padding
 
 If no padding modifier is specified, the default is `0` for all directives except `%e`, which defaults to `_`.
-
-### Example: Time Label Format
 
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 

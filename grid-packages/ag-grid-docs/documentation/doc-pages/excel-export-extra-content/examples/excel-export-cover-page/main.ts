@@ -52,22 +52,22 @@ function onBtExport() {
   spreadsheets.push(
     gridOptions.api!.getSheetDataForExcel({
       prependContent: [
-        [
-          {
+        {
+          cells: [{
             styleId: 'coverHeading',
             mergeAcross: 3,
             data: { value: 'AG Grid', type: 'String' },
-          },
-        ],
-        [
-          {
+          }],
+        },
+        {
+          cells: [{
             styleId: 'coverHeading',
             mergeAcross: 3,
             data: { value: '', type: 'String' },
-          },
-        ],
-        [
-          {
+          }],
+        },
+        {
+          cells: [{
             styleId: 'coverText',
             mergeAcross: 3,
             data: {
@@ -75,18 +75,18 @@ function onBtExport() {
                 'Data shown lists Olympic medal winners for years 2000-2012',
               type: 'String',
             },
-          },
-        ],
-        [
-          {
+          }],
+        },
+        {
+          cells: [{
             styleId: 'coverText',
             data: {
               value:
                 'This data includes a row for each participation record - athlete name, country, year, sport, count of gold, silver, bronze medals won during the sports event',
               type: 'String',
             },
-          },
-        ],
+          }],
+        },
       ],
       processHeaderCallback: () => '',
       sheetName: 'cover',

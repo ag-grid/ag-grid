@@ -109,11 +109,12 @@ export class PieChartProxy extends PolarChartProxy {
                 pieSeries.callout.colors = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
-                chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                    if (opaqueSeries) {
-                        opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
-                    }
-                });
+                // @todo(AG-6790): Revisit approach here?
+                // chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                //     if (opaqueSeries) {
+                //         opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
+                //     }
+                // });
             }
             chart.tooltip.delay = 500;
 

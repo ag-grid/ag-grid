@@ -1786,7 +1786,7 @@ export class GridApi {
         return res;
     }
 
-    /** Enable or disable the delta sort grid option. */
+    /** Sets the `deltaSort` property */
     public setDeltaSort(enable: boolean): void {
         this.gridOptionsWrapper.setProperty('deltaSort', enable);
     }

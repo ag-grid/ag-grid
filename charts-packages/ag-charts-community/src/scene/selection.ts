@@ -3,9 +3,7 @@ import { Scene } from "./scene";
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
-type NodeCallback<G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void;
 type NodeSelector<N, G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N;
-type NodeSelectorAll<N, G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[];
 
 export class EnterNode {
 

@@ -5,16 +5,17 @@ import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
-import { Legend, LegendClickEvent, LegendDatum } from "./legend";
+import { Legend, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
-import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/observable";
+import { Observable, SourceEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { createId } from "../util/id";
 import { PlacedLabel, placeLabels, PointLabelDatum } from "../util/labelPlacement";
 import { AgChartOptions } from "./agChartOptions";
+import { debouncedAnimationFrame, debouncedCallback } from "../util/render";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -150,17 +151,17 @@ export class ChartTooltip extends Observable {
 
     private observer?: IntersectionObserver;
 
-    @reactive() enabled: boolean = true;
+    enabled: boolean = true;
 
-    @reactive() class: string = Chart.defaultTooltipClass;
+    class: string = Chart.defaultTooltipClass;
 
-    @reactive() delay: number = 0;
+    delay: number = 0;
 
     /**
      * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
      * Only has effect on series with markers.
      */
-    @reactive() tracking: boolean = true;
+    tracking: boolean = true;
 
     constructor(chart: Chart, document: Document) {
         super();
@@ -288,6 +289,16 @@ export class ChartTooltip extends Observable {
     }
 }
 
+/** Types of chart-update, in pipeline execution order. */
+export enum ChartUpdateType {
+    FULL,
+    PROCESS_DATA,
+    PERFORM_LAYOUT,
+    SERIES_UPDATE,
+    SCENE_RENDER,
+    NONE,
+}
+
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
@@ -301,6 +312,15 @@ export abstract class Chart extends Observable {
     protected captionAutoPadding = 0; // top padding only
 
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
+
+    private _debug = false;
+    set debug(value: boolean) {
+        this._debug = value;
+        this.scene.debug.consoleLog = value;
+    }
+    get debug() {
+        return this._debug;
+    }
 
     private _container: HTMLElement | undefined | null = undefined;
     set container(value: HTMLElement | undefined | null) {
@@ -334,8 +354,7 @@ export abstract class Chart extends Observable {
     set width(value: number) {
         this.autoSize = false;
         if (this.width !== value) {
-            this.scene.resize(value, this.height);
-            this.fireEvent({ type: 'layoutChange' });
+            this.resize(value, this.height);
         }
     }
     get width(): number {
@@ -345,36 +364,36 @@ export abstract class Chart extends Observable {
     set height(value: number) {
         this.autoSize = false;
         if (this.height !== value) {
-            this.scene.resize(this.width, value);
-            this.fireEvent({ type: 'layoutChange' });
+            this.resize(this.width, value);
         }
     }
     get height(): number {
         return this.scene.height;
     }
 
+    private _lastAutoSize: [number, number];
     protected _autoSize = false;
     set autoSize(value: boolean) {
-        if (this._autoSize !== value) {
-            this._autoSize = value;
-            const { style } = this.element;
-            if (value) {
-                const chart = this; // capture `this` for IE11
-                SizeMonitor.observe(this.element, size => {
-                    if (size.width !== chart.width || size.height !== chart.height) {
-                        chart.scene.resize(size.width, size.height);
-                        chart.fireEvent({ type: 'layoutChange' });
-                    }
-                });
-                style.display = 'block';
-                style.width = '100%';
-                style.height = '100%';
-            } else {
-                SizeMonitor.unobserve(this.element);
-                style.display = 'inline-block';
-                style.width = 'auto';
-                style.height = 'auto';
+        if (this._autoSize === value) {
+            return;
+        }
+
+        this._autoSize = value;
+
+        const { style } = this.element;
+        if (value) {
+            style.display = 'block';
+            style.width = '100%';
+            style.height = '100%';
+
+            if (!this._lastAutoSize) {
+                return;
             }
+            this.resize(this._lastAutoSize[0], this._lastAutoSize[1]);
+        } else {
+            style.display = 'inline-block';
+            style.width = 'auto';
+            style.height = 'auto';
         }
     }
     get autoSize(): boolean {
@@ -388,8 +407,36 @@ export abstract class Chart extends Observable {
     }
 
     padding = new Padding(20);
-    @reactive('layoutChange') title?: Caption;
-    @reactive('layoutChange') subtitle?: Caption;
+
+    _title?: Caption = undefined;
+    set title(caption: Caption | undefined) {
+        const { root } = this.scene;
+        if (this._title != null) {
+            root?.removeChild(this._title.node);
+        }
+        this._title = caption;
+        if (this._title != null) {
+            root?.appendChild(this._title.node);
+        }
+    }
+    get title() {
+        return this._title;
+    }
+    
+    _subtitle?: Caption = undefined;
+    set subtitle(caption: Caption | undefined) {
+        const { root } = this.scene;
+        if (this._subtitle != null) {
+            root?.removeChild(this._subtitle.node);
+        }
+        this._subtitle = caption;
+        if (this._subtitle != null) {
+            root?.appendChild(this._subtitle.node);
+        }
+    }
+    get subtitle() {
+        return this._subtitle;
+    }
 
     private static tooltipDocuments: Document[] = [];
 
@@ -402,21 +449,29 @@ export abstract class Chart extends Observable {
         background.fill = 'white';
         root.appendChild(background);
 
-        const element = this._element = document.createElement('div');
+        const element = this.element = document.createElement('div');
         element.setAttribute('class', 'ag-chart-wrapper');
 
-        const scene = new Scene(document);
-        this.scene = scene;
-        this.autoSize = true; // Triggers width/height calc - needs to happen before root group assignment.
-        scene.root = root;
-        scene.container = element;
+        this.scene = new Scene(document);
+        this.scene.debug.consoleLog = this._debug;
+        this.scene.root = root;
+        this.scene.container = element;
+        this.autoSize = true;
 
-        this.padding.addEventListener('layoutChange', this.scheduleLayout, this);
+        SizeMonitor.observe(this.element, size => {
+            const { width, height } = size;
+            this._lastAutoSize = [width, height];
 
-        const { legend } = this;
-        legend.addEventListener('layoutChange', this.scheduleLayout, this);
-        legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
-        legend.addPropertyListener('position', this.onLegendPositionChange, this);
+            if (!this.autoSize) {
+                return;
+            }
+
+            if (width === this.width && height === this.height) {
+                return;
+            }
+
+            this.resize(width, height);
+        });
 
         this.tooltip = new ChartTooltip(this, document);
         this.tooltip.addPropertyListener('class', () => this.tooltip.toggle());
@@ -429,14 +484,12 @@ export abstract class Chart extends Observable {
             Chart.tooltipDocuments.push(document);
         }
 
-        this.setupDomListeners(scene.canvas.element);
-
-        this.addPropertyListener('title', this.onCaptionChange);
-        this.addPropertyListener('subtitle', this.onCaptionChange);
-        this.addEventListener('layoutChange', this.scheduleLayout);
+        this.setupDomListeners(this.scene.canvas.element);
     }
 
     destroy() {
+        this._performUpdateType = ChartUpdateType.NONE;
+
         this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
@@ -445,28 +498,85 @@ export abstract class Chart extends Observable {
         this.scene.container = undefined;
     }
 
-    private onLegendPositionChange() {
-        this.legendAutoPadding.clear();
-        this.layoutPending = true;
+    private _performUpdateType: ChartUpdateType = ChartUpdateType.NONE;
+    get performUpdateType() {
+        return this._performUpdateType;
+    }
+    get updatePending(): boolean {
+        return this._performUpdateType !== ChartUpdateType.NONE;
+    }
+    private _lastPerformUpdateError?: Error;
+    get lastPerformUpdateError() {
+        return this._lastPerformUpdateError;
     }
 
-    private onCaptionChange(event: PropertyChangeEvent<this, Caption | undefined>) {
-        const { value, oldValue } = event;
-
-        if (oldValue) {
-            oldValue.removeEventListener('change', this.scheduleLayout, this);
-            this.scene.root!.removeChild(oldValue.node);
+    private firstRenderComplete = false;
+    private firstResizeReceived = false;
+    private performUpdateTrigger = debouncedCallback(({ count }) => {
+        try {
+            this.performUpdate(count);
+        } catch (error) {
+            this._lastPerformUpdateError = error;
+            if (this.debug) {
+                console.error(error);
+            }
         }
-        if (value) {
-            value.addEventListener('change', this.scheduleLayout, this);
-            this.scene.root!.appendChild(value.node);
+    });
+    public update(type = ChartUpdateType.FULL, opts?: { forceNodeDataRefresh: boolean }) {
+        const { forceNodeDataRefresh = false } = opts || {};
+
+        if (forceNodeDataRefresh) {
+            this.series.forEach(series => series.markNodeDataDirty());
+        }
+
+        if (type < this._performUpdateType) {
+            this._performUpdateType = type;
+            this.performUpdateTrigger.schedule();
+        }
+    }
+    private performUpdate(count: number) {
+        const { _performUpdateType: performUpdateType, firstRenderComplete, firstResizeReceived } = this;
+        const start = performance.now();
+
+        switch (performUpdateType) {
+            case ChartUpdateType.FULL:
+            case ChartUpdateType.PROCESS_DATA:
+                this.processData();
+            case ChartUpdateType.PERFORM_LAYOUT:
+                if (!firstRenderComplete && !firstResizeReceived) {
+                    if (this.debug) {
+                        console.log({firstRenderComplete, firstResizeReceived});
+                    }
+                    // Reschedule if canvas size hasn't been set yet to avoid a race.
+                    this._performUpdateType = ChartUpdateType.PERFORM_LAYOUT;
+                    this.performUpdateTrigger.schedule();
+                    break;
+                }
+
+                this.performLayout();
+            case ChartUpdateType.SERIES_UPDATE:
+                this.series.forEach(series => {
+                    series.update();
+                });
+            case ChartUpdateType.SCENE_RENDER:
+                this.scene.render();
+                this.firstRenderComplete = true;
+            case ChartUpdateType.NONE:
+                // Do nothing.
+                this._performUpdateType = ChartUpdateType.NONE;
+        }
+        const end = performance.now();
+
+        if (this.debug) {
+            console.log({
+                durationMs: Math.round((end - start)*100) / 100,
+                count,
+                performUpdateType: ChartUpdateType[performUpdateType],
+            });
         }
     }
 
-    protected _element: HTMLElement;
-    get element(): HTMLElement {
-        return this._element;
-    }
+    readonly element: HTMLElement;
 
     abstract get seriesRoot(): Node;
 
@@ -476,7 +586,6 @@ export abstract class Chart extends Observable {
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
         this._axes = values.filter(a => !a.linkedTo).concat(values.filter(a => a.linkedTo));
         this._axes.forEach(axis => this.attachAxis(axis));
-        this.axesChanged = true;
     }
     get axes(): ChartAxis[] {
         return this._axes;
@@ -499,17 +608,6 @@ export abstract class Chart extends Observable {
         return this._series;
     }
 
-    protected scheduleLayout() {
-        this.layoutPending = true;
-    }
-
-    private scheduleData() {
-        // To prevent the chart from thinking the cursor is over the same node
-        // after a change to data (the nodes are reused on data changes).
-        this.dehighlightDatum();
-        this.dataPending = true;
-    }
-
     addSeries(series: Series, before?: Series): boolean {
         const { series: allSeries, seriesRoot } = this;
         const canAdd = allSeries.indexOf(series) < 0;
@@ -525,8 +623,6 @@ export abstract class Chart extends Observable {
                 seriesRoot.append(series.group);
             }
             this.initSeries(series);
-            this.seriesChanged = true;
-            this.axesChanged = true;
 
             return true;
         }
@@ -539,17 +635,11 @@ export abstract class Chart extends Observable {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout, this);
-        series.addEventListener('dataChange', this.scheduleData, this);
-        series.addEventListener('legendChange', this.updateLegend, this);
         series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
     protected freeSeries(series: Series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout, this);
-        series.removeEventListener('dataChange', this.scheduleData, this);
-        series.removeEventListener('legendChange', this.updateLegend, this);
         series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
@@ -579,9 +669,6 @@ export abstract class Chart extends Observable {
 
                 allSeries.unshift(series);
             }
-
-            this.seriesChanged = true;
-            this.axesChanged = true;
         }
 
         return false;
@@ -594,7 +681,6 @@ export abstract class Chart extends Observable {
             this.series.splice(index, 1);
             this.freeSeries(series);
             this.seriesRoot.removeChild(series.group);
-            this.seriesChanged = true;
             return true;
         }
 
@@ -607,7 +693,6 @@ export abstract class Chart extends Observable {
             this.seriesRoot.removeChild(series.group);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
-        this.seriesChanged = true;
     }
 
     protected assignSeriesToAxes() {
@@ -623,8 +708,6 @@ export abstract class Chart extends Observable {
 
             axis.boundSeries = boundSeries;
         });
-
-        this.seriesChanged = false;
     }
 
     protected assignAxesToSeries(force: boolean = false) {
@@ -640,124 +723,56 @@ export abstract class Chart extends Observable {
         this.series.forEach(series => {
             series.directions.forEach(direction => {
                 const axisName = direction + 'Axis';
-                if (!(series as any)[axisName] || force) {
-                    const directionAxes = directionToAxesMap[direction];
-                    if (directionAxes) {
-                        const axis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
-                        if (axis) {
-                            (series as any)[axisName] = axis;
-                        }
-                    }
+                if ((series as any)[axisName] && !force) {
+                    return;
                 }
+                const directionAxes = directionToAxesMap[direction];
+                if (!directionAxes) {
+                    return;
+                }
+                (series as any)[axisName] = this.findMatchingAxis(directionAxes, series.getKeys(direction));
             });
         });
-
-        this.axesChanged = false;
     }
 
     private findMatchingAxis(directionAxes: ChartAxis[], directionKeys?: string[]): ChartAxis | undefined {
-        for (let i = 0; i < directionAxes.length; i++) {
-            const axis = directionAxes[i];
+        for (const axis of directionAxes) {
             const axisKeys = axis.keys;
 
             if (!axisKeys.length) {
                 return axis;
-            } else if (directionKeys) {
-                for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
-                        return axis;
-                    }
+            }
+
+            if (!directionKeys) {
+                continue;
+            }
+            
+            for (const directionKey of directionKeys) {
+                if (axisKeys.indexOf(directionKey) >= 0) {
+                    return axis;
                 }
             }
         }
     }
 
-    protected _axesChanged = false;
-    protected set axesChanged(value: boolean) {
-        this._axesChanged = value;
-    }
-    protected get axesChanged(): boolean {
-        return this._axesChanged;
-    }
+    private resize(width: number, height: number) {
+        if (this.scene.resize(width, height)) {
+            this.firstResizeReceived = true;
 
-    protected _seriesChanged = false;
-    protected set seriesChanged(value: boolean) {
-        this._seriesChanged = value;
-        if (value) {
-            this.dataPending = true;
+            this.background.width = this.width;
+            this.background.height = this.height;
+    
+            this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
         }
-    }
-    protected get seriesChanged(): boolean {
-        return this._seriesChanged;
-    }
-
-    protected layoutCallbackId: number = 0;
-    set layoutPending(value: boolean) {
-        if (value) {
-            if (!(this.layoutCallbackId || this.dataPending)) {
-                this.layoutCallbackId = requestAnimationFrame(this._performLayout);
-                this.series.forEach(s => s.nodeDataPending = true);
-            }
-        } else if (this.layoutCallbackId) {
-            cancelAnimationFrame(this.layoutCallbackId);
-            this.layoutCallbackId = 0;
-        }
-    }
-    /**
-     * Only `true` while we are waiting for the layout to start.
-     * This will be `false` if the layout has already started and is ongoing.
-     */
-    get layoutPending(): boolean {
-        return !!this.layoutCallbackId;
-    }
-
-    private readonly _performLayout = () => {
-        this.layoutCallbackId = 0;
-
-        this.background.width = this.width;
-        this.background.height = this.height;
-
-        this.performLayout();
-
-        if (!this.layoutPending) {
-            this.fireEvent({ type: 'layoutDone' });
-        }
-    }
-
-    private dataCallbackId: number = 0;
-    set dataPending(value: boolean) {
-        if (this.dataCallbackId) {
-            clearTimeout(this.dataCallbackId);
-            this.dataCallbackId = 0;
-        }
-        if (value) {
-            this.dataCallbackId = window.setTimeout(() => {
-                this.dataPending = false;
-                this.processData();
-            }, 0);
-        }
-    }
-    get dataPending(): boolean {
-        return !!this.dataCallbackId;
     }
 
     processData(): void {
-        this.layoutPending = false;
-
-        if (this.axesChanged) {
-            this.assignAxesToSeries(true);
-            this.assignSeriesToAxes();
-        }
-
-        if (this.seriesChanged) {
-            this.assignSeriesToAxes();
-        }
+        this.assignAxesToSeries(true);
+        this.assignSeriesToAxes();
 
         this.series.forEach(s => s.processData());
 
-        this.updateLegend(); // sets legend data which schedules a layout
-
-        this.layoutPending = true;
+        this.updateLegend();
     }
 
     private nodeData: Map<Series, readonly SeriesNodeDatum[]> = new Map();
@@ -804,33 +819,8 @@ export abstract class Chart extends Observable {
 
     abstract performLayout(): void;
 
-    private updateCallbackId: number = 0;
-    set updatePending(value: boolean) {
-        if (this.updateCallbackId) {
-            clearTimeout(this.updateCallbackId);
-            this.updateCallbackId = 0;
-        }
-        if (value && !this.layoutPending) {
-            this.updateCallbackId = window.setTimeout(() => {
-                this.update();
-            }, 0);
-        }
-    }
-    get updatePending(): boolean {
-        return !!this.updateCallbackId;
-    }
-
-    update() {
-        this.updatePending = false;
-        this.series.forEach(series => {
-            if (series.updatePending) {
-                series.update();
-            }
-        });
-    }
-
     protected positionCaptions() {
-        const { title, subtitle } = this;
+        const { _title: title, _subtitle: subtitle } = this;
 
         let titleVisible = false;
         let subtitleVisible = false;
@@ -1075,10 +1065,15 @@ export abstract class Chart extends Observable {
             if (this.tooltip.delay > 0) {
                 this.tooltip.toggle(false);
             }
-            this.handleTooltip(event);
+            this.lastTooltipEvent = event;
+            this.handleTooltipTrigger.schedule();
         }
     }
 
+    private lastTooltipEvent?: MouseEvent = undefined;
+    private handleTooltipTrigger = debouncedAnimationFrame(({ count }) => {
+        this.handleTooltip(this.lastTooltipEvent!);
+    });
     protected handleTooltip(event: MouseEvent) {
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
         const { offsetX, offsetY } = event;
@@ -1137,18 +1132,20 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(event: MouseEvent) { }
-    protected onMouseUp(event: MouseEvent) { }
+    protected onMouseDown(_event: MouseEvent) { }
+    protected onMouseUp(_event: MouseEvent) { }
 
-    protected onMouseOut(event: MouseEvent) {
+    protected onMouseOut(_event: MouseEvent) {
         this.tooltip.toggle(false);
     }
 
     protected onClick(event: MouseEvent) {
         if (this.checkSeriesNodeClick()) {
+            this.update(ChartUpdateType.SERIES_UPDATE);
             return;
         }
         if (this.checkLegendClick(event)) {
+            this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
             return;
         }
         this.fireEvent<ChartClickEvent>({
@@ -1178,19 +1175,13 @@ export abstract class Chart extends Observable {
 
         if (datum) {
             const { id, itemId, enabled } = datum;
-            const series = find(this.series, series => series.id === id);
+            const series = find(this.series, (s) => s.id === id);
 
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
                     this.tooltip.toggle(false);
                 }
-                this.legend.fireEvent<LegendClickEvent>({
-                    type: 'click',
-                    event,
-                    itemId,
-                    enabled: !enabled
-                });
                 return true;
             }
         }
@@ -1213,17 +1204,17 @@ export abstract class Chart extends Observable {
 
         if (!pointerInsideLegend && this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             this.dehighlightDatum();
             return;
         }
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'pointer';
+            this.element.style.cursor = 'pointer';
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
+            this.element.style.cursor = 'default';
         }
 
         this.pointerInsideLegend = pointerInsideLegend;
@@ -1252,7 +1243,10 @@ export abstract class Chart extends Observable {
             (this.highlightedDatum && oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
                     this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
-            this.series.forEach(s => s.updatePending = true);
+            this.highlightedDatum.series.onHighlightChange();
+            oldHighlightedDatum?.series.onHighlightChange();
+
+            this.update(ChartUpdateType.SERIES_UPDATE);
         }
     }
 
@@ -1281,15 +1275,21 @@ export abstract class Chart extends Observable {
     highlightedDatum?: SeriesNodeDatum;
 
     highlightDatum(datum: SeriesNodeDatum): void {
-        this.scene.canvas.element.style.cursor = datum.series.cursor;
+        this.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
-        this.series.forEach(s => s.updatePending = true);
+
+        const { series } = this.highlightedDatum;
+        series.onHighlightChange();
+        this.update(ChartUpdateType.SERIES_UPDATE);
     }
 
     dehighlightDatum(): void {
         if (this.highlightedDatum) {
+            const { series } = this.highlightedDatum;
             this.highlightedDatum = undefined;
-            this.series.forEach(s => s.updatePending = true);
+
+            series.onHighlightChange();
+            this.update(ChartUpdateType.SERIES_UPDATE);
         }
     }
 }

@@ -2,7 +2,7 @@ import { ChartModel } from "@ag-grid-community/core";
 
 // the line below is automatically modified during releases - do not modify
 // (see scripts/release/updateChartModel.js)
-export const CURRENT_VERSION = "27.2.1";
+export const CURRENT_VERSION = "27.3.0";
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     if (model.version == null) {
@@ -20,12 +20,12 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
 
 type VersionParts = { major: number, minor: number, patch: number };
 function versionParts(version: string): VersionParts {
-    if (!/^([:digits:]{1,2}\.){2}[:digits:]{1}$/.test(version)) {
+    const split = typeof version === 'string' ?
+        version.split('.').map(v => Number(v)) : 
+        [];
+    if (split.length !== 3 || split.some((v) => isNaN(v))) {
         throw new Error('AG Grid - Illegal version string: ' + version);
     }
-
-    const split = version.split('.')
-        .map(v => Number(v));
 
     return {
         major: split[0],

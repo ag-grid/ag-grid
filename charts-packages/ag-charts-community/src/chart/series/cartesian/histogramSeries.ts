@@ -14,7 +14,7 @@ import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { extent } from "../../../util/array";
-import { reactive, TypedEvent } from "../../../util/observable";
+import { TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isContinuous } from "../../../util/value";
@@ -25,7 +25,7 @@ enum HistogramSeriesNodeTag {
 }
 
 class HistogramSeriesLabel extends Label {
-    @reactive('change') formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: number }) => string = undefined;
 }
 
 const defaultBinCount = 10;
@@ -110,7 +110,7 @@ export class HistogramBin {
 }
 
 export class HistogramSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export class HistogramSeries extends CartesianSeries {
@@ -138,20 +138,19 @@ export class HistogramSeries extends CartesianSeries {
 
     tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
-    @reactive('dataChange') fill: string | undefined = undefined;
-    @reactive('dataChange') stroke: string | undefined = undefined;
+    fill: string | undefined = undefined;
+    stroke: string | undefined = undefined;
 
-    @reactive('layoutChange') fillOpacity = 1;
-    @reactive('layoutChange') strokeOpacity = 1;
+    fillOpacity = 1;
+    strokeOpacity = 1;
 
-    @reactive('update') lineDash?: number[] = [0];
-    @reactive('update') lineDashOffset: number = 0;
+    lineDash?: number[] = [0];
+    lineDashOffset: number = 0;
 
     constructor() {
         super();
 
         this.label.enabled = false;
-        this.label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     directionKeys = {
@@ -181,118 +180,25 @@ export class HistogramSeries extends CartesianSeries {
         return values;
     }
 
-    protected _xKey: string = '';
-    set xKey(value: string) {
-        if (this._xKey !== value) {
-            this._xKey = value;
-            this.scheduleData();
-        }
-    }
-
-    get xKey(): string {
-        return this._xKey;
-    }
-
-    private _areaPlot: boolean = false;
-    set areaPlot(c: boolean) {
-        this._areaPlot = c;
-
-        this.scheduleData();
-    }
-
-    get areaPlot(): boolean {
-        return this._areaPlot;
-    }
-
-    private _bins: [number, number][] | undefined = undefined;
-    set bins(bins: [number, number][] | undefined) {
-        this._bins = bins;
-
-        this.scheduleData();
-    }
-
-    get bins(): [number, number][] | undefined {
-        return this._bins;
-    }
-
-    private _aggregation: HistogramAggregation = 'count';
-    set aggregation(aggregation: HistogramAggregation) {
-        this._aggregation = aggregation;
-
-        this.scheduleData();
-    }
-
-    get aggregation(): HistogramAggregation {
-        return this._aggregation;
-    }
-
-    private _binCount: number | undefined = undefined;
-    set binCount(binCount: number | undefined) {
-        this._binCount = binCount;
-
-        this.scheduleData();
-    }
-
-    get binCount(): number | undefined {
-        return this._binCount;
-    }
-
-    protected _xName: string = '';
-    set xName(value: string) {
-        if (this._xName !== value) {
-            this._xName = value;
-            this.scheduleUpdate();
-        }
-    }
-
-    get xName(): string {
-        return this._xName;
-    }
-
+    xKey: string = '';
+    areaPlot: boolean = false;
+    bins: [number, number][] | undefined = undefined;
+    aggregation: HistogramAggregation = 'count';
+    binCount: number | undefined = undefined;
+    xName: string = '';
     protected _yKey: string = '';
     set yKey(yKey: string) {
         this._yKey = yKey;
         this.seriesItemEnabled = true;
-        this.scheduleData();
     }
 
     get yKey(): string {
         return this._yKey;
     }
 
-    protected _yName: string = '';
-    set yName(values: string) {
-        this._yName = values;
-        this.scheduleData();
-    }
-
-    get yName(): string {
-        return this._yName;
-    }
-
-    private _strokeWidth: number = 1;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.scheduleUpdate();
-        }
-    }
-
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
-    private _shadow?: DropShadow;
-    set shadow(value: DropShadow | undefined) {
-        if (this._shadow !== value) {
-            this._shadow = value;
-            this.scheduleUpdate();
-        }
-    }
-
-    get shadow(): DropShadow | undefined {
-        return this._shadow;
-    }
+    yName: string = '';
+    strokeWidth: number = 1;
+    shadow?: DropShadow = undefined;
 
     onHighlightChange() {
         this.updateRectNodes();
@@ -308,7 +214,7 @@ export class HistogramSeries extends CartesianSeries {
     // During processData phase, used to unify different ways of the user specifying
     // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     private deriveBins(): [number, number][] {
-        const { bins, binCount } = this;
+        const { bins } = this;
 
         if (!this.data) {
             return [];
@@ -319,7 +225,7 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const xData = this.data.map(datum => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(extent(xData, isContinuous), 'x');
+        const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
         const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
@@ -366,7 +272,7 @@ export class HistogramSeries extends CartesianSeries {
             bins[currentBin].addDatum(datum);
         }
 
-        bins.forEach(b => b.calculateAggregatedValue(this._aggregation, this.yKey));
+        bins.forEach(b => b.calculateAggregatedValue(this.aggregation, this.yKey));
 
         return bins;
     }
@@ -385,15 +291,13 @@ export class HistogramSeries extends CartesianSeries {
         const yData = this.binnedData.map(b => b.getY(this.areaPlot));
         const yMinMax = extent(yData, isContinuous);
 
-        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
+        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
 
         const firstBin = this.binnedData[0];
         const lastBin = this.binnedData[this.binnedData.length - 1];
         const xMin = firstBin.domain[0];
         const xMax = lastBin.domain[1];
         this.xDomain = [xMin, xMax];
-
-        this.fireEvent({ type: 'dataProcessed' });
 
         return true;
     }
@@ -417,17 +321,15 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         this.updateSelections();
         this.updateNodes();
     }
 
     updateSelections() {
-        if (!this.nodeDataPending) {
+        if (!this.nodeDataRefresh) {
             return;
         }
-        this.nodeDataPending = false;
+        this.nodeDataRefresh = false;
 
         const nodeData = this.createNodeData();
 
@@ -669,6 +571,5 @@ export class HistogramSeries extends CartesianSeries {
         if (itemId === this.yKey) {
             this.seriesItemEnabled = enabled;
         }
-        this.scheduleData();
     }
 }

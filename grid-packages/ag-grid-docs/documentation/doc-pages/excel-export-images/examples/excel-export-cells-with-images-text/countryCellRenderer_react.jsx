@@ -10,10 +10,11 @@ export default class ControlsComponent extends Component {
     }
 
     render() {
+        const { data, context } = this.props;
         return (
-            <React.Fragment>
-                <img alt={this.props.data.country} src={this.props.context.base64flags[this.props.context.countryCodes[this.props.data.country]]} />
-            </React.Fragment>
+            <div>
+                <img alt={data.country} src={context.base64flags[context.countryCodes[data.country]]} /> {data.country}
+            </div>
         );
     }
 };

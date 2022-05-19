@@ -1,11 +1,12 @@
 {
   "name": "ag-grid-angular",
-  "version": "27.2.1",
+  "version": "27.3.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build --prod && npm run hash",
+    "build-prod": "npm run build",
     "build-cjs": "npm run build",
     "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
@@ -42,7 +43,7 @@
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "12.20.20",
-    "ag-grid-community": "~27.2.0",
+    "ag-grid-community": "~27.3.0",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

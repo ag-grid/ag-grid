@@ -33,7 +33,7 @@ export class NumberAxis extends ChartAxis {
         if (this._nice !== value) {
             this._nice = value;
             if (value && this.scale.nice) {
-                this.scale.nice(this.tick.count);
+                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
             }
         }
     }
@@ -67,7 +67,7 @@ export class NumberAxis extends ChartAxis {
 
             (this.scale as ContinuousScale).clamp = true;
             if (this.nice && this.scale.nice) {
-                this.scale.nice(this.tick.count);
+                this.scale.nice(typeof this.calculatedTickCount === 'number' ? this.calculatedTickCount : undefined);
             }
         }
     }

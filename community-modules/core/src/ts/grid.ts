@@ -366,22 +366,29 @@ export class GridCoreCreator {
 
         if (exists(rowModelClass)) { return rowModelClass; }
 
-        if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-            console.error(`AG Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
+
+
+        if (ModuleRegistry.isPackageBased()) {
+            if ([Constants.ROW_MODEL_TYPE_VIEWPORT, Constants.ROW_MODEL_TYPE_SERVER_SIDE].includes(rowModelType))
+                // If package based only the enterprise row models could be missing.
+                console.error(`AG Grid: Row Model "${rowModelType}" not found. Please ensure the package 'ag-grid-enterprise' is imported. Please see: https://www.ag-grid.com/javascript-grid/packages/`);
+            else {
+                console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
+            }
+        } else {
+            if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
+                console.error(`AG Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+            } else if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
+                console.error(`AG Grid: Row Model "Viewport" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+            } else if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+                console.error(`AG Grid: Row Model "Server Side" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+            } else if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+                console.error(`AG Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} module is registered. Please see: https://www.ag-grid.com/javascript-grid/modules/`);
+            } else {
+                console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
+            }
         }
 
-        console.error('AG Grid: could not find matching row model for rowModelType ' + rowModelType);
-        if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            console.error(`AG Grid: Row Model "Viewport" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
-        }
-
-        if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            console.error(`AG Grid: Row Model "Server Side" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
-        }
-
-        if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.error(`AG Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
-        }
     }
 
 }

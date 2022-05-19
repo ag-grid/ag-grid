@@ -82,6 +82,7 @@
         },
         "clipboardDelimiter": {},
         "suppressCopyRowsToClipboard": {},
+        "suppressCopySingleCellRanges": {},
         "suppressLastEmptyLineOnPaste": {},
         "suppressClipboardPaste": {},
         "suppressClipboardApi": {},
@@ -690,8 +691,8 @@
         "groupAggFiltering": {},
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
-                "name": "Configuring Aggregation Functions",
-                "url": "/aggregation-other"
+                "name": "Hiding Repeated Value Column Labels",
+                "url": "/pivoting/#hiding-repeated-value-column-labels"
             }
         }
     },
@@ -949,14 +950,7 @@
                 "url": "/row-models/"
             }
         },
-        "rowModelType": {
-            "options": [
-                "clientSide",
-                "infinite",
-                "viewport",
-                "serverSide"
-            ]
-        },
+        "rowModelType": {},
         "getRowId": {}
     },
     "clientRowModel": {
@@ -1212,16 +1206,18 @@
                 "url": "/row-sorting/#multi-column-sorting"
             }
         },
-        "suppressMaintainUnsortedOrder": {
-            "more": {
-                "name": "Big Data Small Transactions",
-                "url": "/immutable-data/"
-            }
-        },
+        "suppressMaintainUnsortedOrder": {},
         "postSortRows": {
             "more": {
                 "name": "Post Sort",
                 "url": "/row-sorting/#post-sort"
+            }
+        },
+        "deltaSort": {
+            "description": "When enabled, sorts only the rows added/updated by a transaction. Default: `false`",
+            "more": {
+                "name": "Delta sorting",
+                "url": "/data-update-transactions/#delta-sorting"
             }
         }
     },

@@ -8,6 +8,10 @@
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
+  "TickCount": {
+    "meta": { "isTypeAlias": true },
+    "type": "number | CountableTimeInterval"
+  },
   "AxisLabelFormatterParams": {
     "meta": {},
     "type": {
@@ -787,7 +791,8 @@
       "padding?": "PixelSize",
       "color?": "CssColor",
       "rotation?": "number",
-      "autoRotate?": "boolean | number",
+      "autoRotate?": "boolean",
+      "autoRotateAngle?": "number",
       "format?": "string",
       "formatter?": "(params: AgAxisLabelFormatterParams) => string"
     },
@@ -799,7 +804,8 @@
       "padding?": "/** Padding in pixels between the axis label and the tick. */",
       "color?": "/** The colour to use for the labels */",
       "rotation?": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
-      "autoRotate?": "/** If specified and axis labels collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category axes at an angle of 45 degrees. If the `rotation` property is specified, it takes precedence. */",
+      "autoRotate?": "/** If specified and axis labels may collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category. If the `rotation` property is specified, it takes precedence. */",
+      "autoRotateAngle?": "/** If autoRotate is enabled, specifies the rotation angle to use when autoRotate is activated. Defaults to an angle of 335 degrees if unspecified. */",
       "format?": "/** Format string used when rendering labels for time axes. */",
       "formatter?": "/** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */"
     }
@@ -2132,6 +2138,18 @@
       "backgroundColor?": "string"
     }
   },
+  "ChartUpdateType": {
+    "meta": { "isEnum": true },
+    "type": [
+      "FULL",
+      "PROCESS_DATA",
+      "PERFORM_LAYOUT",
+      "SERIES_UPDATE",
+      "SCENE_RENDER",
+      "NONE"
+    ],
+    "docs": [null, null, null, null, null, null]
+  },
   "Point": {
     "meta": { "isTypeAlias": true },
     "type": "{ x: number; y: number; }"
@@ -2746,9 +2764,18 @@
     "type": ["All", "None"],
     "docs": [null, null]
   },
+  "RedrawType": {
+    "meta": { "isEnum": true },
+    "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
+    "docs": [null, null, null, null]
+  },
   "DebugOptions": {
     "meta": {},
-    "type": { "renderFrameIndex": "boolean", "renderBoundingBoxes": "boolean" }
+    "type": {
+      "renderFrameIndex": "boolean",
+      "renderBoundingBoxes": "boolean",
+      "consoleLog": "boolean"
+    }
   },
   "ValueFn": {
     "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
@@ -2758,17 +2785,9 @@
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
   },
-  "NodeCallback": {
-    "meta": { "isTypeAlias": true, "typeParams": ["G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void"
-  },
   "NodeSelector": {
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N"
-  },
-  "NodeSelectorAll": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[]"
   },
   "ArcType": {
     "meta": { "isEnum": true },

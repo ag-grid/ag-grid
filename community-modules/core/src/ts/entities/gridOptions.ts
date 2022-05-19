@@ -137,8 +137,10 @@ export interface GridOptions {
      * Default: `\t`
     */
     clipboardDelimiter?: string;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
+    /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */
     suppressCopyRowsToClipboard?: boolean;
+    /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */
+    suppressCopySingleCellRanges?: boolean;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */
     suppressLastEmptyLineOnPaste?: boolean;
     /** Set to `true` to turn off paste operations within the grid. */
@@ -601,7 +603,7 @@ export interface GridOptions {
 
     // *** Row Model *** //
     /** Sets the row model type. Default: `clientSide` */
-    rowModelType?: string;
+    rowModelType?: 'clientSide' | 'infinite' | 'viewport' | 'serverSide';
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -879,9 +881,9 @@ export interface GridOptions {
      * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
-    /** Allows you to set the ID for a particular row based on the data and enables immutableData. */
+    /** Allows setting the ID for a particular row node based on the data. */
     getRowId?: GetRowIdFunc;
-    /** When new Row Data is set, and getRowId() is provided, the grid will disregard all previous rows and treat the new Row Data as a new set. All Row State (eg selection, rendered rows) will be lost. */
+    /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
     resetRowDataOnUpdate?: boolean;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?: (params: ProcessRowParams) => void;
@@ -1057,7 +1059,7 @@ export interface GridOptions {
     // *** Row Model: Client Side *** //
     /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */
     onRowDataChanged?(event: RowDataChangedEvent): void;
-    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */
+    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by setting new Row Data and Row ID's are provided (as this results in a transaction underneath the hood). */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;

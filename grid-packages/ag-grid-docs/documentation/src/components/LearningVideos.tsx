@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import classnames from 'classnames';
+// @ts-ignore
 import styles from './LearningVideos.module.scss';
+// @ts-ignore
 import {hostPrefix} from '../utils/consts';
 
 type VideoData = {
@@ -41,9 +43,8 @@ const Video = ({title, url, thumbnail, keyPoints, runningTime, index}: any) => {
         </div>
     )
 }
-const LearningVideos = ({framework}) => {
-    const [videos, setVideos] = useState<VideoData[]>([]);
-
+const LearningVideos = ({framework}: {framework: string}) => {
+    const [videos, setVideos] = useState<{[framework: string]: VideoData[]}>({});
     useEffect(() => {
         const controller = new AbortController();
         const {signal} = controller;
@@ -60,7 +61,7 @@ const LearningVideos = ({framework}) => {
 
     return (
         <div className={classnames(styles["learning-videos"])}>
-            {frameworkVideos.map((video: {}, index: number) => {
+            {frameworkVideos.map((video: VideoData, index: number) => {
                 return (<Video {...video} index={index + 1} key={video.url}/>)
             })}
         </div>

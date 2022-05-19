@@ -78,7 +78,7 @@ const useJsCellRenderer = (
         // is a change in state
         useEffectOnce(() => {
             return destroyCellRenderer;
-        }, 'showJsRenderer.destroy');
+        });
 }
 
 export default useJsCellRenderer;

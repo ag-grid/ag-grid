@@ -26,11 +26,11 @@ const cell: ExcelXMLTemplate = {
                     prefixedAttributes: [{
                         prefix: "ss:",
                         map: {
-                            Type: data.type
+                            Type: data?.type
                         }
                     }]
                 },
-                textNode: data.value
+                textNode: data?.value
             }]
         };
     }
