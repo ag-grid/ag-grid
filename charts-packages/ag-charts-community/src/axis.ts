@@ -179,7 +179,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     ticks: any[];
 
-    readonly group = new Group();
+    readonly group = new Group({ layer: true, zIndex: 200 });
 
     readonly line: {
         /**

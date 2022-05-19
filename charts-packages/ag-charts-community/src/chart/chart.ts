@@ -452,7 +452,7 @@ export abstract class Chart extends Observable {
         const element = this.element = document.createElement('div');
         element.setAttribute('class', 'ag-chart-wrapper');
 
-        this.scene = new Scene(document);
+        this.scene = new Scene({document});
         this.scene.debug.consoleLog = this._debug;
         this.scene.root = root;
         this.scene.container = element;

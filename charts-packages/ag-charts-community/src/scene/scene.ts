@@ -8,6 +8,11 @@ interface DebugOptions {
     consoleLog: boolean;
 }
 
+interface SceneOptions {
+    document: Document,
+    mode: 'simple' | 'composite',
+}
+
 export class Scene {
 
     static className = 'Scene';
@@ -19,11 +24,22 @@ export class Scene {
 
     private readonly ctx: CanvasRenderingContext2D;
 
-    // As a rule of thumb, constructors with no parameters are preferred.
-    // A few exceptions are:
-    // - we absolutely need to know something at construction time (document)
-    // - knowing something at construction time meaningfully improves performance (width, height)
-    constructor(document = window.document, width?: number, height?: number) {
+    private readonly opts: SceneOptions;
+
+    constructor(
+        opts: {
+            width?: number,
+            height?: number,
+        } & Partial<SceneOptions>
+    ) {
+        const {
+            document = window.document,
+            mode = 'composite',
+            width,
+            height,
+        } = opts;
+
+        this.opts = { document, mode };
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -70,7 +86,11 @@ export class Scene {
     }
 
     private _nextZIndex = 0;
-    addLayer(zIndex: number = this._nextZIndex++): HdpiCanvas {
+    addLayer(zIndex: number = this._nextZIndex++): HdpiCanvas | undefined {
+        if (this.opts.mode !== 'composite') {
+            return undefined;
+        }
+
         const { width, height } = this;
         const newLayer = {
             zIndex,
