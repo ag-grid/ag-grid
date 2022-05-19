@@ -15,6 +15,8 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
+    readonly layers: { zIndex: number, canvas: HdpiCanvas }[] = [];
+
     private readonly ctx: CanvasRenderingContext2D;
 
     // As a rule of thumb, constructors with no parameters are preferred.
@@ -22,7 +24,7 @@ export class Scene {
     // - we absolutely need to know something at construction time (document)
     // - knowing something at construction time meaningfully improves performance (width, height)
     constructor(document = window.document, width?: number, height?: number) {
-        this.canvas = new HdpiCanvas(document, width, height);
+        this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
 
@@ -65,6 +67,43 @@ export class Scene {
         this.markDirty();
         
         return true;
+    }
+
+    private _nextZIndex = 0;
+    addLayer(zIndex: number = this._nextZIndex++): HdpiCanvas {
+        const { width, height } = this;
+        const newLayer = {
+            zIndex,
+            canvas: new HdpiCanvas({ document: this.canvas.document, width, height }),
+        };
+
+        if (zIndex >= this._nextZIndex) {
+            this._nextZIndex = zIndex + 1;
+        }
+
+        this.layers.push(newLayer);
+        this.layers.sort((a, b) => a.zIndex - b.zIndex);
+
+        if (this.debug.consoleLog) {
+            console.log({ layers: this.layers });
+        }
+
+        return newLayer.canvas;
+    }
+
+    removeLayer(canvas: HdpiCanvas) {
+        const index = this.layers.findIndex((l) => l.canvas = canvas);
+
+        if (index >= 0) {
+            this.layers.splice(index, 1);
+            canvas.destroy();
+            this.markDirty();
+
+            if (this.debug.consoleLog) {
+                console.log({ layers: this.layers });
+            }
+    
+        }
     }
 
     private _dirty = false;
@@ -113,10 +152,12 @@ export class Scene {
     }
 
     render() {
-        const { ctx, root, pendingSize } = this;
+        const { canvas, ctx, root, layers, pendingSize } = this;
 
         if (pendingSize) {
             this.canvas.resize(...pendingSize);
+            this.layers.forEach((layer) => layer.canvas.resize(...pendingSize));
+
             this.pendingSize = undefined;
         }
 
@@ -133,10 +174,10 @@ export class Scene {
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
             canvasCleared = true;
-            ctx.clearRect(0, 0, this.width, this.height);
+            canvas.clear();
         }
 
-        if (root) {
+        if (root && canvasCleared) {
             if (this.debug.consoleLog) {
                 console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
             }
@@ -146,6 +187,15 @@ export class Scene {
                 root.render({ ctx, forceRender: true });
                 ctx.restore();
             }
+        }
+
+        if (layers.length > 0 && canvasCleared) {
+            ctx.save();
+            ctx.resetTransform();
+            layers.forEach((layer) => {
+                ctx.drawImage(layer.canvas.element, 0, 0);
+            });
+            ctx.restore();
         }
 
         this._frameIndex++;

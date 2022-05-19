@@ -1,10 +1,17 @@
-import { Node, RedrawType, SceneChangeDetection } from "./node";
+import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
 import { BBox } from "./bbox";
 import { Matrix } from "./matrix";
+import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { Scene } from "./scene";
 
 export class Group extends Node {
 
     static className = 'Group';
+
+    private canvas?: HdpiCanvas;
+
+    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
+    opacity: number = 1;
 
     public constructor(
         private readonly opts?: {
@@ -17,13 +24,23 @@ export class Group extends Node {
         this.isContainerNode = true;
     }
 
+    _setScene(scene?: Scene) {
+        if (this._scene && this.canvas) {
+            this._scene.removeLayer(this.canvas);
+            this.canvas = undefined;
+        }
+
+        super._setScene(scene);
+
+        if (scene && this.opts?.layer) {
+            this.canvas = scene.addLayer(this.opts?.zIndex);
+        }
+    }
+
     markDirty(type = RedrawType.TRIVIAL) {
         const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
         super.markDirty(type, parentType);
     }
-
-    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
-    opacity: number = 1;
 
     // We consider a group to be boundless, thus any point belongs to it.
     containsPoint(_x: number, _y: number): boolean {
@@ -85,7 +102,33 @@ export class Group extends Node {
 
     render(renderCtx: RenderContext) {
         let { ctx, forceRender } = renderCtx;
+
+        if (this.canvas) {
+            // Dy default there is no need to force redraw a group which has it's own canvas layer
+            // as the layer is independent of any other layer.
+            forceRender = false;
+        }
+
+        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex;
+        if (!isDirty && !forceRender) {
+            // Nothing to do.
             return;
+        }
+
+        if (this.canvas) {
+            // Switch context to the canvas layer we use for this group.
+            ctx = this.canvas.context;
+            ctx.save();
+            ctx.resetTransform();
+
+            if (isDirty) {
+                forceRender = true;
+                this.canvas?.clear();
+            }
+        }
+
+        if (this.scene?.debug?.consoleLog) {
+            console.log({ group: this, isDirty, forceRender });
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -94,18 +137,13 @@ export class Group extends Node {
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
-        const clearNeeded = this.dirty >= RedrawType.MINOR;
-        if (!forceRender && clearNeeded) {
-            forceRender = true;
-            this.clearBBox(ctx);
-        }
-
         const children = this.children;
         const n = children.length;
 
         if (this.dirtyZIndex) {
             this.dirtyZIndex = false;
             children.sort((a, b) => a.zIndex - b.zIndex);
+            forceRender = true;
         }
 
         ctx.globalAlpha *= this.opacity;
@@ -128,11 +166,8 @@ export class Group extends Node {
 
         super.render(renderCtx);
 
-        // debug
-        // this.computeBBox().render(ctx, {
-        //     label: this.id,
-        //     resetTransform: true,
-        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
-        // });
+        if (this.canvas) {
+            ctx.restore();
+        }
     }
 }

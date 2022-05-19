@@ -11,7 +11,7 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(document = window.document, width = 600, height = 300) {
+    constructor({ document = window.document, width = 600, height = 300 }) {
         this.document = document;
         this.element = document.createElement('canvas');
         this.context = this.element.getContext('2d')!;
@@ -51,6 +51,13 @@ export class HdpiCanvas {
         this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
+    }
+
+    clear() {
+        this.context.save();
+        this.context.resetTransform();
+        this.context.clearRect(0, 0, this.width, this.height);
+        this.context.restore();
     }
 
     toImage(): HTMLImageElement {
