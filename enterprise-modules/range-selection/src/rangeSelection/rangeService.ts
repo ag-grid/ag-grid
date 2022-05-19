@@ -56,6 +56,8 @@ export class RangeService extends BeanStub implements IRangeService {
     private dragging = false;
     private draggingRange?: CellRange;
 
+    private intersectionRange = false; // When dragging ends, the current range will be used to intersect all other ranges
+
     public autoScrollService: AutoScrollService;
 
     @PostConstruct
@@ -136,7 +138,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
-
+    
     public getRangeStartRow(cellRange: CellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
             return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
@@ -172,6 +174,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        console.log('setRangeToCell');
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
@@ -590,6 +593,8 @@ export class RangeService extends BeanStub implements IRangeService {
     public onDragStart(mouseEvent: MouseEvent): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
+        console.log('drag start');
+
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
@@ -619,6 +624,8 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
+        this.intersectionRange = multiSelectKeyPressed && this.getCellRangeCount(this.lastCellHovered) > 1;
+        console.log('Actually Dragging, intersecting:', this.intersectionRange)
 
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
@@ -650,6 +657,76 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
+    
+    private intersectLastRange() {
+        if (this.isEmpty()) { return; }
+        
+        const lastRange = _.last(this.cellRanges);
+        
+        const intersectionStartRow = this.getRangeStartRow(lastRange);
+        const intersectionEndRow = this.getRangeEndRow(lastRange);
+
+        const newRanges: CellRange[] = []
+
+        this.cellRanges.slice(0, -1).forEach((range) => {
+            const startRow = this.getRangeStartRow(range);
+            const endRow = this.getRangeEndRow(range);
+            const cols = range.columns
+            const intersectCols = cols.filter((col) => lastRange.columns.indexOf(col) === -1);
+            // TODO: not sure these skipping conditions are necessary if the other bits are correct
+            if (intersectCols.length === cols.length) {
+                // No overlapping columns, retain previous range
+                newRanges.push(range);
+                return;
+            }
+            if (this.rowPositionUtils.before(intersectionEndRow, startRow) || this.rowPositionUtils.before(endRow, intersectionStartRow)) {
+                // No overlapping rows, retain previous range
+                newRanges.push(range);
+                return;
+            }
+            const rangeCountBefore =  newRanges.length;
+            // Top
+            if (this.rowPositionUtils.before(startRow, intersectionStartRow)) {
+                const top: CellRange = {
+                    columns: [...cols],
+                    startColumn: lastRange.startColumn,
+                    startRow: { ...startRow },
+                    endRow: this.rowPositionUtils.previousRow(intersectionStartRow),
+                };
+                newRanges.push(top);
+            }
+            // Left & Right (not contigious with columns)
+            if (intersectCols.length > 0) {
+                const middle: CellRange = {
+                    columns: intersectCols,
+                    startColumn: _.includes(intersectCols, lastRange.startColumn) ? lastRange.startColumn : intersectCols[0],
+                    startRow: this.rowPositionUtils.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
+                    endRow: this.rowPositionUtils.rowMin([{ ...intersectionEndRow }, { ...endRow }]),
+                };
+                newRanges.push(middle);
+            }
+            // Bottom
+            if (this.rowPositionUtils.before(intersectionEndRow, endRow)) {
+                newRanges.push({
+                    columns: [...cols],
+                    startColumn: lastRange.startColumn,
+                    startRow: this.rowPositionUtils.nextRow(intersectionEndRow),
+                    endRow: { ...endRow },
+                });
+            }
+            if ((newRanges.length - rangeCountBefore) === 1 && newRanges.length > 0) {
+                // Only one range result from the intersection.
+                // Copy the source range's id, since essentially we just reduced it's size
+                newRanges[newRanges.length -1].id = range.id;
+            }
+        });
+        this.cellRanges = newRanges;
+    }
+    
+    // TODO:
+    // - SINGLE CELL RANGES
+    // - EVENTS
+    // - DOCS
 
     private updateValuesOnMove(mouseEvent: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
@@ -694,12 +771,14 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStop(): void {
+        console.log('drag stop');
         if (this.cellHoverListener) {
             this.cellHoverListener();
             this.cellHoverListener = undefined;
         }
 
         if (!this.dragging) { return; }
+        console.log('drag stop2');
 
         const { id } = this.draggingRange!;
 
@@ -710,8 +789,15 @@ export class RangeService extends BeanStub implements IRangeService {
         this.dragging = false;
         this.draggingRange = undefined;
         this.lastCellHovered = undefined;
+        
+        if (this.intersectionRange) {
+            console.log('is intersection range!')
+            this.intersectionRange = false;
+            this.intersectLastRange();
+        }
 
         this.dispatchChangedEvent(false, true, id);
+
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
