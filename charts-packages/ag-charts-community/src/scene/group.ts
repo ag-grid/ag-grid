@@ -6,7 +6,16 @@ export class Group extends Node {
 
     static className = 'Group';
 
-    protected isContainerNode: boolean = true;
+    public constructor(
+        private readonly opts?: {
+            layer?: boolean,
+            zIndex?: number,
+        }
+    ) {
+        super();
+
+        this.isContainerNode = true;
+    }
 
     markDirty(type = RedrawType.TRIVIAL) {
         const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;

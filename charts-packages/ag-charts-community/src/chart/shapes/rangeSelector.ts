@@ -7,8 +7,6 @@ import { RedrawType, RenderContext } from "../../scene/node";
 export class RangeSelector extends Group {
     static className = 'Range';
 
-    protected isContainerNode: boolean = true;
-
     private static defaults = {
         x: 0,
         y: 0,
@@ -96,6 +94,12 @@ export class RangeSelector extends Group {
     }
     get max(): number {
         return this.mask.max;
+    }
+
+    constructor() {
+        super();
+
+        this.isContainerNode = true;
     }
 
     onRangeChange?: (min: number, max: number) => any;

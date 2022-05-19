@@ -12,9 +12,13 @@ export class ClipRect extends Node {
 
     static className = 'ClipRect';
 
-    protected isContainerNode: boolean = true;
-
     protected path = new Path2D();
+
+    constructor() {
+        super();
+
+        this.isContainerNode = true;
+    }
 
     containsPoint(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
