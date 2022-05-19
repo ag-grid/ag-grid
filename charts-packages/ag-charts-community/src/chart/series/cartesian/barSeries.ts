@@ -330,22 +330,46 @@ export class BarSeries extends CartesianSeries {
         this.updateRectNodes();
     }
 
+    protected smallestDataInterval?: { x: number, y: number } = undefined;
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled, xAxis } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        if (!xAxis) {
+        if (!xAxis || !yAxis) {
             return false;
         }
 
+        const setSmallestXInterval = (curr: number, prev: number) => {
+            if (this.smallestDataInterval == undefined) {
+                this.smallestDataInterval = { x: Infinity, y: Infinity };
+            }
+            const { x } = this.smallestDataInterval;
+
+            const interval = Math.abs(curr - prev);
+            if (interval > 0 && interval < x) {
+                this.smallestDataInterval.x = interval;
+            }
+        }
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
         let keysFound = true; // only warn once
+        let prevX = Infinity;
         this.xData = data.map(datum => {
             if (keysFound && !(xKey in datum)) {
                 keysFound = false;
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
 
-            return this.checkDatum(datum[xKey], false);
+            const x = this.checkDatum(datum[xKey], isContinuousX);
+
+            if (isContinuousX) {
+                setSmallestXInterval(x, prevX);
+            }
+
+            prevX = x;
+
+            return x;
         });
 
         this.yData = data.map(datum => yKeys.map(stack => {
@@ -355,7 +379,7 @@ export class BarSeries extends CartesianSeries {
                     console.warn(`The key '${yKey}' was not found in the data: `, datum);
                 }
 
-                const yDatum = this.checkDatum(datum[yKey], true);
+                const yDatum = this.checkDatum(datum[yKey], isContinuousY);
 
                 if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
                     return 0;
@@ -449,6 +473,28 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
+    private calculateStep(range: number): number | undefined {
+        const { smallestDataInterval: smallestInterval } = this;
+
+        const xAxis = this.getCategoryAxis();
+
+        if (!xAxis) { return; }
+
+        // calculate step
+        let domainLength = xAxis.domain[1] - xAxis.domain[0];
+        let intervals = (domainLength / (smallestInterval?.x ?? 1)) + 1;
+
+        // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
+        // Allow a maximum number of bands to ensure the step does not fall below 1 pixel.
+        // This means there could be some overlap of the bands in the chart.
+        const maxBands = Math.floor(range); // A minimum of 1px per bar/column means the maximum number of bands will equal the available range
+        const bands = Math.min(intervals, maxBands);
+
+        const step = range / Math.max(1, bands);
+
+        return step;
+    }
+
     createNodeData(): BarNodeDatum[] {
         const { chart, data, visible } = this;
         const xAxis = this.getCategoryAxis();
@@ -485,10 +531,23 @@ export class BarSeries extends CartesianSeries {
             placement: labelPlacement
         } = label;
 
-        groupScale.range = [0, xScale.bandwidth!];
+        let xBandWidth = xScale.bandwidth;
+
+        if (xScale instanceof ContinuousScale) {
+            const availableRange = Math.max(xAxis!.range[0], xAxis!.range[1]);
+            const step = this.calculateStep(availableRange);
+
+            xBandWidth = step;
+
+            // last node will be clipped if the scale is not a band scale
+            // subtract last band width from the range so that the last band is not clipped
+            xScale.range = this.flipXY ? [availableRange - (step ?? 0), 0] : [0, availableRange - (step ?? 0)];
+        }
+
+        groupScale.range = [0, xBandWidth!];
 
         const grouped = true;
-        const barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth!;
+        const barWidth = grouped ? groupScale.bandwidth : xBandWidth!;
         const nodeData: BarNodeDatum[] = [];
 
         xData.forEach((group, groupIndex) => {
