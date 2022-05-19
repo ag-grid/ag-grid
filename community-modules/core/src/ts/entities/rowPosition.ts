@@ -100,4 +100,78 @@ export class RowPositionUtils extends BeanStub {
         }
         return rowA.rowIndex < rowB.rowIndex;
     }
+    
+    public previousRow(row: RowPosition): RowPosition | undefined {
+        const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
+        
+        const pinned = row.rowPinned || 'center';
+        let rowIndex = row.rowIndex - 1;
+
+        switch (pinned) {
+            case Constants.PINNED_BOTTOM:
+                if (rowIndex > 0) {
+                    return { rowPinned: Constants.PINNED_BOTTOM, rowIndex };
+                }
+                rowIndex = this.paginationProxy.getPageLastRow(); // Bubble up into center
+            case 'center':
+                if (rowIndex > 0) {
+                    return { rowPinned: null, rowIndex };
+                }
+                rowIndex = pinnedTopCount - 1; // Bubble up into Pinned top
+            case Constants.PINNED_TOP:
+                if (rowIndex > 0) {
+                    return { rowPinned: Constants.PINNED_TOP, rowIndex };
+                }
+            default:
+                return undefined;
+        }
+    }
+    
+    public nextRow(row: RowPosition): RowPosition | undefined {
+        const pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
+        const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
+        const rowCount = this.paginationProxy.getRowCount();
+        
+        let pinned = row.rowPinned || 'center';
+        let rowIndex = row.rowIndex + 1;
+        
+        switch (pinned) {
+            case Constants.PINNED_TOP:
+                if (rowIndex < pinnedTopCount) {
+                    return { rowPinned: Constants.PINNED_TOP, rowIndex };
+                }
+                rowIndex = 0; // Drop down into center
+            case 'center':
+                if (rowIndex < rowCount) {
+                    return { rowPinned: null, rowIndex };
+                }
+                rowIndex = 0; // Drop down into pinned bottom
+            case Constants.PINNED_BOTTOM:
+                if (rowIndex < pinnedBottomCount) {
+                    return { rowPinned: Constants.PINNED_BOTTOM, rowIndex };
+                }
+            default:
+                return undefined;
+        }
+    }
+    
+    public rowMax(rows: RowPosition[]): RowPosition | undefined {
+        let max: RowPosition | undefined = undefined;
+        rows.forEach((row) => {
+            if (max === undefined || this.before(max, row)) {
+                max = row;
+            }
+        });
+        return max;
+    }
+
+    public rowMin(rows: RowPosition[]): RowPosition | undefined {
+        let min: RowPosition | undefined = undefined;
+        rows.forEach((row) => {
+            if (min === undefined || this.before(row, min)) {
+                min = row;
+            }
+        });
+        return min;
+    }
 }
