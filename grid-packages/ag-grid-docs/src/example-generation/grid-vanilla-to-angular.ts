@@ -2,7 +2,7 @@ import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutp
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports, getPropertyInterfaces, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 
-function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }, hasApi: boolean, hasColApi: boolean): string {
+function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; rowDataType: string | undefined }, hasApi: boolean, hasColApi: boolean): string {
     const additionalLines = [];
 
     if (readyCode) {
@@ -14,13 +14,13 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }
 
     if (data) {
-        const { url, callback } = data;
+        const { url, callback, rowDataType = 'any[]' } = data;
 
         if (callback.indexOf('api!.setRowData') !== -1) {
             const setRowDataBlock = callback.replace('params.api!.setRowData(data)', 'this.rowData = data');
-            additionalLines.push(`this.http.get<any[]>(${url}).subscribe(data => ${setRowDataBlock});`);
+            additionalLines.push(`this.http.get<${rowDataType}>(${url}).subscribe(data => ${setRowDataBlock});`);
         } else {
-            additionalLines.push(`this.http.get<any[]>(${url}).subscribe(data => ${callback});`);
+            additionalLines.push(`this.http.get<${rowDataType}>(${url}).subscribe(data => ${callback});`);
         }
     }
 
@@ -129,6 +129,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces } = bindings;
+    const { rowDataType } = data;
     const diParams = [];
 
     if (data) {
@@ -172,7 +173,8 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         }
 
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
-            propertyAssignments.push('public rowData!: any[];');
+
+            propertyAssignments.push(`public rowData!: ${rowDataType || 'any[]'};`);
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));

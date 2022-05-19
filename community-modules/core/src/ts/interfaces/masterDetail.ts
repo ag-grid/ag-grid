@@ -33,7 +33,7 @@ export interface IDetailCellRendererParams<TData = any> extends ICellRendererPar
     suppressRefresh: boolean;
 }
 
-export interface GetDetailRowData<TData> {
+export interface GetDetailRowData<TData = any> {
     (params: GetDetailRowDataParams<TData>): void;
 }
 
@@ -46,7 +46,7 @@ export interface GetDetailRowDataParams<TData> {
     successCallback(rowData: any[]): void;
 }
 
-interface TemplateFunc<TData> {
+interface TemplateFunc<TData = any> {
     (params: ICellRendererParams<TData>): string;
 }
 
