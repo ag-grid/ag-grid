@@ -69,11 +69,16 @@ export class CssClassManager {
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        const list = (className || '').split(' ');
+        if (!className) { return; }
 
-        if (list.length > 1) {
-            list.forEach(cls => this.addOrRemoveCssClass(cls, addOrRemove));
-            return;
+        // we check for spaces before doing the split, as doing the split
+        // created a performance problem (on windows only, see AG-6765)
+        if (className.indexOf(' ')>=0) {
+            const list = (className || '').split(' ');
+            if (list.length > 1) {
+                list.forEach(cls => this.addOrRemoveCssClass(cls, addOrRemove));
+                return;
+            }    
         }
 
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
