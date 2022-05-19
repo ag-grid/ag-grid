@@ -104,9 +104,9 @@ export class Group extends Node {
 
     render(renderCtx: RenderContext) {
         const { name } = this.opts || {};
-        let { ctx, forceRender, clipBBox } = renderCtx;
+        let { ctx, forceRender, clipBBox, resized } = renderCtx;
 
-        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex;
+        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex || resized;
 
         if (name && this.scene?.debug?.consoleLog) {
             console.log({ name, group: this, isDirty, forceRender });

@@ -10,7 +10,7 @@ interface DebugOptions {
 
 interface SceneOptions {
     document: Document,
-    mode: 'simple' | 'composite',
+    mode: 'simple' | 'composite' | 'dom-composite',
 }
 
 export class Scene {
@@ -34,7 +34,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = 'composite',
+            mode = (window as any).agSceneRenderModel || 'composite',
             width,
             height,
         } = opts;
@@ -87,16 +87,24 @@ export class Scene {
 
     private _nextZIndex = 0;
     addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
-        if (this.opts.mode !== 'composite') {
+        const { mode } = this.opts;
+        if (mode !== 'composite' && mode !== 'dom-composite') {
             return undefined;
         }
 
         const { zIndex = this._nextZIndex++, name } = opts || {};
         const { width, height } = this;
+        const domLayer = mode === 'dom-composite';
         const newLayer = {
             name,
             zIndex,
-            canvas: new HdpiCanvas({ document: this.canvas.document, width, height }),
+            canvas: new HdpiCanvas({
+                document: this.canvas.document,
+                width,
+                height,
+                domLayer,
+                zIndex,
+            }),
         };
 
         if (zIndex >= this._nextZIndex) {
@@ -105,6 +113,10 @@ export class Scene {
 
         this.layers.push(newLayer);
         this.layers.sort((a, b) => a.zIndex - b.zIndex);
+
+        if (domLayer) {
+            this.canvas.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+        }
 
         if (this.debug.consoleLog) {
             console.log({ layers: this.layers });
@@ -174,7 +186,7 @@ export class Scene {
     }
 
     render() {
-        const { canvas, ctx, root, layers, pendingSize } = this;
+        const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
             this.canvas.resize(...pendingSize);
@@ -206,12 +218,12 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                root.render({ ctx, forceRender: true });
+                root.render({ ctx, forceRender: true, resized: !!pendingSize });
                 ctx.restore();
             }
         }
 
-        if (layers.length > 0 && canvasCleared) {
+        if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
             ctx.resetTransform();
             layers.forEach((layer) => {
