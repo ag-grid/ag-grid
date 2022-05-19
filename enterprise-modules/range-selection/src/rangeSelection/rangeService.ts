@@ -138,7 +138,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
-    
+
     public getRangeStartRow(cellRange: CellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
             return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow) ?
@@ -640,7 +640,6 @@ export class RangeService extends BeanStub implements IRangeService {
             const endRow = this.getRangeEndRow(range);
             const cols = range.columns
             const intersectCols = cols.filter((col) => lastRange.columns.indexOf(col) === -1);
-            // TODO: not sure these skipping conditions are necessary if the other bits are correct
             if (intersectCols.length === cols.length) {
                 // No overlapping columns, retain previous range
                 newRanges.push(range);
@@ -681,7 +680,7 @@ export class RangeService extends BeanStub implements IRangeService {
                     endRow: { ...endRow },
                 });
             }
-            if ((newRanges.length - rangeCountBefore) === 1 && newRanges.length > 0) {
+            if ((newRanges.length - rangeCountBefore) === 1) {
                 // Only one range result from the intersection.
                 // Copy the source range's id, since essentially we just reduced it's size
                 newRanges[newRanges.length -1].id = range.id;
@@ -756,7 +755,6 @@ export class RangeService extends BeanStub implements IRangeService {
         }
 
         this.dispatchChangedEvent(false, true, id);
-
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
