@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -9,55 +9,6 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { ModuleRegistry, GridOptions, ColDef, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-const topOptions: GridOptions = {
-    alignedGrids: [],
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    suppressHorizontalScroll: true
-};
-
-const bottomOptions: GridOptions = {
-    alignedGrids: [],
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    }
-};
-
-topOptions.alignedGrids!.push(bottomOptions);
-bottomOptions.alignedGrids!.push(topOptions);
-
-const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 200 },
-    { field: 'age', width: 150 },
-    { field: 'country', width: 150 },
-    { field: 'year', width: 120 },
-    { field: 'date', width: 150 },
-    { field: 'sport', width: 150 },
-    // in the total col, we have a value getter, which usually means we don't need to provide a field
-    // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order ot match up the columns
-    {
-        headerName: 'Total',
-        field: 'total',
-        valueGetter: 'data.gold + data.silver + data.bronze',
-        width: 200
-    },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 }
-];
 
 const bottomData = [
     {
@@ -75,7 +26,38 @@ const bottomData = [
 
 const GridExample = () => {
     const [rowData, setRowData] = useState(null);
-    const topGridRef = useRef<AgGridReact>(null);
+    const topGrid = useRef<AgGridReact>(null);
+    const bottomGrid = useRef<AgGridReact>(null);
+
+    const defaultColDef: ColDef = useMemo(() => ({
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
+    }), []);
+
+    const columnDefs: ColDef[] = useMemo(() => ([
+        { field: 'athlete', width: 200 },
+        { field: 'age', width: 150 },
+        { field: 'country', width: 150 },
+        { field: 'year', width: 120 },
+        { field: 'date', width: 150 },
+        { field: 'sport', width: 150 },
+        // in the total col, we have a value getter, which usually means we don't need to provide a field
+        // however the master/slave depends on the column id (which is derived from the field if provided) in
+        // order ot match up the columns
+        {
+            headerName: 'Total',
+            field: 'total',
+            valueGetter: 'data.gold + data.silver + data.bronze',
+            width: 200
+        },
+        { field: 'gold', width: 100 },
+        { field: 'silver', width: 100 },
+        { field: 'bronze', width: 100 }
+    ]), []);
 
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -83,26 +65,26 @@ const GridExample = () => {
             .then(data => setRowData(data));
     }
 
-    const onFirstDataRendered = () => {
-        topGridRef.current!.columnApi.autoSizeAllColumns();
-    }
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-alpine">
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
-                    ref={topGridRef}
+                    ref={topGrid}
+                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
                     rowData={rowData}
-                    gridOptions={topOptions}
+                    defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered} />
+                    suppressHorizontalScroll
+                />
             </div>
 
             <div style={{ flex: 'none', height: '60px' }}>
                 <AgGridReact
+                    ref={bottomGrid}
+                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
                     rowData={bottomData}
-                    gridOptions={bottomOptions}
+                    defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     headerHeight={0}
                     rowStyle={{ fontWeight: 'bold' }}
