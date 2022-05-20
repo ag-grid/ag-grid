@@ -69,8 +69,7 @@ export class AgGridColumn {
     /** Provide your own tooltip component for the column.
      * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.     */
     @Input() public tooltipComponent: any;
-    /** @deprecated As of v27, use `tooltipComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `tooltipComponent` for framework components too.     */
     @Input() public tooltipComponentFramework: any;
     /** The params used to configure `tooltipComponent`.     */
     @Input() public tooltipComponentParams: any;
@@ -85,8 +84,7 @@ export class AgGridColumn {
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
      * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.     */
     @Input() public headerGroupComponent: any;
-    /** @deprecated As of v27, use `headerGroupComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `headerGroupComponent` for framework components too.     */
     @Input() public headerGroupComponentFramework: any;
     /** The params used to configure the `headerGroupComponent`.     */
     @Input() public headerGroupComponentParams: any;
@@ -152,8 +150,7 @@ export class AgGridColumn {
     /** Provide your own cell editor component for this column's cells.
      * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.     */
     @Input() public cellEditor: any;
-    /** @deprecated As of v27, use `cellEditor` for framework components too.
-     */
+    /** @deprecated As of v27, use `cellEditor` for framework components too.     */
     @Input() public cellEditorFramework: any;
     /** Params to be passed to the `cellEditor` component.     */
     @Input() public cellEditorParams: any;
@@ -161,14 +158,13 @@ export class AgGridColumn {
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
-    /** @deprecated use `valueSetter` instead
-     */
+    /** @deprecated use `valueSetter` instead     */
     @Input() public newValueHandler: ((params: NewValueParams) => boolean) | undefined;
     /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined;
     /** Set the position for the popup cell editor. Possible values are
-     *   - `over` Popup will be positioned over the cell
-     *   - `under` Popup will be positioned below the cell leaving the cell value visible.
+     *  - `over` Popup will be positioned over the cell
+     *  - `under` Popup will be positioned below the cell leaving the cell value visible.
      * 
      * Default: `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined;
@@ -190,8 +186,7 @@ export class AgGridColumn {
 /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
      * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
     @Input() public headerComponent: any;
-    /** @deprecated As of v27, use `headerComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `headerComponent` for framework components too.     */
     @Input() public headerComponentFramework: any;
     /** The parameters to be passed to the `headerComponent`.     */
     @Input() public headerComponentParams: any;
@@ -214,17 +209,13 @@ export class AgGridColumn {
     @Input() public initialPinned: boolean | string | undefined;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`     */
     @Input() public lockPinned: boolean | undefined;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
-     */
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
-     */
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRendererFramework: any;
-    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
-     */
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.     */
     @Input() public pinnedRowCellRendererParams: any;
-    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.
-     */
+    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.     */
     @Input() public pinnedRowValueFormatter: string | ValueFormatterFunc | undefined;
     /** Set to true to pivot by this column.     */
     @Input() public pivot: boolean | undefined;
@@ -250,8 +241,7 @@ export class AgGridColumn {
     /** Provide your own cell Renderer component for this column's cells.
      * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.     */
     @Input() public cellRenderer: any;
-    /** @deprecated As of v27, use `cellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `cellRenderer` for framework components too.     */
     @Input() public cellRendererFramework: any;
     /** Params to be passed to the `cellRenderer` component.     */
     @Input() public cellRendererParams: any;
@@ -322,8 +312,7 @@ export class AgGridColumn {
     @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined;
-    /** @deprecated since v24 - use sortIndex instead
-     */
+    /** @deprecated since v24 - use sortIndex instead*/
     @Input() public sortedAt: number | undefined;
     /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns.     */
     @Input() public colSpan: ((params: ColSpanParams) => number) | undefined;
