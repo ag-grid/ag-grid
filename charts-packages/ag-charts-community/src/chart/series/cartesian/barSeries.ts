@@ -332,10 +332,13 @@ export class BarSeries extends CartesianSeries {
 
     protected smallestDataInterval?: { x: number, y: number } = undefined;
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis } = this;
+        const { xKey, yKeys, seriesItemEnabled } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        if (!xAxis || !yAxis) {
+        const xAxis = this.getCategoryAxis();
+        const yAxis = this.getValueAxis();
+
+        if (!(xAxis && yAxis)) {
             return false;
         }
 
