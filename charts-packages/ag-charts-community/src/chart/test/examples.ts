@@ -1,5 +1,5 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS, DATA_MEAN_SEA_LEVEL, DATA_REVENUE, DATA_APPLE_REVENUE_BY_PRODUCT } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -730,6 +730,158 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianCh
             xKey: 'year',
             yKey: 'visitors',
             showInLegend: false,
+        },
+    ],
+}
+
+export const COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: 'Mean Sea Level (mm)',
+    },
+    data: DATA_MEAN_SEA_LEVEL,
+    series: [
+        {
+            type: 'column',
+            xKey: 'time',
+            yKey: 'mm',
+            showInLegend: false,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_REVENUE,
+    series: [
+        {
+            type: 'column',
+            // Flip this column to area and you will see the chart
+            xKey: 'date',
+            yKey: 'value',
+        },
+    ],
+    axes: [
+        {
+            type: 'time',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ]
+}
+
+export const STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+            stacked: true,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
         },
     ],
 }
