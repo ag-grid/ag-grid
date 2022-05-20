@@ -9,7 +9,7 @@ export class Group extends Node {
 
     static className = 'Group';
 
-    private canvas?: HdpiCanvas;
+    private layer?: HdpiCanvas;
     private clipPath: Path2D = new Path2D();
 
     @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
@@ -28,16 +28,16 @@ export class Group extends Node {
     }
 
     _setScene(scene?: Scene) {
-        if (this._scene && this.canvas) {
-            this._scene.removeLayer(this.canvas);
-            this.canvas = undefined;
+        if (this._scene && this.layer) {
+            this._scene.removeLayer(this.layer);
+            this.layer = undefined;
         }
 
         super._setScene(scene);
 
         if (scene && this.opts?.layer) {
             const { zIndex, name } = this.opts || {};
-            this.canvas = scene.addLayer({ zIndex, name });
+            this.layer = scene.addLayer({ zIndex, name });
         }
     }
 
@@ -105,7 +105,7 @@ export class Group extends Node {
     }
 
     render(renderCtx: RenderContext) {
-        const { opts: { name } = { name: undefined }, dirty, dirtyZIndex, clipPath, canvas, children } = this;
+        const { opts: { name } = { name: undefined }, dirty, dirtyZIndex, clipPath, layer, children } = this;
         let { ctx, forceRender, clipBBox, resized } = renderCtx;
 
         const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
@@ -114,7 +114,7 @@ export class Group extends Node {
             console.log({ name, group: this, isDirty, forceRender });
         }
 
-        if (canvas) {
+        if (layer) {
             // Dy default there is no need to force redraw a group which has it's own canvas layer
             // as the layer is independent of any other layer.
             forceRender = false;
@@ -125,14 +125,14 @@ export class Group extends Node {
             return;
         }
 
-        if (canvas) {
+        if (layer) {
             // Switch context to the canvas layer we use for this group.
-            ctx = canvas.context;
+            ctx = layer.context;
             ctx.save();
             ctx.setTransform(renderCtx.ctx.getTransform());
 
             forceRender = true;
-            canvas.clear();
+            layer.clear();
 
             if (clipBBox) {
                 const { width, height, x, y } = clipBBox;
@@ -185,7 +185,7 @@ export class Group extends Node {
 
         super.render(renderCtx);
 
-        if (canvas) {
+        if (layer) {
             ctx.restore();
         }
     }

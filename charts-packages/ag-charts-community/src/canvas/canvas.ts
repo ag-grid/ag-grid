@@ -14,6 +14,8 @@ function makeHdpiOverrides(dpr: number): any {
             if (depth > 0) {
                 this.$restore();
                 depth--;
+            } else {
+                throw new Error('Unable to restore() past depth 0');
             }
         },
         resetTransform() {
