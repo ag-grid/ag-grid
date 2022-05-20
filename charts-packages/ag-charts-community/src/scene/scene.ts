@@ -136,7 +136,6 @@ export class Scene {
             if (this.debug.consoleLog) {
                 console.log({ layers: this.layers });
             }
-    
         }
     }
 
@@ -225,7 +224,7 @@ export class Scene {
 
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
             layers.forEach((layer) => {
                 ctx.drawImage(layer.canvas.element, 0, 0);
             });
