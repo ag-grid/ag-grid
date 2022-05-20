@@ -162,6 +162,22 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
     },
+    BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+    },
+    BAR_TIME_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.BAR_TIME_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['bar'] }),
+    },
+    STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+    },
+    GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: {
+        options: examples.GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
+    },
 };
 
 describe('AgChartV2', () => {
