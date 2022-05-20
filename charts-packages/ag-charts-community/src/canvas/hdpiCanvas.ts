@@ -47,6 +47,15 @@ export class HdpiCanvas {
         return this._container;
     }
 
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        this.element.style.display = value ? 'block' : 'none';
+        this._enabled = !!value;
+    }
+    get enabled() {
+        return this._enabled;
+    }
+
     private remove() {
         const { parentNode } = this.element;
 

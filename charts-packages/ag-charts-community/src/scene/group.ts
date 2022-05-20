@@ -41,6 +41,12 @@ export class Group extends Node {
         }
     }
 
+    protected visibilityChanged() {
+        if (this.layer) {
+            this.layer.enabled = this.visible;
+        }
+    }
+
     markDirty(type = RedrawType.TRIVIAL) {
         const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
         super.markDirty(type, parentType);
@@ -105,12 +111,14 @@ export class Group extends Node {
     }
 
     render(renderCtx: RenderContext) {
-        const { opts: { name } = { name: undefined }, dirty, dirtyZIndex, clipPath, layer, children } = this;
+        const { opts: { name = undefined } = {} } = this;
+        const { _debug: { consoleLog = false } = {} } = this;
+        const { dirty, dirtyZIndex, clipPath, layer, children } = this;
         let { ctx, forceRender, clipBBox, resized } = renderCtx;
 
         const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
 
-        if (name && this.scene?.debug?.consoleLog) {
+        if (name && consoleLog) {
             console.log({ name, group: this, isDirty, forceRender });
         }
 
@@ -169,7 +177,8 @@ export class Group extends Node {
         // Render visible children.
         for (const child of children) {
             if (!child.visible) {
-                // Skip invisible children.
+                // Skip invisible children, but make sure their dirty flag is reset.
+                child.markClean();
                 continue;
             }
 

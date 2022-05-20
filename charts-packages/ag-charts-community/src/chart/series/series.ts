@@ -199,7 +199,7 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void { }
+    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void { }
 
     /**
      * @private
@@ -211,7 +211,7 @@ export abstract class Series extends Observable {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
 
-    toggleSeriesItem(itemId: any, enabled: boolean): void {
+    toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }

@@ -34,7 +34,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agSceneRenderModel || 'composite',
+            mode = (window as any).agChartsSceneRenderModel || 'composite',
             width,
             height,
         } = opts;
@@ -226,7 +226,9 @@ export class Scene {
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
             layers.forEach((layer) => {
-                ctx.drawImage(layer.canvas.element, 0, 0);
+                if (layer.canvas.enabled) {
+                    ctx.drawImage(layer.canvas.element, 0, 0);
+                }
             });
             ctx.restore();
         }

@@ -110,15 +110,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
 
+    protected _debug?: Scene['debug'];
     protected _scene?: Scene;
     _setScene(value?: Scene) {
         this._scene = value;
+        this._debug = value?.debug;
 
-        const children = this.children;
-        const n = children.length;
-
-        for (let i = 0; i < n; i++) {
-            children[i]._setScene(value);
+        for (const child of this.children) {
+            child._setScene(value);
         }
     }
     get scene(): Scene | undefined {
@@ -236,7 +235,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
-                this.markDirty(RedrawType.MINOR);
+                this.markDirty(RedrawType.MAJOR);
 
                 return node;
             }
@@ -538,8 +537,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    markClean() {
+        if (this._dirty === RedrawType.NONE) {
+            return;
+        }
+
+        this._dirty = RedrawType.NONE;
+
+        for (const child of this.children) {
+            child.markClean();
+        }
+    }
+
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() })
     visible: boolean = true;
+    protected visibilityChanged() {}
 
     protected dirtyZIndex: boolean = false;
 

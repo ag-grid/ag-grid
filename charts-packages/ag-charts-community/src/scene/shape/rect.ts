@@ -2,7 +2,6 @@ import { Path, ScenePathChangeDetection } from "./path";
 import { BBox } from "../bbox";
 import { LinearGradient } from "../gradient/linearGradient";
 import { Color } from "../../util/color";
-import { RedrawType } from "../node";
 import { Shape } from "./shape";
 
 export enum RectSizing {
