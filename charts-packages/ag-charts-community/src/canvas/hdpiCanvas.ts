@@ -63,8 +63,8 @@ export class HdpiCanvas {
 
     clear() {
         this.context.save();
-        this.context.resetTransform();
-        this.context.clearRect(0, 0, this.width, this.height);
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.clearRect(0, 0, this.element.width, this.element.height);
         this.context.restore();
     }
 

@@ -225,7 +225,7 @@ export class Scene {
 
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
-            ctx.resetTransform();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             layers.forEach((layer) => {
                 ctx.drawImage(layer.canvas.element, 0, 0);
             });

@@ -44,10 +44,10 @@ export class ClipRect extends Node {
     height: number = 10;
 
     updatePath() {
-        const path = this.path;
+        const { x, y, width, height, path } = this;
 
         path.clear();
-        path.rect(this.x, this.y, this.width, this.height);
+        path.rect(x, y, width, height);
 
         this._dirtyPath = false;
     }
@@ -58,29 +58,25 @@ export class ClipRect extends Node {
     }
 
     render(renderCtx: RenderContext) {
+        const { enabled, dirty, _dirtyPath, children } = this;
         let { ctx, forceRender } = renderCtx;
 
-        if (this.dirty === RedrawType.NONE && !forceRender) {
+        if (dirty === RedrawType.NONE && !forceRender) {
             return;
         }
 
-        if (this.enabled) {
-            if (this._dirtyPath) {
-                this.updatePath();
-            }
+        if (_dirtyPath) {
+            this.updatePath();
+        }
+
+        if (enabled) {
+            ctx.save();
             this.path.draw(ctx);
             ctx.clip();
         }
 
-        const clearNeeded = this.dirty >= RedrawType.MINOR;
-        if (!forceRender && clearNeeded) {
-            forceRender = true;
-            this.clearBBox(ctx);
-        }
-
-        const clipBBox = this.computeBBox();
+        const clipBBox = enabled ? this.computeBBox() : undefined;
         const childRenderContext = { ...renderCtx, clipBBox };
-        const { children } = this;
         for (const child of children) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
@@ -90,5 +86,9 @@ export class ClipRect extends Node {
         }
 
         super.render(renderCtx);
+
+        if (enabled) {
+            ctx.restore();
+        }
     }
 }

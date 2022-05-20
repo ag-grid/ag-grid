@@ -3,12 +3,14 @@ import { BBox } from "./bbox";
 import { Matrix } from "./matrix";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Scene } from "./scene";
+import { Path2D } from "./path2D";
 
 export class Group extends Node {
 
     static className = 'Group';
 
     private canvas?: HdpiCanvas;
+    private clipPath: Path2D = new Path2D();
 
     @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
     opacity: number = 1;
@@ -103,16 +105,16 @@ export class Group extends Node {
     }
 
     render(renderCtx: RenderContext) {
-        const { name } = this.opts || {};
+        const { opts: { name } = { name: undefined }, dirty, dirtyZIndex, clipPath, canvas, children } = this;
         let { ctx, forceRender, clipBBox, resized } = renderCtx;
 
-        const isDirty = this.dirty >= RedrawType.TRIVIAL || this.dirtyZIndex || resized;
+        const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
 
         if (name && this.scene?.debug?.consoleLog) {
             console.log({ name, group: this, isDirty, forceRender });
         }
 
-        if (this.canvas) {
+        if (canvas) {
             // Dy default there is no need to force redraw a group which has it's own canvas layer
             // as the layer is independent of any other layer.
             forceRender = false;
@@ -123,22 +125,21 @@ export class Group extends Node {
             return;
         }
 
-        const originalTransform = ctx.getTransform();
-        if (this.canvas) {
+        if (canvas) {
             // Switch context to the canvas layer we use for this group.
-            ctx = this.canvas.context;
+            ctx = canvas.context;
             ctx.save();
-            ctx.resetTransform();
+            ctx.setTransform(renderCtx.ctx.getTransform());
+
+            forceRender = true;
+            canvas.clear();
 
             if (clipBBox) {
                 const { width, height, x, y } = clipBBox;
-                ctx.rect(x, y, width, height);
-                ctx.clip()
-            }
-
-            if (isDirty) {
-                forceRender = true;
-                this.canvas?.clear();
+                clipPath.clear();
+                clipPath.rect(x, y, width, height);
+                clipPath.draw(ctx);
+                ctx.clip();
             }
         }
 
@@ -149,8 +150,7 @@ export class Group extends Node {
         this.matrix.toContext(ctx);
         clipBBox = clipBBox ? this.matrix.transformBBox(clipBBox) : undefined;
 
-        const { children } = this;
-        if (this.dirtyZIndex) {
+        if (dirtyZIndex) {
             this.dirtyZIndex = false;
             children.sort((a, b) => a.zIndex - b.zIndex);
             forceRender = true;
@@ -185,9 +185,8 @@ export class Group extends Node {
 
         super.render(renderCtx);
 
-        if (this.canvas) {
+        if (canvas) {
             ctx.restore();
         }
-        ctx.setTransform(originalTransform);
     }
 }
