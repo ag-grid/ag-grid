@@ -5,7 +5,7 @@
  * Adjust as necessary for your application needs.
  */
 (function (global) {
-    var ANGULAR_VERSION = "10.0.0";
+    var ANGULAR_VERSION = "13.3.5";
     var ANGULAR_CDK_VERSION = "10.0.0";
     var ANGULAR_MATERIAL_VERSION = "10.0.0";
 
@@ -68,16 +68,32 @@
                 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // angular bundles
-                "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.min.js",
-                "@angular/animations/browser": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations-browser.umd.min.js",
-                "@angular/core": "npm:@angular/core@" + ANGULAR_VERSION + "/bundles/core.umd.min.js",
-                "@angular/common": "npm:@angular/common@" + ANGULAR_VERSION + "/bundles/common.umd.min.js",
-                "@angular/common/http": "npm:@angular/common@" + ANGULAR_VERSION + "/bundles/common-http.umd.min.js",
-                "@angular/compiler": "npm:@angular/compiler@" + ANGULAR_VERSION + "/bundles/compiler.umd.min.js",
-                "@angular/platform-browser": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser.umd.min.js",
-                "@angular/platform-browser/animations": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser-animations.umd.min.js",
-                "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@" + ANGULAR_VERSION + "/bundles/platform-browser-dynamic.umd.min.js",
-                "@angular/forms": "npm:@angular/forms@" + ANGULAR_VERSION + "/bundles/forms.umd.min.js",
+                // Cell renderers only work with the esm-bundle version
+                '@angular/compiler': 'https://cdn.jsdelivr.net/npm/@esm-bundle/angular__compiler@13.3.5/system/es2015/ivy/angular-compiler.js',
+                //'@angular/compiler':'https://cdn.jsdelivr.net/npm/@angular/compiler@13.3.5/fesm2015/compiler.mjs',
+                '@angular/core':
+                    'https://cdn.jsdelivr.net/npm/@angular/core@13.3.5/fesm2015/core.mjs',
+                '@angular/common':
+                    'https://cdn.jsdelivr.net/npm/@angular/common@13.3.5/fesm2015/common.mjs',
+                '@angular/common/http':
+                    'https://cdn.jsdelivr.net/npm/@angular/common@13.3.5/fesm2015/http.mjs',
+
+                '@angular/platform-browser-dynamic':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@13.3.5/fesm2015/platform-browser-dynamic.mjs',
+                '@angular/platform-browser':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@13.3.5/fesm2015/platform-browser.mjs',
+                '@angular/platform-browser/animations':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@13.3.5/fesm2015/animations.mjs',
+
+                '@angular/forms':
+                    'https://cdn.jsdelivr.net/npm/@angular/forms@13.3.5/fesm2015/forms.mjs',
+                '@angular/router':
+                    'https://cdn.jsdelivr.net/npm/@angular/router@13.3.5/fesm2015/router.mjs',
+                '@angular/animations':
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@13.3.5/fesm2015/animations.mjs',
+                '@angular/animations/browser':
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@13.3.5/fesm2015/browser.mjs',
+
                 // material design
                 "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-core.umd.min.js",
                 "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-radio.umd.min.js",
@@ -112,8 +128,6 @@
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
-
-                rxjs: "npm:rxjs@6.5.3/bundles/rxjs.umd.min.js"
             },
             systemJsMap
         ),

@@ -270,7 +270,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${format(systemJsPaths)};` : ''}
         `
         }} />
-        <script src="https://unpkg.com/systemjs@0.19.47/dist/system.js" />
+        <script src="https://unpkg.com/systemjs@0.21.6/dist/system.js" />
         <script src={systemJsPath} />
         <script dangerouslySetInnerHTML={{ __html: `System.import('${startFile}').catch(function(err) { console.error(err); });` }} />
     </>;
