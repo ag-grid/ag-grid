@@ -13,7 +13,7 @@ try {
     logger("Changelog Data Downloaded", CHANGELOG_LOG);
 
     saveDataToFile(changelogData, CHANGELOG_TMP_FILE);
-    logger("Changelog Data Downloaded", CHANGELOG_LOG);
+    logger("Changelog Data Saved", CHANGELOG_LOG);
 
     // check we've not downloaded an empty data set (it's very unlikely the changelog will ever be empty)
     if(changelogData.length > 1) {

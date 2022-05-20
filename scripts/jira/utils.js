@@ -38,8 +38,8 @@ const executeJiraRequest = (url) => {
                     customfield_10521: breakingChangesNotes = "",
                     customfield_10523: documentationUrl = "",
                     issuetype: {name: issueType},
-                    status: {name: status},
-                    resolution
+                    resolution,
+                    status: {name: status}
                 }
             } = issue;
 
@@ -63,7 +63,6 @@ const executeJiraRequest = (url) => {
                 documentationUrl
             }
         });
-
     return JSON.stringify(result);
 }
 
