@@ -156,14 +156,17 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
 
     beforeEach(() => {
         ctx.nodeCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+        window['agChartsSceneRenderModel'] = 'simple';
 
         realCreateElement = document.createElement;
         document.createElement = jest.fn(
             (element, options) => {
                 if (element === 'canvas') {
                     const mockedElement = realCreateElement.call(document, element, options);
+
+                    let nodeCanvas = ctx.nodeCanvas;
                     mockedElement.getContext = (p) => { 
-                        const context2d = ctx.nodeCanvas.getContext(p, { alpha: false });
+                        const context2d = nodeCanvas.getContext(p, { alpha: false });
                         context2d.patternQuality = 'good';
                         context2d.quality = 'good';
                         context2d.textDrawingMode = 'path';
