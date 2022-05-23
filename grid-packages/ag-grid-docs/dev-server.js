@@ -1,4 +1,3 @@
-const v8 = require('node:v8');
 const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
@@ -668,10 +667,6 @@ const readModulesState = () => {
 };
 
 module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
-    const {total_available_size} = v8.getHeapStatistics();
-    console.log('**************************************');
-    console.log(`** Total Available Heap Size: ~${(total_available_size / Math.pow(1024, 3)).toFixed(0)}GB **`);
-    console.log('**************************************');
     tcpPortUsed.check(EXPRESS_HTTP_PORT)
         .then(async (inUse) => {
             if (inUse) {
