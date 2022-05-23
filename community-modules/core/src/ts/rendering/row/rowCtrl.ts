@@ -107,6 +107,8 @@ export class RowCtrl extends BeanStub {
 
     private updateColumnListsPending = false;
 
+    private inBody: boolean; // false if row is pinned
+
     // the top needs to be set into the DOM element when the element is created, not updated afterwards.
     // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
     // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
@@ -122,9 +124,11 @@ export class RowCtrl extends BeanStub {
         beans: Beans,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
-        printLayout: boolean
+        printLayout: boolean,
+        inBody: boolean
     ) {
         super();
+        this.inBody = inBody;
         this.beans = beans;
         this.rowNode = rowNode;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
@@ -489,7 +493,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setAnimateFlags(animateIn: boolean): void {
-        if (animateIn) {
+        if (this.inBody && animateIn) {
             const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
@@ -1190,6 +1194,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
+        // row heights don't change for pinned rows
+        if (!this.inBody) { return; }
+
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
@@ -1254,6 +1261,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private setupRemoveAnimation(): void {
+        // we don't animate pinned rows
+        if (!this.inBody) { return; }
+
         const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
         if (rowStillVisibleJustNotInViewport) {
             // if the row is not rendered, but in viewport, it means it has moved,
@@ -1340,6 +1350,9 @@ export class RowCtrl extends BeanStub {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return; }
 
+        // when rows are pinned, we ignore changes to row top, because we are using pinnedRowTop
+        if (!this.inBody) { return; }
+
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (exists(pixels)) {
@@ -1362,19 +1375,24 @@ export class RowCtrl extends BeanStub {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
 
-        // if sliding in, we take the old row top. otherwise we just set the current row top.
-        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
-        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
-        // we don't apply scaling if row is pinned
-        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+        let rowTop: number;
+        if (this.inBody) {
+            // if sliding in, we take the old row top. otherwise we just set the current row top.
+            const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+            const afterPaginationPixels = this.applyPaginationOffset(pixels!);
+            // we don't apply scaling if row is pinned
+            rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+        } else {
+            rowTop = this.rowNode.pinnedRowTop;            
+        }
 
-        const res = afterScalingPixels + 'px';
+        const rowTopPx = rowTop + 'px';
 
         const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
         if (suppressRowTransform) {
-            this.initialTop = res;
+            this.initialTop = rowTopPx;
         } else {
-            this.initialTransform = `translateY(${res})`;
+            this.initialTransform = `translateY(${rowTopPx})`;
         }
     }
 

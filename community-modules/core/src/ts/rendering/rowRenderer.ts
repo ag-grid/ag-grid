@@ -29,7 +29,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
+import { doOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -76,6 +76,10 @@ export class RowRenderer extends BeanStub {
 
     private pinningLeft: boolean;
     private pinningRight: boolean;
+
+    private firstVisibleVPixel: number;
+
+    private stickyRows: RowNode[] = [];
 
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
@@ -336,7 +340,8 @@ export class RowRenderer extends BeanStub {
                 this.beans,
                 false,
                 false,
-                this.printLayout
+                this.printLayout,
+                false
             );
 
             rowComps.push(rowCtrl);
@@ -464,6 +469,7 @@ export class RowRenderer extends BeanStub {
         }
 
         this.releaseLockOnRefresh();
+        this.pinnedRowModel.setStickyRows(this.stickyRows);
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
@@ -762,6 +768,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
+        this.pinnedRowModel.setStickyRows(this.stickyRows);
         this.dispatchDisplayedRowsChanged();
     }
 
@@ -778,7 +785,7 @@ export class RowRenderer extends BeanStub {
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
         // all in all indexes in the viewport
-        const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        let indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowCtrl) => {
             const index = rowComp.getRowNode().rowIndex;
@@ -798,12 +805,64 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
+        indexesToDraw = indexesToDraw.filter( index => {
+            const rowNode = this.paginationProxy.getRow(index);
+            return rowNode && !rowNode.sticky;
+        });
+
         return indexesToDraw;
+    }
+
+    private checkStickyRows(): void {
+        if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
+            this.stickyRows = [];
+            return;
+        }
+
+        if (this.rowModel.getType()!=Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            doOnce(()=> console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
+        }
+
+        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel);
+        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
+        if (!rowNode) { return; }
+
+        // we want first row that's fully visible
+        if (rowNode.rowTop! < this.firstVisibleVPixel) {
+            rowNode = this.paginationProxy.getRow(firstVisibleIndex+1);
+            if (!rowNode) { return; }
+        }
+
+        const stickyRows: RowNode[] = [];
+        const stickyRowsMapped: {[id: string]: RowNode} = {};
+        if (rowNode.level>0) {
+            let pointer = rowNode.parent;
+            while (pointer !== null && pointer.level>=0) {
+                stickyRows.unshift(pointer);
+                stickyRowsMapped[pointer.__objectId] = pointer;
+                pointer = pointer.parent;
+            }
+        }
+
+        const oldHash = this.stickyRows.map( row => row.__objectId ).join('-');
+        const newHash = stickyRows.map( row => row.__objectId ).join('-');
+        if (oldHash==newHash) { return; }
+
+        this.stickyRows.forEach( row => {
+            const stillSticky = stickyRowsMapped[row.__objectId] === row;
+            if (stillSticky) { return; }
+            row.sticky = false;
+        });
+
+        stickyRows.forEach( row => row.sticky = true );
+
+        this.stickyRows = stickyRows;
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
+        this.checkStickyRows();
 
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -1037,17 +1096,19 @@ export class RowRenderer extends BeanStub {
                 const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
+                const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
+                const bodyTopPixel = bodyVRange.top;
+                const bodyBottomPixel = bodyVRange.bottom;
+
                 if (suppressRowVirtualisation) {
                     firstPixel = pageFirstPixel + divStretchOffset;
                     lastPixel = pageLastPixel + divStretchOffset;    
                 } else {
-                    const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-                    const bodyTopPixel = bodyVRange.top;
-                    const bodyBottomPixel = bodyVRange.bottom;
-
                     firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
                     lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;    
                 }
+
+                this.firstVisibleVPixel = Math.max(bodyTopPixel + paginationOffset, pageFirstPixel) + divStretchOffset;
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
@@ -1196,7 +1257,8 @@ export class RowRenderer extends BeanStub {
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout
+            this.printLayout,
+            true
         );
 
         return res;

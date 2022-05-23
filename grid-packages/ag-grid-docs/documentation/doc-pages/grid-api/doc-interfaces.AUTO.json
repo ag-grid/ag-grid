@@ -2574,6 +2574,9 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -21800,6 +21803,9 @@
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "groupRowsSticky": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "context": {
       "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
       "type": { "returnType": "any", "optional": true }
@@ -24501,6 +24507,9 @@
     },
     "detailRowAutoHeight": {
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupRowsSticky": {
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {
@@ -27214,6 +27223,9 @@
     },
     "detailRowAutoHeight": {
       "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "groupRowsSticky": {
       "type": { "returnType": "boolean", "optional": true }
     },
     "context": {

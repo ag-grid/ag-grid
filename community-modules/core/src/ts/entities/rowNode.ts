@@ -136,6 +136,12 @@ export class RowNode implements IEventEmitter {
     /** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */
     public rowPinned: string;
 
+    /** When true, this row will appear in the top */
+    public sticky: boolean;
+
+    /** If row is pinned, then pinnedRowTop is used rather than rowTop */
+    public pinnedRowTop: number;
+
     /** If using quick filter, stores a string representation of the row for searching against. */
     public quickFilterAggregateText: string | null;
 

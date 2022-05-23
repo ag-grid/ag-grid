@@ -339,6 +339,8 @@ export interface GridOptions {
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
     detailRowAutoHeight?: boolean;
 
+    groupRowsSticky?: boolean;
+
     // *** Miscellaneous *** //
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
