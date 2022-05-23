@@ -1,9 +1,102 @@
-function groupedData(game: string, country: string): {} {
-    return {
-        labels: [game, country],
-        toString: () => `${country} - ${game}`,
-    };
-}
+import { seedRandom } from "./random";
+
+export const DATA_MEAN_SEA_LEVEL = (() => {
+    const seaLevelRandom = seedRandom(75023847123);
+    const meanSeaLevelData = [];
+
+    for (let i = 0; i < 1000; i++) {
+        meanSeaLevelData.push({
+            time: seaLevelRandom() * 15 + 1998, // time between 1998 and 2013
+            mm: seaLevelRandom() * 100 - 20, // mean sea level between -20 and 80
+        });
+    }
+
+    return meanSeaLevelData;
+})();
+
+export const DATA_REVENUE = (() => {
+    const appleRevenueRandom = seedRandom(10763960837);
+    const revenueData = [];
+    // Two year's worth of monthly data
+    for (let idx = 1000; idx > 0; idx--) {
+        const today = new Date();
+        if (idx % 30 === 0) {
+            today.setDate(today.getDate() - idx);
+            revenueData.push({
+                date: today,
+                value: appleRevenueRandom() * 1000,
+            });
+        }
+    }
+    return revenueData;
+})();
+
+export const DATA_APPLE_REVENUE_BY_PRODUCT = [
+    {
+        quarter: "Q1'18",
+        iphone: 140,
+        mac: 16,
+        ipad: 14,
+        wearables: 12,
+        services: 20
+    },
+    {
+        quarter: "Q2'18",
+        iphone: 134,
+        mac: 20,
+        ipad: 14,
+        wearables: 12,
+        services: 30
+    },
+    {
+        quarter: "Q3'18",
+        iphone: 124,
+        mac: 20,
+        ipad: 18,
+        wearables: 14,
+        services: 36
+    },
+    {
+        quarter: "Q4'18",
+        iphone: 118,
+        mac: 24,
+        ipad: 14,
+        wearables: 14,
+        services: 36
+    },
+    {
+        quarter: "Q1'19",
+        iphone: 112,
+        mac: 18,
+        ipad: 16,
+        wearables: 18,
+        services: 26
+    },
+    {
+        quarter: "Q2'19",
+        iphone: 108,
+        mac: 20,
+        ipad: 16,
+        wearables: 18,
+        services: 40
+    },
+    {
+        quarter: "Q3'19",
+        iphone: 96,
+        mac: 22,
+        ipad: 18,
+        wearables: 24,
+        services: 42
+    },
+    {
+        quarter: "Q4'19",
+        iphone: 104,
+        mac: 22,
+        ipad: 14,
+        wearables: 20,
+        services: 40
+    }
+];
 
 export const DATA_VISITORS = [
     {
@@ -222,6 +315,13 @@ export const DATA_BROWSER_MARKET_SHARE = [
         chrome: 61.72,
     },
 ];
+
+function groupedData(game: string, country: string): {} {
+    return {
+        labels: [game, country],
+        toString: () => `${country} - ${game}`,
+    };
+}
 
 export const DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY = [
     {
