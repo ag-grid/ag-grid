@@ -34,7 +34,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agChartsSceneRenderModel || 'composite',
+            mode = (window as any).agChartsSceneRenderModel || 'dom-composite',
             width,
             height,
         } = opts;
