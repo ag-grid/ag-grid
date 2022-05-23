@@ -667,7 +667,6 @@ const readModulesState = () => {
     return modulesState;
 };
 
-// 2:18
 module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
     const {total_available_size} = v8.getHeapStatistics();
     console.log('**************************************');
