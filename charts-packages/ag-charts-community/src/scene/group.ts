@@ -123,7 +123,7 @@ export class Group extends Node {
         }
 
         if (layer) {
-            // Dy default there is no need to force redraw a group which has it's own canvas layer
+            // By default there is no need to force redraw a group which has it's own canvas layer
             // as the layer is independent of any other layer.
             forceRender = false;
         }

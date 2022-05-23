@@ -72,8 +72,8 @@ export class HdpiCanvas {
 
     clear() {
         this.context.save();
-        this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.clearRect(0, 0, this.element.width, this.element.height);
+        this.context.resetTransform();
+        this.context.clearRect(0, 0, this.width, this.height);
         this.context.restore();
     }
 
@@ -314,6 +314,8 @@ export class HdpiCanvas {
                 if (depth > 0) {
                     this.$restore();
                     depth--;
+                } else {
+                    throw new Error('Unable to restore() past depth 0');
                 }
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
@@ -330,11 +332,6 @@ export class HdpiCanvas {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
                 this.$setTransform(scale, 0, 0, scale, 0, 0);
-                this.save();
-                depth = 0;
-                // The scale above will be impossible to restore,
-                // because we override the `ctx.restore` above and
-                // check `depth` there.
             }
         } as any;
 
