@@ -343,7 +343,7 @@ export class BarSeries extends CartesianSeries {
         }
 
         const setSmallestXInterval = (curr: number, prev: number) => {
-            if (this.smallestDataInterval == undefined) {
+            if (this.smallestDataInterval === undefined) {
                 this.smallestDataInterval = { x: Infinity, y: Infinity };
             }
             const { x } = this.smallestDataInterval;
