@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType,
@@ -80,7 +80,9 @@ export class Path extends Shape {
     protected isDirtyPath() {}
     protected updatePath() {}
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender } = renderCtx;
+
         if (this.dirty === RedrawType.NONE && !forceRender) {
             return;
         }
@@ -96,6 +98,6 @@ export class Path extends Shape {
 
         this.fillStroke(ctx);
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }

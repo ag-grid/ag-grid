@@ -2769,12 +2769,23 @@
     "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
     "docs": [null, null, null, null]
   },
+  "RenderContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ ctx: CanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; }"
+  },
   "DebugOptions": {
     "meta": {},
     "type": {
       "renderFrameIndex": "boolean",
       "renderBoundingBoxes": "boolean",
       "consoleLog": "boolean"
+    }
+  },
+  "SceneOptions": {
+    "meta": {},
+    "type": {
+      "document": "Document",
+      "mode": "'simple' | 'composite' | 'dom-composite'"
     }
   },
   "ValueFn": {

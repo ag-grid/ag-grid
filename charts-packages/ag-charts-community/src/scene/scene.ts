@@ -8,6 +8,11 @@ interface DebugOptions {
     consoleLog: boolean;
 }
 
+interface SceneOptions {
+    document: Document,
+    mode: 'simple' | 'composite' | 'dom-composite',
+}
+
 export class Scene {
 
     static className = 'Scene';
@@ -15,14 +20,27 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
+    readonly layers: { name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+
     private readonly ctx: CanvasRenderingContext2D;
 
-    // As a rule of thumb, constructors with no parameters are preferred.
-    // A few exceptions are:
-    // - we absolutely need to know something at construction time (document)
-    // - knowing something at construction time meaningfully improves performance (width, height)
-    constructor(document = window.document, width?: number, height?: number) {
-        this.canvas = new HdpiCanvas(document, width, height);
+    private readonly opts: SceneOptions;
+
+    constructor(
+        opts: {
+            width?: number,
+            height?: number,
+        } & Partial<SceneOptions>
+    ) {
+        const {
+            document = window.document,
+            mode = (window as any).agChartsSceneRenderModel || 'composite',
+            width,
+            height,
+        } = opts;
+
+        this.opts = { document, mode };
+        this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
 
@@ -65,6 +83,60 @@ export class Scene {
         this.markDirty();
         
         return true;
+    }
+
+    private _nextZIndex = 0;
+    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
+        const { mode } = this.opts;
+        if (mode !== 'composite' && mode !== 'dom-composite') {
+            return undefined;
+        }
+
+        const { zIndex = this._nextZIndex++, name } = opts || {};
+        const { width, height } = this;
+        const domLayer = mode === 'dom-composite';
+        const newLayer = {
+            name,
+            zIndex,
+            canvas: new HdpiCanvas({
+                document: this.canvas.document,
+                width,
+                height,
+                domLayer,
+                zIndex,
+            }),
+        };
+
+        if (zIndex >= this._nextZIndex) {
+            this._nextZIndex = zIndex + 1;
+        }
+
+        this.layers.push(newLayer);
+        this.layers.sort((a, b) => a.zIndex - b.zIndex);
+
+        if (domLayer) {
+            this.canvas.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+        }
+
+        if (this.debug.consoleLog) {
+            console.log({ layers: this.layers });
+        }
+
+        return newLayer.canvas;
+    }
+
+    removeLayer(canvas: HdpiCanvas) {
+        const index = this.layers.findIndex((l) => l.canvas = canvas);
+
+        if (index >= 0) {
+            this.layers.splice(index, 1);
+            canvas.destroy();
+            this.markDirty();
+
+            if (this.debug.consoleLog) {
+                console.log({ layers: this.layers });
+            }
+        }
     }
 
     private _dirty = false;
@@ -113,10 +185,12 @@ export class Scene {
     }
 
     render() {
-        const { ctx, root, pendingSize } = this;
+        const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
             this.canvas.resize(...pendingSize);
+            this.layers.forEach((layer) => layer.canvas.resize(...pendingSize));
+
             this.pendingSize = undefined;
         }
 
@@ -133,19 +207,32 @@ export class Scene {
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
             canvasCleared = true;
-            ctx.clearRect(0, 0, this.width, this.height);
+            canvas.clear();
         }
 
-        if (root) {
+        if (root && canvasCleared) {
             if (this.debug.consoleLog) {
                 console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
             }
 
             if (root.visible) {
                 ctx.save();
-                root.render(ctx, canvasCleared);
+                root.render({ ctx, forceRender: true, resized: !!pendingSize });
                 ctx.restore();
             }
+        }
+
+        if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
+            ctx.save();
+            ctx.resetTransform();
+            layers.forEach((layer) => {
+                if (layer.canvas.enabled) {
+                    // Indirect reference to fix typings for tests.
+                    const canvas = layer.canvas.context.canvas;
+                    ctx.drawImage(canvas, 0, 0);
+                }
+            });
+            ctx.restore();
         }
 
         this._frameIndex++;

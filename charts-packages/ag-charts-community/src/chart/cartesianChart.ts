@@ -2,7 +2,6 @@ import { Chart } from "./chart";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
-import { Series } from "./series/series";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
@@ -108,7 +107,8 @@ export class CartesianChart extends Chart {
         }
 
         axes.forEach(axis => {
-            axis.group.visible = true;
+            axis.axisGroup.visible = true;
+            axis.gridlineGroup.visible = true;
             let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
 
             // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).

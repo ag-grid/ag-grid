@@ -11,13 +11,21 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(document = window.document, width = 600, height = 300) {
+    constructor({ document = window.document, width = 600, height = 300, domLayer = false, zIndex = 0 }) {
         this.document = document;
         this.element = document.createElement('canvas');
         this.context = this.element.getContext('2d')!;
 
         this.element.style.userSelect = 'none';
         this.element.style.display = 'block';
+
+        if (domLayer) {
+            this.element.style.position = 'absolute';
+            this.element.style.zIndex = String(zIndex);
+            this.element.style.top = '0';
+            this.element.style.left = '0';
+            this.element.style.pointerEvents = 'none';
+        }
 
         this.setPixelRatio();
         this.resize(width, height);
@@ -39,6 +47,15 @@ export class HdpiCanvas {
         return this._container;
     }
 
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        this.element.style.display = value ? 'block' : 'none';
+        this._enabled = !!value;
+    }
+    get enabled() {
+        return this._enabled;
+    }
+
     private remove() {
         const { parentNode } = this.element;
 
@@ -51,6 +68,13 @@ export class HdpiCanvas {
         this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
+    }
+
+    clear() {
+        this.context.save();
+        this.context.resetTransform();
+        this.context.clearRect(0, 0, this.width, this.height);
+        this.context.restore();
     }
 
     toImage(): HTMLImageElement {
@@ -290,6 +314,8 @@ export class HdpiCanvas {
                 if (depth > 0) {
                     this.$restore();
                     depth--;
+                } else {
+                    throw new Error('Unable to restore() past depth 0');
                 }
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
@@ -306,11 +332,6 @@ export class HdpiCanvas {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
                 this.$setTransform(scale, 0, 0, scale, 0, 0);
-                this.save();
-                depth = 0;
-                // The scale above will be impossible to restore,
-                // because we override the `ctx.restore` above and
-                // check `depth` there.
             }
         } as any;
 

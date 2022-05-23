@@ -5,7 +5,6 @@ import { normalizeAngle360, toRadians } from "../../util/angle";
 import { Text } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
-// import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
 import { AxisLabel } from "../../axis";
@@ -16,20 +15,11 @@ class GroupedCategoryAxisLabel extends AxisLabel {
 }
 
 export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
-    // debug (bbox)
-    // private bboxRect = (() => {
-    //     const rect = new Rect();
-    //     rect.fill = undefined;
-    //     rect.stroke = 'red';
-    //     rect.strokeWidth = 1;
-    //     rect.strokeOpacity = 0.2;
-    //     return rect;
-    // })();
 
     static className = 'GroupedCategoryAxis';
     static type = 'groupedCategory' as const;
 
-    // Label scale (labels are positionsed between ticks, tick count = label count + 1).
+    // Label scale (labels are positioned between ticks, tick count = label count + 1).
     // We don't call is `labelScale` for consistency with other axes.
     readonly tickScale = new BandScale<string | number>();
 
@@ -43,7 +33,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     constructor() {
         super(new BandScale<string | number>());
 
-        const { group, tickScale, scale } = this;
+        const { axisGroup: group, tickScale, scale } = this;
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
@@ -58,7 +48,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         this.axisLineSelection = Selection.select(group).selectAll<Line>();
         this.separatorSelection = Selection.select(group).selectAll<Line>();
         this.labelSelection = Selection.select(group).selectAll<Text>();
-        // this.group.append(this.bboxRect); // debug (bbox)
     }
 
     set domain(domainValues: any[]) {
@@ -191,7 +180,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, label, tickScale, requestedRange } = this;
+        const { axisGroup: group, scale, label, tickScale, requestedRange } = this;
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -435,14 +424,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                     line.fill = undefined;
                 });
         }
-
-        // debug (bbox)
-        // const bbox = this.computeBBox();
-        // const bboxRect = this.bboxRect;
-        // bboxRect.x = bbox.x;
-        // bboxRect.y = bbox.y;
-        // bboxRect.width = bbox.width;
-        // bboxRect.height = bbox.height;
     }
 
     computeBBox(options?: { excludeTitle: boolean }): BBox {

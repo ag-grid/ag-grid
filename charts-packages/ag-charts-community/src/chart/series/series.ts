@@ -96,7 +96,7 @@ export abstract class Series extends Observable {
     }
 
     // The group node that contains all the nodes used to render this series.
-    readonly group: Group = new Group();
+    readonly group: Group = new Group({ name: this.id, layer: true, zIndex: 100 });
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
     readonly pickGroup: Group = this.group.appendChild(new Group());
@@ -199,7 +199,7 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void { }
+    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void { }
 
     /**
      * @private
@@ -211,7 +211,7 @@ export abstract class Series extends Observable {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
 
-    toggleSeriesItem(itemId: any, enabled: boolean): void {
+    toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }
