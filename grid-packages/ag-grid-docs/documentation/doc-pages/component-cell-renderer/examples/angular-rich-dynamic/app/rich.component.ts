@@ -10,7 +10,13 @@ import { ColDef, GridOptions, GridReadyEvent, Module } from "@ag-grid-community/
 
 @Component({
     selector: 'my-app',
-    templateUrl: './rich.component.html'
+    template: `
+    <ag-grid-angular style="width: 100%; height: 360px;" class="ag-theme-alpine"
+                 [gridOptions]="gridOptions"
+                 (gridReady)="onGridReady($event)"
+                 [modules]="modules">
+    </ag-grid-angular>
+    `
 })
 export class RichComponent {
     public gridOptions: GridOptions;

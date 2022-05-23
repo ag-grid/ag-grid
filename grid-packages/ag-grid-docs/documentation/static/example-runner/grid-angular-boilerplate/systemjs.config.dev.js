@@ -6,8 +6,8 @@
  */
 (function (global) {
     var ANGULAR_VERSION = "13.3.5";
-    var ANGULAR_CDK_VERSION = "10.0.0";
-    var ANGULAR_MATERIAL_VERSION = "10.0.0";
+    var ANGULAR_CDK_VERSION = "13.3.5";
+    var ANGULAR_MATERIAL_VERSION = "13.3.5";
 
     function assign() {
         var result = {};
@@ -69,55 +69,56 @@
 
                 // angular bundles
                 // Cell renderers only work with the esm-bundle version
-                '@angular/compiler': 'https://cdn.jsdelivr.net/npm/@esm-bundle/angular__compiler@13.3.5/system/es2015/ivy/angular-compiler.js',
-                //'@angular/compiler':'https://cdn.jsdelivr.net/npm/@angular/compiler@13.3.5/fesm2015/compiler.mjs',
+                '@angular/compiler': 'https://cdn.jsdelivr.net/npm/@esm-bundle/angular__compiler@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-compiler.js',
+                //'@angular/compiler':'https://cdn.jsdelivr.net/npm/@angular/compiler@' + ANGULAR_VERSION + '/fesm2015/compiler.mjs',
                 '@angular/core':
-                    'https://cdn.jsdelivr.net/npm/@angular/core@13.3.5/fesm2015/core.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/core@' + ANGULAR_VERSION + '/fesm2015/core.mjs',
                 '@angular/common':
-                    'https://cdn.jsdelivr.net/npm/@angular/common@13.3.5/fesm2015/common.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/common.mjs',
                 '@angular/common/http':
-                    'https://cdn.jsdelivr.net/npm/@angular/common@13.3.5/fesm2015/http.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/http.mjs',
 
                 '@angular/platform-browser-dynamic':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@13.3.5/fesm2015/platform-browser-dynamic.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@' + ANGULAR_VERSION + '/fesm2015/platform-browser-dynamic.mjs',
                 '@angular/platform-browser':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@13.3.5/fesm2015/platform-browser.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/platform-browser.mjs',
                 '@angular/platform-browser/animations':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@13.3.5/fesm2015/animations.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
 
                 '@angular/forms':
-                    'https://cdn.jsdelivr.net/npm/@angular/forms@13.3.5/fesm2015/forms.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/forms@' + ANGULAR_VERSION + '/fesm2015/forms.mjs',
                 '@angular/router':
-                    'https://cdn.jsdelivr.net/npm/@angular/router@13.3.5/fesm2015/router.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/router@' + ANGULAR_VERSION + '/fesm2015/router.mjs',
                 '@angular/animations':
-                    'https://cdn.jsdelivr.net/npm/@angular/animations@13.3.5/fesm2015/animations.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
                 '@angular/animations/browser':
-                    'https://cdn.jsdelivr.net/npm/@angular/animations@13.3.5/fesm2015/browser.mjs',
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/browser.mjs',
 
                 // material design
-                "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-core.umd.min.js",
-                "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-radio.umd.min.js",
-                "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-card.umd.min.js",
-                "@angular/material/slider": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-slider.umd.min.js",
-                "@angular/material/select": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-select.umd.min.js",
-                "@angular/material/progress-spinner": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-progress-spinner.umd.min.js",
-                "@angular/material/input": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-input.umd.min.js",
-                "@angular/material/icon": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-icon.umd.min.js",
-                "@angular/material/form-field": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-form-field.umd.min.js",
-                "@angular/material/checkbox": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-checkbox.umd.min.js",
-                "@angular/material/button-toggle": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material-button-toggle.umd.min.js",
-                "@angular/cdk": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk.umd.min.js",
-                "@angular/cdk/platform": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-platform.umd.min.js",
-                "@angular/cdk/bidi": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-bidi.umd.min.js",
-                "@angular/cdk/coercion": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-coercion.umd.min.js",
-                "@angular/cdk/keycodes": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-keycodes.umd.min.js",
-                "@angular/cdk/a11y": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-a11y.umd.min.js",
-                "@angular/cdk/overlay": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-overlay.umd.min.js",
-                "@angular/cdk/portal": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-portal.umd.min.js",
-                "@angular/cdk/observers": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-observers.umd.min.js",
-                "@angular/cdk/collections": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-collections.umd.min.js",
-                "@angular/cdk/scrolling": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-scrolling.umd.min.js",
-                "@angular/cdk/text-field": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-text-field.umd.min.js",
+                "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/core.mjs",
+                "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/radio.mjs",
+                "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/card.mjs",
+                "@angular/material/slider": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/slider.mjs",
+                "@angular/material/select": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/select.mjs",
+                "@angular/material/progress-spinner": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/progress-spinner.mjs",
+                "@angular/material/input": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/input.mjs",
+                "@angular/material/icon": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/icon.mjs",
+                "@angular/material/form-field": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/form-field.mjs",
+                "@angular/material/checkbox": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/checkbox.mjs",
+                "@angular/material/button-toggle": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/button-toggle.mjs",
+
+                "@angular/cdk": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/cdk.mjs",
+                "@angular/cdk/platform": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/platform.mjs",
+                "@angular/cdk/bidi": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/bidi.mjs",
+                "@angular/cdk/coercion": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/coercion.mjs",
+                "@angular/cdk/keycodes": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/keycodes.mjs",
+                "@angular/cdk/a11y": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/a11y.mjs",
+                "@angular/cdk/overlay": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/overlay.mjs",
+                "@angular/cdk/portal": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/portal.mjs",
+                "@angular/cdk/observers": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/observers.mjs",
+                "@angular/cdk/collections": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/collections.mjs",
+                "@angular/cdk/scrolling": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/scrolling.mjs",
+                "@angular/cdk/text-field": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/fesm2015/text-field.mjs",
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",
@@ -143,7 +144,7 @@
                 }
             },
             'ag-grid-angular': {
-                main: './dist/ag-grid-angular/bundles/ag-grid-angular.umd.js',
+                main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
@@ -155,7 +156,7 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
+                main: "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.js",
                 defaultExtension: "js"
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...

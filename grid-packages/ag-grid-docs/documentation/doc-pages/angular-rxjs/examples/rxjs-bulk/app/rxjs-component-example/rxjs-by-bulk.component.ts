@@ -9,7 +9,10 @@ import { Observable } from "rxjs";
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     selector: 'my-app',
-    templateUrl: './rxjs-by-bulk.component.html',
+    template: `
+    <h2>Full Data Set With Updates Within Supplied</h2>
+    <ag-grid-angular style="width: 100%; height: 330px;" class="ag-theme-alpine" [gridOptions]="gridOptions">
+    </ag-grid-angular>`,
     providers: [MockServerService]
 })
 export class RxJsComponentByFullSet {
