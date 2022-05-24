@@ -194,11 +194,17 @@ export abstract class Series extends Observable {
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
 
-    protected getOpacity(datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { dimOpacity = 1 } } } = this;
-        return !chart || !chart.highlightedDatum ||
-            chart.highlightedDatum.series === this &&
-            (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : dimOpacity;
+    protected getOpacity(): number {
+        const { 
+            chart: { highlightedDatum: { series = undefined } = {} } = {},
+            highlightStyle: { series: { dimOpacity = 1 } },
+         } = this;
+        
+        if (series && series !== this) {
+            return dimOpacity;
+        } else {
+            return 1;
+        }
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {

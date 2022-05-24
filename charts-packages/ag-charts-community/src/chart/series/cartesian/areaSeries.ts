@@ -608,7 +608,7 @@ export class AreaSeries extends CartesianSeries {
             shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.opacity = this.getOpacity(datum);
+            shape.opacity = this.getOpacity();
 
             const { points } = datum;
 
@@ -653,7 +653,7 @@ export class AreaSeries extends CartesianSeries {
 
         this.strokeSelection.each((shape, datum, index) => {
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.opacity = this.getOpacity(datum);
+            shape.opacity = this.getOpacity();
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = this.getStrokeWidth(this.strokeWidth, datum);
             shape.strokeOpacity = strokeOpacity;
@@ -752,7 +752,7 @@ export class AreaSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
-            node.opacity = this.getOpacity(datum);
+            node.opacity = this.getOpacity();
         });
     }
 
@@ -784,7 +784,7 @@ export class AreaSeries extends CartesianSeries {
                 text.y = point.y - 10;
                 text.fill = color;
                 text.visible = true;
-                text.opacity = this.getOpacity(datum);
+                text.opacity = this.getOpacity();
             } else {
                 text.visible = false;
             }
