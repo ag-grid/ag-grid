@@ -21,7 +21,7 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
-    readonly layers: { name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+    readonly layers: { id: number, name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
 
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -89,6 +89,7 @@ export class Scene {
     }
 
     private _nextZIndex = 0;
+    private _nextLayerId = 0;
     addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
         const { mode } = this.opts;
         if (mode !== 'composite' && mode !== 'dom-composite') {
@@ -99,6 +100,7 @@ export class Scene {
         const { width, height } = this;
         const domLayer = mode === 'dom-composite';
         const newLayer = {
+            id: this._nextLayerId++,
             name,
             zIndex,
             canvas: new HdpiCanvas({
@@ -116,10 +118,18 @@ export class Scene {
         }
 
         this.layers.push(newLayer);
-        this.layers.sort((a, b) => a.zIndex - b.zIndex);
+        this.layers.sort((a, b) => { 
+            const zDiff = a.zIndex - b.zIndex;
+            if (zDiff !== 0) {
+                return zDiff;
+            }
+            return a.id - b.id;
+        });
 
         if (domLayer) {
-            this.canvas.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+            const newLayerIndex = this.layers.findIndex(v => v === newLayer);
+            const lastLayer = this.layers[newLayerIndex - 1]?.canvas ?? this.canvas;
+            lastLayer.element.insertAdjacentElement('afterend', newLayer.canvas.element);
         }
 
         if (this.debug.consoleLog) {
