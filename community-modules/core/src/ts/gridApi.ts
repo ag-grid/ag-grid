@@ -1251,11 +1251,13 @@ export class GridApi {
 
     /** @deprecated use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
+        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColDef has been renamed, please use setProcessPivotResultColDef instead');
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
     /** @deprecated use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
+        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColGroupDef has been renamed, please use setProcessPivotResultColGroupDef instead');
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
 

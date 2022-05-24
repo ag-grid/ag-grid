@@ -122,6 +122,7 @@ export class ColumnApi {
 
     /** @deprecated Use `getPivotResultColumn` instead */
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryPivotColumn has been renamed, please use getPivotResultColumn instead');
         return this.getPivotResultColumn(pivotKeys, valueColKey);
     }
 
@@ -187,17 +188,26 @@ export class ColumnApi {
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
     /** @deprecated Use `setPivotResultColumns` instead. */
-    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.setPivotResultColumns(colDefs); }
+    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void {
+        console.warn('AG Grid: since version 28.0.x setSecondaryColumns has been renamed, please use setPivotResultColumns instead');
+        this.setPivotResultColumns(colDefs);
+    }
     /** Set the pivot result columns. */
     public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
 
     /** @deprecated Use `getPivotResultColumns` instead. */
-    public getSecondaryColumns(): Column[] | null { return this.getPivotResultColumns(); }
+    public getSecondaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryColumns has been renamed, please use getPivotResultColumns instead');
+        return this.getPivotResultColumns();
+    }
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
 
     /** @deprecated Use `getAllColumns` instead. */
-    public getPrimaryColumns(): Column[] | null { return this.getAllColumns(); }
+    public getPrimaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getAllColumns instead');
+        return this.getAllColumns();
+    }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {

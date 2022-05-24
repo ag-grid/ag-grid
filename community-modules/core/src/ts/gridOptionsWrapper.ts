@@ -1817,6 +1817,9 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
             options.clipboardDelimiter = options.clipboardDeliminator;
         }
+
+        checkRenamedProperty('processSecondaryColDef', 'processPivotResultColDef', '28.0.x');
+        checkRenamedProperty('processSecondaryColGroupDef', 'processPivotResultColGroupDef', '28.0.x');
     }
 
     private checkForViolations() {
