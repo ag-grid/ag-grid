@@ -1220,7 +1220,7 @@ export class RowCtrl extends BeanStub {
             // We do not use rowNode.rowHeight here, as this could be the result of autoHeight,
             // and we found using the autoHeight result causes a loop, where changing the
             // line-height them impacts the cell height, resulting in a new autoHeight,
-            // resulting in a new line-height and so on loop. 
+            // resulting in a new line-height and so on loop.
             // const heightFromFunc = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
             if (lineHeight) {
                 gui.element.style.setProperty('--ag-line-height', lineHeight);
@@ -1383,7 +1383,7 @@ export class RowCtrl extends BeanStub {
             // we don't apply scaling if row is pinned
             rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
         } else {
-            rowTop = this.rowNode.pinnedRowTop;            
+            rowTop = this.rowNode.pinnedRowTop;
         }
 
         const rowTopPx = rowTop + 'px';

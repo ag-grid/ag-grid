@@ -590,7 +590,7 @@ export class RowRenderer extends BeanStub {
                     cellCtrl.refreshCell(refreshCellParams);
                 }
             });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach( fullWidthRowCtrl => {
+        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
             fullWidthRowCtrl.refreshFullWidth();
         });
     }
@@ -657,20 +657,22 @@ export class RowRenderer extends BeanStub {
         // skip this row if it is missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
+
         if (floating === Constants.PINNED_BOTTOM) {
-            return rowIdsMap.bottom[id]!=null;
-        } else if (floating === Constants.PINNED_TOP) {
-            return rowIdsMap.top[id]!=null;
-        } else {
-            return rowIdsMap.normal[id]!=null;
+            return rowIdsMap.bottom[id] != null;
         }
+
+        if (floating === Constants.PINNED_TOP) {
+            return rowIdsMap.top[id] != null;
+        }
+
+        return rowIdsMap.normal[id] != null;
     }
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        let rowIdsMap = this.mapRowNodes(rowNodes);
-
+        const rowIdsMap = this.mapRowNodes(rowNodes);
         const res: CellCtrl[] = [];
 
         let colIdsMap: any;
@@ -689,7 +691,7 @@ export class RowRenderer extends BeanStub {
             const rowNode: RowNode = rowComp.getRowNode();
 
             // skip this row if it is missing from the provided list
-            if (rowIdsMap!=null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
+            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
 
             rowComp.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
@@ -807,7 +809,7 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
-        indexesToDraw = indexesToDraw.filter( index => {
+        indexesToDraw = indexesToDraw.filter(index => {
             const rowNode = this.paginationProxy.getRow(index);
             return rowNode && !rowNode.sticky;
         });
@@ -821,8 +823,8 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
-        if (this.rowModel.getType()!=Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            doOnce(()=> console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
+        if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
         }
 
         const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel);
@@ -831,32 +833,34 @@ export class RowRenderer extends BeanStub {
 
         // we want first row that's fully visible
         if (rowNode.rowTop! < this.firstVisibleVPixel) {
-            rowNode = this.paginationProxy.getRow(firstVisibleIndex+1);
+            rowNode = this.paginationProxy.getRow(firstVisibleIndex + 1);
             if (!rowNode) { return; }
         }
 
         const stickyRows: RowNode[] = [];
         const stickyRowsMapped: {[id: string]: RowNode} = {};
-        if (rowNode.level>0) {
+
+        if (rowNode.level > 0) {
             let pointer = rowNode.parent;
-            while (pointer !== null && pointer.level>=0) {
+            while (pointer !== null && pointer.level >= 0) {
                 stickyRows.unshift(pointer);
                 stickyRowsMapped[pointer.__objectId] = pointer;
                 pointer = pointer.parent;
             }
         }
 
-        const oldHash = this.stickyRows.map( row => row.__objectId ).join('-');
-        const newHash = stickyRows.map( row => row.__objectId ).join('-');
-        if (oldHash==newHash) { return; }
+        const oldHash = this.stickyRows.map(row => row.__objectId).join('-');
+        const newHash = stickyRows.map(row => row.__objectId).join('-');
 
-        this.stickyRows.forEach( row => {
+        if (oldHash === newHash) { return; }
+
+        this.stickyRows.forEach(row => {
             const stillSticky = stickyRowsMapped[row.__objectId] === row;
             if (stillSticky) { return; }
             row.sticky = false;
         });
 
-        stickyRows.forEach( row => row.sticky = true );
+        stickyRows.forEach(row => row.sticky = true);
 
         this.stickyRows = stickyRows;
     }
@@ -948,13 +952,13 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: RowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter( (rowCtrl: RowCtrl) => {
+        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
             // if Row Nodes provided, we exclude where Row Node is missing
             const rowNode = rowCtrl.getRowNode();
-            if (rowNodesMap!=null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
+            if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
 
             return true;
         });
@@ -1103,10 +1107,10 @@ export class RowRenderer extends BeanStub {
 
                 if (suppressRowVirtualisation) {
                     firstPixel = pageFirstPixel + divStretchOffset;
-                    lastPixel = pageLastPixel + divStretchOffset;    
+                    lastPixel = pageLastPixel + divStretchOffset;
                 } else {
                     firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
-                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;    
+                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;
                 }
 
                 this.firstVisibleVPixel = Math.max(bodyTopPixel + paginationOffset, pageFirstPixel) + divStretchOffset;

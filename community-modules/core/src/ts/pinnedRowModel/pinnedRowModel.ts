@@ -164,10 +164,11 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public setStickyRows(stickyRows: RowNode[] = []): void {
-        const createHash = (rowNodes: RowNode[]) => rowNodes.map( rowNode => rowNode.__objectId).join('-');
+        const createHash = (rowNodes: RowNode[]) => rowNodes.map(rowNode => rowNode.__objectId).join('-');
         const beforeHash = createHash(this.stickyRows);
         const afterHash = createHash(stickyRows);
-        if (beforeHash==afterHash) { return; }
+
+        if (beforeHash === afterHash) { return; }
 
         this.stickyRows = stickyRows || [];
         this.combineTop();
