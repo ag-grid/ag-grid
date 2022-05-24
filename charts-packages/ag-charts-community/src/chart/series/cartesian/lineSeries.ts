@@ -310,7 +310,7 @@ export class LineSeries extends CartesianSeries {
         this.nodeSelection = updateSelection.merge(enterSelection);
 
         const updateHighlight = this.highlightSelection.setData(nodeData);
-        updateSelection.exit.remove();
+        updateHighlight.exit.remove();
 
         const enterHighlight = updateHighlight.enter.append(Group);
         enterHighlight.append(MarkerShape);
@@ -409,7 +409,7 @@ export class LineSeries extends CartesianSeries {
             node.visible = marker.enabled && node.size > 0;
         };
 
-        this.nodeSelection.selectByClass(MarkerShape)
+        markerSelection
             .each((node, datum, idx) => updateMarkerFn(node, datum, idx, false));
         this.highlightSelection.selectByClass(MarkerShape)
             .each((node, datum, idx) => {
