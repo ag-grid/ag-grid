@@ -17,9 +17,7 @@
         return result;
     }
 
-    var ANGULAR_VERSION = "10.0.0";
-    var ANGULAR_CDK_VERSION = "10.0.0";
-    var ANGULAR_MATERIAL_VERSION = "10.0.0";
+    var ANGULAR_VERSION = "13.3.5";
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -69,34 +67,26 @@
                 'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
                 // angular bundles
-                "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.min.js",
-                "@angular/animations/browser": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations-browser.umd.min.js",
-                "@angular/core": "npm:@angular/core@" + ANGULAR_VERSION + "/bundles/core.umd.min.js",
-                "@angular/common": "npm:@angular/common@" + ANGULAR_VERSION + "/bundles/common.umd.min.js",
-                "@angular/common/http": "npm:@angular/common@" + ANGULAR_VERSION + "/bundles/common-http.umd.min.js",
-                "@angular/compiler": "npm:@angular/compiler@" + ANGULAR_VERSION + "/bundles/compiler.umd.min.js",
-                "@angular/platform-browser": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser.umd.min.js",
-                "@angular/platform-browser/animations": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser-animations.umd.min.js",
-                "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@" + ANGULAR_VERSION + "/bundles/platform-browser-dynamic.umd.min.js",
-                "@angular/forms": "npm:@angular/forms@" + ANGULAR_VERSION + "/bundles/forms.umd.min.js",
-                // material design
-                "@angular/material": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/bundles/material.umd.min.js",
-                "@angular/cdk/platform": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-platform.umd.min.js",
-                "@angular/cdk/bidi": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-bidi.umd.min.js",
-                "@angular/cdk/coercion": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-coercion.umd.min.js",
-                "@angular/cdk/keycodes": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-keycodes.umd.min.js",
-                "@angular/cdk/a11y": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-a11y.umd.min.js",
-                "@angular/cdk/overlay": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-overlay.umd.min.js",
-                "@angular/cdk/portal": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-portal.umd.min.js",
-                "@angular/cdk/observers": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-observers.umd.min.js",
-                "@angular/cdk/collections": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-collections.umd.min.js",
-                "@angular/cdk/accordion": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-accordion.umd.min.js",
-                "@angular/cdk/scrolling": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-scrolling.umd.min.js",
-                "@angular/cdk/layout": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-layout.umd.min.js",
-                "@angular/cdk/table": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-table.umd.min.js",
-                "@angular/cdk/text-field": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-text-field.umd.min.js",
-                "@angular/cdk/tree": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-tree.umd.min.js",
-                "@angular/cdk/stepper": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-stepper.umd.min.js",
+                '@angular/compiler': 'https://cdn.jsdelivr.net/npm/@esm-bundle/angular__compiler@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-compiler.js',
+                //'@angular/compiler':'https://cdn.jsdelivr.net/npm/@angular/compiler@' + ANGULAR_VERSION + '/fesm2015/compiler.mjs',
+                '@angular/core':
+                    'https://cdn.jsdelivr.net/npm/@angular/core@' + ANGULAR_VERSION + '/fesm2015/core.mjs',
+                '@angular/common':
+                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/common.mjs',
+                '@angular/common/http':
+                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/http.mjs',
+
+                '@angular/platform-browser-dynamic':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@' + ANGULAR_VERSION + '/fesm2015/platform-browser-dynamic.mjs',
+                '@angular/platform-browser':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/platform-browser.mjs',
+                '@angular/platform-browser/animations':
+                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
+
+                '@angular/animations':
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
+                '@angular/animations/browser':
+                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/browser.mjs',
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",
@@ -104,9 +94,6 @@
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
-
-                rxjs: "npm:rxjs@6.5.3/bundles/rxjs.umd.min.js",
-                lodash: 'npm:lodash@4.17.15',
             },
             systemJsMap
         ),
@@ -122,7 +109,7 @@
                 }
             },
             'ag-charts-angular': {
-                main: './dist/ag-charts-angular/bundles/ag-charts-angular.umd.js',
+                main: './dist/ag-charts-angular/fesm2015/ag-charts-angular.js',
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
