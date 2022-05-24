@@ -12,8 +12,17 @@ export class Group extends Node {
     private layer?: HdpiCanvas;
     private clipPath: Path2D = new Path2D();
 
-    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
+    @SceneChangeDetection({
+        convertor: (v: number) => Math.min(1, Math.max(0, v)),
+        changeCb: (o) => o.opacityChanged(),
+    })
     opacity: number = 1;
+
+    protected opacityChanged() {
+        if (this.layer) {
+            this.layer.opacity = this.opacity;
+        }
+    }
 
     public constructor(
         private readonly opts?: {
@@ -25,6 +34,9 @@ export class Group extends Node {
         super();
 
         this.isContainerNode = true;
+        if (this.opts?.zIndex !== undefined) {
+            this.zIndex = this.opts.zIndex;
+        }
     }
 
     _setScene(scene?: Scene) {
@@ -112,9 +124,9 @@ export class Group extends Node {
 
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
-        const { _debug: { consoleLog = false } = {} } = this;
+        const { _debug: { consoleLog = false, onlyLayers = [] } = {} } = this;
         const { dirty, dirtyZIndex, clipPath, layer, children } = this;
-        let { ctx, forceRender, clipBBox, resized } = renderCtx;
+        let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
 
@@ -129,10 +141,21 @@ export class Group extends Node {
         }
 
         if (!isDirty && !forceRender) {
+            if (name && consoleLog && stats) {
+                const counts = this.nodeCount;
+                console.log({ name, result: 'skipping', counts, group: this });
+            }
+
+            if (layer && stats) {
+                stats.layersSkipped++;
+            }
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
+
             // Nothing to do.
             return;
         }
 
+        let groupVisible = this.visible;
         if (layer) {
             // Switch context to the canvas layer we use for this group.
             ctx = layer.context;
@@ -149,6 +172,14 @@ export class Group extends Node {
                 clipPath.draw(ctx);
                 ctx.clip();
             }
+
+            if (onlyLayers.length > 0) {
+                groupVisible = !!name && onlyLayers.indexOf(name) >= 0;
+            }
+        } else {
+            // Only apply opacity if this isn't a distinct layer - opacity will be applied
+            // at composition time.
+            ctx.globalAlpha *= this.opacity;
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -164,8 +195,6 @@ export class Group extends Node {
             forceRender = true;
         }
 
-        ctx.globalAlpha *= this.opacity;
-
         // Reduce churn if renderCtx is identical.
         const renderContextChanged = forceRender !== renderCtx.forceRender ||
              clipBBox !== renderCtx.clipBBox ||
@@ -175,15 +204,18 @@ export class Group extends Node {
             renderCtx;
 
         // Render visible children.
+        let skipped = 0;
         for (const child of children) {
-            if (!child.visible) {
+            if (!child.visible || !groupVisible) {
                 // Skip invisible children, but make sure their dirty flag is reset.
                 child.markClean();
+                if (stats) skipped += child.nodeCount.count;
                 continue;
             }
 
             if (!forceRender && child.dirty === RedrawType.NONE) {
                 // Skip children that don't need to be redrawn.
+                if (stats) skipped += child.nodeCount.count;
                 continue;
             }
 
@@ -191,11 +223,18 @@ export class Group extends Node {
             child.render(childRenderContext);
             ctx.restore();
         }
+        if (stats) stats.nodesSkipped += skipped;
 
         super.render(renderCtx);
 
         if (layer) {
+            if (stats) stats.layersRendered++;
             ctx.restore();
+        }
+
+        if (name && consoleLog && stats) {
+            const counts = this.nodeCount;
+            console.log({ name, result: 'rendered', skipped, counts, group: this });
         }
     }
 }

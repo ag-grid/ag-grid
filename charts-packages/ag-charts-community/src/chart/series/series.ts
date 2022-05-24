@@ -96,10 +96,22 @@ export abstract class Series extends Observable {
     }
 
     // The group node that contains all the nodes used to render this series.
-    readonly group: Group = new Group({ name: this.id, layer: true, zIndex: 100 });
+    readonly group: Group = new Group();
+
+    // The group node that contains the series rendering in it's default (non-highlighted) state.
+    readonly seriesGroup: Group = this.group.appendChild(
+        new Group({ name: `${this.id}-series`, layer: true, zIndex: 100 }),
+    );
+
+    // The group node that contains all highlighted series items. This is a performance optimisation
+    // for large-scale data-sets, where the only thing that routinely varies is the currently
+    // highlighted node.
+    readonly highlightGroup: Group = this.group.appendChild(
+        new Group({ name: `${this.id}-highlight`, layer: true, zIndex: 150 }),
+    );
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
-    readonly pickGroup: Group = this.group.appendChild(new Group());
+    readonly pickGroup: Group = this.seriesGroup.appendChild(new Group());
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;

@@ -21,6 +21,7 @@ import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isContinuous } from "../../../util/value";
+import { Marker } from "../../marker/marker";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -74,6 +75,7 @@ export class LineSeries extends CartesianSeries {
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
     private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
+    private highlightSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Group>();
     private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
@@ -98,7 +100,7 @@ export class LineSeries extends CartesianSeries {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         // Make line render before markers in the pick group.
-        this.group.insertBefore(lineNode, this.pickGroup);
+        this.seriesGroup.insertBefore(lineNode, this.pickGroup);
 
         const { marker, label } = this;
 
@@ -306,10 +308,21 @@ export class LineSeries extends CartesianSeries {
         enterSelection.append(Text);
 
         this.nodeSelection = updateSelection.merge(enterSelection);
+
+        const updateHighlight = this.highlightSelection.setData(nodeData);
+        updateHighlight.exit.remove();
+
+        const enterHighlight = updateHighlight.enter.append(Group);
+        enterHighlight.append(MarkerShape);
+        enterHighlight.append(Text);
+
+        this.highlightSelection = updateHighlight.merge(enterHighlight);
     }
 
     private updateNodes() {
         this.group.visible = this.visible;
+        this.seriesGroup.visible = this.visible;
+        this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
         this.updateLineNode();
         this.updateMarkerNodes();
         this.updateTextNodes();
@@ -325,7 +338,7 @@ export class LineSeries extends CartesianSeries {
         lineNode.lineDash = this.lineDash;
         lineNode.lineDashOffset = this.lineDashOffset;
 
-        lineNode.opacity = this.getOpacity();
+        lineNode.opacity = 1;
     }
 
     private updateMarkerNodes() {
@@ -352,68 +365,90 @@ export class LineSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const MarkerShape = getMarker(marker.shape);
 
-        this.nodeSelection.selectByClass(MarkerShape)
-            .each((node, datum) => {
+        const markerSelection = this.nodeSelection.selectByClass(MarkerShape);
+        const datumOpacity = new Array<number>(markerSelection.size);
+        markerSelection.each((_, datum, idx) => {
+            datumOpacity[idx] = this.getOpacity(datum);
+        });
+        const nodesHaveIdenticalOpacity = datumOpacity.every((v) => v === datumOpacity[0]);
+        this.seriesGroup.opacity = nodesHaveIdenticalOpacity ? datumOpacity[0] : 1;
+
+        const updateMarkerFn = (node: Marker, datum: LineNodeDatum, idx: number, isDatumHighlighted: boolean) => {
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
+            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : markerStrokeWidth;
+
+            let format: CartesianSeriesMarkerFormat | undefined = undefined;
+            if (formatter) {
+                format = formatter({
+                    datum: datum.datum,
+                    xKey,
+                    yKey,
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    size,
+                    highlighted: isDatumHighlighted
+                });
+            }
+
+            node.fill = format && format.fill || fill;
+            node.stroke = format && format.stroke || stroke;
+            node.strokeWidth = format && format.strokeWidth !== undefined
+                ? format.strokeWidth
+                : strokeWidth;
+            node.size = format && format.size !== undefined
+                ? format.size
+                : size;
+
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
+            node.opacity = nodesHaveIdenticalOpacity ? 1 : datumOpacity[idx];
+            node.visible = marker.enabled && node.size > 0;
+        };
+
+        markerSelection
+            .each((node, datum, idx) => updateMarkerFn(node, datum, idx, false));
+        this.highlightSelection.selectByClass(MarkerShape)
+            .each((node, datum, idx) => {
                 const isDatumHighlighted = datum === highlightedDatum;
-                const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
-                const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
-                const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : markerStrokeWidth;
 
-                let format: CartesianSeriesMarkerFormat | undefined = undefined;
-                if (formatter) {
-                    format = formatter({
-                        datum: datum.datum,
-                        xKey,
-                        yKey,
-                        fill,
-                        stroke,
-                        strokeWidth,
-                        size,
-                        highlighted: isDatumHighlighted
-                    });
+                node.visible = isDatumHighlighted;
+                if (node.visible) {
+                    updateMarkerFn(node, datum, idx, isDatumHighlighted);
                 }
-
-                node.fill = format && format.fill || fill;
-                node.stroke = format && format.stroke || stroke;
-                node.strokeWidth = format && format.strokeWidth !== undefined
-                    ? format.strokeWidth
-                    : strokeWidth;
-                node.size = format && format.size !== undefined
-                    ? format.size
-                    : size;
-
-                node.translationX = datum.point.x;
-                node.translationY = datum.point.y;
-                node.opacity = this.getOpacity(datum);
-                node.visible = marker.enabled && node.size > 0;
             });
     }
 
     private updateTextNodes() {
+        const updateTextFn = (text: Text, datum: LineNodeDatum) => {
+            const { point, label } = datum;
+    
+            const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
+    
+            if (label && labelEnabled) {
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
+                text.text = label.text;
+                text.x = point.x;
+                text.y = point.y - 10;
+                text.fill = color;
+                text.visible = true;
+            } else {
+                text.visible = false;
+            }
+        };
+
         this.nodeSelection.selectByClass(Text)
-            .each((text, datum) => {
-                const { point, label } = datum;
-
-                const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
-
-                if (label && labelEnabled) {
-                    text.fontStyle = fontStyle;
-                    text.fontWeight = fontWeight;
-                    text.fontSize = fontSize;
-                    text.fontFamily = fontFamily;
-                    text.textAlign = label.textAlign;
-                    text.textBaseline = label.textBaseline;
-                    text.text = label.text;
-                    text.x = point.x;
-                    text.y = point.y - 10;
-                    text.fill = color;
-                    text.visible = true;
-                } else {
-                    text.visible = false;
-                }
-            });
+            .each(updateTextFn);
+        this.highlightSelection.selectByClass(Text)
+            .each(updateTextFn);
     }
 
     getNodeData(): readonly LineNodeDatum[] {

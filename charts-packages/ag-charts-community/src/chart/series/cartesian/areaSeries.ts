@@ -100,10 +100,10 @@ export class AreaSeries extends CartesianSeries {
 
     tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 
-    private areaGroup = this.group.insertBefore(new Group, this.pickGroup);
-    private strokeGroup = this.group.insertBefore(new Group, this.pickGroup);
+    private areaGroup = this.seriesGroup.insertBefore(new Group, this.pickGroup);
+    private strokeGroup = this.seriesGroup.insertBefore(new Group, this.pickGroup);
     private markerGroup = this.pickGroup.appendChild(new Group);
-    private labelGroup = this.group.appendChild(new Group);
+    private labelGroup = this.seriesGroup.appendChild(new Group);
 
     private fillSelection: Selection<Path, Group, FillSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
     private strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();

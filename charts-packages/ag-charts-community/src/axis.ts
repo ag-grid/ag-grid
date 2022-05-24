@@ -176,7 +176,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     ticks: any[];
 
-    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 200 });
+    readonly axisGroup = new Group({ name: `${this.id}-axis`, layer: true, zIndex: 50 });
     private axisGroupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 

@@ -1,11 +1,12 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Node, RedrawType } from "./node";
+import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 
 interface DebugOptions {
-    renderFrameIndex: boolean;
+    stats: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
+    onlyLayers: string[];
 }
 
 interface SceneOptions {
@@ -20,7 +21,7 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
-    readonly layers: { name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+    readonly layers: { id: number, name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
 
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -40,6 +41,8 @@ export class Scene {
         } = opts;
 
         this.opts = { document, mode };
+        this.debug.stats = (window as any).agChartsSceneStats || false;
+        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers || [];
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -86,6 +89,7 @@ export class Scene {
     }
 
     private _nextZIndex = 0;
+    private _nextLayerId = 0;
     addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
         const { mode } = this.opts;
         if (mode !== 'composite' && mode !== 'dom-composite') {
@@ -96,6 +100,7 @@ export class Scene {
         const { width, height } = this;
         const domLayer = mode === 'dom-composite';
         const newLayer = {
+            id: this._nextLayerId++,
             name,
             zIndex,
             canvas: new HdpiCanvas({
@@ -104,6 +109,7 @@ export class Scene {
                 height,
                 domLayer,
                 zIndex,
+                name,
             }),
         };
 
@@ -112,10 +118,18 @@ export class Scene {
         }
 
         this.layers.push(newLayer);
-        this.layers.sort((a, b) => a.zIndex - b.zIndex);
+        this.layers.sort((a, b) => { 
+            const zDiff = a.zIndex - b.zIndex;
+            if (zDiff !== 0) {
+                return zDiff;
+            }
+            return a.id - b.id;
+        });
 
         if (domLayer) {
-            this.canvas.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+            const newLayerIndex = this.layers.findIndex(v => v === newLayer);
+            const lastLayer = this.layers[newLayerIndex - 1]?.canvas ?? this.canvas;
+            lastLayer.element.insertAdjacentElement('afterend', newLayer.canvas.element);
         }
 
         if (this.debug.consoleLog) {
@@ -174,9 +188,10 @@ export class Scene {
     }
 
     readonly debug: DebugOptions = {
-        renderFrameIndex: false,
+        stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
+        onlyLayers: [],
     };
 
     private _frameIndex = 0;
@@ -185,6 +200,7 @@ export class Scene {
     }
 
     render() {
+        const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
@@ -203,6 +219,15 @@ export class Scene {
             return;
         }
 
+        const renderCtx: RenderContext = {
+            ctx,
+            forceRender: true,
+            resized: !!pendingSize,
+        };
+        if (this.debug.stats) {
+            renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
+        }
+
         let canvasCleared = false;
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
@@ -217,7 +242,7 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                root.render({ ctx, forceRender: true, resized: !!pendingSize });
+                root.render(renderCtx);
                 ctx.restore();
             }
         }
@@ -227,6 +252,7 @@ export class Scene {
             ctx.resetTransform();
             layers.forEach((layer) => {
                 if (layer.canvas.enabled) {
+                    ctx.globalAlpha = layer.canvas.opacity;
                     // Indirect reference to fix typings for tests.
                     const canvas = layer.canvas.context.canvas;
                     ctx.drawImage(canvas, 0, 0);
@@ -235,15 +261,30 @@ export class Scene {
             ctx.restore();
         }
 
+        this._dirty = false;
+
+        const end = performance.now();
         this._frameIndex++;
 
-        if (this.debug.renderFrameIndex) {
+        if (this.debug.stats) {
+            const pct = (rendered: number, skipped: number) => {
+                const total = rendered + skipped;
+                return `${rendered}/${total}(${Math.round(100*rendered/total)}%)`;
+            }
+            const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
+                renderCtx.stats || {};
+            const stats = `${Math.round((end - start)*100) / 100}ms; ` +
+                `Layers: ${pct(layersRendered, layersSkipped)}; ` +
+                `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
+
+            ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 40, 15);
+            ctx.fillRect(0, 0, 300, 15);
             ctx.fillStyle = 'black';
             ctx.fillText(this.frameIndex.toString(), 2, 10);
+            ctx.fillText(stats, 30, 10);
+            ctx.restore();
         }
 
-        this._dirty = false;
     }
 }

@@ -156,13 +156,15 @@ export class Text extends Shape {
     }
 
     render(renderCtx: RenderContext): void {
-        let { ctx, forceRender } = renderCtx;
+        let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
         if (!this.lines.length || !this.scene) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 

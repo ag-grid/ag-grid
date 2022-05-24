@@ -120,7 +120,7 @@ export class BarSeries extends CartesianSeries {
     // on the first run. If on the next run more bars are added, they might clip the labels
     // rendered during the previous run.
     private rectGroup = this.pickGroup.appendChild(new Group);
-    private labelGroup = this.group.appendChild(new Group);
+    private labelGroup = this.seriesGroup.appendChild(new Group);
 
     private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();

@@ -81,9 +81,10 @@ export class Path extends Shape {
     protected updatePath() {}
 
     render(renderCtx: RenderContext) {
-        let { ctx, forceRender } = renderCtx;
+        let { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 

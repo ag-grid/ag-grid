@@ -11,20 +11,33 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor({ document = window.document, width = 600, height = 300, domLayer = false, zIndex = 0 }) {
+    constructor({
+        document = window.document,
+        width = 600,
+        height = 300,
+        domLayer = false,
+        zIndex = 0,
+        name = undefined as undefined | string,
+    }) {
         this.document = document;
         this.element = document.createElement('canvas');
         this.context = this.element.getContext('2d')!;
 
-        this.element.style.userSelect = 'none';
-        this.element.style.display = 'block';
+        const { style } = this.element;
+
+        style.userSelect = 'none';
+        style.display = 'block';
 
         if (domLayer) {
-            this.element.style.position = 'absolute';
-            this.element.style.zIndex = String(zIndex);
-            this.element.style.top = '0';
-            this.element.style.left = '0';
-            this.element.style.pointerEvents = 'none';
+            style.position = 'absolute';
+            style.zIndex = String(zIndex);
+            style.top = '0';
+            style.left = '0';
+            style.pointerEvents = 'none';
+            style.opacity = `1`;
+            if (name) {
+                this.element.id = name;
+            }
         }
 
         this.setPixelRatio();
@@ -54,6 +67,15 @@ export class HdpiCanvas {
     }
     get enabled() {
         return this._enabled;
+    }
+
+    private _opacity: number = 1;
+    set opacity(value: number) {
+        this.element.style.opacity = `${value}`;
+        this._opacity = value;
+    }
+    get opacity() {
+        return this._opacity;
     }
 
     private remove() {
@@ -319,14 +341,18 @@ export class HdpiCanvas {
                 }
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
-                this.$setTransform(
-                    a * scale,
-                    b * scale,
-                    c * scale,
-                    d * scale,
-                    e * scale,
-                    f * scale
-                );
+                if (typeof a === 'object') {
+                    this.$setTransform(a);
+                } else {
+                    this.$setTransform(
+                        a * scale,
+                        b * scale,
+                        c * scale,
+                        d * scale,
+                        e * scale,
+                        f * scale
+                    );
+                }
             },
             resetTransform() {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",

@@ -132,12 +132,12 @@ export class PieSeries extends PolarSeries {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                this.group.removeChild(oldTitle.node);
+                this.seriesGroup.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                this.group.appendChild(value.node);
+                this.seriesGroup.appendChild(value.node);
             }
 
             this._title = value;

@@ -33,7 +33,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     constructor() {
         super(new BandScale<string | number>());
 
-        const { axisGroup: group, tickScale, scale } = this;
+        const { axisGroup, gridlineGroup, tickScale, scale } = this;
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
@@ -43,11 +43,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-
-        this.gridLineSelection = Selection.select(group).selectAll<Line>();
-        this.axisLineSelection = Selection.select(group).selectAll<Line>();
-        this.separatorSelection = Selection.select(group).selectAll<Line>();
-        this.labelSelection = Selection.select(group).selectAll<Text>();
+        this.gridLineSelection = Selection.select(gridlineGroup).selectAll<Line>();
+        this.axisLineSelection = Selection.select(axisGroup).selectAll<Line>();
+        this.separatorSelection = Selection.select(axisGroup).selectAll<Line>();
+        this.labelSelection = Selection.select(axisGroup).selectAll<Text>();
     }
 
     set domain(domainValues: any[]) {
@@ -180,7 +179,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { axisGroup: group, scale, label, tickScale, requestedRange } = this;
+        const { axisGroup, gridlineGroup, scale, label, tickScale, requestedRange } = this;
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -190,9 +189,13 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = this.label.rotation? normalizeAngle360(toRadians(this.label.rotation)) : 0;
 
-        group.translationX = this.translation.x;
-        group.translationY = this.translation.y;
-        group.rotation = rotation;
+        axisGroup.translationX = this.translation.x;
+        axisGroup.translationY = this.translation.y;
+        axisGroup.rotation = rotation;
+
+        gridlineGroup.translationX = this.translation.x;
+        gridlineGroup.translationY = this.translation.y;
+        gridlineGroup.rotation = rotation;
 
         const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
