@@ -227,6 +227,7 @@ export class Scene {
             ctx.resetTransform();
             layers.forEach((layer) => {
                 if (layer.canvas.enabled) {
+                    ctx.globalAlpha = layer.canvas.opacity;
                     // Indirect reference to fix typings for tests.
                     const canvas = layer.canvas.context.canvas;
                     ctx.drawImage(canvas, 0, 0);

@@ -136,5 +136,7 @@ export class RangeSelector extends Group {
                 ctx.restore();
             }
         });
+
+        this.markClean(true);
     }
 }

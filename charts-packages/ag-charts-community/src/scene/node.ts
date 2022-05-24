@@ -537,8 +537,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    markClean() {
-        if (this._dirty === RedrawType.NONE) {
+    markClean(force = false) {
+        if (this._dirty === RedrawType.NONE && !force) {
             return;
         }
 

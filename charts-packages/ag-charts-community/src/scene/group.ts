@@ -12,8 +12,17 @@ export class Group extends Node {
     private layer?: HdpiCanvas;
     private clipPath: Path2D = new Path2D();
 
-    @SceneChangeDetection({ convertor: (v: number) => Math.min(1, Math.max(0, v)) })
+    @SceneChangeDetection({
+        convertor: (v: number) => Math.min(1, Math.max(0, v)),
+        changeCb: (o) => o.opacityChanged(),
+    })
     opacity: number = 1;
+
+    protected opacityChanged() {
+        if (this.layer) {
+            this.layer.opacity = this.opacity;
+        }
+    }
 
     public constructor(
         private readonly opts?: {
@@ -25,6 +34,9 @@ export class Group extends Node {
         super();
 
         this.isContainerNode = true;
+        if (this.opts?.zIndex !== undefined) {
+            this.zIndex = this.opts.zIndex;
+        }
     }
 
     _setScene(scene?: Scene) {
@@ -133,6 +145,7 @@ export class Group extends Node {
             return;
         }
 
+        let groupVisible = this.visible;
         if (layer) {
             // Switch context to the canvas layer we use for this group.
             ctx = layer.context;
@@ -149,6 +162,10 @@ export class Group extends Node {
                 clipPath.draw(ctx);
                 ctx.clip();
             }
+        } else {
+            // Only apply opacity if this isn't a distinct layer - opacity will be applied
+            // at composition time.
+            ctx.globalAlpha *= this.opacity;
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -164,8 +181,6 @@ export class Group extends Node {
             forceRender = true;
         }
 
-        ctx.globalAlpha *= this.opacity;
-
         // Reduce churn if renderCtx is identical.
         const renderContextChanged = forceRender !== renderCtx.forceRender ||
              clipBBox !== renderCtx.clipBBox ||
@@ -176,7 +191,7 @@ export class Group extends Node {
 
         // Render visible children.
         for (const child of children) {
-            if (!child.visible) {
+            if (!child.visible || !groupVisible) {
                 // Skip invisible children, but make sure their dirty flag is reset.
                 child.markClean();
                 continue;
