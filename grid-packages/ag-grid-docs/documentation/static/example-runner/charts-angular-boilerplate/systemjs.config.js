@@ -115,7 +115,7 @@
                 }
             },
             'ag-charts-angular': {
-                main: './bundles/ag-charts-angular.umd.min.js',
+                main: './fesm2015/ag-charts-angular.js',
                 defaultExtension: 'js'
             },
             rxjs: {

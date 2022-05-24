@@ -129,8 +129,6 @@
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
-
-                rxjs: "npm:rxjs@6.5.3/bundles/rxjs.umd.min.js"
             },
             systemJsMap
         ),
@@ -146,7 +144,7 @@
                 }
             },
             'ag-grid-angular': {
-                main: './bundles/ag-grid-angular.umd.min.js',
+                main: './fesm2015/ag-grid-angular.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
@@ -158,7 +156,7 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./bundles/ag-grid-community-angular.umd.min.js",
+                main: "./fesm2015/ag-grid-community-angular.js",
                 defaultExtension: "js"
             },
             rxjs: {
