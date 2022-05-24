@@ -791,15 +791,33 @@
     }
   },
   "setProcessSecondaryColDef": {
+    "description": "/** @deprecated use `setProcessPivotResultColDef` instead\n */",
     "type": {
       "arguments": { "processSecondaryColDefFunc": "(colDef: ColDef) => void" },
       "returnType": "void"
     }
   },
   "setProcessSecondaryColGroupDef": {
+    "description": "/** @deprecated use `setProcessPivotResultColGroupDef` instead\n */",
     "type": {
       "arguments": {
         "processSecondaryColGroupDefFunc": "(colDef: ColDef) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setProcessPivotResultColDef": {
+    "type": {
+      "arguments": {
+        "processPivotResultColDefFunc": "(colDef: ColDef) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setProcessPivotResultColGroupDef": {
+    "type": {
+      "arguments": {
+        "processPivotResultColGroupDefFunc": "(colDef: ColDef) => void"
       },
       "returnType": "void"
     }

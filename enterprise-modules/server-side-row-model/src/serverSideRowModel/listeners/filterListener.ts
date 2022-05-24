@@ -40,7 +40,8 @@ export class FilterListener extends BeanStub {
 
         const params: StoreRefreshAfterParams = {
             valueColChanged,
-            secondaryColChanged,
+            secondaryColChanged, // Deprecated
+            pivotResultColChanged: secondaryColChanged,
             alwaysReset,
             changedColumns
         };

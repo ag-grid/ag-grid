@@ -138,8 +138,8 @@ export class GridOptionsWrapper {
     public static PROP_PROCESS_CELL_FROM_CLIPBOARD = 'processCellFromClipboard';
     public static PROP_SEND_TO_CLIPBOARD = 'sendToClipboard';
 
-    public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
-    public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_DEF = 'processPivotResultColDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_GROUP_DEF = 'processPivotResultColGroupDef';
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
@@ -1360,11 +1360,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
 
-    public getProcessSecondaryColDefFunc() {
-        return this.gridOptions.processSecondaryColDef;
+    public getProcessPivotResultColDefFunc() {
+        return this.gridOptions.processPivotResultColDef || this.gridOptions.processSecondaryColDef;
     }
-    public getProcessSecondaryColGroupDefFunc() {
-        return this.gridOptions.processSecondaryColGroupDef;
+
+    public getProcessPivotResultColGroupDefFunc() {
+        return this.gridOptions.processPivotResultColGroupDef || this.gridOptions.processSecondaryColGroupDef;
     }
 
     public getSendToClipboardFunc() {

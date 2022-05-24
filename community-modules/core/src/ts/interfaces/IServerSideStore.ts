@@ -30,7 +30,9 @@ export interface IServerSideStore {
 
 export interface StoreRefreshAfterParams {
     valueColChanged: boolean;
+    /** @deprecated Use `pivotResultColChanged` instead */
     secondaryColChanged: boolean;
+    pivotResultColChanged: boolean;
     alwaysReset: boolean;
     changedColumns: string[];
 }

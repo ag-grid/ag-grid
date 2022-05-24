@@ -223,7 +223,17 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "getSecondaryPivotColumn": {
-    "description": "/** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
+    "description": "/** @deprecated Use `getPivotResultColumn` instead\n */",
+    "type": {
+      "arguments": {
+        "pivotKeys": "string[]",
+        "valueColKey": "string | Column"
+      },
+      "returnType": "Column | null"
+    }
+  },
+  "getPivotResultColumn": {
+    "description": "/** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
     "type": {
       "arguments": {
         "pivotKeys": "string[]",
@@ -384,18 +394,29 @@
     "type": { "arguments": { "skipHeader?": "boolean" }, "returnType": "void" }
   },
   "setSecondaryColumns": {
-    "description": "/** Set the secondary pivot columns. */",
+    "description": "/** @deprecated Use `setPivotResultColumns` instead.\n */",
+    "type": {
+      "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
+      "returnType": "void"
+    }
+  },
+  "setPivotResultColumns": {
+    "description": "/** Set the pivot result columns. */",
     "type": {
       "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
       "returnType": "void"
     }
   },
   "getSecondaryColumns": {
-    "description": "/** Returns the grid's secondary columns. */",
+    "description": "/** @deprecated Use `getPivotResultColumns` instead.\n */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getPivotResultColumns": {
+    "description": "/** Returns the grid's pivot result columns. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getPrimaryColumns": {
-    "description": "/** Returns the grid's primary columns. */",
+    "description": "/** @deprecated Use `getAllColumns` instead.\n */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "columnGroupOpened": {

@@ -119,8 +119,14 @@ export class ColumnApi {
     public setPivotMode(pivotMode: boolean): void { this.columnModel.setPivotMode(pivotMode); }
     /** Get the pivot mode. */
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
-    /** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+
+    /** @deprecated Use `getPivotResultColumn` instead */
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
+        return this.getPivotResultColumn(pivotKeys, valueColKey);
+    }
+
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     /** Set the value columns. */
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
@@ -180,12 +186,18 @@ export class ColumnApi {
     /** Calls `autoSizeColumns` on all displayed columns. */
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
-    /** Set the secondary pivot columns. */
-    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
-    /** Returns the grid's secondary columns. */
-    public getSecondaryColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
-    /** Returns the grid's primary columns. */
-    public getPrimaryColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
+    /** @deprecated Use `setPivotResultColumns` instead. */
+    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.setPivotResultColumns(colDefs); }
+    /** Set the pivot result columns. */
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+
+    /** @deprecated Use `getPivotResultColumns` instead. */
+    public getSecondaryColumns(): Column[] | null { return this.getPivotResultColumns(); }
+    /** Returns the grid's pivot result columns. */
+    public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
+
+    /** @deprecated Use `getAllColumns` instead. */
+    public getPrimaryColumns(): Column[] | null { return this.getAllColumns(); }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
