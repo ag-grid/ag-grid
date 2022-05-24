@@ -200,6 +200,7 @@ export class Scene {
     }
 
     render() {
+        const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
@@ -260,6 +261,9 @@ export class Scene {
             ctx.restore();
         }
 
+        this._dirty = false;
+
+        const end = performance.now();
         this._frameIndex++;
 
         if (this.debug.stats) {
@@ -269,19 +273,18 @@ export class Scene {
             }
             const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
                 renderCtx.stats || {};
-            const stats =
+            const stats = `${Math.round((end - start)*100) / 100}ms; ` +
                 `Layers: ${pct(layersRendered, layersSkipped)}; ` +
                 `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
 
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 200, 15);
+            ctx.fillRect(0, 0, 300, 15);
             ctx.fillStyle = 'black';
             ctx.fillText(this.frameIndex.toString(), 2, 10);
             ctx.fillText(stats, 30, 10);
             ctx.restore();
         }
 
-        this._dirty = false;
     }
 }
