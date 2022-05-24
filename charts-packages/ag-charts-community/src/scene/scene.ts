@@ -1,11 +1,12 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Node, RedrawType } from "./node";
+import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 
 interface DebugOptions {
-    renderFrameIndex: boolean;
+    stats: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
+    onlyLayers: string[];
 }
 
 interface SceneOptions {
@@ -40,6 +41,8 @@ export class Scene {
         } = opts;
 
         this.opts = { document, mode };
+        this.debug.stats = (window as any).agChartsSceneStats || false;
+        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers || [];
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -104,6 +107,7 @@ export class Scene {
                 height,
                 domLayer,
                 zIndex,
+                name,
             }),
         };
 
@@ -174,9 +178,10 @@ export class Scene {
     }
 
     readonly debug: DebugOptions = {
-        renderFrameIndex: false,
+        stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
+        onlyLayers: [],
     };
 
     private _frameIndex = 0;
@@ -203,6 +208,15 @@ export class Scene {
             return;
         }
 
+        const renderCtx: RenderContext = {
+            ctx,
+            forceRender: true,
+            resized: !!pendingSize,
+        };
+        if (this.debug.stats) {
+            renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
+        }
+
         let canvasCleared = false;
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
@@ -217,7 +231,7 @@ export class Scene {
 
             if (root.visible) {
                 ctx.save();
-                root.render({ ctx, forceRender: true, resized: !!pendingSize });
+                root.render(renderCtx);
                 ctx.restore();
             }
         }
@@ -238,11 +252,24 @@ export class Scene {
 
         this._frameIndex++;
 
-        if (this.debug.renderFrameIndex) {
+        if (this.debug.stats) {
+            const pct = (rendered: number, skipped: number) => {
+                const total = rendered + skipped;
+                return `${rendered}/${total}(${Math.round(100*rendered/total)}%)`;
+            }
+            const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
+                renderCtx.stats || {};
+            const stats =
+                `Layers: ${pct(layersRendered, layersSkipped)}; ` +
+                `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
+
+            ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 40, 15);
+            ctx.fillRect(0, 0, 200, 15);
             ctx.fillStyle = 'black';
             ctx.fillText(this.frameIndex.toString(), 2, 10);
+            ctx.fillText(stats, 30, 10);
+            ctx.restore();
         }
 
         this._dirty = false;

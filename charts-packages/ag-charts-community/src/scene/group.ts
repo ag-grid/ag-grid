@@ -124,9 +124,9 @@ export class Group extends Node {
 
     render(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
-        const { _debug: { consoleLog = false } = {} } = this;
+        const { _debug: { consoleLog = false, onlyLayers = [] } = {} } = this;
         const { dirty, dirtyZIndex, clipPath, layer, children } = this;
-        let { ctx, forceRender, clipBBox, resized } = renderCtx;
+        let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
         const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
 
@@ -141,6 +141,16 @@ export class Group extends Node {
         }
 
         if (!isDirty && !forceRender) {
+            if (name && consoleLog && stats) {
+                const counts = this.nodeCount;
+                console.log({ name, result: 'skipping', counts, group: this });
+            }
+
+            if (layer && stats) {
+                stats.layersSkipped++;
+            }
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
+
             // Nothing to do.
             return;
         }
@@ -161,6 +171,10 @@ export class Group extends Node {
                 clipPath.rect(x, y, width, height);
                 clipPath.draw(ctx);
                 ctx.clip();
+            }
+
+            if (onlyLayers.length > 0) {
+                groupVisible = !!name && onlyLayers.indexOf(name) >= 0;
             }
         } else {
             // Only apply opacity if this isn't a distinct layer - opacity will be applied
@@ -190,15 +204,18 @@ export class Group extends Node {
             renderCtx;
 
         // Render visible children.
+        let skipped = 0;
         for (const child of children) {
             if (!child.visible || !groupVisible) {
                 // Skip invisible children, but make sure their dirty flag is reset.
                 child.markClean();
+                if (stats) skipped += child.nodeCount.count;
                 continue;
             }
 
             if (!forceRender && child.dirty === RedrawType.NONE) {
                 // Skip children that don't need to be redrawn.
+                if (stats) skipped += child.nodeCount.count;
                 continue;
             }
 
@@ -206,11 +223,18 @@ export class Group extends Node {
             child.render(childRenderContext);
             ctx.restore();
         }
+        if (stats) stats.nodesSkipped += skipped;
 
         super.render(renderCtx);
 
         if (layer) {
+            if (stats) stats.layersRendered++;
             ctx.restore();
+        }
+
+        if (name && consoleLog && stats) {
+            const counts = this.nodeCount;
+            console.log({ name, result: 'rendered', skipped, counts, group: this });
         }
     }
 }

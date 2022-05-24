@@ -59,9 +59,10 @@ export class ClipRect extends Node {
 
     render(renderCtx: RenderContext) {
         const { enabled, dirty, _dirtyPath, children } = this;
-        let { ctx, forceRender } = renderCtx;
+        let { ctx, forceRender, stats } = renderCtx;
 
         if (dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 

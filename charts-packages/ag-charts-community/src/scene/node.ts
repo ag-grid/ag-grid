@@ -26,6 +26,12 @@ export type RenderContext = {
     forceRender: boolean;
     resized: boolean;
     clipBBox?: BBox;
+    stats?: {
+        nodesRendered: number;
+        nodesSkipped: number;
+        layersRendered: number;
+        layersSkipped: number;
+    };
 }
 
 export function SceneChangeDetection(opts?: {
@@ -502,8 +508,12 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    render(_renderCtx: RenderContext): void {
+    render(renderCtx: RenderContext): void {
+        const { stats } = renderCtx;
+        
         this._dirty = RedrawType.NONE;
+
+        if (stats) stats.nodesRendered++;
     }
 
     clearBBox(ctx: CanvasRenderingContext2D) {
@@ -566,4 +576,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
     zIndex: number = 0;
 
     pointerEvents: PointerEvents = PointerEvents.All;
+
+    get nodeCount() {
+        const { children } = this;
+
+        let count = 1;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let visibleCount = this.visible ? 1 : 0;
+
+        for (const child of this._children) {
+            const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
+            count += childCount;
+            visibleCount += childVisibleCount;
+            dirtyCount += childDirtyCount;
+        }
+
+        return { count, visibleCount, dirtyCount };
+    }
 }
