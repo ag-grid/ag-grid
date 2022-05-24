@@ -456,6 +456,8 @@ export class RowRenderer extends BeanStub {
 
         this.redraw(rowsToRecycle, animate);
 
+        this.gridBodyCtrl.updateRowCount();
+
         if (!params.onlyBody) {
             this.refreshFloatingRowComps();
         }
@@ -905,7 +907,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.updateAllRowCtrls();
-        this.gridBodyCtrl.updateRowCount();
     }
 
     private dispatchDisplayedRowsChanged(): void {
