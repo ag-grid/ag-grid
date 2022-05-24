@@ -68,32 +68,26 @@
         // map tells the System loader where to look for things
         map: assign(
             {
-                // css plugin
-                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-                // angular bundles
-                '@angular/compiler': 'https://cdn.jsdelivr.net/npm/@esm-bundle/angular__compiler@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-compiler.js',
-                //'@angular/compiler':'https://cdn.jsdelivr.net/npm/@angular/compiler@' + ANGULAR_VERSION + '/fesm2015/compiler.mjs',
-                '@angular/core':
-                    'https://cdn.jsdelivr.net/npm/@angular/core@' + ANGULAR_VERSION + '/fesm2015/core.mjs',
-                '@angular/common':
-                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/common.mjs',
-                '@angular/common/http':
-                    'https://cdn.jsdelivr.net/npm/@angular/common@' + ANGULAR_VERSION + '/fesm2015/http.mjs',
+                // Angular bundles in System.register format via esm-bundle
+                // Cell renderers only work with the esm-bundle version
+                // TemplateUrls only works with platform-browser-dynamic from esm-bundle
+                '@angular/compiler': 'npm:@esm-bundle/angular__compiler@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-compiler.min.js',
+                '@angular/platform-browser-dynamic': 'npm:@esm-bundle/angular__platform-browser-dynamic@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-platform-browser-dynamic.min.js',
 
-                '@angular/platform-browser-dynamic':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser-dynamic@' + ANGULAR_VERSION + '/fesm2015/platform-browser-dynamic.mjs',
-                '@angular/platform-browser':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/platform-browser.mjs',
-                '@angular/platform-browser/animations':
-                    'https://cdn.jsdelivr.net/npm/@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
+                '@angular/core': 'npm:@angular/core@' + ANGULAR_VERSION + '/fesm2015/core.mjs',
+                '@angular/common': 'npm:@angular/common@' + ANGULAR_VERSION + '/fesm2015/common.mjs',
+                '@angular/common/http': 'npm:@angular/common@' + ANGULAR_VERSION + '/fesm2015/http.mjs',
 
-                '@angular/animations':
-                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
-                '@angular/animations/browser':
-                    'https://cdn.jsdelivr.net/npm/@angular/animations@' + ANGULAR_VERSION + '/fesm2015/browser.mjs',
+                '@angular/platform-browser': 'npm:@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/platform-browser.mjs',
+                '@angular/platform-browser/animations': 'npm:@angular/platform-browser@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
 
+                '@angular/forms': 'npm:@angular/forms@' + ANGULAR_VERSION + '/fesm2015/forms.mjs',
+                '@angular/router': 'npm:@angular/router@' + ANGULAR_VERSION + '/fesm2015/router.mjs',
+                '@angular/animations': 'npm:@angular/animations@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
+                '@angular/animations/browser': 'npm:@angular/animations@' + ANGULAR_VERSION + '/fesm2015/browser.mjs',
 
+                css: 'npm:systemjs-plugin-css@0.1.37/css.js',
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",
                 typescript: "npm:typescript@3.7.7/lib/typescript.js",
