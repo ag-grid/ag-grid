@@ -28,7 +28,7 @@ import { ColumnAlignmentService } from "./columnAlignmentService";
     imports: [
         BrowserModule,
         FormsModule,
-        AgGridModule.withComponents([MatSliderComponent, MatButtonToggleHeaderComponent, MatProgressSpinnerComponent]),
+        AgGridModule,
         BrowserAnimationsModule,
         MatCheckboxModule,
         MatFormFieldModule,

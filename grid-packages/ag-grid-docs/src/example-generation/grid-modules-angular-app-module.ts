@@ -31,7 +31,7 @@ ${imports.join('\n')}
   imports: [
     BrowserModule,
     HttpClientModule,${includeNgFormsModule ? "\nFormsModule," : ""}
-    ${components.length == 0 ? 'AgGridModule' : `AgGridModule.withComponents([${components.join(', ')}])`}
+    AgGridModule
   ],
   declarations: [
     ${['AppComponent'].concat(components).join(',')}

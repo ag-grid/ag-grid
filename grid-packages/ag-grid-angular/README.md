@@ -63,7 +63,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 	@NgModule({
 	  declarations: [AppComponent],
-	  imports: [BrowserModule, AgGridModule.withComponents([])],
+	  imports: [BrowserModule, AgGridModule],
 	  providers: [],
 	  bootstrap: [AppComponent]
 	})

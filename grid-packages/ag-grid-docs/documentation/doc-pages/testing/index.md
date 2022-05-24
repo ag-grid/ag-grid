@@ -275,7 +275,7 @@ title: "Testing AG Grid"
 |     TestBed.configureTestingModule({
 |         imports: [
 |             FormsModule,
-|             AgGridModule.withComponents([])
+|             AgGridModule
 |         ],
 |         declarations: [TestHostComponent]
 |     }).compileComponents();
@@ -294,7 +294,7 @@ title: "Testing AG Grid"
 |     TestBed.configureTestingModule({
 |         imports: [
 |             FormsModule,
-| +            AgGridModule.withComponents([RendererComponent, EditorComponent])
+| +            AgGridModule
 |         ],
 | +        declarations: [TestHostComponent, RendererComponent, EditorComponent]
 |     }).compileComponents();

@@ -16,11 +16,7 @@ import { ClickableParentComponent } from "./clickable.parent.component";
     imports: [
         BrowserModule,
         FormsModule,
-        AgGridModule.withComponents(
-            [
-                RatioParentComponent,
-                ClickableParentComponent
-            ]),
+        AgGridModule,
         RatioModule,
         ClickableModule
     ],
