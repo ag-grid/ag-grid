@@ -107,7 +107,7 @@
     "description": "/** When true, this row will appear in the top */",
     "type": { "returnType": "boolean" }
   },
-  "pinnedRowTop": {
+  "stickyRowTop": {
     "description": "/** If row is pinned, then pinnedRowTop is used rather than rowTop */",
     "type": { "returnType": "number" }
   },

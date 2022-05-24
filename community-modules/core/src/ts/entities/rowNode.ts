@@ -140,7 +140,7 @@ export class RowNode implements IEventEmitter {
     public sticky: boolean;
 
     /** If row is pinned, then pinnedRowTop is used rather than rowTop */
-    public pinnedRowTop: number;
+    public stickyRowTop: number;
 
     /** If using quick filter, stores a string representation of the row for searching against. */
     public quickFilterAggregateText: string | null;

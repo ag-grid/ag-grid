@@ -71,6 +71,8 @@ export class RowRenderer extends BeanStub {
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
+    private stickyRowCtrls: RowCtrl[] = [];
+
     private topRowCtrls: RowCtrl[] = [];
     private bottomRowCtrls: RowCtrl[] = [];
 
@@ -78,8 +80,6 @@ export class RowRenderer extends BeanStub {
     private pinningRight: boolean;
 
     private firstVisibleVPixel: number;
-
-    private stickyRows: RowNode[] = [];
 
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
@@ -127,6 +127,10 @@ export class RowRenderer extends BeanStub {
 
     public getRowCtrls(): RowCtrl[] {
         return this.allRowCtrls;
+    }
+
+    public getStickyTopRowCtrls(): RowCtrl[] {
+        return this.stickyRowCtrls;
     }
 
     private updateAllRowCtrls(): void {
@@ -471,7 +475,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.releaseLockOnRefresh();
-        this.pinnedRowModel.setStickyRows(this.stickyRows);
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
@@ -740,14 +743,14 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const nodesByIdMap: RowCtrlMap = {};
+        const ctrlsByIdMap: RowCtrlMap = {};
         iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const rowNode = rowComp.getRowNode();
-            nodesByIdMap[rowNode.id!] = rowComp;
+            ctrlsByIdMap[rowNode.id!] = rowComp;
         });
         this.rowCtrlsByRowIndex = {};
 
-        return nodesByIdMap;
+        return ctrlsByIdMap;
     }
 
     // takes array of row indexes
@@ -772,7 +775,6 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.pinnedRowModel.setStickyRows(this.stickyRows);
         this.dispatchDisplayedRowsChanged();
     }
 
@@ -819,7 +821,7 @@ export class RowRenderer extends BeanStub {
 
     private checkStickyRows(): void {
         if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRows = [];
+            this.stickyRowCtrls = [];
             return;
         }
 
@@ -849,20 +851,35 @@ export class RowRenderer extends BeanStub {
             }
         }
 
-        const oldHash = this.stickyRows.map(row => row.__objectId).join('-');
-        const newHash = stickyRows.map(row => row.__objectId).join('-');
+        const oldHash = this.stickyRowCtrls.map( ctrl => ctrl.getRowNode().__objectId ).join('-');
+        const newHash = stickyRows.map( row => row.__objectId ).join('-');
+        if (oldHash==newHash) { return; }
 
-        if (oldHash === newHash) { return; }
+        const ctrlsToDestroy: RowCtrlMap = {};
+        this.stickyRowCtrls.forEach( ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
 
-        this.stickyRows.forEach(row => {
-            const stillSticky = stickyRowsMapped[row.__objectId] === row;
-            if (stillSticky) { return; }
-            row.sticky = false;
+        const newCtrls: RowCtrl[] = [];
+        let nextRowTop = 0;
+        stickyRows.forEach( rowNode => {
+            rowNode.sticky = true;
+            rowNode.stickyRowTop = nextRowTop;
+            nextRowTop += rowNode.rowHeight!;
+
+            const rowNodeId = rowNode.id!;
+            const oldCtrl = ctrlsToDestroy[rowNodeId];
+            if (oldCtrl) {
+                delete ctrlsToDestroy[rowNodeId];
+                newCtrls.push(oldCtrl);
+                return;
+            }
+            const newCtrl = this.createRowCon(rowNode, false, false, true);
+            newCtrls.push(newCtrl);
         });
 
-        stickyRows.forEach(row => row.sticky = true);
+        Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false );
+        this.destroyRowCtrls(ctrlsToDestroy, false);
 
-        this.stickyRows = stickyRows;
+        this.stickyRowCtrls = newCtrls;
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
@@ -1242,7 +1259,7 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
+    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky = false): RowCtrl {
 
         const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
         if (rowCtrlFromCache) { return rowCtrlFromCache; }
@@ -1263,7 +1280,7 @@ export class RowRenderer extends BeanStub {
             animate,
             useAnimationFrameForCreate,
             this.printLayout,
-            true
+            sticky
         );
 
         return res;

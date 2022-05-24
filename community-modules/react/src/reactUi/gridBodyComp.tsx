@@ -38,11 +38,13 @@ const GridBodyComp = () => {
 
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);
+    const eStickyTop = useRef<HTMLDivElement>(null);
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
+    useReactCommentEffect(' AG Sticky Top ', eStickyTop);
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
@@ -108,6 +110,10 @@ const GridBodyComp = () => {
         classesList('ag-floating-top', cellSelectableCss), 
         [cellSelectableCss]
     );
+    const stickyTopClasses = useMemo( ()=> 
+        classesList('ag-sticky-top', cellSelectableCss), 
+        [cellSelectableCss]
+    );
     const bottomClasses = useMemo( ()=> 
         classesList('ag-floating-bottom', cellSelectableCss), 
         [cellSelectableCss]
@@ -119,6 +125,10 @@ const GridBodyComp = () => {
         display: topDisplay,
         overflowY: (topAndBottomOverflowY as any)
     }), [topHeight, topDisplay, topAndBottomOverflowY]);
+
+    const stickyTopStyle: React.CSSProperties = useMemo( () => ({
+        // what goes here????
+    }), []);
 
     const bottomStyle: React.CSSProperties = useMemo( ()=> ({
         height: bottomHeight,
@@ -153,6 +163,12 @@ const GridBodyComp = () => {
                 RowContainerName.CENTER,
                 RowContainerName.RIGHT,
                 RowContainerName.FULL_WIDTH,
+            ]}) }
+            { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
+                RowContainerName.STICKY_TOP_LEFT,
+                RowContainerName.STICKY_TOP_CENTER,
+                RowContainerName.STICKY_TOP_RIGHT,
+                RowContainerName.STICKY_TOP_FULL_WIDTH,
             ]}) }
             { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, children: [
                 RowContainerName.BOTTOM_LEFT,

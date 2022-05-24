@@ -107,7 +107,7 @@ export class RowCtrl extends BeanStub {
 
     private updateColumnListsPending = false;
 
-    private inBody: boolean; // false if row is pinned
+    private sticky: boolean;
 
     // the top needs to be set into the DOM element when the element is created, not updated afterwards.
     // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
@@ -125,10 +125,10 @@ export class RowCtrl extends BeanStub {
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
         printLayout: boolean,
-        inBody: boolean
+        sticky: boolean
     ) {
         super();
-        this.inBody = inBody;
+        this.sticky = sticky;
         this.beans = beans;
         this.rowNode = rowNode;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
@@ -147,6 +147,10 @@ export class RowCtrl extends BeanStub {
         this.addListeners();
 
         this.setInitialRowTop();
+    }
+
+    public isSticky(): boolean {
+        return this.sticky;
     }
 
     public getBeans(): Beans {
@@ -493,7 +497,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setAnimateFlags(animateIn: boolean): void {
-        if (this.inBody && animateIn) {
+        if (!this.sticky && animateIn) {
             const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
@@ -1194,8 +1198,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
-        // row heights don't change for pinned rows
-        if (!this.inBody) { return; }
+        // row heights don't change for sticky rows
+        if (this.sticky) { return; }
 
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
@@ -1261,8 +1265,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private setupRemoveAnimation(): void {
-        // we don't animate pinned rows
-        if (!this.inBody) { return; }
+        // we don't animate sticky rows
+        if (this.sticky) { return; }
 
         const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
         if (rowStillVisibleJustNotInViewport) {
@@ -1350,8 +1354,8 @@ export class RowCtrl extends BeanStub {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return; }
 
-        // when rows are pinned, we ignore changes to row top, because we are using pinnedRowTop
-        if (!this.inBody) { return; }
+        // when rows are sticky, we ignore changes to row top, because we are using pinnedRowTop
+        if (this.sticky) { return; }
 
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
@@ -1376,14 +1380,14 @@ export class RowCtrl extends BeanStub {
         if (this.printLayout) { return ''; }
 
         let rowTop: number;
-        if (this.inBody) {
+        if (this.sticky) {
+            rowTop = this.rowNode.stickyRowTop;
+        } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
             const afterPaginationPixels = this.applyPaginationOffset(pixels!);
             // we don't apply scaling if row is pinned
             rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
-        } else {
-            rowTop = this.rowNode.pinnedRowTop;
         }
 
         const rowTopPx = rowTop + 'px';

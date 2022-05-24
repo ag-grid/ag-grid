@@ -3679,13 +3679,12 @@
   "RedrawType": {},
   "RenderContext": {},
   "DebugOptions": {
-    "renderFrameIndex": {
-      "type": { "returnType": "boolean", "optional": false }
-    },
+    "stats": { "type": { "returnType": "boolean", "optional": false } },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
     },
-    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
+    "onlyLayers": { "type": { "returnType": "string[]", "optional": false } }
   },
   "SceneOptions": {
     "document": { "type": { "returnType": "Document", "optional": false } },

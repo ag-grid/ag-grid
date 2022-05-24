@@ -31,6 +31,12 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
             <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
         </div>
+        <div class="ag-sticky-top" ref="eStickyTop" role="presentation">
+            <ag-row-container ref="stickyTopLeftContainer" name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
+            <ag-row-container ref="stickyTopCenterContainer" name="${RowContainerName.STICKY_TOP_CENTER}"></ag-row-container>
+            <ag-row-container ref="stickyTopRightContainer" name="${RowContainerName.STICKY_TOP_RIGHT}"></ag-row-container>
+            <ag-row-container ref="stickyTopFullWidthContainer" name="${RowContainerName.STICKY_TOP_FULL_WIDTH}"></ag-row-container>
+        </div>
         <div class="ag-floating-bottom" ref="eBottom" role="presentation">
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>

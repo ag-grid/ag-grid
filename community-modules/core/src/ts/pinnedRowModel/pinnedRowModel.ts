@@ -16,11 +16,8 @@ export class PinnedRowModel extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('beans') private beans: Beans;
 
-    private pinnedTopRows: RowNode[] = [];
-    private stickyRows: RowNode[] = [];
-    private topRows: RowNode[] = [];
-
-    private bottomRows: RowNode[] = [];
+    private pinnedTopRows: RowNode[];
+    private pinnedBottomRows: RowNode[];
 
     @PostConstruct
     public init(): void {
@@ -29,7 +26,7 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public isEmpty(floating: string): boolean {
-        const rows = floating === Constants.PINNED_TOP ? this.topRows : this.bottomRows;
+        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         return missingOrEmpty(rows);
     }
 
@@ -38,13 +35,13 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public getRowAtPixel(pixel: number, floating: string): number {
-        const rows = floating === Constants.PINNED_TOP ? this.topRows : this.bottomRows;
+        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
             const rowNode = rows[i];
-            const rowTopPixel = rowNode.pinnedRowTop! + rowNode.rowHeight! - 1;
+            const rowTopPixel = rowNode.rowTop! + rowNode.rowHeight! - 1;
             // only need to range check against the top pixel, as we are going through the list
             // in order, first row to hit the pixel wins
             if (rowTopPixel >= pixel) {
@@ -56,30 +53,16 @@ export class PinnedRowModel extends BeanStub {
 
     public setPinnedTopRowData(rowData: any[] | undefined): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        this.combineTop();
-        this.fireDataChanged();
-    }
-
-    public combineTop(): void {
-        this.topRows = [...this.pinnedTopRows, ...this.stickyRows];
-        this.setRowTops(this.topRows);
-    }
-
-    public setRowTops(rowNodes: RowNode[]): void {
-        let nextRowTop = 0;
-        rowNodes.forEach(rowNode => {
-            rowNode.pinnedRowTop = nextRowTop;
-            nextRowTop += rowNode.rowHeight!;
-        });
+        const event: PinnedRowDataChangedEvent = {
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public setPinnedBottomRowData(rowData: any[] | undefined): void {
-        this.bottomRows = this.createNodesFromData(rowData, false);
-        this.setRowTops(this.bottomRows);
-        this.fireDataChanged();
-    }
-
-    private fireDataChanged(): void {
+        this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: PinnedRowDataChangedEvent = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
             api: this.gridApi,
@@ -111,67 +94,55 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public getPinnedTopRowData(): RowNode[] {
-        return this.topRows;
+        return this.pinnedTopRows;
     }
 
     public getPinnedBottomRowData(): RowNode[] {
-        return this.bottomRows;
+        return this.pinnedBottomRows;
     }
 
     public getPinnedTopTotalHeight(): number {
-        return this.getTotalHeight(this.topRows);
+        return this.getTotalHeight(this.pinnedTopRows);
     }
 
     public getPinnedTopRowCount(): number {
-        return this.topRows ? this.topRows.length : 0;
+        return this.pinnedTopRows ? this.pinnedTopRows.length : 0;
     }
 
     public getPinnedBottomRowCount(): number {
-        return this.bottomRows ? this.bottomRows.length : 0;
+        return this.pinnedBottomRows ? this.pinnedBottomRows.length : 0;
     }
 
     public getPinnedTopRow(index: number): RowNode | undefined {
-        return this.topRows[index];
+        return this.pinnedTopRows[index];
     }
 
     public getPinnedBottomRow(index: number): RowNode | undefined {
-        return this.bottomRows[index];
+        return this.pinnedBottomRows[index];
     }
 
     public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.topRows)) {
+        if (missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
-        this.topRows.forEach(callback);
+        this.pinnedTopRows.forEach(callback);
     }
 
     public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (missingOrEmpty(this.bottomRows)) {
+        if (missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
-        this.bottomRows.forEach(callback);
+        this.pinnedBottomRows.forEach(callback);
     }
 
     public getPinnedBottomTotalHeight(): number {
-        return this.getTotalHeight(this.bottomRows);
+        return this.getTotalHeight(this.pinnedBottomRows);
     }
 
     private getTotalHeight(rowNodes: RowNode[]): number {
         if (!rowNodes || rowNodes.length === 0) { return 0; }
 
         const lastNode = last(rowNodes);
-        return lastNode.pinnedRowTop! + lastNode.rowHeight!;
-    }
-
-    public setStickyRows(stickyRows: RowNode[] = []): void {
-        const createHash = (rowNodes: RowNode[]) => rowNodes.map(rowNode => rowNode.__objectId).join('-');
-        const beforeHash = createHash(this.stickyRows);
-        const afterHash = createHash(stickyRows);
-
-        if (beforeHash === afterHash) { return; }
-
-        this.stickyRows = stickyRows || [];
-        this.combineTop();
-        this.fireDataChanged();
+        return lastNode.rowTop! + lastNode.rowHeight!;
     }
 }

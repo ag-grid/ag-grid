@@ -266,6 +266,15 @@
     "topRightRowContainerCtrl": {
       "type": { "returnType": "RowContainerCtrl", "optional": false }
     },
+    "stickyTopCenterRowContainerCtrl": {
+      "type": { "returnType": "RowContainerCtrl", "optional": false }
+    },
+    "stickyTopLeftRowContainerCtrl": {
+      "type": { "returnType": "RowContainerCtrl", "optional": false }
+    },
+    "stickyTopRightRowContainerCtrl": {
+      "type": { "returnType": "RowContainerCtrl", "optional": false }
+    },
     "fakeHScrollCtrl": {
       "type": { "returnType": "FakeHScrollCtrl", "optional": false }
     },
