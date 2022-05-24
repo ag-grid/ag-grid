@@ -25,7 +25,7 @@ export class RxJsComponentByRow {
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
-        this.rowDataUpdates$ = mockServerService.byRowupdates();
+        this.rowDataUpdates$ = mockServerService.byRowUpdates();
 
         this.gridOptions = {
             enableRangeSelection: true,

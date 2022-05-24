@@ -39,8 +39,6 @@
                 // vue class component
                 'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
-                lodash: 'npm:lodash@4.17.15',
-
                 app: appLocation + 'app'
             },
             systemJsMap

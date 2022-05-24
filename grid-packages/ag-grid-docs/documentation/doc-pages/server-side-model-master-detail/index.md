@@ -63,7 +63,7 @@ This example shows a simple Master / Detail setup which includes the infinite sc
 - **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
 - **cellRenderer: 'agGroupCellRenderer'** - is used to provide expand / collapse icons on the master rows.
 
-<grid-example title='Infinite Scrolling with Master / Detail' name='infinite-scrolling' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["lodash"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Infinite Scrolling with Master / Detail' name='infinite-scrolling' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 ## Combining Row Grouping with Master Detail
 

@@ -87,7 +87,7 @@ The example below shows this in action where the following can be noted: 333
 - Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
 - Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
 
-<grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 [[note]]
 | The examples on this page use a simple method for expanding group nodes, however a
@@ -104,7 +104,7 @@ The example below shows this in action where the following can be noted:
 - Click **Purge Everything** to clear all caches by calling `gridOptions.api.refreshServerSideStore({ route: [], purge: true })`.
 - Click **Purge ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSideStore({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
-<grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ## Sorting
 

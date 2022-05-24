@@ -17,7 +17,6 @@ function getImports(bindingImports, componentFileNames: string[], { typeParts })
     })
 
     const imports = [
-        "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
     ];
 
