@@ -56,11 +56,11 @@ and `pivotMode` is used to determine if pivoting is currently enabled in the gri
 
 ## Setting Pivot Result Columns
 
-Pivot Result columns are the columns that are created as part of the pivot function. You must provide
+Pivot Result Columns are the columns that are created as part of the pivot function. You must provide
 these to the grid in order for the grid to display the correct columns for the active pivot function.
 
 For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the
-data, e.g. `2000, 2002, 2004 etc...`
+data, e.g. `2000`, `2002`, `2004` e.t.c.
 
 Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
