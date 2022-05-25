@@ -1,9 +1,11 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
+import { Group } from "./group";
 
 interface DebugOptions {
     stats: boolean;
+    dirtyTree: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
     onlyLayers: string[];
@@ -41,8 +43,9 @@ export class Scene {
         } = opts;
 
         this.opts = { document, mode };
-        this.debug.stats = (window as any).agChartsSceneStats || false;
-        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers || [];
+        this.debug.stats = (window as any).agChartsSceneStats ?? false;
+        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers ?? [];
+        this.debug.dirtyTree = (window as any).agChartsSceneDirtyTree ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -188,6 +191,7 @@ export class Scene {
     }
 
     readonly debug: DebugOptions = {
+        dirtyTree: false,
         stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
@@ -233,6 +237,11 @@ export class Scene {
             // start with a blank canvas, clear previous drawing
             canvasCleared = true;
             canvas.clear();
+        }
+
+        if (root && this.debug.dirtyTree) {
+            const {dirtyTree, paths} = this.buildDirtyTree(root);
+            console.log({dirtyTree, paths});
         }
 
         if (root && canvasCleared) {
@@ -286,5 +295,35 @@ export class Scene {
             ctx.restore();
         }
 
+    }
+
+    buildDirtyTree(node: Node): {
+        dirtyTree: { meta?: { name: string, node: any, dirty: string } },
+        paths: string[],
+    } {
+        if (node.dirty === RedrawType.NONE) {
+            return { dirtyTree: {}, paths: [] };
+        }
+
+        const childrenDirtyTree = node.children.map(c => this.buildDirtyTree(c))
+            .filter(c => c.paths.length > 0);
+        const name = (node instanceof Group ? node.name : null) ?? node.id;
+        const paths = childrenDirtyTree.length === 0 ? [ name ]
+            : childrenDirtyTree.map(c => c.paths)
+                .reduce((r, p) => r.concat(p), [])
+                .map(p => `${name}.${p}`);
+
+        return {
+            dirtyTree: {
+                meta: { name, node, dirty: RedrawType[node.dirty] },
+                ...childrenDirtyTree.map((c) => c.dirtyTree)
+                    .filter((t) => t.meta !== undefined)
+                    .reduce((result, childTree) => {
+                        result[childTree.meta?.name || '<unknown>'] = childTree;
+                        return result;
+                    }, {} as Record<string, {}>),
+            },
+            paths,
+        };
     }
 }

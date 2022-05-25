@@ -11,6 +11,7 @@ export class Group extends Node {
 
     private layer?: HdpiCanvas;
     private clipPath: Path2D = new Path2D();
+    readonly name?: string;
 
     @SceneChangeDetection({
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
@@ -37,6 +38,7 @@ export class Group extends Node {
         if (this.opts?.zIndex !== undefined) {
             this.zIndex = this.opts.zIndex;
         }
+        this.name = this.opts?.name;
     }
 
     _setScene(scene?: Scene) {
