@@ -16,9 +16,9 @@
   },
   "private": true,
   "license": "MIT",
-  "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
-  "module": "./dist/ag-grid-angular/fesm5/ag-grid-community-angular.js",
-  "typings": "./dist/ag-grid-angular/ag-grid-community-angular.d.ts",
+  "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular-legacy.umd.js",
+  "module": "./dist/ag-grid-angular/fesm5/ag-grid-community-angular-legacy.js",
+  "typings": "./dist/ag-grid-angular/ag-grid-community-angular-legacy.d.ts",
   "dependencies": {
     "@angular/animations": "~9.0.0",
     "@angular/common": "~9.0.0",

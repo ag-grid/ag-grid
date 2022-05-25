@@ -17,7 +17,7 @@
   "private": true,
   "license": "MIT",
   "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
-  "module": "./dist/ag-grid-angular/fesm5/ag-grid-community-angular.js",
+  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.js",
   "typings": "./dist/ag-grid-angular/ag-grid-community-angular.d.ts",
   "dependencies": {
     "@angular/animations": "~12.2.0",

@@ -3,11 +3,11 @@
   "version": "5.3.0",
   "scripts": {
     "clean": "rimraf dist .hash",
-    "ng": "npx @angular/cli",
-    "build": "npx @angular/cli build && npm run hash",
+    "ng": "ng",
+    "build": "ng build && npm run hash",
     "build-prod": "npm run build",
-    "test:e2e": "npx @angular/cli test --watch false --browsers ChromeHeadless",
-    "lint": "npx @angular/cli lint",
+    "test:e2e": "ng test --watch false --browsers ChromeHeadless",
+    "lint": "ng lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -29,7 +29,7 @@
   "homepage": "https://www.ag-grid.com/",
   "private": false,
   "main": "./dist/ag-charts-angular/bundles/ag-charts-angular.umd.js",
-  "module": "./dist/ag-charts-angular/fesm5/ag-charts-angular.js",
+  "module": "./dist/ag-charts-angular/fesm2015/ag-charts-angular.js",
   "typings": "./dist/ag-charts-angular/ag-charts-angular.d.ts",
   "dependencies": {
     "@angular/animations": "~12.2.0",
