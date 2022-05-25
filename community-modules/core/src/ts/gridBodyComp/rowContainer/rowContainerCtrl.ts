@@ -90,7 +90,7 @@ const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-container'],
     [RowContainerName.STICKY_TOP_LEFT, 'ag-pinned-left-sticky-top'],
     [RowContainerName.STICKY_TOP_RIGHT, 'ag-pinned-right-sticky-top'],
-    [RowContainerName.STICKY_TOP_FULL_WIDTH, 'ag-floating-top-full-width-container'],
+    [RowContainerName.STICKY_TOP_FULL_WIDTH, 'ag-sticky-top-full-width-container'],
 
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-container'],
     [RowContainerName.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
@@ -242,10 +242,10 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, ()=> this.onScrollVisibilityChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> this.onDisplayedColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, ()=> this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, ()=> this.onDisplayedRowsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, () => this.onDisplayedRowsChanged());
 
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();

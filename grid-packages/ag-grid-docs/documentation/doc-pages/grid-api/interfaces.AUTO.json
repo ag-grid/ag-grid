@@ -5344,6 +5344,8 @@
       "setTopDisplay(display: string)": "void",
       "setBottomHeight(height: number)": "void",
       "setBottomDisplay(display: string)": "void",
+      "setStickyTopHeight(height: number)": "void",
+      "setStickyTopOffsetTop(offsetTop: number)": "void",
       "setColumnCount(count: number)": "void",
       "setRowCount(count: number)": "void",
       "setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean)": "void",

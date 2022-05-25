@@ -9199,6 +9199,20 @@
         "optional": false
       }
     },
+    "setStickyTopHeight": {
+      "type": {
+        "arguments": { "height": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setStickyTopOffsetTop": {
+      "type": {
+        "arguments": { "offsetTop": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setColumnCount": {
       "type": {
         "arguments": { "count": "number" },

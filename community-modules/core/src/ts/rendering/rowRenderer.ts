@@ -819,6 +819,10 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
+    public getStickyTopHeight(): number {
+        return this.stickyRowCtrls.reduce((currentHeight, ctrl) => currentHeight + (ctrl?.getRowNode()?.rowHeight || 0), 0);
+    }
+
     private checkStickyRows(): void {
         if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
             this.stickyRowCtrls = [];
@@ -851,16 +855,17 @@ export class RowRenderer extends BeanStub {
             }
         }
 
-        const oldHash = this.stickyRowCtrls.map( ctrl => ctrl.getRowNode().__objectId ).join('-');
-        const newHash = stickyRows.map( row => row.__objectId ).join('-');
-        if (oldHash==newHash) { return; }
+        const oldHash = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode().__objectId).join('-');
+        const newHash = stickyRows.map(row => row.__objectId).join('-');
+
+        if (oldHash === newHash) { return; }
 
         const ctrlsToDestroy: RowCtrlMap = {};
-        this.stickyRowCtrls.forEach( ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
+        this.stickyRowCtrls.forEach(ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
 
         const newCtrls: RowCtrl[] = [];
         let nextRowTop = 0;
-        stickyRows.forEach( rowNode => {
+        stickyRows.forEach(rowNode => {
             rowNode.sticky = true;
             rowNode.stickyRowTop = nextRowTop;
             nextRowTop += rowNode.rowHeight!;
@@ -876,7 +881,7 @@ export class RowRenderer extends BeanStub {
             newCtrls.push(newCtrl);
         });
 
-        Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false );
+        Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false);
         this.destroyRowCtrls(ctrlsToDestroy, false);
 
         this.stickyRowCtrls = newCtrls;

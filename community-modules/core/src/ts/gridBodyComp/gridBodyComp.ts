@@ -54,6 +54,7 @@ export class GridBodyComp extends Component {
     @Optional('rangeService') private rangeService: IRangeService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
+    @RefSelector('eStickyTop') private eStickyTop: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
     @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
@@ -81,6 +82,8 @@ export class GridBodyComp extends Component {
             setBottomHeight: height => setHeight(height, this.eBottom),
             setTopDisplay: display => this.eTop.style.display = display,
             setBottomDisplay: display => this.eBottom.style.display = display,
+            setStickyTopHeight: height => this.eStickyTop.style.height = `${height}px`,
+            setStickyTopOffsetTop: offsetTop => this.eStickyTop.style.top = `${offsetTop}px`,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
             updateLayoutClasses: (cssClass, params) => {
                 const bodyViewportClassList = this.eBodyViewport.classList;
@@ -106,7 +109,14 @@ export class GridBodyComp extends Component {
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
-        this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
+        this.ctrl.setComp(
+            compProxy,
+            this.getGui(),
+            this.eBodyViewport,
+            this.eTop,
+            this.eBottom,
+            this.eStickyTop
+        );
 
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);

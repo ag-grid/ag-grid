@@ -24,6 +24,7 @@ export class GridHeaderCtrl extends BeanStub {
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
+    private headerHeight: number;
 
     public setComp(comp: IGridHeaderComp, eGui: HTMLElement, eFocusableElement: HTMLElement): void {
         this.comp = comp;
@@ -60,8 +61,12 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
     }
 
+    public getHeaderHeight(): number {
+        return this.headerHeight;
+    }
+
     private setHeaderHeight(): void {
-        const {columnModel, gridOptionsWrapper} = this;
+        const { columnModel, gridOptionsWrapper } = this;
 
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
@@ -91,10 +96,18 @@ export class GridHeaderCtrl extends BeanStub {
         totalHeaderHeight += numberOfGroups * groupHeight!;
         totalHeaderHeight += headerHeight!;
 
+        if (this.headerHeight === totalHeaderHeight) { return; }
+
+        this.headerHeight = totalHeaderHeight;
+
         // one extra pixel is needed here to account for the
         // height of the border
         const px = `${totalHeaderHeight + 1}px`;
         this.comp.setHeightAndMinHeight(px);
+
+        this.eventService.dispatchEvent({
+            type: Events.EVENT_HEADER_HEIGHT_CHANGED
+        });
     }
 
     private onPivotModeChanged(): void {
