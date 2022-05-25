@@ -7,7 +7,7 @@
             "displayName": "Columns"
         },
         "getColumn": {},
-        "getAllColumns": {},
+        "getColumns": {},
         "getAllGridColumns": {}
     },
     "state": {

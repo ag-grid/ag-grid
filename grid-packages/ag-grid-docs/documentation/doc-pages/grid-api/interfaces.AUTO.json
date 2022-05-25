@@ -9392,12 +9392,8 @@
     "type": {
       "valueColChanged": "boolean",
       "secondaryColChanged": "boolean",
-      "pivotResultColChanged": "boolean",
       "alwaysReset": "boolean",
       "changedColumns": "string[]"
-    },
-    "docs": {
-      "secondaryColChanged": "/** @deprecated Use `pivotResultColChanged` instead\n */"
     }
   },
   "ServerSideStoreState": {

@@ -127,11 +127,15 @@
     }
   },
   "getAllColumns": {
+    "description": "/** @deprecated Use `getColumns` instead\n */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getColumns": {
     "description": "/** Returns all the columns, regardless of visible or not. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getAllGridColumns": {
-    "description": "/** Returns all the grid columns, same as `getAllColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
+    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedLeftColumns": {
@@ -416,7 +420,7 @@
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getPrimaryColumns": {
-    "description": "/** @deprecated Use `getAllColumns` instead.\n */",
+    "description": "/** @deprecated Use `getColumns` instead.\n */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "columnGroupOpened": {

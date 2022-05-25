@@ -16539,10 +16539,6 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "secondaryColChanged": {
-      "description": "/** @deprecated Use `pivotResultColChanged` instead\n */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "pivotResultColChanged": {
       "type": { "returnType": "boolean", "optional": false }
     },
     "alwaysReset": { "type": { "returnType": "boolean", "optional": false } },

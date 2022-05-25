@@ -68,10 +68,18 @@ export class ColumnApi {
     /** Same as `setColumnPinned`, but provide a list of column keys. */
     public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
+    /** @deprecated Use `getColumns` instead */
+    public getAllColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
+    }
+
     /** Returns all the columns, regardless of visible or not. */
-    public getAllColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
+    public getColumns(): Column[] | null {
+        return this.columnModel.getAllPrimaryColumns();
+    }
     /**
-     * Returns all the grid columns, same as `getAllColumns()`, except
+     * Returns all the grid columns, same as `getColumns()`, except
      *
      *  a) it has the order of the columns that are presented in the grid
      *
@@ -203,10 +211,10 @@ export class ColumnApi {
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
 
-    /** @deprecated Use `getAllColumns` instead. */
+    /** @deprecated Use `getColumns` instead. */
     public getPrimaryColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getAllColumns instead');
-        return this.getAllColumns();
+        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
     }
 
     @PreDestroy

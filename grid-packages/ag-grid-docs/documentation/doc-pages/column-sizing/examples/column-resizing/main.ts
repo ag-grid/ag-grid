@@ -36,7 +36,7 @@ function sizeToFit() {
 
 function autoSizeAll(skipHeader: boolean) {
   const allColumnIds: string[] = []
-  gridOptions.columnApi!.getAllColumns()!.forEach(column => {
+  gridOptions.columnApi!.getColumns()!.forEach(column => {
     allColumnIds.push(column.getId())
   })
 
