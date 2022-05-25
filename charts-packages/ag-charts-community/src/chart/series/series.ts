@@ -209,12 +209,17 @@ export abstract class Series extends Observable {
         }
     }
 
-    protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { strokeWidth } } } = this;
-        return chart && chart.highlightedDatum &&
-            chart.highlightedDatum.series === this &&
-            (!datum || chart.highlightedDatum.itemId === datum.itemId) &&
-            strokeWidth !== undefined ? strokeWidth : defaultStrokeWidth;
+    protected getStrokeWidth(defaultStrokeWidth: number): number {
+        const { 
+            chart: { highlightedDatum: { series = undefined } = {} } = {},
+            highlightStyle: { series: { strokeWidth } },
+        } = this;
+
+        if (series && series === this && strokeWidth !== undefined) {
+            return strokeWidth;
+        } else {
+            return defaultStrokeWidth;
+        }
     }
 
     abstract getTooltipHtml(seriesDatum: any): string;

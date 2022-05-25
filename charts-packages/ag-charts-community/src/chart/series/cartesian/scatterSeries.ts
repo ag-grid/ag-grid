@@ -349,7 +349,7 @@ export class ScatterSeries extends CartesianSeries {
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || seriesStroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(markerStrokeWidth, datum);
+                : this.getStrokeWidth(markerStrokeWidth);
             const size = sizeData.length ? sizeScale.convert(sizeData[index]) : marker.size
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
@@ -406,7 +406,7 @@ export class ScatterSeries extends CartesianSeries {
 
         const fill = marker.fill || seriesFill;
         const stroke = marker.stroke || seriesStroke;
-        const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth, nodeDatum);
+        const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth);
 
         const { formatter } = this.marker;
         let format: CartesianSeriesMarkerFormat | undefined = undefined;
