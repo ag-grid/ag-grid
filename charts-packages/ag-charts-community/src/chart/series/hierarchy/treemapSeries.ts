@@ -455,5 +455,6 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     listSeriesItems(_legendData: LegendDatum[]): void {
+        // Override point for subclasses.
     }
 }
