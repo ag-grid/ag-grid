@@ -1152,7 +1152,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.sortingOrder;
     }
 
-    public getAlignedGrids(): GridOptions[] | undefined {
+    public getAlignedGrids(): { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined {
         return this.gridOptions.alignedGrids;
     }
 

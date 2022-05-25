@@ -3697,7 +3697,8 @@ export class ColumnModel extends BeanStub {
         // avoid divide by zero
         const allDisplayedColumns = this.getAllDisplayedColumns();
 
-        if (gridWidth <= 0 || !allDisplayedColumns.length) { return; }
+        const doColumnsAlreadyFit = gridWidth === this.getWidthOfColsInList(allDisplayedColumns);
+        if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) { return; }
 
         const colsToSpread: Column[] = [];
         const colsToNotSpread: Column[] = [];

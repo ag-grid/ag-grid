@@ -2592,7 +2592,10 @@
     },
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-      "type": { "returnType": "GridOptions[]", "optional": true }
+      "type": {
+        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "optional": true
+      }
     },
     "tabIndex": {
       "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -21835,7 +21838,10 @@
     },
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-      "type": { "returnType": "GridOptions[]", "optional": true }
+      "type": {
+        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "optional": true
+      }
     },
     "tabIndex": {
       "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -24541,7 +24547,10 @@
     },
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-      "type": { "returnType": "GridOptions[]", "optional": true }
+      "type": {
+        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "optional": true
+      }
     },
     "tabIndex": {
       "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -27257,7 +27266,10 @@
     },
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-      "type": { "returnType": "GridOptions[]", "optional": true }
+      "type": {
+        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "optional": true
+      }
     },
     "tabIndex": {
       "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
