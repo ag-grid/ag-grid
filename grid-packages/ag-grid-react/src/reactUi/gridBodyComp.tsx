@@ -22,8 +22,11 @@ const GridBodyComp = () => {
     const [ariaRowCount, setAriaRowCount] = useState<number>(0);
     const [topHeight, setTopHeight] = useState<number>(0);
     const [bottomHeight, setBottomHeight] = useState<number>(0);
+    const [stickyTopHeight, setStickyTopHeight] = useState<number>(0);
+    const [stickyTopOffsetTop, setStickyTopOffsetTop] = useState<number>(0);
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
+    
     const [movingCss, setMovingCss] = useState<string | null>(null);
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
@@ -38,11 +41,13 @@ const GridBodyComp = () => {
 
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);
+    const eStickyTop = useRef<HTMLDivElement>(null);
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
 
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
+    useReactCommentEffect(' AG Sticky Top ', eStickyTop);
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
@@ -69,10 +74,12 @@ const GridBodyComp = () => {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: setAriaColCount,
             setRowCount: setAriaRowCount,
-            setTopHeight: setTopHeight,
-            setBottomHeight: setBottomHeight,
-            setTopDisplay: setTopDisplay,
-            setBottomDisplay: setBottomDisplay,
+            setTopHeight,
+            setBottomHeight,
+            setStickyTopHeight,
+            setStickyTopOffsetTop,
+            setTopDisplay,
+            setBottomDisplay,
             setColumnMovingCss: setMovingCss,
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
@@ -87,7 +94,14 @@ const GridBodyComp = () => {
 
         const ctrl = context.createBean(new GridBodyCtrl());
         beansToDestroy.push(ctrl);
-        ctrl.setComp(compProxy, eRoot.current!, eBodyViewport.current!, eTop.current!, eBottom.current!);
+        ctrl.setComp(
+            compProxy,
+            eRoot.current!,
+            eBodyViewport.current!,
+            eTop.current!,
+            eBottom.current!,
+            eStickyTop.current!
+        );
 
         return () => {
             context.destroyBeans(beansToDestroy);
@@ -96,31 +110,40 @@ const GridBodyComp = () => {
 
     });
 
-    const rootClasses = useMemo( ()=> 
+    const rootClasses = useMemo(() =>
         classesList('ag-root','ag-unselectable', movingCss, layoutClass), 
         [movingCss, layoutClass]
     );
-    const bodyViewportClasses = useMemo( ()=> 
+    const bodyViewportClasses = useMemo(() =>
         classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
     );
-    const topClasses = useMemo( ()=> 
+    const topClasses = useMemo(() =>
         classesList('ag-floating-top', cellSelectableCss), 
         [cellSelectableCss]
     );
-    const bottomClasses = useMemo( ()=> 
-        classesList('ag-floating-bottom', cellSelectableCss), 
+    const stickyTopClasses = useMemo(() =>
+        classesList('ag-sticky-top', cellSelectableCss), 
+        [cellSelectableCss]
+    );
+    const bottomClasses = useMemo(() =>
+        classesList('ag-floating-bottom', cellSelectableCss),
         [cellSelectableCss]
     );
 
-    const topStyle: React.CSSProperties = useMemo( () => ({
+    const topStyle: React.CSSProperties = useMemo(() => ({
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
         overflowY: (topAndBottomOverflowY as any)
     }), [topHeight, topDisplay, topAndBottomOverflowY]);
 
-    const bottomStyle: React.CSSProperties = useMemo( ()=> ({
+    const stickyTopStyle: React.CSSProperties = useMemo(() => ({
+        height: stickyTopHeight,
+        top: stickyTopOffsetTop
+    }), []);
+
+    const bottomStyle: React.CSSProperties = useMemo(()=> ({
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
@@ -129,11 +152,11 @@ const GridBodyComp = () => {
 
     const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
     const createSection = ({
-        section, 
+        section,
         children,
-        className, 
+        className,
         style
-    }: SectionProperties & { children: RowContainerName[] } ) => (
+    }: SectionProperties & { children: RowContainerName[] }) => (
         <div ref={ section } className={ className } role="presentation" style={ style }>
             { children.map(createRowContainer) }
         </div>
@@ -153,6 +176,12 @@ const GridBodyComp = () => {
                 RowContainerName.CENTER,
                 RowContainerName.RIGHT,
                 RowContainerName.FULL_WIDTH,
+            ]}) }
+            { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
+                RowContainerName.STICKY_TOP_LEFT,
+                RowContainerName.STICKY_TOP_CENTER,
+                RowContainerName.STICKY_TOP_RIGHT,
+                RowContainerName.STICKY_TOP_FULL_WIDTH,
             ]}) }
             { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, children: [
                 RowContainerName.BOTTOM_LEFT,

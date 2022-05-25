@@ -98,8 +98,20 @@ export abstract class Series extends Observable {
     // The group node that contains all the nodes used to render this series.
     readonly group: Group = new Group();
 
+    // The group node that contains the series rendering in it's default (non-highlighted) state.
+    readonly seriesGroup: Group = this.group.appendChild(
+        new Group({ name: `${this.id}-series`, layer: true, zIndex: 100 }),
+    );
+
+    // The group node that contains all highlighted series items. This is a performance optimisation
+    // for large-scale data-sets, where the only thing that routinely varies is the currently
+    // highlighted node.
+    readonly highlightGroup: Group = this.group.appendChild(
+        new Group({ name: `${this.id}-highlight`, layer: true, zIndex: 150 }),
+    );
+
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
-    readonly pickGroup: Group = this.group.appendChild(new Group());
+    readonly pickGroup: Group = this.seriesGroup.appendChild(new Group());
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
@@ -136,7 +148,9 @@ export abstract class Series extends Observable {
         }
     }
 
-    setColors(_fills: string[], _strokes: string[]) { }
+    setColors(_fills: string[], _strokes: string[]) {
+        // Override point for subclasses.
+    }
 
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
@@ -182,11 +196,17 @@ export abstract class Series extends Observable {
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
 
-    protected getOpacity(datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { dimOpacity = 1 } } } = this;
-        return !chart || !chart.highlightedDatum ||
-            chart.highlightedDatum.series === this &&
-            (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : dimOpacity;
+    protected getOpacity(): number {
+        const { 
+            chart: { highlightedDatum: { series = undefined } = {} } = {},
+            highlightStyle: { series: { dimOpacity = 1 } },
+         } = this;
+        
+        if (series && series !== this) {
+            return dimOpacity;
+        } else {
+            return 1;
+        }
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
@@ -199,7 +219,9 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void { }
+    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void {
+        // Override point for subclasses.
+    }
 
     /**
      * @private
@@ -211,7 +233,7 @@ export abstract class Series extends Observable {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
 
-    toggleSeriesItem(itemId: any, enabled: boolean): void {
+    toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }
@@ -220,7 +242,9 @@ export abstract class Series extends Observable {
 
     // Each series is expected to have its own logic to efficiently update its nodes
     // on hightlight changes.
-    onHighlightChange() { }
+    onHighlightChange() {
+        // Override point for subclasses.
+    }
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {

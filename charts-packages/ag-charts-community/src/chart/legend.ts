@@ -7,6 +7,7 @@ import { Marker } from "./marker/marker";
 import { SourceEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
+import { RedrawType } from "../scene/node";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -106,7 +107,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group();
+    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
@@ -161,7 +162,7 @@ export class Legend {
     public onMarkerShapeChange() {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
-        this.group.markDirty();
+        this.group.markDirty(RedrawType.MINOR);
     }
 
     /**

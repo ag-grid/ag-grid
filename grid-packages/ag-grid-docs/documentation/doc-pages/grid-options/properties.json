@@ -848,6 +848,7 @@
             }
         },
         "groupSuppressBlankHeader": {},
+        "groupRowsSticky": {},
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",

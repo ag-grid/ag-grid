@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType,
@@ -76,12 +76,18 @@ export class Path extends Shape {
         return false;
     }
 
-    /** Override point for more expensive dirty checks. */
-    protected isDirtyPath() {}
-    protected updatePath() {}
+    protected isDirtyPath() {
+        // Override point for more expensive dirty checks. .
+    }
+    protected updatePath() {
+        // Override point for subclasses.
+    }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender, stats } = renderCtx;
+
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
@@ -96,6 +102,6 @@ export class Path extends Shape {
 
         this.fillStroke(ctx);
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }

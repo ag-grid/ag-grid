@@ -123,7 +123,7 @@ export class HistogramSeries extends CartesianSeries {
     // on the first run. If on the next run more columns are added, they might clip the labels
     // rendered during the previous run.
     private rectGroup = this.pickGroup.appendChild(new Group());
-    private textGroup = this.group.appendChild(new Group());
+    private textGroup = this.seriesGroup.appendChild(new Group());
 
     private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
@@ -462,7 +462,7 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
-            rect.opacity = this.getOpacity(datum);
+            rect.opacity = this.getOpacity();
         });
     }
 

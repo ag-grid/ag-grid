@@ -11,13 +11,34 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(document = window.document, width = 600, height = 300) {
+    constructor({
+        document = window.document,
+        width = 600,
+        height = 300,
+        domLayer = false,
+        zIndex = 0,
+        name = undefined as undefined | string,
+    }) {
         this.document = document;
         this.element = document.createElement('canvas');
         this.context = this.element.getContext('2d')!;
 
-        this.element.style.userSelect = 'none';
-        this.element.style.display = 'block';
+        const { style } = this.element;
+
+        style.userSelect = 'none';
+        style.display = 'block';
+
+        if (domLayer) {
+            style.position = 'absolute';
+            style.zIndex = String(zIndex);
+            style.top = '0';
+            style.left = '0';
+            style.pointerEvents = 'none';
+            style.opacity = `1`;
+            if (name) {
+                this.element.id = name;
+            }
+        }
 
         this.setPixelRatio();
         this.resize(width, height);
@@ -39,6 +60,24 @@ export class HdpiCanvas {
         return this._container;
     }
 
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        this.element.style.display = value ? 'block' : 'none';
+        this._enabled = !!value;
+    }
+    get enabled() {
+        return this._enabled;
+    }
+
+    private _opacity: number = 1;
+    set opacity(value: number) {
+        this.element.style.opacity = `${value}`;
+        this._opacity = value;
+    }
+    get opacity() {
+        return this._opacity;
+    }
+
     private remove() {
         const { parentNode } = this.element;
 
@@ -51,6 +90,13 @@ export class HdpiCanvas {
         this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
+    }
+
+    clear() {
+        this.context.save();
+        this.context.resetTransform();
+        this.context.clearRect(0, 0, this.width, this.height);
+        this.context.restore();
     }
 
     toImage(): HTMLImageElement {
@@ -290,27 +336,28 @@ export class HdpiCanvas {
                 if (depth > 0) {
                     this.$restore();
                     depth--;
+                } else {
+                    throw new Error('Unable to restore() past depth 0');
                 }
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
-                this.$setTransform(
-                    a * scale,
-                    b * scale,
-                    c * scale,
-                    d * scale,
-                    e * scale,
-                    f * scale
-                );
+                if (typeof a === 'object') {
+                    this.$setTransform(a);
+                } else {
+                    this.$setTransform(
+                        a * scale,
+                        b * scale,
+                        c * scale,
+                        d * scale,
+                        e * scale,
+                        f * scale
+                    );
+                }
             },
             resetTransform() {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
                 this.$setTransform(scale, 0, 0, scale, 0, 0);
-                this.save();
-                depth = 0;
-                // The scale above will be impossible to restore,
-                // because we override the `ctx.restore` above and
-                // check `depth` there.
             }
         } as any;
 

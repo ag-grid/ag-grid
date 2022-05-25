@@ -76,7 +76,7 @@ export abstract class BaseDropZonePanel extends Component {
     @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
-        super(/* html */ `<div class="ag-unselectable" aria-role="presentation"></div>`);
+        super(/* html */ `<div class="ag-unselectable" role="presentation"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
         this.addElementClasses(this.eColumnDropList, 'list');

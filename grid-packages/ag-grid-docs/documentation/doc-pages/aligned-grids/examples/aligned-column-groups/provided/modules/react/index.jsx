@@ -15,104 +15,62 @@ class GridExample extends Component {
     constructor(props) {
         super(props);
 
-        this.athleteVisible = true;
-        this.ageVisible = true;
-        this.countryVisible = true;
-        this.rowData = null;
-
-        this.state = this.createState();
+        this.topGridRef = React.createRef();
+        this.bottomGridRef = React.createRef();
+        this.state = {
+            rowData: [],
+        };
     }
 
-    createState = () => {
-        const topOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
-        const bottomOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
-
-        topOptions.alignedGrids.push(bottomOptions);
-        bottomOptions.alignedGrids.push(topOptions);
-
-        return {
-            gridReady: 0,
-            topOptions,
-            bottomOptions,
-            columnDefs: [
-                {
-                    headerName: 'Group 1',
-                    headerClass: 'blue',
-                    groupId: 'Group1',
-                    children: [
-                        { field: 'athlete', pinned: true, width: 100 },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                        { field: 'country', width: 100 },
-                        { field: 'year', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 }
-                    ]
-                },
-                {
-                    headerName: 'Group 2',
-                    headerClass: 'green',
-                    groupId: 'Group2',
-                    children: [
-                        { field: 'athlete', pinned: true, width: 100 },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                        { field: 'country', width: 100 },
-                        { field: 'year', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 }
-                    ]
-                }
-            ],
-            rowData: this.rowData
-        };
+    defaultColDef = {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100,
+        width: 100,
     };
 
-    onGridReady = (params) => {
-        this.topGrid = params;
+    columnDefs = [
+        {
+            headerName: 'Group 1',
+            headerClass: 'blue',
+            groupId: 'Group1',
+            children: [
+                { field: 'athlete', pinned: true },
+                { field: 'age', pinned: true, columnGroupShow: 'open' },
+                { field: 'country' },
+                { field: 'year', columnGroupShow: 'open' },
+                { field: 'date' },
+                { field: 'sport', columnGroupShow: 'open' },
+                { field: 'date' },
+                { field: 'sport', columnGroupShow: 'open' }
+            ]
+        },
+        {
+            headerName: 'Group 2',
+            headerClass: 'green',
+            groupId: 'Group2',
+            children: [
+                { field: 'athlete', pinned: true },
+                { field: 'age', pinned: true, columnGroupShow: 'open' },
+                { field: 'country' },
+                { field: 'year', columnGroupShow: 'open' },
+                { field: 'date' },
+                { field: 'sport', columnGroupShow: 'open' },
+                { field: 'date' },
+                { field: 'sport', columnGroupShow: 'open' }
+            ]
+        }
+    ];
+
+    onGridReady = () => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => {
-                this.rowData = data;
-                this.setState(this.createState());
-                window.setTimeout(() => {
-                    // mix up some columns
-                    this.topGrid.columnApi.moveColumnByIndex(11, 4);
-                    this.topGrid.columnApi.moveColumnByIndex(11, 4);
-                }, 100);
+                this.setState({ rowData: data });
             });
-    };
-
-    onFirstDataRendered = (params) => {
-        this.setState({
-            gridReady: this.state.gridReady + 1
-        });
-
-        if (this.state.gridReady > 1) {
-            params.api.sizeColumnsToFit();
-        }
     };
 
     render() {
@@ -120,22 +78,24 @@ class GridExample extends Component {
             <div className="container">
                 <div className="grid ag-theme-alpine">
                     <AgGridReact
+                        ref={this.topGridRef}
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
                         rowData={this.state.rowData}
-                        gridOptions={this.state.topOptions}
-                        columnDefs={this.state.columnDefs}
-                        defaultColDef={{ resizable: true }}
-                        onGridReady={this.onGridReady.bind(this)}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
+                        onGridReady={this.onGridReady} 
+                        alignedGrids={this.bottomGridRef.current ? [this.bottomGridRef.current] : undefined}
+                    />
                 </div>
 
                 <div className="divider"></div>
 
                 <div className="grid ag-theme-alpine">
                     <AgGridReact
+                        ref={this.bottomGridRef}
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
                         rowData={this.state.rowData}
-                        gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
+                        alignedGrids={this.topGridRef.current ? [this.topGridRef.current] : undefined}/>
                 </div>
             </div>
         );

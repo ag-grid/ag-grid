@@ -65,7 +65,7 @@ export class ScatterSeries extends CartesianSeries {
     private nodeData: ScatterNodeDatum[] = [];
     private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
 
-    private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.group).selectAll<Text>();
+    private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.seriesGroup).selectAll<Text>();
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -378,7 +378,7 @@ export class ScatterSeries extends CartesianSeries {
             node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.opacity = this.getOpacity(datum);
+            node.opacity = this.getOpacity();
             node.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             node.visible = marker.enabled && node.size > 0;
         });

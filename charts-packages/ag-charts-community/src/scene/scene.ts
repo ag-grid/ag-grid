@@ -1,11 +1,17 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Node, RedrawType } from "./node";
+import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 
 interface DebugOptions {
-    renderFrameIndex: boolean;
+    stats: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
+    onlyLayers: string[];
+}
+
+interface SceneOptions {
+    document: Document,
+    mode: 'simple' | 'composite' | 'dom-composite',
 }
 
 export class Scene {
@@ -15,14 +21,29 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
+    readonly layers: { id: number, name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+
     private readonly ctx: CanvasRenderingContext2D;
 
-    // As a rule of thumb, constructors with no parameters are preferred.
-    // A few exceptions are:
-    // - we absolutely need to know something at construction time (document)
-    // - knowing something at construction time meaningfully improves performance (width, height)
-    constructor(document = window.document, width?: number, height?: number) {
-        this.canvas = new HdpiCanvas(document, width, height);
+    private readonly opts: SceneOptions;
+
+    constructor(
+        opts: {
+            width?: number,
+            height?: number,
+        } & Partial<SceneOptions>
+    ) {
+        const {
+            document = window.document,
+            mode = (window as any).agChartsSceneRenderModel || 'dom-composite',
+            width,
+            height,
+        } = opts;
+
+        this.opts = { document, mode };
+        this.debug.stats = (window as any).agChartsSceneStats || false;
+        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers || [];
+        this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
 
@@ -67,6 +88,71 @@ export class Scene {
         return true;
     }
 
+    private _nextZIndex = 0;
+    private _nextLayerId = 0;
+    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
+        const { mode } = this.opts;
+        if (mode !== 'composite' && mode !== 'dom-composite') {
+            return undefined;
+        }
+
+        const { zIndex = this._nextZIndex++, name } = opts || {};
+        const { width, height } = this;
+        const domLayer = mode === 'dom-composite';
+        const newLayer = {
+            id: this._nextLayerId++,
+            name,
+            zIndex,
+            canvas: new HdpiCanvas({
+                document: this.canvas.document,
+                width,
+                height,
+                domLayer,
+                zIndex,
+                name,
+            }),
+        };
+
+        if (zIndex >= this._nextZIndex) {
+            this._nextZIndex = zIndex + 1;
+        }
+
+        this.layers.push(newLayer);
+        this.layers.sort((a, b) => { 
+            const zDiff = a.zIndex - b.zIndex;
+            if (zDiff !== 0) {
+                return zDiff;
+            }
+            return a.id - b.id;
+        });
+
+        if (domLayer) {
+            const newLayerIndex = this.layers.findIndex(v => v === newLayer);
+            const lastLayer = this.layers[newLayerIndex - 1]?.canvas ?? this.canvas;
+            lastLayer.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+        }
+
+        if (this.debug.consoleLog) {
+            console.log({ layers: this.layers });
+        }
+
+        return newLayer.canvas;
+    }
+
+    removeLayer(canvas: HdpiCanvas) {
+        const index = this.layers.findIndex((l) => l.canvas = canvas);
+
+        if (index >= 0) {
+            this.layers.splice(index, 1);
+            canvas.destroy();
+            this.markDirty();
+
+            if (this.debug.consoleLog) {
+                console.log({ layers: this.layers });
+            }
+        }
+    }
+
     private _dirty = false;
     markDirty() {
         this._dirty = true;
@@ -102,9 +188,10 @@ export class Scene {
     }
 
     readonly debug: DebugOptions = {
-        renderFrameIndex: false,
+        stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
+        onlyLayers: [],
     };
 
     private _frameIndex = 0;
@@ -113,10 +200,13 @@ export class Scene {
     }
 
     render() {
-        const { ctx, root, pendingSize } = this;
+        const start = performance.now();
+        const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
             this.canvas.resize(...pendingSize);
+            this.layers.forEach((layer) => layer.canvas.resize(...pendingSize));
+
             this.pendingSize = undefined;
         }
 
@@ -129,34 +219,72 @@ export class Scene {
             return;
         }
 
+        const renderCtx: RenderContext = {
+            ctx,
+            forceRender: true,
+            resized: !!pendingSize,
+        };
+        if (this.debug.stats) {
+            renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
+        }
+
         let canvasCleared = false;
         if (!root || root.dirty >= RedrawType.TRIVIAL) {
             // start with a blank canvas, clear previous drawing
             canvasCleared = true;
-            ctx.clearRect(0, 0, this.width, this.height);
+            canvas.clear();
         }
 
-        if (root) {
+        if (root && canvasCleared) {
             if (this.debug.consoleLog) {
                 console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
             }
 
             if (root.visible) {
                 ctx.save();
-                root.render(ctx, canvasCleared);
+                root.render(renderCtx);
                 ctx.restore();
             }
         }
 
-        this._frameIndex++;
-
-        if (this.debug.renderFrameIndex) {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 40, 15);
-            ctx.fillStyle = 'black';
-            ctx.fillText(this.frameIndex.toString(), 2, 10);
+        if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
+            ctx.save();
+            ctx.resetTransform();
+            layers.forEach((layer) => {
+                if (layer.canvas.enabled) {
+                    ctx.globalAlpha = layer.canvas.opacity;
+                    // Indirect reference to fix typings for tests.
+                    const canvas = layer.canvas.context.canvas;
+                    ctx.drawImage(canvas, 0, 0);
+                }
+            });
+            ctx.restore();
         }
 
         this._dirty = false;
+
+        const end = performance.now();
+        this._frameIndex++;
+
+        if (this.debug.stats) {
+            const pct = (rendered: number, skipped: number) => {
+                const total = rendered + skipped;
+                return `${rendered}/${total}(${Math.round(100*rendered/total)}%)`;
+            }
+            const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
+                renderCtx.stats || {};
+            const stats = `${Math.round((end - start)*100) / 100}ms; ` +
+                `Layers: ${pct(layersRendered, layersSkipped)}; ` +
+                `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
+
+            ctx.save();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 300, 15);
+            ctx.fillStyle = 'black';
+            ctx.fillText(this.frameIndex.toString(), 2, 10);
+            ctx.fillText(stats, 30, 10);
+            ctx.restore();
+        }
+
     }
 }

@@ -16,7 +16,7 @@
     "publish": "npx gatsby build --prefix-paths",
     "develop": "NODE_ENV=development npx gatsby develop --https --key-file ${AG_DOCS_KEY:-../selfsigned.key} --cert-file ${AG_DOCS_CRT:-../selfsigned.crt} --ca-file ${AG_DOCS_CRT:-../selfsigned.crt} -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start": "npm run clean && npm run customise && npm run develop",
+    "start": "npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "hash": "sh ../../../scripts/hashDirectory.sh > .hash",
     "clean": "npx gatsby clean && rimraf _gen .hash",

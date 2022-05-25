@@ -71,7 +71,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
-    private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
+    private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: ClientSideNodeManager;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;

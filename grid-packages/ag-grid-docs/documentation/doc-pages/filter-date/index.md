@@ -56,9 +56,9 @@ Below is an example of using a date filter with a comparator.
 |                    // In the example application, dates are stored as dd/mm/yyyy
 |                    // We create a Date object for comparison against the filter date
 |                    const dateParts = dateAsString.split('/');
-|                    const day = Number(dateParts[2]);
+|                    const year = Number(dateParts[2]);
 |                    const month = Number(dateParts[1]) - 1;
-|                    const year = Number(dateParts[0]);
+|                    const day = Number(dateParts[0]);
 |                    const cellDate = new Date(year, month, day);
 |
 |                    // Now that both parameters are Date objects, we can compare

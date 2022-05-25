@@ -327,7 +327,9 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
-        raiseEventsFunc && raiseEventsFunc();
+        if (raiseEventsFunc) {
+            raiseEventsFunc();
+        }
 
         this.dispatchNewColumnsLoaded();
     }
@@ -2080,7 +2082,7 @@ export class ColumnModel extends BeanStub {
 
             raiseEventsFunc(); // Will trigger secondary column changes if pivoting modified
             return { unmatchedAndAutoStates, unmatchedCount };
-        }
+        };
 
         this.columnAnimationService.start();
 
@@ -3695,7 +3697,8 @@ export class ColumnModel extends BeanStub {
         // avoid divide by zero
         const allDisplayedColumns = this.getAllDisplayedColumns();
 
-        if (gridWidth <= 0 || !allDisplayedColumns.length) { return; }
+        const doColumnsAlreadyFit = gridWidth === this.getWidthOfColsInList(allDisplayedColumns);
+        if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) { return; }
 
         const colsToSpread: Column[] = [];
         const colsToNotSpread: Column[] = [];

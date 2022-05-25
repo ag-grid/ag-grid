@@ -75,7 +75,7 @@ export class MoveColumnFeature implements DropListener {
         }
 
         this.setColumnsPinned(columns, this.pinned, "uiColumnDragged");
-        this.onDragging(draggingEvent, true);
+        this.onDragging(draggingEvent, true, true);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
@@ -146,8 +146,7 @@ export class MoveColumnFeature implements DropListener {
         }
     }
 
-    public onDragging(draggingEvent: DraggingEvent, fromEnter = false): void {
-
+    public onDragging(draggingEvent: DraggingEvent, fromEnter = false, fakeEvent = false): void {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
@@ -179,7 +178,7 @@ export class MoveColumnFeature implements DropListener {
             return true;
         });
 
-        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter);
+        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter, fakeEvent);
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
@@ -207,7 +206,7 @@ export class MoveColumnFeature implements DropListener {
         return gapsExist ? null : firstIndex;
     }
 
-    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection | undefined, mouseX: number, fromEnter: boolean): void {
+    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection | undefined, mouseX: number, fromEnter: boolean, fakeEvent: boolean): void {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
 
@@ -244,7 +243,9 @@ export class MoveColumnFeature implements DropListener {
             constrainDirection = oldIndex !== null;
         }
 
-        if (constrainDirection) {
+        // if the event was faked by a change in column pin state, then the original location of the column
+        // is not reliable for dictating where the column may now be placed.
+        if (constrainDirection && !fakeEvent) {
             // only allow left drag if this column is moving left
             if (draggingLeft && firstValidMove >= (oldIndex as number)) { return; }
 

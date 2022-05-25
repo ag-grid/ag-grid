@@ -30,7 +30,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // no need to useMemo for boolean types
     const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER 
+                    || name === RowContainerName.BOTTOM_CENTER 
+                    || name === RowContainerName.STICKY_TOP_CENTER;
     const template3 = !template1 && !template2;
 
     const topLevelRef = template1 ? eWrapper : template2 ? eViewport : eContainer;

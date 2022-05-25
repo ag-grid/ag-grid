@@ -204,7 +204,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols -= 1;
                 return;
             }
-            if (node.level) {
+            if (!this.config.gridOptionsWrapper.isGroupHideOpenParents() && node.level) {
                 _.last(this.rows).outlineLevel = node.level;
             }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);

@@ -11,3 +11,4 @@ tslint.json
 tslint-fix.json
 
 node_modules
+*.map

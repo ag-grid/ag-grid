@@ -347,13 +347,14 @@
     "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
     "type": { "returnType": "boolean" }
   },
+  "groupRowsSticky": { "type": { "returnType": "boolean" } },
   "context": {
     "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
     "type": { "returnType": "any" }
   },
   "alignedGrids": {
     "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-    "type": { "returnType": "GridOptions[]" }
+    "type": { "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]" }
   },
   "tabIndex": {
     "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",

@@ -339,12 +339,14 @@ export interface GridOptions {
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
     detailRowAutoHeight?: boolean;
 
+    groupRowsSticky?: boolean;
+
     // *** Miscellaneous *** //
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: GridOptions[];
+    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**

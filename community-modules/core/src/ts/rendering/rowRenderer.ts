@@ -29,7 +29,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { executeInAWhile } from "../utils/function";
+import { doOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -71,11 +71,15 @@ export class RowRenderer extends BeanStub {
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
+    private stickyRowCtrls: RowCtrl[] = [];
+
     private topRowCtrls: RowCtrl[] = [];
     private bottomRowCtrls: RowCtrl[] = [];
 
     private pinningLeft: boolean;
     private pinningRight: boolean;
+
+    private firstVisibleVPixel: number;
 
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
@@ -123,6 +127,10 @@ export class RowRenderer extends BeanStub {
 
     public getRowCtrls(): RowCtrl[] {
         return this.allRowCtrls;
+    }
+
+    public getStickyTopRowCtrls(): RowCtrl[] {
+        return this.stickyRowCtrls;
     }
 
     private updateAllRowCtrls(): void {
@@ -336,7 +344,8 @@ export class RowRenderer extends BeanStub {
                 this.beans,
                 false,
                 false,
-                this.printLayout
+                this.printLayout,
+                false
             );
 
             rowComps.push(rowCtrl);
@@ -450,6 +459,8 @@ export class RowRenderer extends BeanStub {
         const focusedCellRecycled = isFocusedCellGettingRecycled();
 
         this.redraw(rowsToRecycle, animate);
+
+        this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
             this.refreshFloatingRowComps();
@@ -582,7 +593,7 @@ export class RowRenderer extends BeanStub {
                     cellCtrl.refreshCell(refreshCellParams);
                 }
             });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach( fullWidthRowCtrl => {
+        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
             fullWidthRowCtrl.refreshFullWidth();
         });
     }
@@ -649,20 +660,22 @@ export class RowRenderer extends BeanStub {
         // skip this row if it is missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
+
         if (floating === Constants.PINNED_BOTTOM) {
-            return rowIdsMap.bottom[id]!=null;
-        } else if (floating === Constants.PINNED_TOP) {
-            return rowIdsMap.top[id]!=null;
-        } else {
-            return rowIdsMap.normal[id]!=null;
+            return rowIdsMap.bottom[id] != null;
         }
+
+        if (floating === Constants.PINNED_TOP) {
+            return rowIdsMap.top[id] != null;
+        }
+
+        return rowIdsMap.normal[id] != null;
     }
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        let rowIdsMap = this.mapRowNodes(rowNodes);
-
+        const rowIdsMap = this.mapRowNodes(rowNodes);
         const res: CellCtrl[] = [];
 
         let colIdsMap: any;
@@ -681,7 +694,7 @@ export class RowRenderer extends BeanStub {
             const rowNode: RowNode = rowComp.getRowNode();
 
             // skip this row if it is missing from the provided list
-            if (rowIdsMap!=null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
+            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
 
             rowComp.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
@@ -730,14 +743,14 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const nodesByIdMap: RowCtrlMap = {};
+        const ctrlsByIdMap: RowCtrlMap = {};
         iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const rowNode = rowComp.getRowNode();
-            nodesByIdMap[rowNode.id!] = rowComp;
+            ctrlsByIdMap[rowNode.id!] = rowComp;
         });
         this.rowCtrlsByRowIndex = {};
 
-        return nodesByIdMap;
+        return ctrlsByIdMap;
     }
 
     // takes array of row indexes
@@ -778,7 +791,7 @@ export class RowRenderer extends BeanStub {
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
         // all in all indexes in the viewport
-        const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        let indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowCtrl) => {
             const index = rowComp.getRowNode().rowIndex;
@@ -798,12 +811,86 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
+        indexesToDraw = indexesToDraw.filter(index => {
+            const rowNode = this.paginationProxy.getRow(index);
+            return rowNode && !rowNode.sticky;
+        });
+
         return indexesToDraw;
+    }
+
+    public getStickyTopHeight(): number {
+        return this.stickyRowCtrls.reduce((currentHeight, ctrl) => currentHeight + (ctrl?.getRowNode()?.rowHeight || 0), 0);
+    }
+
+    private checkStickyRows(): void {
+        if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
+            this.stickyRowCtrls = [];
+            return;
+        }
+
+        if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
+        }
+
+        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel);
+        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
+        if (!rowNode) { return; }
+
+        // we want first row that's fully visible
+        if (rowNode.rowTop! < this.firstVisibleVPixel) {
+            rowNode = this.paginationProxy.getRow(firstVisibleIndex + 1);
+            if (!rowNode) { return; }
+        }
+
+        const stickyRows: RowNode[] = [];
+        const stickyRowsMapped: {[id: string]: RowNode} = {};
+
+        if (rowNode.level > 0) {
+            let pointer = rowNode.parent;
+            while (pointer !== null && pointer.level >= 0) {
+                stickyRows.unshift(pointer);
+                stickyRowsMapped[pointer.__objectId] = pointer;
+                pointer = pointer.parent;
+            }
+        }
+
+        const oldHash = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode().__objectId).join('-');
+        const newHash = stickyRows.map(row => row.__objectId).join('-');
+
+        if (oldHash === newHash) { return; }
+
+        const ctrlsToDestroy: RowCtrlMap = {};
+        this.stickyRowCtrls.forEach(ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
+
+        const newCtrls: RowCtrl[] = [];
+        let nextRowTop = 0;
+        stickyRows.forEach(rowNode => {
+            rowNode.sticky = true;
+            rowNode.stickyRowTop = nextRowTop;
+            nextRowTop += rowNode.rowHeight!;
+
+            const rowNodeId = rowNode.id!;
+            const oldCtrl = ctrlsToDestroy[rowNodeId];
+            if (oldCtrl) {
+                delete ctrlsToDestroy[rowNodeId];
+                newCtrls.push(oldCtrl);
+                return;
+            }
+            const newCtrl = this.createRowCon(rowNode, false, false, true);
+            newCtrls.push(newCtrl);
+        });
+
+        Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false);
+        this.destroyRowCtrls(ctrlsToDestroy, false);
+
+        this.stickyRowCtrls = newCtrls;
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
+        this.checkStickyRows();
 
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -846,7 +933,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.updateAllRowCtrls();
-        this.gridBodyCtrl.updateRowCount();
     }
 
     private dispatchDisplayedRowsChanged(): void {
@@ -888,13 +974,13 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: RowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter( (rowCtrl: RowCtrl) => {
+        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
             // if Row Nodes provided, we exclude where Row Node is missing
             const rowNode = rowCtrl.getRowNode();
-            if (rowNodesMap!=null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
+            if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
 
             return true;
         });
@@ -1037,17 +1123,19 @@ export class RowRenderer extends BeanStub {
                 const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
+                const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
+                const bodyTopPixel = bodyVRange.top;
+                const bodyBottomPixel = bodyVRange.bottom;
+
                 if (suppressRowVirtualisation) {
                     firstPixel = pageFirstPixel + divStretchOffset;
-                    lastPixel = pageLastPixel + divStretchOffset;    
+                    lastPixel = pageLastPixel + divStretchOffset;
                 } else {
-                    const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-                    const bodyTopPixel = bodyVRange.top;
-                    const bodyBottomPixel = bodyVRange.bottom;
-
                     firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
-                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;    
+                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;
                 }
+
+                this.firstVisibleVPixel = Math.max(bodyTopPixel + paginationOffset, pageFirstPixel) + divStretchOffset;
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
@@ -1176,7 +1264,7 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
+    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky = false): RowCtrl {
 
         const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
         if (rowCtrlFromCache) { return rowCtrlFromCache; }
@@ -1196,7 +1284,8 @@ export class RowRenderer extends BeanStub {
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout
+            this.printLayout,
+            sticky
         );
 
         return res;

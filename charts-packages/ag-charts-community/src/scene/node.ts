@@ -21,6 +21,19 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
+export type RenderContext = {
+    ctx: CanvasRenderingContext2D;
+    forceRender: boolean;
+    resized: boolean;
+    clipBBox?: BBox;
+    stats?: {
+        nodesRendered: number;
+        nodesSkipped: number;
+        layersRendered: number;
+        layersSkipped: number;
+    };
+}
+
 export function SceneChangeDetection(opts?: {
     redraw?: RedrawType,
     type?: 'normal' | 'transform' | 'path' | 'font',
@@ -103,15 +116,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
 
+    protected _debug?: Scene['debug'];
     protected _scene?: Scene;
     _setScene(value?: Scene) {
         this._scene = value;
+        this._debug = value?.debug;
 
-        const children = this.children;
-        const n = children.length;
-
-        for (let i = 0; i < n; i++) {
-            children[i]._setScene(value);
+        for (const child of this.children) {
+            child._setScene(value);
         }
     }
     get scene(): Scene | undefined {
@@ -229,7 +241,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
-                this.markDirty(RedrawType.MINOR);
+                this.markDirty(RedrawType.MAJOR);
 
                 return node;
             }
@@ -496,8 +508,12 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean): void {
+    render(renderCtx: RenderContext): void {
+        const { stats } = renderCtx;
+        
         this._dirty = RedrawType.NONE;
+
+        if (stats) stats.nodesRendered++;
     }
 
     clearBBox(ctx: CanvasRenderingContext2D) {
@@ -531,8 +547,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    markClean(force = false) {
+        if (this._dirty === RedrawType.NONE && !force) {
+            return;
+        }
+
+        this._dirty = RedrawType.NONE;
+
+        for (const child of this.children) {
+            child.markClean();
+        }
+    }
+
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() })
     visible: boolean = true;
+    protected visibilityChanged() {}
 
     protected dirtyZIndex: boolean = false;
 
@@ -547,4 +576,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
     zIndex: number = 0;
 
     pointerEvents: PointerEvents = PointerEvents.All;
+
+    get nodeCount() {
+        const { children } = this;
+
+        let count = 1;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let visibleCount = this.visible ? 1 : 0;
+
+        for (const child of this._children) {
+            const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
+            count += childCount;
+            visibleCount += childVisibleCount;
+            dirtyCount += childDirtyCount;
+        }
+
+        return { count, visibleCount, dirtyCount };
+    }
 }

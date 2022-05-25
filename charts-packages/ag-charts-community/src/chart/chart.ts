@@ -443,7 +443,7 @@ export abstract class Chart extends Observable {
     protected constructor(document = window.document) {
         super();
 
-        const root = new Group();
+        const root = new Group({ name: 'root' });
         const background = this.background;
 
         background.fill = 'white';
@@ -451,8 +451,9 @@ export abstract class Chart extends Observable {
 
         const element = this.element = document.createElement('div');
         element.setAttribute('class', 'ag-chart-wrapper');
+        element.style.position = 'relative';
 
-        this.scene = new Scene(document);
+        this.scene = new Scene({document});
         this.scene.debug.consoleLog = this._debug;
         this.scene.root = root;
         this.scene.container = element;
@@ -592,11 +593,13 @@ export abstract class Chart extends Observable {
     }
 
     protected attachAxis(axis: ChartAxis) {
-        this.scene.root!.insertBefore(axis.group, this.seriesRoot);
+        this.scene.root!.insertBefore(axis.gridlineGroup, this.seriesRoot);
+        this.scene.root!.insertBefore(axis.axisGroup, this.seriesRoot);
     }
 
     protected detachAxis(axis: ChartAxis) {
-        this.scene.root!.removeChild(axis.group);
+        this.scene.root!.removeChild(axis.axisGroup);
+        this.scene.root!.removeChild(axis.gridlineGroup);
     }
 
     protected _series: Series[] = [];
@@ -1132,8 +1135,12 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(_event: MouseEvent) { }
-    protected onMouseUp(_event: MouseEvent) { }
+    protected onMouseDown(_event: MouseEvent) {
+        // Override point for subclasses.
+    }
+    protected onMouseUp(_event: MouseEvent) {
+        // Override point for subclasses.
+    }
 
     protected onMouseOut(_event: MouseEvent) {
         this.tooltip.toggle(false);

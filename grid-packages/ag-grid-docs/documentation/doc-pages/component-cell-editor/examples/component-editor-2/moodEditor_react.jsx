@@ -65,7 +65,7 @@ export default class MoodEditor extends Component {
         this.setState({
             happy: true
         },
-            () => this.props.api.stopEditing()
+            () => this.props.stopEditing()
         );
     }
 
@@ -73,7 +73,7 @@ export default class MoodEditor extends Component {
         this.setState({
             happy: false
         },
-            () => this.props.api.stopEditing()
+            () => this.props.stopEditing()
         );
     }
 
