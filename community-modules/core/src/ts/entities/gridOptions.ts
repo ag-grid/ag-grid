@@ -132,8 +132,8 @@ export interface GridOptions {
     copyGroupHeadersToClipboard?: boolean;
     /** @deprecated Use `clipboardDelimiter` */
     clipboardDeliminator?: string;
-    /** 
-     * Specify the delimiter to use when copying to clipboard. 
+    /**
+     * Specify the delimiter to use when copying to clipboard.
      * Default: `\t`
     */
     clipboardDelimiter?: string;
@@ -298,7 +298,7 @@ export interface GridOptions {
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
 
-    // *** Loading Cell Renderers *** //    
+    // *** Loading Cell Renderers *** //
     /**
     * Provide your own loading cell renderer to use when data is loading via a DataSource.
     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
@@ -611,7 +611,7 @@ export interface GridOptions {
     // changeable with impact
     /** Set the data to be displayed as rows in the grid. */
     rowData?: any[] | null;
-    /** 
+    /**
      * @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
      * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
     immutableData?: boolean;
@@ -880,7 +880,7 @@ export interface GridOptions {
      */
     getBusinessKeyForNode?: (node: RowNode) => string;
     /**
-     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
+     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows setting the ID for a particular row node based on the data. */
@@ -1102,12 +1102,12 @@ export interface GridOptions {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
 
     /**
-     * The Grid Api for interacting with the grid. 
+     * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
     api?: GridApi | null;
     /**
-     * The Column Api for interacting with the grid columns. 
+     * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
      */
     columnApi?: ColumnApi | null;
@@ -1156,7 +1156,6 @@ export interface RowClassParams extends AgGridCommon {
     /** The index of the row */
     rowIndex: number;
 }
-
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];

@@ -325,7 +325,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
-    /** Specify the delimiter to use when copying to clipboard. 
+    /** Specify the delimiter to use when copying to clipboard.
      * Default: `\t`     */
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false`     */
@@ -929,7 +929,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
-    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
+    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
 Allows you to set the ID for a particular row node based on the data.
      */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
