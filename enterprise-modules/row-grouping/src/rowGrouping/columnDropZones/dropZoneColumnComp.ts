@@ -21,7 +21,10 @@ import {
     VirtualList,
     KeyCode,
     _,
+    SortController,
+    SortIndicatorComp,
 } from "@ag-grid-community/core";
+import { TDropZone } from "./baseDropZonePanel";
 
 export interface ColumnRemoveEvent extends AgEvent { }
 
@@ -33,6 +36,7 @@ export class DropZoneColumnComp extends Component {
         `<span role="option" tabindex="0">
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
           <span ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
+          <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
           <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
         </span>`;
 
@@ -42,10 +46,13 @@ export class DropZoneColumnComp extends Component {
     @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('sortController') private readonly sortController: SortController;
     
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
+
+    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
 
     private displayName: string | null;
     private popupShowing = false;
@@ -54,7 +61,7 @@ export class DropZoneColumnComp extends Component {
         private column: Column,
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
-        private valueColumn: boolean,
+        private dropZonePurpose: TDropZone,
         private horizontal: boolean
     ) {
         super();
@@ -74,6 +81,8 @@ export class DropZoneColumnComp extends Component {
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!);
         this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper)!);
 
+        this.setupSort();
+
         this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
 
@@ -87,7 +96,7 @@ export class DropZoneColumnComp extends Component {
 
         let extraDescription = '';
 
-        if (this.valueColumn && !isFunctionsReadOnly) {
+        if (this.isAggregationZone() && !isFunctionsReadOnly) {
             extraDescription = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
         }
 
@@ -105,6 +114,31 @@ export class DropZoneColumnComp extends Component {
         refresh();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public setupSort(): void {
+        const canSort = this.column.getColDef().sortable;
+        const isGroupingZone = this.isGroupingZone();
+        if (!canSort || !isGroupingZone) {
+            return;
+        }
+
+        this.eSortIndicator.setupSort(this.column);
+        const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+
+        const onClick = (event: MouseEvent) => {
+            const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+            this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
+            event.preventDefault();
+        };
+        // add the event on the header, so when clicked, we do sorting
+        if (this.eText) {
+            this.addManagedListener(this.eText, 'click', onClick);
+        }
+        // also add the event to the sort indicator
+        if (this.eSortIndicator) {
+            this.eSortIndicator.addGuiEventListener('click', onClick);
+        }
     }
 
     private addDragSource(): void {
@@ -137,7 +171,7 @@ export class DropZoneColumnComp extends Component {
             this.addCssClass('ag-column-drop-cell-ghost');
         }
 
-        if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+        if (this.isAggregationZone() && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
@@ -156,7 +190,7 @@ export class DropZoneColumnComp extends Component {
                 this.dispatchEvent(agEvent);
             }
 
-            if (isEnter && this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            if (isEnter && this.isAggregationZone() && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
                 e.preventDefault();
                 this.onShowAggFuncSelection();
             }
@@ -178,7 +212,7 @@ export class DropZoneColumnComp extends Component {
         const name = this.displayName as string;
         let aggFuncName: string = '';
 
-        if (this.valueColumn) {
+        if (this.isAggregationZone()) {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
@@ -191,7 +225,7 @@ export class DropZoneColumnComp extends Component {
 
     private setTextValue(): void {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
-        const displayValue = this.valueColumn ? `${aggFuncName}(${name})` : name;
+        const displayValue = this.isAggregationZone() ? `${aggFuncName}(${name})` : name;
         const displayValueSanitised: any = _.escapeString(displayValue);
 
         this.eText.innerHTML = displayValueSanitised;
@@ -303,6 +337,14 @@ export class DropZoneColumnComp extends Component {
         suffix = suffix ? `-${suffix}` : '';
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         el.classList.add(`ag-column-drop-cell${suffix}`, `ag-column-drop-${direction}-cell${suffix}`);
+    }
+
+    private isAggregationZone() {
+        return this.dropZonePurpose === 'aggregation';
+    }
+
+    private isGroupingZone() {
+        return this.dropZonePurpose === 'rowGroup';
     }
 }
 

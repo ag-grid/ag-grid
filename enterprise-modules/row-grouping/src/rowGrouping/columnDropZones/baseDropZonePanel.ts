@@ -36,6 +36,8 @@ export interface BaseDropZonePanelBeans {
     dragAndDropService: DragAndDropService;
 }
 
+export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
+
 export abstract class BaseDropZonePanel extends Component {
 
     private static STATE_NOT_DRAGGING = 'notDragging';
@@ -75,7 +77,7 @@ export abstract class BaseDropZonePanel extends Component {
 
     @Autowired('focusService') private readonly focusService: FocusService;
 
-    constructor(private horizontal: boolean, private valueColumn: boolean) {
+    constructor(private horizontal: boolean, private dropZonePurpose: TDropZone) {
         super(/* html */ `<div class="ag-unselectable" role="presentation"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
@@ -480,7 +482,7 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private createColumnComponent(column: Column, ghost: boolean): DropZoneColumnComp {
-        const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
+        const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.dropZonePurpose, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
 
         this.beans.context.createBean(columnComponent);

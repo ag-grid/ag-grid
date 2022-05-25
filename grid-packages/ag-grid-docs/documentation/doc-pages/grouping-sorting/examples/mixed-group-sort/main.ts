@@ -6,31 +6,8 @@ const gridOptions: GridOptions = {
     {
       field: 'year',
       rowGroup: true,
-      hide: true,
-    },
-    {
-      field: 'month',
-      rowGroup: true,
-      hide: true,
-      comparator: (a, b) => {
-        const months = [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
-        ]
-
-        // sorts 'months' in chronological order
-        return months.indexOf(a) - months.indexOf(b)
-      },
+      sortable: true,
+      sort: 'desc',
     },
     { field: 'salesRep' },
     { field: 'handset' },
@@ -46,6 +23,26 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     sort: 'asc',
     minWidth: 300,
+    field: 'month',
+    comparator: (a, b) => {
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ]
+
+      // sorts 'months' in chronological order
+      return months.indexOf(a) - months.indexOf(b)
+    },
   },
   groupDefaultExpanded: 1,
   rowData: getData(),

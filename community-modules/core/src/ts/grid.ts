@@ -93,6 +93,7 @@ import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
+import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 
 export interface GridParams {
     // used by Web Components
@@ -272,6 +273,7 @@ export class GridCoreCreator {
             { componentName: 'AgColorPicker', componentClass: AgColorPicker },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
+            { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },

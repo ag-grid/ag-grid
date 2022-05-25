@@ -24,7 +24,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
-        super(horizontal, false);
+        super(horizontal, 'rowGroup');
     }
 
     @PostConstruct
