@@ -33,7 +33,7 @@ import { doOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
-import { removeFromArray } from "../utils/array";
+import { last, removeFromArray } from "../utils/array";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -819,8 +819,58 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
-    public getStickyTopHeight(): number {
-        return this.stickyRowCtrls.reduce((currentHeight, ctrl) => currentHeight + (ctrl?.getRowNode()?.rowHeight || 0), 0);
+    public getStickyTopHeight(includeSliding: boolean = true): number {
+        return this.stickyRowCtrls.reduce((currentHeight, ctrl) => {
+            const node = ctrl?.getRowNode();
+
+            if (!node || (!includeSliding && node.stickySliding)) { return currentHeight; }
+
+            return currentHeight + (node.rowHeight || 0);
+        }, 0);
+    }
+
+    private getRowsThatShouldStick(): RowNode[] {
+        const height = this.getStickyTopHeight(false);
+        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + height);
+        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
+
+        if (rowNode?.sticky) { return []; }
+
+        const ret: RowNode[] = [];
+
+        while (rowNode && rowNode.level >= 0) {
+            if (rowNode.group && rowNode.expanded) {
+                ret.unshift(rowNode);
+            }
+            rowNode = rowNode.parent as RowNode;
+        }
+
+        return ret;
+    }
+
+    private updateStickySlidingRows(stickyRows: RowNode[]): void {
+        stickyRows.forEach(node => node.stickySliding = false);
+
+        const currentRowNodes = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode());
+        const nodesRemovedFromSticky = currentRowNodes.filter(node => stickyRows.indexOf(node) === -1);
+
+        if (nodesRemovedFromSticky.length) {
+            const lastNode = last(nodesRemovedFromSticky);
+            const bottomOfLastNode = lastNode.stickyRowTop + lastNode.rowHeight!;
+            const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + bottomOfLastNode);
+            const nextNode = this.paginationProxy.getRow(firstVisibleIndex);
+
+            if (lastNode === nextNode) { return; }
+
+            nodesRemovedFromSticky.forEach(node => {
+                node.stickyRowTop = node.stickyRowTop + (nextNode!.rowTop! - bottomOfLastNode - this.firstVisibleVPixel);
+                if (Math.abs(node.stickyRowTop) < node.rowHeight!) { node.stickySliding = true; }
+                const ctrl = this.stickyRowCtrls.find(ctrl => ctrl.getRowNode() === node);
+                ctrl?.setRowTop(node.stickyRowTop);
+            });
+        }
+
+        stickyRows.unshift(...nodesRemovedFromSticky.filter(node => node.stickySliding));
     }
 
     private checkStickyRows(): void {
@@ -833,27 +883,8 @@ export class RowRenderer extends BeanStub {
             doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
         }
 
-        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel);
-        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
-        if (!rowNode) { return; }
-
-        // we want first row that's fully visible
-        if (rowNode.rowTop! < this.firstVisibleVPixel) {
-            rowNode = this.paginationProxy.getRow(firstVisibleIndex + 1);
-            if (!rowNode) { return; }
-        }
-
-        const stickyRows: RowNode[] = [];
-        const stickyRowsMapped: {[id: string]: RowNode} = {};
-
-        if (rowNode.level > 0) {
-            let pointer = rowNode.parent;
-            while (pointer !== null && pointer.level >= 0) {
-                stickyRows.unshift(pointer);
-                stickyRowsMapped[pointer.__objectId] = pointer;
-                pointer = pointer.parent;
-            }
-        }
+        const stickyRows = this.getRowsThatShouldStick();
+        this.updateStickySlidingRows(stickyRows);
 
         const oldHash = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode().__objectId).join('-');
         const newHash = stickyRows.map(row => row.__objectId).join('-');
@@ -866,9 +897,11 @@ export class RowRenderer extends BeanStub {
         const newCtrls: RowCtrl[] = [];
         let nextRowTop = 0;
         stickyRows.forEach(rowNode => {
-            rowNode.sticky = true;
-            rowNode.stickyRowTop = nextRowTop;
-            nextRowTop += rowNode.rowHeight!;
+            if (!rowNode.stickySliding) {
+                rowNode.sticky = true;
+                rowNode.stickyRowTop = nextRowTop;
+                nextRowTop += rowNode.rowHeight!;
+            }
 
             const rowNodeId = rowNode.id!;
             const oldCtrl = ctrlsToDestroy[rowNodeId];
