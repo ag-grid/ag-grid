@@ -3,9 +3,9 @@ const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS, findNode, getJsDoc } = require('./../../scripts/formatAST');
+const { getFormatterForTS } = require('./../../scripts/formatAST');
 
-const formatNode = getFormatterForTS(ts);
+const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
 
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {

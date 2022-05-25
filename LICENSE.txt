@@ -6,6 +6,7 @@ Each package has it's own license file explaining the license for that package.
 The following packages are MIT licensed:
 + ag-grid-community
 + ag-grid-angular
++ ag-grid-angular-legacy
 + ag-grid-angular-cli-example
 + ag-grid-aurelia
 + ag-grid-aurelia-example

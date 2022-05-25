@@ -6,7 +6,7 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () { } :
 MouseEvent = typeof MouseEvent === 'undefined' ? function () { } : MouseEvent;
 
 /* Checks for missing gridOptions on agGridAngular */
-const { AgGridAngular, AgGridColumn } = require('./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js');
+const { AgGridAngular, AgGridColumn } = require('./dist/ag-grid-angular/bundles/ag-grid-community-angular-legacy.umd.js');
 const { ComponentUtil } = require("@ag-grid-community/core");
 
 const agGridColumnObject = new AgGridColumn();
