@@ -353,7 +353,7 @@ describe('json module', () => {
             expect(target.recurse.str).toEqual(json.recurse.str);
         });
 
-        it.skip('should instantiate complex types by path', () => {
+        it('should instantiate complex types by path', () => {
             const testString = 'hello!';
             const target = new TestApply({});
             const json = { recurse: { str: () => 'test', recurse: { recurse: { str: testString } } } };
@@ -372,7 +372,7 @@ describe('json module', () => {
             expect(target.recurse.recurse.recurse).toBeInstanceOf(TestApply);
         });
 
-        it.skip('should instantiate complex types by path', () => {
+        it('should instantiate complex types by path', () => {
             const testString1 = 'hello!';
             const testString2 = 'world!';
             const target = new TestApply({});
