@@ -36,6 +36,8 @@ export class ColumnApi {
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     public getColumn(key: any): Column | null { return this.columnModel.getPrimaryColumn(key); }
+    /** Returns all the columns, regardless of visible or not. */
+    public getColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
@@ -68,16 +70,6 @@ export class ColumnApi {
     /** Same as `setColumnPinned`, but provide a list of column keys. */
     public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
-    /** @deprecated Use `getColumns` instead */
-    public getAllColumns(): Column[] | null {
-        console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
-        return this.getColumns();
-    }
-
-    /** Returns all the columns, regardless of visible or not. */
-    public getColumns(): Column[] | null {
-        return this.columnModel.getAllPrimaryColumns();
-    }
     /**
      * Returns all the grid columns, same as `getColumns()`, except
      *
@@ -235,6 +227,11 @@ export class ColumnApi {
     //     return null;
     // }
 
+    /** @deprecated Use `getColumns` instead */
+    public getAllColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
+    }
     /** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened */
     public columnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
         console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
