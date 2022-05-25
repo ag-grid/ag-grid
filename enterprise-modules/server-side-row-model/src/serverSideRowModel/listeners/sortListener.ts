@@ -96,8 +96,7 @@ export class SortListener extends BeanStub {
 
         const params: StoreRefreshAfterParams = {
             valueColChanged,
-            secondaryColChanged, // Deprecated
-            pivotResultColChanged: secondaryColChanged,
+            secondaryColChanged,
             alwaysReset,
             changedColumns
         };
