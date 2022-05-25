@@ -96,6 +96,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from "ag-grid-community";
 export { HeaderRowComp, HeaderRowType } from "ag-grid-community";
 export { HeaderRowCtrl, IHeaderRowComp } from "ag-grid-community";
 export { HeaderCellCtrl, IHeaderCellComp } from "ag-grid-community";
+export { SortIndicatorComp } from "ag-grid-community";
 export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "ag-grid-community";
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "ag-grid-community";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "ag-grid-community";

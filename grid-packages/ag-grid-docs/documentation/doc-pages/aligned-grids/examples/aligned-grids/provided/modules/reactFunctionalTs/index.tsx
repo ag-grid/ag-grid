@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -10,36 +10,11 @@ import { ModuleRegistry, GridOptions, ColDef, ColGroupDef, GridReadyEvent, First
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const topOptions: GridOptions = {
-    alignedGrids: [],
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    }
-};
-const bottomOptions: GridOptions = {
-    alignedGrids: [],
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    }
-};
-
-topOptions.alignedGrids!.push(bottomOptions);
-bottomOptions.alignedGrids!.push(topOptions);
-
 const GridExample = () => {
-    const topGridRef = useRef<AgGridReact>(null);
+    const topGrid = useRef<AgGridReact>(null);
+    const bottomGrid = useRef<AgGridReact>(null);
 
-    const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>([
+    const columnDefs = useMemo<(ColDef | ColGroupDef)[]>(() => [
         { field: 'athlete' },
         { field: 'age' },
         { field: 'country' },
@@ -58,33 +33,38 @@ const GridExample = () => {
                 { columnGroupShow: 'open', field: "bronze", width: 100 }
             ]
         }
-    ]);
+    ], []);
+
+    const defaultColDef = useMemo<ColDef>(() => ({
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
+    }), []);
 
     const [rowData, setRowData] = useState([]);
 
-    function onGridReady(params: GridReadyEvent) {
+    const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => setRowData(data));
     }
 
-    function onFirstDataRendered(params: FirstDataRenderedEvent) {
-        params.api.sizeColumnsToFit();
+    const onCbAthlete = (event: any) => {
+        // we only need to update one grid, as the other is a slave
+        topGrid.current!.columnApi.setColumnVisible('athlete', event.target.checked);
     }
 
-    function onCbAthlete(event: any) {
+    const onCbAge = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGridRef.current!.columnApi.setColumnVisible('athlete', event.target.checked);
+        topGrid.current!.columnApi.setColumnVisible('age', event.target.checked);
     }
 
-    function onCbAge(event: any) {
+    const onCbCountry = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGridRef.current!.columnApi.setColumnVisible('age', event.target.checked);
-    }
-
-    function onCbCountry(event: any) {
-        // we only need to update one grid, as the other is a slave
-        topGridRef.current!.columnApi.setColumnVisible('country', event.target.checked);
+        topGrid.current!.columnApi.setColumnVisible('country', event.target.checked);
     }
 
     return (
@@ -112,19 +92,23 @@ const GridExample = () => {
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
-                    ref={topGridRef}
+                    ref={topGrid}
+                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
                     rowData={rowData}
-                    gridOptions={topOptions}
                     columnDefs={columnDefs}
-                    onGridReady={params => onGridReady(params)}
-                    onFirstDataRendered={params => onFirstDataRendered(params)} />
+                    defaultColDef={defaultColDef}
+                    onGridReady={onGridReady}
+                />
             </div>
 
             <div className="grid ag-theme-alpine">
                 <AgGridReact
+                    ref={bottomGrid}
+                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
                     rowData={rowData}
-                    gridOptions={bottomOptions}
-                    columnDefs={columnDefs} />
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                />
             </div>
         </div>
     );

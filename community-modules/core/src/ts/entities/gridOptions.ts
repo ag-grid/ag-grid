@@ -346,7 +346,7 @@ export interface GridOptions {
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: GridOptions[];
+    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**
@@ -850,10 +850,14 @@ export interface GridOptions {
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    /** @deprecated - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef) => void;
-    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    processPivotResultColDef?: (colDef: ColDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use initialGroupOrderComparator instead */

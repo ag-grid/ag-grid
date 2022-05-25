@@ -118,4 +118,14 @@
     @include ag-keyboard-focus((
         ag-select-agg-func-virtual-list-item
     ), 1px);
+
+
+    // column sort direction indicator
+    .ag-sort-indicator-container {
+        display: flex;
+    }
+
+    .ag-sort-indicator-icon {
+        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
+    }
 }

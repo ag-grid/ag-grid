@@ -36,6 +36,8 @@ export class ColumnApi {
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     public getColumn(key: any): Column | null { return this.columnModel.getPrimaryColumn(key); }
+    /** Returns all the columns, regardless of visible or not. */
+    public getColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
     /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
     /** Gets the state of the columns. Typically used when saving column state. */
@@ -68,10 +70,8 @@ export class ColumnApi {
     /** Same as `setColumnPinned`, but provide a list of column keys. */
     public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
-    /** Returns all the columns, regardless of visible or not. */
-    public getAllColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
     /**
-     * Returns all the grid columns, same as `getAllColumns()`, except
+     * Returns all the grid columns, same as `getColumns()`, except
      *
      *  a) it has the order of the columns that are presented in the grid
      *
@@ -119,8 +119,15 @@ export class ColumnApi {
     public setPivotMode(pivotMode: boolean): void { this.columnModel.setPivotMode(pivotMode); }
     /** Get the pivot mode. */
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
-    /** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+
+    /** @deprecated Use `getPivotResultColumn` instead */
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryPivotColumn has been renamed, please use getPivotResultColumn instead');
+        return this.getPivotResultColumn(pivotKeys, valueColKey);
+    }
+
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     /** Set the value columns. */
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
@@ -180,12 +187,27 @@ export class ColumnApi {
     /** Calls `autoSizeColumns` on all displayed columns. */
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
-    /** Set the secondary pivot columns. */
-    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
-    /** Returns the grid's secondary columns. */
-    public getSecondaryColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
-    /** Returns the grid's primary columns. */
-    public getPrimaryColumns(): Column[] | null { return this.columnModel.getAllPrimaryColumns(); }
+    /** @deprecated Use `setPivotResultColumns` instead. */
+    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void {
+        console.warn('AG Grid: since version 28.0.x setSecondaryColumns has been renamed, please use setPivotResultColumns instead');
+        this.setPivotResultColumns(colDefs);
+    }
+    /** Set the pivot result columns. */
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
+
+    /** @deprecated Use `getPivotResultColumns` instead. */
+    public getSecondaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getSecondaryColumns has been renamed, please use getPivotResultColumns instead');
+        return this.getPivotResultColumns();
+    }
+    /** Returns the grid's pivot result columns. */
+    public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
+
+    /** @deprecated Use `getColumns` instead. */
+    public getPrimaryColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getPrimaryColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
+    }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
@@ -205,6 +227,11 @@ export class ColumnApi {
     //     return null;
     // }
 
+    /** @deprecated Use `getColumns` instead */
+    public getAllColumns(): Column[] | null {
+        console.warn('AG Grid: since version 28.0.x getAllColumns has been renamed, please use getColumns instead');
+        return this.getColumns();
+    }
     /** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened */
     public columnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
         console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');

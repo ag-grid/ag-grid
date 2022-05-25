@@ -354,7 +354,7 @@
   },
   "alignedGrids": {
     "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-    "type": { "returnType": "GridOptions[]" }
+    "type": { "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]" }
   },
   "tabIndex": {
     "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -1148,10 +1148,21 @@
     }
   },
   "processSecondaryColDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
     "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
+    "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+    "type": {
+      "arguments": { "colGroupDef": "ColGroupDef" },
+      "returnType": "void"
+    }
+  },
+  "processPivotResultColDef": {
+    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
+  },
+  "processPivotResultColGroupDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef" },

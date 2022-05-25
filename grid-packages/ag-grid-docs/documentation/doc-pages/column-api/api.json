@@ -7,7 +7,7 @@
             "displayName": "Columns"
         },
         "getColumn": {},
-        "getAllColumns": {},
+        "getColumns": {},
         "getAllGridColumns": {}
     },
     "state": {
@@ -127,14 +127,13 @@
         "addPivotColumns": {},
         "removePivotColumn": {},
         "removePivotColumns": {},
-        "getSecondaryPivotColumn": {},
-        "setSecondaryColumns": {},
-        "getPrimaryColumns": {
+        "getPivotResultColumn": {},
+        "setPivotResultColumns": {},
+        "getPivotResultColumns": {
             "more": {
-                "name": "Primary vs Secondary Columns",
-                "url": "/pivoting/#primary-vs-secondary-columns"
+                "name": "Columns vs Pivot Result Columns",
+                "url": "/pivoting/#columns-vs-pivot-result-columns"
             }
-        },
-        "getSecondaryColumns": {}
+        }
     }
 }

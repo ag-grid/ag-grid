@@ -14,96 +14,64 @@ class GridExample extends Component {
     constructor(props) {
         super(props);
 
-        this.athleteVisible = true;
-        this.ageVisible = true;
-        this.countryVisible = true;
-        this.rowData = null;
-        this.bottomData = [
-            {
-                athlete: 'Total',
-                age: '15 - 61',
-                country: 'Ireland',
-                year: '2020',
-                date: '26/11/1970',
-                sport: 'Synchronised Riding',
-                gold: 55,
-                silver: 65,
-                bronze: 12
-            }
-        ];
+        this.state = {
+            data: undefined,
+        };
 
-        this.state = this.createState();
+        this.topGrid = React.createRef();
+        this.bottomGrid = React.createRef();
     }
 
-    createState() {
-        const topOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            },
-            suppressHorizontalScroll: true
-        };
-        const bottomOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
+    defaultColDef = {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
+    };
 
-        topOptions.alignedGrids.push(bottomOptions);
-        bottomOptions.alignedGrids.push(topOptions);
+    columnDefs = [
+        { field: 'athlete', width: 200 },
+        { field: 'age', width: 150 },
+        { field: 'country', width: 150 },
+        { field: 'year', width: 120 },
+        { field: 'date', width: 150 },
+        { field: 'sport', width: 150 },
+        // in the total col, we have a value getter, which usually means we don't need to provide a field
+        // however the master/slave depends on the column id (which is derived from the field if provided) in
+        // order ot match up the columns
+        {
+            headerName: 'Total',
+            field: 'total',
+            valueGetter: 'data.gold + data.silver + data.bronze',
+            width: 200
+        },
+        { field: 'gold', width: 100 },
+        { field: 'silver', width: 100 },
+        { field: 'bronze', width: 100 }
+    ];
 
-        return {
-            topOptions,
-            bottomOptions,
-            columnDefs: [
-                { field: 'athlete', width: 200, hide: !this.athleteVisible },
-                { field: 'age', width: 150, hide: !this.ageVisible },
-                { field: 'country', width: 150, hide: !this.countryVisible },
-                { field: 'year', width: 120 },
-                { field: 'date', width: 150 },
-                { field: 'sport', width: 150 },
-                // in the total col, we have a value getter, which usually means we don't need to provide a field
-                // however the master/slave depends on the column id (which is derived from the field if provided) in
-                // order ot match up the columns
-                {
-                    headerName: 'Total',
-                    field: 'total',
-                    valueGetter: 'data.gold + data.silver + data.bronze',
-                    width: 200
-                },
-                { field: 'gold', width: 100 },
-                { field: 'silver', width: 100 },
-                { field: 'bronze', width: 100 }
-
-            ],
-            bottomData: this.bottomData,
-            rowData: this.rowData
-        };
-    }
+    bottomData = [
+        {
+            athlete: 'Total',
+            age: '15 - 61',
+            country: 'Ireland',
+            year: '2020',
+            date: '26/11/1970',
+            sport: 'Synchronised Riding',
+            gold: 55,
+            silver: 65,
+            bronze: 12
+        }
+    ];
 
     onGridReady(params) {
-        this.topGrid = params;
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => {
-                this.rowData = data
-                this.setState(this.createState.bind(this));
+                this.setState({ data });
             });
-    }
-
-    onFirstDataRendered() {
-        this.topGrid.columnApi.autoSizeAllColumns();
     }
 
     render() {
@@ -111,19 +79,24 @@ class GridExample extends Component {
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-alpine">
                 <div style={{ flex: '1 1 auto' }}>
                     <AgGridReact
-                        rowData={this.state.rowData}
-                        gridOptions={this.state.topOptions}
-                        columnDefs={this.state.columnDefs}
+                        ref={this.topGrid}
+                        alignedGrids={this.bottomGrid.current ? [this.bottomGrid.current] : undefined}
+                        suppressHorizontalScroll
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
+                        rowData={this.state.data}
                         onGridReady={this.onGridReady.bind(this)}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
+                    />
                 </div>
 
                 <div style={{ flex: 'none', height: '60px' }}>
                     <AgGridReact
-                        rowData={this.state.bottomData}
-                        gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs}
-                        headerHeight="0"
+                        ref={this.bottomGrid}
+                        alignedGrids={this.topGrid.current ? [this.topGrid.current] : undefined}
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
+                        rowData={this.bottomData}
+                        headerHeight={0}
                         rowStyle={{ fontWeight: 'bold' }}
                     />
                 </div>
