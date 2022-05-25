@@ -759,7 +759,7 @@ export class BarSeries extends CartesianSeries {
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
             rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
-            rect.opacity = this.getOpacity(datum);
+            rect.opacity = this.getOpacity();
         });
     }
 
@@ -782,7 +782,6 @@ export class BarSeries extends CartesianSeries {
         }
 
         const {
-            chart: { highlightedDatum },
             label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color }
         } = this;
 
@@ -801,7 +800,7 @@ export class BarSeries extends CartesianSeries {
                 text.y = label.y;
                 text.fill = color;
                 text.visible = true;
-                text.opacity = this.getOpacity(datum);
+                text.opacity = this.getOpacity();
             } else {
                 text.visible = false;
             }

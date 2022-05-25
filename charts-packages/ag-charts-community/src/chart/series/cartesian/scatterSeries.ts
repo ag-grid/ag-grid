@@ -378,7 +378,7 @@ export class ScatterSeries extends CartesianSeries {
             node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.opacity = this.getOpacity(datum);
+            node.opacity = this.getOpacity();
             node.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             node.visible = marker.enabled && node.size > 0;
         });

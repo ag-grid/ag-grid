@@ -333,12 +333,10 @@ export class LineSeries extends CartesianSeries {
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        lineNode.strokeOpacity = this.strokeOpacity;
+        lineNode.strokeOpacity = this.strokeOpacity * (1 / this.getOpacity());
 
         lineNode.lineDash = this.lineDash;
         lineNode.lineDashOffset = this.lineDashOffset;
-
-        lineNode.opacity = 1;
     }
 
     private updateMarkerNodes() {
@@ -365,13 +363,7 @@ export class LineSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const MarkerShape = getMarker(marker.shape);
 
-        const markerSelection = this.nodeSelection.selectByClass(MarkerShape);
-        const datumOpacity = new Array<number>(markerSelection.size);
-        markerSelection.each((_, datum, idx) => {
-            datumOpacity[idx] = this.getOpacity(datum);
-        });
-        const nodesHaveIdenticalOpacity = datumOpacity.every((v) => v === datumOpacity[0]);
-        this.seriesGroup.opacity = nodesHaveIdenticalOpacity ? datumOpacity[0] : 1;
+        this.seriesGroup.opacity = this.getOpacity();
 
         const updateMarkerFn = (node: Marker, datum: LineNodeDatum, idx: number, isDatumHighlighted: boolean) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
@@ -405,11 +397,10 @@ export class LineSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.opacity = nodesHaveIdenticalOpacity ? 1 : datumOpacity[idx];
             node.visible = marker.enabled && node.size > 0;
         };
 
-        markerSelection
+        this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum, idx) => updateMarkerFn(node, datum, idx, false));
         this.highlightSelection.selectByClass(MarkerShape)
             .each((node, datum, idx) => {

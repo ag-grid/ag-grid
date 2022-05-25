@@ -462,7 +462,7 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
-            rect.opacity = this.getOpacity(datum);
+            rect.opacity = this.getOpacity();
         });
     }
 
