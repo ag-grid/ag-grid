@@ -148,7 +148,9 @@ export abstract class Series extends Observable {
         }
     }
 
-    setColors(_fills: string[], _strokes: string[]) { }
+    setColors(_fills: string[], _strokes: string[]) {
+        // Override point for subclasses.
+    }
 
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
@@ -217,7 +219,9 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void { }
+    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void {
+        // Override point for subclasses.
+    }
 
     /**
      * @private
@@ -238,7 +242,9 @@ export abstract class Series extends Observable {
 
     // Each series is expected to have its own logic to efficiently update its nodes
     // on hightlight changes.
-    onHighlightChange() { }
+    onHighlightChange() {
+        // Override point for subclasses.
+    }
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {

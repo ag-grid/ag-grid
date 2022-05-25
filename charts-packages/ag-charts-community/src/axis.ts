@@ -13,7 +13,6 @@ import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util
 import { doOnce } from "./util/function";
 import { ContinuousScale } from "./scale/continuousScale";
 import { CountableTimeInterval } from "./util/time/interval";
-// import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
     Tick,
@@ -222,13 +221,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Overridden in ChartAxis subclass.
      * Sets an appropriate tick count based on the available range.
      */
-    calculateTickCount(_availableRange: number): void { }
+    calculateTickCount(_availableRange: number): void {
+        // Override point for subclasses.
+    }
 
     /**
      * Meant to be overridden in subclasses to provide extra context the the label formatter.
      * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
      */
-    getMeta(): any { }
+    getMeta(): any {
+        // Override point for subclasses.
+    }
 
     constructor(scale: S) {
         this.scale = scale;

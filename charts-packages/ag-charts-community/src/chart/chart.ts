@@ -1135,8 +1135,12 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(_event: MouseEvent) { }
-    protected onMouseUp(_event: MouseEvent) { }
+    protected onMouseDown(_event: MouseEvent) {
+        // Override point for subclasses.
+    }
+    protected onMouseUp(_event: MouseEvent) {
+        // Override point for subclasses.
+    }
 
     protected onMouseOut(_event: MouseEvent) {
         this.tooltip.toggle(false);

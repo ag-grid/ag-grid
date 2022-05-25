@@ -76,9 +76,12 @@ export class Path extends Shape {
         return false;
     }
 
-    /** Override point for more expensive dirty checks. */
-    protected isDirtyPath() {}
-    protected updatePath() {}
+    protected isDirtyPath() {
+        // Override point for more expensive dirty checks. .
+    }
+    protected updatePath() {
+        // Override point for subclasses.
+    }
 
     render(renderCtx: RenderContext) {
         let { ctx, forceRender, stats } = renderCtx;
