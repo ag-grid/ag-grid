@@ -9,6 +9,7 @@ class TestApply {
     date?: Date = undefined;
     array?: number[] = undefined;
     recurse?: TestApply = undefined;
+    recurseArray?: TestApply[] = undefined;
 
     constructor(params: {[K in keyof TestApply]?: TestApply[K]} = {}) {
         Object.assign(this, params);
@@ -352,5 +353,50 @@ describe('json module', () => {
             expect(target.recurse.str).toEqual(json.recurse.str);
         });
 
+        it.skip('should instantiate complex types by path', () => {
+            const testString = 'hello!';
+            const target = new TestApply({});
+            const json = { recurse: { str: () => 'test', recurse: { recurse: { str: testString } } } };
+            const opts = {
+                path: 'series[0]',
+                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                constructors: {
+                    'series[].recurse': TestApply,
+                    'series[].recurse.recurse': TestApply,
+                    'series[].recurse.recurse.recurse': TestApply,
+                },
+            };
+
+            jsonApply(target, json as any, opts);
+            expect(target.recurse.recurse.recurse.str).toEqual(testString);
+            expect(target.recurse.recurse.recurse).toBeInstanceOf(TestApply);
+        });
+
+        it.skip('should instantiate complex types by path', () => {
+            const testString1 = 'hello!';
+            const testString2 = 'world!';
+            const target = new TestApply({});
+            const json = { recurseArray: [
+                { recurse: { str: testString1 } },
+                { recurse: { str: testString2 } },
+            ]};
+
+            const opts = {
+                path: 'series[0]',
+                allowedTypes: {'series[].recurse.str': ['function' as const]},
+                constructors: {
+                    'series[].recurseArray[]': TestApply,
+                    'series[].recurseArray[].recurse': TestApply,
+                },
+            };
+
+            jsonApply(target, json as any, opts);
+            expect(target.recurseArray[0].recurse.str).toEqual(testString1);
+            expect(target.recurseArray[1].recurse.str).toEqual(testString2);
+            expect(target.recurseArray[0]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray[0].recurse).toBeInstanceOf(TestApply);
+            expect(target.recurseArray[1]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray[1].recurse).toBeInstanceOf(TestApply);
+        });
     });
 });
