@@ -47,7 +47,7 @@ In the example below, export the grid to Excel, open the exported Excel document
 - The exported Excel document will also contain the Total column, but this column will not be included in the "collapsible" group.
 
 [[note]]
-| When using pivoting to export [secondary columns](../pivoting/#primary-vs-secondary-columns), only currently visible columns are exported as grouped. Collapsed secondary columns aren’t exported at all, even when the [ExcelExportParams](../excel-export-api/#excelexportparams) option `allColumns:true` is set.
+| When using pivoting to export [pivot result columns](../pivoting/#columns-vs-pivot-result-columns), only currently visible columns are exported as grouped. Collapsed pivot result columns aren’t exported at all, even when the [ExcelExportParams](../excel-export-api/#excelexportparams) option `allColumns:true` is set.
 
 <grid-example title='Excel Export - Collapsible Columns' name='excel-export-collapsible-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
 

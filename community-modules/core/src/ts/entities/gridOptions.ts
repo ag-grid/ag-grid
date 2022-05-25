@@ -850,10 +850,14 @@ export interface GridOptions {
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    /** @deprecated - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef) => void;
-    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    processPivotResultColDef?: (colDef: ColDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use initialGroupOrderComparator instead */

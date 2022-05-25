@@ -3435,7 +3435,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -3443,6 +3443,22 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "type": {
+        "arguments": { "colGroupDef": "ColGroupDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "type": {
+        "arguments": { "colDef": "ColDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },
@@ -22681,7 +22697,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -22689,6 +22705,22 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "type": {
+        "arguments": { "colGroupDef": "ColGroupDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "type": {
+        "arguments": { "colDef": "ColDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },
@@ -25390,7 +25422,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -25398,6 +25430,22 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "type": {
+        "arguments": { "colGroupDef": "ColGroupDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "type": {
+        "arguments": { "colDef": "ColDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },
@@ -28109,7 +28157,7 @@
       }
     },
     "processSecondaryColDef": {
-      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -28117,6 +28165,22 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "type": {
+        "arguments": { "colGroupDef": "ColGroupDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "type": {
+        "arguments": { "colDef": "ColDef" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "processPivotResultColGroupDef": {
       "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },

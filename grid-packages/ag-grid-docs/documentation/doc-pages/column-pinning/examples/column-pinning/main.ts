@@ -64,7 +64,7 @@ function jumpToCol() {
   }
 
   // it's actually a column the api needs, so look the column up
-  const allColumns = gridOptions.columnApi!.getAllColumns()
+  const allColumns = gridOptions.columnApi!.getColumns()
   if (allColumns) {
     const column = allColumns[index]
     if (column) {
