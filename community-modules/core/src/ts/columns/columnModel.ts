@@ -2976,6 +2976,9 @@ export class ColumnModel extends BeanStub {
             if (!providedColumnGroup) { return; }
             if (providedColumnGroup.isExpanded() === newValue) { return; }
 
+            // Move the hidden columns to where the visible ones are, so they dont spring from nowhere
+            this.moveHiddenColumnsOfGroupToLeftmostVisible(providedColumnGroup);
+
             this.logger.log('columnGroupOpened(' + providedColumnGroup.getGroupId() + ',' + newValue + ')');
             providedColumnGroup.setExpanded(newValue);
             impactedGroups.push(providedColumnGroup);
@@ -2995,6 +2998,25 @@ export class ColumnModel extends BeanStub {
         });
 
         this.columnAnimationService.finish();
+    }
+
+    private moveHiddenColumnsOfGroupToLeftmostVisible(providedGroup: ProvidedColumnGroup) {
+        const hidden: Column[] = [];
+        const visible: Column[] = [];
+        providedGroup.getLeafColumns().forEach((col) => {
+            if (this.isColumnDisplayed(col)) {
+                visible.push(col);
+            } else {
+                hidden.push(col);
+            }
+        });
+        const gridOrderedVisibleCols = this.getGridColumns(visible);
+        if (gridOrderedVisibleCols.length > 0) {
+            const colsCopy = this.gridColumns.slice();
+            removeAllFromArray(colsCopy, hidden);
+            const insertionIndex = colsCopy.indexOf(gridOrderedVisibleCols[0]);
+            this.moveColumns(hidden, insertionIndex);
+        }
     }
 
     // called by headerRenderer - when a header is opened or closed
