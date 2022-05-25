@@ -2593,7 +2593,7 @@
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": {
-        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "returnType": "{ api?: GridApi | null, columnApi?: ColumnApi | null }[]",
         "optional": true
       }
     },
@@ -21839,7 +21839,7 @@
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": {
-        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "returnType": "{ api?: GridApi | null, columnApi?: ColumnApi | null }[]",
         "optional": true
       }
     },
@@ -24548,7 +24548,7 @@
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": {
-        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "returnType": "{ api?: GridApi | null, columnApi?: ColumnApi | null }[]",
         "optional": true
       }
     },
@@ -27267,7 +27267,7 @@
     "alignedGrids": {
       "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": {
-        "returnType": "{ api?: GridApi, columnApi?: ColumnApi }[]",
+        "returnType": "{ api?: GridApi | null, columnApi?: ColumnApi | null }[]",
         "optional": true
       }
     },

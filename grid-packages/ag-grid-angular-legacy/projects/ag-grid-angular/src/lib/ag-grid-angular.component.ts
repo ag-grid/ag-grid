@@ -486,10 +486,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
+    @Input() public groupRowsSticky: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync.     */
-    @Input() public alignedGrids: GridOptions[] | undefined = undefined;
+    @Input() public alignedGrids: { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined = undefined;
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0`     */
     @Input() public tabIndex: number | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.
@@ -1251,6 +1252,7 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_resetRowDataOnUpdate: boolean | null | '';
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
+    static ngAcceptInputType_groupRowsSticky: boolean | null | '';
     // @END@
 }
 
