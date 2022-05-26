@@ -6,7 +6,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-import { ColDef, ColGroupDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent, ModuleRegistry } from '@ag-grid-community/core';
+
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -67,6 +68,12 @@ const GridExample = () => {
             });
     }
 
+    const onFirstDataRendered = (params: FirstDataRenderedEvent) => {
+        // mix up some columns
+        params.columnApi.moveColumnByIndex(11, 4);
+        params.columnApi.moveColumnByIndex(11, 4);
+    }
+
     return (
         <div className="container">
             <div className="grid ag-theme-alpine">
@@ -75,7 +82,8 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    onGridReady={params => onGridReady(params)}
+                    onGridReady={onGridReady}
+                    onFirstDataRendered={onFirstDataRendered}
                     alignedGrids={bottomGridRef.current ? [bottomGridRef.current] : undefined}
                 />
             </div>
