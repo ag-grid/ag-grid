@@ -213,5 +213,4 @@ export abstract class Shape extends Node {
     }
 
     abstract isPointInPath(x: number, y: number): boolean;
-    abstract isPointInStroke(x: number, y: number): boolean;
 }
