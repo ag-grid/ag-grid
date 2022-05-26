@@ -151,10 +151,6 @@ export class Text extends Shape {
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
-    isPointInStroke(_x: number, _y: number): boolean {
-        return false;
-    }
-
     render(renderCtx: RenderContext): void {
         let { ctx, forceRender, stats } = renderCtx;
 

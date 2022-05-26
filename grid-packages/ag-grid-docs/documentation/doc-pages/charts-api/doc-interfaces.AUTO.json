@@ -3271,6 +3271,8 @@
   "Coordinate": {},
   "CumulativeValue": {},
   "ProcessedXDatum": {},
+  "AreaSeriesTag": {},
+  "AreaSeriesGroup": {},
   "BarSeriesNodeClickEvent": {
     "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
     "event": { "type": { "returnType": "MouseEvent", "optional": false } },
@@ -3680,6 +3682,7 @@
   "RenderContext": {},
   "DebugOptions": {
     "stats": { "type": { "returnType": "boolean", "optional": false } },
+    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
     },

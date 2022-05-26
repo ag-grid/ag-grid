@@ -8,7 +8,8 @@ const commandLineArgs = require('command-line-args');
 const optionDefinitions = [
     {name: 'bundlePrefix', type: String},
     {name: 'umdModuleName', type: String},
-    {name: 'esmType', type: String}
+    {name: 'esmType', type: String},
+    {name: 'esmMain', type: String}
 ];
 
 const options = commandLineArgs(optionDefinitions);

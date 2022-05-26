@@ -298,7 +298,7 @@ export class TreemapSeries extends HierarchySeries {
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.depth < 2 ? undefined : 'black';
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(1, datum);
+                : this.getStrokeWidth(1);
 
             rect.fill = fill;
             rect.stroke = stroke;

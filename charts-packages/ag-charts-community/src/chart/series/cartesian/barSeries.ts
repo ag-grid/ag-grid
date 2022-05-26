@@ -730,7 +730,7 @@ export class BarSeries extends CartesianSeries {
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[colorIndex % fills.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(this.strokeWidth, datum);
+                : this.getStrokeWidth(this.strokeWidth);
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
@@ -837,7 +837,7 @@ export class BarSeries extends CartesianSeries {
         const yName = yNames[yKey];
         const fill = fills[fillIndex % fills.length];
         const stroke = strokes[fillIndex % fills.length];
-        const strokeWidth = this.getStrokeWidth(this.strokeWidth, datum);
+        const strokeWidth = this.getStrokeWidth(this.strokeWidth);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const processedYValue = yGroup[j][i];
