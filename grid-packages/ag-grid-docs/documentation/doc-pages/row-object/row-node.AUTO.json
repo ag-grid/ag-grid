@@ -111,6 +111,7 @@
     "description": "/** If row is pinned, then pinnedRowTop is used rather than rowTop */",
     "type": { "returnType": "number" }
   },
+  "stickySliding": { "type": { "returnType": "boolean" } },
   "quickFilterAggregateText": {
     "description": "/** If using quick filter, stores a string representation of the row for searching against. */",
     "type": { "returnType": "string | null" }
