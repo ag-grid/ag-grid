@@ -366,11 +366,11 @@ private RelationalGroupedDataset pivot(RelationalGroupedDataset groupedDf) {
 The result of a `pivot()` transformation is also a `RelationalGroupedDataset`.
 
 
-From the DataFrame we will use the inferred schema to determine the generated secondary columns:
+From the DataFrame we will use the inferred schema to determine the generated pivot result columns:
 
 
 ```java
-private List<String> getSecondaryColumns(Dataset<Row> df) {
+private List<String> getPivotResultColumns(Dataset<Row> df) {
     return stream(df.schema().fieldNames())
         .filter(f -> !rowGroups.contains(f)) // filter out group fields
         .collect(toList());
@@ -380,17 +380,17 @@ private List<String> getSecondaryColumns(Dataset<Row> df) {
 These will need to be returned to the grid in the following property:
 
 ```java
-List<String> secondaryColumnFields;
+List<String> pivotResultColumnFields;
 ```
 
-Our client code will then use these secondary column fields to generate the corresponding `ColDefs` like so:
+Our client code will then use these column fields to generate the corresponding `ColDefs` like so:
 
 
 ```js
 // src/main/resources/static/main.js
 
-let createSecondaryColumns = function (fields, valueCols) {
-    let secondaryCols = [];
+let createPivotResultColumns = function (fields, valueCols) {
+    let pivotResultColumns = [];
 
     function addColDef(colId, parts, res) {
         if (parts.length === 0) return [];
@@ -426,9 +426,9 @@ let createSecondaryColumns = function (fields, valueCols) {
     }
 
     fields.sort();
-    fields.forEach(field => addColDef(field, field.split('_'), secondaryCols));
+    fields.forEach(field => addColDef(field, field.split('_'), pivotResultColumns));
 
-    return secondaryCols;
+    return pivotResultColumns;
 };
 ```
 
@@ -436,7 +436,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+gridOptions.columnApi.setPivotResultColumns(pivotResultColumns);
 ```
 
 ## Aggregation
@@ -554,13 +554,13 @@ private DataResult paginate(Dataset<Row> df, int startRow, int endRow) {
     // calculate last row
     long lastRow = endRow >= rowCount ? rowCount : -1;
 
-    return new DataResult(paginatedResults, lastRow, getSecondaryColumns(df));
+    return new DataResult(paginatedResults, lastRow, getPivotResultColumns(df));
 }
 ```
 
 The RDD is then converted back into a Data Frame using the original schema previously stored. Once the rows have been filtered we can then safely collect the reduced results as a list of JSON objects. This ensures we don't run out of memory by bringing back all the results.
 
-Finally we determine the `lastRow` and retrieve the secondary columns which contain will be required by the client code to generate `ColDefs` when in pivot mode.
+Finally we determine the `lastRow` and retrieve the pivot result columns which contain will be required by the client code to generate `ColDefs` when in pivot mode.
 
 ## Conclusion
 

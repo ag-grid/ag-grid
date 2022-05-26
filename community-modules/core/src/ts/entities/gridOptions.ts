@@ -132,8 +132,8 @@ export interface GridOptions {
     copyGroupHeadersToClipboard?: boolean;
     /** @deprecated Use `clipboardDelimiter` */
     clipboardDeliminator?: string;
-    /** 
-     * Specify the delimiter to use when copying to clipboard. 
+    /**
+     * Specify the delimiter to use when copying to clipboard.
      * Default: `\t`
     */
     clipboardDelimiter?: string;
@@ -298,7 +298,7 @@ export interface GridOptions {
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
 
-    // *** Loading Cell Renderers *** //    
+    // *** Loading Cell Renderers *** //
     /**
     * Provide your own loading cell renderer to use when data is loading via a DataSource.
     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
@@ -346,7 +346,7 @@ export interface GridOptions {
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
     /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: GridOptions[];
+    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**
@@ -611,7 +611,7 @@ export interface GridOptions {
     // changeable with impact
     /** Set the data to be displayed as rows in the grid. */
     rowData?: any[] | null;
-    /** 
+    /**
      * @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
      * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
     immutableData?: boolean;
@@ -850,10 +850,14 @@ export interface GridOptions {
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams) => number;
     /** @deprecated - Use `initialGroupOrderComparator` instead */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    /** @deprecated - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef) => void;
-    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead */
     processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
+    processPivotResultColDef?: (colDef: ColDef) => void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
+    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use initialGroupOrderComparator instead */
@@ -880,7 +884,7 @@ export interface GridOptions {
      */
     getBusinessKeyForNode?: (node: RowNode) => string;
     /**
-     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
+     * @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows setting the ID for a particular row node based on the data. */
@@ -1102,12 +1106,12 @@ export interface GridOptions {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
 
     /**
-     * The Grid Api for interacting with the grid. 
+     * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
     api?: GridApi | null;
     /**
-     * The Column Api for interacting with the grid columns. 
+     * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
      */
     columnApi?: ColumnApi | null;
@@ -1156,7 +1160,6 @@ export interface RowClassParams extends AgGridCommon {
     /** The index of the row */
     rowIndex: number;
 }
-
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];

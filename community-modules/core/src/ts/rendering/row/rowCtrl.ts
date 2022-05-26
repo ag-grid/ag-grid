@@ -1354,9 +1354,6 @@ export class RowCtrl extends BeanStub {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return; }
 
-        // when rows are sticky, we ignore changes to row top, because we are using pinnedRowTop
-        if (this.sticky) { return; }
-
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (exists(pixels)) {

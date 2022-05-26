@@ -14,87 +14,71 @@ class GridExample extends Component {
     constructor(props) {
         super(props);
 
-        const topOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
-        const bottomOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
-
-        topOptions.alignedGrids.push(bottomOptions);
-        bottomOptions.alignedGrids.push(topOptions);
-
+        this.topGrid = React.createRef();
+        this.bottomGrid = React.createRef();
+    
         this.state = {
-            topOptions,
-            bottomOptions,
-            columnDefs: [
-                { field: 'athlete' },
-                { field: 'age' },
-                { field: 'country' },
-                { field: 'year' },
-                { field: 'date' },
-                { field: 'sport' },
-                {
-                    headerName: 'Medals',
-                    children: [
-                        {
-                            columnGroupShow: 'closed', field: "total",
-                            valueGetter: "data.gold + data.silver + data.bronze", width: 200
-                        },
-                        { columnGroupShow: 'open', field: "gold", width: 100 },
-                        { columnGroupShow: 'open', field: "silver", width: 100 },
-                        { columnGroupShow: 'open', field: "bronze", width: 100 }
-                    ]
-                }
-            ],
-            rowData: []
+            data: undefined,
         };
     }
 
+    defaultColDef = {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
+    };
+
+    columnDefs = [
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        {
+            headerName: 'Medals',
+            children: [
+                {
+                    columnGroupShow: 'closed', field: "total",
+                    valueGetter: "data.gold + data.silver + data.bronze", width: 200
+                },
+                { columnGroupShow: 'open', field: "gold", width: 100 },
+                { columnGroupShow: 'open', field: "silver", width: 100 },
+                { columnGroupShow: 'open', field: "bronze", width: 100 }
+            ]
+        }
+    ];
+
     onGridReady(params) {
-        this.topGrid = params;
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => {
-                this.setState({
-                    rowData: data
-                })
+                this.setState({ data });
             });
-    }
-
-    onFirstDataRendered(params) {
-        params.api.sizeColumnsToFit();
     }
 
     onCbAthlete(event) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.columnApi.setColumnVisible('athlete', event.target.checked);
+        if(this.topGrid.current) {
+            this.topGrid.current.columnApi.setColumnVisible('athlete', event.target.checked);
+        }
     }
 
     onCbAge(event) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.columnApi.setColumnVisible('age', event.target.checked);
+        if(this.topGrid.current) {
+            this.topGrid.current.columnApi.setColumnVisible('age', event.target.checked);
+        }
     }
 
     onCbCountry(event) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.columnApi.setColumnVisible('country', event.target.checked);
+        if(this.topGrid.current) {
+            this.topGrid.current.columnApi.setColumnVisible('country', event.target.checked);
+        }
     }
 
     render() {
@@ -123,18 +107,23 @@ class GridExample extends Component {
 
                 <div className="grid ag-theme-alpine">
                     <AgGridReact
-                        rowData={this.state.rowData}
-                        gridOptions={this.state.topOptions}
-                        columnDefs={this.state.columnDefs}
+                        ref={this.topGrid}
+                        alignedGrids={this.bottomGrid.current ? [this.bottomGrid.current] : undefined}
+                        rowData={this.state.data}
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
                         onGridReady={this.onGridReady.bind(this)}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
+                    />
                 </div>
 
                 <div className="grid ag-theme-alpine">
                     <AgGridReact
-                        rowData={this.state.rowData}
-                        gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs} />
+                        ref={this.bottomGrid}
+                        alignedGrids={this.topGrid.current ? [this.topGrid.current] : undefined}
+                        rowData={this.state.data}
+                        defaultColDef={this.defaultColDef}
+                        columnDefs={this.columnDefs}
+                    />
                 </div>
             </div>
         );

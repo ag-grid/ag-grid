@@ -25,7 +25,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
-        super(horizontal, true);
+        super(horizontal, 'aggregation');
     }
 
     @PostConstruct
