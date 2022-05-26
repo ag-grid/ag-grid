@@ -73,6 +73,12 @@ class GridExample extends Component {
             });
     };
 
+    onFirstDataRendered = (params) => {
+        // mix up some columns
+        params.columnApi.moveColumnByIndex(11, 4);
+        params.columnApi.moveColumnByIndex(11, 4);
+    }
+
     render() {
         return (
             <div className="container">
@@ -82,7 +88,8 @@ class GridExample extends Component {
                         defaultColDef={this.defaultColDef}
                         columnDefs={this.columnDefs}
                         rowData={this.state.rowData}
-                        onGridReady={this.onGridReady} 
+                        onGridReady={this.onGridReady}
+                        onFirstDataRendered={this.onFirstDataRendered}
                         alignedGrids={this.bottomGridRef.current ? [this.bottomGridRef.current] : undefined}
                     />
                 </div>
