@@ -258,7 +258,7 @@ export class Scene {
 
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
-            ctx.resetTransform();
+            ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
             layers.forEach((layer) => {
                 if (layer.canvas.enabled) {
                     ctx.globalAlpha = layer.canvas.opacity;
