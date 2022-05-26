@@ -27,8 +27,11 @@ export class CategoryAxis extends ChartAxis<BandScale<string>> {
 
     set domain(values: string[]) {
         // Prevent duplicate categories.
-        this.scale.domain = values
-            .filter((s, i, arr) => arr.indexOf(s) === i)
+        const valuesDict: Record<string, null> = {};
+        for (const value of values) {
+            valuesDict[value] = null;
+        }
+        this.scale.domain = Object.keys(valuesDict);
     }
     get domain(): string[] {
         return this.scale.domain.slice();

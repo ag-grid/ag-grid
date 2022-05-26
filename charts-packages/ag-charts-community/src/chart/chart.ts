@@ -1025,7 +1025,9 @@ export abstract class Chart extends Observable {
         type Point = { x: number, y: number };
 
         function getDistance(p1: Point, p2: Point): number {
-            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+            // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
+            // values > 1 
+            return (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
         }
 
         let minDistance = Infinity;
