@@ -997,7 +997,7 @@ export abstract class Chart extends Observable {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            node = series.pickGroup.pickNode(x, y);
+            node = series.pickNode(x, y);
             if (node) {
                 return {
                     series,

@@ -4,7 +4,8 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as AreaTooltipRendererParams,
-    SeriesTooltip
+    SeriesTooltip,
+    Series
 } from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
@@ -25,6 +26,7 @@ import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 import { doOnce } from "../../../util/function";
+import { Node } from '../../../scene/node';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -93,6 +95,22 @@ export class AreaSeriesTooltip extends SeriesTooltip {
     format?: string = undefined;
 }
 
+enum AreaSeriesTag {
+    Fill,
+    Stroke,
+    Marker,
+    Label,
+}
+
+type AreaSeriesGroup = {
+    group: Group;
+    pickGroup: Group;
+    fillSelection: Selection<Path, Group, FillSelectionDatum, any>;
+    strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any>;
+    markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
+    labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
+}
+
 export class AreaSeries extends CartesianSeries {
 
     static className = 'AreaSeries';
@@ -100,17 +118,11 @@ export class AreaSeries extends CartesianSeries {
 
     tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 
-    private areaGroup = this.seriesGroup.insertBefore(new Group, this.pickGroup);
-    private strokeGroup = this.seriesGroup.insertBefore(new Group, this.pickGroup);
-    private markerGroup = this.pickGroup.appendChild(new Group);
-    private highlightMarkerGroup = this.highlightGroup.appendChild(new Group);
-    private labelGroup = this.seriesGroup.appendChild(new Group);
+    private seriesGroups: AreaSeriesGroup[] = [];
+    private seriesGroupId: number = 0;
 
-    private fillSelection: Selection<Path, Group, FillSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
-    private strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
-    private markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any> = Selection.select(this.markerGroup).selectAll<Marker>();
+    private highlightMarkerGroup = this.highlightGroup.appendChild(new Group);
     private highlightMarkerSelection: Selection<Marker, Group, MarkerSelectionDatum, any> = Selection.select(this.highlightMarkerGroup).selectAll<Marker>();
-    private labelSelection: Selection<Text, Group, LabelSelectionDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -122,8 +134,8 @@ export class AreaSeries extends CartesianSeries {
     private yData: number[][] = [];
     private fillSelectionData: FillSelectionDatum[] = [];
     private strokeSelectionData: StrokeSelectionDatum[] = [];
-    private markerSelectionData: MarkerSelectionDatum[] = [];
-    private labelSelectionData: LabelSelectionDatum[] = [];
+    private markerSelectionData: MarkerSelectionDatum[][] = [];
+    private labelSelectionData: LabelSelectionDatum[][] = [];
     private yDomain: any[] = [];
     private xDomain: any[] = [];
 
@@ -382,6 +394,22 @@ export class AreaSeries extends CartesianSeries {
         }
     }
 
+    pickNode(x: number, y: number): Node | undefined {
+        let result = super.pickNode(x, y);
+
+        if (!result) {
+            for (const { pickGroup } of this.seriesGroups ) {
+                result = pickGroup.pickNode(x, y);
+
+                if (result) {
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     update(): void {
         this.updateSelections();
         this.updateNodes();
@@ -394,10 +422,13 @@ export class AreaSeries extends CartesianSeries {
         this.nodeDataRefresh = false;
 
         this.createSelectionData();
-        this.updateFillSelection();
-        this.updateStrokeSelection();
-        this.updateMarkerSelection();
-        this.updateLabelSelection();
+        this.updateSeriesGroups();
+        this.seriesGroups.forEach(((_, idx) => {
+            this.updateFillSelection(idx);
+            this.updateStrokeSelection(idx);
+            this.updateMarkerSelection(idx);
+            this.updateLabelSelection(idx);
+        }))
     }
 
     updateNodes() {
@@ -406,12 +437,15 @@ export class AreaSeries extends CartesianSeries {
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && this.chart?.highlightedDatum?.series === this;
 
-        this.seriesGroup.opacity = this.getOpacity();
+        this.seriesGroups.forEach(({ group }, idx) => {
+            group.opacity = this.getOpacity(this.fillSelectionData[idx]);
+            group.visible = visible;
 
-        this.updateFillNodes();
-        this.updateStrokeNodes();
-        this.updateMarkerNodes();
-        this.updateLabelNodes();
+            this.updateFillNodes(idx);
+            this.updateStrokeNodes(idx);
+            this.updateMarkerNodes(idx);
+            this.updateLabelNodes(idx);
+        });
     }
 
     private createSelectionData() {
@@ -493,6 +527,8 @@ export class AreaSeries extends CartesianSeries {
 
         yData.forEach((seriesYs, seriesIdx) => {
             const yKey = yKeys[seriesIdx];
+            markerSelectionData[seriesIdx] = [];
+            labelSelectionData[seriesIdx] = [];
 
             const fillSelectionForSeries = fillSelectionData[seriesIdx] || (fillSelectionData[seriesIdx] = { itemId: yKey, points: [] });
             const fillPoints = fillSelectionForSeries.points;
@@ -511,7 +547,7 @@ export class AreaSeries extends CartesianSeries {
                 const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
 
                 if (marker) {
-                    markerSelectionData.push({
+                    markerSelectionData[seriesIdx].push({
                         index: datumIdx,
                         series: this,
                         itemId: yKey,
@@ -534,7 +570,7 @@ export class AreaSeries extends CartesianSeries {
                 }
 
                 if (label) {
-                    labelSelectionData.push({
+                    labelSelectionData[seriesIdx].push({
                         index: datumIdx,
                         itemId: yKey,
                         point,
@@ -589,26 +625,62 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    private updateFillSelection(): void {
-        const updateFills = this.fillSelection.setData(this.fillSelectionData);
+    private updateSeriesGroups() {
+        const { fillSelectionData, seriesGroups } = this;
+        if (fillSelectionData.length === seriesGroups.length) {
+            return;
+        }
+
+        if (fillSelectionData.length < seriesGroups.length) {
+            seriesGroups.splice(fillSelectionData.length)
+                .forEach((group) => this.seriesGroup.removeChild(group.group));
+        }
+
+        while (fillSelectionData.length > seriesGroups.length) {
+            const group = new Group({
+                name: `AreaSeries-series-sub${this.seriesGroupId++}`,
+                layer: true,
+                zIndex: Series.SERIES_LAYER_ZINDEX,
+            });
+            const pickGroup = new Group();
+            this.seriesGroup.appendChild(group);
+            group.appendChild(pickGroup);
+
+            seriesGroups.push({
+                group,
+                pickGroup,
+                fillSelection: Selection.select(pickGroup).selectAllByTag<Path>(AreaSeriesTag.Fill),
+                strokeSelection: Selection.select(pickGroup).selectAllByTag<Path>(AreaSeriesTag.Stroke),
+                labelSelection: Selection.select(group).selectAllByTag<Text>(AreaSeriesTag.Label),
+                markerSelection: Selection.select(group).selectAllByTag<Marker>(AreaSeriesTag.Marker),
+            });
+        }
+    }
+
+    private updateFillSelection(idx: number): void {
+        const seriesGroup = this.seriesGroups[idx];
+        const { fillSelection } = seriesGroup;
+        const updateFills = fillSelection.setData(this.fillSelectionData.slice(idx, idx + 1));
 
         updateFills.exit.remove();
 
         const enterFills = updateFills.enter.append(Path)
             .each(path => {
+                path.tag = AreaSeriesTag.Fill;
                 path.lineJoin = 'round';
                 path.stroke = undefined;
                 path.pointerEvents = PointerEvents.None;
             });
 
-        this.fillSelection = updateFills.merge(enterFills);
+        seriesGroup.fillSelection = updateFills.merge(enterFills);
     }
 
-    private updateFillNodes() {
+    private updateFillNodes(idx: number) {
+        const { fillSelection } = this.seriesGroups[idx];
         const { fills, fillOpacity, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
 
-        this.fillSelection.each((shape, datum, index) => {
-            shape.fill = fills[index % fills.length];
+        fillSelection.each((shape, datum) => {
+            shape.fill = fills[idx % fills.length];
             shape.fillOpacity = fillOpacity;
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
@@ -634,33 +706,37 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    private updateStrokeSelection(): void {
-        const updateStrokes = this.strokeSelection.setData(this.strokeSelectionData);
+    private updateStrokeSelection(idx: number): void {
+        const seriesGroup = this.seriesGroups[idx];
+        const { strokeSelection } = seriesGroup;
+        const updateStrokes = strokeSelection.setData(this.strokeSelectionData.slice(idx, idx + 1));
 
         updateStrokes.exit.remove();
 
         const enterStrokes = updateStrokes.enter.append(Path)
             .each(path => {
+                path.tag = AreaSeriesTag.Stroke;
                 path.fill = undefined;
                 path.lineJoin = path.lineCap = 'round';
                 path.pointerEvents = PointerEvents.None;
             });
 
-        this.strokeSelection = updateStrokes.merge(enterStrokes);
+        seriesGroup.strokeSelection = updateStrokes.merge(enterStrokes);
     }
 
-    private updateStrokeNodes() {
+    private updateStrokeNodes(idx: number) {
         if (!this.data) {
             return;
         }
 
+        const { strokeSelection } = this.seriesGroups[idx];
         const { strokes, strokeOpacity, seriesItemEnabled } = this;
 
         let moveTo = true;
 
-        this.strokeSelection.each((shape, datum, index) => {
+        strokeSelection.each((shape, datum) => {
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.stroke = strokes[index % strokes.length];
+            shape.stroke = strokes[idx % strokes.length];
             shape.strokeWidth = this.getStrokeWidth(this.strokeWidth);
             shape.strokeOpacity = strokeOpacity;
             shape.lineDash = this.lineDash;
@@ -688,27 +764,39 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    private updateMarkerSelection(): void {
-        const MarkerShape = getMarker(this.marker.shape);
-        const data = MarkerShape ? this.markerSelectionData : [];
+    private updateMarkerSelection(idx: number): void {
+        const seriesGroup = this.seriesGroups[idx];
+        const { markerSelection } = seriesGroup;
+        const { highlightMarkerSelection } = this;
 
-        const { markerSelection, highlightMarkerSelection } = this;
-        const update = (selection: typeof markerSelection) => {
-            const updateMarkers = selection.setData(data);
+        const MarkerShape = getMarker(this.marker.shape);
+        const data = MarkerShape ? this.markerSelectionData[idx] : [];
+        const highlightData = idx === 0 && MarkerShape ? 
+            this.markerSelectionData.reduce((r, n) => r.concat(n), []) :
+            [];
+
+        const update = (selection: typeof markerSelection, selectionDdata: typeof data) => {
+            const updateMarkers = selection.setData(selectionDdata);
             updateMarkers.exit.remove();
-            const enterMarkers = updateMarkers.enter.append(MarkerShape);
+            const enterMarkers = updateMarkers.enter.append(MarkerShape)
+                .each((marker) => {
+                    marker.tag = AreaSeriesTag.Marker;
+                });
             return updateMarkers.merge(enterMarkers);
         }
 
-        this.markerSelection = update(markerSelection);
-        this.highlightMarkerSelection = update(highlightMarkerSelection);
+        seriesGroup.markerSelection = update(markerSelection, data);
+        if (idx === 0) {
+            this.highlightMarkerSelection = update(highlightMarkerSelection, highlightData);
+        }
     }
 
-    private updateMarkerNodes(): void {
+    private updateMarkerNodes(idx: number): void {
         if (!this.chart) {
             return;
         }
 
+        const { markerSelection } = this.seriesGroups[idx];
         const {
             xKey, marker, seriesItemEnabled,
             yKeys,
@@ -766,7 +854,7 @@ export class AreaSeries extends CartesianSeries {
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
         };
 
-        this.markerSelection.each((node, datum) => updateMarkerFn(node, datum, false));
+        markerSelection.each((node, datum) => updateMarkerFn(node, datum, false));
         this.highlightMarkerSelection.each((node, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
 
@@ -777,20 +865,27 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    private updateLabelSelection(): void {
-        const updateLabels = this.labelSelection.setData(this.labelSelectionData);
+    private updateLabelSelection(idx: number): void {
+        const seriesGroup = this.seriesGroups[idx];
+        const { labelSelection } = seriesGroup;
+
+        const updateLabels = labelSelection.setData(this.labelSelectionData[idx]);
         updateLabels.exit.remove();
-        const enterLabels = updateLabels.enter.append(Text);
-        this.labelSelection = updateLabels.merge(enterLabels);
+        const enterLabels = updateLabels.enter.append(Text)
+            .each(text => {
+                text.tag = AreaSeriesTag.Label;
+            });
+        seriesGroup.labelSelection = updateLabels.merge(enterLabels);
     }
 
-    private updateLabelNodes(): void {
+    private updateLabelNodes(idx: number): void {
         if (!this.chart) {
             return;
         }
 
+        const { labelSelection } = this.seriesGroups[idx];
         const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
-        this.labelSelection.each((text, datum) => {
+        labelSelection.each((text, datum) => {
             const { point, label } = datum;
 
             if (label && labelEnabled) {
@@ -812,7 +907,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     getNodeData(): readonly MarkerSelectionDatum[] {
-        return this.markerSelectionData;
+        return this.markerSelectionData.reduce((r, n) => r.concat(n), []);
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {

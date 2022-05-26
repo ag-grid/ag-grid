@@ -2327,6 +2327,15 @@
     "meta": { "isTypeAlias": true },
     "type": "{ xDatum: any; seriesDatum: any; }"
   },
+  "AreaSeriesTag": {
+    "meta": { "isEnum": true },
+    "type": ["Fill", "Stroke", "Marker", "Label"],
+    "docs": [null, null, null, null]
+  },
+  "AreaSeriesGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ group: Group; fillSelection: Selection<Path, Group, FillSelectionDatum, any>; strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any>; markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>; labelSelection: Selection<Text, Group, LabelSelectionDatum, any>; }"
+  },
   "BarSeriesNodeClickEvent": {
     "meta": {},
     "type": {
@@ -2777,6 +2786,7 @@
     "meta": {},
     "type": {
       "stats": "boolean",
+      "dirtyTree": "boolean",
       "renderBoundingBoxes": "boolean",
       "consoleLog": "boolean",
       "onlyLayers": "string[]"

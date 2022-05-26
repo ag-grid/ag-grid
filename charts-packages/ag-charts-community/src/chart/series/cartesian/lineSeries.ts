@@ -300,23 +300,18 @@ export class LineSeries extends CartesianSeries {
         const nodeData = marker.shape ? this.nodeData : [];
         const MarkerShape = getMarker(marker.shape);
 
-        const updateSelection = this.nodeSelection.setData(nodeData);
-        updateSelection.exit.remove();
+        const { nodeSelection, highlightSelection } = this;
+        const update = (selection: typeof nodeSelection) => {
+            const updateSelection = selection.setData(nodeData);
+            updateSelection.exit.remove();
+            const enterSelection = updateSelection.enter.append(Group);
+            enterSelection.append(MarkerShape);
+            enterSelection.append(Text);
+            return updateSelection.merge(enterSelection);
+        }
 
-        const enterSelection = updateSelection.enter.append(Group);
-        enterSelection.append(MarkerShape);
-        enterSelection.append(Text);
-
-        this.nodeSelection = updateSelection.merge(enterSelection);
-
-        const updateHighlight = this.highlightSelection.setData(nodeData);
-        updateHighlight.exit.remove();
-
-        const enterHighlight = updateHighlight.enter.append(Group);
-        enterHighlight.append(MarkerShape);
-        enterHighlight.append(Text);
-
-        this.highlightSelection = updateHighlight.merge(enterHighlight);
+        this.nodeSelection = update(nodeSelection);
+        this.highlightSelection = update(highlightSelection);
     }
 
     private updateNodes() {
