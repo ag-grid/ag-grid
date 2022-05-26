@@ -911,6 +911,10 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** @deprecated - Use `processPivotResultColGroupDef` instead
      */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column definition.     */
+    @Input() public processPivotResultColDef: ((colDef: ColDef) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
+    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     /** @deprecated - Use initialGroupOrderComparator instead

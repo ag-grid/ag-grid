@@ -72,7 +72,7 @@ export class PropertyKeys {
         'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass',
         'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'groupRowAggNodes', 'getGroupRowAgg', 'getRowNodeId', 'isFullWidthCell', 'isFullWidthRow', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
-        'processSecondaryColDef', 'processSecondaryColGroupDef',
+        'processSecondaryColDef', 'processSecondaryColGroupDef', 'processPivotResultColDef', 'processPivotResultColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader',
         'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup',
         'getChildCount', 'getDataPath', 'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent',
