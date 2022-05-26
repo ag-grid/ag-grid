@@ -830,14 +830,12 @@ export class RowRenderer extends BeanStub {
     }
 
     private getRowsThatShouldStick(): RowNode[] {
-        const height = this.getStickyTopHeight(false);
+        const height = this.getStickyTopHeight();
         const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + height);
-        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
-
-        if (rowNode?.sticky) { return []; }
 
         const ret: RowNode[] = [];
 
+        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
         while (rowNode && rowNode.level >= 0) {
             if (rowNode.group && rowNode.expanded) {
                 ret.unshift(rowNode);
@@ -848,29 +846,63 @@ export class RowRenderer extends BeanStub {
         return ret;
     }
 
-    private updateStickySlidingRows(stickyRows: RowNode[]): void {
+    private updateStickySlidingRows(stickyRows: RowNode[]): RowNode[] {
         stickyRows.forEach(node => node.stickySliding = false);
 
         const currentRowNodes = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode());
-        const nodesRemovedFromSticky = currentRowNodes.filter(node => stickyRows.indexOf(node) === -1);
+        const addedNodes = stickyRows.filter(node => currentRowNodes.indexOf(node) === -1);
+        const removedNodes = currentRowNodes.filter(node => stickyRows.indexOf(node) === -1);
 
-        if (nodesRemovedFromSticky.length) {
-            const lastNode = last(nodesRemovedFromSticky);
-            const bottomOfLastNode = lastNode.stickyRowTop + lastNode.rowHeight!;
-            const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + bottomOfLastNode);
-            const nextNode = this.paginationProxy.getRow(firstVisibleIndex);
+        this.updateStickySlidingRowsRemoved(removedNodes);
+        this.updateStickySlidingRowsAdded(addedNodes);
 
-            if (lastNode === nextNode) { return; }
+        stickyRows.push(
+            ...removedNodes.filter(node => node.stickySliding)
+        );
 
-            nodesRemovedFromSticky.forEach(node => {
-                node.stickyRowTop = node.stickyRowTop + (nextNode!.rowTop! - bottomOfLastNode - this.firstVisibleVPixel);
-                if (Math.abs(node.stickyRowTop) < node.rowHeight!) { node.stickySliding = true; }
+        stickyRows.sort((a, b) => a.rowIndex! - b.rowIndex!);
+
+        let isSliding = false;
+
+        return stickyRows.filter(node => {
+            if (isSliding && addedNodes.indexOf(node) != -1) { return false; }
+            if (node.stickySliding) { isSliding = true; }
+            return true;
+        });
+    }
+
+    private updateStickySlidingRowsRemoved(stickyRows: RowNode[]): void {
+        const lastNode = last(stickyRows);
+        if (!lastNode) { return; }
+
+        const bottomOfLastNode = lastNode.stickyRowTop + lastNode.rowHeight!;
+        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + bottomOfLastNode);
+        const nextNode = this.paginationProxy.getRow(firstVisibleIndex);
+        const diff = (nextNode!.rowTop! - bottomOfLastNode - this.firstVisibleVPixel);
+
+        if (lastNode === nextNode) { return; }
+
+        stickyRows.forEach(node => {
+            const newTop = node.stickyRowTop + diff;
+            const removeLimit = stickyRows.length * node.rowHeight!;
+            if (newTop <= node.initialStickyRowTop) {
+                if (node.initialStickyRowTop - newTop > removeLimit) {
+                    node.stickySliding = false;
+                    return;
+                }
                 const ctrl = this.stickyRowCtrls.find(ctrl => ctrl.getRowNode() === node);
-                ctrl?.setRowTop(node.stickyRowTop);
-            });
-        }
+                node.stickySliding = true;
+                node.stickyRowTop = newTop;
+                ctrl?.setRowTop(newTop);
+            } else {
+                console.log('diff larger than height');
+            }
+        });
+    }
 
-        stickyRows.unshift(...nodesRemovedFromSticky.filter(node => node.stickySliding));
+    private updateStickySlidingRowsAdded(stickyRows: RowNode[]): void {
+        const lastNode = last(stickyRows);
+        if (!lastNode) { return; }
     }
 
     private checkStickyRows(): void {
@@ -883,8 +915,7 @@ export class RowRenderer extends BeanStub {
             doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
         }
 
-        const stickyRows = this.getRowsThatShouldStick();
-        this.updateStickySlidingRows(stickyRows);
+        const stickyRows = this.updateStickySlidingRows(this.getRowsThatShouldStick());
 
         const oldHash = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode().__objectId).join('-');
         const newHash = stickyRows.map(row => row.__objectId).join('-');
@@ -897,10 +928,13 @@ export class RowRenderer extends BeanStub {
         const newCtrls: RowCtrl[] = [];
         let nextRowTop = 0;
         stickyRows.forEach(rowNode => {
+            rowNode.sticky = true;
             if (!rowNode.stickySliding) {
-                rowNode.sticky = true;
                 rowNode.stickyRowTop = nextRowTop;
+                rowNode.initialStickyRowTop = nextRowTop;
                 nextRowTop += rowNode.rowHeight!;
+            } else {
+                nextRowTop += rowNode.rowHeight! - (rowNode.initialStickyRowTop - rowNode.stickyRowTop);
             }
 
             const rowNodeId = rowNode.id!;

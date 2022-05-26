@@ -142,6 +142,8 @@ export class RowNode implements IEventEmitter {
     /** If row is pinned, then pinnedRowTop is used rather than rowTop */
     public stickyRowTop: number;
 
+    public initialStickyRowTop: number;
+
     public stickySliding: boolean;
 
     /** If using quick filter, stores a string representation of the row for searching against. */
@@ -618,7 +620,7 @@ export class RowNode implements IEventEmitter {
         this.onRowHeightChangedDebounced();
     }
 
-    /** This method is debounced. It is used for row auto-height. If we don't debounce, 
+    /** This method is debounced. It is used for row auto-height. If we don't debounce,
      * then the Row Models will end up recalculating each row position
      * for each row height change and result in the Row Renderer laying out rows.
      * This is particularly bad if using print layout, and showing eg 1,000 rows,
