@@ -135,6 +135,7 @@ export class AreaSeries extends CartesianSeries {
     private fillSelectionData: FillSelectionDatum[] = [];
     private strokeSelectionData: StrokeSelectionDatum[] = [];
     private markerSelectionData: MarkerSelectionDatum[][] = [];
+    private allMarkerSelectionData: MarkerSelectionDatum[] = [];
     private labelSelectionData: LabelSelectionDatum[][] = [];
     private yDomain: any[] = [];
     private xDomain: any[] = [];
@@ -423,27 +424,31 @@ export class AreaSeries extends CartesianSeries {
 
         this.createSelectionData();
         this.updateSeriesGroups();
-        this.seriesGroups.forEach(((_, idx) => {
+
+        this.highlightMarkerSelection = this.updateMarkerSelection(this.highlightMarkerSelection, this.allMarkerSelectionData);
+        this.seriesGroups.forEach(((seriesGroup, idx) => {
+            const { markerSelection } = seriesGroup;
             this.updateFillSelection(idx);
             this.updateStrokeSelection(idx);
-            this.updateMarkerSelection(idx);
+            seriesGroup.markerSelection = this.updateMarkerSelection(markerSelection, this.markerSelectionData[idx]);
             this.updateLabelSelection(idx);
         }))
     }
 
     updateNodes() {
-        const visible = this.visible && this.xData.length > 0 && this.yData.length > 0;;
+        const visible = this.visible && this.xData.length > 0 && this.yData.length > 0;
         this.group.visible = visible;
         this.seriesGroup.visible = visible;
         this.highlightGroup.visible = visible && this.chart?.highlightedDatum?.series === this;
 
-        this.seriesGroups.forEach(({ group }, idx) => {
+        this.updateMarkerNodes(this.highlightMarkerSelection, true);
+        this.seriesGroups.forEach(({ markerSelection, group }, idx) => {
             group.opacity = this.getOpacity(this.fillSelectionData[idx]);
             group.visible = visible;
 
             this.updateFillNodes(idx);
             this.updateStrokeNodes(idx);
-            this.updateMarkerNodes(idx);
+            this.updateMarkerNodes(markerSelection, false);
             this.updateLabelNodes(idx);
         });
     }
@@ -457,6 +462,7 @@ export class AreaSeries extends CartesianSeries {
             yData,
             labelSelectionData,
             markerSelectionData,
+            allMarkerSelectionData,
             strokeSelectionData,
             fillSelectionData,
         } = this;
@@ -474,6 +480,7 @@ export class AreaSeries extends CartesianSeries {
         const xOffset = (xScale.bandwidth || 0) / 2;
 
         markerSelectionData.length = 0;
+        allMarkerSelectionData.length = 0;
         labelSelectionData.length = 0;
         strokeSelectionData.length = 0;
         fillSelectionData.length = 0;
@@ -623,6 +630,8 @@ export class AreaSeries extends CartesianSeries {
 
             fillPoints.push(...fillPhantomPoints.slice().reverse());
         });
+
+        this.allMarkerSelectionData = markerSelectionData.reduce((r, n) => r.concat(n), []);
     }
 
     private updateSeriesGroups() {
@@ -764,39 +773,30 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    private updateMarkerSelection(idx: number): void {
-        const seriesGroup = this.seriesGroups[idx];
-        const { markerSelection } = seriesGroup;
-        const { highlightMarkerSelection } = this;
-
+    private updateMarkerSelection(
+        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>,
+        data: MarkerSelectionDatum[],
+    ): Selection<Marker, Group, MarkerSelectionDatum, any> {
         const MarkerShape = getMarker(this.marker.shape);
-        const data = MarkerShape ? this.markerSelectionData[idx] : [];
-        const highlightData = idx === 0 && MarkerShape ? 
-            this.markerSelectionData.reduce((r, n) => r.concat(n), []) :
-            [];
+        data = MarkerShape ? data : [];
 
-        const update = (selection: typeof markerSelection, selectionDdata: typeof data) => {
-            const updateMarkers = selection.setData(selectionDdata);
-            updateMarkers.exit.remove();
-            const enterMarkers = updateMarkers.enter.append(MarkerShape)
-                .each((marker) => {
-                    marker.tag = AreaSeriesTag.Marker;
-                });
-            return updateMarkers.merge(enterMarkers);
-        }
-
-        seriesGroup.markerSelection = update(markerSelection, data);
-        if (idx === 0) {
-            this.highlightMarkerSelection = update(highlightMarkerSelection, highlightData);
-        }
+        const updateMarkers = markerSelection.setData(data);
+        updateMarkers.exit.remove();
+        const enterMarkers = updateMarkers.enter.append(MarkerShape)
+            .each((marker) => {
+                marker.tag = AreaSeriesTag.Marker;
+            });
+        return updateMarkers.merge(enterMarkers);
     }
 
-    private updateMarkerNodes(idx: number): void {
+    private updateMarkerNodes(
+        markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>,
+        highlightSelection: boolean,
+    ): void {
         if (!this.chart) {
             return;
         }
 
-        const { markerSelection } = this.seriesGroups[idx];
         const {
             xKey, marker, seriesItemEnabled,
             yKeys,
@@ -818,7 +818,13 @@ export class AreaSeries extends CartesianSeries {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
-        const updateMarkerFn = (node: Marker, datum: MarkerSelectionDatum, isDatumHighlighted: boolean) => {
+        markerSelection.each((node, datum) => {
+            const isDatumHighlighted = datum === highlightedDatum;
+            node.visible = highlightSelection && isDatumHighlighted;
+            if (!node.visible) {
+                return;
+            }
+
             const yKeyIndex = yKeys.indexOf(datum.yKey);
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || fills[yKeyIndex % fills.length];
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || strokes[yKeyIndex % fills.length];
@@ -852,16 +858,6 @@ export class AreaSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
-        };
-
-        markerSelection.each((node, datum) => updateMarkerFn(node, datum, false));
-        this.highlightMarkerSelection.each((node, datum) => {
-            const isDatumHighlighted = datum === highlightedDatum;
-
-            node.visible = isDatumHighlighted;
-            if (node.visible) {
-                updateMarkerFn(node, datum, isDatumHighlighted);
-            }
         });
     }
 
@@ -907,7 +903,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     getNodeData(): readonly MarkerSelectionDatum[] {
-        return this.markerSelectionData.reduce((r, n) => r.concat(n), []);
+        return this.allMarkerSelectionData;
     }
 
     fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
