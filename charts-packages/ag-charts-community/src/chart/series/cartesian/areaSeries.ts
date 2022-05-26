@@ -105,8 +105,8 @@ enum AreaSeriesTag {
 type AreaSeriesGroup = {
     group: Group;
     pickGroup: Group;
-    fillSelection: Selection<Path, Group, FillSelectionDatum, any>;
-    strokeSelection: Selection<Path, Group, StrokeSelectionDatum, any>;
+    fill: Path;
+    stroke: Path;
     markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>;
     labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
 }
@@ -651,15 +651,24 @@ export class AreaSeries extends CartesianSeries {
                 layer: true,
                 zIndex: Series.SERIES_LAYER_ZINDEX,
             });
+
             const pickGroup = new Group();
             this.seriesGroup.appendChild(group);
             group.appendChild(pickGroup);
 
+            const fill = new Path();
+            fill.tag = AreaSeriesTag.Fill;
+            pickGroup.appendChild(fill);
+
+            const stroke = new Path();
+            stroke.tag = AreaSeriesTag.Stroke;
+            pickGroup.appendChild(stroke);
+
             seriesGroups.push({
                 group,
                 pickGroup,
-                fillSelection: Selection.select(pickGroup).selectAllByTag<Path>(AreaSeriesTag.Fill),
-                strokeSelection: Selection.select(pickGroup).selectAllByTag<Path>(AreaSeriesTag.Stroke),
+                fill,
+                stroke,
                 labelSelection: Selection.select(group).selectAllByTag<Text>(AreaSeriesTag.Label),
                 markerSelection: Selection.select(group).selectAllByTag<Marker>(AreaSeriesTag.Marker),
             });
@@ -668,69 +677,53 @@ export class AreaSeries extends CartesianSeries {
 
     private updateFillSelection(idx: number): void {
         const seriesGroup = this.seriesGroups[idx];
-        const { fillSelection } = seriesGroup;
-        const updateFills = fillSelection.setData(this.fillSelectionData.slice(idx, idx + 1));
+        const { fill } = seriesGroup;
 
-        updateFills.exit.remove();
-
-        const enterFills = updateFills.enter.append(Path)
-            .each(path => {
-                path.tag = AreaSeriesTag.Fill;
-                path.lineJoin = 'round';
-                path.stroke = undefined;
-                path.pointerEvents = PointerEvents.None;
-            });
-
-        seriesGroup.fillSelection = updateFills.merge(enterFills);
+        fill.datum = this.fillSelectionData[idx];
+        fill.tag = AreaSeriesTag.Fill;
+        fill.lineJoin = 'round';
+        fill.stroke = undefined;
+        fill.pointerEvents = PointerEvents.None;
     }
 
     private updateFillNodes(idx: number) {
-        const { fillSelection } = this.seriesGroups[idx];
+        const { fill, fill: { datum } } = this.seriesGroups[idx];
         const { fills, fillOpacity, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
 
-        fillSelection.each((shape, datum) => {
-            shape.fill = fills[idx % fills.length];
-            shape.fillOpacity = fillOpacity;
-            shape.strokeOpacity = strokeOpacity;
-            shape.strokeWidth = strokeWidth;
-            shape.lineDash = this.lineDash;
-            shape.lineDashOffset = this.lineDashOffset;
-            shape.fillShadow = shadow;
-            shape.visible = !!seriesItemEnabled.get(datum.itemId);
+        fill.fill = fills[idx % fills.length];
+        fill.fillOpacity = fillOpacity;
+        fill.strokeOpacity = strokeOpacity;
+        fill.strokeWidth = strokeWidth;
+        fill.lineDash = this.lineDash;
+        fill.lineDashOffset = this.lineDashOffset;
+        fill.fillShadow = shadow;
+        fill.visible = !!seriesItemEnabled.get(datum.itemId);
 
-            const { points } = datum;
+        const { points } = datum as FillSelectionDatum;
 
-            const path = shape.path;
-            path.clear();
+        const path = fill.path;
+        path.clear();
 
-            points.forEach(({ x, y }, i) => {
-                if (i > 0) {
-                    path.lineTo(x, y);
-                } else {
-                    path.moveTo(x, y);
-                }
-            });
-
-            path.closePath();
+        points.forEach(({ x, y }, i) => {
+            if (i > 0) {
+                path.lineTo(x, y);
+            } else {
+                path.moveTo(x, y);
+            }
         });
+
+        path.closePath();
     }
 
     private updateStrokeSelection(idx: number): void {
         const seriesGroup = this.seriesGroups[idx];
-        const { strokeSelection } = seriesGroup;
-        const updateStrokes = strokeSelection.setData(this.strokeSelectionData.slice(idx, idx + 1));
+        const { stroke } = seriesGroup;
 
-        updateStrokes.exit.remove();
-
-        const enterStrokes = updateStrokes.enter.append(Path)
-            .each(path => {
-                path.tag = AreaSeriesTag.Stroke;
-                path.fill = undefined;
-                path.lineJoin = path.lineCap = 'round';
-                path.pointerEvents = PointerEvents.None;
-            });
-
-        seriesGroup.strokeSelection = updateStrokes.merge(enterStrokes);
+        stroke.datum = this.strokeSelectionData[idx];
+        stroke.tag = AreaSeriesTag.Stroke;
+        stroke.fill = undefined;
+        stroke.lineJoin = stroke.lineCap = 'round';
+        stroke.pointerEvents = PointerEvents.None;
     }
 
     private updateStrokeNodes(idx: number) {
@@ -738,37 +731,31 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { strokeSelection } = this.seriesGroups[idx];
+        const { stroke, stroke: { datum } } = this.seriesGroups[idx];
         const { strokes, strokeOpacity, seriesItemEnabled } = this;
 
         let moveTo = true;
 
-        strokeSelection.each((shape, datum) => {
-            shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.stroke = strokes[idx % strokes.length];
-            shape.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-            shape.strokeOpacity = strokeOpacity;
-            shape.lineDash = this.lineDash;
-            shape.lineDashOffset = this.lineDashOffset;
+        stroke.visible = !!seriesItemEnabled.get(datum.itemId);
+        stroke.stroke = strokes[idx % strokes.length];
+        stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+        stroke.strokeOpacity = strokeOpacity;
+        stroke.lineDash = this.lineDash;
+        stroke.lineDashOffset = this.lineDashOffset;
 
-            const { points, yValues } = datum;
+        const { points, yValues } = datum as StrokeSelectionDatum;
 
-            const path = shape.path
-            path.clear();
+        const path = stroke.path
+        path.clear();
 
-            for (let i = 0; i < points.length; i++) {
-                const { x, y } = points[i];
-
-                if (yValues[i] === undefined) {
-                    moveTo = true;
-                } else {
-                    if (moveTo) {
-                        path.moveTo(x, y);
-                        moveTo = false;
-                    } else {
-                        path.lineTo(x, y);
-                    }
-                }
+        points.forEach(({x, y}, i) => {
+            if (yValues[i] === undefined) {
+                moveTo = true;
+            } else if (moveTo) {
+                path.moveTo(x, y);
+                moveTo = false;
+            } else {
+                path.lineTo(x, y);
             }
         });
     }
