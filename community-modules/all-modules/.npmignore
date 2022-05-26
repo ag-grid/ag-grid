@@ -15,5 +15,5 @@ webpack-no-styles.js
 webpack-with-styles.js
 webpackUpdater.js
 generate-code-reference-files.js
-esm-main.js
+esm-main.auto.js
 *.map

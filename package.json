@@ -69,9 +69,9 @@
     "glob": "^7.1.6",
     "inquirer": "^7.0.0",
     "lerna": "^3.18.3",
-    "rollup": "^1.21.2",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0",
+    "rollup": "^2.74.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
     "terser": "^4.3.9",
     "typescript": "~3.7.7",
     "walk": "^2.3.14"

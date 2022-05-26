@@ -96,7 +96,6 @@ export { GridHeaderCtrl, IGridHeaderComp } from "ag-grid-community";
 export { HeaderRowComp, HeaderRowType } from "ag-grid-community";
 export { HeaderRowCtrl, IHeaderRowComp } from "ag-grid-community";
 export { HeaderCellCtrl, IHeaderCellComp } from "ag-grid-community";
-export { SortIndicatorComp } from "ag-grid-community";
 export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "ag-grid-community";
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "ag-grid-community";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "ag-grid-community";
@@ -250,5 +249,14 @@ export { IAggregationStage } from "ag-grid-community";
 export { Module } from "ag-grid-community";
 export { ModuleNames } from "ag-grid-community";
 export { ModuleRegistry } from "ag-grid-community";
+export { BaseCreator } from "ag-grid-community";
+export { BaseGridSerializingSession } from "ag-grid-community";
+export { CsvCreator } from "ag-grid-community";
+export { CsvExportModule } from "ag-grid-community";
+export { Downloader } from "ag-grid-community";
+export { GridSerializer, RowType } from "ag-grid-community";
+export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from "ag-grid-community";
+export { XmlFactory } from "ag-grid-community";
+export { ZipContainer } from "ag-grid-community";
 
 /* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */
