@@ -42,10 +42,6 @@ export class Line extends Shape {
         return false;
     }
 
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
-
     render(renderCtx: RenderContext) {
         let { ctx, forceRender, stats } = renderCtx;
 

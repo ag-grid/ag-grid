@@ -131,10 +131,6 @@ export class Rect extends Path {
         return bbox.containsPoint(point.x, point.y);
     }
 
-    isPointInStroke(_x: number, _y: number): boolean {
-        return false;
-    }
-
     protected fillStroke(ctx: CanvasRenderingContext2D) {
         if (!this.scene) {
             return;

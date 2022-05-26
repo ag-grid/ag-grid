@@ -446,7 +446,7 @@ export class HistogramSeries extends CartesianSeries {
             const isDatumHighlighted = datum === highlightedDatum;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(datum.strokeWidth, datum);
+                : this.getStrokeWidth(datum.strokeWidth);
 
             rect.x = datum.x;
             rect.y = datum.y;
