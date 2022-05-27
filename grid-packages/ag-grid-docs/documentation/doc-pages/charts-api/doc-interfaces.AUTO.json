@@ -3336,6 +3336,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },
+  "BarSeriesGroup": {},
   "CartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },

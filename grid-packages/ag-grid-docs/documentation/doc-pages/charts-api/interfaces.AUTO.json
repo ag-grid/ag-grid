@@ -2408,6 +2408,10 @@
     "meta": {},
     "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
   },
+  "BarSeriesGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ group: Group; pickGroup: Group; rectSelection: Selection<Rect, Group, BarNodeDatum, any>; labelSelection: Selection<Text, Group, BarNodeDatum, any>; }"
+  },
   "CartesianSeriesMarkerFormat": {
     "meta": {},
     "type": {

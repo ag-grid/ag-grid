@@ -13,7 +13,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import { TooltipRendererResult, toTooltipHtml, ChartUpdateType } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { TypedEvent } from "../../../util/observable";
@@ -21,6 +21,7 @@ import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
+import { Node } from '../../../scene/node';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -110,22 +111,25 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
     return array.length > 0 && Array.isArray(array[0]);
 }
 
+type BarSeriesGroup = {
+    group: Group;
+    pickGroup: Group;
+    rectSelection: Selection<Rect, Group, BarNodeDatum, any>;
+    labelSelection: Selection<Text, Group, BarNodeDatum, any>;
+}
+
 export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
     static type = 'bar' as const;
 
-    // Need to put bar and label nodes into separate groups, because even though label nodes are
-    // created after the bar nodes, this only guarantees that labels will always be on top of bars
-    // on the first run. If on the next run more bars are added, they might clip the labels
-    // rendered during the previous run.
-    private rectGroup = this.pickGroup.appendChild(new Group);
-    private labelGroup = this.seriesGroup.appendChild(new Group);
+    private seriesGroups: BarSeriesGroup[] = [];
+    private seriesGroupId: number = 0;
 
-    private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
+    private highlightRectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Rect>();
 
-    private nodeData: BarNodeDatum[] = [];
+    private nodeData: BarNodeDatum[][] = [];
+    private allNodeData: BarNodeDatum[] = [];
     private xData: string[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
@@ -327,7 +331,7 @@ export class BarSeries extends CartesianSeries {
     shadow?: DropShadow = undefined;
 
     onHighlightChange() {
-        this.updateRectNodes();
+        this.updateNodes();
     }
 
     protected smallestDataInterval?: { x: number, y: number } = undefined;
@@ -551,7 +555,7 @@ export class BarSeries extends CartesianSeries {
 
         const grouped = true;
         const barWidth = grouped ? groupScale.bandwidth : xBandWidth!;
-        const nodeData: BarNodeDatum[] = [];
+        const nodeData: BarNodeDatum[][] = [];
 
         xData.forEach((group, groupIndex) => {
             const seriesDatum = data[groupIndex];
@@ -619,7 +623,8 @@ export class BarSeries extends CartesianSeries {
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                    nodeData.push({
+                    nodeData[levelIndex] = nodeData[levelIndex] ?? [];
+                    nodeData[levelIndex].push({
                         index: groupIndex,
                         series: this,
                         itemId: yKey,
@@ -656,7 +661,26 @@ export class BarSeries extends CartesianSeries {
             }
         });
 
-        return this.nodeData = nodeData;
+        this.nodeData = nodeData;
+        this.allNodeData = this.nodeData.reduce((r, n) => r.concat(n), []);
+
+        return this.allNodeData;
+    }
+
+    pickNode(x: number, y: number): Node | undefined {
+        let result = super.pickNode(x, y);
+
+        if (!result) {
+            for (const { pickGroup } of this.seriesGroups ) {
+                result = pickGroup.pickNode(x, y);
+
+                if (result) {
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     update(): void {
@@ -671,27 +695,80 @@ export class BarSeries extends CartesianSeries {
         this.nodeDataRefresh = false;
 
         this.createNodeData();
-        this.updateRectSelection();
-        this.updateLabelSelection();
+        this.updateSeriesGroups();
+
+        this.highlightRectSelection = this.updateRectSelection(this.highlightRectSelection, this.allNodeData);
+        this.seriesGroups.forEach((groupSeries, idx) => {
+            const { labelSelection, rectSelection } = groupSeries;
+            groupSeries.rectSelection = this.updateRectSelection(rectSelection, this.nodeData[idx]);
+            groupSeries.labelSelection = this.updateLabelSelection(labelSelection, this.nodeData[idx]);
+        });
+    }
+
+    private updateSeriesGroups() {
+        const { nodeData, seriesGroups } = this;
+        if (nodeData.length === seriesGroups.length) {
+            return;
+        }
+
+        if (nodeData.length < seriesGroups.length) {
+            seriesGroups.splice(nodeData.length)
+                .forEach((group) => this.seriesGroup.removeChild(group.group));
+        }
+
+        while (nodeData.length > seriesGroups.length) {
+            const group = new Group({
+                name: `BarSeries-series-sub${this.seriesGroupId++}`,
+                layer: true,
+                zIndex: Series.SERIES_LAYER_ZINDEX,
+            });
+            const pickGroup = new Group();
+            this.seriesGroup.appendChild(group);
+            group.appendChild(pickGroup);
+
+            seriesGroups.push({
+                group,
+                pickGroup,
+                labelSelection: Selection.select(group).selectAllByTag<Text>(BarSeriesNodeTag.Label),
+                rectSelection: Selection.select(pickGroup).selectAllByTag<Rect>(BarSeriesNodeTag.Bar),
+            });
+        }
     }
 
     private updateNodes() {
-        this.group.visible = this.visible;
-        this.updateRectNodes();
-        this.updateLabelNodes();
-    }
+        const visible = this.visible;
+        this.group.visible = visible;
+        this.seriesGroup.visible = visible;
+        this.highlightGroup.visible = visible && this.chart?.highlightedDatum?.series === this;
 
-    private updateRectSelection(): void {
-        const updateRects = this.rectSelection.setData(this.nodeData);
-        updateRects.exit.remove();
-        const enterRects = updateRects.enter.append(Rect).each(rect => {
-            rect.tag = BarSeriesNodeTag.Bar;
-            rect.crisp = true;
+        this.updateRectNodes(this.highlightRectSelection, true);
+        this.seriesGroups.forEach(({ group, labelSelection, rectSelection }, idx) => {
+            group.opacity = this.getOpacity(rectSelection.data[0]);
+            group.visible = visible;
+
+            this.updateRectNodes(rectSelection, false);
+            this.updateLabelNodes(labelSelection);
         });
-        this.rectSelection = updateRects.merge(enterRects);
     }
 
-    private updateRectNodes(): void {
+    private updateRectSelection(
+        rectSelection: Selection<Rect, Group, BarNodeDatum, any>,
+        nodeData: BarNodeDatum[],
+    ): Selection<Rect, Group, BarNodeDatum, any> {
+        const updateRects = rectSelection.setData(nodeData);
+        updateRects.exit.remove();
+        const enterRects = updateRects.enter.append(Rect)
+            .each(rect => {
+                rect.tag = BarSeriesNodeTag.Bar;
+                rect.crisp = true;
+            });
+        return updateRects.merge(enterRects);
+    }
+
+    private updateRectNodes(
+        rectSelection: Selection<Rect, Group, BarNodeDatum, any>,
+        highlightSelection: boolean,
+    ): void {
         if (!this.chart) {
             return;
         }
@@ -712,11 +789,16 @@ export class BarSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((rect, datum, index) => {
+        rectSelection.each((rect, datum) => {
+            const isDatumHighlighted = highlightSelection && datum === highlightedDatum;
+            rect.visible = !highlightSelection || isDatumHighlighted;
+            if (!rect.visible) {
+                return;
+            }
+
             let colorIndex = 0;
             let i = 0;
-            for (let j = 0; j < yKeys.length; j++) {
-                const stack = yKeys[j];
+            for (const stack of yKeys) {
                 i = stack.indexOf(datum.yKey);
                 if (i >= 0) {
                     colorIndex += i;
@@ -725,12 +807,11 @@ export class BarSeries extends CartesianSeries {
                 colorIndex += stack.length;
             }
 
-            const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[colorIndex % fills.length];
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[colorIndex % fills.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(this.strokeWidth);
+                : this.getStrokeWidth(this.strokeWidth, datum);
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
@@ -758,13 +839,14 @@ export class BarSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
-            rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
-            rect.opacity = this.getOpacity();
         });
     }
 
-    private updateLabelSelection(): void {
-        const updateLabels = this.labelSelection.setData(this.nodeData);
+    private updateLabelSelection(
+        labelSelection: Selection<Text, Group, BarNodeDatum, any>,
+        nodeData: BarNodeDatum[],
+    ): Selection<Text, Group, BarNodeDatum, any> {
+        const updateLabels = labelSelection.setData(nodeData);
 
         updateLabels.exit.remove();
 
@@ -773,10 +855,12 @@ export class BarSeries extends CartesianSeries {
             text.pointerEvents = PointerEvents.None;
         });
 
-        this.labelSelection = updateLabels.merge(enterLabels);
+        return updateLabels.merge(enterLabels);
     }
 
-    private updateLabelNodes(): void {
+    private updateLabelNodes(
+        labelSelection: Selection<Text, Group, BarNodeDatum, any>,
+    ): void {
         if (!this.chart) {
             return;
         }
@@ -785,7 +869,7 @@ export class BarSeries extends CartesianSeries {
             label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color }
         } = this;
 
-        this.labelSelection.each((text, datum, index) => {
+        labelSelection.each((text, datum) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -800,7 +884,6 @@ export class BarSeries extends CartesianSeries {
                 text.y = label.y;
                 text.fill = color;
                 text.visible = true;
-                text.opacity = this.getOpacity();
             } else {
                 text.visible = false;
             }
