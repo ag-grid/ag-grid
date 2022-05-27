@@ -334,13 +334,16 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
     }
 
+    // fixme - don't think we need this
     private onDisplayedRowsChanged(): void {
-        this.setStickyTopHeight();
+        // this.setStickyTopHeight();
     }
 
-    private setStickyTopHeight(): void {
-        const height = this.rowRenderer.getStickyTopHeight();
-
+    public setStickyTopHeight(height?: number): void {
+        if (height==null) {
+            height = this.rowRenderer.getStickyTopHeight();
+        }
+        console.log('setting sticky top height ' + height);
         this.comp.setStickyTopHeight(height);
     }
 

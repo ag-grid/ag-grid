@@ -35,6 +35,7 @@ import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
 import { StickyRowFeature } from "./features/stickyRowFeature";
+import { NiallStickyRowFeature } from "./features/niallStickyRowFeature";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -88,7 +89,7 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
-    private stickyRowFeature: StickyRowFeature;
+    private stickyRowFeature: StickyRowFeature | NiallStickyRowFeature;
 
     @PostConstruct
     private postConstruct(): void {
@@ -109,7 +110,8 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(this.beans));
+            this.stickyRowFeature = this.createManagedBean(new NiallStickyRowFeature());
+            // this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(this.beans));
         }
 
         this.registerCellEventListeners();
