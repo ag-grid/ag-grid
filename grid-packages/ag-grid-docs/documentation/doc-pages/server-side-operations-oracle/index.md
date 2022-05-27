@@ -209,7 +209,7 @@ public class ServerSideGetRowsResponse {
 
     private int lastRow;
 
-    private List<String> secondaryColumnFields;
+    private List<String> pivotResultColumnsFields;
 
     ...
 }
@@ -412,14 +412,14 @@ sum (
 ) "Financial_Buy_CURRENTVALUE"
 ```
 
-These new pivot columns (i.e. 'Secondary Columns') are created using the row values contained in the data and have field names such as: `Financial_Buy_CURRENTVALUE`.
+These new pivot result columns are created using the row values contained in the data and have field names such as: `Financial_Buy_CURRENTVALUE`.
 
 
 These will need to be returned to the grid in the `ServerSideGetRowsResponse` in the following property:
 
 
 ```java
-List<String> secondaryColumnFields;
+List<String> pivotResultColumnsFields;
 ```
 
 Our client code will then use these secondary column fields to generate the corresponding `ColDefs` like so:
@@ -427,8 +427,8 @@ Our client code will then use these secondary column fields to generate the corr
 ```js
 // src/main/resources/static/main.js
 
-let createSecondaryColumns = function (fields, valueCols) {
-    let secondaryCols = [];
+let createPivotResultColumns = function (fields, valueCols) {
+    let pivotResultCols = [];
 
     function addColDef(colId, parts, res) {
         if (parts.length === 0) return [];
@@ -464,9 +464,9 @@ let createSecondaryColumns = function (fields, valueCols) {
     }
 
     fields.sort();
-    fields.forEach(field => addColDef(field, field.split('_'), secondaryCols));
+    fields.forEach(field => addColDef(field, field.split('_'), pivotResultCols));
 
-    return secondaryCols;
+    return pivotResultCols;
 };
 ```
 
@@ -474,7 +474,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+gridOptions.columnApi.setPivotResultColumns(pivotResultColDefs);
 ```
 
 ## Infinite Scrolling

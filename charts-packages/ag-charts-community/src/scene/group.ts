@@ -11,6 +11,7 @@ export class Group extends Node {
 
     private layer?: HdpiCanvas;
     private clipPath: Path2D = new Path2D();
+    readonly name?: string;
 
     @SceneChangeDetection({
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
@@ -37,6 +38,7 @@ export class Group extends Node {
         if (this.opts?.zIndex !== undefined) {
             this.zIndex = this.opts.zIndex;
         }
+        this.name = this.opts?.name;
     }
 
     _setScene(scene?: Scene) {
@@ -128,10 +130,11 @@ export class Group extends Node {
         const { dirty, dirtyZIndex, clipPath, layer, children } = this;
         let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
-        const isDirty = dirty >= RedrawType.TRIVIAL || dirtyZIndex || resized;
+        const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
+        const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
 
         if (name && consoleLog) {
-            console.log({ name, group: this, isDirty, forceRender });
+            console.log({ name, group: this, isDirty, isChildDirty, forceRender });
         }
 
         if (layer) {
@@ -140,7 +143,7 @@ export class Group extends Node {
             forceRender = false;
         }
 
-        if (!isDirty && !forceRender) {
+        if (!isDirty && !isChildDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
                 console.log({ name, result: 'skipping', counts, group: this });

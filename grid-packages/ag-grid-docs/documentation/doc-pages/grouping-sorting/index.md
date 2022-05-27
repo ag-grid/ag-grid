@@ -7,7 +7,7 @@ This section provides details on how to configure and customise how row groups a
 
 ## Enabling Group Sorting
 
-When using [Single Group Column](../grouping-single-group-column/) or [Multiple Group Columns](../grouping-multiple-group-columns/), sorting can be enabled through the `sortable` column property as shown below:    
+When using [Single Group Column](../grouping-single-group-column/) or [Multiple Group Columns](../grouping-multiple-group-columns/), sorting can be enabled through the `sortable` column property as shown below:  
 
 <snippet>
 const gridOptions = { 
@@ -48,53 +48,53 @@ const gridOptions = {
 };
 </snippet>
 
-[[note]]
-| When using the [Group Rows Display Type](../grouping-group-rows/) there are no group columns to sort by, however row 
-| groups can still be ordered through the [Default Group Order](../grouping-group-order/#default-group-order). 
-
 The example below demonstrates how sorting is enabled with [Multiple Group Columns](../grouping-multiple-group-columns/). 
 Note that sorting is enabled across all columns, including Row Group Columns, using: `defaultColDef.sortable = true`.
 
 <grid-example title='Enabling Group Sorting' name='enabling-group-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Custom Group Sorting
+## Mixed Group Sorting
 
-By default, any sort `comparator` defined on a column that is used to group rows by will also be used by the Group Column. 
-For example, consider the following column definition:
+By default, columns only apply sorting to their leaf level row data, as such to sort row groups you should apply the sort to the column on which the grouping has been applied.
 
-<api-documentation source='column-properties/properties.json' section='sort' names='["comparator"]'></api-documentation>
+This creates the side effect that groups can be sorted in multiple directions simultaneously, the group column reflects this by displaying the multi-sort icon when it does not match one or more of the provided columns sort direction.
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        {
-|            field: 'month',
-|            rowGroup: true,
-|            comparator: (a, b) => {
-|                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
-|                                'August', 'September','October', 'November', 'December'];
-|
-|                // sorts 'months' in chronological order
-|                return months.indexOf(a) - months.indexOf(b);
-|            },
-|        },
-|    ],
-|}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            rowGroup: true,
+            sortable: true,
+            sort: 'desc',
+        },
+    ],
+    autoGroupColDef: {
+        sortable: true,
+        sort: 'asc',
+        field: 'month',
+        comparator: (a, b) => {
+            const months = [
+                'January', 'February', 'March', 'April',
+                'May', 'June', 'July', 'August',
+                'September', 'October', 'November', 'December',
+            ];
+            // sorts 'months' in chronological order
+            return months.indexOf(a) - months.indexOf(b);
+        },
+    },
+}
 </snippet>
 
-As `rowGroup = true` is defined on this column, the supplied `comparator` will be used to sort the `month` column and 
-the Group Column.
+In this snippet, sorting applied to the auto column will sort the months using the provided comparator, sorting on the year column will sort the years, which are now row groups. As the auto column sort direction differs from the grouped column the auto column will also display the mixed-sort icon.
 
-The following example demonstrates custom group sorting. Note the following:
+The following example demonstrates multi group sorting. Note the following:
 
-- The `month` column has a custom sort `comparator` supplied which sorts months in chronological order.
-- The 'Group' Column uses the `comparator` defined on the `month` column definition to sort the row groups. 
+- Click the header of the group column to apply a sort, observe how it forces the year column sort to match its sort direction.
+- Hold shift and click the header of the year column, observe how the sort direction is now different from the auto column, and the auto column now displays the mixed-sort icon.
+- Sort by at least three columns including the year column, observe how row group columns don't receive a sort index. This is because they are always sorted before any other columns.
 
-<grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
-
-[[note]]
-| It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
-| This 'shared group comparator' will take precedence over any comparators defined on the underlying columns.
+<grid-example title='Mixed Group Sort' name='mixed-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
 ## Maintain Group Order
 

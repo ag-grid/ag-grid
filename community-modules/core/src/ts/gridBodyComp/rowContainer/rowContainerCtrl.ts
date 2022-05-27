@@ -254,6 +254,14 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private listenOnDomOrder(): void {
+        // sticky section must show rows in set order
+        const allStickyContainers = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT, RowContainerName.STICKY_TOP_FULL_WIDTH];
+        const isStickContainer = allStickyContainers.indexOf(this.name) >= 0;
+        if (isStickContainer) {
+            this.comp.setDomOrder(true);
+            return;
+        }
+
         const listener = () => this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder());
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();

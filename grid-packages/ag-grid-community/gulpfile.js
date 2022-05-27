@@ -116,7 +116,8 @@ const copyGridAllUmdFiles = (done) => {
 
     return gulp.src([
         './node_modules/@ag-grid-community/all-modules/dist/ag-grid-community*.js',
-        '!./node_modules/@ag-grid-community/all-modules/dist/**/*.cjs*.js']).pipe(gulp.dest('./dist/'));
+        '!./node_modules/@ag-grid-community/all-modules/dist/**/*.cjs*.js'])
+        .pipe(gulp.dest('./dist/'));
 };
 
 // copy from grid-core tasks

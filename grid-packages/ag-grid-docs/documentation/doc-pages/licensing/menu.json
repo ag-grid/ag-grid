@@ -304,11 +304,29 @@
             "items": [
               {
                 "title": "Packages",
-                "url": "/packages/"
+                "url": "/packages/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-packages/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
               },
               {
                 "title": "Modules",
-                "url": "/modules/"
+                "url": "/modules/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-modules/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
               },
               {
                 "title": "Custom UMD Bundle",

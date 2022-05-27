@@ -56,7 +56,7 @@
     "type": { "returnType": "string" }
   },
   "clipboardDelimiter": {
-    "description": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+    "description": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
@@ -1150,10 +1150,21 @@
     }
   },
   "processSecondaryColDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
     "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
+    "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+    "type": {
+      "arguments": { "colGroupDef": "ColGroupDef" },
+      "returnType": "void"
+    }
+  },
+  "processPivotResultColDef": {
+    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
+  },
+  "processPivotResultColGroupDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef" },
@@ -1206,7 +1217,7 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
@@ -2395,11 +2406,11 @@
     "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
   "api": {
-    "description": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
     "type": { "returnType": "GridApi | null" }
   },
   "columnApi": {
-    "description": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
     "type": { "returnType": "ColumnApi | null" }
   }
 }

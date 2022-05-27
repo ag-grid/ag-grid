@@ -35,15 +35,29 @@ export class SortController extends BeanStub {
             sort = null;
         }
 
-        // update sort on current col
-        column.setSort(sort, source);
+
+        // We only sort dependent columns as a result of sorting a group in CSRM
+        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
+        let columnsToUpdate = [column];
+        // clear sort on all columns except this one, and update the icons
+        if (column.getColDef().showRowGroup && isClientSideRowModel) {
+            const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+            const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
+            
+            if (sortableRowGroupColumns) {
+                columnsToUpdate = [column, ...sortableRowGroupColumns];
+            } 
+        }
+
+        // update sort on changed cols
+        columnsToUpdate.forEach(col => col.setSort(sort, source));
 
         const doingMultiSort = (multiSort || this.gridOptionsWrapper.isAlwaysMultiSort()) && !this.gridOptionsWrapper.isSuppressMultiSort();
 
         // clear sort on all columns except this one, and update the icons
         if (!doingMultiSort) {
-            this.clearSortBarThisColumn(column, source);
-        }
+            this.clearSortBarTheseColumns(columnsToUpdate, source);
+        } 
 
         // sortIndex used for knowing order of cols when multi-col sort
         this.updateSortIndex(column);
@@ -94,10 +108,10 @@ export class SortController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
+    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): void {
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (columnToClear !== columnToSkip) {
+            if (!columnsToSkip.includes(columnToClear)) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);

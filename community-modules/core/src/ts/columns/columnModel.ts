@@ -203,6 +203,7 @@ export class ColumnModel extends BeanStub {
     private groupAutoColumns: Column[] | null;
 
     private groupDisplayColumns: Column[];
+    private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
     private ready = false;
     private logger: Logger;
@@ -2587,6 +2588,20 @@ export class ColumnModel extends BeanStub {
         return this.getAutoColumn(key);
     }
 
+    public getSourceColumnsForGroupColumn(groupCol: Column): Column[] | null {
+        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        if (!sourceColumnId) {
+            return null;
+        }
+
+        if (sourceColumnId === true) {
+            return this.rowGroupColumns.slice(0);
+        }
+
+        const column = this.getPrimaryColumn(sourceColumnId);
+        return column ? [column] : null;
+    }
+
     private getAutoColumn(key: string | Column): Column | null {
         if (
             !this.groupAutoColumns ||
@@ -3069,11 +3084,21 @@ export class ColumnModel extends BeanStub {
 
     private calculateColumnsForGroupDisplay(): void {
         this.groupDisplayColumns = [];
+        this.groupDisplayColumnsMap = {};
 
         const checkFunc = (col: Column) => {
             const colDef = col.getColDef();
-            if (colDef && exists(colDef.showRowGroup)) {
+            const underlyingColumn = colDef.showRowGroup;
+            if (colDef && exists(underlyingColumn)) {
                 this.groupDisplayColumns.push(col);
+
+                if (typeof underlyingColumn === 'string') {
+                    this.groupDisplayColumnsMap[underlyingColumn] = col;
+                } else if (underlyingColumn === true) {
+                    this.getRowGroupColumns().forEach(rowGroupCol => {
+                        this.groupDisplayColumnsMap[rowGroupCol.getId()] = col;
+                    });
+                }
             }
         };
 
@@ -3086,6 +3111,10 @@ export class ColumnModel extends BeanStub {
 
     public getGroupDisplayColumns(): Column[] {
         return this.groupDisplayColumns;
+    }
+
+    public getGroupDisplayColumnForGroup(rowGroupColumnId: string): Column {
+        return this.groupDisplayColumnsMap[rowGroupColumnId];
     }
 
     private updateDisplayedColumns(source: ColumnEventType): void {
@@ -3139,8 +3168,8 @@ export class ColumnModel extends BeanStub {
 
     private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[] | null): (ColDef | ColGroupDef)[] | undefined {
 
-        const columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
-        const groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
+        const columnCallback = this.gridOptionsWrapper.getProcessPivotResultColDefFunc();
+        const groupCallback = this.gridOptionsWrapper.getProcessPivotResultColGroupDefFunc();
 
         if (!columnCallback && !groupCallback) { return undefined; }
 

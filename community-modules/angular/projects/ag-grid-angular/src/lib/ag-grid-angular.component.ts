@@ -325,7 +325,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
-    /** Specify the delimiter to use when copying to clipboard. 
+    /** Specify the delimiter to use when copying to clipboard.
      * Default: `\t`     */
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false`     */
@@ -881,10 +881,16 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
     /** @deprecated - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column definition.     */
+    /** @deprecated - Use `processPivotResultColDef` instead
+     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead
+     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column definition.     */
+    @Input() public processPivotResultColDef: ((colDef: ColDef) => void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
+    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     /** @deprecated - Use initialGroupOrderComparator instead     */

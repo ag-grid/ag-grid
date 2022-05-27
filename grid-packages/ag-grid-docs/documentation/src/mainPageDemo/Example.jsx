@@ -780,7 +780,7 @@ const Example = () => {
         // callback when row clicked
         // stopEditingWhenCellsLoseFocus: true,
         // allowShowChangeAfterFilter: true,
-        processSecondaryColDef: (def) => {
+        processPivotResultColDef: (def) => {
             def.filter = 'agNumberColumnFilter';
             def.floatingFilter = true;
         },

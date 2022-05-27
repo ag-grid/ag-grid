@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
   },
-  processSecondaryColDef: (colDef: ColDef) => {
+  processPivotResultColDef: (colDef: ColDef) => {
     colDef.filter = 'agNumberColumnFilter';
     colDef.floatingFilter = true;
   },
@@ -97,7 +97,7 @@ function filterHockeyIceHockey() {
 }
 
 function filterEveryYearGold() {
-  const goldPivotCols = gridOptions.columnApi!.getSecondaryColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
+  const goldPivotCols = gridOptions.columnApi!.getPivotResultColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
   if (goldPivotCols) {
     const newOpts = goldPivotCols.reduce((acc, col) => {
       acc[col.getId()] = {
@@ -112,7 +112,7 @@ function filterEveryYearGold() {
 }
 
 function filter2000Silver() {
-  const targetCol = gridOptions.columnApi!.getSecondaryPivotColumn(['2000'], 'silver');
+  const targetCol = gridOptions.columnApi!.getPivotResultColumn(['2000'], 'silver');
   if (targetCol) {
     gridOptions.api!.setFilterModel({
       ...gridOptions.api!.getFilterModel(),

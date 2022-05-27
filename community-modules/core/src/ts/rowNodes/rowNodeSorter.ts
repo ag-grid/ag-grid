@@ -27,7 +27,7 @@ export class RowNodeSorter {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-
+        
         const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
@@ -98,7 +98,20 @@ export class RowNodeSorter {
         return primaryColumn.getColDef().comparator;
     }
 
-    private getValue(nodeA: RowNode, column: Column): string {
-        return this.valueService.getValue(column, nodeA, false, false);
+    private getValue(node: RowNode, column: Column): any {
+        const isNodeGroupedAtLevel = node.rowGroupColumn === column;
+        if (isNodeGroupedAtLevel) {
+            const displayCol = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
+            if (!displayCol) {
+                return undefined;
+            }
+            return node.groupData?.[displayCol.getId()];
+        }
+
+        if (node.group && column.getColDef().showRowGroup) {
+            return undefined;
+        }
+
+        return this.valueService.getValue(column, node, false, false);
     }
 }

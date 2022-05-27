@@ -300,29 +300,27 @@ export class LineSeries extends CartesianSeries {
         const nodeData = marker.shape ? this.nodeData : [];
         const MarkerShape = getMarker(marker.shape);
 
-        const updateSelection = this.nodeSelection.setData(nodeData);
-        updateSelection.exit.remove();
+        const { nodeSelection, highlightSelection } = this;
+        const update = (selection: typeof nodeSelection) => {
+            const updateSelection = selection.setData(nodeData);
+            updateSelection.exit.remove();
+            const enterSelection = updateSelection.enter.append(Group);
+            enterSelection.append(MarkerShape);
+            enterSelection.append(Text);
+            return updateSelection.merge(enterSelection);
+        }
 
-        const enterSelection = updateSelection.enter.append(Group);
-        enterSelection.append(MarkerShape);
-        enterSelection.append(Text);
-
-        this.nodeSelection = updateSelection.merge(enterSelection);
-
-        const updateHighlight = this.highlightSelection.setData(nodeData);
-        updateHighlight.exit.remove();
-
-        const enterHighlight = updateHighlight.enter.append(Group);
-        enterHighlight.append(MarkerShape);
-        enterHighlight.append(Text);
-
-        this.highlightSelection = updateHighlight.merge(enterHighlight);
+        this.nodeSelection = update(nodeSelection);
+        this.highlightSelection = update(highlightSelection);
     }
 
     private updateNodes() {
         this.group.visible = this.visible;
         this.seriesGroup.visible = this.visible;
         this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
+
+        this.seriesGroup.opacity = this.getOpacity();
+
         this.updateLineNode();
         this.updateMarkerNodes();
         this.updateTextNodes();
@@ -333,7 +331,7 @@ export class LineSeries extends CartesianSeries {
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        lineNode.strokeOpacity = this.strokeOpacity * (1 / this.getOpacity());
+        lineNode.strokeOpacity = this.strokeOpacity;
 
         lineNode.lineDash = this.lineDash;
         lineNode.lineDashOffset = this.lineDashOffset;
@@ -363,9 +361,7 @@ export class LineSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const MarkerShape = getMarker(marker.shape);
 
-        this.seriesGroup.opacity = this.getOpacity();
-
-        const updateMarkerFn = (node: Marker, datum: LineNodeDatum, idx: number, isDatumHighlighted: boolean) => {
+        const updateMarkerFn = (node: Marker, datum: LineNodeDatum, isDatumHighlighted: boolean) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -401,14 +397,14 @@ export class LineSeries extends CartesianSeries {
         };
 
         this.nodeSelection.selectByClass(MarkerShape)
-            .each((node, datum, idx) => updateMarkerFn(node, datum, idx, false));
+            .each((node, datum) => updateMarkerFn(node, datum, false));
         this.highlightSelection.selectByClass(MarkerShape)
-            .each((node, datum, idx) => {
+            .each((node, datum) => {
                 const isDatumHighlighted = datum === highlightedDatum;
 
                 node.visible = isDatumHighlighted;
                 if (node.visible) {
-                    updateMarkerFn(node, datum, idx, isDatumHighlighted);
+                    updateMarkerFn(node, datum, isDatumHighlighted);
                 }
             });
     }

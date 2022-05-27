@@ -137,6 +137,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
 export { HeaderCellCtrl, IHeaderCellComp } from "./headerRendering/cells/column/headerCellCtrl";
+export { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "./headerRendering/cells/floatingFilter/headerFilterCellCtrl";
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerRendering/cells/columnGroup/headerGroupCellCtrl";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";

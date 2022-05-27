@@ -67,6 +67,12 @@ const GridExample = () => {
             });
     }
 
+    const onFirstDataRendered = (params) => {
+        // mix up some columns
+        params.columnApi.moveColumnByIndex(11, 4);
+        params.columnApi.moveColumnByIndex(11, 4);
+    }
+
     return (
         <div className="container">
             <div className="grid ag-theme-alpine">
@@ -76,6 +82,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
+                    onFirstDataRendered={onFirstDataRendered}
                     alignedGrids={bottomGridRef.current ? [bottomGridRef.current] : undefined}
                 />
             </div>
