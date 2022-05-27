@@ -3,10 +3,6 @@ import { RowNode } from "../../entities/rowNode";
 import { BeanStub } from "../../context/beanStub";
 import { RowCtrl } from "../row/rowCtrl";
 import { RowCtrlMap, RowRenderer } from "../rowRenderer";
-import { last } from "../../utils/array";
-import { Constants } from "../../constants/constants";
-import { doOnce } from "../../utils/function";
-import { Beans } from "../beans";
 import { Autowired, PostConstruct } from "../../context/context";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
@@ -123,74 +119,6 @@ export class NiallStickyRowFeature extends BeanStub {
             }
 
             break;
-        }
-
-        setResult(stickyRows);
-    }
-
-
-    public checkStickyRows2(
-        createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky: boolean) => RowCtrl,
-        destroyRowCtrls: (rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean) => void
-    ): void {
-        const setResult = (res: RowNode[] = [])=> {            
-            const ctrlsToDestroy: RowCtrlMap = {};
-            this.stickyRowCtrls.forEach(ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
-            destroyRowCtrls(ctrlsToDestroy, false);
-            this.stickyRowCtrls = res.map( stickyRow => createRowCon(stickyRow, false, false, true));
-
-            let height = 0;
-            res.forEach(rowNode => {
-                const thisRowLastPx = rowNode.stickyRowTop + rowNode.rowHeight!;
-                if (height < thisRowLastPx) {
-                    height = thisRowLastPx;
-                }
-            });
-
-            if (this.containerHeight!=height) {
-                this.containerHeight = height;
-                this.gridBodyCtrl.setStickyTopHeight(height);
-            }
-        }
-
-        if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
-            setResult(); return;
-        }
-
-        const firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
-        const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixel);
-        let firstRow = this.rowModel.getRow(firstIndex);
-
-        if (firstRow==null) { setResult(); return; }
-
-        // if (firstRow.rowTop! < firstPixel) {
-        //     firstRow = this.rowModel.getRow(firstIndex + 1);
-        // }
-
-        // if (firstRow==null) { setResult(); return; }
-
-        // only happens when pivoting, and we are showing root node
-        if (firstRow.level<0) { setResult(); return; }
-
-        const stickyRows: RowNode[] = [];
-
-        // if first row is an open group, and partically shown, it needs
-        // to be stuck
-        if (firstRow.group && firstRow.expanded && firstRow.rowTop! < firstPixel) {
-            stickyRows.push(firstRow);
-        }
-
-        const stickyRow = firstRow.level == 0 ? firstRow : firstRow.parent!;
-        
-        stickyRows.push(stickyRow);
-        
-        const lastChild = stickyRow.childrenAfterSort![stickyRow.childrenAfterSort!.length-1];
-        const lastChildBottom = lastChild.rowTop! + lastChild.rowHeight!;
-        const stickRowBottom = firstPixel + stickyRow.rowHeight!;
-        if (lastChildBottom < stickRowBottom) {
-            stickyRow.stickyRowTop = (lastChildBottom - stickRowBottom - 1);
-        } else {
-            stickyRow.stickyRowTop = 0;
         }
 
         setResult(stickyRows);
