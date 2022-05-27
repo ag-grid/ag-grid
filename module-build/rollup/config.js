@@ -112,24 +112,24 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             ] : []
         });
         entries.push({
-            // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enteprise/all-modules)
+            // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
             // module are self registered
-            // analogous to legacy ag-grid-community / ag-grid-enteprise packages
+            // analogous to legacy ag-grid-community / ag-grid-enterprise packages
             name: 'es-modules-complete-dev',
             inputMainFile: './esm-main.complete.js',
             format: 'es',
             env: 'development',
-            extension: '.complete.esm.js'
+            extension: '.auto.complete.esm.js'
         });
         entries.push({
-            // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enteprise/all-modules)
+            // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
             // module are self registered
-            // analogous to legacy ag-grid-community / ag-grid-enteprise packages
+            // analogous to legacy ag-grid-community / ag-grid-enterprise packages
             name: 'es-modules-complete-prod',
             inputMainFile: './esm-main.complete.js',
             format: 'es',
             env: 'production',
-            extension: '.complete.esm.min.js'
+            extension: '.auto.complete.esm.min.js'
         });
     }
 

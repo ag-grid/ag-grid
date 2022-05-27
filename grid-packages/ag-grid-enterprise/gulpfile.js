@@ -137,14 +137,7 @@ const copyGridAllUmdFiles = (done) => {
 
     return gulp.src([
         './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise*.js',
-        '!./node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.esm.*js',
         '!./node_modules/@ag-grid-enterprise/all-modules/dist/**/*.cjs*.js'])
-        .pipe(rename(function (path) {
-            if(path.basename.includes('.auto')) {
-                path.basename = path.basename.replace('.auto', '');
-            }
-            return path;
-        }))
         .pipe(gulp.dest('./dist/'));
 };
 
