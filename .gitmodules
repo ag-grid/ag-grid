@@ -50,3 +50,12 @@
 	path = examples-grid/ag-grid-react-package-example
 	url = https://github.com/ag-grid/ag-grid-react-package-example.git
 	branch = latest
+[submodule "examples-grid/ag-grid-angular-cli-legacy-example"]
+	path = examples-grid/ag-grid-angular-cli-legacy-example
+	url = https://github.com/ag-grid/ag-grid-angular-cli-legacy-example.git
+[submodule "examples-grid/ag-grid-angular-cli-legacy-package-example"]
+	path = examples-grid/ag-grid-angular-cli-legacy-package-example
+	url = https://github.com/ag-grid/ag-grid-angular-cli-legacy-package-example.git
+[submodule "examples-charts/ag-charts-angular-legacy-example"]
+	path = examples-charts/ag-charts-angular-legacy-example
+	url = https://github.com/ag-grid/ag-charts-angular-legacy-example.git
