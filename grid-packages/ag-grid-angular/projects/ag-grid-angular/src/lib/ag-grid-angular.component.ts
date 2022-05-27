@@ -881,11 +881,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
     /** @deprecated - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColDef` instead
-     */
+    /** @deprecated - Use `processPivotResultColDef` instead     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColGroupDef` instead
-     */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef) => void) | undefined = undefined;
@@ -910,7 +908,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
-    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` 
+    /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
          * Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
