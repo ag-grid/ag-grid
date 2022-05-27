@@ -154,10 +154,6 @@ export class TreemapSeries extends HierarchySeries {
 
     readonly tooltip = new TreemapSeriesTooltip();
 
-    onHighlightChange() {
-        this.updateNodes();
-    }
-
     private updateLayoutPadding() {
         const { title, subtitle, nodePadding, labelKey } = this;
 

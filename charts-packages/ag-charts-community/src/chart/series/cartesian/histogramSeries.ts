@@ -200,10 +200,6 @@ export class HistogramSeries extends CartesianSeries {
     strokeWidth: number = 1;
     shadow?: DropShadow = undefined;
 
-    onHighlightChange() {
-        this.updateRectNodes();
-    }
-
     setColors(fills: string[], strokes: string[]) {
         this.fill = fills[0];
         this.stroke = strokes[0];

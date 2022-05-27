@@ -221,10 +221,6 @@ export class PieSeries extends PolarSeries {
 
     readonly highlightStyle = new PieHighlightStyle();
 
-    onHighlightChange() {
-        this.updateNodes();
-    }
-
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
         this.strokes = strokes;

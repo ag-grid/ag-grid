@@ -95,10 +95,6 @@ export class ScatterSeries extends CartesianSeries {
      */
     strokeOpacity: number = 1;
 
-    onHighlightChange() {
-        this.updateMarkerNodes();
-    }
-
     title?: string = undefined;
     labelKey?: string = undefined;
 

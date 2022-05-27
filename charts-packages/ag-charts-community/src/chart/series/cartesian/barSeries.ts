@@ -46,6 +46,7 @@ interface BarNodeDatum extends SeriesNodeDatum {
     readonly height: number;
     readonly fill?: string;
     readonly stroke?: string;
+    readonly colorIndex: number;
     readonly strokeWidth: number;
     readonly label?: {
         readonly x: number;
@@ -329,10 +330,6 @@ export class BarSeries extends CartesianSeries {
     strokeWidth: number = 1;
 
     shadow?: DropShadow = undefined;
-
-    onHighlightChange() {
-        this.updateNodes();
-    }
 
     protected smallestDataInterval?: { x: number, y: number } = undefined;
     processData(): boolean {
@@ -635,6 +632,7 @@ export class BarSeries extends CartesianSeries {
                         y: flipXY ? barX : Math.min(y, bottomY),
                         width: flipXY ? Math.abs(bottomY - y) : barWidth,
                         height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        colorIndex,
                         fill: fills[colorIndex % fills.length],
                         stroke: strokes[colorIndex % strokes.length],
                         strokeWidth,
@@ -796,17 +794,7 @@ export class BarSeries extends CartesianSeries {
                 return;
             }
 
-            let colorIndex = 0;
-            let i = 0;
-            for (const stack of yKeys) {
-                i = stack.indexOf(datum.yKey);
-                if (i >= 0) {
-                    colorIndex += i;
-                    break;
-                }
-                colorIndex += stack.length;
-            }
-
+            const { colorIndex } = datum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[colorIndex % fills.length];
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[colorIndex % fills.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -846,7 +834,9 @@ export class BarSeries extends CartesianSeries {
         labelSelection: Selection<Text, Group, BarNodeDatum, any>,
         nodeData: BarNodeDatum[],
     ): Selection<Text, Group, BarNodeDatum, any> {
-        const updateLabels = labelSelection.setData(nodeData);
+        const { enabled } = this.label;
+        const data = enabled ? nodeData : [];
+        const updateLabels = labelSelection.setData(data);
 
         updateLabels.exit.remove();
 

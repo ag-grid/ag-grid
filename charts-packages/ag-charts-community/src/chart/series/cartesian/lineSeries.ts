@@ -182,10 +182,6 @@ export class LineSeries extends CartesianSeries {
         return this.yDomain;
     }
 
-    onHighlightChange() {
-        this.updateNodes();
-    }
-
     resetHighlight() {
         this.lineNode.strokeWidth = this.strokeWidth;
     }

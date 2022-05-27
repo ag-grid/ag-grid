@@ -279,12 +279,6 @@ export abstract class Series extends Observable {
 
     readonly highlightStyle = new HighlightStyle();
 
-    // Each series is expected to have its own logic to efficiently update its nodes
-    // on hightlight changes.
-    onHighlightChange() {
-        // Override point for subclasses.
-    }
-
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {
             return [0, 1];
