@@ -951,7 +951,10 @@ export class RowRenderer extends BeanStub {
         Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false);
         this.destroyRowCtrls(ctrlsToDestroy, false);
 
-        this.stickyRowCtrls = newCtrls;
+        // we reverse, as we want the order of the rows in the DOM to
+        // be reversed, otherwise they would not slide under the rows above
+        // when sliding in and out
+        this.stickyRowCtrls = newCtrls.reverse();
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
