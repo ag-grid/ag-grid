@@ -11,7 +11,7 @@ import {
     ViewportChangedEvent
 } from "../events";
 import { Constants } from "../constants/constants";
-import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
+import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
@@ -29,11 +29,12 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { doOnce, executeInAWhile } from "../utils/function";
+import { executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
-import { last, removeFromArray } from "../utils/array";
+import { removeFromArray } from "../utils/array";
+import { StickyRowFeature } from "./features/stickyRowFeature";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -71,8 +72,6 @@ export class RowRenderer extends BeanStub {
     private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
-    private stickyRowCtrls: RowCtrl[] = [];
-
     private topRowCtrls: RowCtrl[] = [];
     private bottomRowCtrls: RowCtrl[] = [];
 
@@ -89,6 +88,7 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
+    private stickyRowFeature: StickyRowFeature;
 
     @PostConstruct
     private postConstruct(): void {
@@ -107,6 +107,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_ROW_CLASS, this.redrawRows.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
+        if (this.gridOptionsWrapper.isGroupRowsSticky()) {
+            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(this.beans));
+        }
 
         this.registerCellEventListeners();
 
@@ -130,7 +134,9 @@ export class RowRenderer extends BeanStub {
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
-        return this.stickyRowCtrls;
+        if (!this.stickyRowFeature) { return []; }
+
+        return this.stickyRowFeature.getStickyRowCtrls();
     }
 
     private updateAllRowCtrls(): void {
@@ -819,148 +825,13 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
-    public getStickyTopHeight(includeSliding: boolean = true): number {
-        return this.stickyRowCtrls.reduce((currentHeight, ctrl) => {
-            const node = ctrl?.getRowNode();
-
-            if (!node || (!includeSliding && node.stickySliding)) { return currentHeight; }
-
-            return currentHeight + (node.rowHeight || 0);
-        }, 0);
-    }
-
-    private getRowsThatShouldStick(): RowNode[] {
-        const height = this.getStickyTopHeight();
-        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + height);
-
-        const ret: RowNode[] = [];
-
-        let rowNode = this.paginationProxy.getRow(firstVisibleIndex);
-        while (rowNode && rowNode.level >= 0) {
-            if (rowNode.group && rowNode.expanded) {
-                ret.unshift(rowNode);
-            }
-            rowNode = rowNode.parent as RowNode;
-        }
-
-        return ret;
-    }
-
-    private updateStickySlidingRows(stickyRows: RowNode[]): RowNode[] {
-        stickyRows.forEach(node => node.stickySliding = false);
-
-        const currentRowNodes = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode());
-        const addedNodes = stickyRows.filter(node => currentRowNodes.indexOf(node) === -1);
-        const removedNodes = currentRowNodes.filter(node => stickyRows.indexOf(node) === -1);
-
-        this.updateStickySlidingRowsRemoved(removedNodes);
-        this.updateStickySlidingRowsAdded(addedNodes);
-
-        stickyRows.push(
-            ...removedNodes.filter(node => node.stickySliding)
-        );
-
-        stickyRows.sort((a, b) => a.rowIndex! - b.rowIndex!);
-
-        let isSliding = false;
-
-        return stickyRows.filter(node => {
-            if (isSliding && addedNodes.indexOf(node) != -1) { return false; }
-            if (node.stickySliding) { isSliding = true; }
-            return true;
-        });
-    }
-
-    private updateStickySlidingRowsRemoved(stickyRows: RowNode[]): void {
-        const lastNode = last(stickyRows);
-        if (!lastNode) { return; }
-
-        const bottomOfLastNode = lastNode.stickyRowTop + lastNode.rowHeight!;
-        const firstVisibleIndex = this.rowModel.getRowIndexAtPixel(this.firstVisibleVPixel + bottomOfLastNode);
-        const nextNode = this.paginationProxy.getRow(firstVisibleIndex);
-        const diff = (nextNode!.rowTop! - bottomOfLastNode - this.firstVisibleVPixel);
-
-        if (lastNode === nextNode) { return; }
-
-        stickyRows.forEach(node => {
-            const newTop = node.stickyRowTop + diff;
-            const removeLimit = stickyRows.length * node.rowHeight!;
-            if (newTop <= node.initialStickyRowTop) {
-                if (node.initialStickyRowTop - newTop > removeLimit) {
-                    node.stickySliding = false;
-                    return;
-                }
-                const ctrl = this.stickyRowCtrls.find(ctrl => ctrl.getRowNode() === node);
-                node.stickySliding = true;
-                node.stickyRowTop = newTop;
-                ctrl?.setRowTop(newTop);
-            } else {
-                console.log('diff larger than height');
-            }
-        });
-    }
-
-    private updateStickySlidingRowsAdded(stickyRows: RowNode[]): void {
-        const lastNode = last(stickyRows);
-        if (!lastNode) { return; }
-    }
-
-    private checkStickyRows(): void {
-        if (!this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowCtrls = [];
-            return;
-        }
-
-        if (this.rowModel.getType() != Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-        }
-
-        const stickyRows = this.updateStickySlidingRows(this.getRowsThatShouldStick());
-
-        const oldHash = this.stickyRowCtrls.map(ctrl => ctrl.getRowNode().__objectId).join('-');
-        const newHash = stickyRows.map(row => row.__objectId).join('-');
-
-        if (oldHash === newHash) { return; }
-
-        const ctrlsToDestroy: RowCtrlMap = {};
-        this.stickyRowCtrls.forEach(ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
-
-        const newCtrls: RowCtrl[] = [];
-        let nextRowTop = 0;
-        stickyRows.forEach(rowNode => {
-            rowNode.sticky = true;
-            if (!rowNode.stickySliding) {
-                rowNode.stickyRowTop = nextRowTop;
-                rowNode.initialStickyRowTop = nextRowTop;
-                nextRowTop += rowNode.rowHeight!;
-            } else {
-                nextRowTop += rowNode.rowHeight! - (rowNode.initialStickyRowTop - rowNode.stickyRowTop);
-            }
-
-            const rowNodeId = rowNode.id!;
-            const oldCtrl = ctrlsToDestroy[rowNodeId];
-            if (oldCtrl) {
-                delete ctrlsToDestroy[rowNodeId];
-                newCtrls.push(oldCtrl);
-                return;
-            }
-            const newCtrl = this.createRowCon(rowNode, false, false, true);
-            newCtrls.push(newCtrl);
-        });
-
-        Object.values(ctrlsToDestroy).forEach(ctrl => ctrl.getRowNode().sticky = false);
-        this.destroyRowCtrls(ctrlsToDestroy, false);
-
-        // we reverse, as we want the order of the rows in the DOM to
-        // be reversed, otherwise they would not slide under the rows above
-        // when sliding in and out
-        this.stickyRowCtrls = newCtrls.reverse();
-    }
-
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
-        this.checkStickyRows();
+
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this));
+        }
 
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -1292,12 +1163,24 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
+    public getFirstVisibleVerticalPixel(): number {
+        return this.firstVisibleVPixel;
+    }
+
     public getFirstVirtualRenderedRow() {
         return this.firstRenderedRow;
     }
 
     public getLastVirtualRenderedRow() {
         return this.lastRenderedRow;
+    }
+
+    public getStickyTopHeight(): number {
+        if (!this.stickyRowFeature) {
+            return 0;
+        }
+
+        return this.stickyRowFeature.getStickyTopHeight();
     }
 
     // check that none of the rows to remove are editing or focused as:
