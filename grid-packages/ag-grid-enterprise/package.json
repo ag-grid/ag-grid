@@ -3,7 +3,7 @@
   "version": "27.3.0",
   "description": "AG Grid Enterprise Features",
   "main": "./dist/ag-grid-enterprise.cjs.js",
-  "module": "./dist/ag-grid-enterprise.esm.js",
+  "module": "./dist/ag-grid-enterprise.auto.esm.js",
   "types": "main.d.ts",
   "scripts": {
     "clean": "rimraf dist main.d.ts .hash",
