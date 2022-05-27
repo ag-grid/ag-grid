@@ -2374,6 +2374,7 @@
       "height": "number",
       "fill?": "string",
       "stroke?": "string",
+      "colorIndex": "number",
       "strokeWidth": "number",
       "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series",
