@@ -84,6 +84,7 @@ export class GridBodyComp extends Component {
             setBottomDisplay: display => this.eBottom.style.display = display,
             setStickyTopHeight: height => this.eStickyTop.style.height = `${height}px`,
             setStickyTopOffsetTop: offsetTop => this.eStickyTop.style.top = `${offsetTop}px`,
+            setStickyTopWidth: width => this.eStickyTop.style.width = width,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
             updateLayoutClasses: (cssClass, params) => {
                 const bodyViewportClassList = this.eBodyViewport.classList;
