@@ -300,6 +300,7 @@ export class LineSeries extends CartesianSeries {
         const update = (selection: typeof nodeSelection) => {
             const updateSelection = selection.setData(nodeData);
             updateSelection.exit.remove();
+            
             const enterSelection = updateSelection.enter.append(Group);
             enterSelection.append(MarkerShape);
             enterSelection.append(Text);

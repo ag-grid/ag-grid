@@ -125,8 +125,9 @@ export class HistogramSeries extends CartesianSeries {
     private rectGroup = this.pickGroup.appendChild(new Group());
     private textGroup = this.seriesGroup.appendChild(new Group());
 
-    private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
+    private rectSelection: Selection<Rect, Group, HistogramNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
+    private highlightSelection: Selection<Rect, Group, HistogramNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Rect>();
+    private textSelection: Selection<Text, Group, HistogramNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
 
     private binnedData: HistogramBin[] = [];
     private xDomain: number[] = [];
@@ -335,6 +336,11 @@ export class HistogramSeries extends CartesianSeries {
 
     updateNodes() {
         this.group.visible = this.visible;
+        this.seriesGroup.visible = this.visible;
+        this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
+
+        this.seriesGroup.opacity = this.getOpacity();
+
         this.updateRectNodes();
         this.updateTextNodes();
     }
@@ -407,15 +413,22 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     private updateRectSelection(nodeData: HistogramNodeDatum[]): void {
-        const updateRects = this.rectSelection.setData(nodeData);
-        updateRects.exit.remove();
+        const { rectSelection, highlightSelection } = this;
 
-        const enterRects = updateRects.enter.append(Rect).each(rect => {
-            rect.tag = HistogramSeriesNodeTag.Bin;
-            rect.crisp = true;
-        });
+        const update = (selection: typeof rectSelection) => {
+            const updateRects = selection.setData(nodeData);
+            updateRects.exit.remove();
 
-        this.rectSelection = updateRects.merge(enterRects);
+            const enterRects = updateRects.enter.append(Rect).each(rect => {
+                rect.tag = HistogramSeriesNodeTag.Bin;
+                rect.crisp = true;
+            });
+
+            return updateRects.merge(enterRects);
+        };
+
+        this.rectSelection = update(rectSelection);
+        this.highlightSelection = update(highlightSelection);
     }
 
     private updateRectNodes(): void {
@@ -438,11 +451,10 @@ export class HistogramSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((rect, datum, index) => {
-            const isDatumHighlighted = datum === highlightedDatum;
+        const updateRectFn = (rect: Rect, datum: HistogramNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(datum.strokeWidth);
+                : datum.strokeWidth;
 
             rect.x = datum.x;
             rect.y = datum.y;
@@ -458,8 +470,19 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
-            rect.opacity = this.getOpacity();
-        });
+        };
+
+        this.rectSelection
+            .each((rect, datum, index) => updateRectFn(rect, datum, index, false));
+        this.highlightSelection
+            .each((rect, datum, index) => {
+                const isDatumHighlighted = datum === highlightedDatum;
+
+                rect.visible = isDatumHighlighted;
+                if (rect.visible) {
+                    updateRectFn(rect, datum, index, isDatumHighlighted);
+                }
+            });
     }
 
 
