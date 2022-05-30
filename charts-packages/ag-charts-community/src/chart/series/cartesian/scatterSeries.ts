@@ -64,7 +64,7 @@ export class ScatterSeries extends CartesianSeries {
 
     private nodeData: ScatterNodeDatum[] = [];
     private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
-
+    private highlightSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
     private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.seriesGroup).selectAll<Text>();
 
     readonly marker = new CartesianSeriesMarker();
@@ -278,6 +278,11 @@ export class ScatterSeries extends CartesianSeries {
 
     private updateNodes() {
         this.group.visible = this.visible;
+        this.seriesGroup.visible = this.visible;
+        this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
+
+        this.seriesGroup.opacity = this.getOpacity();
+
         this.updateMarkerNodes();
         this.updateLabelNodes();
     }
@@ -291,11 +296,18 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateMarkerSelection(): void {
+        const { markerSelection, highlightSelection } = this;
         const MarkerShape = getMarker(this.marker.shape);
-        const updateMarkers = this.markerSelection.setData(this.nodeData);
-        updateMarkers.exit.remove();
-        const enterMarkers = updateMarkers.enter.append(MarkerShape);
-        this.markerSelection = updateMarkers.merge(enterMarkers);
+
+        const update = (selection: typeof markerSelection) => {
+            const updateMarkers = selection.setData(this.nodeData);
+            updateMarkers.exit.remove();
+            const enterMarkers = updateMarkers.enter.append(MarkerShape);
+            return updateMarkers.merge(enterMarkers);
+        };
+
+        this.markerSelection = update(markerSelection);
+        this.highlightSelection = update(highlightSelection);
     }
 
     private updateLabelNodes() {
@@ -339,13 +351,12 @@ export class ScatterSeries extends CartesianSeries {
 
         sizeScale.range = [marker.size, marker.maxSize];
 
-        this.markerSelection.each((node, datum, index) => {
-            const isDatumHighlighted = datum === highlightedDatum;
+        const markerUpdateFn = ((node: Marker, datum: ScatterNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || seriesStroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(markerStrokeWidth);
+                : markerStrokeWidth;
             const size = sizeData.length ? sizeScale.convert(sizeData[index]) : marker.size
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
@@ -374,10 +385,21 @@ export class ScatterSeries extends CartesianSeries {
             node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.opacity = this.getOpacity();
             node.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             node.visible = marker.enabled && node.size > 0;
         });
+
+        this.markerSelection
+            .each((node, datum, index) => markerUpdateFn(node, datum, index, false));
+        this.highlightSelection
+            .each((node, datum, index) => {
+                const isDatumHighlighted = datum === highlightedDatum;
+
+                node.visible = isDatumHighlighted;
+                if (node.visible) {
+                    markerUpdateFn(node, datum, index, isDatumHighlighted);
+                }
+            });
     }
 
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
