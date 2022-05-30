@@ -246,7 +246,7 @@ export class Scene {
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
+                console.log({ redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
             }
 
             if (root.visible) {
@@ -297,8 +297,25 @@ export class Scene {
 
     }
 
+    buildTree(node: Node): { name?: string, node?: any, dirty?: string } {
+        const childrenDirtyTree = node.children.map(c => this.buildDirtyTree(c))
+            .filter(c => c.paths.length > 0);
+        const name = (node instanceof Group ? node.name : null) ?? node.id;
+
+        return {
+            name,
+            node,
+            dirty: RedrawType[node.dirty],
+            ...node.children.map((c) => this.buildTree(c))
+                .reduce((result, childTree) => {
+                    result[childTree.name || '<unknown>'] = childTree;
+                    return result;
+                }, {} as Record<string, {}>),
+        };
+    }
+
     buildDirtyTree(node: Node): {
-        dirtyTree: { meta?: { name: string, node: any, dirty: string } },
+        dirtyTree: { name?: string, node?: any, dirty?: string },
         paths: string[],
     } {
         if (node.dirty === RedrawType.NONE) {
@@ -315,11 +332,13 @@ export class Scene {
 
         return {
             dirtyTree: {
-                meta: { name, node, dirty: RedrawType[node.dirty] },
+                name,
+                node,
+                dirty: RedrawType[node.dirty],
                 ...childrenDirtyTree.map((c) => c.dirtyTree)
-                    .filter((t) => t.meta !== undefined)
+                    .filter((t) => t.dirty !== undefined)
                     .reduce((result, childTree) => {
-                        result[childTree.meta?.name || '<unknown>'] = childTree;
+                        result[childTree.name || '<unknown>'] = childTree;
                         return result;
                     }, {} as Record<string, {}>),
             },
