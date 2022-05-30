@@ -41,6 +41,7 @@ export function SceneChangeDetection(opts?: {
     changeCb?: (o: any) => any,
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
+    const debug = false;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -50,11 +51,13 @@ export function SceneChangeDetection(opts?: {
             // Remove all conditional logic from runtime - generate a setter with the exact necessary
             // steps, as these setters are called a LOT during update cycles.        
             const setterJs = `
+                ${debug ? 'var setCount = 0;' : ''}
                 function set${key}(value) {
                     const oldValue = this.${privateKey};
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
+                        ${debug ? `if (setCount++ % 10 === 0) console.log({ property: '${key}', oldValue, value });` : ''}
                         ${type === 'normal' ? 'this.markDirty(' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
                         ${changeCb ? 'changeCb(this);' : ''}
