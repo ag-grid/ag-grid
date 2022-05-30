@@ -24,6 +24,7 @@ const GridBodyComp = () => {
     const [bottomHeight, setBottomHeight] = useState<number>(0);
     const [stickyTopHeight, setStickyTopHeight] = useState<number>(0);
     const [stickyTopOffsetTop, setStickyTopOffsetTop] = useState<number>(0);
+    const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
     
@@ -78,6 +79,7 @@ const GridBodyComp = () => {
             setBottomHeight,
             setStickyTopHeight,
             setStickyTopOffsetTop,
+            setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
             setColumnMovingCss: setMovingCss,
@@ -140,7 +142,8 @@ const GridBodyComp = () => {
 
     const stickyTopStyle: React.CSSProperties = useMemo(() => ({
         height: stickyTopHeight,
-        top: stickyTopOffsetTop
+        top: stickyTopOffsetTop,
+        width: stickyTopWidth
     }), []);
 
     const bottomStyle: React.CSSProperties = useMemo(()=> ({

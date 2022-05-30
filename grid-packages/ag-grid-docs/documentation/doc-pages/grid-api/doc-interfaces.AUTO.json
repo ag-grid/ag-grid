@@ -9232,6 +9232,13 @@
         "optional": false
       }
     },
+    "setStickyTopWidth": {
+      "type": {
+        "arguments": { "width": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setColumnCount": {
       "type": {
         "arguments": { "count": "number" },

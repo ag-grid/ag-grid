@@ -42,7 +42,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private listenForResize(): void {
-        const listener = ()=> this.onCenterViewportResized();
+        const listener = () => this.onCenterViewportResized();
 
         // centerContainer gets horizontal resizes
         this.centerContainerCtrl.registerViewportResizeListener(listener);

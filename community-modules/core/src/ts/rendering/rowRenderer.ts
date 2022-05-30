@@ -109,7 +109,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(this.beans));
+            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature());
         }
 
         this.registerCellEventListeners();
@@ -1173,14 +1173,6 @@ export class RowRenderer extends BeanStub {
 
     public getLastVirtualRenderedRow() {
         return this.lastRenderedRow;
-    }
-
-    public getStickyTopHeight(): number {
-        if (!this.stickyRowFeature) {
-            return 0;
-        }
-
-        return this.stickyRowFeature.getStickyTopHeight();
     }
 
     // check that none of the rows to remove are editing or focused as:
