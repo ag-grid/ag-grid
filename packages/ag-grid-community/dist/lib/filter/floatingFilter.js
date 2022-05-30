@@ -80,10 +80,11 @@ var InputTextFloatingFilterComp = /** @class */ (function (_super) {
         this.eColumnFloatingFilter.title = '';
     };
     InputTextFloatingFilterComp.prototype.syncUpWithParentFilter = function (e) {
+        var model = this.asParentModel();
         if (null === this.lastKnownModel && utils_1._.isKeyPressed(e, constants_1.Constants.KEY_TAB)) {
+            this.lastKnownModel = model;
             return;
         }
-        var model = this.asParentModel();
         if (this.equalModels(this.lastKnownModel, model)) {
             return;
         }
