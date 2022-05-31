@@ -264,6 +264,10 @@ export class CtrlsService extends BeanStub {
         return this.bottomCenterRowContainerCtrl;
     }
 
+    public getStickyTopCenterRowContainerCtrl(): RowContainerCtrl {
+        return this.stickyTopCenterRowContainerCtrl;
+    }
+
     public getGridBodyCtrl(): GridBodyCtrl {
         return this.gridBodyCtrl;
     }
