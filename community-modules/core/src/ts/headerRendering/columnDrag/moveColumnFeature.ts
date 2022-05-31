@@ -321,7 +321,7 @@ export class MoveColumnFeature implements DropListener {
     // A measure of how fragmented in terms of groups an order of columns is
     private groupFragCount(columns: Column[]): number {
         function parents(col: Column): ProvidedColumnGroup[] {
-            let result = [];
+            let result: ProvidedColumnGroup[] = [];
             let parent = col.getOriginalParent();
             while (parent != null) {
                 result.push(parent);
