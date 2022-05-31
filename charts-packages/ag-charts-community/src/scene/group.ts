@@ -47,6 +47,10 @@ export class Group extends Node {
             this.layer = undefined;
         }
 
+        if (this.layer) {
+            throw new Error('AG Charts - unable to deregister scene rendering layer!');
+        }
+
         super._setScene(scene);
 
         if (scene && this.opts?.layer) {

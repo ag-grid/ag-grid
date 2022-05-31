@@ -143,7 +143,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartV2.DEBUG) {
+        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -173,7 +173,7 @@ export abstract class AgChartV2 {
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if (AgChartV2.DEBUG) {
+    if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
 }

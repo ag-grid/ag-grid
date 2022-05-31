@@ -716,13 +716,13 @@ export class BarSeries extends CartesianSeries {
 
         while (nodeData.length > seriesGroups.length) {
             const group = new Group({
-                name: `BarSeries-series-sub${this.seriesGroupId++}`,
+                name: `${this.id}-series-sub${this.seriesGroupId++}`,
                 layer: true,
                 zIndex: Series.SERIES_LAYER_ZINDEX,
             });
             const pickGroup = new Group();
-            this.seriesGroup.appendChild(group);
             group.appendChild(pickGroup);
+            this.seriesGroup.appendChild(group);
 
             seriesGroups.push({
                 group,

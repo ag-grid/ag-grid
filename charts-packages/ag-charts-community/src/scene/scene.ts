@@ -143,7 +143,7 @@ export class Scene {
     }
 
     removeLayer(canvas: HdpiCanvas) {
-        const index = this.layers.findIndex((l) => l.canvas = canvas);
+        const index = this.layers.findIndex((l) => l.canvas === canvas);
 
         if (index >= 0) {
             this.layers.splice(index, 1);
