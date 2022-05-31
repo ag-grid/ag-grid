@@ -422,8 +422,8 @@ export class ScatterSeries extends CartesianSeries {
             labelName
         } = this;
 
-        const fill = marker.fill || seriesFill;
-        const stroke = marker.stroke || seriesStroke;
+        const fill = marker.fill ?? seriesFill;
+        const stroke = marker.stroke ?? seriesStroke;
         const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth);
 
         const { formatter } = this.marker;

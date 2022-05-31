@@ -243,9 +243,14 @@ function applySeries<
             const previousOpts = chart.options?.series?.[i] || {};
             const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
 
+            if (!seriesDiff) {
+                return;
+            }
+
             debug(`applying series diff idx ${i}`, seriesDiff);
 
             jsonApply(s, seriesDiff);
+            s.markNodeDataDirty();
         });
 
         return;
