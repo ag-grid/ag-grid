@@ -13,7 +13,7 @@
 |eInputDomElement.addEventListener('keydown', event => {
 |    const key = event.key;
 |
-|    const isNavigationKey = keyCode === KEY_LEFT || 
+|    const isNavigationKey = key === KEY_LEFT || 
 |        key === KEY_RIGHT || 
 |        key === KEY_UP || 
 |        key === KEY_DOWN || 
