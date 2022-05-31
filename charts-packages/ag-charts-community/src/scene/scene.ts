@@ -198,12 +198,8 @@ export class Scene {
         onlyLayers: [],
     };
 
-    private _frameIndex = 0;
-    get frameIndex(): number {
-        return this._frameIndex;
-    }
-
-    render() {
+    render(opts: { start: number }) {
+        const { start: preprocessingStart } = opts;
         const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
@@ -273,25 +269,32 @@ export class Scene {
         this._dirty = false;
 
         const end = performance.now();
-        this._frameIndex++;
 
         if (this.debug.stats) {
             const pct = (rendered: number, skipped: number) => {
                 const total = rendered + skipped;
-                return `${rendered}/${total}(${Math.round(100*rendered/total)}%)`;
+                return `${rendered} / ${total} (${Math.round(100*rendered/total)}%)`;
+            }
+            const time = (start: number, end: number) => {
+                return `${Math.round((end - start)*100) / 100}ms`;
             }
             const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
                 renderCtx.stats || {};
-            const stats = `${Math.round((end - start)*100) / 100}ms; ` +
-                `Layers: ${pct(layersRendered, layersSkipped)}; ` +
-                `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
+            const stats = [
+                `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
+                `Layers: ${pct(layersRendered, layersSkipped)}`,
+                `Nodes: ${pct(nodesRendered, nodesSkipped)}`
+            ];
+            const lineHeight = 15;
 
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 300, 15);
+            ctx.fillRect(0, 0, 120, 10 + (lineHeight * stats.length));
             ctx.fillStyle = 'black';
-            ctx.fillText(this.frameIndex.toString(), 2, 10);
-            ctx.fillText(stats, 30, 10);
+            let index = 0;
+            for (const stat of stats) {
+                ctx.fillText(stat, 2, 10 + (index++ * lineHeight));
+            }
             ctx.restore();
         }
 

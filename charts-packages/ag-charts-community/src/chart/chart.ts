@@ -559,7 +559,7 @@ export abstract class Chart extends Observable {
                     series.update();
                 });
             case ChartUpdateType.SCENE_RENDER:
-                this.scene.render();
+                this.scene.render({ start });
                 this.firstRenderComplete = true;
             case ChartUpdateType.NONE:
                 // Do nothing.
