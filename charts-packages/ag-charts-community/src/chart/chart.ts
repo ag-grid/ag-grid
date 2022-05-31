@@ -281,8 +281,7 @@ export class ChartTooltip extends Observable {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
             if (this.chart.lastPick && !this.delay) {
-                this.chart.dehighlightDatum();
-                this.chart.lastPick = undefined;
+                this.chart.changeHighlightDatum();
             }
         }
         this.updateClass(visible, this.constrained);
@@ -560,7 +559,7 @@ export abstract class Chart extends Observable {
                     series.update();
                 });
             case ChartUpdateType.SCENE_RENDER:
-                this.scene.render();
+                this.scene.render({ start });
                 this.firstRenderComplete = true;
             case ChartUpdateType.NONE:
                 // Do nothing.
@@ -1131,9 +1130,8 @@ export abstract class Chart extends Observable {
 
         if (lastPick && (hideTooltip || !tooltipTracking)) {
             // Cursor moved from a non-marker node to empty space.
-            this.dehighlightDatum();
+            this.changeHighlightDatum();
             this.tooltip.toggle(false);
-            this.lastPick = undefined;
         }
     }
 
@@ -1215,7 +1213,7 @@ export abstract class Chart extends Observable {
             this.pointerInsideLegend = false;
             this.element.style.cursor = 'default';
             // Dehighlight if the pointer was inside the legend and is now leaving it.
-            this.dehighlightDatum();
+            this.changeHighlightDatum();
             return;
         }
 
@@ -1252,9 +1250,6 @@ export abstract class Chart extends Observable {
             (this.highlightedDatum && oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
                     this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
-            this.highlightedDatum.series.onHighlightChange();
-            oldHighlightedDatum?.series.onHighlightChange();
-
             this.update(ChartUpdateType.SERIES_UPDATE);
         }
     }
@@ -1263,16 +1258,13 @@ export abstract class Chart extends Observable {
         const { lastPick } = this;
         if (lastPick) {
             if (lastPick.datum === datum) { return; }
-            this.dehighlightDatum();
         }
 
-        this.lastPick = {
+        this.changeHighlightDatum({
             datum,
             node,
             event
-        };
-
-        this.highlightDatum(datum);
+        });
 
         const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
@@ -1283,22 +1275,23 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    highlightDatum(datum: SeriesNodeDatum): void {
-        this.element.style.cursor = datum.series.cursor;
+    changeHighlightDatum(newPick?: { datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent}) {
+        const seriesToUpdate: Set<Series | undefined> = new Set<Series>();
+        const { datum = undefined } = newPick || {};
+
+        if (this.lastPick) {
+            seriesToUpdate.add(this.lastPick?.datum?.series);
+        }
+
+        if (datum) {
+            this.element.style.cursor = datum.series.cursor;
+        }
+
+        this.lastPick = newPick;
         this.highlightedDatum = datum;
 
-        const { series } = this.highlightedDatum;
-        series.onHighlightChange();
+        seriesToUpdate.add(newPick?.datum?.series);
+
         this.update(ChartUpdateType.SERIES_UPDATE);
-    }
-
-    dehighlightDatum(): void {
-        if (this.highlightedDatum) {
-            const { series } = this.highlightedDatum;
-            this.highlightedDatum = undefined;
-
-            series.onHighlightChange();
-            this.update(ChartUpdateType.SERIES_UPDATE);
-        }
     }
 }

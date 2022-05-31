@@ -11,6 +11,9 @@ import { missing, exists } from "../../utils/generic";
 import { sortNumerically, last, includes } from "../../utils/array";
 import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
+import { _ } from "../../utils";
+import { ColumnGroup } from "../../entities/columnGroup";
+import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
 
 export class MoveColumnFeature implements DropListener {
 
@@ -210,6 +213,30 @@ export class MoveColumnFeature implements DropListener {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
 
+        if (dragSourceType === DragSourceType.HeaderCell) {
+            // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
+            let newCols: Column[] = [];
+            allMovingColumns.forEach((col) => {
+                let movingGroup: ColumnGroup | null = null;
+
+                let parent = col.getParent();
+                while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
+                    movingGroup = parent;
+                    parent = parent.getParent();
+                }
+                if (movingGroup != null) {
+                    movingGroup.getLeafColumns().forEach((newCol) => {
+                        if (!newCols.includes(newCol)) {
+                            newCols.push(newCol);
+                        }
+                    });
+                } else if (!newCols.includes(col)) {
+                    newCols.push(col);
+                }
+            });
+            allMovingColumns = newCols;
+        }
+
         // it is important to sort the moving columns as they are in grid columns, as the list of moving columns
         // could themselves be part of 'married children' groups, which means we need to maintain the order within
         // the moving list.
@@ -253,18 +280,68 @@ export class MoveColumnFeature implements DropListener {
             if (draggingRight && firstValidMove <= (oldIndex as number)) { return; }
         }
 
+        // From when we find a move that passes all the rules
+        // Remember what that move would look like in terms of displayed cols
+        // keep going with further moves until we find a different result in displayed output
+        // In this way potentialMoves contains all potential moves over 'hidden' columns
+        const displayedCols = this.columnModel.getAllDisplayedColumns();
+
+        let potentialMoves: { move: number, fragCount: number }[] = [];
+        let targetOrder: Column[] | null = null;
+
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            if (!this.columnModel.doesMovePassRules(allMovingColumnsOrdered, move)) {
+            const order = this.columnModel.getProposedColumnOrder(allMovingColumnsOrdered, move);
+
+            if (!this.columnModel.doesOrderPassRules(order)) {
                 continue;
             }
+            const displayedOrder = order.filter((col) => displayedCols.includes(col));
+            if (targetOrder === null) {
+                targetOrder = displayedOrder;
+            } else if (!_.areEqual(displayedOrder, targetOrder)) {
+                break; // Stop looking for potential moves if the displayed result changes from the target
+            }
+            const fragCount = this.groupFragCount(order);
+            potentialMoves.push({ move, fragCount });
+        }
 
-            this.columnModel.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
-
-            // important to return here, so once we do the first valid move, we don't try do any more
+        if (potentialMoves.length === 0) {
             return;
         }
+
+        // The best move is the move with least group fragmentation
+        potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
+        const bestMove = potentialMoves[0].move;
+
+        this.columnModel.moveColumns(allMovingColumnsOrdered, bestMove, "uiColumnDragged");
+    }
+
+    // A measure of how fragmented in terms of groups an order of columns is
+    private groupFragCount(columns: Column[]): number {
+        function parents(col: Column): ProvidedColumnGroup[] {
+            let result: ProvidedColumnGroup[] = [];
+            let parent = col.getOriginalParent();
+            while (parent != null) {
+                result.push(parent);
+                parent = parent.getOriginalParent();
+            }
+            return result;
+        }
+        let count = 0;
+        for (let i = 0; i < columns.length -1; i++) {
+            let a = parents(columns[i]);
+            let b = parents(columns[i + 1]);
+            // iterate over the longest one
+            [a, b] = a.length > b.length ? [a, b] : [b, a];
+            a.forEach((parent) => {
+                if (b.indexOf(parent) === -1) {
+                    count++; // More fragmented if other column doesn't share the parent
+                }
+            });
+        }
+        return count;
     }
 
     private calculateValidMoves(movingCols: Column[], draggingRight: boolean, mouseX: number): number[] {

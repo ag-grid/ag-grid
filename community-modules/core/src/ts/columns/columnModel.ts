@@ -1377,19 +1377,24 @@ export class ColumnModel extends BeanStub {
 
     public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
+        const proposedColumnOrder = this.getProposedColumnOrder(columnsToMove, toIndex);
+        return this.doesOrderPassRules(proposedColumnOrder);
+    }
+
+    public doesOrderPassRules(gridOrder: Column[]) {
+        if (!this.doesMovePassMarryChildren(gridOrder)) {
+            return false;
+        }
+        if (!this.doesMovePassLockedPositions(gridOrder)) {
+            return false;
+        }
+        return true;
+    }
+
+    public getProposedColumnOrder(columnsToMove: Column[], toIndex: number): Column[] {
         const proposedColumnOrder = this.gridColumns.slice();
         moveInArray(proposedColumnOrder, columnsToMove, toIndex);
-
-        // then check that the new proposed order of the columns passes all rules
-        if (!this.doesMovePassMarryChildren(proposedColumnOrder)) {
-            return false;
-        }
-
-        if (!this.doesMovePassLockedPositions(proposedColumnOrder)) {
-            return false;
-        }
-
-        return true;
+        return proposedColumnOrder;
     }
 
     // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns

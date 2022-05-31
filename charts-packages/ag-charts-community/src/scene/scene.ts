@@ -37,7 +37,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agChartsSceneRenderModel || 'dom-composite',
+            mode = (window as any).agChartsSceneRenderModel || 'composite',
             width,
             height,
         } = opts;
@@ -107,7 +107,7 @@ export class Scene {
             name,
             zIndex,
             canvas: new HdpiCanvas({
-                document: this.canvas.document,
+                document: this.opts.document,
                 width,
                 height,
                 domLayer,
@@ -143,7 +143,7 @@ export class Scene {
     }
 
     removeLayer(canvas: HdpiCanvas) {
-        const index = this.layers.findIndex((l) => l.canvas = canvas);
+        const index = this.layers.findIndex((l) => l.canvas === canvas);
 
         if (index >= 0) {
             this.layers.splice(index, 1);
@@ -198,12 +198,8 @@ export class Scene {
         onlyLayers: [],
     };
 
-    private _frameIndex = 0;
-    get frameIndex(): number {
-        return this._frameIndex;
-    }
-
-    render() {
+    render(opts: { start: number }) {
+        const { start: preprocessingStart } = opts;
         const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
@@ -246,7 +242,7 @@ export class Scene {
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                console.log({ redrawType: RedrawType[root.dirty], canvasCleared });
+                console.log({ redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
             }
 
             if (root.visible) {
@@ -273,32 +269,56 @@ export class Scene {
         this._dirty = false;
 
         const end = performance.now();
-        this._frameIndex++;
 
         if (this.debug.stats) {
             const pct = (rendered: number, skipped: number) => {
                 const total = rendered + skipped;
-                return `${rendered}/${total}(${Math.round(100*rendered/total)}%)`;
+                return `${rendered} / ${total} (${Math.round(100*rendered/total)}%)`;
+            }
+            const time = (start: number, end: number) => {
+                return `${Math.round((end - start)*100) / 100}ms`;
             }
             const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
                 renderCtx.stats || {};
-            const stats = `${Math.round((end - start)*100) / 100}ms; ` +
-                `Layers: ${pct(layersRendered, layersSkipped)}; ` +
-                `Nodes: ${pct(nodesRendered, nodesSkipped)}`;
+            const stats = [
+                `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
+                `Layers: ${pct(layersRendered, layersSkipped)}`,
+                `Nodes: ${pct(nodesRendered, nodesSkipped)}`
+            ];
+            const lineHeight = 15;
 
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 300, 15);
+            ctx.fillRect(0, 0, 120, 10 + (lineHeight * stats.length));
             ctx.fillStyle = 'black';
-            ctx.fillText(this.frameIndex.toString(), 2, 10);
-            ctx.fillText(stats, 30, 10);
+            let index = 0;
+            for (const stat of stats) {
+                ctx.fillText(stat, 2, 10 + (index++ * lineHeight));
+            }
             ctx.restore();
         }
 
     }
 
+    buildTree(node: Node): { name?: string, node?: any, dirty?: string } {
+        const childrenDirtyTree = node.children.map(c => this.buildDirtyTree(c))
+            .filter(c => c.paths.length > 0);
+        const name = (node instanceof Group ? node.name : null) ?? node.id;
+
+        return {
+            name,
+            node,
+            dirty: RedrawType[node.dirty],
+            ...node.children.map((c) => this.buildTree(c))
+                .reduce((result, childTree) => {
+                    result[childTree.name || '<unknown>'] = childTree;
+                    return result;
+                }, {} as Record<string, {}>),
+        };
+    }
+
     buildDirtyTree(node: Node): {
-        dirtyTree: { meta?: { name: string, node: any, dirty: string } },
+        dirtyTree: { name?: string, node?: any, dirty?: string },
         paths: string[],
     } {
         if (node.dirty === RedrawType.NONE) {
@@ -315,11 +335,13 @@ export class Scene {
 
         return {
             dirtyTree: {
-                meta: { name, node, dirty: RedrawType[node.dirty] },
+                name,
+                node,
+                dirty: RedrawType[node.dirty],
                 ...childrenDirtyTree.map((c) => c.dirtyTree)
-                    .filter((t) => t.meta !== undefined)
+                    .filter((t) => t.dirty !== undefined)
                     .reduce((result, childTree) => {
-                        result[childTree.meta?.name || '<unknown>'] = childTree;
+                        result[childTree.name || '<unknown>'] = childTree;
                         return result;
                     }, {} as Record<string, {}>),
             },

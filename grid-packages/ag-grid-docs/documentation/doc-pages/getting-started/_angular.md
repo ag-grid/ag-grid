@@ -237,7 +237,7 @@
 |```
 |
 |
-| Copy the content below into the file `app.styles.css`:
+| Copy the content below into the file `styles.scss`:
 |
 |```css
 |@import 'ag-grid-community/dist/styles/ag-grid.css';

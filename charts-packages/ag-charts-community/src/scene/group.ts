@@ -47,6 +47,10 @@ export class Group extends Node {
             this.layer = undefined;
         }
 
+        if (this.layer) {
+            throw new Error('AG Charts - unable to deregister scene rendering layer!');
+        }
+
         super._setScene(scene);
 
         if (scene && this.opts?.layer) {
@@ -134,7 +138,7 @@ export class Group extends Node {
         const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
 
         if (name && consoleLog) {
-            console.log({ name, group: this, isDirty, isChildDirty, forceRender });
+            console.log({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
         }
 
         if (layer) {
@@ -146,7 +150,7 @@ export class Group extends Node {
         if (!isDirty && !isChildDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
-                console.log({ name, result: 'skipping', counts, group: this });
+                console.log({ name, result: 'skipping', renderCtx, counts, group: this });
             }
 
             if (layer && stats) {
@@ -170,6 +174,11 @@ export class Group extends Node {
 
             if (clipBBox) {
                 const { width, height, x, y } = clipBBox;
+
+                if (consoleLog) {
+                    console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+                }
+
                 clipPath.clear();
                 clipPath.rect(x, y, width, height);
                 clipPath.draw(ctx);
@@ -190,7 +199,7 @@ export class Group extends Node {
         // so all children can be transformed at once.
         this.computeTransformMatrix();
         this.matrix.toContext(ctx);
-        clipBBox = clipBBox ? this.matrix.transformBBox(clipBBox) : undefined;
+        clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
 
         if (dirtyZIndex) {
             this.dirtyZIndex = false;
@@ -237,7 +246,7 @@ export class Group extends Node {
 
         if (name && consoleLog && stats) {
             const counts = this.nodeCount;
-            console.log({ name, result: 'rendered', skipped, counts, group: this });
+            console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
         }
     }
 }

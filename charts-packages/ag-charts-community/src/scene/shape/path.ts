@@ -32,6 +32,12 @@ export class Path extends Shape {
      */
     readonly path = new Path2D();
 
+    @ScenePathChangeDetection()
+    clipPath?: Path2D;
+
+    @ScenePathChangeDetection()
+    clipMode?: 'normal' | 'punch-out';
+
      /**
      * The path only has to be updated when certain attributes change.
      * For example, if transform attributes (such as `translationX`)
@@ -94,9 +100,33 @@ export class Path extends Shape {
             this.updatePath();
             this.dirtyPath = false;
         }
-        this.path.draw(ctx);
 
-        this.fillStroke(ctx);
+        if (this.clipPath) {
+            ctx.save();
+
+            if (this.clipMode === 'normal') {
+                // Bound the shape rendered to the clipping path.
+                this.clipPath.draw(ctx);
+                ctx.clip();
+            }
+
+            this.path.draw(ctx);
+            this.fillStroke(ctx);
+
+            if (this.clipMode === 'punch-out') {
+                // Bound the shape rendered to outside the clipping path.
+                this.clipPath.draw(ctx);
+                ctx.clip();
+                // Fallback values, but practically these should never be used.
+                const { x = -10000, y = -10000, width = 20000, height = 20000 } = this.computeBBox() ?? {};
+                ctx.clearRect(x, y, width, height);
+            }
+
+            ctx.restore();
+        } else {
+            this.path.draw(ctx);
+            this.fillStroke(ctx);
+        }
 
         super.render(renderCtx);
     }
