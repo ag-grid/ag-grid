@@ -436,7 +436,6 @@ function createFakeServer(data) {
             return filteredData;
         };
 
-        // simple implementation of lodash groupBy
         groupBy(data, field) {
             var result = {};
             data.forEach(function (item) {
@@ -451,7 +450,6 @@ function createFakeServer(data) {
             return result;
         };
 
-        // simple implementation of lodash filter
         filter(data, callback) {
             var result = [];
             data.forEach(function (item) {

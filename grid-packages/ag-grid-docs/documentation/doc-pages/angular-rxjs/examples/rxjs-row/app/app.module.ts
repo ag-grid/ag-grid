@@ -8,7 +8,7 @@ import { RxJsComponentByRow } from "./rxjs-component-example/rxjs-by-row.compone
     imports: [
         BrowserModule,
         HttpClientModule,
-        AgGridModule.withComponents([])
+        AgGridModule
     ],
     declarations: [
         RxJsComponentByRow

@@ -1,7 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
-import { cloneDeep } from "lodash";
 import { map, catchError } from "rxjs/operators";
 import { of, throwError, interval } from "rxjs";
 @Injectable()
@@ -21,19 +20,6 @@ export class MockServerService {
     }
 
     // provides randomised data updates to some of the rows
-    // only returns the changed data rows
-    byRowupdates(): any {
-        return interval(1000).pipe(map(() => {
-            let changes: any[] = [];
-
-            // make some mock changes to the data
-            this.makeSomePriceChanges(changes);
-            this.makeSomeVolumeChanges(changes);
-            return changes;
-        }));
-    }
-
-    // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     allDataUpdates(): any {
         return interval(1000).pipe(map(() => {
@@ -45,7 +31,8 @@ export class MockServerService {
 
             // this time we don't care about the delta changes only
             // this time we return the full data set which has changed rows within it
-            return cloneDeep(this.rowData);
+            // We mimic immutable data by spreading each row item
+            return this.rowData.map(r => ({ ...r }));
         }));
     }
 
@@ -56,7 +43,7 @@ export class MockServerService {
         // the sample data has just name and code, we need to add in dummy figures
         this.rowData = this.backfillData(reducedDataSet);
 
-        return cloneDeep(this.rowData);
+        return (this.rowData);
     }
 
     handleError(error: any): any {

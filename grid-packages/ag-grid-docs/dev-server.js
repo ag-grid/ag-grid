@@ -134,6 +134,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'angular'
     });
+    lnk('../../community-modules/angular-legacy/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'angular-legacy'
+    });
     lnk('../../community-modules/react/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -177,6 +182,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-charts-angular'
     });
+    lnk('../../charts-packages/ag-charts-angular-legacy/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-angular-legacy'
+    });
     lnk('../../charts-packages/ag-charts-vue/', '_dev/', {
         force: true,
         type: linkType,
@@ -203,6 +213,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'ag-grid-angular'
+    });
+    lnk('../../grid-packages/ag-grid-angular-legacy/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-angular-legacy'
     });
     lnk('../../grid-packages/ag-grid-react/', '_dev/', {
         force: true,
@@ -371,7 +386,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 const getLernaChainBuildInfo = async (skipFrameworks) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo(false, true, true);
 
-    const frameworks = ['angular', 'react', 'vue', 'vue3'];
+    const frameworks = ['angular', 'angular-legacy', 'react', 'vue', 'vue3'];
 
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
@@ -459,7 +474,7 @@ const watchCoreModules = async (skipFrameworks) => {
 
 const updateCoreModuleHashes = () => {
     const coreModuleRootNames = ['community-modules', 'enterprise-modules', 'charts-packages'];
-    const exclusions = ['react', 'angular', 'vue', 'vue3', 'polymer'];
+    const exclusions = ['react', 'angular', 'angular-legacy', 'vue', 'vue3', 'polymer'];
 
     coreModuleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = `../../${moduleRootName}/`;
@@ -596,13 +611,13 @@ const watchFrameworkModules = async () => {
         '.hash',
     ];
 
-    const moduleFrameworks = ['angular', 'vue', 'vue3', 'react'];
+    const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
     const moduleRootDirectory = `../../community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
 
         const ignoredFolders = [...defaultIgnoreFolders];
-        if (moduleFramework !== 'angular') {
+        if (moduleFramework !== 'angular' && moduleFramework !== 'angular-legacy') {
             ignoredFolders.push('**/lib/**/*');
         }
 
@@ -620,16 +635,19 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
     servePackage(app, '@ag-grid-community/angular');
+    servePackage(app, '@ag-grid-community/angular-legacy');
     servePackage(app, '@ag-grid-community/vue');
     servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
+    servePackage(app, 'ag-charts-angular-legacy');
     servePackage(app, 'ag-charts-vue');
     servePackage(app, 'ag-charts-vue3');
     servePackage(app, 'ag-grid-community');
     servePackage(app, 'ag-grid-enterprise');
     servePackage(app, 'ag-grid-angular');
+    servePackage(app, 'ag-grid-angular-legacy');
     servePackage(app, 'ag-grid-vue');
     servePackage(app, 'ag-grid-vue3');
     servePackage(app, 'ag-grid-react');

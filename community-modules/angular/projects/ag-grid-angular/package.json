@@ -4,9 +4,11 @@
   "license": "MIT",
   "peerDependencies": {
     "@ag-grid-community/core": "~27.3.0",
-    "@angular/common": ">= 8.0.0",
-    "@angular/core": ">= 8.0.0",
-    "tslib": "^1.10.0"
+    "@angular/common": ">= 12.0.0",
+    "@angular/core": ">= 12.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
   },
   "repository": {
     "type": "git",

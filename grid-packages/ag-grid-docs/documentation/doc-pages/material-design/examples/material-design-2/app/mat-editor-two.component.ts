@@ -13,7 +13,15 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 
 @Component({
     selector: "my-app",
-    templateUrl: "./mat-editor-two.component.html"
+    template: `
+    <div style="width: 100%;">
+        <h2>Cell Editor with Material Design Components - Set 2</h2>
+        <ag-grid-angular style="width: 100%; height: 250px;" class="ag-theme-material"
+                     [gridOptions]="gridOptions"
+                     [modules]="modules">
+        </ag-grid-angular>
+    </div>
+    `
 })
 export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;

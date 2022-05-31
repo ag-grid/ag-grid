@@ -27,12 +27,7 @@ import {MatSelectComponent} from "./mat-select.component";
     imports: [
         BrowserModule,
         FormsModule,
-        AgGridModule.withComponents([
-            MatCheckboxComponent,
-            MatInputComponent,
-            MatRadioComponent,
-            MatSelectComponent
-        ]),
+        AgGridModule,
         BrowserAnimationsModule,
         MatCheckboxModule,
         MatFormFieldModule,

@@ -262,7 +262,7 @@ export class AgGridAngular implements AfterViewInit {
 
         // gridReady => onGridReady
         const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`
-        const hasGridOptionListener = !!this.gridOptions && !!this.gridOptions[asEventName];
+        const hasGridOptionListener = !!this.gridOptions && !!(this.gridOptions as any)[asEventName];
 
         return hasEmitter || hasGridOptionListener;
     }
@@ -360,14 +360,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.width`
-     */
+    /** @deprecated Set via `defaultColDef.width`     */
     @Input() public colWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.minWidth`
-     */
+    /** @deprecated Set via `defaultColDef.minWidth`     */
     @Input() public minColWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.maxWidth`
-     */
+    /** @deprecated Set via `defaultColDef.maxWidth`     */
     @Input() public maxColWidth: number | undefined = undefined;
     /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
@@ -399,8 +396,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
     /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
-    /** @deprecated As of v27, use `components` for framework components too.
-     */
+    /** @deprecated As of v27, use `components` for framework components too.     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: string | undefined = undefined;
@@ -426,8 +422,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     /** Set the size of the undo / redo stack. Default: `10`     */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
-    /** @deprecated Use stopEditingWhenCellsLoseFocus instead
-     */
+    /** @deprecated Use stopEditingWhenCellsLoseFocus instead     */
     @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     /** A default configuration object used to export to CSV.     */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
@@ -439,8 +434,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams
-     */
+    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams     */
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     /** Rows are filtered using this text as a quick filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
@@ -459,8 +453,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.     */
     @Input() public loadingCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too.     */
     @Input() public loadingCellRendererFramework: any = undefined;
     /** Params to be passed to the `loadingCellRenderer` component.     */
     @Input() public loadingCellRendererParams: any = undefined;
@@ -477,8 +470,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.
      * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.     */
     @Input() public detailCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `detailCellRenderer` for framework components too.     */
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
@@ -527,8 +519,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide a custom loading overlay component.
      * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.     */
     @Input() public loadingOverlayComponent: any = undefined;
-    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too.     */
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
@@ -539,8 +530,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide a custom no rows overlay component.
      * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.     */
     @Input() public noRowsOverlayComponent: any = undefined;
-    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.
-     */
+    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too.     */
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
@@ -623,8 +613,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide your own cell renderer component to use for full width rows.
      * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.     */
     @Input() public fullWidthCellRenderer: any = undefined;
-    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too.     */
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
@@ -634,7 +623,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
      * 
-     *   The options are:
+     *  The options are:
      * 
      * - `'singleColumn'`: single group column automatically added by the grid.
      * - `'multipleColumns'`: a group column per row group is added automatically.
@@ -676,8 +665,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
      * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.     */
     @Input() public groupRowRenderer: any = undefined;
-    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.
-     */
+    /** @deprecated As of v27, use `groupRowRenderer` for framework components too.     */
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
@@ -685,23 +673,17 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer
-     */
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
     @Input() public groupRowInnerRenderer: any = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer
-     */
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer     */
     @Input() public groupRowInnerRendererFramework: any = undefined;
-    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead
-     */
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead     */
     @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'groupRows' instead
-     */
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead     */
     @Input() public groupUseEntireRow: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'custom' instead
-     */
+    /** @deprecated - Use groupDisplayType = 'custom' instead     */
     @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
-    /** @deprecated - no longer needed, transaction updates keep group state
-     */
+    /** @deprecated - no longer needed, transaction updates keep group state     */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
@@ -712,8 +694,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
     /** @deprecated Immutable Data is on by default when grid callback getRowId() is implemented
-Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`
-     */
+         * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`     */
     @Input() public immutableData: boolean | undefined = undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
@@ -721,8 +702,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaRowDataMode: boolean | undefined = undefined;
-    /** @deprecated use asyncTransactionWaitMillis instead
-     */
+    /** @deprecated use asyncTransactionWaitMillis instead     */
     @Input() public batchUpdateWaitMillis: number | undefined = undefined;
     /** Provide the datasource for infinite scrolling.     */
     @Input() public datasource: IDatasource | undefined = undefined;
@@ -790,7 +770,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
-     */
+         */
     @Input() public suppressCellSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
@@ -881,11 +861,9 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
     @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
-    /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.
-     */
+    /** @deprecated - Set via `colDef.suppressKeyboardEvent`. If you need this to be set for every column set via the `defaultColDef.suppressKeyboardEvent` property.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
-    /** @deprecated - Use `getLocaleText` instead.
-     */
+    /** @deprecated - Use `getLocaleText` instead.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string, variableValues?: string[]) => string) | undefined = undefined;
     /** A callback for localising text within the grid.     */
     @Input() public getLocaleText: ((params: GetLocaleTextParams) => string) | undefined = undefined;
@@ -893,8 +871,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public getDocument: (() => Document) | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
-    /** @deprecated - Use `getGroupRowAgg` instead.
-     */
+    /** @deprecated - Use `getGroupRowAgg` instead.     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.     */
     @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams) => any) | undefined = undefined;
@@ -902,14 +879,11 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams) => number) | undefined = undefined;
-    /** @deprecated - Use `initialGroupOrderComparator` instead
-     */
+    /** @deprecated - Use `initialGroupOrderComparator` instead     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColDef` instead
-     */
+    /** @deprecated - Use `processPivotResultColDef` instead     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
-    /** @deprecated - Use `processPivotResultColGroupDef` instead
-     */
+    /** @deprecated - Use `processPivotResultColGroupDef` instead     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef) => void) | undefined = undefined;
@@ -917,8 +891,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
-    /** @deprecated - Use initialGroupOrderComparator instead
-     */
+    /** @deprecated - Use initialGroupOrderComparator instead     */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
@@ -936,8 +909,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
     /** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
-Allows you to set the ID for a particular row node based on the data.
-     */
+         * Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows setting the ID for a particular row node based on the data.     */
     @Input() public getRowId: GetRowIdFunc | undefined = undefined;
@@ -951,8 +923,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
-    /** @deprecated Use `postSortRows` instead
-     */
+    /** @deprecated Use `postSortRows` instead     */
     @Input() public postSort: ((nodes: RowNode[]) => void) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSortRows: ((params: PostSortRowsParams) => void) | undefined = undefined;
@@ -962,8 +933,7 @@ Allows you to set the ID for a particular row node based on the data.
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
-    /** @deprecated Use `isFullWidthRow` instead.
-     */
+    /** @deprecated Use `isFullWidthRow` instead.     */
     @Input() public isFullWidthCell: ((rowNode: RowNode) => boolean) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams) => boolean) | undefined = undefined;
@@ -1057,9 +1027,9 @@ Allows you to set the ID for a particular row node based on the data.
     @Output() public dragStopped: EventEmitter<DragStoppedEvent> = new EventEmitter<DragStoppedEvent>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
      * 
-     *   - The page size changes.
-     *   - The current shown page is changed.
-     *   - New data is loaded onto the grid.     */
+     *  - The page size changes.
+     *  - The current shown page is changed.
+     *  - New data is loaded onto the grid.     */
     @Output() public paginationChanged: EventEmitter<PaginationChangedEvent> = new EventEmitter<PaginationChangedEvent>();
     /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid.     */
     @Output() public rowDragEnter: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();

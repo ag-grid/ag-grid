@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([MySimpleEditor])
+        AgGridModule
     ],
     declarations: [
         AppComponent, MySimpleEditor

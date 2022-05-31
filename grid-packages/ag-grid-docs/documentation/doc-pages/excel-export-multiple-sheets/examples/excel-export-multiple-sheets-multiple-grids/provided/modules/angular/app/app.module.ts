@@ -10,7 +10,7 @@ import { SportRenderer, AppComponent } from './app.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AgGridModule.withComponents([SportRenderer])
+    AgGridModule
   ],
   declarations: [
     AppComponent,

@@ -10,7 +10,6 @@ function processFunction(code: string): string {
 function getImports(componentFileNames: string[]): string[] {
     const imports = [
         "import { createApp } from 'vue';",
-        "import { cloneDeep } from 'lodash';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue3';",
     ];
