@@ -564,7 +564,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls];
+        const stickyRowCtrls = this.stickyRowFeature.getStickyRowCtrls();
+        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
         Object.keys(this.rowCtrlsByRowIndex).forEach(key => res.push(this.rowCtrlsByRowIndex[key]));
         return res;
     }
