@@ -18,8 +18,8 @@ process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 600;
+export const CANVAS_WIDTH = 800;
+export const CANVAS_HEIGHT = 600;
 
 export function repeat<T>(value: T, count: number): T[] {
     const result = new Array(count);
@@ -153,20 +153,28 @@ export function extractImageData({ nodeCanvas, bbox }: { nodeCanvas?: Canvas, bb
 export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     let realCreateElement: typeof document.createElement;
     let ctx: { nodeCanvas?: Canvas } = {};
+    let canvasStack: Canvas[] = [];
+    let canvases: Canvas[] = [];
 
     beforeEach(() => {
         ctx.nodeCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-        window['agChartsSceneRenderModel'] = 'simple';
+        canvasStack = [ ctx.nodeCanvas ];
+        window['agChartsSceneRenderModel'] = 'composite';
 
         realCreateElement = document.createElement;
         document.createElement = jest.fn(
             (element, options) => {
                 if (element === 'canvas') {
-                    const mockedElement = realCreateElement.call(document, element, options);
+                    const mockedElement: HTMLCanvasElement = realCreateElement.call(document, element, options);
 
-                    let nodeCanvas = ctx.nodeCanvas;
+                    let [nextCanvas] = canvasStack.splice(0, 1);
+                    if (!nextCanvas) {
+                        nextCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+                    }
+                    canvases.push(nextCanvas);
+
                     mockedElement.getContext = (p) => { 
-                        const context2d = nodeCanvas.getContext(p, { alpha: false });
+                        const context2d = nextCanvas.getContext(p, { alpha: true });
                         context2d.patternQuality = 'good';
                         context2d.quality = 'good';
                         context2d.textDrawingMode = 'path';
@@ -186,6 +194,8 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
     afterEach(() => {
         document.createElement = realCreateElement;
         ctx.nodeCanvas = null;
+        canvasStack = [];
+        canvases = [];
     });
 
     return ctx;

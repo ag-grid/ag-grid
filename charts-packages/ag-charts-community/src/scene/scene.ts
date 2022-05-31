@@ -107,7 +107,7 @@ export class Scene {
             name,
             zIndex,
             canvas: new HdpiCanvas({
-                document: this.canvas.document,
+                document: this.opts.document,
                 width,
                 height,
                 domLayer,
