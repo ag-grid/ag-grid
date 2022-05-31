@@ -8,7 +8,7 @@ describe('wrapOptionsUpdateCode', () => {
         }`;
 
         const propertyDefinition = wrapOptionsUpdateCode(functionDefinition);
-        const expected = 'function foo(bar) { const options = cloneDeep(this.options); options.padding.top = 20; this.options = options; }';
+        const expected = 'function foo(bar) { const options = {...this.options}; options.padding.top = 20; this.options = options; }';
 
         expect(standardiseWhitespace(propertyDefinition)).toBe(expected);
     });
@@ -34,7 +34,7 @@ describe('wrapOptionsUpdateCode', () => {
         }`;
 
         const propertyDefinition = wrapOptionsUpdateCode(functionDefinition);
-        const expected = 'foo(bar) { const options = cloneDeep(this.options); options.axes[0].gridStyle = [{ lineDash: [1, 3] }]; this.options = options; }';
+        const expected = 'foo(bar) { const options = {...this.options}; options.axes[0].gridStyle = [{ lineDash: [1, 3] }]; this.options = options; }';
 
         expect(standardiseWhitespace(propertyDefinition)).toBe(expected);
     });
