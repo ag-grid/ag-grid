@@ -916,7 +916,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-sticky-top {
     position: absolute;
+    display: flex;
     width: 100%;
+}
+
+.ag-pinned-left-sticky-top,
+.ag-pinned-right-sticky-top {
+    position: relative;
+    height: 100%;
 }
 
 /**
