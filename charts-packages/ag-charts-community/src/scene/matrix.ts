@@ -117,13 +117,20 @@ export class Matrix {
      * to `C`, if given, or to `A` otherwise.
      */
     private AxB(A: number[], B: number[], C?: number[]) {
+        const a = A[0] * B[0] + A[2] * B[1],
+              b = A[1] * B[0] + A[3] * B[1],
+              c = A[0] * B[2] + A[2] * B[3],
+              d = A[1] * B[2] + A[3] * B[3],
+              e = A[0] * B[4] + A[2] * B[5] + A[4],
+              f = A[1] * B[4] + A[3] * B[5] + A[5];
+
         C = C || A;
-        C[0] = A[0] * B[0] + A[2] * B[1];
-        C[1] = A[1] * B[0] + A[3] * B[1];
-        C[2] = A[0] * B[2] + A[2] * B[3];
-        C[3] = A[1] * B[2] + A[3] * B[3];
-        C[4] = A[0] * B[4] + A[2] * B[5] + A[4];
-        C[5] = A[1] * B[4] + A[3] * B[5] + A[5];
+        C[0] = a;
+        C[1] = b;
+        C[2] = c;
+        C[3] = d;
+        C[4] = e;
+        C[5] = f;
     }
 
     /**
