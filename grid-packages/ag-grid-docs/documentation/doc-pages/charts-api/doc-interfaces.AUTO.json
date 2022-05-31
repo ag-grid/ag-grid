@@ -3303,6 +3303,7 @@
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
+    "colorIndex": { "type": { "returnType": "number", "optional": false } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "label": {
       "type": {
@@ -3336,6 +3337,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },
+  "BarSeriesGroup": {},
   "CartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },

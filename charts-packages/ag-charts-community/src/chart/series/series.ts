@@ -226,17 +226,30 @@ export abstract class Series extends Observable {
         return defaultOpacity;
     }
 
-    protected getStrokeWidth(defaultStrokeWidth: number): number {
+    protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
         const { 
-            chart: { highlightedDatum: { series = undefined } = {} } = {},
+            chart: { highlightedDatum: { series = undefined } = {}, highlightedDatum = undefined } = {},
             highlightStyle: { series: { strokeWidth } },
         } = this;
 
-        if (series && series === this && strokeWidth !== undefined) {
-            return strokeWidth;
-        } else {
+        if (strokeWidth === undefined) {
+            // No change in styling for highlight cases.
             return defaultStrokeWidth;
         }
+
+        if (!series) {
+            // Current series isn't highlighted.
+            return defaultStrokeWidth;
+        }
+
+        const matchesDatum = datum ?
+            highlightedDatum === datum || highlightedDatum?.itemId === datum?.itemId : 
+            true;
+        if (series === this && matchesDatum) {
+            return strokeWidth;
+        }
+
+        return defaultStrokeWidth;
     }
 
     abstract getTooltipHtml(seriesDatum: any): string;
@@ -265,12 +278,6 @@ export abstract class Series extends Observable {
     }
 
     readonly highlightStyle = new HighlightStyle();
-
-    // Each series is expected to have its own logic to efficiently update its nodes
-    // on hightlight changes.
-    onHighlightChange() {
-        // Override point for subclasses.
-    }
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {

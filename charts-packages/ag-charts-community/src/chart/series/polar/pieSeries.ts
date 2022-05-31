@@ -108,6 +108,7 @@ export class PieSeries extends PolarSeries {
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
+    private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
@@ -220,10 +221,6 @@ export class PieSeries extends PolarSeries {
     shadow?: DropShadow = undefined;
 
     readonly highlightStyle = new PieHighlightStyle();
-
-    onHighlightChange() {
-        this.updateNodes();
-    }
 
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
@@ -372,21 +369,30 @@ export class PieSeries extends PolarSeries {
     }
 
     private updateGroupSelection() {
-        const updateGroups = this.groupSelection.setData(this.groupSelectionData);
-        updateGroups.exit.remove();
+        const { groupSelection, highlightSelection } = this;
 
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Sector).each(node => node.tag = PieNodeTag.Sector);
-        enterGroups.append(Line).each(node => {
-            node.tag = PieNodeTag.Callout;
-            node.pointerEvents = PointerEvents.None;
-        });
-        enterGroups.append(Text).each(node => {
-            node.tag = PieNodeTag.Label;
-            node.pointerEvents = PointerEvents.None;
-        });
+        const update = (selection: typeof groupSelection, appendLabels: boolean) => {
+            const updateGroups = selection.setData(this.groupSelectionData);
+            updateGroups.exit.remove();
 
-        this.groupSelection = updateGroups.merge(enterGroups);
+            const enterGroups = updateGroups.enter.append(Group);
+            enterGroups.append(Sector).each(node => node.tag = PieNodeTag.Sector);
+            if (appendLabels) {
+                enterGroups.append(Line).each(node => {
+                    node.tag = PieNodeTag.Callout;
+                    node.pointerEvents = PointerEvents.None;
+                });
+                enterGroups.append(Text).each(node => {
+                    node.tag = PieNodeTag.Label;
+                    node.pointerEvents = PointerEvents.None;
+                });
+            }
+
+            return updateGroups.merge(enterGroups);
+        };
+
+        this.groupSelection = update(groupSelection, true);
+        this.highlightSelection = update(highlightSelection, false);
     }
 
     private updateNodes() {
@@ -394,7 +400,12 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        const isVisible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        this.group.visible = isVisible;
+        this.seriesGroup.visible = isVisible;
+        this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
+
+        this.seriesGroup.opacity = this.getOpacity();
 
         const {
             fills, strokes, fillOpacity, strokeOpacity,
@@ -416,9 +427,8 @@ export class PieSeries extends PolarSeries {
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
-        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
+        const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const radius = radiusScale.convert(datum.radius);
-            const isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[index % strokes.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -460,10 +470,21 @@ export class PieSeries extends PolarSeries {
             sector.lineDashOffset = this.lineDashOffset;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            sector.opacity = this.getOpacity();
 
             centerOffsets.push(sector.centerOffset);
-        });
+        };
+
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector)
+            .each((node, datum, index) => updateSectorFn(node, datum, index, false));
+        this.highlightSelection.selectByTag<Sector>(PieNodeTag.Sector)
+            .each((node, datum, index) => {
+                const isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
+
+                node.visible = isDatumHighlighted;
+                if (node.visible) {
+                    updateSectorFn(node, datum, index, isDatumHighlighted);
+                }
+            });
 
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
