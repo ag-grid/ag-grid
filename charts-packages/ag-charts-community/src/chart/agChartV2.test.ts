@@ -13,6 +13,8 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -196,8 +198,8 @@ describe('AgChartV2', () => {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
-                options.width = 800;
-                options.height = 600;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
 
                 const chart = AgChartV2.create<any>(options);
                 await example.assertions(chart);
@@ -213,8 +215,8 @@ describe('AgChartV2', () => {
 
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
-                options.width = 800;
-                options.height = 600;
+                options.width = CANVAS_WIDTH;
+                options.height = CANVAS_HEIGHT;
 
                 const chart = AgChartV2.create<any>(options) as Chart;
                 await compare();

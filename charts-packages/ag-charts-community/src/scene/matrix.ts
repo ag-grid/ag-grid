@@ -117,16 +117,20 @@ export class Matrix {
      * to `C`, if given, or to `A` otherwise.
      */
     private AxB(A: number[], B: number[], C?: number[]) {
-        const [m11, m12, m21, m22, m31, m32] = A;
-        const [o11, o12, o21, o22, o31, o32] = B;
+        const a = A[0] * B[0] + A[2] * B[1],
+              b = A[1] * B[0] + A[3] * B[1],
+              c = A[0] * B[2] + A[2] * B[3],
+              d = A[1] * B[2] + A[3] * B[3],
+              e = A[0] * B[4] + A[2] * B[5] + A[4],
+              f = A[1] * B[4] + A[3] * B[5] + A[5];
 
         C = C || A;
-        C[0] = m11 * o11 + m21 * o12;
-        C[1] = m12 * o11 + m22 * o12;
-        C[2] = m11 * o21 + m21 * o22;
-        C[3] = m12 * o21 + m22 * o22;
-        C[4] = m11 * o31 + m21 * o32 + m31;
-        C[5] = m12 * o31 + m22 * o32 + m32;
+        C[0] = a;
+        C[1] = b;
+        C[2] = c;
+        C[3] = d;
+        C[4] = e;
+        C[5] = f;
     }
 
     /**
@@ -192,8 +196,8 @@ export class Matrix {
     }
 
     invertSelf(): Matrix {
-        const elements = this.elements;
-        let [a, b, c, d, e, f] = elements;
+        const el = this.elements;
+        let a = el[0], b = el[1], c = el[2], d = el[3], e = el[4], f = el[5];
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
 
         a *= rD;
@@ -201,12 +205,12 @@ export class Matrix {
         c *= rD;
         d *= rD;
 
-        elements[0] = d;
-        elements[1] = -b;
-        elements[2] = -c;
-        elements[3] = a;
-        elements[4] = c * f - d * e;
-        elements[5] = b * e - a * f;
+        el[0] = d;
+        el[1] = -b;
+        el[2] = -c;
+        el[3] = a;
+        el[4] = c * f - d * e;
+        el[5] = b * e - a * f;
 
         return this;
     }

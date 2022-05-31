@@ -41,35 +41,41 @@ export function SceneChangeDetection(opts?: {
     changeCb?: (o: any) => any,
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
+    const debug = false;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = `__${key}`;
 
         if (!target[key]) {
-            Object.defineProperty(target, key, {
-                set: function (value: any) {
-                    const oldValue = this[privateKey];
-                    if (convertor) {
-                        value = convertor(value);
-                    }
+            // Remove all conditional logic from runtime - generate a setter with the exact necessary
+            // steps, as these setters are called a LOT during update cycles.        
+            const setterJs = `
+                ${debug ? 'var setCount = 0;' : ''}
+                function set${key}(value) {
+                    const oldValue = this.${privateKey};
+                    ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
-                        this[privateKey] = value;
-                        if (type === 'normal') {
-                            this.markDirty(redraw);
-                        } else if (type === 'transform') {
-                            this.markDirtyTransform(redraw);
-                        }
-                        if (changeCb) {
-                            changeCb(this);
-                        }
+                        this.${privateKey} = value;
+                        ${debug ? `if (setCount++ % 10 === 0) console.log({ property: '${key}', oldValue, value });` : ''}
+                        ${type === 'normal' ? 'this.markDirty(' + redraw + ');' : ''}
+                        ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
+                        ${changeCb ? 'changeCb(this);' : ''}
                     }
-                },
-                get: function (): any {
-                    return this[privateKey];
-                },
+                };
+                set${key};
+            `;
+            const getterJs = `
+                function get${key}() {
+                    return this.${privateKey};
+                };
+                get${key};
+            `;
+            Object.defineProperty(target, key, {
+                set: eval(setterJs),
+                get: eval(getterJs),
                 enumerable: true,
-                configurable: true
+                configurable: false,
             });
         }
     }
