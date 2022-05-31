@@ -215,7 +215,7 @@ export class GridOptionsWrapper {
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn(
-                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!"
+                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to use these together on our support forum either, you will get the same answer!"
             );
         }
 
@@ -238,6 +238,12 @@ export class GridOptionsWrapper {
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("AG Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        }
+
+        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
+            console.warn(
+                "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
+            );
         }
 
         const warnOfDeprecaredIcon = (name: string) => {
