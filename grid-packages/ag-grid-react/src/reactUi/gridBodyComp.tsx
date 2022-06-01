@@ -22,8 +22,8 @@ const GridBodyComp = () => {
     const [ariaRowCount, setAriaRowCount] = useState<number>(0);
     const [topHeight, setTopHeight] = useState<number>(0);
     const [bottomHeight, setBottomHeight] = useState<number>(0);
-    const [stickyTopHeight, setStickyTopHeight] = useState<number>(0);
-    const [stickyTopOffsetTop, setStickyTopOffsetTop] = useState<number>(0);
+    const [stickyTopHeight, setStickyTopHeight] = useState<string>('0px');
+    const [stickyTopTop, setStickyTopTop] = useState<string>('0px');
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
@@ -78,7 +78,7 @@ const GridBodyComp = () => {
             setTopHeight,
             setBottomHeight,
             setStickyTopHeight,
-            setStickyTopOffsetTop,
+            setStickyTopTop,
             setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
@@ -142,9 +142,9 @@ const GridBodyComp = () => {
 
     const stickyTopStyle: React.CSSProperties = useMemo(() => ({
         height: stickyTopHeight,
-        top: stickyTopOffsetTop,
+        top: stickyTopTop,
         width: stickyTopWidth
-    }), []);
+    }), [stickyTopHeight, stickyTopTop, stickyTopWidth]);
 
     const bottomStyle: React.CSSProperties = useMemo(()=> ({
         height: bottomHeight,
