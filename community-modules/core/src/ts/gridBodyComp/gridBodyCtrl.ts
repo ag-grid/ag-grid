@@ -36,8 +36,8 @@ export interface IGridBodyComp extends LayoutView {
     setTopDisplay(display: string): void;
     setBottomHeight(height: number): void;
     setBottomDisplay(display: string): void;
-    setStickyTopHeight(height: number): void;
-    setStickyTopOffsetTop(offsetTop: number): void;
+    setStickyTopHeight(height: string): void;
+    setStickyTopTop(offsetTop: string): void;
     setStickyTopWidth(width: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
@@ -338,8 +338,8 @@ export class GridBodyCtrl extends BeanStub {
 
     public setStickyTopHeight(height: number = 0): void {
         // console.log('setting sticky top height ' + height);
+        this.comp.setStickyTopHeight(`${height}px`);
         this.stickyTopHeight = height;
-        this.comp.setStickyTopHeight(height);
     }
 
     public getStickyTopHeight(): number {
@@ -363,7 +363,7 @@ export class GridBodyCtrl extends BeanStub {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
         const height = headerCtrl.getHeaderHeight();
 
-        this.comp.setStickyTopOffsetTop(height + 1);
+        this.comp.setStickyTopTop(`${height + 1}px`);
     }
 
     // method will call itself if no available width. this covers if the grid

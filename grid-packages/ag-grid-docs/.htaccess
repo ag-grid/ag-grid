@@ -277,6 +277,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/stacked-column/ /angular-charts/gallery/stacked-column/
     Redirect 301 /documentation/angular/charts/time-axis-with-irregular-intervals/ /angular-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/angular/charts/xy-histogram-with-mean-aggregation/ /angular-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /angular-charts/ /angular-charts/overview/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/client-side-model/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
     Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
@@ -775,6 +776,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/stacked-column/ /react-charts/gallery/stacked-column/
     Redirect 301 /documentation/react/charts/time-axis-with-irregular-intervals/ /react-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/react/charts/xy-histogram-with-mean-aggregation/ /react-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /react-charts/ /react-charts/overview/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/client-side-model/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
     Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
@@ -1022,6 +1024,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/stacked-column/ /vue-charts/gallery/stacked-column/
     Redirect 301 /documentation/vue/charts/time-axis-with-irregular-intervals/ /vue-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/vue/charts/xy-histogram-with-mean-aggregation/ /vue-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /vue-charts/ /vue-charts/overview/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/client-side-model/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
     Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
