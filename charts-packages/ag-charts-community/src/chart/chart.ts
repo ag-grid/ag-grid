@@ -517,9 +517,7 @@ export abstract class Chart extends Observable {
             this.performUpdate(count);
         } catch (error) {
             this._lastPerformUpdateError = error;
-            if (this.debug) {
-                console.error(error);
-            }
+            console.error(error);
         }
     });
     public update(type = ChartUpdateType.FULL, opts?: { forceNodeDataRefresh: boolean }) {
