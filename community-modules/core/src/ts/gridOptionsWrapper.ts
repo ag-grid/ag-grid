@@ -215,7 +215,7 @@ export class GridOptionsWrapper {
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn(
-                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!"
+                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to use these together on our support forum either, you will get the same answer!"
             );
         }
 
@@ -238,6 +238,12 @@ export class GridOptionsWrapper {
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("AG Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        }
+
+        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
+            console.warn(
+                "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
+            );
         }
 
         const warnOfDeprecaredIcon = (name: string) => {
@@ -324,7 +330,7 @@ export class GridOptionsWrapper {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
                 return callback(mergedParams);
-            }
+            };
             return wrapped;
         }
         return callback;
@@ -821,7 +827,7 @@ export class GridOptionsWrapper {
     }
 
     public isReadOnlyEdit(): boolean {
-        return isTrue(this.gridOptions.readOnlyEdit);;
+        return isTrue(this.gridOptions.readOnlyEdit);
     }
 
     public isImmutableData() {
@@ -1295,7 +1301,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (groupRowAggNodes) {
-            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes)
+            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes);
         }
     }
 
@@ -1314,7 +1320,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data)
+            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
         }
     }
 
@@ -1331,7 +1337,7 @@ export class GridOptionsWrapper {
     }
 
     public getTabToNextCellFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell)
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell);
     }
 
     public getGridTabIndex(): string {
@@ -1857,6 +1863,7 @@ export class GridOptionsWrapper {
 
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         const { localeText, getLocaleText, localeTextFunc } = this.gridOptions;
+
         if (getLocaleText) {
             //key: string, defaultValue: string, variableValues?: string[]
             return (key: string, defaultValue: string, variableValues?: string[]) => {
@@ -1867,9 +1874,9 @@ export class GridOptionsWrapper {
                     api: this.getApi()!,
                     columnApi: this.getColumnApi()!,
                     context: this.getContext()
-                }
+                };
                 return getLocaleText(params);
-            }
+            };
         }
 
         if (localeTextFunc) {
@@ -1878,7 +1885,6 @@ export class GridOptionsWrapper {
 
         return (key: string, defaultValue: string, variableValues?: string[]) => {
             let localisedText = localeText && localeText[key];
-
 
             if (localisedText && variableValues && variableValues.length) {
                 let found = 0;

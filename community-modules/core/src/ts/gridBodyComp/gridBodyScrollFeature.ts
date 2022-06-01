@@ -101,6 +101,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
         const topCenterContainer = this.ctrlsService.getTopCenterRowContainerCtrl();
+        const stickyTopCenterContainer = this.ctrlsService.getStickyTopCenterRowContainerCtrl();
         const bottomCenterContainer = this.ctrlsService.getBottomCenterRowContainerCtrl();
         const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
@@ -108,9 +109,14 @@ export class GridBodyScrollFeature extends BeanStub {
         centerHeaderContainer.setHorizontalScroll(offset);
         bottomCenterContainer.setContainerTranslateX(offset);
         topCenterContainer.setContainerTranslateX(offset);
+        stickyTopCenterContainer.setContainerTranslateX(offset);
 
-        const partner = this.lastHorizontalScrollElement === this.centerRowContainerCtrl.getViewportElement() ?
-                fakeHScroll.getViewport() : this.centerRowContainerCtrl.getViewportElement();
+        const centerViewport = this.centerRowContainerCtrl.getViewportElement();
+        const isCenterViewportLastHorizontal = this.lastHorizontalScrollElement === centerViewport;
+
+        const partner = isCenterViewportLastHorizontal ?
+            fakeHScroll.getViewport() :
+            this.centerRowContainerCtrl.getViewportElement();
 
         setScrollLeft(partner, Math.abs(scrollLeft), this.enableRtl);
     }
@@ -385,6 +391,9 @@ export class GridBodyScrollFeature extends BeanStub {
             this.paginationProxy.goToPageWithIndex(index);
         }
 
+        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
+
         const rowNode = this.paginationProxy.getRow(index);
         let rowGotShiftedDuringOperation: boolean;
 
@@ -393,7 +402,7 @@ export class GridBodyScrollFeature extends BeanStub {
             const startingRowHeight = rowNode!.rowHeight;
 
             const paginationOffset = this.paginationProxy.getPixelOffset();
-            const rowTopPixel = rowNode!.rowTop! - paginationOffset;
+            const rowTopPixel = rowNode!.rowTop! - paginationOffset - stickyTopHeight;
             const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 
             const scrollPosition = this.getVScrollPosition();
