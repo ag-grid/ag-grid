@@ -28,6 +28,7 @@ import { Events } from "../eventKeys";
 import { FullWidthRowFocusedEvent } from "../events";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
+import { IRowModel } from "../interfaces/iRowModel";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -52,6 +53,7 @@ export class NavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
@@ -715,8 +717,15 @@ export class NavigationService extends BeanStub {
     }
 
     private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
+        const isGroupStickyEnabled = this.gridOptionsWrapper.isGroupRowsSticky();
+        const rowNode = this.rowModel.getRow(cellPosition.rowIndex);
+
         // ensureCellVisible first, to make sure cell at position is rendered.
-        this.ensureCellVisible(cellPosition);
+        // sticky rows are always visible, so the grid shouldn't scroll to focus them.
+        if (!isGroupStickyEnabled && !rowNode?.sticky) {
+            this.ensureCellVisible(cellPosition);
+        }
+
         const cellComp = this.getCellByPosition(cellPosition);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
