@@ -60,6 +60,8 @@ export function SceneChangeDetection(opts?: {
                         ${debug ? `if (setCount++ % 1000 === 0) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
                         ${type === 'normal' ? 'this.markDirty(' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
+                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
+                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }` : ''}
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
                 };

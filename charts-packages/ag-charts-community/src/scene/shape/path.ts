@@ -7,17 +7,7 @@ export function ScenePathChangeDetection(opts?: {
     convertor?: (o: any) => any,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb, convertor } = opts || {};
-
-    const changeCb = (o: any) => {
-        if (!o._dirtyPath) {
-            o._dirtyPath = true;
-            o.markDirty(redraw);
-        }
-        if (optChangeCb) {
-            optChangeCb(o);
-        }
-    };
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
