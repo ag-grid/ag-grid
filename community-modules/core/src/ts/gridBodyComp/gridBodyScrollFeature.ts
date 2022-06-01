@@ -391,6 +391,9 @@ export class GridBodyScrollFeature extends BeanStub {
             this.paginationProxy.goToPageWithIndex(index);
         }
 
+        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
+
         const rowNode = this.paginationProxy.getRow(index);
         let rowGotShiftedDuringOperation: boolean;
 
@@ -399,7 +402,7 @@ export class GridBodyScrollFeature extends BeanStub {
             const startingRowHeight = rowNode!.rowHeight;
 
             const paginationOffset = this.paginationProxy.getPixelOffset();
-            const rowTopPixel = rowNode!.rowTop! - paginationOffset;
+            const rowTopPixel = rowNode!.rowTop! - paginationOffset - stickyTopHeight;
             const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 
             const scrollPosition = this.getVScrollPosition();

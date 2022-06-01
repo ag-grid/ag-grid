@@ -68,6 +68,7 @@ export class GridBodyCtrl extends BeanStub {
     private eTop: HTMLElement;
     private eBottom: HTMLElement;
     private eStickyTop: HTMLElement;
+    private stickyTopHeight: number = 0;
 
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
@@ -337,7 +338,12 @@ export class GridBodyCtrl extends BeanStub {
 
     public setStickyTopHeight(height: number = 0): void {
         // console.log('setting sticky top height ' + height);
+        this.stickyTopHeight = height;
         this.comp.setStickyTopHeight(height);
+    }
+
+    public getStickyTopHeight(): number {
+        return this.stickyTopHeight;
     }
 
     private setStickyTopWidth(vScrollVisible: boolean) {
