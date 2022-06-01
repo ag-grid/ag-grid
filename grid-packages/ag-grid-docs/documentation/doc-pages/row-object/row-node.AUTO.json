@@ -311,6 +311,7 @@
     "type": { "arguments": { "uiLevel": "number" }, "returnType": "void" }
   },
   "setExpanded": {
+    "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse. */",
     "type": {
       "arguments": {
         "expanded": "boolean",
