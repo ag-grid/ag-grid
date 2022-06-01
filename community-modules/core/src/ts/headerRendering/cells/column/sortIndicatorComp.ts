@@ -108,6 +108,11 @@ export class SortIndicatorComp extends Component {
     }
 
     private isColumnMixedSorting() {
+        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
+        if (!isClientSideRowModel) {
+            return false;
+        }
+
         if (!this.column.getColDef().showRowGroup) {
             return false;
         }
