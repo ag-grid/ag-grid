@@ -24,7 +24,8 @@ Besides the standard set of features you'd expect from any grid:
 
 Here are some of the features that make AG Grid stand out:
 
-* Grouping / Aggregation*
+* Grouping / Aggregation *
+* Accessibility support
 * Custom Filtering
 * In-place Cell Editing
 * Records Lazy Loading *
@@ -33,16 +34,18 @@ Here are some of the features that make AG Grid stand out:
 * Hierarchical Data Support & Tree View *
 * Customizable Appearance
 * Customizable Cell Contents
-* Excel-like Pivoting *
 * State Persistence
-* Keyboard navigation
+* Keyboard Navigation
 * Data Export to CSV
 * Data Export to Excel *
+* Excel-like Pivoting *
 * Row Reordering
 * Copy / Paste
 * Column Spanning
 * Pinned Rows
 * Full Width Rows
+* Integrated Charting
+* Sparklines
 
 \* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) only.
 
