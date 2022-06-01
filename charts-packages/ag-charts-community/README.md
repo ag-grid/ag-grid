@@ -45,7 +45,7 @@ Please refer to our [Getting Started](https://www.ag-grid.com/javascript-charts/
 
 ## Issue Reporting
 
-If you have found a bug, please report them at this repository `issues` section. If you're using Enterprise version please use the private ticketing system to do that. For more information on support check out our [dedicated page](https://www.ag-grid.com/support.php?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github).
+If you have found a bug, please report them at this repository `issues` section. If you're using Enterprise version please use the [private ticketing](https://ag-grid.zendesk.com/) system to do that.
 
 ## Asking Questions
 
