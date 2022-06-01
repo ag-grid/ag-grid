@@ -1245,20 +1245,24 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
-        let rowComponent: RowCtrl | null;
+        let rowCtrl: RowCtrl | null;
+        const {rowIndex} = rowPosition;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.topRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.topRowCtrls[rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.bottomRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.bottomRowCtrls[rowIndex];
                 break;
             default:
-                rowComponent = this.rowCtrlsByRowIndex[rowPosition.rowIndex];
+                rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+                if (!rowCtrl) {
+                    rowCtrl = this.getStickyTopRowCtrls().find( ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+                }
                 break;
         }
 
-        return rowComponent;
+        return rowCtrl;
     }
 
     public getRowNode(gridRow: RowPosition): RowNode | undefined {

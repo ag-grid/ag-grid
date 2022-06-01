@@ -614,8 +614,9 @@ export class NavigationService extends BeanStub {
     }
 
     public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
-        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
+        let rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
         if (!rowCtrl) { return null; }
+
         return rowCtrl.getCellCtrl(cellPosition.column);
     }
 
@@ -726,12 +727,12 @@ export class NavigationService extends BeanStub {
             this.ensureCellVisible(cellPosition);
         }
 
-        const cellComp = this.getCellByPosition(cellPosition);
+        const cellCtrl = this.getCellByPosition(cellPosition);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
-        if (!cellComp) { return null; }
+        if (!cellCtrl) { return null; }
 
-        cellPosition = cellComp.getCellPosition();
+        cellPosition = cellCtrl.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
         // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
         // last column in the group, however now it's the first column in the group). if we didn't do
