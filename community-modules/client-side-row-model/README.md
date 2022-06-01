@@ -7,7 +7,7 @@
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-data-grid/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -53,9 +53,9 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=@ag-grid-community/client-side-row-model-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 

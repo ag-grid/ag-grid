@@ -7,7 +7,7 @@
 # AG Grid Angular Component
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -53,11 +53,11 @@ Here are some of the features that make AG Grid stand out:
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out the [developer documentation](https://www.ag-grid.com/angular-data-grid/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/angular-data-grid/grid-features/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 ## Getting started
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
 
 ### Install dependencies
 
