@@ -1,7 +1,7 @@
 [![npm](https://img.shields.io/npm/dm/ag-charts-react.svg)](https://www.npmjs.com/package/ag-charts-react)
 [![npm](https://img.shields.io/npm/dt/ag-charts-react.svg)](https://www.npmjs.com/package/ag-charts-react)
 
-# AG Charts Community
+# AG Charts React Community
 
 AG Charts is a fully-featured and highly customizable JavaScript charting library.
 
@@ -23,25 +23,19 @@ Here are some of the features that make AG Charts stand out:
 * simple, clean API
 * interactive documentation
 
-Visit [our official docs](https://www.ag-grid.com/javascript-charts-overview/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) for full documentation.
-
-## Looking for a framework specific solution?
-
-* [Get Started with Angular](https://www.ag-grid.com/angular-charts/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-charts/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/vuejs-charts/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github)
+Visit [our official docs](https://www.ag-grid.com/react-charts/overview/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) for full documentation.
 
 ## Getting started
 
 ### Install dependencies
 
 ```sh
-$ npm install --save ag-charts-community
+$ npm install --save ag-charts-community ag-charts-react
 ```
 
 ### Usage
 
-Please refer to our [Getting Started](https://www.ag-grid.com/javascript-charts/) Tutorial.
+Please refer to our [Getting Started](https://www.ag-grid.com/react-charts/getting-started/) Tutorial.
 
 ## Issue Reporting
 
