@@ -138,7 +138,7 @@ export class RangeSelector extends Group {
             }
         });
 
-        this.markClean(true);
+        this.markClean({ force: true });
         if (stats) stats.nodesRendered++;
     }
 }

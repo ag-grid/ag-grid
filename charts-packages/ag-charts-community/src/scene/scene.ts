@@ -9,7 +9,6 @@ interface DebugOptions {
     dirtyTree: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
-    onlyLayers: string[];
 }
 
 interface SceneOptions {
@@ -52,7 +51,6 @@ export class Scene {
 
         this.opts = { document, mode };
         this.debug.stats = (window as any).agChartsSceneStats ?? false;
-        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers ?? [];
         this.debug.dirtyTree = (window as any).agChartsSceneDirtyTree ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
@@ -213,7 +211,6 @@ export class Scene {
         stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
-        onlyLayers: [],
     };
 
     render(opts: { start: number }) {

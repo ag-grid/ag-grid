@@ -110,7 +110,12 @@ export abstract class Series extends Observable {
     // for large-scale data-sets, where the only thing that routinely varies is the currently
     // highlighted node.
     readonly highlightGroup: Group = this.group.appendChild(
-        new Group({ name: `${this.id}-highlight`, layer: true, zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX }),
+        new Group({
+            name: `${this.id}-highlight`,
+            layer: true,
+            zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+            optimiseDirtyTracking: true,
+        }),
     );
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).

@@ -40,7 +40,7 @@ export class Path extends Shape {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;
             if (value) {
-                this.markDirty(RedrawType.MAJOR);
+                this.markDirty(this, RedrawType.MAJOR);
             }
         }
     }
@@ -57,7 +57,7 @@ export class Path extends Shape {
         if (this._svgPath !== value) {
             this._svgPath = value;
             this.path.setFromString(value);
-            this.markDirty(RedrawType.MAJOR);
+            this.markDirty(this, RedrawType.MAJOR);
         }
     }
     get svgPath(): string {

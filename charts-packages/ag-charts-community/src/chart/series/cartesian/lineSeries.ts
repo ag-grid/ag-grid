@@ -75,7 +75,7 @@ export class LineSeries extends CartesianSeries {
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
     private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
-    private highlightSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Group>();
+    private highlightSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
     private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
@@ -297,18 +297,18 @@ export class LineSeries extends CartesianSeries {
         const MarkerShape = getMarker(shape);
 
         const { nodeSelection, highlightSelection } = this;
-        const update = (selection: typeof nodeSelection, data: typeof nodeData) => {
-            const updateSelection = selection.setData(data);
-            updateSelection.exit.remove();
-            
-            const enterSelection = updateSelection.enter.append(Group);
-            enterSelection.append(MarkerShape);
-            enterSelection.append(Text);
-            return updateSelection.merge(enterSelection);
-        }
 
-        this.nodeSelection = update(nodeSelection, nodeData);
-        this.highlightSelection = update(highlightSelection, nodeData);
+        const updateSelection = nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        const enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        enterSelection.append(Text);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    
+        const updateSelection2 = highlightSelection.setData(nodeData);
+        updateSelection2.exit.remove();
+        const enterSelection2 = updateSelection2.enter.append(MarkerShape);
+        this.highlightSelection = updateSelection2.merge(enterSelection2);
     }
 
     private updateNodes() {
@@ -395,7 +395,7 @@ export class LineSeries extends CartesianSeries {
 
         this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => updateMarkerFn(node, datum, false));
-        this.highlightSelection.selectByClass(MarkerShape)
+        this.highlightSelection
             .each((node, datum) => {
                 const isDatumHighlighted = datum === highlightedDatum;
 
