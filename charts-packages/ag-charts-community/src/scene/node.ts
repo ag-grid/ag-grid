@@ -22,7 +22,7 @@ export enum RedrawType {
 }
 
 export type RenderContext = {
-    ctx: CanvasRenderingContext2D;
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     forceRender: boolean;
     resized: boolean;
     clipBBox?: BBox;

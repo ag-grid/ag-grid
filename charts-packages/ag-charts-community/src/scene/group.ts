@@ -4,12 +4,13 @@ import { Matrix } from "./matrix";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Scene } from "./scene";
 import { Path2D } from "./path2D";
+import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
 
 export class Group extends Node {
 
     static className = 'Group';
 
-    private layer?: HdpiCanvas;
+    private layer?: HdpiCanvas | HdpiOffscreenCanvas;
     private clipPath: Path2D = new Path2D();
     readonly name?: string;
 
@@ -242,6 +243,7 @@ export class Group extends Node {
         if (layer) {
             if (stats) stats.layersRendered++;
             ctx.restore();
+            layer.snapshot();
         }
 
         if (name && consoleLog && stats) {

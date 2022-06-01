@@ -94,6 +94,10 @@ export class HdpiCanvas {
         Object.freeze(this);
     }
 
+    snapshot() {
+        // No-op for compatibility with HdpiOffscreenCanvas.
+    }
+
     clear() {
         this.context.save();
         this.context.resetTransform();
@@ -327,7 +331,7 @@ export class HdpiCanvas {
         return size;
     }
 
-    static overrideScale(ctx: CanvasRenderingContext2D, scale: number) {
+    static overrideScale(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, scale: number) {
         let depth = 0;
         const overrides = {
             save() {

@@ -2,6 +2,7 @@ import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 import { Group } from "./group";
+import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
 
 interface DebugOptions {
     stats: boolean;
@@ -12,8 +13,15 @@ interface DebugOptions {
 }
 
 interface SceneOptions {
-    document: Document,
-    mode: 'simple' | 'composite' | 'dom-composite',
+    document: Document;
+    mode: 'simple' | 'composite' | 'dom-composite' | 'adv-composite';
+}
+
+interface SceneLayer {
+    id: number;
+    name?: string;
+    zIndex: number;
+    canvas: HdpiOffscreenCanvas | HdpiCanvas;
 }
 
 export class Scene {
@@ -23,7 +31,7 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
-    readonly layers: { id: number, name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+    readonly layers: SceneLayer[] = [];
 
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -93,27 +101,35 @@ export class Scene {
 
     private _nextZIndex = 0;
     private _nextLayerId = 0;
-    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
+    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
         const { mode } = this.opts;
-        if (mode !== 'composite' && mode !== 'dom-composite') {
+        const layeredModes = ['composite', 'dom-composite', 'adv-composite'];
+        if (!layeredModes.includes(mode)) {
             return undefined;
         }
 
         const { zIndex = this._nextZIndex++, name } = opts || {};
         const { width, height } = this;
         const domLayer = mode === 'dom-composite';
-        const newLayer = {
-            id: this._nextLayerId++,
-            name,
-            zIndex,
-            canvas: new HdpiCanvas({
+        const advLayer = mode === 'adv-composite';
+        const canvas = !advLayer || !HdpiOffscreenCanvas.isSupported() ? 
+            new HdpiCanvas({
                 document: this.opts.document,
                 width,
                 height,
                 domLayer,
                 zIndex,
                 name,
-            }),
+            }) :
+            new HdpiOffscreenCanvas({
+                width,
+                height,
+            });
+        const newLayer = {
+            id: this._nextLayerId++,
+            name,
+            zIndex,
+            canvas,
         };
 
         if (zIndex >= this._nextZIndex) {
@@ -130,9 +146,11 @@ export class Scene {
         });
 
         if (domLayer) {
-            const newLayerIndex = this.layers.findIndex(v => v === newLayer);
-            const lastLayer = this.layers[newLayerIndex - 1]?.canvas ?? this.canvas;
-            lastLayer.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+            const domCanvases= this.layers.map(v => v.canvas)
+                .filter((v): v is HdpiCanvas => v instanceof HdpiCanvas);
+            const newLayerIndex = domCanvases.findIndex(v => v === canvas);
+            const lastLayer = domCanvases[newLayerIndex - 1] ?? this.canvas;
+            lastLayer.element.insertAdjacentElement('afterend', (canvas as HdpiCanvas).element);
         }
 
         if (this.debug.consoleLog) {
@@ -142,7 +160,7 @@ export class Scene {
         return newLayer.canvas;
     }
 
-    removeLayer(canvas: HdpiCanvas) {
+    removeLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas) {
         const index = this.layers.findIndex((l) => l.canvas === canvas);
 
         if (index >= 0) {
