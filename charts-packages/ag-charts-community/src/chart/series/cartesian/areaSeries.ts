@@ -764,8 +764,9 @@ export class AreaSeries extends CartesianSeries {
         markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>,
         data: MarkerSelectionDatum[],
     ): Selection<Marker, Group, MarkerSelectionDatum, any> {
-        const MarkerShape = getMarker(this.marker.shape);
-        data = MarkerShape ? data : [];
+        const { marker: { enabled, shape }} = this;
+        data = shape && enabled ? data : [];
+        const MarkerShape = getMarker(shape);
 
         const updateMarkers = markerSelection.setData(data);
         updateMarkers.exit.remove();
@@ -844,7 +845,7 @@ export class AreaSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
+            node.visible = node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x) && !isNaN(datum.point.y);
         });
     }
 

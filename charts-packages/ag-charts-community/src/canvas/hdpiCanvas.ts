@@ -8,6 +8,7 @@ export class HdpiCanvas {
     readonly document: Document;
     readonly element: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
+    readonly imageSource: HTMLCanvasElement;
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
@@ -21,6 +22,7 @@ export class HdpiCanvas {
     }) {
         this.document = document;
         this.element = document.createElement('canvas');
+        this.imageSource = this.element;
         this.context = this.element.getContext('2d')!;
 
         const { style } = this.element;

@@ -57,7 +57,7 @@ export function SceneChangeDetection(opts?: {
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
-                        ${debug ? `if (setCount++ % 10 === 0) console.log({ property: '${key}', oldValue, value });` : ''}
+                        ${debug ? `if (setCount++ % 1000 === 0) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
                         ${type === 'normal' ? 'this.markDirty(' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
                         ${changeCb ? 'changeCb(this);' : ''}

@@ -255,13 +255,13 @@ export class Scene {
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
-            layers.forEach((layer) => {
-                if (layer.canvas.enabled) {
-                    ctx.globalAlpha = layer.canvas.opacity;
-                    // Indirect reference to fix typings for tests.
-                    const canvas = layer.canvas.context.canvas;
-                    ctx.drawImage(canvas, 0, 0);
+            layers.forEach(({ canvas: { imageSource, enabled, opacity }}) => {
+                if (!enabled) {
+                    return;
                 }
+
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(imageSource, 0, 0);
             });
             ctx.restore();
         }

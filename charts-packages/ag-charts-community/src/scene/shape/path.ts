@@ -4,9 +4,10 @@ import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType,
+    convertor?: (o: any) => any,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb, convertor } = opts || {};
 
     const changeCb = (o: any) => {
         if (!o._dirtyPath) {
@@ -18,7 +19,7 @@ export function ScenePathChangeDetection(opts?: {
         }
     };
 
-    return SceneChangeDetection({ redraw, type: 'path', changeCb });
+    return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
 
 export class Path extends Shape {

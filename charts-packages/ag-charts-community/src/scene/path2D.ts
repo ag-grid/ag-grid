@@ -16,15 +16,14 @@ export class Path2D {
     private static xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
     private static xmlns = 'http://www.w3.org/2000/svg';
 
-    draw(ctx: CanvasRenderingContext2D) {
+    draw(ctx: CanvasDrawPath & CanvasPath) {
         const commands = this.commands;
         const params = this.params;
-        const n = commands.length;
         let j = 0;
 
         ctx.beginPath();
-        for (let i = 0; i < n; i++) {
-            switch (commands[i]) {
+        for (const command of commands) {
+            switch (command) {
                 case 'M':
                     ctx.moveTo(params[j++], params[j++]);
                     break;

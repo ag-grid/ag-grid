@@ -292,13 +292,13 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateNodeSelection() {
-        const { marker } = this;
-        const nodeData = marker.shape ? this.nodeData : [];
-        const MarkerShape = getMarker(marker.shape);
+        const { marker: { shape, enabled } } = this;
+        const nodeData = shape && enabled ? this.nodeData : [];
+        const MarkerShape = getMarker(shape);
 
         const { nodeSelection, highlightSelection } = this;
-        const update = (selection: typeof nodeSelection) => {
-            const updateSelection = selection.setData(nodeData);
+        const update = (selection: typeof nodeSelection, data: typeof nodeData) => {
+            const updateSelection = selection.setData(data);
             updateSelection.exit.remove();
             
             const enterSelection = updateSelection.enter.append(Group);
@@ -307,8 +307,8 @@ export class LineSeries extends CartesianSeries {
             return updateSelection.merge(enterSelection);
         }
 
-        this.nodeSelection = update(nodeSelection);
-        this.highlightSelection = update(highlightSelection);
+        this.nodeSelection = update(nodeSelection, nodeData);
+        this.highlightSelection = update(highlightSelection, nodeData);
     }
 
     private updateNodes() {
@@ -390,7 +390,7 @@ export class LineSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.visible = marker.enabled && node.size > 0;
+            node.visible = node.size > 0;
         };
 
         this.nodeSelection.selectByClass(MarkerShape)
