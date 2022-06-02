@@ -651,7 +651,7 @@ export class RowNode implements IEventEmitter {
 
     /**
      * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
-     */     
+     */
     public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void {
         if (this.expanded === expanded) { return; }
 
