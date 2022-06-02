@@ -75,7 +75,7 @@ export class StickyRowFeature extends BeanStub {
             const lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
             if (lastChildBottom < stickRowBottom) {
-                stickyRow.stickyRowTop = height + (lastChildBottom - stickRowBottom - 1);
+                stickyRow.stickyRowTop = height + (lastChildBottom - stickRowBottom);
             } else {
                 stickyRow.stickyRowTop = height;
             }
