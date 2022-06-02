@@ -614,7 +614,7 @@ export class NavigationService extends BeanStub {
     }
 
     public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
-        let rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
+        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
         if (!rowCtrl) { return null; }
 
         return rowCtrl.getCellCtrl(cellPosition.column);
@@ -718,14 +718,8 @@ export class NavigationService extends BeanStub {
     }
 
     private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
-        const isGroupStickyEnabled = this.gridOptionsWrapper.isGroupRowsSticky();
-        const rowNode = this.rowModel.getRow(cellPosition.rowIndex);
-
         // ensureCellVisible first, to make sure cell at position is rendered.
-        // sticky rows are always visible, so the grid shouldn't scroll to focus them.
-        if (!isGroupStickyEnabled && !rowNode?.sticky) {
-            this.ensureCellVisible(cellPosition);
-        }
+        this.ensureCellVisible(cellPosition);
 
         const cellCtrl = this.getCellByPosition(cellPosition);
 
@@ -809,8 +803,13 @@ export class NavigationService extends BeanStub {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
+        const isGroupStickyEnabled = this.gridOptionsWrapper.isGroupRowsSticky();
+        const rowNode = this.rowModel.getRow(gridCell.rowIndex);
+        // sticky rows are always visible, so the grid shouldn't scroll to focus them.
+        const skipScrollToRow = isGroupStickyEnabled && rowNode?.sticky;
+
         // this scrolls the row into view
-        if (missing(gridCell.rowPinned)) {
+        if (!skipScrollToRow && missing(gridCell.rowPinned)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(gridCell.rowIndex);
         }
 
