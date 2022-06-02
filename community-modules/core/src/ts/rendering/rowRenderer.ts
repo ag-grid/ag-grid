@@ -109,7 +109,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature());
+            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
+                this.createRowCon.bind(this),
+                this.destroyRowCtrls.bind(this)
+            ));
         }
 
         this.registerCellEventListeners();
@@ -832,7 +835,7 @@ export class RowRenderer extends BeanStub {
         this.workOutFirstAndLastRowsToRender();
 
         if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this));
+            this.stickyRowFeature.checkStickyRows();
         }
 
         // the row can already exist and be in the following:
@@ -1257,7 +1260,7 @@ export class RowRenderer extends BeanStub {
             default:
                 rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
                 if (!rowCtrl) {
-                    rowCtrl = this.getStickyTopRowCtrls().find( ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+                    rowCtrl = this.getStickyTopRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
                 }
                 break;
         }
