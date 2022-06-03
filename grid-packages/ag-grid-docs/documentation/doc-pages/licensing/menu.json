@@ -964,6 +964,12 @@
                     "url": "/grouping-custom-group-columns/",
                     "enterprise": true,
                     "showInCollapsed": false
+                  },
+                  {
+                    "title": "Sticky Groups",
+                    "url": "/grouping-sticky-groups/",
+                    "enterprise": true,
+                    "showInCollapsed": false
                   }
                 ]
               },

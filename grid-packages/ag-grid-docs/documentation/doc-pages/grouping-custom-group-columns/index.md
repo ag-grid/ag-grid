@@ -100,4 +100,4 @@ Adding leaf nodes data can also be achieved even if you provide your own group c
 
 ## Next Up
 
-Continue to the next section to learn about the [Row Group Panel](../grouping-group-panel/).
+Continue to the next section to learn about the [Sticky Groups](../grouping-sticky-groups/).
