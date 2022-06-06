@@ -299,7 +299,7 @@ export class Scene {
                 `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
                 this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
                 this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
-            ].filter(v => v != null);
+            ].filter((v): v is string => v != null);
             const lineHeight = 15;
 
             ctx.save();
