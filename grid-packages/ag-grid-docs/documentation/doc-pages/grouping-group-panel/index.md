@@ -63,4 +63,4 @@ The example below demonstrates these two properties. Note the following:
 
 ## Next Up
 
-Continue to the next section to learn how to add [Group Footers](../grouping-footers/).
+Continue to the next section to learn how to add [Group Order](../grouping-group-order/).

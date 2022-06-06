@@ -964,12 +964,6 @@
                     "url": "/grouping-custom-group-columns/",
                     "enterprise": true,
                     "showInCollapsed": false
-                  },
-                  {
-                    "title": "Sticky Groups",
-                    "url": "/grouping-sticky-groups/",
-                    "enterprise": true,
-                    "showInCollapsed": false
                   }
                 ]
               },
@@ -982,6 +976,12 @@
               {
                 "title": "Group Order",
                 "url": "/grouping-group-order/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sticky Groups",
+                "url": "/grouping-sticky-groups/",
                 "enterprise": true,
                 "showInCollapsed": false
               },

@@ -97,4 +97,4 @@ The example below demonstrates the Group Rows display type. Note the following:
 
 ## Next Up
 
-Continue to the next section to learn about the [Row Group Panel](../grouping-group-panel/).
+Continue to the next section to learn about the [Sorting Groups](../grouping-sorting/).
