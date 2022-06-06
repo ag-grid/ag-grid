@@ -512,6 +512,7 @@ export abstract class Chart extends Observable {
 
     private firstRenderComplete = false;
     private firstResizeReceived = false;
+    private seriesToUpdate: Set<Series> = new Set();
     private performUpdateTrigger = debouncedCallback(({ count }) => {
         try {
             this.performUpdate(count);
@@ -520,11 +521,18 @@ export abstract class Chart extends Observable {
             console.error(error);
         }
     });
-    public update(type = ChartUpdateType.FULL, opts?: { forceNodeDataRefresh: boolean }) {
-        const { forceNodeDataRefresh = false } = opts || {};
+    public update(
+        type = ChartUpdateType.FULL, 
+        opts?: { forceNodeDataRefresh?: boolean, seriesToUpdate?: Iterable<Series> }
+    ) {
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
 
         if (forceNodeDataRefresh) {
             this.series.forEach(series => series.markNodeDataDirty());
+        }
+
+        for (const series of seriesToUpdate) {
+            this.seriesToUpdate.add(series);
         }
 
         if (type < this._performUpdateType) {
@@ -553,9 +561,10 @@ export abstract class Chart extends Observable {
 
                 this.performLayout();
             case ChartUpdateType.SERIES_UPDATE:
-                this.series.forEach(series => {
+                this.seriesToUpdate.forEach(series => {
                     series.update();
                 });
+                this.seriesToUpdate.clear();
             case ChartUpdateType.SCENE_RENDER:
                 this.scene.render({ start });
                 this.firstRenderComplete = true;
@@ -1274,22 +1283,27 @@ export abstract class Chart extends Observable {
     highlightedDatum?: SeriesNodeDatum;
 
     changeHighlightDatum(newPick?: { datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent}) {
-        const seriesToUpdate: Set<Series | undefined> = new Set<Series>();
-        const { datum = undefined } = newPick || {};
+        const seriesToUpdate: Set<Series> = new Set<Series>();
+        const { datum: { series: newSeries = undefined } = {}, datum = undefined } = newPick || {};
+        const { lastPick: { datum: { series: lastSeries = undefined } = {} } = {} } = this;
 
-        if (this.lastPick) {
-            seriesToUpdate.add(this.lastPick?.datum?.series);
+        if (lastSeries) {
+            seriesToUpdate.add(lastSeries);
         }
 
-        if (datum) {
-            this.element.style.cursor = datum.series.cursor;
+        if (newSeries) {
+            seriesToUpdate.add(newSeries);
+            this.element.style.cursor = newSeries.cursor;
         }
 
         this.lastPick = newPick;
         this.highlightedDatum = datum;
 
-        seriesToUpdate.add(newPick?.datum?.series);
-
-        this.update(ChartUpdateType.SERIES_UPDATE);
+        let updateAll = newSeries == null || lastSeries == null;
+        if (updateAll) {
+            this.update(ChartUpdateType.SERIES_UPDATE);
+        } else {
+            this.update(ChartUpdateType.SERIES_UPDATE, { seriesToUpdate });
+        }
     }
 }
