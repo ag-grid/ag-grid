@@ -41,7 +41,7 @@ export function SceneChangeDetection(opts?: {
     changeCb?: (o: any) => any,
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
-    const debug = false;
+    const debug = (window as any).agChartsSceneChangeDetectionDebug != null;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -57,7 +57,7 @@ export function SceneChangeDetection(opts?: {
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
-                        ${debug ? `if (setCount++ % 1000 === 0) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
+                        ${debug ? `if (window.agChartsSceneChangeDetectionDebug) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
                         ${type === 'normal' ? 'this.markDirty(this, ' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
                         ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
@@ -555,7 +555,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    markClean({ force = false, recursive = true } = {}) {
+    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+        const { force = false, recursive = true } = opts || {};
+
         if (this._dirty === RedrawType.NONE && !force) {
             return;
         }

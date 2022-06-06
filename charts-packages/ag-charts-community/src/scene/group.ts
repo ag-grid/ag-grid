@@ -79,7 +79,7 @@ export class Group extends Node {
         }
     }
 
-    markClean(opts: { recursive?: boolean, force?: boolean }) {
+    markClean(opts?: {force?: boolean, recursive?: boolean}) {
         // Ensure we update visibility tracking before blowing away dirty flags.
         this.syncChildVisibility();
 
