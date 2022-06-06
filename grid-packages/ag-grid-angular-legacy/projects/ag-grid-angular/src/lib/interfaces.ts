@@ -28,25 +28,25 @@ export interface AgFrameworkComponent<T> {
 
 }
 
-export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkComponent<IHeaderGroupParams> {
+export interface IHeaderGroupAngularComp extends AgFrameworkComponent<IHeaderGroupParams>, IHeaderGroup {
 }
 
-export interface IHeaderAngularComp extends IHeader, AgFrameworkComponent<IHeaderParams> {
+export interface IHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>, IHeader {
 }
 
-export interface IFloatingFilterAngularComp<P = any> extends IFloatingFilter, AgFrameworkComponent<IFloatingFilterParams<P>> {
+export interface IFloatingFilterAngularComp<P = any> extends AgFrameworkComponent<IFloatingFilterParams<P>>, IFloatingFilter {
 }
 
-export interface IDateAngularComp extends IDate, AgFrameworkComponent<IDateParams> {
+export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {
 }
 
-export interface IFilterAngularComp extends IFilter, AgFrameworkComponent<IFilterParams> {
+export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {
 }
 
-export interface ICellRendererAngularComp extends ICellRenderer, AgFrameworkComponent<ICellRendererParams> {
+export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {
 }
 
-export interface ICellEditorAngularComp extends ICellEditor, AgFrameworkComponent<ICellEditorParams> {
+export interface ICellEditorAngularComp extends AgFrameworkComponent<ICellEditorParams>, ICellEditor {
 }
 
 export interface AgRendererComponent extends ICellRendererAngularComp {
