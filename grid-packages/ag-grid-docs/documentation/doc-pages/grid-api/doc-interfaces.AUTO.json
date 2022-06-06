@@ -9220,14 +9220,14 @@
     },
     "setStickyTopHeight": {
       "type": {
-        "arguments": { "height": "number" },
+        "arguments": { "height": "string" },
         "returnType": "void",
         "optional": false
       }
     },
-    "setStickyTopOffsetTop": {
+    "setStickyTopTop": {
       "type": {
-        "arguments": { "offsetTop": "number" },
+        "arguments": { "offsetTop": "string" },
         "returnType": "void",
         "optional": false
       }

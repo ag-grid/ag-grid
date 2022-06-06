@@ -12,12 +12,14 @@ import { missing } from "./utils/generic";
 import { last } from "./utils/array";
 import { KeyCode } from './constants/keyCode';
 import { PaginationProxy } from "./pagination/paginationProxy";
+import { RowRenderer } from "./rendering/rowRenderer";
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
@@ -182,7 +184,30 @@ export class CellNavigationService extends BeanStub {
             }
         }
 
+        const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
+        const nextStickyPosition = this.getNextStickyPosition(rowNode);
+
+        if (nextStickyPosition) {
+            return nextStickyPosition;
+        }
+
         return { rowIndex: index + 1, rowPinned: pinned } as RowPosition;
+    }
+
+    private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
+        if (!this.gridOptionsWrapper.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
+
+        const stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
+            (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!
+        );
+
+        const diff = up ? -1 : 1;
+        const idx = stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode().rowIndex === rowNode.rowIndex);
+        const nextCtrl = stickyRowCtrls[idx + diff];
+
+        if (nextCtrl) {
+            return { rowIndex: nextCtrl.getRowNode().rowIndex!, rowPinned: null };
+        }
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
@@ -245,6 +270,13 @@ export class CellNavigationService extends BeanStub {
             }
 
             return null;
+        }
+
+        const rowNode = this.rowModel.getRow(rowPosition.rowIndex);
+        const nextStickyPosition = this.getNextStickyPosition(rowNode, true);
+
+        if (nextStickyPosition) {
+            return nextStickyPosition;
         }
 
         return { rowIndex: index - 1, rowPinned: pinned } as RowPosition;

@@ -980,6 +980,12 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Sticky Groups",
+                "url": "/grouping-sticky-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Sorting Groups",
                 "url": "/grouping-sorting/",
                 "enterprise": true,

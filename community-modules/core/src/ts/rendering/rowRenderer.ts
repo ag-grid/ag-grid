@@ -109,7 +109,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         if (this.gridOptionsWrapper.isGroupRowsSticky()) {
-            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature());
+            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
+                this.createRowCon.bind(this),
+                this.destroyRowCtrls.bind(this)
+            ));
         }
 
         this.registerCellEventListeners();
@@ -832,7 +835,7 @@ export class RowRenderer extends BeanStub {
         this.workOutFirstAndLastRowsToRender();
 
         if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this));
+            this.stickyRowFeature.checkStickyRows();
         }
 
         // the row can already exist and be in the following:
@@ -1245,20 +1248,24 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
-        let rowComponent: RowCtrl | null;
+        let rowCtrl: RowCtrl | null;
+        const {rowIndex} = rowPosition;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.topRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.topRowCtrls[rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.bottomRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.bottomRowCtrls[rowIndex];
                 break;
             default:
-                rowComponent = this.rowCtrlsByRowIndex[rowPosition.rowIndex];
+                rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+                if (!rowCtrl) {
+                    rowCtrl = this.getStickyTopRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+                }
                 break;
         }
 
-        return rowComponent;
+        return rowCtrl;
     }
 
     public getRowNode(gridRow: RowPosition): RowNode | undefined {
