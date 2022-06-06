@@ -216,7 +216,7 @@ export class LineSeries extends CartesianSeries {
         const linePath = lineNode.path;
         const nodeData: LineNodeDatum[] = [];
 
-        linePath.clear();
+        linePath.clear({ trackChanges: true });
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
         let nextXYDatums: [number, number] | undefined = undefined;
@@ -284,6 +284,8 @@ export class LineSeries extends CartesianSeries {
                     } : undefined
                 });
             }
+
+            lineNode.checkPathDirty();
         }
 
         // Used by marker nodes and for hit-testing even when not using markers

@@ -13,7 +13,6 @@ export function ScenePathChangeDetection(opts?: {
 }
 
 export class Path extends Shape {
-
     static className = 'Path';
 
     /**
@@ -46,6 +45,14 @@ export class Path extends Shape {
     }
     get dirtyPath(): boolean {
         return this._dirtyPath;
+    }
+
+    checkPathDirty() {
+        if (this._dirtyPath) {
+            return;
+        }
+
+        this.dirtyPath = this.path.isDirty();
     }
 
     /**
