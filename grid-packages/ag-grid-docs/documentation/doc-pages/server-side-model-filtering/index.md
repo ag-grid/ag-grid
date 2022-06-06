@@ -44,6 +44,9 @@ The example below demonstrates the Full Store filtering inside the grid. Note th
 
 Note that the Set Filter is provided values to work. This is a requirement when using the Set Filter with the SSRM.
 
+[[note]]
+| The example above demonstrates the default behaviour of the full store.
+| To instead have the grid request that the server provide the filtered rows, enable the `serverSideFilterOnServer` grid option.
 
 ## Partial Store Filtering
 

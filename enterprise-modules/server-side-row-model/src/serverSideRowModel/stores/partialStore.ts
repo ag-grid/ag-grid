@@ -736,11 +736,20 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        this.resetStore();
+        const serverFiltersAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
+            this.resetStore();
+            return;
+        }
+
+        // call refreshAfterSort on children, as we did not purge.
+        // if we did purge, no need to do this as all children were destroyed
+        this.forEachChildStoreShallow(store => store.refreshAfterFilter(params));
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        if (this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
+        const serverSortsAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;
         }

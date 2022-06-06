@@ -58,15 +58,6 @@ The example below demonstrates server-side Row Grouping. Note the following:
 
 <grid-example title='Row Grouping' name='row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| The example above also demonstrates [Sorting](/server-side-model-sorting/) with groups.
-| When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups
-| are expanded, sorting on the 'Year' column won't cause the top level 'Country' groups to reload,
-| but sorting on the 'Gold' column will.
-| <br/><br/>
-| To avoid this and always refresh top level groups regardless of which column is sorted, set the grid
-| property `serverSideSortingAlwaysResets=true`.
-
 ## Grouping and Row Stores
 
 When grouping and a group is expanded, a new Row Store is created to store the child rows of the opened group.
@@ -254,7 +245,8 @@ const gridOptions = {
 When a sort is applied to a grouped grid using the SSRM, the grid will behave differently depending on what store is used. How it behaves is as follows:
 
 - ### Full Store
-    The Full Store always sorts inside the grid. The rows are never reloaded due to a sort.
+    - By default, the grid will sort all rows on the client side.
+    - Enabling the `serverSideSortOnServer` grid option will instead request sorted data from the server when a group is affected by a sort change. The behaviour will then reflect that of the [Partial Store](/server-side-model-grouping/#partial-store).
 
 - ### Partial Store
     - Non-group levels always refresh - all rows are loaded again from the server.
@@ -263,19 +255,19 @@ When a sort is applied to a grouped grid using the SSRM, the grid will behave di
         - Any secondary column (ie you are pivoting and sort a pivot value column)
         - A Column used for this levels group (eg you are grouping by 'Country' and you sort by 'Country').
 
-It is possible to force the grid to always refresh (reload data) after a sort changes. Do this by setting grid property `serverSideSortingAlwaysResets=true`.
+To instead reload every row and group from the server when a refresh is needed, enable the `serverSideSortAllLevels` grid option.
 
 ## Filtering
 
 When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on what store is used. How it behaves is as follows:
 
 - ### Full Store
-    The Full Store always filters inside the grid. The rows are never reloaded due to a filter change. Filtering is only possible at the lowest level (ie not group levels).
+    - By default, the grid will filter all rows on the client side.
+    - Enabling the `serverSideFilterOnServer` grid option will instead request filtered data from the server when a group is affected by a filter change.
+    - To instead reload every row and group from the server when a refresh is needed, enable the `serverSideFilterAllLevels` grid option.
 
 - ### Partial Store
     Changing the filter on any column will always refresh the Partial Store. Rows will be loaded again from the server with the new filter information.
-
-It is possible to force the grid to always refresh (reload data) after a filter changes. Do this by setting grid property `serverSideFilteringAlwaysResets=true`.
 
 ## Complex Columns
 
