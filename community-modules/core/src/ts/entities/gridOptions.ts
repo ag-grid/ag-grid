@@ -658,9 +658,20 @@ export interface GridOptions {
     purgeClosedRowNodes?: boolean;
     /** Provide the `serverSideDatasource` for server side row model. */
     serverSideDatasource?: IServerSideDatasource;
-    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */
+
+
+    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
+    serverSideSortAllLevels?: boolean;
+    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
+    serverSideFilterAllLevels?: boolean;
+    /** When enabled, the grid will always request the server to provide the sort results */
+    serverSideSortOnServer?: boolean;
+    /** When enabled, the grid will always request the server should provide the filter results */
+    serverSideFilterOnServer?: boolean;
+
+    /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
-    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */
+    /** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
     /** @deprecated */

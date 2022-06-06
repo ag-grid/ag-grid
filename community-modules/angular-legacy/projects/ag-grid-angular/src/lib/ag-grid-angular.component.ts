@@ -749,9 +749,19 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
     /** Provide the `serverSideDatasource` for server side row model.     */
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
-    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false`     */
+    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false`     */
+    @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
+    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
+    @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
+    /** When enabled, the grid will always request the server to provide the sort results     */
+    @Input() public serverSideSortOnServer: boolean | undefined = undefined;
+    /** When enabled, the grid will always request the server should provide the filter results     */
+    @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
+    /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.
+     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false`     */
+    /** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.
+     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
@@ -1219,7 +1229,6 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_suppressRowTransform: boolean | null | '';
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';
     static ngAcceptInputType_suppressLastEmptyLineOnPaste: boolean | null | '';
-    static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
     static ngAcceptInputType_suppressSetColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_suppressColumnStateEvents: boolean | null | '';
     static ngAcceptInputType_enableCharts: boolean | null | '';
@@ -1243,6 +1252,11 @@ Allows you to set the ID for a particular row node based on the data.
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
     static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';
+    static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
+    static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
+    static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';
     static ngAcceptInputType_suppressAggFilteredOnly: boolean | null | '';
     static ngAcceptInputType_showOpenedGroup: boolean | null | '';
     static ngAcceptInputType_suppressClipboardApi: boolean | null | '';

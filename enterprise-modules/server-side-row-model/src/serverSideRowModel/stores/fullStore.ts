@@ -286,14 +286,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private sortRowNodes(): void {
-
+        const serverIsSorting = this.gridOptionsWrapper.isServerSideSortAllLevels() || this.gridOptionsWrapper.isServerSideSortOnServer();
         const sortOptions = this.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
-
-        // if we reset after sort, it means the sorting is done on the server
-        const sortDoneOnServer = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-
-        if (noSortApplied || sortDoneOnServer) {
+        if (serverIsSorting || noSortApplied) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
@@ -302,17 +298,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-
-        // if we reset after filter, it means the filtering is done on the server
-        const filterDoneOnServer = this.gridOptionsWrapper.isServerSideFilteringAlwaysResets();
-
+        const serverIsFiltering = this.gridOptionsWrapper.isServerSideFilterAllLevels() || this.gridOptionsWrapper.isServerSideFilterOnServer();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         const groupLevel = this.groupLevel;
 
-        const skipFilter = filterDoneOnServer || groupLevel;
-
-        if (skipFilter) {
+        if (serverIsFiltering || groupLevel) {
             this.nodesAfterFilter = this.allRowNodes;
             return;
         }
@@ -469,21 +460,31 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
+        const serverIsFiltering = this.gridOptionsWrapper.isServerSideFilterOnServer();
+        const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
+        const serverIsFilteringAllLevels = this.gridOptionsWrapper.isServerSideFilterAllLevels();
+        if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
             this.refreshStore(true);
+            this.sortRowNodes();
             return;
         }
 
-        this.filterAndSortNodes();
+        this.filterRowNodes();
+        this.sortRowNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterFilter(params));
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        if (params.alwaysReset) {
+        const serverIsSorting = this.gridOptionsWrapper.isServerSideSortOnServer();
+        const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params);
+        const serverIsSortingAllLevels = this.gridOptionsWrapper.isServerSideSortAllLevels();
+        if (serverIsSortingAllLevels || (serverIsSorting && storeIsImpacted)) {
             this.refreshStore(true);
+            this.filterRowNodes();
             return;
         }
 
+        this.filterRowNodes();
         this.sortRowNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }

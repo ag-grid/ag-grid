@@ -87,7 +87,7 @@ export class StoreUtils extends BeanStub {
     }
 
     public isServerRefreshNeeded(parentRowNode: RowNode, rowGroupCols: ColumnVO[], params: StoreRefreshAfterParams): boolean {
-        if (params.alwaysReset || params.valueColChanged || params.secondaryColChanged) {
+        if (params.valueColChanged || params.secondaryColChanged) {
             return true;
         }
 
