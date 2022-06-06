@@ -5,7 +5,7 @@ import { Group } from "./group";
 import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
 
 interface DebugOptions {
-    stats: boolean;
+    stats: false | 'basic' | 'detailed';
     dirtyTree: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
@@ -239,7 +239,7 @@ export class Scene {
             forceRender: true,
             resized: !!pendingSize,
         };
-        if (this.debug.stats) {
+        if (this.debug.stats === 'detailed') {
             renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
         }
 
@@ -297,9 +297,9 @@ export class Scene {
                 renderCtx.stats || {};
             const stats = [
                 `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
-                `Layers: ${pct(layersRendered, layersSkipped)}`,
-                `Nodes: ${pct(nodesRendered, nodesSkipped)}`
-            ];
+                this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
+                this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
+            ].filter(v => v != null);
             const lineHeight = 15;
 
             ctx.save();
