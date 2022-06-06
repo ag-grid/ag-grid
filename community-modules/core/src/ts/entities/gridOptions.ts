@@ -666,7 +666,7 @@ export interface GridOptions {
     serverSideFilterAllLevels?: boolean;
     /** When enabled, the grid will always request the server to provide the sort results */
     serverSideSortOnServer?: boolean;
-    /** When enabled, the grid will always request the server should provide the filter results */
+    /** When enabled, the grid will always request the server to provide the filter results */
     serverSideFilterOnServer?: boolean;
 
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead. */
