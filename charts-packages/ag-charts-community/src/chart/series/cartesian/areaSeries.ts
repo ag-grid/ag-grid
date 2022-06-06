@@ -632,7 +632,9 @@ export class AreaSeries extends CartesianSeries {
                 }
             });
 
-            fillPoints.push(...fillPhantomPoints.slice().reverse());
+            for (let i = fillPhantomPoints.length - 1; i >= 0; i--) {
+                fillPoints.push(fillPhantomPoints[i]);
+            }
         });
 
         this.allMarkerSelectionData = markerSelectionData.reduce((r, n) => r.concat(n), []);
