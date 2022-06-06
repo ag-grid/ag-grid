@@ -80,6 +80,9 @@ export class Group extends Node {
     }
 
     markClean(opts: { recursive?: boolean, force?: boolean }) {
+        // Ensure we update visibility tracking before blowing away dirty flags.
+        this.syncChildVisibility();
+
         for (const key of Object.keys(this.dirtyChildren)) {
             delete this.dirtyChildren[key];
         }
@@ -283,7 +286,7 @@ export class Group extends Node {
         }
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
-        const isChildDirty = isDirty || Object.keys(dirtyChildren).length > 0;
+        const isChildDirty = Object.keys(dirtyChildren).length > 0;
 
         if (name && consoleLog) {
             console.log({ name, group: this, isDirty, isChildDirty, renderCtx });
@@ -329,13 +332,7 @@ export class Group extends Node {
             ctx.clip();
         }
 
-        for (const child of Object.values(dirtyChildren)) {
-            if (!child.visible && visibleChildren[child.id]) {
-                delete visibleChildren[child.id];
-            } else if (child.visible && !visibleChildren[child.id]) {
-                visibleChildren[child.id] = child;
-            }
-        }
+        this.syncChildVisibility();
 
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
@@ -392,6 +389,18 @@ export class Group extends Node {
         if (name && consoleLog && stats) {
             const counts = this.nodeCount;
             console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
+        }
+    }
+
+    private syncChildVisibility() {
+        const { dirtyChildren, visibleChildren } = this;
+
+        for (const child of Object.values(dirtyChildren)) {
+            if (!child.visible && visibleChildren[child.id]) {
+                delete visibleChildren[child.id];
+            } else if (child.visible && !visibleChildren[child.id]) {
+                visibleChildren[child.id] = child;
+            }
         }
     }
 }
