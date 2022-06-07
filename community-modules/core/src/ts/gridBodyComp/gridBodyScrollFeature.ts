@@ -402,7 +402,7 @@ export class GridBodyScrollFeature extends BeanStub {
             const startingRowHeight = rowNode!.rowHeight;
 
             const paginationOffset = this.paginationProxy.getPixelOffset();
-            const rowTopPixel = rowNode!.rowTop! - paginationOffset - stickyTopHeight;
+            const rowTopPixel = rowNode!.rowTop! - paginationOffset;
             const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 
             const scrollPosition = this.getVScrollPosition();
@@ -420,8 +420,8 @@ export class GridBodyScrollFeature extends BeanStub {
             // make sure if middle, the row is not outside the top of the grid
             const pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
 
-            const rowBelowViewport = vScrollTop > rowTopPixel;
-            const rowAboveViewport = vScrollBottom < rowBottomPixel;
+            const rowAboveViewport = (vScrollTop + stickyTopHeight) > rowTopPixel;
+            const rowBelowViewport = vScrollBottom < rowBottomPixel;
 
             let newScrollPosition: number | null = null;
 
@@ -431,11 +431,11 @@ export class GridBodyScrollFeature extends BeanStub {
                 newScrollPosition = pxBottom;
             } else if (position === 'middle') {
                 newScrollPosition = pxMiddle;
-            } else if (rowBelowViewport) {
-                // if row is before, scroll up with row at top
-                newScrollPosition = pxTop;
             } else if (rowAboveViewport) {
-                // if row is below, scroll down with row at bottom
+                // if row is before, scroll up with row at top
+                newScrollPosition = pxTop - stickyTopHeight;
+            } else if (rowBelowViewport) {
+                // if row is after, scroll down with row at bottom
                 newScrollPosition = pxBottom;
             }
 
