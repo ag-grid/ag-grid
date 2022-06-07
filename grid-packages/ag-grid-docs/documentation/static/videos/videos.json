@@ -297,6 +297,21 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "6:00"
+    },
+    {
+      "title": "Column Filters",
+      "url": "https://www.youtube.com/watch?v=mBtVxJXWGNI&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Column Filters"
+      },
+      "keyPoints": [
+        "Configuring Filters",
+        "Filter Models",
+        "Text, Number & Date Filters",
+        "Set Filter, Multi Filter"
+      ],
+      "runningTime": "12:54"
     }
   ]
 }
