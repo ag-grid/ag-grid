@@ -516,12 +516,8 @@ export class GroupCellRendererCtrl extends BeanStub {
     private scrollToStickyNode(rowNode: RowNode): void {
         const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
         const scrollFeature = gridBodyCtrl.getScrollFeature();
-        const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
 
-        const rowHeight = rowNode.rowHeight;
-        const diff = stickyTopHeight - rowHeight!;
-
-        scrollFeature.setVerticalScrollPosition(rowNode.rowTop! - diff);
+        scrollFeature.setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);
     }
 
     private isExpandable(): boolean {
