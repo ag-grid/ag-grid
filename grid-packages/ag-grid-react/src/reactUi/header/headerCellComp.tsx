@@ -17,6 +17,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const eGui = useRef<HTMLDivElement>(null);
     const eResize = useRef<HTMLDivElement>(null);
+    const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeader>();
 
     const { ctrl } = props;
@@ -36,7 +37,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             getUserCompInstance: () => userCompRef.current || undefined
         };
 
-        ctrl.setComp(compProxy, eGui.current!, eResize.current!);
+        ctrl.setComp(compProxy, eGui.current!, eResize.current!, eHeaderCompWrapper.current!);
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current!.insertAdjacentElement('afterend', selectAllGui);
@@ -82,8 +83,10 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             aria-description={ ariaDescription }
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
+            <div ref={eHeaderCompWrapper} >
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
+            </div>
         </div>
     );
 };

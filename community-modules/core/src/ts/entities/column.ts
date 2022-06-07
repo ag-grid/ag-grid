@@ -404,6 +404,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return !!attrToBoolean(this.colDef.autoHeight);
     }
 
+    public isAutoHeaderHeight(): boolean {
+        return !!attrToBoolean(this.colDef.autoHeaderHeight);
+    }
+
     public isRowDrag(rowNode: RowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
     }

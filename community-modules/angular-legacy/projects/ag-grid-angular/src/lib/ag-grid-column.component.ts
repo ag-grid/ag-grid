@@ -186,8 +186,9 @@ export class AgGridColumn {
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined;
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined;
-    /**     */
-/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
+    @Input() public wrapHeaderText: boolean | undefined;
+    @Input() public autoHeaderHeight: boolean | undefined;
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
      * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
     @Input() public headerComponent: any;
     /** @deprecated As of v27, use `headerComponent` for framework components too.
@@ -390,6 +391,8 @@ export class AgGridColumn {
     static ngAcceptInputType_floatingFilter: boolean | null | '';
     static ngAcceptInputType_cellEditorPopup: boolean | null | '';
     static ngAcceptInputType_suppressFillHandle: boolean | null | '';
+    static ngAcceptInputType_wrapHeaderText: boolean | null | '';
+    static ngAcceptInputType_autoHeaderHeight: boolean | null | '';
     // @END@
 
 }

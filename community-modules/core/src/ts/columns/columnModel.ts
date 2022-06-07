@@ -194,6 +194,9 @@ export class ColumnModel extends BeanStub {
     private autoHeightActive: boolean;
     private autoHeightActiveAtLeastOnce = false;
 
+    // For columns that have autoHeaderHeight enabled
+    private headerHeights: { [id: string]: number } = {}; // TODO use me
+
     private suppressColumnVirtualisation: boolean;
 
     private rowGroupColumns: Column[] = [];
@@ -3949,5 +3952,42 @@ export class ColumnModel extends BeanStub {
         }
 
         return null;
+    }
+
+    public setColumnHeaderHeight(col: Column, height: number): void {
+        const heightBefore = this.headerHeights[col.getId()];
+        this.headerHeights[col.getId()] = height;
+
+        if (heightBefore !== height) {
+            const event: ColumnEvent = {
+                type: Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
+                column: col,
+                columns: [col],
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: 'foo' as any,
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    public getColumnGroupHeaderRowHeight(): number {
+        if (this.isPivotMode()) {
+            return this.gridOptionsWrapper.getPivotGroupHeaderHeight() as number;
+        } else {
+            return this.gridOptionsWrapper.getGroupHeaderHeight() as number;
+        }
+    }
+
+    public getColumnHeaderRowHeight(): number {
+        const defaultHeight: number = (this.isPivotMode() ?
+            this.gridOptionsWrapper.getPivotHeaderHeight() :
+            this.gridOptionsWrapper.getHeaderHeight()) as number;
+
+        const displayedHeights = this.getAllDisplayedColumns()
+            .filter((col) => col.isAutoHeaderHeight())
+            .map((col) => this.headerHeights[col.getId()] || 0);
+
+        return Math.max(defaultHeight, ...displayedHeights);
     }
 }
