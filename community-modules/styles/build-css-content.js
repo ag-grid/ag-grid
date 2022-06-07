@@ -1,12 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 
-const distFolder = path.join(__dirname, "dist");
+const distFolderName = "dist";
+const distFolder = path.join(__dirname, distFolderName);
+const outputFileName = "_css-content.scss"
+const outputFile = path.join(distFolder, outputFileName);
 
-const outputFile = path.join(distFolder, "_css-content.scss");
+const cssFiles = fs.readdirSync(distFolder).filter(file => file.endsWith(".css"));
 
-const mixins = fs.readdirSync(distFolder)
-    .filter(file => file.endsWith(".css"))
+const mixins = cssFiles
     .map((file, index) => {
         const content = fs.readFileSync(path.join(distFolder, file), "utf8");
         const operator = index === 0 ? "@if" : "@else if";
@@ -30,3 +32,4 @@ const content = `
 `;
 
 fs.writeFileSync(outputFile, content, "utf8");
+console.log(`Built ${cssFiles.length} CSS files into ${distFolderName}/${outputFileName} (${cssFiles.join(", ")})`);
