@@ -99,7 +99,6 @@ export interface GridParams {
     // used by Web Components
     globalEventListener?: Function;
 
-
     // this allows the base frameworks (React, Angular, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
 
