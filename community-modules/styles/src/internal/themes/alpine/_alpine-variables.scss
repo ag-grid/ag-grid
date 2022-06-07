@@ -27,7 +27,7 @@
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
     --ag-input-disabled-background-color: #f1f2f4;
-    --ag-disabled-foreground-color: rgba(#fff, 0.5);
+    --ag-disabled-foreground-color: #{rgba(#fff, 0.5)};
     
     // derived colours (shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -36,7 +36,6 @@
     --ag-secondary-foreground-color: var(--ag-foreground-color);
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
-    --ag-header-cell-moving-background-color: var(--ag-background-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
 
     // BORDERS
@@ -66,7 +65,7 @@
     --ag-toggle-button-width: 28px;
 
     // FONTS
-    --ag-font-family: (-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif);
+    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     --ag-font-size: 13px;
     --ag-icon-font-family: agGridAlpine;
 
@@ -86,7 +85,7 @@
     --ag-background-color: #181d1f;
     --ag-foreground-color: #fff;
     --ag-border-color: #68686e;
-    --ag-secondary-border-color: rgba(#585652, 0.5);
+    --ag-secondary-border-color: #{rgba(#585652, 0.5)};
     --ag-header-background-color: #222628;
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;

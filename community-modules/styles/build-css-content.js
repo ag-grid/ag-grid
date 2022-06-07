@@ -1,25 +1,32 @@
 const fs = require('fs');
 const path = require('path');
 
-const destFile = path.join(__dirname, "css-content.scss");
+const distFolder = path.join(__dirname, "dist");
 
-const mixins = fs.readdirSync(__dirname)
+const outputFile = path.join(distFolder, "_css-content.scss");
+
+const mixins = fs.readdirSync(distFolder)
     .filter(file => file.endsWith(".css"))
-    .map(file => {
-        const content = fs.readFileSync(path.join(__dirname, file), "utf8");
-        const name = file.replace(/.css$/, "");
+    .map((file, index) => {
+        const content = fs.readFileSync(path.join(distFolder, file), "utf8");
+        const operator = index === 0 ? "@if" : "@else if";
         return `
-@mixin ${name} {
-    ${content.replace(/\n/g, "\n    ")}
-}
-`;
+    ${operator} $file == "${file}" {
+        ${content.replace(/\n/g, "\n        ")}
+    }`;
     })
-    .join("\n\n");
+    .join("");
 
 const content = `
-// THIS FILE IS GENERATED, DO NOT EDIT IT!
-// To change the icon font code map, edit ${path.basename(__filename)}`;
 
+// THIS FILE IS GENERATED, DO NOT EDIT IT!
+// To change the icon font code map, edit build-css-content.js
+@mixin output-css-file($file) {
+    ${mixins}
+    @else {
+        @error "No such file #{$file}";
+    }
+}
 `;
 
-fs.writeFileSync(destFile, content, "utf8");
+fs.writeFileSync(outputFile, content, "utf8");

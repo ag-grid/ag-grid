@@ -14,7 +14,7 @@
         @error "No $data for #{$name} font";
     }
     @font-face {
-        font-family: "agGridAlpine";
+        font-family: string.quote($name);
         src: url(#{$data});
         font-weight: normal;
         font-style: normal;

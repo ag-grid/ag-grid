@@ -8,14 +8,15 @@
     "*.scss"
   ],
   "scripts": {
-    "build": "sass --no-source-map --load-path src/internal src:.",
-    "build-tmp-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
-    "build-prod": "npm run build -- --no-error-css && node build-css-content.js",
+    "build": "npm run build:sass -- --no-error-css && node build-css-content.js",
+    "build:sass": "sass --no-source-map --load-path src/internal src:dist",
+    "$COMMENT": "TODO remove these tmp scripts once core uses this module",
+    "tmp-watch-patch": "npm run build-tmp-patch; npm run build-tmp-patch -- --watch",
+    "tmp-build-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
     "test": "npm run lint:scss && npm run build-prod && npm run lint:css",
     "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
     "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
-    "watch": "npm run build; npm run build -- --watch",
-    "watch-tmp-patch": "npm run build-tmp-patch; npm run build-tmp-patch -- --watch",
+    "watch": "npm run build:sass; npm run build:sass -- --watch",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "update-icon-fonts": "cd icon-fonts && npm i && npm run build"
   },

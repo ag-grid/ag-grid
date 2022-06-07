@@ -1,5 +1,5 @@
 # compiled CSS files
-ag-*.css
+dist/*.css
 
 # compiled css files as SCSS
-css-content.scss
+dist/_css-content.scss

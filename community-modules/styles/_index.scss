@@ -11,7 +11,7 @@
 @use "sass:color";
 @use "sass:math";
 
-@use "./css-content";
+@use "./dist/css-content";
 
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
@@ -24,18 +24,17 @@
     $params: map.remove($params, "suppress-native-widget-styling");
 
     @if $no-native-widgets {
-        @include meta.load-css("ag-grid-no-native-widgets.css");
+        @include -load-css-file("ag-grid-no-native-widgets.css");
     } @else {
-        @include meta.load-css("ag-grid.css");
+        @include -load-css-file("ag-grid.css");
     }
 
     @each $theme-name, $extra-params in $themes {
         @include -validate-theme($theme-name);
         $css-file: map.get($-theme-css-files, $theme-name);
-        @include meta.load-css($css-file);
+        @include -load-css-file($css-file);
     }
 
-    /* NOISY */
     @each $theme-name, $extra-params in $themes {
         $theme-params: map.merge($params, $extra-params);
         .ag-theme-#{$theme-name} {
@@ -62,19 +61,15 @@
 // PRIVATE IMPLEMENTATION
 //
 
-Next up: need a way of implementing css-content.scss to enable this mixin. Maybe a chain of 
-@if $file == "ag-grid.css" {
-    ... content
-}
+$-loaded-css-files: ();
 
 // Fulfils the same role as meta.load-css, which we can't use due to this issue:
 // https://github.com/sass/dart-sass/issues/1627
-@mixin -include-css($file) {
-    @if not map.has-key($css-content, $file) {
-        @error "No content for \"#{$file}\"";
+@mixin -load-css-file($file) {
+    @if not map.get($-loaded-css-files, $file) {
+        $-loaded-css-files: map.set($-loaded-css-files, $file, true);
+        @include css-content.output-css-file($file);
     }
-    $content: map.get($css-content, $file);
-
 }
 
 // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
@@ -106,12 +101,12 @@ $-theme-variables: (
 );
 
 $-theme-css-files: (
-    alpine: "./ag-theme-alpine.css",
-    alpine-dark: "./ag-theme-alpine.css",
-    balham: "./ag-theme-balham.css",
-    balham-dark: "./ag-theme-balham.css",
-    material: "./ag-theme-material.css",
-    classic: "./ag-theme-classic.css",
+    alpine: "ag-theme-alpine.css",
+    alpine-dark: "ag-theme-alpine.css",
+    balham: "ag-theme-balham.css",
+    balham-dark: "ag-theme-balham.css",
+    material: "ag-theme-material.css",
+    classic: "ag-theme-classic.css",
 );
 
 $-themes: map.keys($-theme-variables);
@@ -193,6 +188,7 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, chip-background-color, foreground-color, $opacity: 0.07);
     $params: -param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
     $params: -param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
+    $params: -param-default($params, input-focus-border-color, alpine-active-color, $opacity: 0.4);
     @return $params;
 }
 

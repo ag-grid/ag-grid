@@ -58,7 +58,7 @@
     // Background color when hovering over rows in the grid and in dropdown
     // menus; Note: if you want a rollover on one but not the other, use CSS
     // selectors instead of this property
-    --ag-row-hover-color: var(--ag-background-color);
+    --ag-row-hover-color: transparent;
 
     // Background color when hovering over columns in the grid
     --ag-column-hover-color: transparent;

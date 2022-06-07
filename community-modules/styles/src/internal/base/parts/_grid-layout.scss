@@ -107,11 +107,15 @@
     }
 }
 
-.ag-row-hover {
-    // TODO make sure this works
-    // @if ag-param-is-set(row-hover-color) {
-        background-color: var(--ag-row-hover-color);
-    // }
+.ag-row-hover::before {
+    content: "";
+    background-color: var(--ag-row-hover-color);
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .ag-column-hover {
