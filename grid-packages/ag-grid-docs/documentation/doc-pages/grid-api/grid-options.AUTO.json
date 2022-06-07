@@ -801,7 +801,7 @@
     "type": { "returnType": "boolean" }
   },
   "serverSideFilterOnServer": {
-    "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+    "description": "/** When enabled, the grid will always request the server to provide the filter results */",
     "type": { "returnType": "boolean" }
   },
   "serverSideSortingAlwaysResets": {

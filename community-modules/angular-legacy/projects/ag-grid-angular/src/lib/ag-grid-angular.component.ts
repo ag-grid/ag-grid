@@ -755,7 +755,7 @@ Enables Immutable Data mode, for compatibility with immutable stores. Default: `
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, the grid will always request the server to provide the sort results     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server should provide the filter results     */
+    /** When enabled, the grid will always request the server to provide the filter results     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.
      */

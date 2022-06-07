@@ -3044,7 +3044,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -22328,7 +22328,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -25069,7 +25069,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -27820,7 +27820,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "description": "/** When enabled, the grid will always request the server to provide the filter results */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
