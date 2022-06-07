@@ -252,7 +252,7 @@ const Pipeline = ({ location }) => {
                     style={{
                         height: '100%',
                         width: '99%%',
-                        marginLeft: '1rem',
+                        marginLeft: '5rem',
                         marginRight: '5rem',
                         paddingBottom: '5rem',
                     }}

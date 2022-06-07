@@ -5,7 +5,7 @@ import styles from './components/assets/homepage/homepage.module.scss';
 
 const LicensePricing = () => {
     return (
-        <div className={styles['page-content']}>
+        <div className={styles['page-content']} style={{marginLeft: "5rem", marginRight: "4rem"}}>
             <div className={styles['license-pricing']}>
                 <div className={styles['license-pricing__content']}>
                     <h1 className={styles['page-title']}>AG Grid Licensing & Pricing</h1>
