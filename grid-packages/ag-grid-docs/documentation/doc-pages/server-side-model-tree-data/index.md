@@ -91,8 +91,7 @@ The example below shows this in action where the following can be noted: 333
 
 [[note]]
 | The examples on this page use a simple method for expanding group nodes, however a
-| better approach is covered in the section
-[Preserving Group State](/server-side-model-grouping/#preserving-group-state).
+| better approach is covered in the section [Preserving Group State](/server-side-model-grouping/#preserving-group-state).
 
 ## Refreshing Tree Data
 
@@ -108,9 +107,8 @@ The example below shows this in action where the following can be noted:
 
 ## Sorting
 
-Sorting works in the same way when using Tree Data as when not using Tree Data with one exception. If using the Partial Store, a change in sort will refresh (reload) the data. If using the Full Store, a change in sort will result in the grid sorting the data without requiring a reload.
+Sorting works in the same way when using Tree Data as when not using Tree Data with one exception. If using Infinite Scroll, a change in sort will reload the data. If using not using Infinite Scroll, a change in sort will result in the grid sorting the data without requiring a reload.
 
 ## Filtering
 
-Changing the filter applied to a column will always refresh (reload) the data. This is true for both the Partial Store and Full Store.
-
+Changing the filter applied to a column will always refresh (reload) the data.

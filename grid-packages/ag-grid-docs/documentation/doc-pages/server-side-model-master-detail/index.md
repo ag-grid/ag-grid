@@ -33,9 +33,6 @@ These grid options are illustrated below:
 |    // use the server-side row model
 |    rowModelType: 'serverSide',
 |
-|    // choose store type
-|    serverSideStoreType: 'partial',
-|
 |    // enable master detail
 |    masterDetail: true,
 |

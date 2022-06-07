@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
 
   // allow multiple leaf row selections
   rowSelection: 'multiple',

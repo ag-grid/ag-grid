@@ -33,8 +33,7 @@ const gridOptions: GridOptions = {
 
   animateRows: true,
 
-  rowModelType: 'serverSide',
-  serverSideStoreType: 'full',
+  rowModelType: 'serverSide'
 }
 
 // setup the grid after the page has finished loading

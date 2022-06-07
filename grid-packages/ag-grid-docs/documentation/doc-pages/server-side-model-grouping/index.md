@@ -50,44 +50,27 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-- The Partial Store is used, thus Infinite Scrolling is active.
-- The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using Partial Scrolling.
+- Infinite Scrolling is active via grid property `serverSideInfiniteScroll=true`.
+- The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using Infinite Scrolling.
 - Country and Sport columns have `rowGroup=true` defined on their column definitions. This tells the grid there is two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Row Grouping' name='row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Grouping and Row Stores
+## Row Stores
 
-When grouping and a group is expanded, a new Row Store is created to store the child rows of the opened group.
-The diagram below shows what the Row Stores could look like with Row Grouping, where two top level Row Groups are open.
+A Row Store contains all the Rows for a particual level. For example if you are grouping by Country and have Ireland and United Kingdom expanded, there are three Row Stores for 1) Top Level, 2) Child Rows of Ireland and 3) Child Rows of United Kingdom.
 
-<image-caption src="multi-store.svg" width="80%" constrained="true" centered="true" alt="Node Store - Grouping">
-    <div style="text-align: center;">Fig 1. Node Store - Grouping</div>
-</image-caption>
-
-This means there can be any number of Row Stores existing inside the SSRM. Each time a Row Group is expanded,
-a new Row Store is created for that level. The sections [Server-Side Row Grouping](/server-side-model-grouping/)
-explains in detail this topic.
-
-## Full vs Partial Store
-
-The Row Grouping mechanics are almost identical with the [Full Store](/server-side-model-row-stores/)
-and [Partial Store](/server-side-model-row-stores/). The difference is that when
-using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
-filtering applied.
-
-All the examples presented in this section use the Partial Store as it covers all the semantics found when
-using both store types.
+If you are not grouping, then there is one Row Store for the top level.
 
 ## Configure Stores
 
-By default, each store will have the same configuration (store type, block size etc). This configuration
-is specified using the grid properties `serverSideStoreType`, `maxBlocksInCache` and `cacheBlockSize`.
+By default, each Row Store will behave in the same way with regards Infinite Scrolling. This configuration
+is specified using the grid properties `serverSideInfiniteScroll`, `maxBlocksInCache` and `cacheBlockSize`.
 
-It is possible to have different configurations for different stores. For example if grouping, infinite
-scrolling (using the Partial Store) could be turned off at the top level but turned on at the lower levels.
+It is possible to have different configurations for different Row Stores. For example if grouping, infinite
+scrolling could be turned off at the top level but turned on at the lower levels.
 
 This is done by implementing the grid callback `getServerSideStoreParams(params)`.
 
@@ -99,13 +82,13 @@ The example below demonstrates the `getServerSideStoreParams(params)` callback. 
 the `getServerSideStoreParams(params)` callback. The callback logs its results to the dev console.
 
 - When grouping is active, the stores are configured as follows:
-    - Level 0 - Full Store (no infinite scrolling)
-    - Level 1 - Partial Store (infinite scrolling) with block size of 5
-    - Level 2 - Partial Store (infinite scrolling) with block size of 2
+    - Level 0 - No Infinite Scrolling
+    - Level 1 - Infinite Scrolling with block size of 5
+    - Level 2 - Infinite Scrolling with block size of 2
 
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
-- When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
+- When no grouping is active, the store is configured to use Infinite Scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
@@ -149,7 +132,7 @@ in [Cancelling Transactions](/server-side-model-high-frequency/#cancelling-trans
 
 If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the store
-is [Refreshed](/server-side-model-refresh/) or b) Partial Store is used (as each block load will get the
+is [Refreshed](/server-side-model-refresh/) or b) Infinite Scrolling is used (as each block load will get the
 opportunity to add info data).
 
 The example below shows Store Info in action.
@@ -242,13 +225,13 @@ const gridOptions = {
 
 ## Sorting
 
-When a sort is applied to a grouped grid using the SSRM, the grid will behave differently depending on what store is used. How it behaves is as follows:
+When a sort is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether Infinite Scrolling is active. How it behaves is as follows:
 
-- ### Full Store
+- ### Infinite Scrolling Off
     - By default, the grid will sort all rows on the client side.
-    - Enabling the `serverSideSortOnServer` grid option will instead request sorted data from the server when a group is affected by a sort change. The behaviour will then reflect that of the [Partial Store](/server-side-model-grouping/#partial-store).
+    - Enabling the `serverSideSortOnServer` grid option will instead request sorted data from the server when a group is affected by a sort change.
 
-- ### Partial Store
+- ### Infinite Scrolling On
     - Non-group levels always refresh - all rows are loaded again from the server.
     - Group levels refresh (reload from server) if the sort was changed in:
         - Any column with a value active (ie colDef.aggFunc='something')
@@ -259,15 +242,15 @@ To instead reload every row and group from the server when a refresh is needed, 
 
 ## Filtering
 
-When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on what store is used. How it behaves is as follows:
+When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether Infinite Scrolling is active. How it behaves is as follows:
 
-- ### Full Store
+- ### Infinite Scrolling Off
     - By default, the grid will filter all rows on the client side.
     - Enabling the `serverSideFilterOnServer` grid option will instead request filtered data from the server when a group is affected by a filter change.
     - To instead reload every row and group from the server when a refresh is needed, enable the `serverSideFilterAllLevels` grid option.
 
-- ### Partial Store
-    Changing the filter on any column will always refresh the Partial Store. Rows will be loaded again from the server with the new filter information.
+- ### Infinite Scrolling On
+    Changing the filter on any column will always refresh the rows. Rows will be loaded again from the server with the new filter information.
 
 ## Complex Columns
 

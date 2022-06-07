@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true
 }
 
 // setup the grid after the page has finished loading

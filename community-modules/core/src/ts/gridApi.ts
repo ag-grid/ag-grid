@@ -1921,8 +1921,8 @@ export class GridApi {
 
     /**
      * Refresh a server-side store.
-     * If you pass no parameters, then the top level cache is purged.
-     * To purge a child cache, pass in the string of keys to get to the child cache.
+     * If you pass no parameters, then the top level store is purged.
+     * To purge a child store, pass in the string of keys to get to the child cache.
      */
     public refreshServerSideStore(params?: RefreshStoreParams): void {
         if (this.serverSideRowModel) {

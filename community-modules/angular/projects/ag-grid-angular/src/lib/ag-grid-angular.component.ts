@@ -712,8 +712,13 @@ export class AgGridAngular implements AfterViewInit {
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * Default: `1`     */
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
-    /** Whether to use Full Store or Partial Store for storing rows. Default: `full`     */
+    /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
+         * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
+         * Full Store is used.
+         */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
+    /** Whether Server-side Row Model will use Infinite Scrolling     */
+    @Input() public serverSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`     */
     @Input() public cacheBlockSize: number | undefined = undefined;
@@ -735,7 +740,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
     /** When enabled, the grid will always request the server to provide the sort results     */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, the grid will always request the server should provide the filter results     */
+    /** When enabled, the grid will always request the server to provide the filter results     */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
@@ -1241,6 +1246,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_groupRowsSticky: boolean | null | '';
+    static ngAcceptInputType_serverSideInfiniteScroll: boolean | null | '';
     // @END@
 }
 

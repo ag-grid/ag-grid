@@ -741,8 +741,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getServerSideStoreType(): string | undefined {
-        return this.gridOptions.serverSideStoreType;
+    public isServerSideInfiniteScroll(): boolean {
+        return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 
     public getServerSideStoreParamsFunc() {
@@ -1875,6 +1875,11 @@ export class GridOptionsWrapper {
 
         checkRenamedProperty('processSecondaryColDef', 'processPivotResultColDef', '28.0.x');
         checkRenamedProperty('processSecondaryColGroupDef', 'processPivotResultColGroupDef', '28.0.x');
+
+        if (options.serverSideStoreType) {
+            console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
+            options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
+        }
     }
 
     private checkForViolations() {

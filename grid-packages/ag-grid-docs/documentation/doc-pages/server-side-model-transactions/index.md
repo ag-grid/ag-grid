@@ -3,7 +3,7 @@ title: "SSRM Transactions"
 enterprise: true
 ---
 
-SSRM Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner. Transactions work with the [Full Store](/server-side-model-row-stores/) only.
+SSRM Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner.
 
 Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side Row Model Transactions](/data-update-transactions/). The APIs are almost identical, but there are some important differences (such as the SSRM requiring a 'route') and as such the APIs are not shared.
 
@@ -62,24 +62,24 @@ If the grid callback `getRowId` is not provided, the grid will match on object r
 
 <api-documentation source='grid-options/properties.json' section='rowModels' names='["getRowId"]' ></api-documentation>
 
-## Targeting Stores
+## Targeting Groups
 
 When updating grouped data, a transaction needs to be targeted against the group. This is done by using the transaction's `route` attribute.
 
-If you require to update more than one store (ie update more than one group level), then a transaction needs to be applied for each individual store (group level) to update.
+If you require to update more than one group, then a transaction needs to be applied for each individual store group to update.
 
 The example below demonstrates applying transactions to a store with groups. Note the following:
 
 - The buttons **New Palm Oil** and **New Rubber** will add one row to each group accordingly and print the result to the console. The group must be open for the add to happen.
 - The button **New Wool & Amber** will add one item to each group. Note that two transactions are require to achieve this, one for each group, and print the results to the console. The groups must be open for the add to happen.
-- The button **New Product** will attempt to add an item to the top level, however it will fail as the top level has been configured to use an Partial store.
+- The button **New Product** will attempt to add an item to the top level, however it will fail as the top level has been configured to use Infinite Scroll.
 - The button **Store State** will print to the console the state of the existing stores.
 
 <grid-example title='Transactions Hierarchy' name='transactions-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside","rowgrouping"] }'></grid-example>
 
-## Partial Store
+## Infinite Scroll
 
-Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or use [Store Refresh](/server-side-model-refresh/) to have the grid data update.
+Transaction Updates do not work for Infinite Scroll. Instead either move your application to not use Infinite Scroll or use [Store Refresh](/server-side-model-refresh/) to have the grid data update.
 
 ## Next Up
 

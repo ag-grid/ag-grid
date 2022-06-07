@@ -46,8 +46,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -654,7 +652,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
-            type: 'full',
+            infiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.allRowNodes.length,
             info: this.info

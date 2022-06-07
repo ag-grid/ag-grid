@@ -27,20 +27,18 @@ Filtering is enabled in the grid via the `filter` column definition attribute. S
 For more details on filtering configurations see the section on [Column Filtering](/filtering/).
 
 
-## Full Store Filtering
+## Filtering Without Infinite Scroll
 
-When using the Full Store, filtering of rows is performed by the grid. There is nothing special to be done by the server.
+When not using Infinite Scroll, filtering of rows is performed by the grid. There is nothing special to be done by the server. This is possible as the grid has all the rows needed to perform the sort. The example below demonstrates this. Note the following:
 
-The example below demonstrates the Full Store filtering inside the grid. Note the following:
-
-- The grid is using the Full Store by setting the grid property `serverSideStoreType = full`.
+- The grid is not using Infinite Scrolling, the property `serverSideInfiniteScroll` is not set.
 - Columns are set up with the following filters:
     - Athlete column has Text Filter.
     - County column has Set Filter.
     - Year column has Number Filter.
 - Rows are loaded once. All filtering is then subsequently done by the grid.
 
-<grid-example title='Full Store Filtering' name='full' type='generated' options='{ "enterprise": true, "modules": ["serverside","setfilter", "menu"] }'></grid-example>
+<grid-example title='Filtering Without Infinite Scroll' name='full' type='generated' options='{ "enterprise": true, "modules": ["serverside","setfilter", "menu"] }'></grid-example>
 
 Note that the Set Filter is provided values to work. This is a requirement when using the Set Filter with the SSRM.
 
@@ -48,11 +46,11 @@ Note that the Set Filter is provided values to work. This is a requirement when 
 | The example above demonstrates the default behaviour of the full store.
 | To instead have the grid request that the server provide the filtered rows, enable the `serverSideFilterOnServer` grid option.
 
-## Partial Store Filtering
+## Filtering With Infinite Scroll
 
-When using the Partial Store, filtering of rows is performed on the server. When a filter is applied in the grid
-a request is made for more rows via the [Datasource](/server-side-model-datasource/). The provided request
-contains filter metadata in the `filterModel` property.
+When using Infinite Scroll, filtering of rows is performed on the server. When using Infinite Scroll, it is not possible for the grid to filter the data as it doesn't not have all the data loaded to filter.
+
+When a filter is applied in the grid and Infinite Scrolling, a request is made for the rows via the [Datasource](/server-side-model-datasource/). The provided request contains filter metadata in the `filterModel` property.
 
 An example of the contents contained in the `filterModel` is shown below:
 
@@ -92,7 +90,7 @@ Partial Store. Notice the following:
 - The server uses the metadata contained in the `filterModel` to filter the rows.
 - Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-<grid-example title='Partial Simple' name='partial-simple' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] }'></grid-example>
+<grid-example title='Filtering With Infinite Scroll' name='partial-simple' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] }'></grid-example>
 
 ## Set Filtering
 
@@ -101,7 +99,7 @@ Filtering using the [Set Filter](/filter-set/) has a few differences to filterin
 ### Set Filter Model
 
 Entries in the `filterModel` have a different format to the Simple Filters. This filter model is what gets passed
-as part of the request to the server when using the Partial Store.
+as part of the request to the server when using Infinite Scrolling.
 The following shows an example of a Set Filter where two items are selected:
 
 
@@ -155,7 +153,7 @@ For more details on setting values, see [Supplying Filter Values](/filter-set-fi
 Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed;
 see [Refreshing Values](/filter-set-filter-list/#refreshing-values) for more information.
 
-The example below demonstrates server-side filtering using the Set Filter and the Partial Row Store. Note the following:
+The example below demonstrates server-side filtering using the Set Filter and Infinite Scrolling. Note the following:
 
 - The **Country** and **Sport** columns have Set Filters defined using `filter: 'agSetColumnFilter'`.
 - Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.
@@ -164,7 +162,7 @@ When the filter for the **Country** column is changed, the values for the **Spor
 - The server uses the metadata contained in the `filterModel` to filter the rows.
 - Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-<grid-example title='Partial Set' name='partial-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
+<grid-example title='Set Filter and Infinite Scrolling' name='partial-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
 
 ## Next Up
 

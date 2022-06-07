@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'full',
   animateRows: true,
 }
 

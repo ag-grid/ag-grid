@@ -64,7 +64,7 @@ export class PropertyKeys {
         'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
         'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation',
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges',
-        'groupRowsSticky'
+        'groupRowsSticky', 'serverSideInfiniteScroll'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

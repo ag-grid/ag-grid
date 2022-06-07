@@ -86,15 +86,13 @@ The example below demonstrates server-side Pivoting. Note the following:
 
 <grid-example title='Simple Pivot' name='simple-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Full vs Partial Store
+## Infinite Scroll
 
-The Pivoting mechanics are almost identical with the [Full Store](/server-side-model-row-stores/)
-and [Partial Store](/server-side-model-row-stores/). The difference is that when
-using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
+The Pivoting mechanics are almost identical regardless of using Infinite Scroll. The difference is that when
+using the Infinite Scroll, data will be requested in blocks and could be requested to have sorting and / or
 filtering applied.
 
-All the examples presented in this section use the Partial Store as it covers all the semantics found when
-using both store types.
+All the examples presented in this section use Infinite Scroll as it covers all the semantics for both scenarios.
 
 ## Example: Pivot Column Groups
 

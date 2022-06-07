@@ -12,7 +12,7 @@ export interface LoadSuccessParams {
      */
     rowData: any[];
     /**
-     * The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination.
+     * The last row, if known, to help Infinite Scroll.
      */
     rowCount?: number;
     /**

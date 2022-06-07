@@ -35,26 +35,26 @@ export interface StoreRefreshAfterParams {
 }
 
 export interface ServerSideStoreState {
-    /** Store type, `partial` or `full` */
-    type: ServerSideStoreType;
+    /** True if infininte scrolling */
+    infiniteScroll: boolean;
     /** The route that identifies this store. */
     route: string[];
     /** How many rows the store has. This includes 'loading rows'. */
     rowCount: number;
     /**
-     * Partial store only.
+     * Infinite Scroll only.
      * Whether the last row index is know.
      * */
     lastRowIndexKnown?: boolean;
     /** Any extra info provided to the store, when data was loaded. */
     info?: any;
     /**
-     * Partial store only.
+     *Infinite Scroll only.
      * Max blocks allowed in the store.
      */
     maxBlocksInCache?: number;
     /**
-     * Partial store only.
+     * Infinite Scroll only.
      * The size (number of rows) of each block.
      */
     cacheBlockSize?: number;

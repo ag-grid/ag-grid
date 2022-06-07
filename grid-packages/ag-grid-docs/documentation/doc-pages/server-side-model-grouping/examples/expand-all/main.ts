@@ -28,7 +28,6 @@ const gridOptions: GridOptions = {
   },
   maxConcurrentDatasourceRequests: 1,
   rowModelType: 'serverSide',
-  serverSideStoreType: 'full',
   suppressAggFuncInHeader: true,
   animateRows: true,
 }

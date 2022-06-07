@@ -637,8 +637,13 @@ export interface GridOptions {
      * Default: `1`
      */
     infiniteInitialRowCount?: number;
-    /** Whether to use Full Store or Partial Store for storing rows. Default: `full`*/
+    /** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.
+     * Deprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,
+     * Full Store is used.
+     */
     serverSideStoreType?: ServerSideStoreType;
+    /** Whether Server-side Row Model will use Infinite Scrolling */
+    serverSideInfiniteScroll?: boolean;
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`
@@ -1230,18 +1235,26 @@ export type ServerSideStoreType = 'full' | 'partial';
 
 export interface ServerSideStoreParams {
     /**
+     * @deprecated
      * What store type to use.
      * If missing, then defaults to grid option `serverSideStoreType`.
+     * Deprecated in favor of infiniteScroll.
+     * If infiniteScroll==true, then Partial Store is used.
+     * If infiniteScroll==false, then Full Store is used.
      *  */
     storeType?: ServerSideStoreType;
+    /** 
+     * Whether to have infinite scroll active or not for the level.
+     */
+    infiniteScroll?: boolean;
     /**
-     * For Partial Store only.
+     * For Infinite Scroll only.
      * How many blocks to keep in cache.
      * If missing, defaults to grid options `maxBlocksInCache`.
      */
     maxBlocksInCache?: number;
     /**
-     * For Partial Store only.
+     * For Infinite Scroll only.
      * Cache block size.
      * If missing, defaults to grid options `cacheBlockSize`.
      */

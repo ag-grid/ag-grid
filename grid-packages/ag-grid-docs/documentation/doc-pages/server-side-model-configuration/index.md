@@ -29,11 +29,11 @@ Notice that the current cache status is logged showing block details such as the
 
 This can be very useful when debugging issues on the server.
 
-## Custom Partial Store
+## Custom Infinite Scrolling
 
-The example below shows a customised SSRM using the Partial Store. Note the following:
+The example below shows a customised SSRM using Infinite Scrolling. Note the following:
 
-- The grid property `serverSideStoreType = partial`, which gets the Partial Store to be used. The grid loads rows one block at a time as the user scrolls down.
+- The grid property `serverSideInfiniteScrolling = true`, which gets the Infinite Store to be used. The grid loads rows one block at a time as the user scrolls down.
 
 - The grid property `cacheBlockSize = 50`. This sets the block size to 50, thus rows are read back 50 at a time.
 
@@ -47,7 +47,7 @@ The example below shows a customised SSRM using the Partial Store. Note the foll
 
 The example below demonstrates debouncing the block loading. Note the following:
 
-- The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through. In other words, infinite scrolling is turned off, however rows are still loaded in blocks.
+- The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through. In other words, Infinite Scrolling is turned off, however rows are still loaded in blocks.
 
 - `blockLoadDebounceMillis = 1000` - loading of blocks is delayed by `1000ms`. This allows for skipping over blocks when scrolling to advanced positions.
 
