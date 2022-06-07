@@ -5,15 +5,15 @@
 
     // Active colours - same shade, different opacities
     --ag-alpine-active-color: #2196f3;
-    --ag-selected-row-background-color: #{rgba(#2196f3, 0.3)};
-    --ag-row-hover-color: #{rgba(#2196f3, 0.1)};
-    --ag-column-hover-color: #{rgba(#2196f3, 0.1)};
-    --ag-chip-background-color: #{rgba(#2196f3, 0.07)};
-    --ag-input-focus-border-color: #{rgba(#2196f3, 0.4)};
-    --ag-range-selection-background-color: #{rgba(#2196f3, 0.2)};
-    --ag-range-selection-background-color-2: #{rgba(#2196f3, 0.36)};
-    --ag-range-selection-background-color-3: #{rgba(#2196f3, 0.49)};
-    --ag-range-selection-background-color-4: #{rgba(#2196f3, 0.59)};
+    --ag-selected-row-background-color: #{color.change(#2196f3, $alpha: 0.3)};
+    --ag-row-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
+    --ag-column-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
+    --ag-chip-background-color: #{color.change(#2196f3, $alpha: 0.07)};
+    --ag-input-focus-border-color: #{color.change(#2196f3, $alpha: 0.4)};
+    --ag-range-selection-background-color: #{color.change(#2196f3, $alpha: 0.2)};
+    --ag-range-selection-background-color-2: #{color.change(#2196f3, $alpha: 0.36)};
+    --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
+    --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
 
     // main colours (overridden by alpine-dark)
     --ag-background-color: #fff;
@@ -27,7 +27,7 @@
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
     --ag-input-disabled-background-color: #f1f2f4;
-    --ag-disabled-foreground-color: #{rgba(#fff, 0.5)};
+    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
     
     // derived colours (shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -85,7 +85,7 @@
     --ag-background-color: #181d1f;
     --ag-foreground-color: #fff;
     --ag-border-color: #68686e;
-    --ag-secondary-border-color: #{rgba(#585652, 0.5)};
+    --ag-secondary-border-color: #{color.change(#585652, $alpha: 0.5)};
     --ag-header-background-color: #222628;
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;

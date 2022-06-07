@@ -206,7 +206,7 @@ $-themes: map.keys($-theme-variables);
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
     $params: -param-default($params, background-color, #fff);
-    $params: -param-default($params, foreground-color, rgba(#000, 0.87));
+    $params: -param-default($params, foreground-color, color.change(#000, $alpha: 0.87));
     $params: -param-default($params, subheader-background-color, #eee);
     $params: -param-default($params, material-primary-color, #3f51b5);
     $params: -param-default($params, range-selection-border-color, material-primary-color);

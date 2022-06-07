@@ -16,8 +16,8 @@
     "$COMMENT": "TODO remove these tmp scripts once core uses this module",
     "tmp-watch-patch": "npm run build-tmp-patch; npm run build-tmp-patch -- --watch",
     "tmp-build-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
-    "test": "npm run lint:scss && npm run build-prod && npm run lint:css",
-    "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
+    "test": "npm run lint:scss && npm run build && npm run lint:css",
+    "lint:css": "stylelint --formatter unix --config stylelint-config-css.js 'dist/*.css'",
     "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "update-icon-fonts": "cd icon-fonts && npm i && npm run build"
