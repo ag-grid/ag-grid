@@ -31,7 +31,6 @@ export interface IServerSideStore {
 export interface StoreRefreshAfterParams {
     valueColChanged: boolean;
     secondaryColChanged: boolean;
-    alwaysReset: boolean;
     changedColumns: string[];
 }
 

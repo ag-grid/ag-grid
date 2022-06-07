@@ -3031,12 +3031,28 @@
       "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
+    "serverSideSortAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSortOnServer": {
+      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterOnServer": {
+      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "serverSideSortingAlwaysResets": {
-      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
-      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {
@@ -13973,7 +13989,7 @@
       }
     },
     "getRowCount": {
-      "description": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "description": "/** Returns the number of rows */",
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
     "getTopLevelRowCount": {
@@ -15195,7 +15211,7 @@
       }
     },
     "getRowCount": {
-      "description": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "description": "/** Returns the number of rows */",
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
     "getTopLevelRowCount": {
@@ -15958,7 +15974,7 @@
       }
     },
     "getRowCount": {
-      "description": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "description": "/** Returns the number of rows */",
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
     "getTopLevelRowCount": {
@@ -16304,7 +16320,7 @@
       }
     },
     "getRowCount": {
-      "description": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "description": "/** Returns the number of rows */",
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
     "getTopLevelRowCount": {
@@ -16577,7 +16593,6 @@
     "secondaryColChanged": {
       "type": { "returnType": "boolean", "optional": false }
     },
-    "alwaysReset": { "type": { "returnType": "boolean", "optional": false } },
     "changedColumns": {
       "type": { "returnType": "string[]", "optional": false }
     }
@@ -22300,12 +22315,28 @@
       "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
+    "serverSideSortAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSortOnServer": {
+      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterOnServer": {
+      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "serverSideSortingAlwaysResets": {
-      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
-      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {
@@ -25025,12 +25056,28 @@
       "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
+    "serverSideSortAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSortOnServer": {
+      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterOnServer": {
+      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "serverSideSortingAlwaysResets": {
-      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
-      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {
@@ -27760,12 +27807,28 @@
       "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
+    "serverSideSortAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterAllLevels": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideSortOnServer": {
+      "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "serverSideFilterOnServer": {
+      "description": "/** When enabled, the grid will always request the server should provide the filter results */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "serverSideSortingAlwaysResets": {
-      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
-      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {

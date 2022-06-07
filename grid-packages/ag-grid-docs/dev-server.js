@@ -109,7 +109,6 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
     });
 }
 
-
 function getTscPath() {
     return 'node_modules/.bin/tsc';
 }
@@ -454,7 +453,6 @@ const watchCoreModules = async (skipFrameworks) => {
 
     tsWatch.stdout.on('data', async (data) => {
         const output = data.toString().trim();
-        console.log(output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
@@ -608,6 +606,7 @@ const watchFrameworkModules = async () => {
         '**/node_modules/**/*',
         '**/dist/**/*',
         '**/bundles/**/*',
+        '**/lib/**/*',
         '.hash',
     ];
 

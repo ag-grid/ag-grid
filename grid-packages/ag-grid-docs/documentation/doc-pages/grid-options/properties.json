@@ -1009,10 +1009,10 @@
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
-        "serverSideSortingAlwaysResets": {
-            "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
-        },
-        "serverSideFilteringAlwaysResets": {},
+        "serverSideSortAllLevels": {},
+        "serverSideFilterAllLevels": {},
+        "serverSideSortOnServer": {},
+        "serverSideFilterOnServer": {},
         "getChildCount": {},
         "getServerSideStoreParams": {},
         "isServerSideGroupOpenByDefault": {},

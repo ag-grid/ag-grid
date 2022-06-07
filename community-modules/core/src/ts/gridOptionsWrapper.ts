@@ -23,6 +23,7 @@ import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
+import { _ } from './utils';
 import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
@@ -1410,14 +1411,55 @@ export class GridOptionsWrapper {
         return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
     }
 
-    public isServerSideSortingAlwaysResets() {
-        return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    public isServerSideSortAllLevels() {
+        const isEnabled = isTrue(this.gridOptions.serverSideSortAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortAllLevels` property can only be used with the server side row model.'), 'serverSideSortAllLevels');
+            return false;
+        }
+        return isEnabled;
     }
 
-    public isServerSideFilteringAlwaysResets() {
-        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
+    public isServerSideFilterAllLevels() {
+        const isEnabled = isTrue(this.gridOptions.serverSideFilterAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterAllLevels` property can only be used with the server side row model.'), 'serverSideFilterAllLevels');
+            return false;
+        }
+        return isEnabled;
     }
 
+    public isServerSideSortOnServer() {
+        const isEnabled = isTrue(this.gridOptions.serverSideSortOnServer);
+
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property can only be used with the server side row model.'), 'serverSideSortOnServerRowModel');
+            return false;
+        }
+
+        if (this.isTreeData() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property cannot be used while using tree data.'), 'serverSideSortOnServerTreeData');
+            return false;
+        }
+
+        return isEnabled;
+    }
+
+    public isServerSideFilterOnServer() {
+        const isEnabled = isTrue(this.gridOptions.serverSideFilterOnServer);
+
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property can only be used with the server side row model.'), 'serverSideFilterOnServerRowModel');
+            return false;
+        }
+
+        if (this.isTreeData() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property cannot be used while using tree data.'), 'serverSideFilterOnServerTreeData');
+            return false;
+        }
+
+        return isEnabled;
+    }
     public getPostSortFunc() {
         const { postSortRows, postSort } = this.gridOptions;
         if (postSortRows) {
@@ -1683,6 +1725,9 @@ export class GridOptionsWrapper {
 
         checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
         checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
+
+        checkRenamedProperty('serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', '28.0.0');
+        checkRenamedProperty('serverSideSortingAlwaysResets', 'serverSideSortAllLevels', '28.0.0');
 
         if (options.immutableColumns || options.deltaColumnMode) {
             console.warn(

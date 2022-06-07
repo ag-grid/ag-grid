@@ -35,6 +35,10 @@ The example below demonstrates the Full Store sorting inside the grid. Note the 
 
 <grid-example title='Full Store Sorting' name='full-sorting' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
+[[note]]
+| The example above demonstrates the default behaviour of the full store.
+| To instead have the grid request that the server provide the sorted rows, enable the `serverSideSortOnServer` grid option.
+
 ## Partial Store
 
 When using the Partial Store, sorting of rows is performed on the server. When a sort is applied in the grid a request

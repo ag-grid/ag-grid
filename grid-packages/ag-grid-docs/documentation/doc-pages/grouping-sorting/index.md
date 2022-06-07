@@ -128,4 +128,4 @@ The following example demonstrates how `groupMaintainOrder` works. Note the foll
 
 ## Next Up
 
-Continue to the next section to learn about [Row Group Filtering](../grouping-filtering/).
+Continue to the next section to learn about [Filtering Groups](../grouping-filtering/).

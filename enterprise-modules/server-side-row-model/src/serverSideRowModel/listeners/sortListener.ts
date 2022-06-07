@@ -92,12 +92,9 @@ export class SortListener extends BeanStub {
         const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
         const secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
 
-        const alwaysReset = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-
         const params: StoreRefreshAfterParams = {
             valueColChanged,
             secondaryColChanged,
-            alwaysReset,
             changedColumns
         };
 

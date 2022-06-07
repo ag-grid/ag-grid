@@ -239,6 +239,21 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "8:35"
+    },
+    {
+      "title": "Custom Components",
+      "url": "https://www.youtube.com/watch?v=A5-Li_9oPSEs&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Angular Custom Components"
+      },
+      "keyPoints": [
+        "Configuring Components",
+        "Component Params",
+        "Component Selectors",
+        "Angular & JavaScript Components"
+      ],
+      "runningTime": "13:59"
     }
   ],
   "vue": [
