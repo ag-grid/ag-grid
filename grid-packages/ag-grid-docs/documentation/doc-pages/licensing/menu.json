@@ -533,8 +533,13 @@
                 "enterprise": true
               },
               {
-                "title": "Row Stores",
+                "title": "Infinite Scroll",
                 "url": "/server-side-model-row-stores/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Grouping",
+                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
@@ -550,11 +555,6 @@
               {
                 "title": "Filtering",
                 "url": "/server-side-model-filtering/",
-                "enterprise": true
-              },
-              {
-                "title": "Row Grouping",
-                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
