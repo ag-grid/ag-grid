@@ -162,7 +162,7 @@ export class Legend {
     public onMarkerShapeChange() {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
-        this.group.markDirty(RedrawType.MINOR);
+        this.group.markDirty(this.group, RedrawType.MINOR);
     }
 
     /**

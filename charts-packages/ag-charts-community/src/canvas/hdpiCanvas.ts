@@ -8,6 +8,7 @@ export class HdpiCanvas {
     readonly document: Document;
     readonly element: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
+    readonly imageSource: HTMLCanvasElement;
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
@@ -22,6 +23,7 @@ export class HdpiCanvas {
         this.document = document;
         this.element = document.createElement('canvas');
         this.context = this.element.getContext('2d')!;
+        this.imageSource = this.context.canvas;
 
         const { style } = this.element;
 
@@ -90,6 +92,10 @@ export class HdpiCanvas {
         this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
+    }
+
+    snapshot() {
+        // No-op for compatibility with HdpiOffscreenCanvas.
     }
 
     clear() {
@@ -325,7 +331,7 @@ export class HdpiCanvas {
         return size;
     }
 
-    static overrideScale(ctx: CanvasRenderingContext2D, scale: number) {
+    static overrideScale(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, scale: number) {
         let depth = 0;
         const overrides = {
             save() {

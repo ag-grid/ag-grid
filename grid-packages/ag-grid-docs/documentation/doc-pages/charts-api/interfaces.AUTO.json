@@ -2785,23 +2785,31 @@
   },
   "RenderContext": {
     "meta": { "isTypeAlias": true },
-    "type": "{ ctx: CanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
+    "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
   },
   "DebugOptions": {
     "meta": {},
     "type": {
-      "stats": "boolean",
+      "stats": "false | 'basic' | 'detailed'",
       "dirtyTree": "boolean",
       "renderBoundingBoxes": "boolean",
-      "consoleLog": "boolean",
-      "onlyLayers": "string[]"
+      "consoleLog": "boolean"
     }
   },
   "SceneOptions": {
     "meta": {},
     "type": {
       "document": "Document",
-      "mode": "'simple' | 'composite' | 'dom-composite'"
+      "mode": "'simple' | 'composite' | 'dom-composite' | 'adv-composite'"
+    }
+  },
+  "SceneLayer": {
+    "meta": {},
+    "type": {
+      "id": "number",
+      "name?": "string",
+      "zIndex": "number",
+      "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
     }
   },
   "ValueFn": {

@@ -3683,19 +3683,34 @@
   "RedrawType": {},
   "RenderContext": {},
   "DebugOptions": {
-    "stats": { "type": { "returnType": "boolean", "optional": false } },
+    "stats": {
+      "type": {
+        "returnType": "false | 'basic' | 'detailed'",
+        "optional": false
+      }
+    },
     "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
     },
-    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
-    "onlyLayers": { "type": { "returnType": "string[]", "optional": false } }
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SceneOptions": {
     "document": { "type": { "returnType": "Document", "optional": false } },
     "mode": {
       "type": {
-        "returnType": "'simple' | 'composite' | 'dom-composite'",
+        "returnType": "'simple' | 'composite' | 'dom-composite' | 'adv-composite'",
+        "optional": false
+      }
+    }
+  },
+  "SceneLayer": {
+    "id": { "type": { "returnType": "number", "optional": false } },
+    "name": { "type": { "returnType": "string", "optional": true } },
+    "zIndex": { "type": { "returnType": "number", "optional": false } },
+    "canvas": {
+      "type": {
+        "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
         "optional": false
       }
     }

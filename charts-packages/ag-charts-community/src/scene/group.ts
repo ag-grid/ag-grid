@@ -4,14 +4,18 @@ import { Matrix } from "./matrix";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Scene } from "./scene";
 import { Path2D } from "./path2D";
+import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
 
 export class Group extends Node {
 
     static className = 'Group';
 
-    private layer?: HdpiCanvas;
-    private clipPath: Path2D = new Path2D();
+    protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
+    protected clipPath: Path2D = new Path2D();
     readonly name?: string;
+
+    readonly dirtyChildren: Record<string, Node> = {};
+    readonly visibleChildren: Record<string, Node> = {};
 
     @SceneChangeDetection({
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
@@ -26,10 +30,11 @@ export class Group extends Node {
     }
 
     public constructor(
-        private readonly opts?: {
-            layer?: boolean,
-            zIndex?: number,
-            name?: string,
+        protected readonly opts?: {
+            readonly layer?: boolean,
+            readonly zIndex?: number,
+            readonly name?: string,
+            readonly optimiseDirtyTracking?: boolean,
         }
     ) {
         super();
@@ -65,9 +70,24 @@ export class Group extends Node {
         }
     }
 
-    markDirty(type = RedrawType.TRIVIAL) {
+    markDirty(source: Node, type = RedrawType.TRIVIAL) {
         const parentType = type <= RedrawType.MINOR ? RedrawType.TRIVIAL : type;
-        super.markDirty(type, parentType);
+        super.markDirty(source, type, parentType);
+
+        if (source !== this && this.dirtyChildren) {
+            this.dirtyChildren[source.id] = source;
+        }
+    }
+
+    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+        // Ensure we update visibility tracking before blowing away dirty flags.
+        this.syncChildVisibility();
+
+        for (const key of Object.keys(this.dirtyChildren)) {
+            delete this.dirtyChildren[key];
+        }
+
+        super.markClean(opts);
     }
 
     // We consider a group to be boundless, thus any point belongs to it.
@@ -129,8 +149,17 @@ export class Group extends Node {
     }
 
     render(renderCtx: RenderContext) {
+        if (this.layer && this.opts?.optimiseDirtyTracking) {
+            this.optimisedRender(renderCtx);
+            return;
+        }
+
+        this.basicRender(renderCtx);
+    }
+
+    private basicRender(renderCtx: RenderContext) {
         const { opts: { name = undefined } = {} } = this;
-        const { _debug: { consoleLog = false, onlyLayers = [] } = {} } = this;
+        const { _debug: { consoleLog = false } = {} } = this;
         const { dirty, dirtyZIndex, clipPath, layer, children } = this;
         let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
 
@@ -155,8 +184,8 @@ export class Group extends Node {
 
             if (layer && stats) {
                 stats.layersSkipped++;
+                stats.nodesSkipped += this.nodeCount.count;
             }
-            if (stats) stats.nodesSkipped += this.nodeCount.count;
 
             // Nothing to do.
             return;
@@ -183,10 +212,6 @@ export class Group extends Node {
                 clipPath.rect(x, y, width, height);
                 clipPath.draw(ctx);
                 ctx.clip();
-            }
-
-            if (onlyLayers.length > 0) {
-                groupVisible = !!name && onlyLayers.indexOf(name) >= 0;
             }
         } else {
             // Only apply opacity if this isn't a distinct layer - opacity will be applied
@@ -242,11 +267,140 @@ export class Group extends Node {
         if (layer) {
             if (stats) stats.layersRendered++;
             ctx.restore();
+            layer.snapshot();
         }
 
         if (name && consoleLog && stats) {
             const counts = this.nodeCount;
             console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
+        }
+    }
+
+    private optimisedRender(renderCtx: RenderContext) {
+        const { _debug: { consoleLog = false } = {} } = this;
+        const { name, dirty, dirtyZIndex, clipPath, layer, children, dirtyChildren, visibleChildren, visible: groupVisible } = this;
+        let { ctx, clipBBox, resized, stats } = renderCtx;
+
+        if (!layer) {
+            return;
+        }
+
+        const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
+        const isChildDirty = Object.keys(dirtyChildren).length > 0;
+
+        if (name && consoleLog) {
+            console.log({ name, group: this, isDirty, isChildDirty, renderCtx });
+        }
+
+        // By default there is no need to force redraw a group which has it's own canvas layer
+        // as the layer is independent of any other layer.
+        let forceRender = false;
+
+        if (!isDirty && !isChildDirty) {
+            if (name && consoleLog && stats) {
+                const counts = this.nodeCount;
+                console.log({ name, result: 'skipping', renderCtx, counts, group: this });
+            }
+
+            if (stats) {
+                stats.layersSkipped++;
+                stats.nodesSkipped += this.nodeCount.count;
+            }
+
+            // Nothing to do.
+            return;
+        }
+
+        // Switch context to the canvas layer we use for this group.
+        ctx = layer.context;
+        ctx.save();
+        ctx.setTransform(renderCtx.ctx.getTransform());
+
+        forceRender = true;
+        layer.clear();
+
+        if (clipBBox) {
+            const { width, height, x, y } = clipBBox;
+
+            if (consoleLog) {
+                console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+            }
+
+            clipPath.clear();
+            clipPath.rect(x, y, width, height);
+            clipPath.draw(ctx);
+            ctx.clip();
+        }
+
+        this.syncChildVisibility();
+
+        // A group can have `scaling`, `rotation`, `translation` properties
+        // that are applied to the canvas context before children are rendered,
+        // so all children can be transformed at once.
+        this.computeTransformMatrix();
+        this.matrix.toContext(ctx);
+        clipBBox = clipBBox ? this.matrix.inverse().transformBBox(clipBBox) : undefined;
+
+        if (dirtyZIndex) {
+            this.dirtyZIndex = false;
+            children.sort((a, b) => a.zIndex - b.zIndex);
+            forceRender = true;
+        }
+
+        // Reduce churn if renderCtx is identical.
+        const renderContextChanged = forceRender !== renderCtx.forceRender ||
+                clipBBox !== renderCtx.clipBBox ||
+                ctx !== renderCtx.ctx;
+        const childRenderContext =  renderContextChanged ?
+            { ...renderCtx, ctx, forceRender, clipBBox } :
+            renderCtx;
+
+        if (consoleLog) {
+            console.log({ name, visibleChildren, dirtyChildren });
+        }
+
+        let skipped = 0;
+        if (groupVisible) {
+            for (const child of Object.values(visibleChildren)) {
+                if (!forceRender && child.dirty === RedrawType.NONE) {
+                    // Skip children that don't need to be redrawn.
+                    if (stats) skipped += child.nodeCount.count;
+                    continue;
+                }
+    
+                ctx.save();
+                child.render(childRenderContext);
+                ctx.restore();
+            }
+        }
+
+        this.markClean({ recursive: false });
+        for (const child of Object.values(dirtyChildren)) {
+            child.markClean();
+            delete dirtyChildren[child.id];
+        }
+
+        if (stats) stats.nodesSkipped += skipped;
+
+        if (stats) stats.layersRendered++;
+        ctx.restore();
+        layer.snapshot();
+
+        if (name && consoleLog && stats) {
+            const counts = this.nodeCount;
+            console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
+        }
+    }
+
+    private syncChildVisibility() {
+        const { dirtyChildren, visibleChildren } = this;
+
+        for (const child of Object.values(dirtyChildren)) {
+            if (!child.visible && visibleChildren[child.id]) {
+                delete visibleChildren[child.id];
+            } else if (child.visible && !visibleChildren[child.id]) {
+                visibleChildren[child.id] = child;
+            }
         }
     }
 }

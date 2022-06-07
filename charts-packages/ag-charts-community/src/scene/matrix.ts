@@ -264,7 +264,7 @@ export class Matrix {
         return target;
     }
 
-    toContext(ctx: CanvasRenderingContext2D) {
+    toContext(ctx: CanvasTransform) {
         // It's fair to say that matrix multiplications are not cheap.
         // However, updating path definitions on every frame isn't either, so
         // it may be cheaper to just translate paths. It's also fair to
