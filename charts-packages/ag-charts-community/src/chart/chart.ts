@@ -1186,21 +1186,34 @@ export abstract class Chart extends Observable {
 
     private checkLegendClick(event: MouseEvent): boolean {
         const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
-
-        if (datum) {
-            const { id, itemId, enabled } = datum;
-            const series = find(this.series, (s) => s.id === id);
-
-            if (series) {
-                series.toggleSeriesItem(itemId, !enabled);
-                if (enabled) {
-                    this.tooltip.toggle(false);
-                }
-                return true;
-            }
+        if (!datum) {
+            return false;
         }
 
-        return false;
+        const { id, itemId, enabled } = datum;
+        const series = find(this.series, (s) => s.id === id);
+        if (!series) {
+            return false;
+        }
+
+        series.toggleSeriesItem(itemId, !enabled);
+        if (enabled) {
+            this.tooltip.toggle(false);
+        }
+
+        if (enabled && this.highlightedDatum?.series === series) {
+            this.highlightedDatum = undefined;
+        }
+
+        if (!enabled) {
+            this.highlightedDatum = {
+                series,
+                itemId,
+                datum: undefined
+            };
+        }
+
+        return true;
     }
 
     private pointerInsideLegend = false;
