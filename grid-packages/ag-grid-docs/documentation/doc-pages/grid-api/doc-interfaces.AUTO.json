@@ -20318,14 +20318,6 @@
     }
   },
   "IHeaderAngularComp": {
-    "refresh": {
-      "description": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
-      "type": {
-        "arguments": { "params": "IHeaderParams" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
@@ -20333,10 +20325,26 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "refresh": {
+      "description": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
+      "type": {
+        "arguments": { "params": "IHeaderParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
     }
   },
   "IFloatingFilterAngularComp": {
     "meta": { "typeParams": ["P"] },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFloatingFilterParams<P>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "onParentModelChanged": {
       "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
@@ -20351,17 +20359,17 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "IFloatingFilterParams<P>" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "IDateAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IDateParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "getDate": {
       "description": "/** Returns the current date represented by this component */",
       "type": {
@@ -20409,17 +20417,17 @@
         "returnType": "void",
         "optional": true
       }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "IDateParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "IFilterAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFilterParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "isFilterActive": {
       "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -20467,35 +20475,35 @@
         "returnType": "void",
         "optional": true
       }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "IFilterParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "ICellRendererAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "refresh": {
       "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
       "type": {
         "arguments": { "params": "ICellRendererParams" },
         "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "ICellRendererParams" },
-        "returnType": "void",
         "optional": false
       }
     }
   },
   "ICellEditorAngularComp": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellEditorParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
@@ -20531,17 +20539,17 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "ICellEditorParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "AgRendererComponent": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellRendererParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "refresh": {
       "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
       "type": {
@@ -20549,17 +20557,17 @@
         "returnType": "boolean",
         "optional": false
       }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "ICellRendererParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "AgEditorComponent": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "ICellEditorParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
@@ -20595,17 +20603,17 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "ICellEditorParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "AgFilterComponent": {
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFilterParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "isFilterActive": {
       "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -20653,18 +20661,18 @@
         "returnType": "void",
         "optional": true
       }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "IFilterParams" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "AgFloatingFilterComponent": {
     "meta": { "typeParams": ["P"] },
+    "agInit": {
+      "description": "/** Mandatory - Params for rendering this component. */",
+      "type": {
+        "arguments": { "params": "IFloatingFilterParams<P>" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "onParentModelChanged": {
       "description": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
       "type": {
@@ -20679,14 +20687,6 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "agInit": {
-      "description": "/** Mandatory - Params for rendering this component. */",
-      "type": {
-        "arguments": { "params": "IFloatingFilterParams<P>" },
-        "returnType": "void",
-        "optional": false
-      }
     }
   },
   "ILoadingCellRendererAngularComp": {

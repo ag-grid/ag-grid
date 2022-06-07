@@ -11757,51 +11757,52 @@
   "IHeaderAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: IHeaderParams)": "boolean",
-      "agInit(params: IHeaderParams)": "void"
+      "agInit(params: IHeaderParams)": "void",
+      "refresh(params: IHeaderParams)": "boolean"
     },
     "docs": {
-      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
-      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */"
     }
   },
   "IFloatingFilterAngularComp": {
     "meta": { "typeParams": ["P"] },
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IDateAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IDateParams)": "void",
       "getDate()": "Date | null",
       "setDate(date: Date | null)": "void",
       "setDisabled?(disabled: boolean)": "void",
       "setInputPlaceholder?(placeholder: string)": "void",
       "setInputAriaLabel?(placeholder: string)": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IDateParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */",
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
       "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IFilterAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11809,10 +11810,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11820,24 +11821,24 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ICellRendererAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "ICellEditorAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11845,10 +11846,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11856,24 +11857,24 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgRendererComponent": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "AgEditorComponent": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11881,10 +11882,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11892,13 +11893,13 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11906,10 +11907,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11917,21 +11918,20 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFloatingFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ILoadingCellRendererAngularComp": {
