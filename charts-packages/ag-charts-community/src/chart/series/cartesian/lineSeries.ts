@@ -74,7 +74,7 @@ export class LineSeries extends CartesianSeries {
 
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
-    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
+    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Group>();
     private highlightSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
     private nodeData: LineNodeDatum[] = [];
 
@@ -307,10 +307,10 @@ export class LineSeries extends CartesianSeries {
         enterSelection.append(Text);
         this.nodeSelection = updateSelection.merge(enterSelection);
     
-        const updateSelection2 = highlightSelection.setData(nodeData);
-        updateSelection2.exit.remove();
-        const enterSelection2 = updateSelection2.enter.append(MarkerShape);
-        this.highlightSelection = updateSelection2.merge(enterSelection2);
+        const updateHighlightSelection = highlightSelection.setData(nodeData);
+        updateHighlightSelection.exit.remove();
+        const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
+        this.highlightSelection = updateHighlightSelection.merge(enterHighlightSelection);
     }
 
     private updateNodes() {
