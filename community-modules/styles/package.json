@@ -8,15 +8,17 @@
     "*.scss"
   ],
   "scripts": {
-    "build": "npm run build:sass -- --no-error-css && node build-css-content.js",
+    "build": "npm run build:sass -- --no-error-css && npm run build:content",
+    "build:dev": "npm run build:sass && npm run build:content",
     "build:sass": "sass --no-source-map --load-path src/internal src:dist",
+    "build:content": "node build-css-content.js",
+    "watch": "chokidar 'src/**/*' --command 'npm run build:dev' --initial",
     "$COMMENT": "TODO remove these tmp scripts once core uses this module",
     "tmp-watch-patch": "npm run build-tmp-patch; npm run build-tmp-patch -- --watch",
     "tmp-build-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
     "test": "npm run lint:scss && npm run build-prod && npm run lint:css",
     "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
     "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
-    "watch": "npm run build:sass; npm run build:sass -- --watch",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "update-icon-fonts": "cd icon-fonts && npm i && npm run build"
   },
@@ -38,6 +40,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@vusion/webfonts-generator": "^0.8.0",
+    "chokidar-cli": "^3.0.0",
     "postcss-scss": "^4.0.4",
     "sass": "^1.51.0",
     "stylelint": "^14.8.2",

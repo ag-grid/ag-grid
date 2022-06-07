@@ -43,8 +43,10 @@
     }
 }
 
-// Apply styles to all text fields
-// @include ag.text-input { border: solid dashed red; }
+// Apply styles to all text fields. Usage:
+// @include ag.text-input {
+//     border: solid dashed red;
+// }
 @mixin text-input {
     input[class^='ag-']:not([type]),
     input[class^='ag-'][type='text'],
