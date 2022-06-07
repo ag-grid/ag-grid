@@ -1412,25 +1412,21 @@ export class GridOptionsWrapper {
     }
 
     public isServerSideSortAllLevels() {
-        const isFullStore = this.getServerSideStoreType() === 'full';
-        const isClientSideSorting = isFullStore && !this.isServerSideSortOnServer();
-        const enabled = isTrue(this.gridOptions.serverSideSortAllLevels);
-        if (isClientSideSorting && enabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideSortAllLevels` property can only be used with the full store when `serverSideSortOnServer` is enabled.'), 'serverSideSortAllLevelsClientSort');
+        const isEnabled = isTrue(this.gridOptions.serverSideSortAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortAllLevels` property can only be used with the server side row model.'), 'serverSideSortAllLevels');
             return false;
         }
-        return enabled;
+        return isEnabled;
     }
 
     public isServerSideFilterAllLevels() {
-        const isFullStore = this.getServerSideStoreType() === 'full';
-        const isClientSideFiltering = isFullStore && !this.isServerSideFilterOnServer();
-        const enabled = isTrue(this.gridOptions.serverSideFilterAllLevels);
-        if (isClientSideFiltering && enabled) {
-            doOnce(() => console.warn('AG Grid: The `serverSideFilterAllLevels` property can only be used with the full store when `serverSideFilterOnServer` is enabled.'), 'serverSideFilterAllLevelsClientSort');
+        const isEnabled = isTrue(this.gridOptions.serverSideFilterAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterAllLevels` property can only be used with the server side row model.'), 'serverSideFilterAllLevels');
             return false;
         }
-        return enabled;
+        return isEnabled;
     }
 
     public isServerSideSortOnServer() {
@@ -1446,10 +1442,6 @@ export class GridOptionsWrapper {
             return false;
         }
 
-        if (isEnabled && this.getServerSideStoreType() !== 'full') {
-            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property cannot be used while with store types other than full.'), 'serverSideSortOnServerStoreType');
-            return false;
-        }
         return isEnabled;
     }
 
@@ -1466,10 +1458,6 @@ export class GridOptionsWrapper {
             return false;
         }
 
-        if (isEnabled && this.getServerSideStoreType() !== 'full') {
-            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property cannot be used while with store types other than full.'), 'serverSideFilterOnServerStoreType');
-            return false;
-        }
         return isEnabled;
     }
     public getPostSortFunc() {
