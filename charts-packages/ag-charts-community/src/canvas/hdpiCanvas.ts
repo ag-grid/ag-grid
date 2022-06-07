@@ -22,8 +22,8 @@ export class HdpiCanvas {
     }) {
         this.document = document;
         this.element = document.createElement('canvas');
-        this.imageSource = this.element;
         this.context = this.element.getContext('2d')!;
+        this.imageSource = this.context.canvas;
 
         const { style } = this.element;
 

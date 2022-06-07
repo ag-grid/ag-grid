@@ -13,7 +13,7 @@ export class HdpiOffscreenCanvas {
     opacity: number = 1;
 
     static isSupported() {
-        return OffscreenCanvas != null;
+        return (window as any)['OffscreenCanvas'] != null;
     }
 
     // The width/height attributes of the Canvas element default to
