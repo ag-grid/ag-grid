@@ -178,7 +178,7 @@ $-themes: map.keys($-theme-variables);
     // that are used in blending either below or in the base color blends
     $params: -param-default($params, background-color, #fff);
     $params: -param-default($params, foreground-color, #181d1f);
-    $params: -param-default($params, subheader-background-color, #000);
+    $params: -param-default($params, subheader-background-color, #fff);
     $params: -param-default($params, alpine-active-color, #2196f3);
     $params: -param-default($params, range-selection-border-color, alpine-active-color);
 
@@ -197,9 +197,26 @@ $-themes: map.keys($-theme-variables);
 @function -theme-alpine-dark-color-blends($params) {
     $params: -param-default($params, background-color, #181d1f);
     $params: -param-default($params, foreground-color, #fff);
-    $params: -param-default($params, subheader-background-color, #fff);
+    $params: -param-default($params, subheader-background-color, #000);
 
     @return  -theme-alpine-color-blends($params);
+}
+
+@function -theme-material-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, rgba(#000, 0.87));
+    $params: -param-default($params, subheader-background-color, #eee);
+    $params: -param-default($params, material-primary-color, #3f51b5);
+    $params: -param-default($params, range-selection-border-color, material-primary-color);
+    $params: -param-default($params, range-selection-background-color, rgba(122, 134, 203, 0.1));
+    $params: -param-default($params, border-color, #e2e2e2);
+
+    // Blended defaults
+    $params: -param-default($params, secondary-foreground-color, foreground-color, $opacity: 0.54);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.38);
+    @return $params;
 }
 
 // Apply a default value to a parameter
