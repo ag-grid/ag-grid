@@ -5112,11 +5112,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "maxBlocksInCache": {
-      "description": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "description": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "cacheBlockSize": {
-      "description": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
+      "description": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -16606,9 +16606,9 @@
     }
   },
   "ServerSideStoreState": {
-    "type": {
-      "description": "/** Store type, `partial` or `full` */",
-      "type": { "returnType": "ServerSideStoreType", "optional": false }
+    "infiniteScroll": {
+      "description": "/** True if infininte scrolling */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "route": {
       "description": "/** The route that identifies this store. */",
@@ -16619,7 +16619,7 @@
       "type": { "returnType": "number", "optional": false }
     },
     "lastRowIndexKnown": {
-      "description": "/** Partial store only.\n * Whether the last row index is know. */",
+      "description": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "info": {
@@ -16627,11 +16627,11 @@
       "type": { "returnType": "any", "optional": true }
     },
     "maxBlocksInCache": {
-      "description": "/** Partial store only.\n * Max blocks allowed in the store. */",
+      "description": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
       "type": { "returnType": "number", "optional": true }
     },
     "cacheBlockSize": {
-      "description": "/** Partial store only.\n * The size (number of rows) of each block. */",
+      "description": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -19712,7 +19712,7 @@
       "type": { "returnType": "any[]", "optional": false }
     },
     "rowCount": {
-      "description": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "description": "/** The last row, if known, to help Infinite Scroll. */",
       "type": { "returnType": "number", "optional": true }
     },
     "storeInfo": {

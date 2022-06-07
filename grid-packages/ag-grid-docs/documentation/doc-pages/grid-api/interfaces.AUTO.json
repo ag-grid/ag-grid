@@ -2408,8 +2408,8 @@
     "docs": {
       "storeType?": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
       "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level. */",
-      "maxBlocksInCache?": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
-      "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
+      "maxBlocksInCache?": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
     }
   },
   "LoadingCellRendererSelectorFunc": {
@@ -9425,7 +9425,7 @@
   "ServerSideStoreState": {
     "meta": {},
     "type": {
-      "type": "ServerSideStoreType",
+      "infiniteScroll": "boolean",
       "route": "string[]",
       "rowCount": "number",
       "lastRowIndexKnown?": "boolean",
@@ -9434,13 +9434,13 @@
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "type": "/** Store type, `partial` or `full` */",
+      "infiniteScroll": "/** True if infininte scrolling */",
       "route": "/** The route that identifies this store. */",
       "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
-      "lastRowIndexKnown?": "/** Partial store only.\n * Whether the last row index is know. */",
+      "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
       "info?": "/** Any extra info provided to the store, when data was loaded. */",
-      "maxBlocksInCache?": "/** Partial store only.\n * Max blocks allowed in the store. */",
-      "cacheBlockSize?": "/** Partial store only.\n * The size (number of rows) of each block. */"
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */"
     }
   },
   "SetFilterModelValue": {
@@ -11271,7 +11271,7 @@
     "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
-      "rowCount?": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
       "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },

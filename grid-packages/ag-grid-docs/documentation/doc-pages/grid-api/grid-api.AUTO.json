@@ -1330,7 +1330,7 @@
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
   "refreshServerSideStore": {
-    "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level cache is purged.\n * To purge a child cache, pass in the string of keys to get to the child cache. */",
+    "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level store is purged.\n * To purge a child store, pass in the string of keys to get to the child cache. */",
     "type": {
       "arguments": { "params?": "RefreshStoreParams" },
       "returnType": "void"
