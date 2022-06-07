@@ -41,7 +41,9 @@ export function SceneChangeDetection(opts?: {
     changeCb?: (o: any) => any,
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
-    const debug = (window as any).agChartsSceneChangeDetectionDebug != null;
+    
+    const win = typeof window === "undefined" ? undefined : window;
+    const debug = (win as any)?.agChartsSceneChangeDetectionDebug != null;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
