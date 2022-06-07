@@ -325,7 +325,7 @@ const Changelog = ({location}) => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem", paddingBottom: "5rem"}}>
+                <div style={{height: "100%", width: "99%%", marginLeft: "5rem", marginRight: "5rem", paddingBottom: "5rem"}}>
                     <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px"}}>AG Grid Changelog</div>
 
                     <div className={styles["note"]}>

@@ -44,9 +44,16 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
 
     // takes account of archives too
     const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/,'');
+
     const fullScreenPage = processedPath === '/' ||
-        processedPath === '/example' ||
-        processedPath === '/example/';
+        processedPath === '/example' || processedPath === '/example/';
+
+    const fullScreenWithFooter = processedPath === '/license-pricing' || processedPath === '/license-pricing/' ||
+        processedPath === '/about' || processedPath === '/about/' ||
+        processedPath === '/cookies' || processedPath === '/cookies/' ||
+        processedPath === '/changelog' || processedPath === '/changelog/' ||
+        processedPath === '/pipeline' || processedPath === '/pipeline/' ||
+        processedPath === '/privacy' || processedPath === '/privacy/';
 
     return <GlobalContextProvider>
         <Helmet>
@@ -61,9 +68,9 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
                     <HeaderNav path={path}/>
                 </div>
             </header>
-            {!fullScreenPage && <TopBar frameworks={frameworks} framework={framework} path={path}/>}
+            {(!fullScreenPage && !fullScreenWithFooter) && <TopBar frameworks={frameworks} framework={framework} path={path}/>}
             <div className={styles['content-viewport']}>
-                {!fullScreenPage &&
+                {(!fullScreenPage && !fullScreenWithFooter) &&
                     <aside className={`${styles['main-menu']}`}>
                         <Menu currentFramework={framework} currentPage={pageName}/>
                     </aside>}
@@ -72,7 +79,7 @@ export const Layout = ({children, pageContext: {frameworks, framework = 'javascr
                 </main>
             </div>
         </div>
-        {!fullScreenPage && <Footer framework={framework}/>}
+        {(!fullScreenPage || fullScreenWithFooter) && <Footer framework={framework}/>}
     </GlobalContextProvider>;
 };
 
