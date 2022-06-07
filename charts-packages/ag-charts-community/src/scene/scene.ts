@@ -2,18 +2,25 @@ import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 import { Group } from "./group";
+import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
 
 interface DebugOptions {
-    stats: boolean;
+    stats: false | 'basic' | 'detailed';
     dirtyTree: boolean;
     renderBoundingBoxes: boolean;
     consoleLog: boolean;
-    onlyLayers: string[];
 }
 
 interface SceneOptions {
-    document: Document,
-    mode: 'simple' | 'composite' | 'dom-composite',
+    document: Document;
+    mode: 'simple' | 'composite' | 'dom-composite' | 'adv-composite';
+}
+
+interface SceneLayer {
+    id: number;
+    name?: string;
+    zIndex: number;
+    canvas: HdpiOffscreenCanvas | HdpiCanvas;
 }
 
 export class Scene {
@@ -23,7 +30,7 @@ export class Scene {
     readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
-    readonly layers: { id: number, name?: string, zIndex: number, canvas: HdpiCanvas }[] = [];
+    readonly layers: SceneLayer[] = [];
 
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -44,7 +51,6 @@ export class Scene {
 
         this.opts = { document, mode };
         this.debug.stats = (window as any).agChartsSceneStats ?? false;
-        this.debug.onlyLayers = (window as any).agChartsSceneOnlyLayers ?? [];
         this.debug.dirtyTree = (window as any).agChartsSceneDirtyTree ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
@@ -93,27 +99,35 @@ export class Scene {
 
     private _nextZIndex = 0;
     private _nextLayerId = 0;
-    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | undefined {
+    addLayer(opts?: { zIndex?: number, name?: string }): HdpiCanvas | HdpiOffscreenCanvas | undefined {
         const { mode } = this.opts;
-        if (mode !== 'composite' && mode !== 'dom-composite') {
+        const layeredModes = ['composite', 'dom-composite', 'adv-composite'];
+        if (!layeredModes.includes(mode)) {
             return undefined;
         }
 
         const { zIndex = this._nextZIndex++, name } = opts || {};
         const { width, height } = this;
         const domLayer = mode === 'dom-composite';
-        const newLayer = {
-            id: this._nextLayerId++,
-            name,
-            zIndex,
-            canvas: new HdpiCanvas({
+        const advLayer = mode === 'adv-composite';
+        const canvas = !advLayer || !HdpiOffscreenCanvas.isSupported() ? 
+            new HdpiCanvas({
                 document: this.opts.document,
                 width,
                 height,
                 domLayer,
                 zIndex,
                 name,
-            }),
+            }) :
+            new HdpiOffscreenCanvas({
+                width,
+                height,
+            });
+        const newLayer = {
+            id: this._nextLayerId++,
+            name,
+            zIndex,
+            canvas,
         };
 
         if (zIndex >= this._nextZIndex) {
@@ -130,9 +144,11 @@ export class Scene {
         });
 
         if (domLayer) {
-            const newLayerIndex = this.layers.findIndex(v => v === newLayer);
-            const lastLayer = this.layers[newLayerIndex - 1]?.canvas ?? this.canvas;
-            lastLayer.element.insertAdjacentElement('afterend', newLayer.canvas.element);
+            const domCanvases= this.layers.map(v => v.canvas)
+                .filter((v): v is HdpiCanvas => v instanceof HdpiCanvas);
+            const newLayerIndex = domCanvases.findIndex(v => v === canvas);
+            const lastLayer = domCanvases[newLayerIndex - 1] ?? this.canvas;
+            lastLayer.element.insertAdjacentElement('afterend', (canvas as HdpiCanvas).element);
         }
 
         if (this.debug.consoleLog) {
@@ -142,7 +158,7 @@ export class Scene {
         return newLayer.canvas;
     }
 
-    removeLayer(canvas: HdpiCanvas) {
+    removeLayer(canvas: HdpiCanvas | HdpiOffscreenCanvas) {
         const index = this.layers.findIndex((l) => l.canvas === canvas);
 
         if (index >= 0) {
@@ -195,7 +211,6 @@ export class Scene {
         stats: false,
         renderBoundingBoxes: false,
         consoleLog: false,
-        onlyLayers: [],
     };
 
     render(opts: { start: number }) {
@@ -224,7 +239,7 @@ export class Scene {
             forceRender: true,
             resized: !!pendingSize,
         };
-        if (this.debug.stats) {
+        if (this.debug.stats === 'detailed') {
             renderCtx.stats = { layersRendered: 0, layersSkipped: 0, nodesRendered: 0, nodesSkipped: 0 };
         }
 
@@ -255,13 +270,13 @@ export class Scene {
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
-            layers.forEach((layer) => {
-                if (layer.canvas.enabled) {
-                    ctx.globalAlpha = layer.canvas.opacity;
-                    // Indirect reference to fix typings for tests.
-                    const canvas = layer.canvas.context.canvas;
-                    ctx.drawImage(canvas, 0, 0);
+            layers.forEach(({ canvas: { imageSource, enabled, opacity }}) => {
+                if (!enabled) {
+                    return;
                 }
+
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(imageSource, 0, 0);
             });
             ctx.restore();
         }
@@ -282,9 +297,9 @@ export class Scene {
                 renderCtx.stats || {};
             const stats = [
                 `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
-                `Layers: ${pct(layersRendered, layersSkipped)}`,
-                `Nodes: ${pct(nodesRendered, nodesSkipped)}`
-            ];
+                this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
+                this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
+            ].filter((v): v is string => v != null);
             const lineHeight = 15;
 
             ctx.save();

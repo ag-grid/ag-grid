@@ -11,17 +11,7 @@ export function SceneFontChangeDetection(opts?: {
     redraw?: RedrawType,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
-
-    const changeCb = (o: any) => {
-        if (!o._dirtyFont) {
-            o._dirtyFont = true;
-            o.markDirty(redraw);
-        }
-        if (optChangeCb) {
-            optChangeCb(o);
-        }
-    };
+    const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }

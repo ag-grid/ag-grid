@@ -152,7 +152,7 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
 
-    protected fillStroke(ctx: CanvasRenderingContext2D) {
+    protected fillStroke(ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath) {
         if (!this.scene) {
             return;
         }

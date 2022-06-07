@@ -4,25 +4,15 @@ import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType,
+    convertor?: (o: any) => any,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
 
-    const changeCb = (o: any) => {
-        if (!o._dirtyPath) {
-            o._dirtyPath = true;
-            o.markDirty(redraw);
-        }
-        if (optChangeCb) {
-            optChangeCb(o);
-        }
-    };
-
-    return SceneChangeDetection({ redraw, type: 'path', changeCb });
+    return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
 
 export class Path extends Shape {
-
     static className = 'Path';
 
     /**
@@ -49,12 +39,20 @@ export class Path extends Shape {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;
             if (value) {
-                this.markDirty(RedrawType.MAJOR);
+                this.markDirty(this, RedrawType.MAJOR);
             }
         }
     }
     get dirtyPath(): boolean {
         return this._dirtyPath;
+    }
+
+    checkPathDirty() {
+        if (this._dirtyPath) {
+            return;
+        }
+
+        this.dirtyPath = this.path.isDirty();
     }
 
     /**
@@ -66,7 +64,7 @@ export class Path extends Shape {
         if (this._svgPath !== value) {
             this._svgPath = value;
             this.path.setFromString(value);
-            this.markDirty(RedrawType.MAJOR);
+            this.markDirty(this, RedrawType.MAJOR);
         }
     }
     get svgPath(): string {

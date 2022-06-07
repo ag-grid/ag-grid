@@ -148,6 +148,7 @@
       <excludeFolder url="file://$MODULE_DIR$/t" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/multi-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/sparklines/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue3/lib" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />

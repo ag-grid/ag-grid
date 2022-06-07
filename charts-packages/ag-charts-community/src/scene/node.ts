@@ -22,7 +22,7 @@ export enum RedrawType {
 }
 
 export type RenderContext = {
-    ctx: CanvasRenderingContext2D;
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     forceRender: boolean;
     resized: boolean;
     clipBBox?: BBox;
@@ -41,7 +41,9 @@ export function SceneChangeDetection(opts?: {
     changeCb?: (o: any) => any,
 }) {
     const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
-    const debug = false;
+    
+    const win = typeof window === "undefined" ? undefined : window;
+    const debug = (win as any)?.agChartsSceneChangeDetectionDebug != null;
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -57,9 +59,11 @@ export function SceneChangeDetection(opts?: {
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
-                        ${debug ? `if (setCount++ % 10 === 0) console.log({ property: '${key}', oldValue, value });` : ''}
-                        ${type === 'normal' ? 'this.markDirty(' + redraw + ');' : ''}
+                        ${debug ? `if (window.agChartsSceneChangeDetectionDebug) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
+                        ${type === 'normal' ? 'this.markDirty(this, ' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
+                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
+                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }` : ''}
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
                 };
@@ -212,7 +216,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             node._setScene(this.scene);
         }
 
-        this.markDirty(RedrawType.MAJOR);
+        this.markDirty(this, RedrawType.MAJOR);
     }
 
     appendChild<T extends Node>(node: T): T {
@@ -233,7 +237,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         node._parent = this;
         node._setScene(this.scene);
 
-        this.markDirty(RedrawType.MAJOR);
+        this.markDirty(this, RedrawType.MAJOR);
 
         return node;
     }
@@ -247,7 +251,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
-                this.markDirty(RedrawType.MAJOR);
+                this.markDirty(this, RedrawType.MAJOR);
 
                 return node;
             }
@@ -283,7 +287,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                     + `but is not in its list of children.`);
             }
 
-            this.markDirty(RedrawType.MAJOR);
+            this.markDirty(this, RedrawType.MAJOR);
         } else {
             this.append(node);
         }
@@ -336,7 +340,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     private _dirtyTransform = false;
     markDirtyTransform() {
         this._dirtyTransform = true;
-        this.markDirty(RedrawType.MAJOR);
+        this.markDirty(this, RedrawType.MAJOR);
     }
 
     @SceneChangeDetection({ type: 'transform' })
@@ -533,7 +537,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     private _dirty: RedrawType = RedrawType.MAJOR;
-    markDirty(type = RedrawType.TRIVIAL, parentType = type) {
+    markDirty(_source: Node, type = RedrawType.TRIVIAL, parentType = type) {
         if (this._dirty > type) {
             return;
         }
@@ -544,7 +548,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
         this._dirty = type;
         if (this.parent) {
-            this.parent.markDirty(parentType);
+            this.parent.markDirty(this, parentType);
         } else if (this.scene) {
             this.scene.markDirty();
         }
@@ -553,15 +557,19 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._dirty;
     }
 
-    markClean(force = false) {
+    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+        const { force = false, recursive = true } = opts || {};
+
         if (this._dirty === RedrawType.NONE && !force) {
             return;
         }
 
         this._dirty = RedrawType.NONE;
 
-        for (const child of this.children) {
-            child.markClean();
+        if (recursive) {
+            for (const child of this.children) {
+                child.markClean();
+            }
         }
     }
 
