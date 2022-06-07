@@ -284,4 +284,4 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 ## Next Up
 
-Continue to the next section to learn how to perform [Data Refresh](/server-side-model-refresh/).
+Continue to the next section to learn how to perform [Configuration](/server-side-model-configuration/).
