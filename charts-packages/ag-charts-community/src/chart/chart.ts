@@ -1024,14 +1024,6 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        type Point = { x: number, y: number };
-
-        function getDistance(p1: Point, p2: Point): number {
-            // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
-            // values > 1 
-            return (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
-        }
-
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
 
@@ -1039,21 +1031,25 @@ export abstract class Chart extends Observable {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
+            // Ignore off-screen points when finding the closest series node datum in tracking mode.
+            const { xAxis, yAxis } = series;
             const hitPoint = series.group.transformPoint(x, y);
             for (const datum of series.getNodeData()) {
-                if (!datum.point) {
+                const { point } = datum;
+                if (!point) {
                     return;
                 }
 
-                // Ignore off-screen points when finding the closest series node datum in tracking mode.
-                const { xAxis, yAxis } = series;
-                const isInRange = xAxis?.inRange(datum.point.x) && yAxis?.inRange(datum.point.y);
+                const { x, y } = point;
+                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
 
                 if (!isInRange) {
-                    return;
+                    continue;
                 }
 
-                const distance = getDistance(hitPoint, datum.point);
+                // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
+                // values > 1 
+                const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
