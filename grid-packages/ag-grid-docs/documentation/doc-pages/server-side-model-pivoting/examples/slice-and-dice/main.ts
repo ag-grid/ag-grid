@@ -148,7 +148,7 @@ const gridOptions: GridOptions = {
   },
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   animateRows: true,

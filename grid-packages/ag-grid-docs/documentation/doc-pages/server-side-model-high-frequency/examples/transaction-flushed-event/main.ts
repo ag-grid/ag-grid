@@ -24,7 +24,6 @@ const gridOptions: GridOptions = {
     return params.data.product
   },
   rowSelection: 'multiple',
-  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',

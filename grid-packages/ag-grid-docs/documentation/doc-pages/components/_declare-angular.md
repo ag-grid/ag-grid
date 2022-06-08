@@ -17,7 +17,6 @@
 |                 // ...other components
 |             ]
 |         ),
-|       // AgGridModule, // Ivy: No need for withComponents 
 |     ]
 | })
 | ```

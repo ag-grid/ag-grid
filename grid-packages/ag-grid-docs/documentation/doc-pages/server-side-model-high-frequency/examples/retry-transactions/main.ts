@@ -30,7 +30,6 @@ const gridOptions: GridOptions = {
     return params.data.product
   },
   rowModelType: 'serverSide',
-  serverSideStoreType: 'full',
   columnDefs: columnDefs,
 }
 

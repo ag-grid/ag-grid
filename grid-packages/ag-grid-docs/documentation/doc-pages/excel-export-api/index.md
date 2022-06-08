@@ -22,6 +22,10 @@ This page documents the Excel Export API and Interfaces.
 
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelExportMultipleSheetParams'></api-documentation>
 
+### ExcelRow
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelRow'></api-documentation>
+
 ### ExcelCell
 
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelCell'></api-documentation>

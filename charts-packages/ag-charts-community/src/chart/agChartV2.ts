@@ -35,7 +35,7 @@ import { NumberAxis } from './axis/numberAxis';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { TimeAxis } from './axis/timeAxis';
-import { Chart } from './chart';
+import { Chart, ChartUpdateType } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
@@ -120,7 +120,12 @@ export abstract class AgChartV2 {
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
-        const mergedOptions = prepareOptions(userOptions);
+        const mixinOpts: any = {};
+        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+            mixinOpts['debug'] = true;
+        }
+
+        const mergedOptions = prepareOptions(userOptions, mixinOpts);
 
         const chart = isAgCartesianChartOptions(mergedOptions) ? (mergedOptions.type === 'groupedCategory' ? new GroupedCategoryChart(document) : new CartesianChart(document)) :
             isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
@@ -137,7 +142,12 @@ export abstract class AgChartV2 {
 
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
-        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>);
+        const mixinOpts: any = {};
+        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+            mixinOpts['debug'] = true;
+        }
+
+        const mergedOptions = prepareOptions(userOptions, chart.userOptions as ChartOptionType<T>, mixinOpts);
 
         if (chartType(mergedOptions) !== chartType(chart.options as ChartOptionType<typeof chart>)) {
             chart.destroy();
@@ -163,7 +173,7 @@ export abstract class AgChartV2 {
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if (AgChartV2.DEBUG) {
+    if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
 }
@@ -182,16 +192,23 @@ function applyChartOptions<
         throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
     }
 
-    let performProcessData = false;
+    let updateType = ChartUpdateType.PERFORM_LAYOUT;
     if (options.series && options.series.length > 0) {
         applySeries<T, O>(chart, options);
     }
     if (isAgCartesianChartOptions(options) && options.axes) {
-        performProcessData = applyAxes<T, O>(chart, options);
+        const axesPresent = applyAxes<T, O>(chart, options);
+        if (axesPresent) {
+            updateType = ChartUpdateType.PROCESS_DATA;
+        }
     }
+
+    const seriesOpts = options.series as any[];
     if (options.data) {
         chart.data = options.data;
-        performProcessData = true;
+        updateType = ChartUpdateType.PROCESS_DATA;
+    } else if (seriesOpts?.some((s) => s.data != null)) {
+        updateType = ChartUpdateType.PROCESS_DATA;
     }
 
     // Needs to be done last to avoid overrides by width/height properties.
@@ -202,14 +219,10 @@ function applyChartOptions<
         registerListeners(chart, options.listeners);
     }
 
-    chart.layoutPending = true;
-    if (performProcessData) {
-        chart.processData();
-    }
-    chart.performLayout();
-
     chart.options = jsonMerge(chart.options || {}, options);
     chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);
+
+    chart.update(updateType);
 }
 
 function applySeries<
@@ -230,9 +243,14 @@ function applySeries<
             const previousOpts = chart.options?.series?.[i] || {};
             const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
 
+            if (!seriesDiff) {
+                return;
+            }
+
             debug(`applying series diff idx ${i}`, seriesDiff);
 
             jsonApply(s, seriesDiff);
+            s.markNodeDataDirty();
         });
 
         return;
@@ -285,6 +303,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 series.push(applySeriesValues(new AreaSeries(), seriesOptions, {path, skip}));
                 break;
             case 'bar':
+                // fall-through - bar and column are synonyms.
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, {path, skip}));
                 break;

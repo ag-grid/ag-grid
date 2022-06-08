@@ -11,7 +11,7 @@ import {
     ViewportChangedEvent
 } from "../events";
 import { Constants } from "../constants/constants";
-import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
@@ -34,6 +34,7 @@ import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
+import { StickyRowFeature } from "./features/stickyRowFeature";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -55,7 +56,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
-    @Optional("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -77,6 +78,8 @@ export class RowRenderer extends BeanStub {
     private pinningLeft: boolean;
     private pinningRight: boolean;
 
+    private firstVisibleVPixel: number;
+
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
     // renderer they call an API method that results in another pass of the refresh,
@@ -85,6 +88,7 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
+    private stickyRowFeature: StickyRowFeature;
 
     @PostConstruct
     private postConstruct(): void {
@@ -103,6 +107,13 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_ROW_CLASS, this.redrawRows.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
+        if (this.gridOptionsWrapper.isGroupRowsSticky()) {
+            this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
+                this.createRowCon.bind(this),
+                this.destroyRowCtrls.bind(this)
+            ));
+        }
 
         this.registerCellEventListeners();
 
@@ -123,6 +134,12 @@ export class RowRenderer extends BeanStub {
 
     public getRowCtrls(): RowCtrl[] {
         return this.allRowCtrls;
+    }
+
+    public getStickyTopRowCtrls(): RowCtrl[] {
+        if (!this.stickyRowFeature) { return []; }
+
+        return this.stickyRowFeature.getStickyRowCtrls();
     }
 
     private updateAllRowCtrls(): void {
@@ -336,7 +353,8 @@ export class RowRenderer extends BeanStub {
                 this.beans,
                 false,
                 false,
-                this.printLayout
+                this.printLayout,
+                false
             );
 
             rowComps.push(rowCtrl);
@@ -451,6 +469,8 @@ export class RowRenderer extends BeanStub {
 
         this.redraw(rowsToRecycle, animate);
 
+        this.gridBodyCtrl.updateRowCount();
+
         if (!params.onlyBody) {
             this.refreshFloatingRowComps();
         }
@@ -547,7 +567,9 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls];
+        const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
+        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
+
         Object.keys(this.rowCtrlsByRowIndex).forEach(key => res.push(this.rowCtrlsByRowIndex[key]));
         return res;
     }
@@ -582,7 +604,7 @@ export class RowRenderer extends BeanStub {
                     cellCtrl.refreshCell(refreshCellParams);
                 }
             });
-        this.getFullWidthRowCtrls(params.rowNodes).forEach( fullWidthRowCtrl => {
+        this.getFullWidthRowCtrls(params.rowNodes).forEach(fullWidthRowCtrl => {
             fullWidthRowCtrl.refreshFullWidth();
         });
     }
@@ -649,20 +671,22 @@ export class RowRenderer extends BeanStub {
         // skip this row if it is missing from the provided list
         const id = rowNode.id!;
         const floating = rowNode.rowPinned;
+
         if (floating === Constants.PINNED_BOTTOM) {
-            return rowIdsMap.bottom[id]!=null;
-        } else if (floating === Constants.PINNED_TOP) {
-            return rowIdsMap.top[id]!=null;
-        } else {
-            return rowIdsMap.normal[id]!=null;
+            return rowIdsMap.bottom[id] != null;
         }
+
+        if (floating === Constants.PINNED_TOP) {
+            return rowIdsMap.top[id] != null;
+        }
+
+        return rowIdsMap.normal[id] != null;
     }
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        let rowIdsMap = this.mapRowNodes(rowNodes);
-
+        const rowIdsMap = this.mapRowNodes(rowNodes);
         const res: CellCtrl[] = [];
 
         let colIdsMap: any;
@@ -681,7 +705,7 @@ export class RowRenderer extends BeanStub {
             const rowNode: RowNode = rowComp.getRowNode();
 
             // skip this row if it is missing from the provided list
-            if (rowIdsMap!=null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
+            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
 
             rowComp.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
@@ -730,14 +754,14 @@ export class RowRenderer extends BeanStub {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const nodesByIdMap: RowCtrlMap = {};
+        const ctrlsByIdMap: RowCtrlMap = {};
         iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const rowNode = rowComp.getRowNode();
-            nodesByIdMap[rowNode.id!] = rowComp;
+            ctrlsByIdMap[rowNode.id!] = rowComp;
         });
         this.rowCtrlsByRowIndex = {};
 
-        return nodesByIdMap;
+        return ctrlsByIdMap;
     }
 
     // takes array of row indexes
@@ -778,7 +802,7 @@ export class RowRenderer extends BeanStub {
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
         // all in all indexes in the viewport
-        const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        let indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowCtrl) => {
             const index = rowComp.getRowNode().rowIndex;
@@ -798,12 +822,21 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
+        indexesToDraw = indexesToDraw.filter(index => {
+            const rowNode = this.paginationProxy.getRow(index);
+            return rowNode && !rowNode.sticky;
+        });
+
         return indexesToDraw;
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
         this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
+
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
+        }
 
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -846,7 +879,6 @@ export class RowRenderer extends BeanStub {
         }
 
         this.updateAllRowCtrls();
-        this.gridBodyCtrl.updateRowCount();
     }
 
     private dispatchDisplayedRowsChanged(): void {
@@ -888,13 +920,13 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: RowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter( (rowCtrl: RowCtrl) => {
+        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
             // if Row Nodes provided, we exclude where Row Node is missing
             const rowNode = rowCtrl.getRowNode();
-            if (rowNodesMap!=null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
+            if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) { return false; }
 
             return true;
         });
@@ -1037,17 +1069,19 @@ export class RowRenderer extends BeanStub {
                 const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
+                const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
+                const bodyTopPixel = bodyVRange.top;
+                const bodyBottomPixel = bodyVRange.bottom;
+
                 if (suppressRowVirtualisation) {
                     firstPixel = pageFirstPixel + divStretchOffset;
-                    lastPixel = pageLastPixel + divStretchOffset;    
+                    lastPixel = pageLastPixel + divStretchOffset;
                 } else {
-                    const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
-                    const bodyTopPixel = bodyVRange.top;
-                    const bodyBottomPixel = bodyVRange.bottom;
-
                     firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
-                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;    
+                    lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;
                 }
+
+                this.firstVisibleVPixel = Math.max(bodyTopPixel + paginationOffset, pageFirstPixel) + divStretchOffset;
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
@@ -1134,6 +1168,10 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
+    public getFirstVisibleVerticalPixel(): number {
+        return this.firstVisibleVPixel;
+    }
+
     public getFirstVirtualRenderedRow() {
         return this.firstRenderedRow;
     }
@@ -1176,7 +1214,7 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
+    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky = false): RowCtrl {
 
         const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
         if (rowCtrlFromCache) { return rowCtrlFromCache; }
@@ -1196,7 +1234,8 @@ export class RowRenderer extends BeanStub {
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout
+            this.printLayout,
+            sticky
         );
 
         return res;
@@ -1209,20 +1248,24 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRowByPosition(rowPosition: RowPosition): RowCtrl | null {
-        let rowComponent: RowCtrl | null;
+        let rowCtrl: RowCtrl | null;
+        const {rowIndex} = rowPosition;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.topRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.topRowCtrls[rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.bottomRowCtrls[rowPosition.rowIndex];
+                rowCtrl = this.bottomRowCtrls[rowIndex];
                 break;
             default:
-                rowComponent = this.rowCtrlsByRowIndex[rowPosition.rowIndex];
+                rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+                if (!rowCtrl) {
+                    rowCtrl = this.getStickyTopRowCtrls().find(ctrl => ctrl.getRowNode().rowIndex === rowIndex) || null;
+                }
                 break;
         }
 
-        return rowComponent;
+        return rowCtrl;
     }
 
     public getRowNode(gridRow: RowPosition): RowNode | undefined {

@@ -7,7 +7,7 @@ const Privacy = () => {
         <>
             <SEO title="AG Grid: Privacy Policy"
                  description="We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR."/>
-            <div className={styles['page-content']}>
+            <div className={styles['page-content']} style={{marginLeft: "5rem", marginRight: "5rem"}}>
                 <div className={styles['privacy-page']}>
                     <section>
                         <div id="introduction" className="text-left">
@@ -50,7 +50,7 @@ const Privacy = () => {
                                 <hr/>
                                 <p>
                                     This privacy notice provides you with details of how we collect and process your personal data through
-                                    your use of our <a href="https://www.ag-grid.com/">site.</a>
+                                    your use of our <a href="https://www.ag-grid.com/">site. </a>
                                     By providing us with your data, you warrant to us that you are over 13 years of age.
                                     AG Grid Ltd. is the data controller and we are responsible for your personal data (referred to as
                                     “we”, “us” or “our” in this privacy notice).

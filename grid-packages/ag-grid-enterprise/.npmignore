@@ -9,3 +9,4 @@ tsconfig.es6.json
 tsconfig.json
 tsconfig-main.es6.json
 tsconfig-main.json
+*.map

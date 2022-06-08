@@ -56,11 +56,15 @@
     "type": { "returnType": "string" }
   },
   "clipboardDelimiter": {
-    "description": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+    "description": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
-    "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+    "description": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "suppressCopySingleCellRanges": {
+    "description": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressLastEmptyLineOnPaste": {
@@ -343,13 +347,16 @@
     "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
     "type": { "returnType": "boolean" }
   },
+  "groupRowsSticky": { "type": { "returnType": "boolean" } },
   "context": {
     "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
     "type": { "returnType": "any" }
   },
   "alignedGrids": {
     "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
-    "type": { "returnType": "GridOptions[]" }
+    "type": {
+      "returnType": "{ api?: GridApi | null, columnApi?: ColumnApi | null }[]"
+    }
   },
   "tabIndex": {
     "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
@@ -754,8 +761,12 @@
     "type": { "returnType": "number" }
   },
   "serverSideStoreType": {
-    "description": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+    "description": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
     "type": { "returnType": "ServerSideStoreType" }
+  },
+  "serverSideInfiniteScroll": {
+    "description": "/** Whether Server-side Row Model will use Infinite Scrolling */",
+    "type": { "returnType": "boolean" }
   },
   "cacheBlockSize": {
     "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
@@ -781,12 +792,28 @@
     "description": "/** Provide the `serverSideDatasource` for server side row model. */",
     "type": { "returnType": "IServerSideDatasource" }
   },
+  "serverSideSortAllLevels": {
+    "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "serverSideFilterAllLevels": {
+    "description": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "serverSideSortOnServer": {
+    "description": "/** When enabled, the grid will always request the server to provide the sort results */",
+    "type": { "returnType": "boolean" }
+  },
+  "serverSideFilterOnServer": {
+    "description": "/** When enabled, the grid will always request the server to provide the filter results */",
+    "type": { "returnType": "boolean" }
+  },
   "serverSideSortingAlwaysResets": {
-    "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
+    "description": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilteringAlwaysResets": {
-    "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+    "description": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
     "type": { "returnType": "boolean" }
   },
   "suppressEnterpriseResetOnNewColumns": {
@@ -1143,10 +1170,21 @@
     }
   },
   "processSecondaryColDef": {
-    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "description": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
     "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
   },
   "processSecondaryColGroupDef": {
+    "description": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+    "type": {
+      "arguments": { "colGroupDef": "ColGroupDef" },
+      "returnType": "void"
+    }
+  },
+  "processPivotResultColDef": {
+    "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
+  },
+  "processPivotResultColGroupDef": {
     "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
     "type": {
       "arguments": { "colGroupDef": "ColGroupDef" },
@@ -1199,7 +1237,7 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getRowNodeId": {
-    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+    "description": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "getRowId": {
@@ -2388,11 +2426,11 @@
     "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
   "api": {
-    "description": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
     "type": { "returnType": "GridApi | null" }
   },
   "columnApi": {
-    "description": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */",
+    "description": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */",
     "type": { "returnType": "ColumnApi | null" }
   }
 }

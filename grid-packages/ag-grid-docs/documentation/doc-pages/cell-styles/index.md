@@ -88,7 +88,7 @@ const gridOptions = {
 ## Cell Class Rules
 
 
-You can define rules which can be applied to include certain CSS classes via via `colDef.cellClassRules`.
+You can define rules which can be applied to include certain CSS classes via `colDef.cellClassRules`.
 These rules are provided as a JavaScript map where the keys are the class names and the values are expressions
 that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
 or a string which is treated as a shorthand for a function by the grid.

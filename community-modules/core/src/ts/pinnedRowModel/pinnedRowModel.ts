@@ -145,5 +145,4 @@ export class PinnedRowModel extends BeanStub {
         const lastNode = last(rowNodes);
         return lastNode.rowTop! + lastNode.rowHeight!;
     }
-
 }

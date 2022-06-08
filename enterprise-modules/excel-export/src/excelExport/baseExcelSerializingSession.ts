@@ -47,7 +47,7 @@ interface ExcelMixedStyle {
     result: ExcelStyle;
 }
 
-export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializingSession<ExcelCell[][]> {
+export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializingSession<ExcelRow[]> {
     protected readonly config: ExcelGridSerializingParams;
     protected readonly stylesByIds: { [key: string]: ExcelStyle };
 
@@ -77,14 +77,14 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
-    public addCustomContent(customContent: ExcelCell[][]): void {
+    public addCustomContent(customContent: ExcelRow[]): void {
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
 
             this.rows.push({
                 height: getHeightFromProperty(rowLen, this.config.rowHeight),
-                cells: row.map((cell, idx) => {
-                    const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data.value as string);
+                cells: (row.cells || []).map((cell, idx) => {
+                    const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data?.value as string);
                     const ret = { ...cell };
 
                     if (image) {
@@ -97,7 +97,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                         }
                     }
                     return ret;
-                })
+                }),
+                outlineLevel: row.outlineLevel || undefined
             });
         });
     }
@@ -202,6 +203,9 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             if (skipCols > 0) {
                 skipCols -= 1;
                 return;
+            }
+            if (!this.config.gridOptionsWrapper.isGroupHideOpenParents() && node.level) {
+                _.last(this.rows).outlineLevel = node.level;
             }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, valueForCell, column, node);

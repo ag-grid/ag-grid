@@ -160,7 +160,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-center-cols-viewport,
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
-.ag-virtual-list-viewport {
+.ag-virtual-list-viewport,
+.ag-sticky-top-viewport {
     position: relative;
     height: 100%;
     min-width: 0px;
@@ -206,12 +207,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-body-horizontal-scroll-container,
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
-.ag-virtual-list-container {
+.ag-virtual-list-container,
+.ag-sticky-top-container {
     position: relative;
 }
 
 // for when auto height is used but there is no row data
-.ag-header-container, .ag-floating-top-container, .ag-floating-bottom-container {
+.ag-header-container,
+.ag-floating-top-container,
+.ag-floating-bottom-container,
+.ag-sticky-top-container {
     height: 100%;
     white-space: nowrap;
 }
@@ -230,7 +235,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-full-width-container,
 .ag-floating-top-full-width-container,
-.ag-floating-bottom-full-width-container {
+.ag-floating-bottom-full-width-container,
+.ag-sticky-top-full-width-container {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -903,6 +909,29 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 0px;
 }
 
+/**
+ ****************************
+ * Sticky Top
+ ****************************
+*/
+
+.ag-sticky-top {
+    position: absolute;
+    display: flex;
+    width: 100%;
+}
+
+.ag-pinned-left-sticky-top,
+.ag-pinned-right-sticky-top {
+    position: relative;
+    height: 100%;
+}
+
+.ag-sticky-top-full-width-container {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
 
 /**
  ****************************

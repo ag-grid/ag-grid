@@ -54,9 +54,6 @@
                 tslib: "npm:tslib@2.3.1/tslib.js",
                 typescript: "npm:typescript@3.7.7/lib/typescript.js",
 
-                // for some of the examples
-                lodash: "npm:lodash@4.17.4/lodash.js",
-
                 // appLocation comes from index.html
                 app: appLocation,
 

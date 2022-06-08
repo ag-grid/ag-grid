@@ -108,7 +108,6 @@ const gridOptions: GridOptions = {
   asyncTransactionWaitMillis: 500,
   purgeClosedRowNodes: true,
   rowSelection: 'multiple',
-  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
   animateRows: true,

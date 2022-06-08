@@ -3,9 +3,7 @@ import { Scene } from "./scene";
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
-type NodeCallback<G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void;
 type NodeSelector<N, G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N;
-type NodeSelectorAll<N, G, GDatum> = (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[];
 
 export class EnterNode {
 
@@ -249,19 +247,13 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * @param cb
      */
     each(cb: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void): this {
-        const groups = this.groups;
-        const numGroups = groups.length;
-
-        for (let j = 0; j < numGroups; j++) {
-            const group = groups[j];
-            const groupSize = group.length;
-
-            for (let i = 0; i < groupSize; i++) {
-                const node = group[i];
-
+        for (const group of this.groups) {
+            let i = 0;
+            for (const node of group) {
                 if (node) {
                     cb(node, node.datum as GDatum, i, group);
                 }
+                i++;
             }
         }
 
@@ -366,7 +358,13 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     get size(): number {
         let size = 0;
 
-        this.each(() => size++);
+        for (const group of this.groups) {
+            for (const node of group) {
+                if (node) {
+                    size++;
+                }
+            }
+        }
 
         return size;
     }
@@ -375,9 +373,16 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * Returns the array of data for the selected elements.
      */
     get data(): GDatum[] {
-        const data: GDatum[] = [];
+        const data: GDatum[] = new Array<GDatum>(this.size);
 
-        this.each((_, datum) => data.push(datum));
+        let i = 0;
+        for (const group of this.groups) {
+            for (const node of group) {
+                if (node) {
+                    data[i++] = node.datum;
+                }
+            }
+        }
 
         return data;
     }

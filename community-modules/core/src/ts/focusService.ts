@@ -530,7 +530,7 @@ export class FocusService extends BeanStub {
             return true;
         }
 
-        if (!backwards) {
+        if (!backwards && !this.gridCtrl.isDetailGrid()) {
             this.gridCtrl.forceFocusOutOfContainer();
         }
 

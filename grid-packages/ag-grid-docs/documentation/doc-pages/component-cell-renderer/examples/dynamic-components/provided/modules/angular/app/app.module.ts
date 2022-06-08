@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([ChildMessageRenderer, CubeRenderer, CurrencyRenderer, ParamsRenderer, SquareRenderer])
+        AgGridModule
     ],
     declarations: [
         AppComponent, ChildMessageRenderer, CubeRenderer, CurrencyRenderer, ParamsRenderer, SquareRenderer

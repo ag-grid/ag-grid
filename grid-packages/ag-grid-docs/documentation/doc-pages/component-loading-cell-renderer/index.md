@@ -25,12 +25,7 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-```ts
-interface ILoadingCellRendererParams {
-    // The grid API
-    api: GridApi;
-}
-```
+<interface-documentation interfaceName='ILoadingCellRendererParams' names='["api", "columnApi", "context", "node"]' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
 
 ## Dynamic Cell Loading Renderer
 

@@ -22,12 +22,12 @@ const gridOptions: GridOptions = {
   getRowId: (params: GetRowIdParams) => {
     // use country for group level ids, or the id we assigned for leaf level
     var data = params.data;
-    return data.id || data.country;
+    return data.id!=null ? data.id : data.country;
   },
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
 
   // allow multiple leaf row selections
   rowSelection: 'multiple',

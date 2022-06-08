@@ -11,6 +11,7 @@ import { TextFilter } from "../../filter/provided/text/textFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { HeaderComp } from "../../headerRendering/cells/column/headerComp";
 import { HeaderGroupComp } from "../../headerRendering/cells/columnGroup/headerGroupComp";
+import { SortIndicatorComp } from "../../headerRendering/cells/column/sortIndicatorComp";
 import { IComponent } from "../../interfaces/iComponent";
 import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
 import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
@@ -55,6 +56,7 @@ export class UserComponentRegistry extends BeanStub {
         //header
         agColumnHeader: HeaderComp,
         agColumnGroupHeader: HeaderGroupComp,
+        agSortIndicator: SortIndicatorComp,
 
         //floating filters
         agTextColumnFloatingFilter: TextFloatingFilter,

@@ -8,6 +8,10 @@
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
+  "TickCount": {
+    "meta": { "isTypeAlias": true },
+    "type": "number | CountableTimeInterval"
+  },
   "AxisLabelFormatterParams": {
     "meta": {},
     "type": {
@@ -2134,6 +2138,18 @@
       "backgroundColor?": "string"
     }
   },
+  "ChartUpdateType": {
+    "meta": { "isEnum": true },
+    "type": [
+      "FULL",
+      "PROCESS_DATA",
+      "PERFORM_LAYOUT",
+      "SERIES_UPDATE",
+      "SCENE_RENDER",
+      "NONE"
+    ],
+    "docs": [null, null, null, null, null, null]
+  },
   "Point": {
     "meta": { "isTypeAlias": true },
     "type": "{ x: number; y: number; }"
@@ -2311,6 +2327,15 @@
     "meta": { "isTypeAlias": true },
     "type": "{ xDatum: any; seriesDatum: any; }"
   },
+  "AreaSeriesTag": {
+    "meta": { "isEnum": true },
+    "type": ["Fill", "Stroke", "Marker", "Label"],
+    "docs": [null, null, null, null]
+  },
+  "AreaSeriesGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ group: Group; pickGroup: Group; fill: Path; stroke: Path; markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>; labelSelection: Selection<Text, Group, LabelSelectionDatum, any>; }"
+  },
   "BarSeriesNodeClickEvent": {
     "meta": {},
     "type": {
@@ -2349,6 +2374,7 @@
       "height": "number",
       "fill?": "string",
       "stroke?": "string",
+      "colorIndex": "number",
       "strokeWidth": "number",
       "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
       "series": "Series",
@@ -2382,6 +2408,10 @@
   "BarSeriesFormat": {
     "meta": {},
     "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+  },
+  "BarSeriesGroup": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ group: Group; pickGroup: Group; rectSelection: Selection<Rect, Group, BarNodeDatum, any>; labelSelection: Selection<Text, Group, BarNodeDatum, any>; }"
   },
   "CartesianSeriesMarkerFormat": {
     "meta": {},
@@ -2748,9 +2778,39 @@
     "type": ["All", "None"],
     "docs": [null, null]
   },
+  "RedrawType": {
+    "meta": { "isEnum": true },
+    "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
+    "docs": [null, null, null, null]
+  },
+  "RenderContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D; forceRender: boolean; resized: boolean; clipBBox?: BBox; stats?: { nodesRendered: number; nodesSkipped: number; layersRendered: number; layersSkipped: number; }; }"
+  },
   "DebugOptions": {
     "meta": {},
-    "type": { "renderFrameIndex": "boolean", "renderBoundingBoxes": "boolean" }
+    "type": {
+      "stats": "false | 'basic' | 'detailed'",
+      "dirtyTree": "boolean",
+      "renderBoundingBoxes": "boolean",
+      "consoleLog": "boolean"
+    }
+  },
+  "SceneOptions": {
+    "meta": {},
+    "type": {
+      "document": "Document",
+      "mode": "'simple' | 'composite' | 'dom-composite' | 'adv-composite'"
+    }
+  },
+  "SceneLayer": {
+    "meta": {},
+    "type": {
+      "id": "number",
+      "name?": "string",
+      "zIndex": "number",
+      "canvas": "HdpiOffscreenCanvas | HdpiCanvas"
+    }
   },
   "ValueFn": {
     "meta": { "isTypeAlias": true, "typeParams": ["P", "GDatum", "PDatum"] },
@@ -2760,17 +2820,9 @@
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string"
   },
-  "NodeCallback": {
-    "meta": { "isTypeAlias": true, "typeParams": ["G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void"
-  },
   "NodeSelector": {
     "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
     "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N"
-  },
-  "NodeSelectorAll": {
-    "meta": { "isTypeAlias": true, "typeParams": ["N", "G", "GDatum"] },
-    "type": "(node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[]"
   },
   "ArcType": {
     "meta": { "isEnum": true },

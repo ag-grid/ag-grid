@@ -37,6 +37,8 @@ This is demonstrated in the following example, note the following:
 
 - Only the `country`, `year` and `sport` columns can be dragged to the Row Group Panel as they have `enableRowGroup` enabled.
 
+- The columns can be clicked in the Row Group Panel to progress their sort.
+
 <grid-example title='Enabling Row Group Panel' name='row-group-panel' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Keeping Columns Visible
@@ -47,8 +49,8 @@ This default behaviour can be changed with the following properties:
 - `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, e.g. when dragging a column from the grid to the group drop zone, the column will remain visible.
 - `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, e.g. when clicking the 'x' on a column in the drop zone, the column will not be made visible.
 
-The default behaviour is more natural for most scenarios as it stops data appearing twice, e.g. if country is displayed
-in group column, there is no need to display country again in the country column.
+The default behaviour is more natural for most scenarios as it stops data appearing twice, e.g. if country is displayed in the group column,
+there is no need to display country again in the country column. However, preventing hiding the grouped columns can allow for a finer control over the group sorting.
 
 The example below demonstrates these two properties. Note the following:
 
@@ -61,4 +63,4 @@ The example below demonstrates these two properties. Note the following:
 
 ## Next Up
 
-Continue to the next section to learn how to add [Group Footers](../grouping-footers/).
+Continue to the next section to learn how to add [Group Order](../grouping-group-order/).

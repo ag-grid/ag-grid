@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { withPrefix } from 'gatsby';
+import React, {useState} from 'react';
+import {withPrefix} from 'gatsby';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
@@ -22,8 +22,19 @@ const links = [
     }
 ];
 
-const HeaderLinks = ({path} ) => {
-    const [active, setActive] = useState('Documentation')
+const getActiveLink = (path) => {
+    const rawPath = path.replaceAll('/', '');
+    const match = links.filter(link => link.url.includes(rawPath));
+    if (match && match.length === 1) {
+        return match[0].name
+    }
+
+    return 'Documentation';
+}
+
+
+const HeaderLinks = ({path}) => {
+    const [active, setActive] = useState(getActiveLink(path))
 
     return (
         <ul className={styles['header-nav__navbar']}>
@@ -63,7 +74,7 @@ const HeaderNav = ({path}) => (
                 <HeaderLinks path={path}/>
             </div>
             <div className={styles['header-nav__widgets']}>
-                <HeaderExpandButton />
+                <HeaderExpandButton/>
             </div>
         </div>
     </nav>

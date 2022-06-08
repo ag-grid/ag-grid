@@ -9,7 +9,7 @@ import { RxJsComponentByFullSet } from "./rxjs-component-example/rxjs-by-bulk.co
     imports: [
         BrowserModule,
         HttpClientModule,
-        AgGridModule.withComponents([])
+        AgGridModule
     ],
     declarations: [
         RxJsComponentByFullSet

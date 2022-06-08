@@ -1,6 +1,6 @@
 import { Group } from "../../scene/group";
 import { LegendDatum } from "../legend";
-import { Observable, reactive } from "../../util/observable";
+import { Observable } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
@@ -8,6 +8,7 @@ import { Label } from "../label";
 import { PointLabelDatum } from "../../util/labelPlacement";
 import { isNumber } from "../../util/value";
 import { TimeAxis } from "../axis/timeAxis";
+import { Node } from '../../scene/node';
 
 /**
  * Processed series datum used in node selections,
@@ -82,11 +83,14 @@ export class HighlightStyle {
     readonly series = new SeriesHighlightStyle();
 }
 
-export class SeriesTooltip extends Observable {
-    @reactive('change') enabled = true;
+export class SeriesTooltip {
+    enabled = true;
 }
 
 export abstract class Series extends Observable {
+    protected static readonly highlightedZIndex = 1000000000000;
+    protected static readonly SERIES_LAYER_ZINDEX = 100;
+    protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
 
     readonly id = createId(this);
 
@@ -97,8 +101,25 @@ export abstract class Series extends Observable {
     // The group node that contains all the nodes used to render this series.
     readonly group: Group = new Group();
 
+    // The group node that contains the series rendering in it's default (non-highlighted) state.
+    readonly seriesGroup: Group = this.group.appendChild(
+        new Group({ name: `${this.id}-series`, layer: true, zIndex: Series.SERIES_LAYER_ZINDEX }),
+    );
+
+    // The group node that contains all highlighted series items. This is a performance optimisation
+    // for large-scale data-sets, where the only thing that routinely varies is the currently
+    // highlighted node.
+    readonly highlightGroup: Group = this.group.appendChild(
+        new Group({
+            name: `${this.id}-highlight`,
+            layer: true,
+            zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+            optimiseDirtyTracking: true,
+        }),
+    );
+
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
-    readonly pickGroup: Group = this.group.appendChild(new Group());
+    readonly pickGroup: Group = this.seriesGroup.appendChild(new Group());
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
@@ -108,15 +129,24 @@ export abstract class Series extends Observable {
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {};
 
-    protected static highlightedZIndex = 1000000000000;
+    // Flag to determine if we should recalculate node data.
+    protected nodeDataRefresh = true;
 
     readonly label = new Label();
 
     abstract tooltip: SeriesTooltip;
 
-    @reactive('dataChange') data?: any[] = undefined;
-    @reactive('dataChange') visible = true;
-    @reactive('layoutChange') showInLegend = true;
+    protected _data?: any[] = undefined;
+    set data(input: any[] | undefined) {
+        this._data = input;
+        this.nodeDataRefresh = true;
+    }
+    get data() {
+        return this._data;
+    }
+
+    visible = true;
+    showInLegend = true;
 
     cursor = 'default';
 
@@ -126,7 +156,9 @@ export abstract class Series extends Observable {
         }
     }
 
-    setColors(fills: string[], strokes: string[]) { }
+    setColors(_fills: string[], _strokes: string[]) {
+        // Override point for subclasses.
+    }
 
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
@@ -159,67 +191,81 @@ export abstract class Series extends Observable {
     // Using processed data, create data that backs visible nodes.
     createNodeData(): SeriesNodeDatum[] { return []; }
 
+    // Indicate that something external changed and we should recalculate nodeData.
+    markNodeDataDirty() {
+        this.nodeDataRefresh = true;
+    }
+
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
     getLabelData(): readonly PointLabelDatum[] { return []; }
 
-    private _nodeDataPending = true;
-    set nodeDataPending(value: boolean) {
-        if (this._nodeDataPending !== value) {
-            this._nodeDataPending = value;
-            this.updatePending = true;
-            if (value && this.chart) {
-                this.chart.updatePending = value;
-            }
-        }
-    }
-    get nodeDataPending(): boolean {
-        return this._nodeDataPending;
-    }
-
-    scheduleNodeDate() {
-        this.nodeDataPending = true;
-    }
-
-    private _updatePending = false;
-    set updatePending(value: boolean) {
-        if (this._updatePending !== value) {
-            this._updatePending = value;
-            if (value && this.chart) {
-                this.chart.updatePending = value;
-            }
-        }
-    }
-    get updatePending(): boolean {
-        return this._updatePending;
-    }
-
-    scheduleUpdate() {
-        this.updatePending = true;
-    }
-
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
 
     protected getOpacity(datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { dimOpacity = 1 } } } = this;
-        return !chart || !chart.highlightedDatum ||
-            chart.highlightedDatum.series === this &&
-            (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : dimOpacity;
+        const { 
+            chart: { highlightedDatum: { series = undefined, itemId = undefined } = {} } = {},
+            highlightStyle: { series: { dimOpacity = 1 } },
+         } = this;
+
+         const defaultOpacity = 1;
+         const highlighting = series != null;
+
+         if (!highlighting) {
+             // Highlighting not active.
+             return defaultOpacity;
+         }
+        
+        if (series !== this) {
+             // Highlighting active, this series not highlighted.
+             return dimOpacity;
+        }
+
+        if (datum && itemId !== datum.itemId) {
+             // Highlighting active, this series item not highlighted.
+             return dimOpacity;
+        }
+
+        return defaultOpacity;
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { strokeWidth } } } = this;
-        return chart && chart.highlightedDatum &&
-            chart.highlightedDatum.series === this &&
-            (!datum || chart.highlightedDatum.itemId === datum.itemId) &&
-            strokeWidth !== undefined ? strokeWidth : defaultStrokeWidth;
+        const { 
+            chart: { highlightedDatum: { series = undefined } = {}, highlightedDatum = undefined } = {},
+            highlightStyle: { series: { strokeWidth } },
+        } = this;
+
+        if (strokeWidth === undefined) {
+            // No change in styling for highlight cases.
+            return defaultStrokeWidth;
+        }
+
+        if (!series) {
+            // Current series isn't highlighted.
+            return defaultStrokeWidth;
+        }
+
+        const matchesDatum = datum ?
+            highlightedDatum === datum || highlightedDatum?.itemId === datum?.itemId : 
+            true;
+        if (series === this && matchesDatum) {
+            return strokeWidth;
+        }
+
+        return defaultStrokeWidth;
     }
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void { }
+    pickNode(x: number, y: number): Node | undefined {
+        return this.pickGroup.pickNode(x, y);
+    }
+
+    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void {
+        // Override point for subclasses.
+    }
 
     /**
      * @private
@@ -231,25 +277,14 @@ export abstract class Series extends Observable {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
 
-    toggleSeriesItem(itemId: any, enabled: boolean): void {
+    toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
+        this.nodeDataRefresh = true;
     }
 
     readonly highlightStyle = new HighlightStyle();
 
-    // Each series is expected to have its own logic to efficiently update its nodes
-    // on hightlight changes.
-    onHighlightChange() { }
-
-    readonly scheduleLayout = () => {
-        this.fireEvent({ type: 'layoutChange' });
-    }
-
-    readonly scheduleData = () => {
-        this.fireEvent({ type: 'dataChange' });
-    }
-
-    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string, axis?: ChartAxis): [number, number] {
+    protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): [number, number] {
         if (!extent) {
             return [0, 1];
         }

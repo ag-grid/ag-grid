@@ -31,6 +31,11 @@ export enum RowContainerName {
     TOP_CENTER = 'topCenter',
     TOP_FULL_WIDTH = 'topFullWidth',
 
+    STICKY_TOP_LEFT = 'stickyTopLeft',
+    STICKY_TOP_RIGHT = 'stickyTopRight',
+    STICKY_TOP_CENTER = 'stickyTopCenter',
+    STICKY_TOP_FULL_WIDTH = 'stickyTopFullWidth',
+
     BOTTOM_LEFT = 'bottomLeft',
     BOTTOM_RIGHT = 'bottomRight',
     BOTTOM_CENTER = 'bottomCenter',
@@ -48,18 +53,22 @@ export function getRowContainerTypeForName(name: RowContainerName): RowContainer
     switch (name) {
         case RowContainerName.CENTER:
         case RowContainerName.TOP_CENTER:
+        case RowContainerName.STICKY_TOP_CENTER:
         case RowContainerName.BOTTOM_CENTER:
             return RowContainerType.CENTER;
         case RowContainerName.LEFT:
         case RowContainerName.TOP_LEFT:
+        case RowContainerName.STICKY_TOP_LEFT:
         case RowContainerName.BOTTOM_LEFT:
             return RowContainerType.LEFT;
         case RowContainerName.RIGHT:
         case RowContainerName.TOP_RIGHT:
+        case RowContainerName.STICKY_TOP_RIGHT:
         case RowContainerName.BOTTOM_RIGHT:
             return RowContainerType.RIGHT;
         case RowContainerName.FULL_WIDTH:
         case RowContainerName.TOP_FULL_WIDTH:
+        case RowContainerName.STICKY_TOP_FULL_WIDTH:
         case RowContainerName.BOTTOM_FULL_WIDTH:
             return RowContainerType.FULL_WIDTH;
         default :
@@ -78,6 +87,11 @@ const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.TOP_RIGHT, 'ag-pinned-right-floating-top'],
     [RowContainerName.TOP_FULL_WIDTH, 'ag-floating-top-full-width-container'],
 
+    [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-container'],
+    [RowContainerName.STICKY_TOP_LEFT, 'ag-pinned-left-sticky-top'],
+    [RowContainerName.STICKY_TOP_RIGHT, 'ag-pinned-right-sticky-top'],
+    [RowContainerName.STICKY_TOP_FULL_WIDTH, 'ag-sticky-top-full-width-container'],
+
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-container'],
     [RowContainerName.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
     [RowContainerName.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
@@ -87,6 +101,7 @@ const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
 const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-viewport'],
     [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
+    [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-viewport'],
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
@@ -114,16 +129,17 @@ export class RowContainerCtrl extends BeanStub {
         switch (name) {
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.TOP_LEFT:
+            case RowContainerName.STICKY_TOP_LEFT:
             case RowContainerName.LEFT:
                 return Constants.PINNED_LEFT;
             case RowContainerName.BOTTOM_RIGHT:
             case RowContainerName.TOP_RIGHT:
+            case RowContainerName.STICKY_TOP_RIGHT:
             case RowContainerName.RIGHT:
                 return Constants.PINNED_RIGHT;
             default:
                 return null;
         }
-
     }
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -166,6 +182,9 @@ export class RowContainerCtrl extends BeanStub {
             case RowContainerName.TOP_CENTER: this.ctrlsService.registerTopCenterRowContainerCtrl(this); break;
             case RowContainerName.TOP_LEFT: this.ctrlsService.registerTopLeftRowContainerCon(this); break;
             case RowContainerName.TOP_RIGHT: this.ctrlsService.registerTopRightRowContainerCtrl(this); break;
+            case RowContainerName.STICKY_TOP_CENTER: this.ctrlsService.registerStickyTopCenterRowContainerCtrl(this); break;
+            case RowContainerName.STICKY_TOP_LEFT: this.ctrlsService.registerStickyTopLeftRowContainerCon(this); break;
+            case RowContainerName.STICKY_TOP_RIGHT: this.ctrlsService.registerStickyTopRightRowContainerCtrl(this); break;
             case RowContainerName.BOTTOM_CENTER: this.ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
             case RowContainerName.BOTTOM_LEFT: this.ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
             case RowContainerName.BOTTOM_RIGHT: this.ctrlsService.registerBottomRightRowContainerCtrl(this); break;
@@ -198,15 +217,16 @@ export class RowContainerCtrl extends BeanStub {
         this.stopHScrollOnPinnedRows();
 
         const allTopNoFW = [RowContainerName.TOP_CENTER, RowContainerName.TOP_LEFT, RowContainerName.TOP_RIGHT];
+        const allStickyTopNoFW = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT];
         const allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
         const allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
-        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW];
+        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW, ...allStickyTopNoFW];
 
         const allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
 
-        const allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.BOTTOM_CENTER];
-        const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT];
-        const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT];
+        const allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER];
+        const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT, RowContainerName.STICKY_TOP_LEFT];
+        const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT, RowContainerName.STICKY_TOP_RIGHT];
 
         this.forContainers(allLeft, () => this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)));
         this.forContainers(allRight, () => this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)));
@@ -222,10 +242,10 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, ()=> this.onScrollVisibilityChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> this.onDisplayedColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, ()=> this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, ()=> this.onDisplayedRowsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, () => this.onDisplayedRowsChanged());
 
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
@@ -234,6 +254,14 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private listenOnDomOrder(): void {
+        // sticky section must show rows in set order
+        const allStickyContainers = [RowContainerName.STICKY_TOP_CENTER, RowContainerName.STICKY_TOP_LEFT, RowContainerName.STICKY_TOP_RIGHT, RowContainerName.STICKY_TOP_FULL_WIDTH];
+        const isStickContainer = allStickyContainers.indexOf(this.name) >= 0;
+        if (isStickContainer) {
+            this.comp.setDomOrder(true);
+            return;
+        }
+
         const listener = () => this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder());
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
@@ -243,7 +271,7 @@ export class RowContainerCtrl extends BeanStub {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private stopHScrollOnPinnedRows(): void {
-        this.forContainers([RowContainerName.TOP_CENTER, RowContainerName.BOTTOM_CENTER], () => {
+        this.forContainers([RowContainerName.TOP_CENTER, RowContainerName.STICKY_TOP_CENTER, RowContainerName.BOTTOM_CENTER], () => {
             const resetScrollLeft = () => this.eViewport.scrollLeft = 0;
             this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
         });
@@ -344,6 +372,7 @@ export class RowContainerCtrl extends BeanStub {
     private onDisplayedRowsChanged(): void {
         const fullWithContainer =
             this.name === RowContainerName.TOP_FULL_WIDTH
+            || this.name === RowContainerName.STICKY_TOP_FULL_WIDTH
             || this.name === RowContainerName.BOTTOM_FULL_WIDTH
             || this.name === RowContainerName.FULL_WIDTH;
 
@@ -376,6 +405,12 @@ export class RowContainerCtrl extends BeanStub {
             case RowContainerName.TOP_RIGHT:
             case RowContainerName.TOP_FULL_WIDTH:
                 return this.rowRenderer.getTopRowCtrls();
+
+            case RowContainerName.STICKY_TOP_CENTER:
+            case RowContainerName.STICKY_TOP_LEFT:
+            case RowContainerName.STICKY_TOP_RIGHT:
+            case RowContainerName.STICKY_TOP_FULL_WIDTH:
+                return this.rowRenderer.getStickyTopRowCtrls();
 
             case RowContainerName.BOTTOM_CENTER:
             case RowContainerName.BOTTOM_LEFT:

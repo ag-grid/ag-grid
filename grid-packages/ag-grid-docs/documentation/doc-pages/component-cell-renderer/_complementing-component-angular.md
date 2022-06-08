@@ -3,11 +3,11 @@
 |```js
 |// define cellRenderer to be reused
 |@Component({
-|    selector: 'my-app',
+|    selector: 'colour-cell',
 |    template: `<span [style.colour]="params.color">{{params.value}}</span>`
 |})
 |class ColourCellRenderer implements ICellRendererAngularComp {
-|    params: ICellRendererParams;
+|    params!: ICellRendererParams;
 |
 |    agInit(ICellRendererParams) {
 |        this.params = params;
@@ -15,7 +15,7 @@
 |
 |    refresh(ICellRendererParams) {
 |        this.params = params;
-|        // As we have updated the params we return true to let AG Grid we have handle refresh.
+|        // As we have updated the params we return true to let AG Grid know we have handled the refresh.
 |        // So AG Grid will not recreate the cell renderer from scratch.
 |        return true;
 |    }

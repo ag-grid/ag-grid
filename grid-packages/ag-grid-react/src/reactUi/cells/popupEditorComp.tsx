@@ -71,7 +71,7 @@ const PopupEditorComp = (props: {
             context.destroyBean(wrapper);
         };
 
-    }, 'popupEditor.main');
+    });
 
     return (
         <>

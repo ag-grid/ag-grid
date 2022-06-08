@@ -8,7 +8,7 @@ This page discusses alternatives to this approach.
 
 [Value Setters](/value-setters/#value-setter) provides an alternative to using `field` for setting the data. Use `valueSetter` if you want the grid to manage the data (ie update the data inline) but you want to update in a way other than using `field`. This is useful if you are not using `field`, or somehow need to manipulate the data in another way (e.g. the data item isn't a simple key / value pair map, but contains a more complex structure).
 
-[Read Only Edit](/value-setters/#read-only-edit) stops the grid from updating data, and relies on teh application to make the update after the edit is complete. Use this if you want to manage the grid data state externally, such as in a Redux store.
+[Read Only Edit](/value-setters/#read-only-edit) stops the grid from updating data, and relies on the application to make the update after the edit is complete. Use this if you want to manage the grid data state externally, such as in a Redux store.
 
 ## Value Setter
 

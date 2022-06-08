@@ -27,6 +27,10 @@ interface ReadyParams {
     topLeftRowContainerCtrl: RowContainerCtrl;
     topRightRowContainerCtrl: RowContainerCtrl;
 
+    stickyTopCenterRowContainerCtrl: RowContainerCtrl;
+    stickyTopLeftRowContainerCtrl: RowContainerCtrl;
+    stickyTopRightRowContainerCtrl: RowContainerCtrl;
+
     fakeHScrollCtrl: FakeHScrollCtrl;
     gridHeaderCtrl: GridHeaderCtrl;
 
@@ -55,6 +59,10 @@ export class CtrlsService extends BeanStub {
     private topLeftRowContainerCtrl: RowContainerCtrl;
     private topRightRowContainerCtrl: RowContainerCtrl;
 
+    private stickyTopCenterRowContainerCtrl: RowContainerCtrl;
+    private stickyTopLeftRowContainerCtrl: RowContainerCtrl;
+    private stickyTopRightRowContainerCtrl: RowContainerCtrl;
+
     private centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
     private leftHeaderRowContainerCtrl: HeaderRowContainerCtrl;
     private rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
@@ -82,6 +90,10 @@ export class CtrlsService extends BeanStub {
             && this.topCenterRowContainerCtrl != null
             && this.topLeftRowContainerCtrl != null
             && this.topRightRowContainerCtrl != null
+
+            && this.stickyTopCenterRowContainerCtrl != null
+            && this.stickyTopLeftRowContainerCtrl != null
+            && this.stickyTopRightRowContainerCtrl != null
 
             && this.centerHeaderRowContainerCtrl != null
             && this.leftHeaderRowContainerCtrl != null
@@ -118,6 +130,10 @@ export class CtrlsService extends BeanStub {
             topCenterRowContainerCtrl: this.topCenterRowContainerCtrl,
             topLeftRowContainerCtrl: this.topLeftRowContainerCtrl,
             topRightRowContainerCtrl: this.topRightRowContainerCtrl,
+
+            stickyTopCenterRowContainerCtrl: this.stickyTopCenterRowContainerCtrl,
+            stickyTopLeftRowContainerCtrl: this.stickyTopLeftRowContainerCtrl,
+            stickyTopRightRowContainerCtrl: this.stickyTopRightRowContainerCtrl,
 
             centerHeaderRowContainerCtrl: this.centerHeaderRowContainerCtrl,
             leftHeaderRowContainerCtrl: this.leftHeaderRowContainerCtrl,
@@ -167,6 +183,21 @@ export class CtrlsService extends BeanStub {
 
     public registerTopRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
         this.topRightRowContainerCtrl = ctrl;
+        this.checkReady();
+    }
+
+    public registerStickyTopCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.stickyTopCenterRowContainerCtrl = ctrl;
+        this.checkReady();
+    }
+
+    public registerStickyTopLeftRowContainerCon(ctrl: RowContainerCtrl): void {
+        this.stickyTopLeftRowContainerCtrl = ctrl;
+        this.checkReady();
+    }
+
+    public registerStickyTopRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.stickyTopRightRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
@@ -231,6 +262,10 @@ export class CtrlsService extends BeanStub {
 
     public getBottomCenterRowContainerCtrl(): RowContainerCtrl {
         return this.bottomCenterRowContainerCtrl;
+    }
+
+    public getStickyTopCenterRowContainerCtrl(): RowContainerCtrl {
+        return this.stickyTopCenterRowContainerCtrl;
     }
 
     public getGridBodyCtrl(): GridBodyCtrl {

@@ -1,7 +1,7 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
-import { removeAriaSort, setAriaDescribedBy, setAriaLabel, setAriaSort } from "../../../utils/aria";
+import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
@@ -48,8 +48,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),
-            setAriaLabel: label => setAriaLabel(eGui, label),
-            setAriaDescribedBy: value => setAriaDescribedBy(eGui, value),
+            setAriaDescription: label => setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp

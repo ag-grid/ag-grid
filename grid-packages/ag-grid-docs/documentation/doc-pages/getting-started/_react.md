@@ -208,7 +208,7 @@
 |  );
 |};
 |
-|render(<App />, document.getElementById('root'));
+|export default App;
 |```
 |
 | If everything is correct, you should see a simple grid that looks like this:<br/><br/>

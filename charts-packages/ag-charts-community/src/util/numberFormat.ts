@@ -240,15 +240,13 @@ function formatPrefixAuto(x: number, p: number = 0) {
 
     if (i === n) {
         return coefficient;
+    } else if (i > n) {
+        return coefficient + new Array(i - n + 1).join('0');
+    } else if (i > 0) {
+        return coefficient.slice(0, i) + '.' + coefficient.slice(i);
     } else {
-        if (i > n) {
-            return coefficient + new Array(i - n + 1).join('0');
-        } if (i > 0) {
-            return coefficient.slice(0, i) + '.' + coefficient.slice(i);
-        } else {
-            const parts = formatDecimalParts(x, Math.max(0, p + i - 1));
-            return '0.' + new Array(1 - i).join('0') + parts![0]; // less than 1y!
-        }
+        const parts = formatDecimalParts(x, Math.max(0, p + i - 1));
+        return '0.' + new Array(1 - i).join('0') + parts![0]; // less than 1y!
     }
 }
 

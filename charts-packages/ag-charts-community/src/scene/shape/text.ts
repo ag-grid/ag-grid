@@ -2,10 +2,19 @@ import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
 import { HdpiCanvas } from "../../canvas/hdpiCanvas";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
 export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
+export function SceneFontChangeDetection(opts?: {
+    redraw?: RedrawType,
+    changeCb?: (t: any) => any,
+}) {
+    const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
+
+    return SceneChangeDetection({ redraw, type: 'font', changeCb });
+}
 export class Text extends Shape {
 
     static className = 'Text';
@@ -19,159 +28,59 @@ export class Text extends Shape {
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 
-    private _x: number = 0;
-    set x(value: number) {
-        if (this._x !== value) {
-            this._x = value;
-            this.dirty = true;
-        }
-    }
-    get x(): number {
-        return this._x;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    x: number = 0;
 
-    private _y: number = 0;
-    set y(value: number) {
-        if (this._y !== value) {
-            this._y = value;
-            this.dirty = true;
-        }
-    }
-    get y(): number {
-        return this._y;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    y: number = 0;
 
-    private lineBreakRegex = /\r?\n/g;
     private lines: string[] = [];
-
-    private splitText() {
-        this.lines = this._text.split(this.lineBreakRegex);
+    private _splitText() {
+        this.lines = this.text.split(/\r?\n/g);
     }
 
-    private _text: string = '';
-    set text(value: string) {
-        const str = String(value); // `value` can be an object here
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o._splitText() })
+    text: string = '';
 
-        if (this._text !== str) {
-            this._text = str;
-            this.splitText();
-            this.dirty = true;
-        }
-    }
-    get text(): string {
-        return this._text;
-    }
-
+    private _dirtyFont: boolean = true;
     private _font?: string;
     get font(): string {
-        if (this.dirtyFont) {
-            this.dirtyFont = false;
+        if (this._dirtyFont) {
+            this._dirtyFont = false;
             this._font = getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
         }
 
         return this._font!;
     }
 
-    private _dirtyFont: boolean = true;
-    set dirtyFont(value: boolean) {
-        if (this._dirtyFont !== value) {
-            this._dirtyFont = value;
-            if (value) {
-                this.dirty = true;
-            }
-        }
-    }
-    get dirtyFont(): boolean {
-        return this._dirtyFont;
-    }
+    @SceneFontChangeDetection()
+    fontStyle?: FontStyle;
 
-    private _fontStyle?: FontStyle;
-    set fontStyle(value: FontStyle | undefined) {
-        if (this._fontStyle !== value) {
-            this._fontStyle = value;
-            this.dirtyFont = true;
-        }
-    }
-    get fontStyle(): FontStyle | undefined {
-        return this._fontStyle;
-    }
+    @SceneFontChangeDetection()
+    fontWeight?: FontWeight;
 
-    private _fontWeight?: FontWeight;
-    set fontWeight(value: FontWeight | undefined) {
-        if (this._fontWeight !== value) {
-            this._fontWeight = value;
-            this.dirtyFont = true;
-        }
-    }
-    get fontWeight(): FontWeight | undefined {
-        return this._fontWeight;
-    }
+    @SceneFontChangeDetection()
+    fontSize: number = 10;
 
-    private _fontSize: number = 10;
-    set fontSize(value: number) {
-        if (!isFinite(value)) {
-            value = 10;
-        }
-        if (this._fontSize !== value) {
-            this._fontSize = value;
-            this.dirtyFont = true;
-        }
-    }
-    get fontSize(): number {
-        return this._fontSize;
-    }
+    @SceneFontChangeDetection()
+    fontFamily: string = 'sans-serif';
 
-    private _fontFamily: string = 'sans-serif';
-    set fontFamily(value: string) {
-        if (this._fontFamily !== value) {
-            this._fontFamily = value;
-            this.dirtyFont = true;
-        }
-    }
-    get fontFamily(): string {
-        return this._fontFamily;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    textAlign: CanvasTextAlign = Text.defaultStyles.textAlign;
 
-    private _textAlign: CanvasTextAlign = Text.defaultStyles.textAlign;
-    set textAlign(value: CanvasTextAlign) {
-        if (this._textAlign !== value) {
-            this._textAlign = value;
-            this.dirty = true;
-        }
-    }
-    get textAlign(): CanvasTextAlign {
-        return this._textAlign;
-    }
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    textBaseline: CanvasTextBaseline = Text.defaultStyles.textBaseline;
 
-    private _textBaseline: CanvasTextBaseline = Text.defaultStyles.textBaseline;
-    set textBaseline(value: CanvasTextBaseline) {
-        if (this._textBaseline !== value) {
-            this._textBaseline = value;
-            this.dirty = true;
-        }
-    }
-    get textBaseline(): CanvasTextBaseline {
-        return this._textBaseline;
-    }
-
-    private _lineHeight: number = 14;
-    set lineHeight(value: number) {
-        // Multi-line text is complicated because:
-        // - Canvas does not support it natively, so we have to implement it manually
-        // - need to know the height of each line -> need to parse the font shorthand ->
-        //   generally impossible to do because font size may not be in pixels
-        // - so, need to measure the text instead, each line individually -> expensive
-        // - or make the user provide the line height manually for multi-line text
-        // - computeBBox should use the lineHeight for multi-line text but ignore it otherwise
-        // - textBaseline kind of loses its meaning for multi-line text
-        if (this._lineHeight !== value) {
-            this._lineHeight = value;
-            this.dirty = true;
-        }
-    }
-    get lineHeight(): number {
-        return this._lineHeight;
-    }
+    // Multi-line text is complicated because:
+    // - Canvas does not support it natively, so we have to implement it manually
+    // - need to know the height of each line -> need to parse the font shorthand ->
+    //   generally impossible to do because font size may not be in pixels
+    // - so, need to measure the text instead, each line individually -> expensive
+    // - or make the user provide the line height manually for multi-line text
+    // - computeBBox should use the lineHeight for multi-line text but ignore it otherwise
+    // - textBaseline kind of loses its meaning for multi-line text
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR })
+    lineHeight: number = 14;
 
     computeBBox(): BBox {
         return HdpiCanvas.has.textMetrics
@@ -232,19 +141,20 @@ export class Text extends Shape {
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
+    render(renderCtx: RenderContext): void {
+        let { ctx, forceRender, stats } = renderCtx;
 
-    render(ctx: CanvasRenderingContext2D): void {
-        if (!this.lines.length || !this.scene) {
+        if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
+        if (!this.lines.length || !this.scene) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
+            return;
         }
-        // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
+
+        this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
         const { fill, stroke, strokeWidth } = this;
@@ -305,7 +215,7 @@ export class Text extends Shape {
             ctx.strokeText(text, x, y);
         }
 
-        this.dirty = false;
+        super.render(renderCtx);
     }
 }
 

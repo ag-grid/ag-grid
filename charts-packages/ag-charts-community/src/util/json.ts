@@ -243,7 +243,7 @@ export function jsonApply<
         const targetAny = (target as any);
         const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];
-        const ctr = constructors[property];
+        let ctr = constructors[property] ?? constructors[propertyMatcherPath];
         try {
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
@@ -262,7 +262,13 @@ export function jsonApply<
             }
 
             if (newValueType === 'array') {
-                targetAny[property] = newValue;
+                ctr = ctr ?? constructors[`${propertyMatcherPath}[]`];
+                if (ctr != null) {
+                    const newValueArray: any[] = newValue as any;
+                    targetAny[property] = newValueArray.map((v) => jsonApply(new ctr(), v, {...params, path: propertyPath, matcherPath: propertyMatcherPath + '[]' }));
+                } else {
+                    targetAny[property] = newValue;
+                }
             } else if (newValueType === 'class-instance') {
                 targetAny[property] = newValue;
             } else if (newValueType === 'object') {

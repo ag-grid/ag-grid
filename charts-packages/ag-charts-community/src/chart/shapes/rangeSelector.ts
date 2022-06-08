@@ -2,11 +2,10 @@ import { Group } from "../../scene/group";
 import { RangeHandle } from "./rangeHandle";
 import { RangeMask } from "./rangeMask";
 import { BBox } from "../../scene/bbox";
+import { RedrawType, RenderContext } from "../../scene/node";
 
 export class RangeSelector extends Group {
     static className = 'Range';
-
-    protected isContainerNode: boolean = true;
 
     private static defaults = {
         x: 0,
@@ -97,6 +96,12 @@ export class RangeSelector extends Group {
         return this.mask.max;
     }
 
+    constructor() {
+        super();
+
+        this.isContainerNode = true;
+    }
+
     onRangeChange?: (min: number, max: number) => any;
 
     private updateHandles() {
@@ -114,19 +119,26 @@ export class RangeSelector extends Group {
         return this.mask.computeVisibleRangeBBox();
     }
 
-    render(ctx: CanvasRenderingContext2D) {
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender, stats } = renderCtx;
+
+        if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped++;
+            return;
         }
+        this.computeTransformMatrix();
         this.matrix.toContext(ctx);
 
         const { mask, minHandle, maxHandle } = this;
         [mask, minHandle, maxHandle].forEach(child => {
-            ctx.save();
-            if (child.visible) {
-                child.render(ctx);
+            if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
+                ctx.save();
+                child.render({ ...renderCtx, ctx, forceRender });
+                ctx.restore();
             }
-            ctx.restore();
         });
+
+        this.markClean({ force: true });
+        if (stats) stats.nodesRendered++;
     }
 }

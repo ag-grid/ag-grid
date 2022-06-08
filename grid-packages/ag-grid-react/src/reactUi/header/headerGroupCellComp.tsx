@@ -36,7 +36,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eResize.current!);
 
-    }, 'headerGroupCellComp.main');
+    });
 
     // js comps
     useEffect(() => {

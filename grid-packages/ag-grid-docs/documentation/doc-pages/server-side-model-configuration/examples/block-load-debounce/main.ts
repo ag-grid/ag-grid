@@ -22,12 +22,12 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
 
   // set to partial, so infinite scrolling is enabled
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
 
   // adding a debounce to allow skipping over blocks while scrolling
   blockLoadDebounceMillis: 1000,
 
-  debug: true,
+  debug: true
 }
 
 // setup the grid after the page has finished loading

@@ -4,9 +4,10 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { reactive, Observable, PropertyChangeEvent, SourceEvent } from "../util/observable";
+import { SourceEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
+import { RedrawType } from "../scene/node";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -48,30 +49,40 @@ interface LegendLabelFormatterParams {
     value: string;
 }
 
-export class LegendLabel extends Observable {
-    @reactive('change') color = 'black';
-    @reactive('layoutChange') fontStyle?: FontStyle;
-    @reactive('layoutChange') fontWeight?: FontWeight;
-    @reactive('layoutChange') fontSize = 12;
-    @reactive('layoutChange') fontFamily = 'Verdana, sans-serif';
-    @reactive() formatter?: (params: LegendLabelFormatterParams) => string;
+export class LegendLabel {
+    color = 'black';
+    fontStyle?: FontStyle = undefined;
+    fontWeight?: FontWeight = undefined;
+    fontSize = 12;
+    fontFamily = 'Verdana, sans-serif';
+    formatter?: (params: LegendLabelFormatterParams) => string = undefined;
 }
 
-export class LegendMarker extends Observable {
-    @reactive('layoutChange') size = 15;
+export class LegendMarker {
+    size = 15;
     /**
      * If the marker type is set, the legend will always use that marker type for all its items,
      * regardless of the type that comes from the `data`.
      */
-    @reactive('layoutChange') shape?: string | (new () => Marker);
+    _shape?: string | (new () => Marker) = undefined;
+    set shape(value: string | (new () => Marker) | undefined) {
+        this._shape = value;
+        this.parent?.onMarkerShapeChange();
+    }
+    get shape() {
+        return this._shape;
+    }
+
     /**
      * Padding between the marker and the label within each legend item.
      */
-    @reactive('layoutChange') padding: number = 8;
-    @reactive('change') strokeWidth: number = 1;
+    padding: number = 8;
+    strokeWidth: number = 1;
+
+    parent?: { onMarkerShapeChange(): void }
 }
 
-export class LegendItem extends Observable {
+export class LegendItem {
     readonly marker = new LegendMarker();
     readonly label = new LegendLabel();
     /**
@@ -79,28 +90,16 @@ export class LegendItem extends Observable {
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
      * padding between legend items.
      */
-    @reactive('layoutChange') paddingX = 16;
+    paddingX = 16;
     /**
      * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
      * padding between legend items.
      */
-    @reactive('layoutChange') paddingY = 8;
-
-    constructor() {
-        super();
-
-        const changeListener = () => this.fireEvent({ type: 'change' });
-        this.marker.addEventListener('change', changeListener);
-        this.label.addEventListener('change', changeListener);
-
-        const layoutChangeListener = () => this.fireEvent({ type: 'layoutChange' });
-        this.marker.addEventListener('layoutChange', layoutChangeListener);
-        this.label.addEventListener('layoutChange', layoutChangeListener);
-    }
+    paddingY = 8;
 }
 
-export class Legend extends Observable {
+export class Legend {
 
     static className = 'Legend';
 
@@ -108,7 +107,7 @@ export class Legend extends Observable {
 
     onLayoutChange?: () => void;
 
-    readonly group: Group = new Group();
+    readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: 300 });
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
@@ -116,45 +115,32 @@ export class Legend extends Observable {
 
     readonly item = new LegendItem();
 
-    @reactive('layoutChange') data: LegendDatum[] = [];
-    @reactive('layoutChange') enabled = true;
-    @reactive('layoutChange') orientation: LegendOrientation = LegendOrientation.Vertical;
-    @reactive('layoutChange') position: LegendPosition = LegendPosition.Right;
+    private _data: LegendDatum[] = [];
+    set data(value: LegendDatum[]) {
+        this._data = value;
 
-    /**
-     * Spacing between the legend and the edge of the chart's element.
-     */
-    @reactive('layoutChange') spacing = 20;
-
-    constructor() {
-        super();
-
-        this.addPropertyListener('data', this.onDataChange);
-        this.addPropertyListener('enabled', this.onEnabledChange);
-        this.addPropertyListener('position', this.onPositionChange);
-        this.item.marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-
-        this.addEventListener('change', this.update);
-
-        this.item.addEventListener('change', () => this.fireEvent({ type: 'change' }));
-        this.item.addEventListener('layoutChange', () => this.fireEvent({ type: 'layoutChange' }));
+        this.group.visible = value.length > 0 && this.enabled;
+    }
+    get data() {
+        return this._data;
     }
 
-    private _size: [number, number] = [0, 0];
-    get size(): Readonly<[number, number]> {
-        return this._size;
+    private _enabled = true;
+    set enabled(value: boolean) {
+        this._enabled = value;
+
+        this.group.visible = value && this.data.length > 0;
+    }
+    get enabled() {
+        return this._enabled;
     }
 
-    protected onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>) {
-        this.group.visible = event.value.length > 0 && this.enabled;
-    }
+    orientation: LegendOrientation = LegendOrientation.Vertical;
+    private _position: LegendPosition = LegendPosition.Right;
+    set position(value: LegendPosition) {
+        this._position = value;
 
-    protected onEnabledChange(event: PropertyChangeEvent<this, boolean>) {
-        this.group.visible = event.value && this.data.length > 0;
-    }
-
-    protected onPositionChange(event: PropertyChangeEvent<this, LegendPosition>) {
-        switch (event.value) {
+        switch (value) {
             case 'right':
             case 'left':
                 this.orientation = LegendOrientation.Vertical;
@@ -165,14 +151,26 @@ export class Legend extends Observable {
                 break;
         }
     }
+    get position() {
+        return this._position;
+    }
 
-    protected onMarkerShapeChange() {
+    constructor() {
+        this.item.marker.parent = this;
+    }
+
+    public onMarkerShapeChange() {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
-        if (this.group.scene) {
-            this.group.scene.dirty = false;
-        }
+        this.group.markDirty(this.group, RedrawType.MINOR);
     }
+
+    /**
+     * Spacing between the legend and the edge of the chart's element.
+     */
+    spacing = 20;
+
+    readonly size: [number, number] = [0, 0];
 
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
@@ -354,7 +352,7 @@ export class Legend extends Observable {
         // Update legend item properties that don't affect the layout.
         this.update();
 
-        const size = this._size;
+        const size = this.size;
         const oldSize = this.oldSize;
         size[0] = paddedItemsWidth;
         size[1] = paddedItemsHeight;

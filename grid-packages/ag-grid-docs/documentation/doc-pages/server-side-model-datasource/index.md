@@ -3,12 +3,12 @@ title: "SSRM Datasource"
 enterprise: true
 ---
 
-This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a
-server through an infinite scroll.
+This section describes the Server-Side Datasource and demonstrates how it is used to load data from a
+server.
 
 
 The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data
-(eg the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
+(e.g. the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
 
 [[note]]
 | The SSRM does not impose any restrictions on the server-side technologies used. It is left up to applications to decide how and where data is sourced for the grid.
@@ -119,7 +119,7 @@ The success callback passes rows to the grid via the `LoadSuccessParams` interfa
 
 The `rowData` attribute provides the grid with the requested data.
 
-The `rowCount` is used when Partial Store is used. When the total row count is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This then allows the user to scroll the full extend of the dataset and the grid will never ask for data past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar range will grow as the user scrolls down (the default behaviour for Partial Store).
+The `rowCount` is used when Infininte Scrolling is used. When the total row count is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This then allows the user to scroll the full extend of the dataset and the grid will never ask for data past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar range will grow as the user scrolls down.
 
 The `rowCount` is also used when [Pagination](/server-side-model-pagination/) is enabled. The row count is used to determine the number of pages that are required and enables the grid to jump to the last page. If not provided users will only be able to step to the next page as the grid does not know how many pages are required.
 
@@ -131,5 +131,4 @@ The Fail callback has no parameters. It informs the grid the request has failed 
 
 ## Next Up
 
-Continue to the next section to learn about [Row Stores](/server-side-model-row-stores/).
-
+Continue to the next section to learn about [Infinite Scroll](/server-side-model-row-stores/).

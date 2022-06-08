@@ -12,7 +12,7 @@ import { normalizeAngle180, toRadians } from "../../../util/angle";
 import { toFixed, mod } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
-import { reactive, Observable, TypedEvent } from "../../../util/observable";
+import { Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
@@ -75,13 +75,13 @@ export interface PieSeriesFormat {
 }
 
 class PieSeriesLabel extends Label {
-    @reactive('change') offset = 3; // from the callout line
-    @reactive('dataChange') minAngle = 20; // in degrees
-    @reactive('dataChange') formatter?: (params: { value: any }) => string;
+    offset = 3; // from the callout line
+    minAngle = 20; // in degrees
+    formatter?: (params: { value: any }) => string = undefined;
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors: string[] = [
+    colors: string[] = [
         '#874349',
         '#718661',
         '#a48f5f',
@@ -89,16 +89,16 @@ class PieSeriesCallout extends Observable {
         '#7f637a',
         '#5d8692'
     ];
-    @reactive('change') length: number = 10;
-    @reactive('change') strokeWidth: number = 1;
+    length: number = 10;
+    strokeWidth: number = 1;
 }
 
 export class PieSeriesTooltip extends SeriesTooltip {
-    @reactive('change') renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+    renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
 export class PieTitle extends Caption {
-    @reactive() showInLegend = false;
+    showInLegend = false;
 }
 
 export class PieSeries extends PolarSeries {
@@ -108,6 +108,7 @@ export class PieSeries extends PolarSeries {
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
+    private highlightSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
@@ -130,26 +131,17 @@ export class PieSeries extends PolarSeries {
     set title(value: PieTitle | undefined) {
         const oldTitle = this._title;
 
-        function updateLegend(this: PieSeries) {
-            this.fireEvent({ type: 'legendChange' });
-        }
-
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeEventListener('change', this.scheduleUpdate, this);
-                oldTitle.removePropertyListener('showInLegend', updateLegend, this);
-                this.group.removeChild(oldTitle.node);
+                this.seriesGroup.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addEventListener('change', this.scheduleUpdate, this);
-                value.addPropertyListener('showInLegend', updateLegend, this);
-                this.group.appendChild(value.node);
+                this.seriesGroup.appendChild(value.node);
             }
 
             this._title = value;
-            this.scheduleUpdate();
         }
     }
     get title(): PieTitle | undefined {
@@ -161,42 +153,35 @@ export class PieSeries extends PolarSeries {
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
-    constructor() {
-        super();
-
-        this.addEventListener('update', this.scheduleUpdate, this);
-        this.label.addEventListener('change', this.scheduleUpdate, this);
-        this.label.addEventListener('dataChange', this.scheduleData, this);
-        this.callout.addEventListener('change', this.scheduleLayout, this);
-
-        this.addPropertyListener('data', event => {
-            if (event.value) {
-                event.source.seriesItemEnabled = event.value.map(() => true);
-            }
-        });
+    set data(input: any[] | undefined) {
+        this._data = input;
+        this.seriesItemEnabled = input?.map(() => true) || [];
+    }
+    get data() {
+        return this._data;
     }
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    @reactive('dataChange') angleKey = '';
-    @reactive('update') angleName = '';
+    angleKey = '';
+    angleName = '';
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
      * proportionally smaller radii.
      */
-    @reactive('dataChange') radiusKey?: string;
-    @reactive('update') radiusName?: string;
-    @reactive('dataChange') radiusMin?: number;
-    @reactive('dataChange') radiusMax?: number;
+    radiusKey?: string = undefined;
+    radiusName?: string = undefined;
+    radiusMin?: number = undefined;
+    radiusMax?: number = undefined;
 
-    @reactive('dataChange') labelKey?: string;
-    @reactive('update') labelName?: string;
+    labelKey?: string = undefined;
+    labelName?: string = undefined;
 
-    private _fills: string[] = [
+    fills: string[] = [
         '#c16068',
         '#a2bf8a',
         '#ebcc87',
@@ -204,15 +189,8 @@ export class PieSeries extends PolarSeries {
         '#b58dae',
         '#85c0d1'
     ];
-    set fills(values: string[]) {
-        this._fills = values;
-        this.scheduleUpdate();
-    }
-    get fills(): string[] {
-        return this._fills;
-    }
 
-    private _strokes: string[] = [
+    strokes: string[] = [
         '#874349',
         '#718661',
         '#a48f5f',
@@ -220,40 +198,29 @@ export class PieSeries extends PolarSeries {
         '#7f637a',
         '#5d8692'
     ];
-    set strokes(values: string[]) {
-        this._strokes = values;
-        this.scheduleUpdate();
-    }
-    get strokes(): string[] {
-        return this._strokes;
-    }
 
-    @reactive('layoutChange') fillOpacity = 1;
-    @reactive('layoutChange') strokeOpacity = 1;
+    fillOpacity = 1;
+    strokeOpacity = 1;
 
-    @reactive('update') lineDash?: number[] = [0];
-    @reactive('update') lineDashOffset: number = 0;
+    lineDash?: number[] = [0];
+    lineDashOffset: number = 0;
 
-    @reactive('update') formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
+    formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat = undefined;
 
     /**
      * The series rotation in degrees.
      */
-    @reactive('dataChange') rotation = 0;
+    rotation = 0;
 
-    @reactive('layoutChange') outerRadiusOffset = 0;
+    outerRadiusOffset = 0;
 
-    @reactive('dataChange') innerRadiusOffset = 0;
+    innerRadiusOffset = 0;
 
-    @reactive('layoutChange') strokeWidth = 1;
+    strokeWidth = 1;
 
-    @reactive('layoutChange') shadow?: DropShadow;
+    shadow?: DropShadow = undefined;
 
     readonly highlightStyle = new PieHighlightStyle();
-
-    onHighlightChange() {
-        this.updateNodes();
-    }
 
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
@@ -372,8 +339,6 @@ export class PieSeries extends PolarSeries {
     }
 
     update(): void {
-        this.updatePending = false;
-
         const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
 
         this.radiusScale.range = [
@@ -400,30 +365,34 @@ export class PieSeries extends PolarSeries {
     }
 
     private updateSelections() {
-        if (!this.nodeDataPending) {
-            return;
-        }
-        this.nodeDataPending = false;
-
         this.updateGroupSelection();
     }
 
     private updateGroupSelection() {
-        const updateGroups = this.groupSelection.setData(this.groupSelectionData);
-        updateGroups.exit.remove();
+        const { groupSelection, highlightSelection } = this;
 
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Sector).each(node => node.tag = PieNodeTag.Sector);
-        enterGroups.append(Line).each(node => {
-            node.tag = PieNodeTag.Callout;
-            node.pointerEvents = PointerEvents.None;
-        });
-        enterGroups.append(Text).each(node => {
-            node.tag = PieNodeTag.Label;
-            node.pointerEvents = PointerEvents.None;
-        });
+        const update = (selection: typeof groupSelection, appendLabels: boolean) => {
+            const updateGroups = selection.setData(this.groupSelectionData);
+            updateGroups.exit.remove();
 
-        this.groupSelection = updateGroups.merge(enterGroups);
+            const enterGroups = updateGroups.enter.append(Group);
+            enterGroups.append(Sector).each(node => node.tag = PieNodeTag.Sector);
+            if (appendLabels) {
+                enterGroups.append(Line).each(node => {
+                    node.tag = PieNodeTag.Callout;
+                    node.pointerEvents = PointerEvents.None;
+                });
+                enterGroups.append(Text).each(node => {
+                    node.tag = PieNodeTag.Label;
+                    node.pointerEvents = PointerEvents.None;
+                });
+            }
+
+            return updateGroups.merge(enterGroups);
+        };
+
+        this.groupSelection = update(groupSelection, true);
+        this.highlightSelection = update(highlightSelection, false);
     }
 
     private updateNodes() {
@@ -431,7 +400,12 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        const isVisible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        this.group.visible = isVisible;
+        this.seriesGroup.visible = isVisible;
+        this.highlightGroup.visible = isVisible && this.chart?.highlightedDatum?.series === this;
+
+        this.seriesGroup.opacity = this.getOpacity();
 
         const {
             fills, strokes, fillOpacity, strokeOpacity,
@@ -453,9 +427,8 @@ export class PieSeries extends PolarSeries {
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
-        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
+        const updateSectorFn = (sector: Sector, datum: PieNodeDatum, index: number, isDatumHighlighted: boolean) => {
             const radius = radiusScale.convert(datum.radius);
-            const isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[index % strokes.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -497,10 +470,21 @@ export class PieSeries extends PolarSeries {
             sector.lineDashOffset = this.lineDashOffset;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            sector.opacity = this.getOpacity();
 
             centerOffsets.push(sector.centerOffset);
-        });
+        };
+
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector)
+            .each((node, datum, index) => updateSectorFn(node, datum, index, false));
+        this.highlightSelection.selectByTag<Sector>(PieNodeTag.Sector)
+            .each((node, datum, index) => {
+                const isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
+
+                node.visible = isDatumHighlighted;
+                if (node.visible) {
+                    updateSectorFn(node, datum, index, isDatumHighlighted);
+                }
+            });
 
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
@@ -642,6 +626,5 @@ export class PieSeries extends PolarSeries {
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
-        this.scheduleData();
     }
 }

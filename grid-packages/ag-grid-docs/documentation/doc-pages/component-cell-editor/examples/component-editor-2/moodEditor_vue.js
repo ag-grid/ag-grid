@@ -32,7 +32,7 @@ export default {
 
         onClick(happy) {
             this.setHappy(happy);
-            this.params.api.stopEditing();
+            this.params.stopEditing();
         },
 
         onKeyDown(event) {

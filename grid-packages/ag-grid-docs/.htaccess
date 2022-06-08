@@ -277,6 +277,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/stacked-column/ /angular-charts/gallery/stacked-column/
     Redirect 301 /documentation/angular/charts/time-axis-with-irregular-intervals/ /angular-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/angular/charts/xy-histogram-with-mean-aggregation/ /angular-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /angular-charts/ /angular-charts/overview/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/client-side-model/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
     Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
@@ -352,7 +353,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/grid-size/ /angular-data-grid/grid-size/
     Redirect 301 /documentation/angular/group-cell-renderer/ /angular-data-grid/group-cell-renderer/
     Redirect 301 /documentation/angular/grouping/ /angular-data-grid/grouping/
-    Redirect 301 /documentation/angular/immutable-data/ /angular-data-grid/immutable-data/
+    Redirect 301 /documentation/angular/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /angular-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /documentation/angular/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /documentation/angular/integrated-charts-container/ /angular-data-grid/integrated-charts-container/
     Redirect 301 /documentation/angular/integrated-charts-customisation/ /angular-data-grid/integrated-charts-customisation/
@@ -606,7 +608,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/grid-size/ /javascript-data-grid/grid-size/
     Redirect 301 /documentation/javascript/group-cell-renderer/ /javascript-data-grid/group-cell-renderer/
     Redirect 301 /documentation/javascript/grouping/ /javascript-data-grid/grouping/
-    Redirect 301 /documentation/javascript/immutable-data/ /javascript-data-grid/immutable-data/
+    Redirect 301 /documentation/javascript/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /javascript-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /documentation/javascript/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /documentation/javascript/integrated-charts-container/ /javascript-data-grid/integrated-charts-container/
     Redirect 301 /documentation/javascript/integrated-charts-customisation/ /javascript-data-grid/integrated-charts-customisation/
@@ -773,6 +776,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/stacked-column/ /react-charts/gallery/stacked-column/
     Redirect 301 /documentation/react/charts/time-axis-with-irregular-intervals/ /react-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/react/charts/xy-histogram-with-mean-aggregation/ /react-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /react-charts/ /react-charts/overview/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/client-side-model/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
     Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
@@ -851,7 +855,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/grid-size/ /react-data-grid/grid-size/
     Redirect 301 /documentation/react/group-cell-renderer/ /react-data-grid/group-cell-renderer/
     Redirect 301 /documentation/react/grouping/ /react-data-grid/grouping/
-    Redirect 301 /documentation/react/immutable-data/ /react-data-grid/immutable-data/
+    Redirect 301 /documentation/react/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /react-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /documentation/react/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /documentation/react/integrated-charts-container/ /react-data-grid/integrated-charts-container/
     Redirect 301 /documentation/react/integrated-charts-customisation/ /react-data-grid/integrated-charts-customisation/
@@ -1019,6 +1024,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/stacked-column/ /vue-charts/gallery/stacked-column/
     Redirect 301 /documentation/vue/charts/time-axis-with-irregular-intervals/ /vue-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/vue/charts/xy-histogram-with-mean-aggregation/ /vue-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /vue-charts/ /vue-charts/overview/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/client-side-model/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
     Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
@@ -1096,7 +1102,8 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/grid-size/ /vue-data-grid/grid-size/
     Redirect 301 /documentation/vue/group-cell-renderer/ /vue-data-grid/group-cell-renderer/
     Redirect 301 /documentation/vue/grouping/ /vue-data-grid/grouping/
-    Redirect 301 /documentation/vue/immutable-data/ /vue-data-grid/immutable-data/
+    Redirect 301 /documentation/vue/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /vue-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /documentation/vue/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /documentation/vue/integrated-charts-container/ /vue-data-grid/integrated-charts-container/
     Redirect 301 /documentation/vue/integrated-charts-customisation/ /vue-data-grid/integrated-charts-customisation/
@@ -1332,7 +1339,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-grouping/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid-header-rendering/ /javascript-data-grid/component-header/
     Redirect 301 /javascript-grid-icons/ /javascript-data-grid/custom-icons/
-    Redirect 301 /javascript-grid-immutable-data/ /javascript-data-grid/immutable-data/
+    Redirect 301 /javascript-grid-immutable-data/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid-infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid-insert-remove/ /javascript-data-grid/data-update/
     Redirect 301 /javascript-grid-interfacing-overview/ /javascript-data-grid/grid-interface/
@@ -1533,7 +1540,8 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/grid-size/ /javascript-data-grid/grid-size/
     Redirect 301 /javascript-grid/group-cell-renderer/ /javascript-data-grid/group-cell-renderer/
     Redirect 301 /javascript-grid/grouping/ /javascript-data-grid/grouping/
-    Redirect 301 /javascript-grid/immutable-data/ /javascript-data-grid/immutable-data/
+    Redirect 301 /javascript-grid/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /javascript-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid/index.html /javascript-data-grid/index.html
     Redirect 301 /javascript-grid/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
@@ -1729,7 +1737,8 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/grid-size/ /angular-data-grid/grid-size/
     Redirect 301 /angular-grid/group-cell-renderer/ /angular-data-grid/group-cell-renderer/
     Redirect 301 /angular-grid/grouping/ /angular-data-grid/grouping/
-    Redirect 301 /angular-grid/immutable-data/ /angular-data-grid/immutable-data/
+    Redirect 301 /angular-grid/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /angular-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /angular-grid/index.html /angular-data-grid/index.html
     Redirect 301 /angular-grid/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /angular-grid/integrated-charts/ /angular-data-grid/integrated-charts/
@@ -1929,7 +1938,8 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/grid-size/ /react-data-grid/grid-size/
     Redirect 301 /react-grid/group-cell-renderer/ /react-data-grid/group-cell-renderer/
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
-    Redirect 301 /react-grid/immutable-data/ /react-data-grid/immutable-data/
+    Redirect 301 /react-grid/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /react-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /react-grid/index.html /react-data-grid/index.html
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /react-grid/integrated-charts/ /react-data-grid/integrated-charts/
@@ -2129,7 +2139,8 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/grid-size/ /vue-data-grid/grid-size/
     Redirect 301 /vue-grid/group-cell-renderer/ /vue-data-grid/group-cell-renderer/
     Redirect 301 /vue-grid/grouping/ /vue-data-grid/grouping/
-    Redirect 301 /vue-grid/immutable-data/ /vue-data-grid/immutable-data/
+    Redirect 301 /vue-grid/immutable-data/ https://www.ag-grid.com/
+    Redirect 301 /vue-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /vue-grid/index.html /vue-data-grid/index.html
     Redirect 301 /vue-grid/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /vue-grid/integrated-charts/ /vue-data-grid/integrated-charts/

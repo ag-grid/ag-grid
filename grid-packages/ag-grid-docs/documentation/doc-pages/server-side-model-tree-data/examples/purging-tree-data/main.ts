@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
     field: 'employeeName',
   },
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
   treeData: true,
   columnDefs: columnDefs,
   animateRows: true,

@@ -1,10 +1,10 @@
-import { Observable, reactive } from "./observable";
+import { Observable } from "./observable";
 
 export class Padding extends Observable {
-    @reactive('layoutChange') top: number;
-    @reactive('layoutChange') right: number;
-    @reactive('layoutChange') bottom: number;
-    @reactive('layoutChange') left: number;
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
 
     constructor(top: number = 0, right: number = top, bottom: number = top, left: number = right) {
         super();

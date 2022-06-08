@@ -6,7 +6,7 @@ By default the grid renders values into the cells as strings. If you want someth
 
 <api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
-The cell editor for a column is set via `colDef.cellRenderer` and can be any of the following types:
+The cell renderer for a column is set via `colDef.cellRenderer` and can be any of the following types:
  
 [[only-javascript]]
 |1. `undefined`: Grid renders the value as a string.

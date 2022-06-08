@@ -24,9 +24,10 @@
 |    }
 |
 |    // gets called whenever the cell refreshes
-|    refresh(params: ICellRendererParams) {
+|    refresh(params: ICellRendererParams): boolean {
 |        // set value into cell again
 |        this.cellValue = this.getValueToDisplay(params);
+|        return true;
 |    }
 |
 |    buttonClicked() {

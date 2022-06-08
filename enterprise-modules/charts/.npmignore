@@ -8,3 +8,4 @@ tsconfig.es6.json
 tsconfig.json
 
 dist/**/*.test.*
+*.map

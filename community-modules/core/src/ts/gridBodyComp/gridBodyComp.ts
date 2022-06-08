@@ -31,6 +31,12 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
             <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
         </div>
+        <div class="ag-sticky-top" ref="eStickyTop" role="presentation">
+            <ag-row-container ref="stickyTopLeftContainer" name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
+            <ag-row-container ref="stickyTopCenterContainer" name="${RowContainerName.STICKY_TOP_CENTER}"></ag-row-container>
+            <ag-row-container ref="stickyTopRightContainer" name="${RowContainerName.STICKY_TOP_RIGHT}"></ag-row-container>
+            <ag-row-container ref="stickyTopFullWidthContainer" name="${RowContainerName.STICKY_TOP_FULL_WIDTH}"></ag-row-container>
+        </div>
         <div class="ag-floating-bottom" ref="eBottom" role="presentation">
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
@@ -48,6 +54,7 @@ export class GridBodyComp extends Component {
     @Optional('rangeService') private rangeService: IRangeService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
+    @RefSelector('eStickyTop') private eStickyTop: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
     @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
@@ -75,6 +82,9 @@ export class GridBodyComp extends Component {
             setBottomHeight: height => setHeight(height, this.eBottom),
             setTopDisplay: display => this.eTop.style.display = display,
             setBottomDisplay: display => this.eBottom.style.display = display,
+            setStickyTopHeight: height => this.eStickyTop.style.height = height,
+            setStickyTopTop: top => this.eStickyTop.style.top = top,
+            setStickyTopWidth: width => this.eStickyTop.style.width = width,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
             updateLayoutClasses: (cssClass, params) => {
                 const bodyViewportClassList = this.eBodyViewport.classList;
@@ -100,7 +110,14 @@ export class GridBodyComp extends Component {
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
-        this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
+        this.ctrl.setComp(
+            compProxy,
+            this.getGui(),
+            this.eBodyViewport,
+            this.eTop,
+            this.eBottom,
+            this.eStickyTop
+        );
 
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);

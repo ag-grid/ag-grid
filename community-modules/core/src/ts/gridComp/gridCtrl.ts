@@ -66,6 +66,12 @@ export class GridCtrl extends BeanStub {
         this.ctrlsService.registerGridCtrl(this);
     }
 
+    public isDetailGrid(): boolean {
+        const el = this.focusService.findTabbableParent(this.getGui());
+
+        return el?.getAttribute('row-id')?.startsWith('detail') || false;
+    }
+
     public showDropZones(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
     }

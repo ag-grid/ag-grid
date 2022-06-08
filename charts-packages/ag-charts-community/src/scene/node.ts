@@ -8,6 +8,83 @@ export enum PointerEvents {
     None
 }
 
+export enum RedrawType {
+    NONE, // No change in rendering.
+
+    // Canvas doesn't need clearing, an incremental re-rerender is sufficient.
+    TRIVIAL, // Non-positional change in rendering.
+
+    // Group needs clearing, a semi-incremental re-render is sufficient.
+    MINOR, // Small change in rendering, potentially affecting other elements in the same group.
+
+    // Canvas needs to be cleared for these redraw types.
+    MAJOR, // Significant change in rendering.
+}
+
+export type RenderContext = {
+    ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+    forceRender: boolean;
+    resized: boolean;
+    clipBBox?: BBox;
+    stats?: {
+        nodesRendered: number;
+        nodesSkipped: number;
+        layersRendered: number;
+        layersSkipped: number;
+    };
+}
+
+export function SceneChangeDetection(opts?: {
+    redraw?: RedrawType,
+    type?: 'normal' | 'transform' | 'path' | 'font',
+    convertor?: (o: any) => any,
+    changeCb?: (o: any) => any,
+}) {
+    const { redraw = RedrawType.TRIVIAL, type = 'normal', changeCb, convertor } = opts || {};
+    
+    const win = typeof window === "undefined" ? undefined : window;
+    const debug = (win as any)?.agChartsSceneChangeDetectionDebug != null;
+
+    return function (target: any, key: string) {
+        // `target` is either a constructor (static member) or prototype (instance member)
+        const privateKey = `__${key}`;
+
+        if (!target[key]) {
+            // Remove all conditional logic from runtime - generate a setter with the exact necessary
+            // steps, as these setters are called a LOT during update cycles.        
+            const setterJs = `
+                ${debug ? 'var setCount = 0;' : ''}
+                function set${key}(value) {
+                    const oldValue = this.${privateKey};
+                    ${convertor ? 'value = convertor(value);' : ''}
+                    if (value !== oldValue) {
+                        this.${privateKey} = value;
+                        ${debug ? `if (window.agChartsSceneChangeDetectionDebug) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
+                        ${type === 'normal' ? 'this.markDirty(this, ' + redraw + ');' : ''}
+                        ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
+                        ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
+                        ${type === 'font' ? `if (!this._dirtyFont) { this._dirtyFont = true; this.markDirty(this, redraw); }` : ''}
+                        ${changeCb ? 'changeCb(this);' : ''}
+                    }
+                };
+                set${key};
+            `;
+            const getterJs = `
+                function get${key}() {
+                    return this.${privateKey};
+                };
+                get${key};
+            `;
+            Object.defineProperty(target, key, {
+                set: eval(setterJs),
+                get: eval(getterJs),
+                enumerable: true,
+                configurable: false,
+            });
+        }
+    }
+}
+
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -49,15 +126,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Note: _setScene and _setParent methods are not meant for end users,
     // but they are not quite private either, rather, they have package level visibility.
 
+    protected _debug?: Scene['debug'];
     protected _scene?: Scene;
     _setScene(value?: Scene) {
         this._scene = value;
+        this._debug = value?.debug;
 
-        const children = this.children;
-        const n = children.length;
-
-        for (let i = 0; i < n; i++) {
-            children[i]._setScene(value);
+        for (const child of this.children) {
+            child._setScene(value);
         }
     }
     get scene(): Scene | undefined {
@@ -65,9 +141,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     private _parent?: Node;
-    _setParent(value?: Node) {
-        this._parent = value;
-    }
     get parent(): Node | undefined {
         return this._parent;
     }
@@ -139,11 +212,11 @@ export abstract class Node { // Don't confuse with `window.Node`.
             this._children.push(node);
             this.childSet[node.id] = true;
 
-            node._setParent(this);
+            node._parent = this;
             node._setScene(this.scene);
         }
 
-        this.dirty = true;
+        this.markDirty(this, RedrawType.MAJOR);
     }
 
     appendChild<T extends Node>(node: T): T {
@@ -161,10 +234,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
         this._children.push(node);
         this.childSet[node.id] = true;
 
-        node._setParent(this);
+        node._parent = this;
         node._setScene(this.scene);
 
-        this.dirty = true;
+        this.markDirty(this, RedrawType.MAJOR);
 
         return node;
     }
@@ -176,9 +249,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent();
+                node._parent = undefined;
                 node._setScene();
-                this.dirty = true;
+                this.markDirty(this, RedrawType.MAJOR);
 
                 return node;
             }
@@ -207,14 +280,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (i >= 0) {
                 this._children.splice(i, 0, node);
                 this.childSet[node.id] = true;
-                node._setParent(this);
+                node._parent = this;
                 node._setScene(this.scene);
             } else {
                 throw new Error(`${nextNode} has ${parent} as the parent, `
                     + `but is not in its list of children.`);
             }
 
-            this.dirty = true;
+            this.markDirty(this, RedrawType.MAJOR);
         } else {
             this.append(node);
         }
@@ -265,37 +338,16 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     private _dirtyTransform = false;
-    set dirtyTransform(value: boolean) {
-        this._dirtyTransform = value;
-        if (value) {
-            this.dirty = true;
-        }
-    }
-    get dirtyTransform(): boolean {
-        return this._dirtyTransform;
+    markDirtyTransform() {
+        this._dirtyTransform = true;
+        this.markDirty(this, RedrawType.MAJOR);
     }
 
-    private _scalingX: number = 1;
-    set scalingX(value: number) {
-        if (this._scalingX !== value) {
-            this._scalingX = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get scalingX(): number {
-        return this._scalingX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingX: number = 1;
 
-    private _scalingY: number = 1;
-    set scalingY(value: number) {
-        if (this._scalingY !== value) {
-            this._scalingY = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get scalingY(): number {
-        return this._scalingY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingY: number = 1;
 
     /**
      * The center of scaling.
@@ -303,65 +355,25 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * determined automatically, as the center of the bounding box
      * of a node.
      */
-    private _scalingCenterX: number | null = null;
-    set scalingCenterX(value: number | null) {
-        if (this._scalingCenterX !== value) {
-            this._scalingCenterX = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get scalingCenterX(): number | null {
-        return this._scalingCenterX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingCenterX: number | null = null;
 
-    private _scalingCenterY: number | null = null;
-    set scalingCenterY(value: number | null) {
-        if (this._scalingCenterY !== value) {
-            this._scalingCenterY = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get scalingCenterY(): number | null {
-        return this._scalingCenterY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    scalingCenterY: number | null = null;
 
-    private _rotationCenterX: number | null = null;
-    set rotationCenterX(value: number | null) {
-        if (this._rotationCenterX !== value) {
-            this._rotationCenterX = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get rotationCenterX(): number | null {
-        return this._rotationCenterX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotationCenterX: number | null = null;
 
-    private _rotationCenterY: number | null = null;
-    set rotationCenterY(value: number | null) {
-        if (this._rotationCenterY !== value) {
-            this._rotationCenterY = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get rotationCenterY(): number | null {
-        return this._rotationCenterY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotationCenterY: number | null = null;
 
     /**
      * Rotation angle in radians.
      * The value is set as is. No normalization to the [-180, 180) or [0, 360)
      * interval is performed.
      */
-    private _rotation: number = 0;
-    set rotation(value: number) {
-        if (this._rotation !== value) {
-            this._rotation = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get rotation(): number {
-        return this._rotation;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    rotation: number = 0;
 
     /**
      * For performance reasons the rotation angle's internal representation
@@ -382,27 +394,11 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this.rotation / Math.PI * 180;
     }
 
-    private _translationX: number = 0;
-    set translationX(value: number) {
-        if (this._translationX !== value) {
-            this._translationX = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get translationX(): number {
-        return this._translationX;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    translationX: number = 0;
 
-    private _translationY: number = 0;
-    set translationY(value: number) {
-        if (this._translationY !== value) {
-            this._translationY = value;
-            this.dirtyTransform = true;
-        }
-    }
-    get translationY(): number {
-        return this._translationY;
-    }
+    @SceneChangeDetection({ type: 'transform' })
+    translationY: number = 0;
 
     containsPoint(x: number, y: number): boolean {
         return false;
@@ -451,6 +447,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     computeTransformMatrix() {
+        if (!this._dirtyTransform) {
+            return;
+        }
+        
         // TODO: transforms without center of scaling and rotation correspond directly
         //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
         //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
@@ -508,7 +508,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         const tx4 = scx * (1 - sx) - rcx;
         const ty4 = scy * (1 - sy) - rcy;
 
-        this.dirtyTransform = false;
+        this._dirtyTransform = false;
 
         this.matrix.setElements([
             cos * sx, sin * sx,
@@ -518,65 +518,93 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    abstract render(ctx: CanvasRenderingContext2D): void;
+    render(renderCtx: RenderContext): void {
+        const { stats } = renderCtx;
+        
+        this._dirty = RedrawType.NONE;
 
-    /**
-     * Each time a property of the node that effects how it renders changes
-     * the `dirty` property of the node should be set to `true`. The change
-     * to the `dirty` property of the node will propagate up to its parents
-     * and eventually to the scene, at which point an animation frame callback
-     * will be scheduled to rerender the scene and its nodes and reset the `dirty`
-     * flags of all nodes and the {@link Scene._dirty | Scene} back to `false`.
-     * Since changes to node properties are not rendered immediately, it's possible
-     * to change as many properties on as many nodes as needed and the rendering
-     * will still only happen once in the next animation frame callback.
-     * The animation frame callback is only scheduled if it hasn't been already.
-     */
-    private _dirty = true;
-    set dirty(value: boolean) {
-        // TODO: check if we are already dirty (e.g. if (this._dirty !== value))
-        //       if we are, then all parents and the scene have been
-        //       notified already, and we are doing redundant work
-        //       (but test if this is indeed the case)
-        this._dirty = value;
-        if (value) {
-            if (this.parent) {
-                this.parent.dirty = true;
-            } else if (this.scene) {
-                this.scene.dirty = true;
-            }
+        if (stats) stats.nodesRendered++;
+    }
+
+    clearBBox(ctx: CanvasRenderingContext2D) {
+        const bbox = this.computeBBox();
+        if (bbox == null) { return; }
+
+        const { x, y, width, height } = bbox;
+        const topLeft = this.transformPoint(x, y);
+        const bottomRight = this.transformPoint(x + width, y + height);
+        ctx.clearRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+    }
+
+    private _dirty: RedrawType = RedrawType.MAJOR;
+    markDirty(_source: Node, type = RedrawType.TRIVIAL, parentType = type) {
+        if (this._dirty > type) {
+            return;
+        }
+
+        if (this._dirty === type && type === parentType) {
+            return;
+        }
+
+        this._dirty = type;
+        if (this.parent) {
+            this.parent.markDirty(this, parentType);
+        } else if (this.scene) {
+            this.scene.markDirty();
         }
     }
-    get dirty(): boolean {
+    get dirty() {
         return this._dirty;
     }
 
-    private _visible: boolean = true;
-    set visible(value: boolean) {
-        if (this._visible !== value) {
-            this._visible = value;
-            this.dirty = true;
+    markClean(opts?: {force?: boolean, recursive?: boolean}) {
+        const { force = false, recursive = true } = opts || {};
+
+        if (this._dirty === RedrawType.NONE && !force) {
+            return;
+        }
+
+        this._dirty = RedrawType.NONE;
+
+        if (recursive) {
+            for (const child of this.children) {
+                child.markClean();
+            }
         }
     }
-    get visible(): boolean {
-        return this._visible;
-    }
+
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o.visibilityChanged() })
+    visible: boolean = true;
+    protected visibilityChanged() {}
 
     protected dirtyZIndex: boolean = false;
 
-    private _zIndex: number = 0;
-    set zIndex(value: number) {
-        if (this._zIndex !== value) {
-            this._zIndex = value;
-            if (this.parent) {
-                this.parent.dirtyZIndex = true;
+    @SceneChangeDetection({
+        redraw: RedrawType.MINOR,
+        changeCb: (o) => {
+            if (o.parent) {
+                o.parent.dirtyZIndex = true;
             }
-            this.dirty = true;
-        }
-    }
-    get zIndex(): number {
-        return this._zIndex;
-    }
+        },
+    })
+    zIndex: number = 0;
 
     pointerEvents: PointerEvents = PointerEvents.All;
+
+    get nodeCount() {
+        const { children } = this;
+
+        let count = 1;
+        let dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
+        let visibleCount = this.visible ? 1 : 0;
+
+        for (const child of this._children) {
+            const { count: childCount, visibleCount: childVisibleCount, dirtyCount: childDirtyCount } = child.nodeCount;
+            count += childCount;
+            visibleCount += childVisibleCount;
+            dirtyCount += childDirtyCount;
+        }
+
+        return { count, visibleCount, dirtyCount };
+    }
 }

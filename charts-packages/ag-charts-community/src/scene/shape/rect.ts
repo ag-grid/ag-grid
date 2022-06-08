@@ -1,8 +1,8 @@
-import { Path } from "./path";
-import { Shape } from "./shape";
+import { Path, ScenePathChangeDetection } from "./path";
 import { BBox } from "../bbox";
 import { LinearGradient } from "../gradient/linearGradient";
 import { Color } from "../../util/color";
+import { Shape } from "./shape";
 
 export enum RectSizing {
     Content,
@@ -13,93 +13,39 @@ export class Rect extends Path {
 
     static className = 'Rect';
 
-    private _x: number = 0;
-    set x(value: number) {
-        if (this._x !== value) {
-            this._x = value;
-            this.dirtyPath = true;
-        }
-    }
-    get x(): number {
-        return this._x;
-    }
+    @ScenePathChangeDetection()
+    x: number = 0;
 
-    private _y: number = 0;
-    set y(value: number) {
-        if (this._y !== value) {
-            this._y = value;
-            this.dirtyPath = true;
-        }
-    }
-    get y(): number {
-        return this._y;
-    }
+    @ScenePathChangeDetection()
+    y: number = 0;
 
-    private _width: number = 10;
-    set width(value: number) {
-        if (this._width !== value) {
-            this._width = value;
-            this.dirtyPath = true;
-        }
-    }
-    get width(): number {
-        return this._width;
-    }
+    @ScenePathChangeDetection()
+    width: number = 10;
 
-    private _height: number = 10;
-    set height(value: number) {
-        if (this._height !== value) {
-            this._height = value;
-            this.dirtyPath = true;
-        }
-    }
-    get height(): number {
-        return this._height;
-    }
+    @ScenePathChangeDetection()
+    height: number = 10;
 
-    private _radius: number = 0;
-    set radius(value: number) {
-        if (this._radius !== value) {
-            this._radius = value;
-            this.dirtyPath = true;
-        }
-    }
-    get radius(): number {
-        return this._radius;
-    }
+    @ScenePathChangeDetection()
+    radius: number = 0;
 
     /**
      * If `true`, the rect is aligned to the pixel grid for crisp looking lines.
      * Animated rects may not look nice with this option enabled, for example
      * when a rect is translated by a sub-pixel value on each frame.
      */
-    private _crisp: boolean = false;
-    set crisp(value: boolean) {
-        if (this._crisp !== value) {
-            this._crisp = value;
-            this.dirtyPath = true;
-        }
-    }
-    get crisp(): boolean {
-        return this._crisp;
-    }
+    @ScenePathChangeDetection()
+    crisp: boolean = false;
 
-    private _gradient: boolean = false;
-    set gradient(value: boolean) {
-        if (this._gradient !== value) {
-            this._gradient = value;
-            this.updateGradientInstance();
-            this.dirty = true;
-        }
-    }
-    get gradient(): boolean {
-        return this._gradient;
-    }
+    @ScenePathChangeDetection({ changeCb: (r) => r.updateGradientInstance() })
+    gradient: boolean = false;
 
+    private gradientFill?: string;
     private gradientInstance?: LinearGradient;
+
     private updateGradientInstance() {
+        const { fill } = this;
+
         if (this.gradient) {
-            const { fill } = this;
             if (fill) {
                 const gradient = new LinearGradient();
                 gradient.angle = 270;
@@ -115,53 +61,27 @@ export class Rect extends Path {
         } else {
             this.gradientInstance = undefined;
         }
-    }
 
-    set fill(value: string | undefined) {
-        if (this._fill !== value) {
-            this._fill = value;
-            this.updateGradientInstance();
-            this.dirty = true;
-        }
-    }
-    get fill(): string | undefined {
-        return this._fill;
-    }
-
-    private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            // Normally, when the `lineWidth` changes, we only need to repaint the rect
-            // without updating the path. If the `isCrisp` is set to `true` however,
-            // we need to update the path to make sure the new stroke aligns to
-            // the pixel grid. This is the reason we override the `lineWidth` setter
-            // and getter here.
-            if (this.crisp || this.sizing === RectSizing.Border) {
-                this.dirtyPath = true;
-            } else {
-                this.effectiveStrokeWidth = value;
-                this.dirty = true;
-            }
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
+        this.gradientFill = fill;
     }
 
     /**
      * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
      */
-    private _sizing: RectSizing = RectSizing.Content;
-    set sizing(value: RectSizing) {
-        if (this._sizing !== value) {
-            this._sizing = value;
-            this.dirtyPath = true;
+    @ScenePathChangeDetection({ changeCb: (o) => o.updateGradientInstance() })
+    sizing: RectSizing = RectSizing.Content;
+
+    private lastUpdatePathStrokeWidth: number = Shape.defaultStyles.strokeWidth;
+
+    protected isDirtyPath() {
+        if (this.lastUpdatePathStrokeWidth !== this.strokeWidth) {
+            return this.crisp || this.sizing === RectSizing.Border;
         }
+
+        return false;
     }
-    get sizing(): RectSizing {
-        return this._sizing;
-    }
+
+    private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
     protected updatePath() {
         const borderSizing = this.sizing === RectSizing.Border;
@@ -189,6 +109,7 @@ export class Rect extends Path {
         }
 
         this.effectiveStrokeWidth = strokeWidth;
+        this.lastUpdatePathStrokeWidth = this.strokeWidth;
 
         if (this.crisp && !borderSizing) {
             const { alignment: a, align: al } = this;
@@ -210,10 +131,6 @@ export class Rect extends Path {
         return bbox.containsPoint(point.x, point.y);
     }
 
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
-
     protected fillStroke(ctx: CanvasRenderingContext2D) {
         if (!this.scene) {
             return;
@@ -222,6 +139,10 @@ export class Rect extends Path {
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
+            if (this.fill !== this.gradientFill) {
+                this.updateGradientInstance();
+            }
+
             if (this.gradientInstance) {
                 ctx.fillStyle = this.gradientInstance.createGradient(ctx, this.computeBBox());
             } else {

@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
   },
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
 
   // fetch 100 rows at a time
   cacheBlockSize: 100,

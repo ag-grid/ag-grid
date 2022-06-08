@@ -167,6 +167,9 @@
       "topCenterRowContainerCtrl": "RowContainerCtrl",
       "topLeftRowContainerCtrl": "RowContainerCtrl",
       "topRightRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopCenterRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopLeftRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
       "gridHeaderCtrl": "GridHeaderCtrl",
       "centerHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
@@ -1464,6 +1467,7 @@
       "clipboardDeliminator?": "string",
       "clipboardDelimiter?": "string",
       "suppressCopyRowsToClipboard?": "boolean",
+      "suppressCopySingleCellRanges?": "boolean",
       "suppressLastEmptyLineOnPaste?": "boolean",
       "suppressClipboardPaste?": "boolean",
       "suppressClipboardApi?": "boolean",
@@ -1534,8 +1538,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -1637,12 +1642,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -1723,6 +1733,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -1836,8 +1848,9 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
-      "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
+      "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
       "suppressClipboardPaste?": "/** Set to `true` to turn off paste operations within the grid. */",
       "suppressClipboardApi?": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
@@ -2010,15 +2023,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -2089,8 +2107,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -2100,7 +2120,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -2182,8 +2202,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "RowGroupingDisplayType": {
@@ -2381,13 +2401,15 @@
     "meta": {},
     "type": {
       "storeType?": "ServerSideStoreType",
+      "infiniteScroll?": "boolean",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "storeType?": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
-      "maxBlocksInCache?": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
-      "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
+      "storeType?": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level. */",
+      "maxBlocksInCache?": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
     }
   },
   "LoadingCellRendererSelectorFunc": {
@@ -5338,6 +5360,9 @@
       "setTopDisplay(display: string)": "void",
       "setBottomHeight(height: number)": "void",
       "setBottomDisplay(display: string)": "void",
+      "setStickyTopHeight(height: string)": "void",
+      "setStickyTopTop(offsetTop: string)": "void",
+      "setStickyTopWidth(width: string)": "void",
       "setColumnCount(count: number)": "void",
       "setRowCount(count: number)": "void",
       "setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean)": "void",
@@ -5379,12 +5404,20 @@
       "TOP_RIGHT = 'topRight'",
       "TOP_CENTER = 'topCenter'",
       "TOP_FULL_WIDTH = 'topFullWidth'",
+      "STICKY_TOP_LEFT = 'stickyTopLeft'",
+      "STICKY_TOP_RIGHT = 'stickyTopRight'",
+      "STICKY_TOP_CENTER = 'stickyTopCenter'",
+      "STICKY_TOP_FULL_WIDTH = 'stickyTopFullWidth'",
       "BOTTOM_LEFT = 'bottomLeft'",
       "BOTTOM_RIGHT = 'bottomRight'",
       "BOTTOM_CENTER = 'bottomCenter'",
       "BOTTOM_FULL_WIDTH = 'bottomFullWidth'"
     ],
     "docs": [
+      null,
+      null,
+      null,
+      null,
       null,
       null,
       null,
@@ -5482,8 +5515,7 @@
       "setWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setColId(id: string)": "void",
-      "setAriaLabel(id?: string)": "void",
-      "setAriaDescribedBy(id?: string)": "void",
+      "setAriaDescription(description?: string)": "void",
       "setAriaSort(sort?: ColumnSortState)": "void",
       "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "getUserCompInstance()": "IHeader | undefined",
@@ -8188,7 +8220,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -8460,7 +8492,7 @@
     "type": {
       "ref?": "string",
       "styleId?": "string",
-      "data": "ExcelData",
+      "data?": "ExcelData",
       "mergeAcross?": "number",
       "collapsibleRanges?": "number[][]"
     }
@@ -8549,11 +8581,11 @@
       "suppressTextAsCDATA?": "boolean",
       "mimeType?": "string",
       "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined",
-      "prependContent?": "ExcelCell[][]",
-      "appendContent?": "ExcelCell[][]",
-      "customHeader?": "ExcelCell[][]",
-      "customFooter?": "ExcelCell[][]",
-      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelCell[][] | undefined",
+      "prependContent?": "ExcelRow[]",
+      "appendContent?": "ExcelRow[]",
+      "customHeader?": "ExcelRow[]",
+      "customFooter?": "ExcelRow[]",
+      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelRow[] | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
       "rowNodes?": "RowPosition[]",
@@ -8840,7 +8872,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -9190,7 +9222,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -9326,7 +9358,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -9387,14 +9419,13 @@
     "type": {
       "valueColChanged": "boolean",
       "secondaryColChanged": "boolean",
-      "alwaysReset": "boolean",
       "changedColumns": "string[]"
     }
   },
   "ServerSideStoreState": {
     "meta": {},
     "type": {
-      "type": "ServerSideStoreType",
+      "infiniteScroll": "boolean",
       "route": "string[]",
       "rowCount": "number",
       "lastRowIndexKnown?": "boolean",
@@ -9403,13 +9434,13 @@
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "type": "/** Store type, `partial` or `full` */",
+      "infiniteScroll": "/** True if infininte scrolling */",
       "route": "/** The route that identifies this store. */",
       "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
-      "lastRowIndexKnown?": "/** Partial store only.\n * Whether the last row index is know. */",
+      "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
       "info?": "/** Any extra info provided to the store, when data was loaded. */",
-      "maxBlocksInCache?": "/** Partial store only.\n * Max blocks allowed in the store. */",
-      "cacheBlockSize?": "/** Partial store only.\n * The size (number of rows) of each block. */"
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */"
     }
   },
   "SetFilterModelValue": {
@@ -11240,7 +11271,7 @@
     "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
-      "rowCount?": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
       "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },
@@ -11737,51 +11768,52 @@
   "IHeaderAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: IHeaderParams)": "boolean",
-      "agInit(params: IHeaderParams)": "void"
+      "agInit(params: IHeaderParams)": "void",
+      "refresh(params: IHeaderParams)": "boolean"
     },
     "docs": {
-      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
-      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */"
     }
   },
   "IFloatingFilterAngularComp": {
     "meta": { "typeParams": ["P"] },
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IDateAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IDateParams)": "void",
       "getDate()": "Date | null",
       "setDate(date: Date | null)": "void",
       "setDisabled?(disabled: boolean)": "void",
       "setInputPlaceholder?(placeholder: string)": "void",
       "setInputAriaLabel?(placeholder: string)": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IDateParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */",
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
       "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IFilterAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11789,10 +11821,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11800,24 +11832,24 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ICellRendererAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "ICellEditorAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11825,10 +11857,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11836,24 +11868,24 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgRendererComponent": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "AgEditorComponent": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11861,10 +11893,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11872,13 +11904,13 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11886,10 +11918,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11897,21 +11929,20 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFloatingFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ILoadingCellRendererAngularComp": {
@@ -12305,6 +12336,7 @@
       "clipboardDeliminator?": "string",
       "clipboardDelimiter?": "string",
       "suppressCopyRowsToClipboard?": "boolean",
+      "suppressCopySingleCellRanges?": "boolean",
       "suppressLastEmptyLineOnPaste?": "boolean",
       "suppressClipboardPaste?": "boolean",
       "suppressClipboardApi?": "boolean",
@@ -12375,8 +12407,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -12478,12 +12511,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -12564,6 +12602,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -12677,8 +12717,9 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
-      "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
+      "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
       "suppressClipboardPaste?": "/** Set to `true` to turn off paste operations within the grid. */",
       "suppressClipboardApi?": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
@@ -12851,15 +12892,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -12930,8 +12976,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -12941,7 +12989,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -13023,8 +13071,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgReactUiProps": {
@@ -13053,6 +13101,7 @@
       "clipboardDeliminator?": "string",
       "clipboardDelimiter?": "string",
       "suppressCopyRowsToClipboard?": "boolean",
+      "suppressCopySingleCellRanges?": "boolean",
       "suppressLastEmptyLineOnPaste?": "boolean",
       "suppressClipboardPaste?": "boolean",
       "suppressClipboardApi?": "boolean",
@@ -13123,8 +13172,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -13226,12 +13276,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -13312,6 +13367,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -13425,8 +13482,9 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
-      "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
+      "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
       "suppressClipboardPaste?": "/** Set to `true` to turn off paste operations within the grid. */",
       "suppressClipboardApi?": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
@@ -13599,15 +13657,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -13678,8 +13741,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -13689,7 +13754,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -13771,8 +13836,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgGridReactProps": {
@@ -13805,6 +13870,7 @@
       "clipboardDeliminator?": "string",
       "clipboardDelimiter?": "string",
       "suppressCopyRowsToClipboard?": "boolean",
+      "suppressCopySingleCellRanges?": "boolean",
       "suppressLastEmptyLineOnPaste?": "boolean",
       "suppressClipboardPaste?": "boolean",
       "suppressClipboardApi?": "boolean",
@@ -13875,8 +13941,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -13978,12 +14045,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -14064,6 +14136,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -14177,8 +14251,9 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
-      "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
+      "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
+      "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
       "suppressClipboardPaste?": "/** Set to `true` to turn off paste operations within the grid. */",
       "suppressClipboardApi?": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
@@ -14351,15 +14426,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -14430,8 +14510,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -14441,7 +14523,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -14523,8 +14605,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgReactComponent": {

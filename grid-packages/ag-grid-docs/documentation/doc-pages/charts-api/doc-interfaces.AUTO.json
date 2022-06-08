@@ -4,6 +4,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } }
   },
+  "TickCount": {},
   "AxisLabelFormatterParams": {
     "value": { "type": { "returnType": "any", "optional": false } },
     "index": { "type": { "returnType": "number", "optional": false } },
@@ -3144,6 +3145,7 @@
     "color": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
   },
+  "ChartUpdateType": {},
   "Point": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
@@ -3269,6 +3271,8 @@
   "Coordinate": {},
   "CumulativeValue": {},
   "ProcessedXDatum": {},
+  "AreaSeriesTag": {},
+  "AreaSeriesGroup": {},
   "BarSeriesNodeClickEvent": {
     "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
     "event": { "type": { "returnType": "MouseEvent", "optional": false } },
@@ -3299,6 +3303,7 @@
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
+    "colorIndex": { "type": { "returnType": "number", "optional": false } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "label": {
       "type": {
@@ -3332,6 +3337,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },
+  "BarSeriesGroup": {},
   "CartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
@@ -3674,19 +3680,44 @@
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "PointerEvents": {},
+  "RedrawType": {},
+  "RenderContext": {},
   "DebugOptions": {
-    "renderFrameIndex": {
-      "type": { "returnType": "boolean", "optional": false }
+    "stats": {
+      "type": {
+        "returnType": "false | 'basic' | 'detailed'",
+        "optional": false
+      }
     },
+    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
+    },
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "SceneOptions": {
+    "document": { "type": { "returnType": "Document", "optional": false } },
+    "mode": {
+      "type": {
+        "returnType": "'simple' | 'composite' | 'dom-composite' | 'adv-composite'",
+        "optional": false
+      }
+    }
+  },
+  "SceneLayer": {
+    "id": { "type": { "returnType": "number", "optional": false } },
+    "name": { "type": { "returnType": "string", "optional": true } },
+    "zIndex": { "type": { "returnType": "number", "optional": false } },
+    "canvas": {
+      "type": {
+        "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
+        "optional": false
+      }
     }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
-  "NodeCallback": { "meta": { "typeParams": ["G", "GDatum"] } },
   "NodeSelector": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
-  "NodeSelectorAll": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
   "ArcType": {},
   "RectSizing": {},
   "ShapeLineCap": {},

@@ -8,7 +8,6 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   rowSelection: 'multiple',
-  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',

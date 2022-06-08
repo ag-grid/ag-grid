@@ -56,7 +56,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
         ctrl.setComp(compProxy);
 
-    }, 'headerRowComp.main');
+    });
 
     const style = useMemo( ()=> ({
         transform: transform,

@@ -55,7 +55,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
             context.destroyBean(ctrl);
         };
 
-    }, 'tabGuard');
+    });
 
     const createTabGuard = (side: 'top' | 'bottom') => (
         <div 

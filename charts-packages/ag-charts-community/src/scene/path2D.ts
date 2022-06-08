@@ -6,8 +6,11 @@ export class Path2D {
     // to minimize the number of allocations.
 
     private xy?: [number, number];
-    readonly commands: string[] = [];
-    readonly params: number[] = [];
+    private previousCommands: string[] = [];
+    private previousParams: number[] = [];
+    private previousClosedPath: boolean = false;
+    commands: string[] = [];
+    params: number[] = [];
 
     private static splitCommandsRe = /(?=[AaCcHhLlMmQqSsTtVvZz])/g;
     private static matchParamsRe = /-?[0-9]*\.?\d+/g;
@@ -16,15 +19,40 @@ export class Path2D {
     private static xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
     private static xmlns = 'http://www.w3.org/2000/svg';
 
-    draw(ctx: CanvasRenderingContext2D) {
+    isDirty() {
+        if (this._closedPath !== this.previousClosedPath) {
+            return true;
+        }
+        if (this.previousCommands.length !== this.commands.length) {
+            return true;
+        }
+        if (this.previousParams.length !== this.params.length) {
+            return true;
+        }
+
+        for (let i = 0; i < this.commands.length; i++) {
+            if (this.commands[i] !== this.previousCommands[i]) {
+                return true;
+            }
+        }
+        
+        for (let i = 0; i < this.params.length; i++) {
+            if (this.params[i] !== this.previousParams[i]) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    draw(ctx: CanvasDrawPath & CanvasPath) {
         const commands = this.commands;
         const params = this.params;
-        const n = commands.length;
         let j = 0;
 
         ctx.beginPath();
-        for (let i = 0; i < n; i++) {
-            switch (commands[i]) {
+        for (const command of commands) {
+            switch (command) {
                 case 'M':
                     ctx.moveTo(params[j++], params[j++]);
                     break;
@@ -376,9 +404,17 @@ export class Path2D {
         }
     }
 
-    clear() {
-        this.commands.length = 0;
-        this.params.length = 0;
+    clear({ trackChanges } = { trackChanges: false }) {
+        if (trackChanges) {
+            this.previousCommands = this.commands;
+            this.previousParams = this.params;
+            this.previousClosedPath = this._closedPath;
+            this.commands = [];
+            this.params = [];
+        } else {
+            this.commands.length = 0;
+            this.params.length = 0;
+        }
         this.xy = undefined;
         this._closedPath = false;
     }

@@ -144,8 +144,8 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.0.1",
-|    "ag-grid-vue3": "^27.0.1",
+|    "ag-grid-community": "^27.1.0",
+|    "ag-grid-vue3": "^27.1.0",
 |    ...
 | ```
 |
@@ -344,8 +344,8 @@
 |
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` property.
-| This example demonstrates consuming the `cellClicked` event.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `@[event-name]` property.
+| This example demonstrates consuming the Cell Clicked event via the `@cell-clicked` property.
 |
 |```jsx
 |  <ag-grid-vue
@@ -393,9 +393,9 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.0.1",
-|    "ag-grid-enterprise": "^27.0.1",
-|    "ag-grid-vue3": "^27.0.1",
+|    "ag-grid-community": "^27.1.0",
+|    "ag-grid-enterprise": "^27.1.0",
+|    "ag-grid-vue3": "^27.1.0",
 |    ...
 | ```
 |

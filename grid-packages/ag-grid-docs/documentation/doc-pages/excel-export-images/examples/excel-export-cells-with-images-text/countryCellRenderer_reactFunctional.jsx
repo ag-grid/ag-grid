@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default (props) => (
-    <React.Fragment>
-        <img alt={props.data.country} src={props.context.base64flags[props.context.countryCodes[props.data.country]]} />
-    </React.Fragment>
+export default ({data, context}) => (
+    <div>
+        <img alt={data.country} src={context.base64flags[context.countryCodes[data.country]]} /> {data.country}
+    </div>
 )

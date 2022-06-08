@@ -43,7 +43,6 @@ const gridOptions: GridOptions = {
         return params.data.product
     },
     rowSelection: 'multiple',
-    serverSideStoreType: 'full',
     enableCellChangeFlash: true,
     columnDefs: columnDefs,
     // use the enterprise row model

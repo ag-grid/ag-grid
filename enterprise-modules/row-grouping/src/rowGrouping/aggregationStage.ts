@@ -281,21 +281,6 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext(),
-            // the three things below are for logging warning messages in case anyone is treating
-            // the params object as an array. in previous grid versions, we didn't pass params object,
-            // but passed values array instead.
-            forEach: (callback: (value: any, index: number, array: any[]) => void, thisArg?: any) => {
-                deprecationWarning();
-                return values.forEach(callback, thisArg);
-            },
-            get length() {
-                deprecationWarning();
-                return values.length;
-            },
-            set length(val: number) {
-                deprecationWarning();
-                values.length = val;
-            }
         } as any; // the "as any" is needed to allow the deprecation warning messages
 
         return aggFuncAny(params);

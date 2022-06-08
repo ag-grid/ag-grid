@@ -103,6 +103,14 @@
     "description": "/** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */",
     "type": { "returnType": "string" }
   },
+  "sticky": {
+    "description": "/** When true, this row will appear in the top */",
+    "type": { "returnType": "boolean" }
+  },
+  "stickyRowTop": {
+    "description": "/** If row is pinned, then pinnedRowTop is used rather than rowTop */",
+    "type": { "returnType": "number" }
+  },
   "quickFilterAggregateText": {
     "description": "/** If using quick filter, stores a string representation of the row for searching against. */",
     "type": { "returnType": "string | null" }
@@ -303,6 +311,7 @@
     "type": { "arguments": { "uiLevel": "number" }, "returnType": "void" }
   },
   "setExpanded": {
+    "description": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse. */",
     "type": {
       "arguments": {
         "expanded": "boolean",

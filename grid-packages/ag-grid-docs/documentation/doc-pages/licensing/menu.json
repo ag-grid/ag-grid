@@ -84,12 +84,7 @@
           },
           {
             "title": "Videos",
-            "url": "/videos/",
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ]
+            "url": "/videos/"
           }
         ]
       },
@@ -309,11 +304,29 @@
             "items": [
               {
                 "title": "Packages",
-                "url": "/packages/"
+                "url": "/packages/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-packages/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
               },
               {
                 "title": "Modules",
-                "url": "/modules/"
+                "url": "/modules/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-modules/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
               },
               {
                 "title": "Custom UMD Bundle",
@@ -472,11 +485,6 @@
             ]
           },
           {
-            "title": "Immutable Data",
-            "url": "/immutable-data/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Data Stages",
             "url": "/client-side-row-stages/",
             "showInCollapsed": true
@@ -525,8 +533,13 @@
                 "enterprise": true
               },
               {
-                "title": "Row Stores",
+                "title": "Infinite Scroll",
                 "url": "/server-side-model-row-stores/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Grouping",
+                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
@@ -542,11 +555,6 @@
               {
                 "title": "Filtering",
                 "url": "/server-side-model-filtering/",
-                "enterprise": true
-              },
-              {
-                "title": "Row Grouping",
-                "url": "/server-side-model-grouping/",
                 "enterprise": true
               },
               {
@@ -968,6 +976,12 @@
               {
                 "title": "Group Order",
                 "url": "/grouping-group-order/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sticky Groups",
+                "url": "/grouping-sticky-groups/",
                 "enterprise": true,
                 "showInCollapsed": false
               },

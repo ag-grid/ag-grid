@@ -3,6 +3,7 @@ import { Text, FontStyle, FontWeight } from "../scene/shape/text";
 import { Square } from "./marker/square";
 import { Marker } from "./marker/marker";
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { RenderContext } from "../scene/node";
 
 export class MarkerLabel extends Group {
 
@@ -126,14 +127,6 @@ export class MarkerLabel extends Group {
         return this.marker.strokeOpacity;
     }
 
-    set opacity(value: number) {
-        this.marker.opacity = value;
-        this.label.opacity = value;
-    }
-    get opacity(): number {
-        return this.marker.opacity;
-    }
-
     private _spacing: number = 8;
     set spacing(value: number) {
         if (this._spacing !== value) {
@@ -152,5 +145,14 @@ export class MarkerLabel extends Group {
         marker.size = markerSize;
 
         this.label.x = markerSize / 2 + this.spacing;
+    }
+
+    render(renderCtx: RenderContext): void {
+        // Cannot override field Group.opacity with get/set pair, so
+        // propagate opacity changes here.
+        this.marker.opacity = this.opacity;
+        this.label.opacity = this.opacity;
+
+        super.render(renderCtx);
     }
 }

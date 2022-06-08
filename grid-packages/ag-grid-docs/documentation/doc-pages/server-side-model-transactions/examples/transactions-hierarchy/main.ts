@@ -15,7 +15,6 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   rowModelType: 'serverSide',
-  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
@@ -54,9 +53,8 @@ const gridOptions: GridOptions = {
     params.api.setServerSideDatasource(dataSource)
   },
   getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
-    const type = params.level == 0 ? 'partial' : 'full'
     return {
-      storeType: type,
+      infiniteScroll: params.level == 0,
     }
   },
 }

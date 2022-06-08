@@ -1,4 +1,47 @@
 {
+  "javascript": [
+    {
+      "title": "Getting Started with AG Grid Community",
+      "url": "https://www.youtube.com/watch?v=j-Odsb0EjVo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Community"
+      },
+      "keyPoints": [
+        "Set up Rows and Columns.",
+        "Simple Grid Properties.",
+        "Use Grid's API.",
+        "Listen to Grid Events."
+      ],
+      "runningTime": "6:43"
+    },
+    {
+      "title": "Getting Started with AG Grid Enterprise",
+      "url": "https://www.youtube.com/watch?v=EIkxDliHFYw&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Getting Started with AG Grid Enterprise"
+      },
+      "keyPoints": [
+        "Configure AG Grid Enterprise."
+      ],
+      "runningTime": "3:21"
+    },
+    {
+      "title": "Customising Cells - Cell Renderers",
+      "url": "https://www.youtube.com/watch?v=NwLVitYQ9c4&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "JavaScript Cell Renderers"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "7:53"
+    }
+  ],
   "react": [
     {
       "title": "Getting Started with AG Grid Community",
@@ -196,6 +239,21 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "8:35"
+    },
+    {
+      "title": "Custom Components",
+      "url": "https://www.youtube.com/watch?v=A5-Li_9oPSEs&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Angular Custom Components"
+      },
+      "keyPoints": [
+        "Configuring Components",
+        "Component Params",
+        "Component Selectors",
+        "Angular & JavaScript Components"
+      ],
+      "runningTime": "13:59"
     }
   ],
   "vue": [
@@ -225,6 +283,35 @@
         "Configure AG Grid Enterprise."
       ],
       "runningTime": "3:54"
+    },
+    {
+      "title": "Customising Cells - Cell Renderer",
+      "url": "https://www.youtube.com/watch?v=ZJga2421b2w&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Customising Cells - Cell Renderer"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "6:00"
+    },
+    {
+      "title": "Column Filters",
+      "url": "https://www.youtube.com/watch?v=mBtVxJXWGNI&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Column Filters"
+      },
+      "keyPoints": [
+        "Configuring Filters",
+        "Filter Models",
+        "Text, Number & Date Filters",
+        "Set Filter, Multi Filter"
+      ],
+      "runningTime": "12:54"
     }
   ]
 }
