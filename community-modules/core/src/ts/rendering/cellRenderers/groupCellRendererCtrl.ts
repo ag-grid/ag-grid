@@ -9,7 +9,7 @@ import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
+import { getAriaDescribedBy, removeAriaExpanded, setAriaExpanded } from "../../utils/aria";
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
@@ -19,6 +19,7 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { RowDragComp } from "../row/rowDragComp";
 import { ValueFormatterService } from "../valueFormatterService";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
+import { CtrlsService } from "../../ctrlsService";
 
 export interface IGroupCellRenderer {
     setInnerRenderer(compDetails: UserCompDetails | undefined, valueToDisplay: any): void;
@@ -79,6 +80,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
     private params: GroupCellRendererParams;
 
@@ -503,7 +505,19 @@ export class GroupCellRendererCtrl extends BeanStub {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
+
+        if (!nextExpandState && rowNode.sticky) {
+            this.scrollToStickyNode(rowNode);
+        }
+
         rowNode.setExpanded(nextExpandState, e);
+    }
+
+    private scrollToStickyNode(rowNode: RowNode): void {
+        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const scrollFeature = gridBodyCtrl.getScrollFeature();
+
+        scrollFeature.setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);
     }
 
     private isExpandable(): boolean {

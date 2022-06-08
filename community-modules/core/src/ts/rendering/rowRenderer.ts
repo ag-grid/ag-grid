@@ -11,7 +11,7 @@ import {
     ViewportChangedEvent
 } from "../events";
 import { Constants } from "../constants/constants";
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
@@ -56,7 +56,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
-    @Optional("ctrlsService") private ctrlsService: CtrlsService;
+    @Autowired("ctrlsService") private ctrlsService: CtrlsService;
 
     private gridBodyCtrl: GridBodyCtrl;
 

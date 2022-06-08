@@ -99,7 +99,6 @@ export interface GridParams {
     // used by Web Components
     globalEventListener?: Function;
 
-
     // this allows the base frameworks (React, Angular, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
 
@@ -143,7 +142,7 @@ export class Grid {
 // their own UI
 export class GridCoreCreator {
 
-    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context)=>void, params?: GridParams): void {
+    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): void {
 
         const debug = !!gridOptions.debug;
 
@@ -368,13 +367,11 @@ export class GridCoreCreator {
 
         if (exists(rowModelClass)) { return rowModelClass; }
 
-
-
         if (ModuleRegistry.isPackageBased()) {
-            if ([Constants.ROW_MODEL_TYPE_VIEWPORT, Constants.ROW_MODEL_TYPE_SERVER_SIDE].includes(rowModelType))
+            if ([Constants.ROW_MODEL_TYPE_VIEWPORT, Constants.ROW_MODEL_TYPE_SERVER_SIDE].includes(rowModelType)) {
                 // If package based only the enterprise row models could be missing.
                 console.error(`AG Grid: Row Model "${rowModelType}" not found. Please ensure the package 'ag-grid-enterprise' is imported. Please see: https://www.ag-grid.com/javascript-grid/packages/`);
-            else {
+            } else {
                 console.error('AG Grid: could not find row model for rowModelType ' + rowModelType);
             }
         } else {
