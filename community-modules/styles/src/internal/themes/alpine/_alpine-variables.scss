@@ -27,9 +27,8 @@
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
     --ag-input-disabled-background-color: #f1f2f4;
-    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
     
-    // derived colours (shared by alpine-dark)
+    // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
     --ag-checkbox-checked-color: var(--ag-alpine-active-color);
     --ag-range-selection-border-color: var(--ag-alpine-active-color);
@@ -37,6 +36,10 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
+
+    // derived and blended colours (these are static versions of the dynamic colour blends
+    // applied by the Sass API and must be overridden in alpine-dark)
+    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
 
     // BORDERS
     --ag-borders: solid 1px;
@@ -81,7 +84,6 @@
 };
 
 .ag-theme-alpine-dark {
-    --ag-alpine-active-color: #2196f3;
     --ag-background-color: #181d1f;
     --ag-foreground-color: #fff;
     --ag-border-color: #68686e;
@@ -90,8 +92,11 @@
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;
     --ag-subheader-background-color: #000;
+    --ag-input-disabled-background-color: #282c2f;
     --ag-input-focus-box-shadow:
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
         0 0 4px 3px var(--ag-input-focus-border-color);
     --ag-card-shadow: 0 1px 20px 1px black;
+
+    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
 }

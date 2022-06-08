@@ -160,16 +160,16 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, range-selection-border-color, foreground-color);
 
     // Blended defaults.
-    $params: -param-default($params, disabled-foreground-color,          foreground-color,                 $opacity: 0.5);
-    $params: -param-default($params, modal-overlay-background-color,     background-color,                 $opacity: 0.66);
-    $params: -param-default($params, range-selection-background-color,   range-selection-border-color,     $opacity: 0.2);
+    $params: -param-default($params, disabled-foreground-color,          foreground-color,                 $alpha: 0.5);
+    $params: -param-default($params, modal-overlay-background-color,     background-color,                 $alpha: 0.66);
+    $params: -param-default($params, range-selection-background-color,   range-selection-border-color,     $alpha: 0.2);
     $params: -param-default($params, range-selection-background-color-2, range-selection-background-color, $self-overlay: 2);
     $params: -param-default($params, range-selection-background-color-3, range-selection-background-color, $self-overlay: 3);
     $params: -param-default($params, range-selection-background-color-4, range-selection-background-color, $self-overlay: 4);
-    $params: -param-default($params, border-color,                       foreground-color,                 $opacity: 0.25);
-    $params: -param-default($params, header-column-separator-color,      border-color,                     $opacity: 0.5);
-    $params: -param-default($params, header-column-resize-handle-color,  border-color,                     $opacity: 0.5);
-    $params: -param-default($params, input-disabled-border-color,        input-border-color,               $opacity: 0.3);
+    $params: -param-default($params, border-color,                       foreground-color,                 $alpha: 0.25);
+    $params: -param-default($params, header-column-separator-color,      border-color,                     $alpha: 0.5);
+    $params: -param-default($params, header-column-resize-handle-color,  border-color,                     $alpha: 0.5);
+    $params: -param-default($params, input-disabled-border-color,        input-border-color,               $alpha: 0.3);
     @return $params;
 }
 
@@ -183,14 +183,14 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, range-selection-border-color, alpine-active-color);
 
     // Blended defaults
-    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $opacity: 0.5);
-    $params: -param-default($params, selected-row-background-color, alpine-active-color, $opacity: 0.1);
-    $params: -param-default($params, row-hover-color, alpine-active-color, $opacity: 0.1);
-    $params: -param-default($params, column-hover-color, alpine-active-color, $opacity: 0.1);
-    $params: -param-default($params, chip-background-color, foreground-color, $opacity: 0.07);
-    $params: -param-default($params, input-disabled-background-color, border-color, $opacity: 0.2);
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.5);
-    $params: -param-default($params, input-focus-border-color, alpine-active-color, $opacity: 0.4);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, selected-row-background-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, row-hover-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, column-hover-color, alpine-active-color, $alpha: 0.1);
+    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.07);
+    $params: -param-default($params, input-disabled-background-color, border-color, $alpha: 0.2);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.5);
+    $params: -param-default($params, input-focus-border-color, alpine-active-color, $alpha: 0.4);
     @return $params;
 }
 
@@ -200,6 +200,40 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, subheader-background-color, #000);
 
     @return  -theme-alpine-color-blends($params);
+}
+
+@function -theme-balham-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, background-color, #fff);
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, border-color, #bdc3c7);
+    $params: -param-default($params, subheader-background-color, #e2e9eb);
+    $params: -param-default($params, balham-active-color, #0091ea);
+    $params: -param-default($params, range-selection-border-color, balham-active-color);
+
+    // Blended defaults
+    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, row-border-color, border-color, $alpha: 0.58);
+    $params: -param-default($params, chip-background-color, foreground-color, $alpha: 0.1);
+    $params: -param-default($params, selected-row-background-color, balham-active-color, $alpha: 0.28);
+    $params: -param-default($params, header-column-separator-color, border-color, $alpha: 0.5);
+    @return $params;
+}
+
+@function -theme-balham-dark-color-blends($params) {
+    $params: -param-default($params, background-color, #181d1f);
+    $params: -param-default($params, foreground-color, #fff);
+    $params: -param-default($params, border-color, #424242);
+    $params: -param-default($params, subheader-background-color, #000);
+    $params: -param-default($params, balham-active-color, #00B0FF);
+
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, header-foreground-color, foreground-color, $alpha: 0.64);
+
+    @return  -theme-balham-color-blends($params);
 }
 
 @function -theme-material-color-blends($params) {
@@ -214,16 +248,16 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, border-color, #e2e2e2);
 
     // Blended defaults
-    $params: -param-default($params, secondary-foreground-color, foreground-color, $opacity: 0.54);
-    $params: -param-default($params, disabled-foreground-color, foreground-color, $opacity: 0.38);
+    $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
+    $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
     @return $params;
 }
 
 // Apply a default value to a parameter
 //  $params: -param-default($params, x, #f08) - default x to a specific color value
 //  $params: -param-default($params, x, y) - default x to the value of y (if y is set)
-//  $params: -param-default($params, x, y, $opacity: 0.5) - default x to the value of y made 50% transparent
-@function -param-default($params, $target, $source, $opacity: null, $self-overlay: null) {
+//  $params: -param-default($params, x, y, $alpha: 0.5) - default x to the value of y made 50% transparent
+@function -param-default($params, $target, $source, $alpha: null, $self-overlay: null) {
     $value: null;
     @if type-of($source) == "color" {
         $value: $source;
