@@ -93,8 +93,7 @@ function generateFontFile(fontName) {
 }
 
 const getIconDataFileContent = (buffer) => `
-${generatedFileWarning}
-
+// THIS FILE IS GENERATED, DO NOT EDIT IT!
 $data: "data:font/woff2;charset=utf-8;base64,${Buffer.from(buffer).toString('base64')}";
 `;
 
@@ -104,16 +103,9 @@ const generateScssIconMap = () => {
     fs.writeFileSync(outputFile, getIconFontCodeScss(), "utf8");
 }
 
-const generatedFileWarning = `
-// THIS FILE IS GENERATED, DO NOT EDIT IT!
-// To change the icon font code map, edit ${path.basename(__filename)}`;
-
-
 const getIconFontCodeScss = () => `
-${generatedFileWarning}
-
+// THIS FILE IS GENERATED, DO NOT EDIT IT!
 @use "sass:string";
-
 $icon-font-codes: (
 ${
     Object.keys(codepoints).map(iconName =>

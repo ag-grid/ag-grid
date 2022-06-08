@@ -20,9 +20,10 @@ const mixins = cssFiles
     .join("");
 
 const content = `
-
 // THIS FILE IS GENERATED, DO NOT EDIT IT!
-// To change the icon font code map, edit build-css-content.js
+
+// Output compiled CSS content for a file in the dist folder, where $file is one of:
+//     - ${cssFiles.join("\n//     - ")}
 @mixin output-css-file($file) {
     ${mixins}
     @else {
