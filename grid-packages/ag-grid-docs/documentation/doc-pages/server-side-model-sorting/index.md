@@ -63,9 +63,9 @@ The example below demonstrates sorting using the SSRM and Infinite Scrolling. No
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
 - Try single / multi column (using <kbd>Shift</kbd> key) sorting by clicking on column headers.
 
-<grid-example title='Sorting With Infinite Scroll' name='partial-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Sorting With Infinite Scroll' name='infinite-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-As previously mentioned, when not using Infinite Scroll, the grid will sort on the client. To change this (sort on the server when no Infinite Scroll) set `serverSideSortOnServer=true`. The is demonstrated in the example below. Note the following:
+As previously mentioned, when not using Infinite Scroll, the grid will sort on the client. To force Server-side Sorting, regardless of Infinite Scroll, set `serverSideSortOnServer=true`. This is demonstrated below, note the following:
 
 - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
 - Grid property `serverSideSortOnServer=true` to force Server-side Sorting.
