@@ -159,14 +159,13 @@ Vue project module bundler setup. Let's follow the [Vue CLI instructions](https:
 run the following in your terminal:
 
 ```bash
-npm install -g @vue/cli
-vue create my-project
+npx -p @vue/cli vue create my-project
 ```
 
 When prompted choose "Manually select features":
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset:
   Default ([Vue 2] babel, eslint)
   Default (Vue 3) ([Vue 3] babel, eslint)
@@ -177,10 +176,9 @@ Next, select `Babel` and `CSS Pre-processors` (we've also deselected `Linter` he
 this is optional):
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project:
-  ◉ Choose Vue version
   ◉ Babel
   ◯ TypeScript
   ◯ Progressive Web App (PWA) Support
@@ -195,7 +193,7 @@ Vue CLI v4.5.12
 Select version `2.x` when prompted:
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 ? Choose a version of Vue.js that you want to start the project with (Use arrow keys)
@@ -206,13 +204,12 @@ Vue CLI v4.5.12
 Next select `Sass/SCSS (with dart-sass)` as the CSS Pre-processor:
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 ? Choose a version of Vue.js that you want to start the project with 2.x
 ? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default):
 ❯ Sass/SCSS (with dart-sass)
-  Sass/SCSS (with node-sass)
   Less
   Stylus
 ```
@@ -220,7 +217,7 @@ Vue CLI v4.5.12
 Now choose where to store the configuration data - we've opted for `dedicated config files`:
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 ? Choose a version of Vue.js that you want to start the project with 2.x
@@ -233,7 +230,7 @@ Finally you can choose to save this configuration for all future projects - what
 for the purposes of this tutorial we'll select `No`:
 
 ```shell
-Vue CLI v4.5.12
+Vue CLI v5.0.4
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 ? Choose a version of Vue.js that you want to start the project with 2.x
@@ -484,9 +481,8 @@ Let's go ahead and make these changes:
 
 ```diff
 <template>
- <div>
-+      <button @click="getSelectedRows()">Get Selected Rows</button>
-
++  <div>
++     <button @click="getSelectedRows()">Get Selected Rows</button>
       <ag-grid-vue
           style="width: 500px; height: 200px"
           class="ag-theme-alpine"
@@ -494,7 +490,7 @@ Let's go ahead and make these changes:
           :rowData="rowData"
       >
       </ag-grid-vue>
- </div>
++  </div>
 </template>
 
 <script>

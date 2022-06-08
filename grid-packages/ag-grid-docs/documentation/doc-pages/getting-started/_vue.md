@@ -116,27 +116,26 @@
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
 | documentation [here.](/modules/)
 |
-| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/getting-started/)
+| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/vue2/)
 |
 | <br/>
 |
 | ## Getting Started with AG Grid Community
 |
 | Below we provide code for a simple AG Grid Vue application. To get this working locally,
-| create a new Vue application as follows:
+| create a new Vue application as follows (when prompted select Vue 3):
 |
 | ```bash
-| vue create this-place
+| npx -p @vue/cli vue create this-place
 | cd this-place
 | npm install --save ag-grid-community
 | npm install --save ag-grid-vue3
 | npm run serve
 | ```
 |
-| If everything goes well, `npm run serve` has started the web server and conveniently opened a browser
-| pointing to [localhost:8080](http://localhost:8080).
-|
-| <br/>
+| If everything went well `npm run serve` started the web server and conveniently opened a browser
+| pointing to [localhost:8080](http://localhost:8080) (if the browser wasn't automatically launched simply navigate to [localhost:8080](http://localhost:8080)
+| in your browser of choice.
 |
 | ### Grid Dependencies
 |
@@ -144,20 +143,17 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.1.0",
-|    "ag-grid-vue3": "^27.1.0",
+|    "ag-grid-community": "@AG_GRID_VERSION@",
+|    "ag-grid-vue3": "@AG_GRID_VERSION@",
 |    ...
 | ```
 |
 | `ag-grid-community` is the core logic of the Grid, and `ag-grid-vue3` is the Vue Rendering Engine.
 | Both are needed for the grid to work with Vue and their versions <b>must</b> match.
 |
-| <br/>
-|
-|
 | ### Copy in Application Code
 |
-| Copy the content below into the file `App.vue`:
+| Copy the content below into the file `src/App.vue`:
 |
 |```html
 |<template>
@@ -200,13 +196,18 @@
 |
 |    // Each Column Definition results in one Column.
 |    const columnDefs = reactive({
-|      value: [{ field: "make" }, { field: "model" }, { field: "price" }],
+|      value: [
+|           { field: "make" },
+|           { field: "model" },
+|           { field: "price" }
+|      ],
 |    });
 |
 |    // DefaultColDef sets props common to all Columns
 |    const defaultColDef = {
 |      sortable: true,
 |      filter: true,
+|      flex: 1
 |    };
 |
 |    // Example load data from sever
@@ -224,7 +225,7 @@
 |      cellWasClicked: (event) => { // Example of consuming Grid Event
 |        console.log("cell was clicked", event);
 |      },
-|      deselectRows: e =>{
+|      deselectRows: () =>{
 |        gridApi.value.deselectAll()
 |      }
 |    };
@@ -313,6 +314,7 @@
 | const defaultColDef = {
 |   sortable: true,
 |   filter: true,
+|   flex: 1
 | };
 |
 | ```
@@ -334,7 +336,7 @@
 | ...
 |
 | // Example using Grid's API
-| deselectRows: e =>{
+| deselectRows: () =>{
 |   gridApi.value.deselectAll()
 | }
 |
@@ -393,9 +395,9 @@
 |
 | ```jsx
 |"dependencies": {
-|    "ag-grid-community": "^27.1.0",
-|    "ag-grid-enterprise": "^27.1.0",
-|    "ag-grid-vue3": "^27.1.0",
+|    "ag-grid-community": "@AG_GRID_VERSION@",
+|    "ag-grid-enterprise": "@AG_GRID_VERSION@",
+|    "ag-grid-vue3": "@AG_GRID_VERSION@",
 |    ...
 | ```
 |
