@@ -82,7 +82,7 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 |
 | However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
 
-## Groups - Client-side
+## Client-side Group Sorting
 
 Sorting groups Client-side (Infinite Scroll is off) happens inside the grid out of the box.
 
@@ -94,13 +94,13 @@ The example below shows Client-side sorting of groups. Note the following:
 <grid-example title='Group Sort Client-side' name='group-sort-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 
-## Groups - Server-side
+## Server-side Group Sorting
 
 When grouping and Server-side sorting, the grid will reload the data if it needs to be sorted.
 
 Not all rows need to be reloaded when a sort changes. Group levels only need to be reloaded (sorted) if the sort impacts the group level. A sort will impact a group level if the sort is on a grouped column, or the sort is on an aggregated column (ie `colDef.aggFunc` is set).
 
-The exmaple below demonstrates. Note the following:
+The example below demonstrates. Note the following:
 
 - Sorting is done on the Server-side via grid property `serverSideSortOnServer=true`.
 - Sorting by `Country` reloads the top level groups.

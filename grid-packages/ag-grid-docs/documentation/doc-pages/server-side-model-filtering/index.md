@@ -163,20 +163,39 @@ When the filter for the **Country** column is changed, the values for the **Spor
 <grid-example title='Set Filter and Infinite Scrolling' name='infinite-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
 
 
-## Row Grouping
+## Client-side Group Filtering
 
-When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether [Infinite Scrolling](/server-side-model-row-stores/) is active. How it behaves is as follows:
+Filtering groups Client-side (Infinite Scroll is off) happens inside the grid out of the box.
 
-- ### Infinite Scrolling Off
-    - By default, the grid will filter all rows on the client side.
-    - Enabling the `serverSideFilterOnServer` grid option will instead request filtered data from the server when a group is affected by a filter change.
-    - To instead reload every row and group from the server when a refresh is needed, enable the `serverSideFilterAllLevels` grid option.
+The example below shows Client-side sorting of groups. Note the following:
+ 
+ - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
+ - All columns have Text or Number filters configured. Setting filters on these columns will filter leaf values within the dataset.
 
-- ### Infinite Scrolling On
-    Changing the filter on any column will always refresh the rows. Rows will be loaded again from the server with the new filter information.
+<grid-example title='Group Filter Client-side' name='group-filter-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+Note the SSRM does not filter groups when using Client-side filtering. This is becasue not all children are loaded, so it is not possible for the grid to know if a group passes af filter. For example if the data was grouped by Sport, and the filter `Country=Ireland` was set, the Gymnastics group would still show even though it has no children (Ireland has no Gymnastics winners). This makes sense, as the grid cannot know this, if the child rows are not laoded. This leads to empty groups when filtering.
+
+
+## Server-side Group Filtering
+
+When grouping and Server-side filtering, the grid will reload the data if it needs to be filtered.
+
+Not all rows need to be reloaded when a filter changes. Group levels only need to be reloaded (filtered) if the filter impacts the group level. A filter will impact a group level if the filter is on a grouped column, or the filter is on an aggregated column (ie `colDef.aggFunc` is set).
+
+The example below demonstrates. Note the following:
+
+- Filtering is done on the Server-side via grid property `serverSideFilterOnServer=true`.
+- All columns have Text or Number filters configured.
+
+<grid-example title='Group Filter Server-side' name='group-filter-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+To override this behaviour, and always have the grid reload all rows when a filter changes, set the grid property `serverSideFilterAllLevels=true`.
+
+The example below is identical to the above, except `serverSideFilterAllLevels=true`.
+
+<grid-example title='Group Filter Server-side Force' name='group-filter-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Next Up
 
 Continue to the next section to learn about [Data Refresh](/server-side-model-refresh/).
-
-
