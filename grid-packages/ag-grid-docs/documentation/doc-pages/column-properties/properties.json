@@ -118,6 +118,8 @@
             }
         },
         "headerComponentParams": {},
+        "wrapHeaderText": {},
+        "autoHeaderHeight": {},
         "menuTabs": {},
         "columnsMenuParams": {
             "more": {

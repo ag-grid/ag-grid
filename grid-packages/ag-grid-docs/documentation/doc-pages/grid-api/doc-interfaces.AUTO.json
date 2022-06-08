@@ -955,8 +955,12 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "wrapHeaderText": { "type": { "returnType": "boolean", "optional": true } },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
@@ -20962,8 +20966,12 @@
       "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "wrapHeaderText": { "type": { "returnType": "boolean", "optional": true } },
+    "wrapHeaderText": {
+      "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "autoHeaderHeight": {
+      "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {

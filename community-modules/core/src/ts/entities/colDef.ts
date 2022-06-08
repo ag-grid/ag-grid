@@ -242,7 +242,12 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Column Headers *** //
 
+    /** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */
     wrapHeaderText?: boolean;
+    /** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.
+    * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
+    * Default: `false`
+    */
     autoHeaderHeight?: boolean;
 
     /**

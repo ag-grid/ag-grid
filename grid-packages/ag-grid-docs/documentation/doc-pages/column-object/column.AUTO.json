@@ -266,6 +266,13 @@
     "description": "/** Returns the current width of the column. If the column is resized, the actual width is the new size. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
+  "getAutoHeaderHeight": {
+    "type": { "arguments": {}, "returnType": "number | null" }
+  },
+  "setAutoHeaderHeight": {
+    "description": "/** Returns true if the header height has changed */",
+    "type": { "arguments": { "height": "number" }, "returnType": "boolean" }
+  },
   "getColSpan": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "number" }
   },
