@@ -1,0 +1,11 @@
+<div class="example-wrapper">
+    <div style="margin-bottom: 5px;">
+        <button onclick="refreshCache(undefined)">Refresh Top Level</button>
+        <button onclick="refreshCache(['Canada'])">Refresh [Canada]</button>
+        <button onclick="refreshCache(['Canada','2002'])">Refresh [Canada,2002]</button>
+
+        <label><input type="checkbox" id="purge" /> Purge</label>
+
+    </div>
+    <div id="myGrid" class="ag-theme-alpine-dark"></div>
+</div>

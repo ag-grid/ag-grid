@@ -14,7 +14,7 @@ import {
     RowNode,
     RowNodeBlock,
     ServerSideGroupLevelParams,
-    RowNodeBlockLoader
+    RowNodeBlockLoader,
 } from "@ag-grid-community/core";
 import { StoreUtils } from "../stores/storeUtils";
 import { BlockUtils } from "./blockUtils";
@@ -218,7 +218,6 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     public setData(rows: any[] = [], failedLoad = false): void {
-
         this.destroyRowNodes();
 
         const storeRowCount = this.parentStore.getRowCount();
@@ -235,34 +234,66 @@ export class PartialStoreBlock extends RowNodeBlock {
         const cachedBlockHeight = showingAutoHeightCols ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
         const cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
 
-        for (let i = 0; i < rowsToCreate; i++) {
-            const rowNode = this.blockUtils.createRowNode(
-                {
-                    field: this.groupField, 
-                    group: this.groupLevel!, 
-                    leafGroup: this.leafGroup,
-                    level: this.level, 
-                    parent: this.parentRowNode, 
-                    rowGroupColumn: this.rowGroupColumn,
-                    rowHeight: cachedRowHeight
-                }
-            );
-            const dataLoadedForThisRow = i < rows.length;
-            if (dataLoadedForThisRow) {
-                const data = rows[i];
-                const defaultId = this.prefixId(this.startRow + i);
-                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight);
-                const newId = rowNode.id;
-                this.parentStore.removeDuplicateNode(newId!);
-                this.nodeManager.addRowNode(rowNode);
-                this.allNodesMap[rowNode.id!] = rowNode;
-                this.blockUtils.checkOpenByDefault(rowNode);
-            }
-            this.rowNodes.push(rowNode);
 
-            if (failedLoad) {
-                rowNode.failedLoad = true;
+        for (let i = 0; i < rowsToCreate; i++) {
+            const dataLoadedForThisRow = i < rows.length;
+
+            const getNodeWithData = (existingNode?: RowNode) => {
+                // if there's not an existing node to reuse, create a fresh node
+                const rowNode = existingNode ?? this.blockUtils.createRowNode(
+                    {
+                        field: this.groupField, 
+                        group: this.groupLevel!, 
+                        leafGroup: this.leafGroup,
+                        level: this.level, 
+                        parent: this.parentRowNode, 
+                        rowGroupColumn: this.rowGroupColumn,
+                        rowHeight: cachedRowHeight
+                    }
+                );
+    
+                if (dataLoadedForThisRow) {
+                    const data = rows[i];
+                    if (!!existingNode) {
+                        this.blockUtils.updateDataIntoRowNode(rowNode, data);
+                    } else {
+                        const defaultId = this.prefixId(this.startRow + i);
+                        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight);
+                        this.blockUtils.checkOpenByDefault(rowNode);
+                    }
+
+                    this.parentStore.removeDuplicateNode(rowNode.id!);
+                    this.nodeManager.addRowNode(rowNode);
+                    this.allNodesMap[rowNode.id!] = rowNode;
+                }
+    
+                if (failedLoad) {
+                    rowNode.failedLoad = true;
+                }
+    
+                return rowNode;
+            };
+
+            const getRowIdFunc = this.gridOptionsWrapper.getRowIdFunc();
+            let row: RowNode | undefined;
+            if (getRowIdFunc && dataLoadedForThisRow) {
+                const data = rows[i];
+                const parentKeys = this.parentRowNode.getGroupKeys();
+                const id = getRowIdFunc({
+                    data,
+                    level: this.level,
+                    parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
+                });
+
+                const cachedRow = this.parentStore.retrieveNodeFromCache(id);
+                row = getNodeWithData(cachedRow);
             }
+
+            if (!row) {
+                row = getNodeWithData();
+            }
+
+            this.rowNodes.push(row);
         }
     }
 
@@ -304,7 +335,10 @@ export class PartialStoreBlock extends RowNodeBlock {
 
     @PreDestroy
     private destroyRowNodes(): void {
-        this.blockUtils.destroyRowNodes(this.rowNodes);
+        this.rowNodes?.forEach(row => {
+            const isStoreCachingNode = this.parentStore.isNodeCached(row.id!);
+            this.blockUtils.destroyRowNode(row, isStoreCachingNode);
+        } );
         this.rowNodes = [];
         this.allNodesMap = {};
     }

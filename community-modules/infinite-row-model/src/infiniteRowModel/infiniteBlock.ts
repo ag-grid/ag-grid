@@ -13,7 +13,6 @@ import {
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
-
     @Autowired('beans') private beans: Beans;
 
     private readonly startRow: number;

@@ -69,8 +69,8 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public destroyRowNode(rowNode: RowNode): void {
-        if (rowNode.childStore) {
+    public destroyRowNode(rowNode: RowNode, preserveStore: boolean = false): void {
+        if (rowNode.childStore && !preserveStore) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }

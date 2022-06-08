@@ -54,8 +54,6 @@ of open groups.
 
 Maintaining open groups is achieved when all of the following are configured:
 
-- Not Infinite Scrolling (`serverSideInfiniteScroll=false`). When using Infinite Scroll, groups and children will be lost.
-
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
 - Row IDs are provided (`getRowId()` implemented, see [Row IDs](/row-ids/)). If not providing Row IDs, groups and children will be lost
@@ -82,19 +80,13 @@ replace rows. This also means when grid property `enableCellChangeFlash = true` 
 changes. If `getRowId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing
 is possible.
 
+### Example 1: Keeping Group State
 
 <grid-example title='Keep Group State' name='keep-group-state' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| If using Infinite Scroll, the grid does not provide for keeping open groups. Refreshing will always
-| reset groups and destroy children.
-|
-| This is because Infinite Scroll loads rows in blocks, so it's unreliable to expect rows that existed before to
-| exist in the new load, as the row could appear in a different block.
-|
-|If you are using Infinite Scroll and need to restore groups to their previously open state, then this logic can
-|be implemented in your application using the [Open by Default](/server-side-model-grouping/#open-by-default) API.
+### Example 2: Keeping Group State with Infinite Scrolling
 
+<grid-example title='Keep Group State with Infinite Scroll' name='keep-group-state-infinite' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 
