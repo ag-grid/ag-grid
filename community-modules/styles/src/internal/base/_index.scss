@@ -6,7 +6,7 @@
 @mixin general-styles() {
     @include ag.icon-styles();
     @include meta.load-css("./base-variables");
-    @include meta.load-css("./parts/wrapper");
+    @include meta.load-css("./parts/root");
     @include meta.load-css("./parts/common-structural");
     @include meta.load-css("./parts/print-structural");
     @include meta.load-css("./parts/reset");
