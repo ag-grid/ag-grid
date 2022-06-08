@@ -118,4 +118,4 @@ The example below is identical to the above, except `serverSideSortAllLevels=tru
 
 ## Next Up
 
-Continue to the next section to learn about [Filtering](/server-side-model-filtering/).
+Continue to the next section to learn about [SSRM Filtering](/server-side-model-filtering/).

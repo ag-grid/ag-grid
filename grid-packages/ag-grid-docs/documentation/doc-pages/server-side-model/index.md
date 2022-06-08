@@ -85,5 +85,5 @@ The full stack examples are as follows:
 
 ## Next Up
 
-To get started using the SSRM see the next section on: [Server-Side Datasource](/server-side-model-datasource/).
+Continue to the next section to learn about the [SSRM API Reference](/server-side-model-api-reference/).
 
