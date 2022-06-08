@@ -25,4 +25,5 @@ export class KeyCode {
     static D = 'KeyD';
     static Z = 'KeyZ';
     static Y = 'KeyY';
+
 }

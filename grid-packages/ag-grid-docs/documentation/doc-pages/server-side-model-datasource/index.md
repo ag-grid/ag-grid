@@ -131,4 +131,4 @@ The Fail callback has no parameters. It informs the grid the request has failed 
 
 ## Next Up
 
-Continue to the next section to learn about [Infinite Scroll](/server-side-model-row-stores/).
+Continue to the next section to learn about [Infinite Scroll](/server-side-model-infinite-scroll/).

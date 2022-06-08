@@ -2,18 +2,18 @@ import { Grid, GridOptions, IServerSideDatasource, ServerSideStoreParams, GetSer
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', enableRowGroup: true, rowGroup: true },
-    { field: 'sport', enableRowGroup: true, rowGroup: true },
-    { field: 'year', minWidth: 100 },
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'athlete', minWidth: 220, filter: 'agTextColumnFilter' },
+    { field: 'country', minWidth: 200, filter: 'agTextColumnFilter' },
+    { field: 'year', filter: 'agNumberColumnFilter' },
+    { field: 'sport', enableRowGroup: true, rowGroup: true, filter: 'agTextColumnFilter' },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
+    resizable: true
   },
   rowGroupPanelShow: 'always',
   autoGroupColumnDef: {
@@ -22,54 +22,10 @@ const gridOptions: GridOptions = {
   },
 
   rowModelType: 'serverSide',
-
-  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
-    var noGroupingActive = params.rowGroupColumns.length == 0
-    var res: ServerSideStoreParams;
-    if (noGroupingActive) {
-      res = {
-        // infinite scrolling
-        infiniteScroll: true,
-        // 100 rows per block
-        cacheBlockSize: 100,
-        // purge blocks that are not needed
-        maxBlocksInCache: 2,
-      }
-    } else {
-      var topLevelRows = params.level == 0
-      res = {
-        infiniteScroll: topLevelRows ? false : true,
-        cacheBlockSize: params.level == 1 ? 5 : 2,
-        maxBlocksInCache: -1, // never purge blocks
-      }
-    }
-
-    console.log('############## NEW STORE ##############')
-    console.log(
-      'getServerSideStoreParams, level = ' +
-      params.level +
-      ', result = ' +
-      JSON.stringify(res)
-    )
-
-    return res
-  },
-
   suppressAggFuncInHeader: true,
-
   animateRows: true,
-}
-
-function onBtStoreState() {
-  var storeState = gridOptions.api!.getServerSideStoreState()
-  console.log('Store States:')
-  storeState.forEach(function (state, index) {
-    console.log(
-      index +
-      ' - ' +
-      JSON.stringify(state).replace(/"/g, '').replace(/,/g, ', ')
-    )
-  })
+  serverSideFilterOnServer: true,
+  serverSideFilterAllLevels: true
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
@@ -85,11 +41,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // call the success callback
           params.success({
             rowData: response.rows,
-            rowCount: response.lastRow,
-            storeInfo: {
-              lastLoadedTime: new Date().toLocaleString(),
-              randomValue: Math.random(),
-            },
+            rowCount: response.lastRow
           })
         } else {
           // inform the grid request failed

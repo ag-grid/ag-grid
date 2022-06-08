@@ -218,17 +218,6 @@ const gridOptions = {
 
 <grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-## Filtering
-
-When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether [Infinite Scrolling](/server-side-model-row-stores/) is active. How it behaves is as follows:
-
-- ### Infinite Scrolling Off
-    - By default, the grid will filter all rows on the client side.
-    - Enabling the `serverSideFilterOnServer` grid option will instead request filtered data from the server when a group is affected by a filter change.
-    - To instead reload every row and group from the server when a refresh is needed, enable the `serverSideFilterAllLevels` grid option.
-
-- ### Infinite Scrolling On
-    Changing the filter on any column will always refresh the rows. Rows will be loaded again from the server with the new filter information.
 
 ## Complex Columns
 
@@ -262,4 +251,4 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 ## Next Up
 
-Continue to the next section to learn how to perform [Configuration](/server-side-model-configuration/).
+Continue to the next section to learn about [SSRM Sorting](/server-side-model-sorting/).

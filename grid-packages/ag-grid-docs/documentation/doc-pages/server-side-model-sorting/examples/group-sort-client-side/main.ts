@@ -22,54 +22,8 @@ const gridOptions: GridOptions = {
   },
 
   rowModelType: 'serverSide',
-
-  getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
-    var noGroupingActive = params.rowGroupColumns.length == 0
-    var res: ServerSideStoreParams;
-    if (noGroupingActive) {
-      res = {
-        // infinite scrolling
-        infiniteScroll: true,
-        // 100 rows per block
-        cacheBlockSize: 100,
-        // purge blocks that are not needed
-        maxBlocksInCache: 2,
-      }
-    } else {
-      var topLevelRows = params.level == 0
-      res = {
-        infiniteScroll: topLevelRows ? false : true,
-        cacheBlockSize: params.level == 1 ? 5 : 2,
-        maxBlocksInCache: -1, // never purge blocks
-      }
-    }
-
-    console.log('############## NEW STORE ##############')
-    console.log(
-      'getServerSideStoreParams, level = ' +
-      params.level +
-      ', result = ' +
-      JSON.stringify(res)
-    )
-
-    return res
-  },
-
   suppressAggFuncInHeader: true,
-
   animateRows: true,
-}
-
-function onBtStoreState() {
-  var storeState = gridOptions.api!.getServerSideStoreState()
-  console.log('Store States:')
-  storeState.forEach(function (state, index) {
-    console.log(
-      index +
-      ' - ' +
-      JSON.stringify(state).replace(/"/g, '').replace(/,/g, ', ')
-    )
-  })
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
@@ -85,11 +39,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // call the success callback
           params.success({
             rowData: response.rows,
-            rowCount: response.lastRow,
-            storeInfo: {
-              lastLoadedTime: new Date().toLocaleString(),
-              randomValue: Math.random(),
-            },
+            rowCount: response.lastRow
           })
         } else {
           // inform the grid request failed

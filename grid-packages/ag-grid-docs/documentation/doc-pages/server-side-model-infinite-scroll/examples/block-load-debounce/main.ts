@@ -18,22 +18,16 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
 
-  // to help with this example, no row buffer, so no rows drawn off screen
-  rowBuffer: 0,
-
   // use the server-side row model
   rowModelType: 'serverSide',
 
   // set to partial, so infinite scrolling is enabled
   serverSideInfiniteScroll: true,
 
-  // fetch 10 rows at a time (default is 100)
-  cacheBlockSize: 50,
+  // adding a debounce to allow skipping over blocks while scrolling
+  blockLoadDebounceMillis: 1000,
 
-  // only keep 4 blocks of rows (default is keep all rows)
-  maxBlocksInCache: 2,
-
-  debug: true,
+  debug: true
 }
 
 // setup the grid after the page has finished loading
@@ -77,7 +71,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
         } else {
           params.fail()
         }
-      }, 1000)
+      }, 100)
     },
   }
 }
@@ -88,8 +82,9 @@ function createFakeServer(allData: any[]) {
       // take a slice of the total rows for requested block
       var rowsForBlock = allData.slice(request.startRow, request.endRow)
 
-      // here we are pretending we don't know the last row until we reach it!
-      var lastRow = getLastRowIndex(request, rowsForBlock)
+      // when row count is known and 'blockLoadDebounceMillis' is set it is possible to
+      // quickly skip over blocks while scrolling
+      var lastRow = allData.length
 
       return {
         success: true,
@@ -98,12 +93,4 @@ function createFakeServer(allData: any[]) {
       }
     },
   }
-}
-
-function getLastRowIndex(request: IServerSideGetRowsRequest, results: any[]) {
-  if (!results) return undefined
-  var currentLastRow = (request.startRow || 0) + results.length
-
-  // if on or after the last block, work out the last row, otherwise return 'undefined'
-  return currentLastRow < (request.endRow || 0) ? currentLastRow : undefined
 }
