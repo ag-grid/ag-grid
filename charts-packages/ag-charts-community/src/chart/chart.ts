@@ -996,10 +996,8 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        const allSeries = this.series;
         let node: Node | undefined = undefined;
-        for (let i = allSeries.length - 1; i >= 0; i--) {
-            const series = allSeries[i];
+        for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
@@ -1026,8 +1024,6 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        const allSeries = this.series;
-
         type Point = { x: number, y: number };
 
         function getDistance(p1: Point, p2: Point): number {
@@ -1039,13 +1035,12 @@ export abstract class Chart extends Observable {
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
 
-        for (let i = allSeries.length - 1; i >= 0; i--) {
-            const series = allSeries[i];
+        for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
             const hitPoint = series.group.transformPoint(x, y);
-            series.getNodeData().forEach(datum => {
+            for (const datum of series.getNodeData()) {
                 if (!datum.point) {
                     return;
                 }
@@ -1063,7 +1058,7 @@ export abstract class Chart extends Observable {
                     minDistance = distance;
                     closestDatum = datum;
                 }
-            });
+            }
         }
 
         return closestDatum;

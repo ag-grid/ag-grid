@@ -773,7 +773,7 @@ export class BarSeries extends CartesianSeries {
 
         const {
             fills, strokes, fillOpacity, strokeOpacity, shadow, formatter,
-            xKey, flipXY, yKeys,
+            xKey, flipXY,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
