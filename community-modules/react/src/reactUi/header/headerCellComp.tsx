@@ -45,19 +45,12 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     // js comps
     useEffect(() => showJsComp(
-        userCompDetails, context, eGui.current!, userCompRef
+        userCompDetails, context, eHeaderCompWrapper.current!, userCompRef
     ), [userCompDetails]);
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {
-        let userCompDomElement: HTMLElement | undefined = undefined;
-        eGui.current!.childNodes.forEach( node => {
-            if (node != null && node !== eResize.current) {
-                userCompDomElement = node as HTMLElement;
-            }
-        });
-
-        ctrl.setDragSource(userCompDomElement);
+        ctrl.setDragSource(eHeaderCompWrapper.current!);
     }, [userCompDetails]);
 
     const style = useMemo(() => ({ width }), [width]);
@@ -83,7 +76,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             aria-description={ ariaDescription }
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
-            <div ref={eHeaderCompWrapper} >
+            <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper">
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
             </div>
