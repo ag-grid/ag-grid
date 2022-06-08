@@ -721,13 +721,14 @@ export class AreaSeries extends CartesianSeries {
         const path = fill.path;
         path.clear({ trackChanges: true });
 
-        points.forEach(({ x, y }, i) => {
-            if (i > 0) {
-                path.lineTo(x, y);
+        let i = 0;
+        for (const p of points) {
+            if (i++ > 0) {
+                path.lineTo(p.x, p.y);
             } else {
-                path.moveTo(x, y);
+                path.moveTo(p.x, p.y);
             }
-        });
+        }
 
         path.closePath();
         fill.checkPathDirty();
@@ -765,16 +766,17 @@ export class AreaSeries extends CartesianSeries {
         const path = stroke.path
         path.clear({ trackChanges: true });
 
-        points.forEach(({x, y}, i) => {
-            if (yValues[i] === undefined) {
+        let i = 0;
+        for (const p of points) {
+            if (yValues[i++] === undefined) {
                 moveTo = true;
             } else if (moveTo) {
-                path.moveTo(x, y);
+                path.moveTo(p.x, p.y);
                 moveTo = false;
             } else {
-                path.lineTo(x, y);
+                path.lineTo(p.x, p.y);
             }
-        });
+        }
         stroke.checkPathDirty();
     }
 
