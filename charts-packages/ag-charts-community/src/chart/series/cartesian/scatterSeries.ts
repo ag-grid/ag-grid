@@ -63,7 +63,7 @@ export class ScatterSeries extends CartesianSeries {
     private sizeScale = new LinearScale();
 
     private nodeData: ScatterNodeDatum[] = [];
-    private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
+    private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Marker>();
     private highlightSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
     private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.seriesGroup).selectAll<Text>();
 
