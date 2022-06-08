@@ -84,6 +84,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     private actualWidth: any;
 
+    // The measured height of this column's header when autoHeaderHeight is enabled
+    private autoHeaderHeight: number | null = null;
+
     private visible: any;
     private pinned: 'left' | 'right' | null;
     private left: number | null;
@@ -659,6 +662,17 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     public getActualWidth(): number {
         return this.actualWidth;
+    }
+
+    public getAutoHeaderHeight(): number | null {
+        return this.autoHeaderHeight;
+    }
+
+    /** Returns true if the header height has changed */
+    public setAutoHeaderHeight(height: number): boolean {
+        const changed = height !== this.autoHeaderHeight;
+        this.autoHeaderHeight = height;
+        return changed;
     }
 
     private createBaseColDefParams(rowNode: RowNode): BaseColDefParams {
