@@ -74,6 +74,15 @@
             "pane": "left"
           },
           {
+            "title": "Angular Compatibility",
+            "icon": "angular",
+            "url": "/angular-compatibility",
+            "frameworks": [
+              "angular"
+            ],
+            "pane": "right"
+          },
+          {
             "title": "Vue 2 Tutorial",
             "icon": "vue",
             "url": "/vue2/",
