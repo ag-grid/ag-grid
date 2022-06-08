@@ -21,10 +21,10 @@
 // }
 @mixin unthemed-rtl($rules) {
     @if list.length(list.nth(&, 1)) < 1 {
-        @error "ag-unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
+        @error "unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
     }
     @if string.index(list.nth(list.nth(&, 1), 1), ".ag-theme-") != null {
-        @error "ag-unthemed-rtl() should not be used in a theme, use ag.theme-rtl() instead.";
+        @error "unthemed-rtl() should not be used in a theme, use ag.theme-rtl() instead.";
     }
     .ag-ltr & {
         @each $property, $value in $rules {
@@ -64,7 +64,7 @@
 // Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
 @mixin theme-rtl($rules) {
     @if list.length(list.nth(&, 1)) < 2 {
-        @error "ag-theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
+        @error "theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
     }
     @at-root {
         #{-insert-class-after-theme(&, ".ag-ltr")} {

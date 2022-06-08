@@ -114,13 +114,6 @@
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
-    .ag-group-toolbar {
-        // @if ag-param(subheader-background-color) {
-            // TODO restore this
-            // background-color: rgba(ag-param(subheader-background-color), 0.5);
-        // }
-    }
-
     @include ag.text-input {
         background: transparent;
         color: var(--ag-foreground-color);

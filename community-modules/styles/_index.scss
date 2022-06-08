@@ -250,6 +250,7 @@ $-themes: map.keys($-theme-variables);
     // Blended defaults
     $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
     $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
+    $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
     @return $params;
 }
 

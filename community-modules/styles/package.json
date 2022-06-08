@@ -14,7 +14,7 @@
     "watch:content": "chokidar 'dist/*.css' --command 'node build-css-content.js'",
     "watch:sass": "npm run build:sass -- --watch",
     "$COMMENT": "TODO remove these tmp scripts once core uses this module",
-    "tmp-watch-patch": "npm run build-tmp-patch; npm run build-tmp-patch -- --watch",
+    "tmp-watch-patch": "npm run tmp-build-patch; npm run tmp-build-patch -- --watch",
     "tmp-build-patch": "sass --no-source-map --load-path src/internal src:../core/dist/styles",
     "test": "npm run lint:scss && npm run build && npm run lint:css",
     "lint:css": "stylelint --formatter unix --config stylelint-config-css.js 'dist/*.css'",
