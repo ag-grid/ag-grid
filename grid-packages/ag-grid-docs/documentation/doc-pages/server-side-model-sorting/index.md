@@ -23,28 +23,23 @@ const gridOptions = {
 
 For more details on sorting configurations see the section on [Row Sorting](/row-sorting/).
 
-## Sorting Without Infinite Scroll
+## Client-side Sorting
 
-When not Infinite Scrolling, sorting of rows is performed by the grid. There is nothing special to be done by the server. This is possible as the grid has all the rows needed to perform the sort. The example below demonstrates this. Note the following:
+When [Infinite Scroll](/server-side-model-row-stores/) is not active, the grid has all the rows needed to sort on the client. As such, the SSRM will sort on the client-side when Infinite Scroll is not active.
 
-- The grid is not using Infinite Scrolling, the property  `serverSideInfiniteScroll` is not set.
+The example below demonstrates Client-side Sorting with no Infinite Scroll. Note the following:
+
+- The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
 - All columns have sorting enabled using the `defaultColDef.sortable = true`.
 - Rows are loaded once. All sorting is then subsequently done by the grid.
 
-<grid-example title='Sorting Without Infinite Scroll' name='full-sorting' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='No Infinite Scroll Client-side Sort' name='full-sort-client-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
-[[note]]
-| The example above demonstrates the default behaviour when not Infinite Scrolling.
-| To instead have the grid request that the server provide the sorted rows, enable the `serverSideSortOnServer` grid option.
+## Server-side Sorting
 
-## Sorting With Infinite Scroll
+When [Infinite Scroll](/server-side-model-row-stores/) is active, the grid does not have all the rows needed to sort on the client. As such, the SRRM will request rows again when the sort changes and expect the server to sort the rows.
 
-When using Infinite Scroll, sorting of rows is performed on the server. When using Infinite Scroll, it is not possible for the grid to sort the data as it doesn't not have all the data loaded to sort.
-
-When a sort is applied in the grid a request is made for rows via the [Datasource](/server-side-model-datasource/). The provided request contains sort
-metadata in the `sortModel` property.
-
-An example of the contents contained in the `sortModel` is shown below:
+The request object sent to the server contains sort metadata in the `sortModel` property. An example of the `sortModel` is as follows:
 
 ```js
 // Example request with sorting info
@@ -58,8 +53,7 @@ An example of the contents contained in the `sortModel` is shown below:
 }
 ```
 
-Notice in the snippet above that the `sortModel` contains an array of models for each column that has active sorts
-in the grid. The column ID and sort type can then be used by the server to perform the actual sorting.
+Notice `sortModel` is an array with each item representing a Column with an active sort, containing the Column ID and the Sort Direction.
 
 The example below demonstrates sorting using the SSRM and Infinite Scrolling. Note the following:
 
@@ -69,8 +63,15 @@ The example below demonstrates sorting using the SSRM and Infinite Scrolling. No
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
 - Try single / multi column (using <kbd>Shift</kbd> key) sorting by clicking on column headers.
 
+<grid-example title='Sorting With Infinite Scroll' name='infinite-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-<grid-example title='Sorting With Infinite Scroll' name='partial-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+As previously mentioned, when not using Infinite Scroll, the grid will sort on the client. To force Server-side Sorting, regardless of Infinite Scroll, set `serverSideSortOnServer=true`. This is demonstrated below, note the following:
+
+- The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
+- Grid property `serverSideSortOnServer=true` to force Server-side Sorting.
+- Rows are loaded every time the sort order changes.
+
+<grid-example title='No Infinite Scroll Server-side Sort' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
 [[note]]
 | **Fake Server Implementation**
@@ -80,6 +81,40 @@ The example below demonstrates sorting using the SSRM and Infinite Scrolling. No
 | JavaScript SQL database that works in browsers.
 |
 | However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+
+## Groups - Client-side
+
+Sorting groups Client-side (Infinite Scroll is off) happens inside the grid out of the box.
+
+The example below shows Client-side sorting of groups. Note the following:
+ 
+ - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
+ - All columns can be sorted. The grid sors without reloading the rows.
+
+<grid-example title='Group Sort Client-side' name='group-sort-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+
+## Groups - Server-side
+
+When grouping and Server-side sorting, the grid will reload the data if it needs to be sorted.
+
+Not all rows need to be reloaded when a sort changes. Group levels only need to be reloaded (sorted) if the sort impacts the group level. A sort will impact a group level if the sort is on a grouped column, or the sort is on an aggregated column (ie `colDef.aggFunc` is set).
+
+The exmaple below demonstrates. Note the following:
+
+- Sorting is done on the Server-side via grid property `serverSideSortOnServer=true`.
+- Sorting by `Country` reloads the top level groups.
+- Sorting by `Sport` reloads the second level group, the top level is not impacted.
+- Sorting by `Year` does not reload any groups. Only leaf-levels are reloaded.
+- Sorting by `Gold`, `Silver` or `Bronze` does reload groups, as they columns have `aggFunc` set.
+
+<grid-example title='Group Sort Server-side' name='group-sort-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+To override this behaviour, and always have the grid reload all rows when a sort changes, set the grid property `serverSideSortAllLevels=true`.
+
+The example below is identical to the above, except `serverSideSortAllLevels=true`.
+
+<grid-example title='Group Sort Server-side Force' name='group-sort-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Next Up
 

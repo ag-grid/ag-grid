@@ -1,12 +1,11 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { valueGetter: 'node.rowIndex', minWidth: 60},
-    { field: 'athlete', minWidth: 150 },
-    { field: 'country', minWidth: 150 },
+    { field: 'athlete', minWidth: 220 },
+    { field: 'country', minWidth: 200 },
     { field: 'year' },
-    { field: 'sport', minWidth: 120 },
+    { field: 'sport', minWidth: 200 },
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
@@ -14,11 +13,13 @@ const gridOptions: GridOptions = {
 
   defaultColDef: {
     flex: 1,
-    minWidth: 80,
+    minWidth: 100,
+    sortable: true,
   },
 
   rowModelType: 'serverSide',
-  serverSideInfiniteScroll: true
+  animateRows: true,
+  serverSideSortOnServer: true
 }
 
 // setup the grid after the page has finished loading
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createServerSideDatasource(server: any): IServerSideDatasource {
   return {
-    getRows: (params) => {
+    getRows: (params: IServerSideGetRowsParams) => {
       console.log(
         '[Datasource] - rows requested by grid: startRow = ' +
         params.request.startRow +
@@ -51,13 +52,13 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
       )
 
       // get data for request from our fake server
-      var response = server.getData(params.request)
+      var response = server.getData()
 
       // simulating real server call with a 500ms delay
       setTimeout(function () {
         if (response.success) {
           // supply rows for requested block to grid
-          params.success({ rowData: response.rows, rowCount: response.lastRow })
+          params.success({ rowData: response.rows })
         } else {
           params.fail()
         }
@@ -68,26 +69,11 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
 
 function createFakeServer(allData: any[]) {
   return {
-    getData: (request: IServerSideGetRowsRequest) => {
-      // in this simplified fake server all rows are contained in an array
-      var requestedRows = allData.slice(request.startRow, request.endRow)
-
-      // here we are pretending we don't know the last row until we reach it!
-      var lastRow = getLastRowIndex(request, requestedRows)
-
+    getData: () => {
       return {
         success: true,
-        rows: requestedRows,
-        lastRow: lastRow,
+        rows: allData,
       }
     },
   }
-}
-
-function getLastRowIndex(request: IServerSideGetRowsRequest, results: any[]) {
-  if (!results) return undefined
-  var currentLastRow = (request.startRow || 0) + results.length
-
-  // if on or after the last block, work out the last row, otherwise return 'undefined'
-  return currentLastRow < (request.endRow || 0) ? currentLastRow : undefined
 }

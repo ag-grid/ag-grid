@@ -50,8 +50,8 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-- Infinite Scrolling is active via grid property `serverSideInfiniteScroll=true`.
-- The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using Infinite Scrolling.
+- [Infinite Scrolling](/server-side-model-row-stores/) is active via grid property `serverSideInfiniteScroll=true`.
+- The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using [Infinite Scrolling](/server-side-model-row-stores/).
 - Country and Sport columns have `rowGroup=true` defined on their column definitions. This tells the grid there is two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
@@ -66,8 +66,7 @@ If you are not grouping, then there is one Row Store for the top level.
 
 ## Configure Stores
 
-By default, each Row Store will behave in the same way with regards Infinite Scrolling. This configuration
-is specified using the grid properties `serverSideInfiniteScroll`, `maxBlocksInCache` and `cacheBlockSize`.
+By default, each Row Store will behave in the same way with regards [Infinite Scrolling](/server-side-model-row-stores/). This configuration is specified using the grid properties `serverSideInfiniteScroll`, `maxBlocksInCache` and `cacheBlockSize`.
 
 It is possible to have different configurations for different Row Stores. For example if grouping, infinite
 scrolling could be turned off at the top level but turned on at the lower levels.
@@ -88,7 +87,7 @@ the `getServerSideStoreParams(params)` callback. The callback logs its results t
 
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
-- When no grouping is active, the store is configured to use Infinite Scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
+- When no grouping is active, the store is configured to use Infinite Scroll and only keeps two blocks of rows in the store. To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
@@ -124,15 +123,11 @@ const createDatasource = server => {
 }
 ```
 
-The info object is merged into the Store Info (which is initially an empty object) and then available in the following locations:
-
-1. Included in the Store State returned from `getServerSideStoreState()`.
-1. Included in the params to `isApplyServerSideTransaction()`. This method is explained
-in [Cancelling Transactions](/server-side-model-high-frequency/#cancelling-transactions).
+The info object is merged into the Store Info (which is initially an empty object) and then available through the `getServerSideStoreState()` API.
 
 If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the store
-is [Refreshed](/server-side-model-refresh/) or b) Infinite Scrolling is used (as each block load will get the
+is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-row-stores/) is used (as each block load will get the
 opportunity to add info data).
 
 The example below shows Store Info in action.
@@ -223,34 +218,6 @@ const gridOptions = {
 
 <grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-## Sorting
-
-When a sort is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether Infinite Scrolling is active. How it behaves is as follows:
-
-- ### Infinite Scrolling Off
-    - By default, the grid will sort all rows on the client side.
-    - Enabling the `serverSideSortOnServer` grid option will instead request sorted data from the server when a group is affected by a sort change.
-
-- ### Infinite Scrolling On
-    - Non-group levels always refresh - all rows are loaded again from the server.
-    - Group levels refresh (reload from server) if the sort was changed in:
-        - Any column with a value active (ie colDef.aggFunc='something')
-        - Any secondary column (ie you are pivoting and sort a pivot value column)
-        - A Column used for this levels group (eg you are grouping by 'Country' and you sort by 'Country').
-
-To instead reload every row and group from the server when a refresh is needed, enable the `serverSideSortAllLevels` grid option.
-
-## Filtering
-
-When a filter is applied to a grouped grid using the SSRM, the grid will behave differently depending on whether Infinite Scrolling is active. How it behaves is as follows:
-
-- ### Infinite Scrolling Off
-    - By default, the grid will filter all rows on the client side.
-    - Enabling the `serverSideFilterOnServer` grid option will instead request filtered data from the server when a group is affected by a filter change.
-    - To instead reload every row and group from the server when a refresh is needed, enable the `serverSideFilterAllLevels` grid option.
-
-- ### Infinite Scrolling On
-    Changing the filter on any column will always refresh the rows. Rows will be loaded again from the server with the new filter information.
 
 ## Complex Columns
 
