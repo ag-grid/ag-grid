@@ -5,9 +5,18 @@ import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '
 import { isBrowserEdge } from './browser';
 import { ColumnGroup } from '../entities/columnGroup';
 import { exists } from './generic';
+import { KeyCode } from '../constants/keyCode';
 
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
-const NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
+
+// Using legacy values to match AZERTY keyboards
+const NUMPAD_DEL_NUMLOCK_ON_KEYCODE = 46;
+const A_KEYCODE = 65;
+const C_KEYCODE = 67;
+const V_KEYCODE = 86;
+const D_KEYCODE = 68;
+const Z_KEYCODE = 90;
+const Y_KEYCODE = 89;
 
 export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
@@ -101,5 +110,35 @@ export function isUserSuppressingHeaderKeyboardEvent(
 function isNumpadDelWithNumLockOnForEdge(event: KeyboardEvent) {
     return (isBrowserEdge()) &&
         event.key === NUMPAD_DEL_NUMLOCK_ON_KEY &&
-        event.charCode === NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
+        event.charCode === NUMPAD_DEL_NUMLOCK_ON_KEYCODE;
+}
+
+export function normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
+    const { keyCode } = keyboardEvent;
+    let code: string;
+
+    switch (keyCode) {
+        case A_KEYCODE:
+            code = KeyCode.A;
+            break;
+        case C_KEYCODE:
+            code = KeyCode.C;
+            break;
+        case V_KEYCODE:
+            code = KeyCode.V;
+            break;
+        case D_KEYCODE:
+            code = KeyCode.D;
+            break;
+        case Z_KEYCODE:
+            code = KeyCode.Z;
+            break;
+        case Y_KEYCODE:
+            code = KeyCode.Y;
+            break;
+        default:
+            code = keyboardEvent.code;
+    }
+
+    return code;
 }
