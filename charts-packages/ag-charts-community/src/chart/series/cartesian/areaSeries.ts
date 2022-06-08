@@ -413,6 +413,7 @@ export class AreaSeries extends CartesianSeries {
 
     update(): void {
         this.updateSelections();
+        this.updateHighlightSelection();
         this.updateNodes();
     }
 
@@ -425,7 +426,6 @@ export class AreaSeries extends CartesianSeries {
         this.createSelectionData();
         this.updateSeriesGroups();
 
-        this.highlightMarkerSelection = this.updateMarkerSelection(this.highlightMarkerSelection, this.allMarkerSelectionData);
         this.seriesGroups.forEach(((seriesGroup, idx) => {
             const { markerSelection } = seriesGroup;
             this.updateFillSelection(idx);
@@ -433,6 +433,18 @@ export class AreaSeries extends CartesianSeries {
             seriesGroup.markerSelection = this.updateMarkerSelection(markerSelection, this.markerSelectionData[idx]);
             this.updateLabelSelection(idx);
         }))
+    }
+
+    updateHighlightSelection() {
+        const {
+            chart: {
+                highlightedDatum: { datum = undefined, series = undefined } = {},
+                highlightedDatum = undefined,
+            } = {},
+        } = this;
+
+        const highlightData = series === this && highlightedDatum && datum ? [highlightedDatum as MarkerSelectionDatum] : [];
+        this.highlightMarkerSelection = this.updateMarkerSelection(this.highlightMarkerSelection, highlightData);
     }
 
     updateNodes() {
@@ -664,11 +676,11 @@ export class AreaSeries extends CartesianSeries {
 
             const fill = new Path();
             fill.tag = AreaSeriesTag.Fill;
-            pickGroup.appendChild(fill);
+            group.appendChild(fill);
 
             const stroke = new Path();
             stroke.tag = AreaSeriesTag.Stroke;
-            pickGroup.appendChild(stroke);
+            group.appendChild(stroke);
 
             seriesGroups.push({
                 group,

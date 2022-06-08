@@ -188,6 +188,7 @@ export class LineSeries extends CartesianSeries {
 
     update(): void {
         this.updateSelections();
+        this.updateHighlightSelection();
         this.updateNodes();
     }
 
@@ -306,13 +307,23 @@ export class LineSeries extends CartesianSeries {
         enterSelection.append(MarkerShape);
         enterSelection.append(Text);
         this.nodeSelection = updateSelection.merge(enterSelection);
-    
-        const updateHighlightSelection = highlightSelection.setData(nodeData);
+    }
+
+    private updateHighlightSelection() {
+        const {
+            marker: { shape, enabled },
+            chart: { highlightedDatum: { datum = undefined, series = undefined } = {}, highlightedDatum = undefined } = {},
+            highlightSelection,
+        } = this;
+        const highlightData = shape && enabled && series === this && highlightedDatum && datum ? [highlightedDatum as LineNodeDatum] : [];
+        const MarkerShape = getMarker(shape);
+
+        const updateHighlightSelection = highlightSelection.setData(highlightData);
         updateHighlightSelection.exit.remove();
         const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
         this.highlightSelection = updateHighlightSelection.merge(enterHighlightSelection);
     }
-
+    
     private updateNodes() {
         this.group.visible = this.visible;
         this.seriesGroup.visible = this.visible;
