@@ -2150,10 +2150,6 @@
     ],
     "docs": [null, null, null, null, null, null]
   },
-  "Point": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ x: number; y: number; }"
-  },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],
