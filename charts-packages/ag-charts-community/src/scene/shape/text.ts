@@ -36,7 +36,7 @@ export class Text extends Shape {
 
     private lines: string[] = [];
     private _splitText() {
-        this.lines = this.text.split(/\r?\n/g);
+        this.lines = typeof this.text === 'string' ? this.text.split(/\r?\n/g) : [];
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o._splitText() })
