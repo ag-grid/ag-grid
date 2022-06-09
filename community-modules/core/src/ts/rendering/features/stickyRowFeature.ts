@@ -114,16 +114,10 @@ export class StickyRowFeature extends BeanStub {
 
     private refreshNodesAndContainerHeight(res: RowNode[], height: number): void {
         const ctrlsToDestroy: RowCtrlMap = {};
-        this.stickyRowCtrls.forEach(ctrl => {
-            ctrl.getRowNode().sticky = false;
-            ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl;
-        });
+        this.stickyRowCtrls.forEach(ctrl => ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl);
         this.destroyRowCtrls(ctrlsToDestroy, false);
         this.stickyRowCtrls = res
-            .map(stickyRow => {
-                stickyRow.sticky = true;
-                return this.createRowCon(stickyRow, false, false, true);
-            })
+            .map(stickyRow => this.createRowCon(stickyRow, false, false, true))
             .reverse();
 
         if (this.containerHeight != height) {

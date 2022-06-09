@@ -107,8 +107,6 @@ export class RowCtrl extends BeanStub {
 
     private updateColumnListsPending = false;
 
-    private sticky: boolean;
-
     // the top needs to be set into the DOM element when the element is created, not updated afterwards.
     // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
     // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
@@ -128,9 +126,9 @@ export class RowCtrl extends BeanStub {
         sticky: boolean
     ) {
         super();
-        this.sticky = sticky;
         this.beans = beans;
         this.rowNode = rowNode;
+        this.rowNode.sticky = !!sticky;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -150,7 +148,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public isSticky(): boolean {
-        return this.sticky;
+        return this.rowNode.sticky;
     }
 
     public getBeans(): Beans {
@@ -497,7 +495,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setAnimateFlags(animateIn: boolean): void {
-        if (!this.sticky && animateIn) {
+        if (!this.isSticky() && animateIn) {
             const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
@@ -1199,7 +1197,7 @@ export class RowCtrl extends BeanStub {
 
     private onRowHeightChanged(): void {
         // row heights don't change for sticky rows
-        if (this.sticky) { return; }
+        if (this.isSticky()) { return; }
 
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
@@ -1266,7 +1264,7 @@ export class RowCtrl extends BeanStub {
 
     private setupRemoveAnimation(): void {
         // we don't animate sticky rows
-        if (this.sticky) { return; }
+        if (this.isSticky()) { return; }
 
         const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
         if (rowStillVisibleJustNotInViewport) {
@@ -1283,6 +1281,7 @@ export class RowCtrl extends BeanStub {
 
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
+        this.rowNode.sticky = false;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());
@@ -1377,7 +1376,7 @@ export class RowCtrl extends BeanStub {
         if (this.printLayout) { return ''; }
 
         let rowTop: number;
-        if (this.sticky) {
+        if (this.isSticky()) {
             rowTop = this.rowNode.stickyRowTop;
         } else {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
