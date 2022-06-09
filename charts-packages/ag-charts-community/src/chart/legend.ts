@@ -2,12 +2,13 @@ import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
-import { FontStyle, FontWeight } from "../scene/shape/text";
+import { FontStyle, FontWeight, getFont } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
 import { SourceEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 import { RedrawType } from "../scene/node";
+import { HdpiCanvas } from "../canvas/hdpiCanvas";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -50,12 +51,16 @@ interface LegendLabelFormatterParams {
 }
 
 export class LegendLabel {
+    characterLimit = undefined;
     color = 'black';
     fontStyle?: FontStyle = undefined;
     fontWeight?: FontWeight = undefined;
     fontSize = 12;
     fontFamily = 'Verdana, sans-serif';
     formatter?: (params: LegendLabelFormatterParams) => string = undefined;
+    getFont(): string {
+        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+    }
 }
 
 export class LegendMarker {
@@ -85,6 +90,8 @@ export class LegendMarker {
 export class LegendItem {
     readonly marker = new LegendMarker();
     readonly label = new LegendLabel();
+    /** Used to constrain the width of legend items. */
+    maxWidth = undefined;
     /**
      * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
@@ -186,7 +193,7 @@ export class Legend {
      */
     performLayout(width: number, height: number) {
         const { item } = this;
-        const { marker, paddingX, paddingY } = item;
+        const { marker, paddingX, paddingY, maxWidth, label: { characterLimit = Infinity }, label } = item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
             const MarkerShape = getMarker(marker.shape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
@@ -202,24 +209,62 @@ export class Legend {
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
-        const itemMarker = this.item.marker;
-        const itemLabel = this.item.label;
-        const maxCharCount = 25;
+
+        const font = label.getFont();
         const ellipsis = `...`;
+        const characterSizeMap: { [key: string]: number } = {
+            [ellipsis]: HdpiCanvas.getTextSize(ellipsis, font).width,
+        };
+
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            markerLabel.markerSize = itemMarker.size;
-            markerLabel.spacing = itemMarker.padding;
-            markerLabel.fontStyle = itemLabel.fontStyle;
-            markerLabel.fontWeight = itemLabel.fontWeight;
-            markerLabel.fontSize = itemLabel.fontSize;
-            markerLabel.fontFamily = itemLabel.fontFamily;
-
             let text = datum.label.text;
-            if (text.length > maxCharCount) {
-                text = `${text.substring(0, maxCharCount - ellipsis.length)}${ellipsis}`;
-            }
             markerLabel.text = text;
+            markerLabel.markerSize = marker.size;
+            markerLabel.spacing = marker.padding;
+            markerLabel.fontStyle = label.fontStyle;
+            markerLabel.fontWeight = label.fontWeight;
+            markerLabel.fontSize = label.fontSize;
+            markerLabel.fontFamily = label.fontFamily;
+
+            const textChars = text.split('');
+            let addEllipsis = false;
+
+            if (text.length > characterLimit) {
+                text = `${text.substring(0, characterLimit - ellipsis.length)}`;
+                addEllipsis = true;
+            }
+
+            if (maxWidth) {
+                const labelBBox = markerLabel.computeBBox();
+                if (labelBBox.width > maxWidth) {
+                    let truncatedText = '';
+                    let cumCharSize = characterSizeMap[ellipsis];
+
+                    for (let char of textChars) {
+                        if (!characterSizeMap[char]) {
+                            characterSizeMap[char] = HdpiCanvas.getTextSize(char, font).width;
+                        };
+
+                        cumCharSize += characterSizeMap[char];
+
+                        if (cumCharSize > maxWidth) {
+                            break;
+                        }
+
+                        truncatedText += char;
+                    }
+
+                    text = truncatedText;
+                    addEllipsis = true;
+                }
+            }
+
+            if (addEllipsis) {
+                text += ellipsis;
+                markerLabel.text = text;
+            }
+
 
             bboxes.push(markerLabel.computeBBox());
         });

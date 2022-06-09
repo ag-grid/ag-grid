@@ -243,6 +243,7 @@ export class ChartTheme {
                         padding: 8
                     },
                     label: {
+                        characterLimit: 25,
                         color: 'black',
                         fontStyle: undefined,
                         fontWeight: undefined,
