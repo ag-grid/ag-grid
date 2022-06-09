@@ -23,7 +23,7 @@ import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
-import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
+import { isContinuous, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 import { doOnce } from "../../../util/function";
 import { Node } from '../../../scene/node';

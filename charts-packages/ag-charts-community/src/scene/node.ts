@@ -54,7 +54,7 @@ export function SceneChangeDetection(opts?: {
             // steps, as these setters are called a LOT during update cycles.        
             const setterJs = `
                 ${debug ? 'var setCount = 0;' : ''}
-                function set${key}(value) {
+                function set_${key}(value) {
                     const oldValue = this.${privateKey};
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
@@ -67,13 +67,13 @@ export function SceneChangeDetection(opts?: {
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
                 };
-                set${key};
+                set_${key};
             `;
             const getterJs = `
-                function get${key}() {
+                function get_${key}() {
                     return this.${privateKey};
                 };
-                get${key};
+                get_${key};
             `;
             Object.defineProperty(target, key, {
                 set: eval(setterJs),
