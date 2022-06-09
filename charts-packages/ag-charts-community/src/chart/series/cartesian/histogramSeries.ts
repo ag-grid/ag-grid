@@ -319,6 +319,7 @@ export class HistogramSeries extends CartesianSeries {
 
     update(): void {
         this.updateSelections();
+        this.updateHighlightSelection();
         this.updateNodes();
     }
 
@@ -330,7 +331,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const nodeData = this.createNodeData();
 
-        this.updateRectSelection(nodeData);
+        this.rectSelection = this.updateRectSelection(this.rectSelection, nodeData);
         this.updateTextSelection(nodeData);
     }
 
@@ -412,9 +413,10 @@ export class HistogramSeries extends CartesianSeries {
         return nodeData;
     }
 
-    private updateRectSelection(nodeData: HistogramNodeDatum[]): void {
-        const { rectSelection, highlightSelection } = this;
-
+    private updateRectSelection(
+        rectSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
+        nodeData: HistogramNodeDatum[],
+    ): Selection<Rect, Group, HistogramNodeDatum, any> {
         const update = (selection: typeof rectSelection) => {
             const updateRects = selection.setData(nodeData);
             updateRects.exit.remove();
@@ -427,8 +429,19 @@ export class HistogramSeries extends CartesianSeries {
             return updateRects.merge(enterRects);
         };
 
-        this.rectSelection = update(rectSelection);
-        this.highlightSelection = update(highlightSelection);
+        return update(rectSelection);
+    }
+
+    private updateHighlightSelection(): void {
+        const {
+            chart: {
+                highlightedDatum: { datum = undefined, series = undefined } = {},
+                highlightedDatum = undefined,
+            } = {},
+        } = this;
+
+        const highlightData = series === this && highlightedDatum && datum ? [highlightedDatum as HistogramNodeDatum] : [];
+        this.highlightSelection = this.updateRectSelection(this.highlightSelection, highlightData);
     }
 
     private updateRectNodes(): void {

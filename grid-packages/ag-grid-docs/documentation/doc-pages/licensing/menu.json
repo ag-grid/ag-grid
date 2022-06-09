@@ -74,6 +74,15 @@
             "pane": "left"
           },
           {
+            "title": "Angular Compatibility",
+            "icon": "angular",
+            "url": "/angular-compatibility",
+            "frameworks": [
+              "angular"
+            ],
+            "pane": "right"
+          },
+          {
             "title": "Vue 2 Tutorial",
             "icon": "vue",
             "url": "/vue2/",
@@ -528,23 +537,23 @@
             "matrixExcludeChildren": true,
             "items": [
               {
+                "title": "API Reference",
+                "url": "/server-side-model-api-reference/",
+                "enterprise": true
+              },
+              {
                 "title": "Datasource",
                 "url": "/server-side-model-datasource/",
                 "enterprise": true
               },
               {
                 "title": "Infinite Scroll",
-                "url": "/server-side-model-row-stores/",
+                "url": "/server-side-model-infinite-scroll/",
                 "enterprise": true
               },
               {
                 "title": "Row Grouping",
                 "url": "/server-side-model-grouping/",
-                "enterprise": true
-              },
-              {
-                "title": "Configuration",
-                "url": "/server-side-model-configuration/",
                 "enterprise": true
               },
               {

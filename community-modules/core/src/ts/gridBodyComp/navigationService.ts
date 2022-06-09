@@ -137,8 +137,17 @@ export class NavigationService extends BeanStub {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
 
+        const stickyTopHeight = this.gridBodyCon.getStickyTopHeight();
+
         if (exists(scrollIndex)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
+        }
+
+        const newStickyTopHeight = this.gridBodyCon.getStickyTopHeight();
+
+        if (newStickyTopHeight !== stickyTopHeight) {
+            const diff = stickyTopHeight - newStickyTopHeight;
+            this.gridBodyCon.scrollVertically(diff);
         }
 
         // make sure the cell is rendered, needed if we are to focus

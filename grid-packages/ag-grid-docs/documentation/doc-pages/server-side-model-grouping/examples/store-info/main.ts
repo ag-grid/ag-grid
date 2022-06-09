@@ -21,10 +21,6 @@ const gridOptions: GridOptions = {
     minWidth: 280,
   },
 
-  // rowBuffer: 0,
-  cacheBlockSize: 4,
-
-  // use the server-side row model
   rowModelType: 'serverSide',
 
   getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {

@@ -276,14 +276,23 @@ export class GridBodyCtrl extends BeanStub {
         };
 
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
-        this.addManagedListener(this.eBodyViewport, 'wheel', this.onWheel.bind(this));
+        this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
+        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
     }
 
-    private onWheel(e: MouseEvent): void {
+    private onBodyViewportWheel(e: WheelEvent): void {
         if (!this.gridOptionsWrapper.isSuppressScrollWhenPopupsAreOpen()) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();
+        }
+    }
+
+    private onStickyTopWheel(e: WheelEvent): void {
+        e.preventDefault();
+
+        if (e.offsetY) {
+            this.scrollVertically(e.deltaY);
         }
     }
 

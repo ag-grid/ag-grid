@@ -819,25 +819,29 @@ export class RowNode implements IEventEmitter {
         callback(this);
     }
 
-    // + rowController.updateGroupsInSelection()
     // + selectionController.calculatedSelectedForAllGroupNodes()
-    public calculateSelectedFromChildren(): void {
+    public calculateSelectedFromChildren(): boolean | undefined | null {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
-        let newSelectedValue: boolean | undefined;
 
         if (!this.childrenAfterGroup?.length) {
-            return;
+            return this.selectable ? this.selected : null;
         }
 
         for (let i = 0; i < this.childrenAfterGroup.length; i++) {
             const child = this.childrenAfterGroup[i];
 
-            // skip non-selectable nodes to prevent inconsistent selection values
-            if (!child.selectable) { continue; }
+            let childState = child.isSelected();
+            // non-selectable nodes must be calculated from their children, or ignored if no value results.
+            if (!child.selectable) {
+                const selectable = child.calculateSelectedFromChildren();
+                if (selectable === null) {
+                    continue;
+                }
+                childState = selectable;
+            }
 
-            const childState = child.isSelected();
 
             switch (childState) {
                 case true:
@@ -852,17 +856,17 @@ export class RowNode implements IEventEmitter {
             }
         }
 
-        if (atLeastOneMixed) {
-            newSelectedValue = undefined;
-        } else if (atLeastOneSelected && !atLeastOneDeSelected) {
-            newSelectedValue = true;
-        } else if (!atLeastOneSelected && atLeastOneDeSelected) {
-            newSelectedValue = false;
+        if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
+            return undefined;
+        } else if (atLeastOneSelected) {
+            return true;
+        } else if (atLeastOneDeSelected) {
+            return false;
+        } else if (!this.selectable) {
+            return null;
         } else {
-            newSelectedValue = undefined;
+            return this.selected;
         }
-
-        this.selectThisNode(newSelectedValue);
     }
 
     public setSelectedInitialValue(selected: boolean): void {

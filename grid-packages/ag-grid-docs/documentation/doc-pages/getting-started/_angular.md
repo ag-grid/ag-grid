@@ -76,7 +76,7 @@
 |</section>
 |
 | [[note]]
-| | Please refer to our [Compatibility Chart](#ag-grid--angular-compatibility-chart) for Supported Versions of
+| | Please refer to our [Compatibility Guide](/angular-compatibility/) for Supported Versions of
 | | Angular & AG Grid.
 |
 | ## Getting Started with Community Video
@@ -457,18 +457,3 @@
 | ];
 |```
 |
-| ## AG Grid & Angular Compatibility Chart
-|
-| [[note]]
-| | Due to a breaking change in Angular 10 you may experience the following error when building:
-| | `Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`<br/><br/>
-| | If you wish to use Angular 10 with AG Grid versions 18-23 then you need to set `"skipLibCheck": true`
-| | in `tsconfig.app.json` Please note however that this is a workaround and Angular 10 is only
-| | officially supported with AG Grid 24+.
-|
-| | Angular Version | AG Grid Versions                        |
-| | --------------- | --------------------------------------- |
-| | 6               | 18 - 22                                 |
-| | 7 - 9           | 18 - 23+ (23 recommended for Angular 9) |
-| | 7 - 10+         | 24 - 26 (24+ for Angular 10)            |
-| | 8 - 10+         | 27+                                     |
