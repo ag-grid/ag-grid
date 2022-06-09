@@ -13,9 +13,11 @@ Here's how our grid looks with multiple filters and grouping enabled:
 
 ![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
 
-Version 22.1.1 of `@ag-grid-community/angular` is the last version that supports Angular 5 and before.
+## Supported Angular Versions
 
-Version 23 onwards of `@ag-grid-community/angular` will support Angular 6+ only.
+This package is published in the Ivy distribution format with a minimum dependency of Angular v12. If you are using Angular v8-11 then you will need to use the `@ag-grid-community/angular-legacy` package instead.
+
+See Angular [Version Compatibility](https://ag-grid.com/angular-data-grid/angular-compatibility/) for which versions of Angular are supported by each AG Grid version.
 
 ## Features
 
