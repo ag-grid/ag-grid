@@ -9333,7 +9333,8 @@
       "description": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */",
       "type": { "returnType": "number", "optional": false }
     },
-    "focusColumn": { "type": { "returnType": "Column", "optional": false } }
+    "focusColumn": { "type": { "returnType": "Column", "optional": false } },
+    "isAsync": { "type": { "returnType": "boolean", "optional": true } }
   },
   "RenderParams": {
     "rows": { "type": { "returnType": "RowNode", "optional": false } }

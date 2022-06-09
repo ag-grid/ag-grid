@@ -5379,7 +5379,8 @@
       "scrollType": "'top' | 'bottom' | null",
       "scrollColumn": "Column | null",
       "focusIndex": "number",
-      "focusColumn": "Column"
+      "focusColumn": "Column",
+      "isAsync?": "boolean"
     },
     "docs": {
       "scrollIndex": "/** The rowIndex to vertically scroll to. */",
