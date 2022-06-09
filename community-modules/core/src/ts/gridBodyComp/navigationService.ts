@@ -40,6 +40,7 @@ interface NavigateParams {
     /** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */
     focusIndex: number;
     focusColumn: Column;
+    isAsync?: boolean;
 }
 
 @Bean('navigationService')
@@ -137,17 +138,16 @@ export class NavigationService extends BeanStub {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
 
-        const stickyTopHeight = this.gridBodyCon.getStickyTopHeight();
-
         if (exists(scrollIndex)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
         }
 
-        const newStickyTopHeight = this.gridBodyCon.getStickyTopHeight();
-
-        if (newStickyTopHeight !== stickyTopHeight) {
-            const diff = stickyTopHeight - newStickyTopHeight;
-            this.gridBodyCon.scrollVertically(diff);
+        // setFocusedCell relies on the browser default focus behavior to scroll the focused cell into view,
+        // however, this behavior will cause the cell border to be cut off, or if we have sticky rows, the
+        // cell will be completely hidden, so we call ensureIndexVisible without a position to guarantee
+        // minimal scroll to get the row into view.
+        if (!navigateParams.isAsync) {
+            this.gridBodyCon.getScrollFeature().ensureIndexVisible(focusIndex);
         }
 
         // make sure the cell is rendered, needed if we are to focus
@@ -265,7 +265,8 @@ export class NavigationService extends BeanStub {
                 scrollType: up ? 'bottom' : 'top',
                 scrollColumn: null,
                 focusIndex: focusIndex,
-                focusColumn: gridCell.column
+                focusColumn: gridCell.column,
+                isAsync: true
             });
         }, 50);
     }
