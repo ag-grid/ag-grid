@@ -239,7 +239,7 @@ export class Legend {
 
             if (maxWidth) {
                 const labelBBox = markerLabel.computeBBox();
-                if (labelBBox.width > maxWidth) {
+                if (labelBBox.width > maxWidth!) {
                     let truncatedText = '';
                     let cumCharSize = characterSizeMap[ellipsis];
 
@@ -250,7 +250,7 @@ export class Legend {
 
                         cumCharSize += characterSizeMap[char];
 
-                        if (cumCharSize > maxWidth) {
+                        if (cumCharSize > maxWidth!) {
                             break;
                         }
 
