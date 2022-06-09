@@ -91,7 +91,7 @@ export class LegendItem {
     readonly marker = new LegendMarker();
     readonly label = new LegendLabel();
     /** Used to constrain the width of legend items. */
-    maxWidth = undefined;
+    maxWidth?: number = undefined;
     /**
      * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
      * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
@@ -123,6 +123,7 @@ export class Legend {
     readonly item = new LegendItem();
 
     truncatedItems: Set<string> = new Set();
+    maxItemWidth?: number = undefined;
 
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
@@ -194,8 +195,8 @@ export class Legend {
      * @param height
      */
     performLayout(width: number, height: number) {
-        const { item } = this;
-        const { marker, paddingX, paddingY, maxWidth, label: { characterLimit = Infinity }, label } = item;
+        const { item, maxItemWidth } = this;
+        const { marker, paddingX, paddingY, label: { characterLimit = Infinity }, label } = item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
             const MarkerShape = getMarker(marker.shape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
@@ -237,9 +238,9 @@ export class Legend {
                 addEllipsis = true;
             }
 
-            if (maxWidth) {
+            if (maxItemWidth) {
                 const labelBBox = markerLabel.computeBBox();
-                if (labelBBox.width > maxWidth!) {
+                if (labelBBox.width > maxItemWidth!) {
                     let truncatedText = '';
                     let cumCharSize = characterSizeMap[ellipsis];
 
@@ -250,7 +251,7 @@ export class Legend {
 
                         cumCharSize += characterSizeMap[char];
 
-                        if (cumCharSize > maxWidth!) {
+                        if (cumCharSize > maxItemWidth!) {
                             break;
                         }
 
@@ -262,12 +263,13 @@ export class Legend {
                 }
             }
 
+            const id = datum.itemId || datum.id;
             if (addEllipsis) {
                 text += ellipsis;
                 markerLabel.text = text;
-                this.truncatedItems.add(datum.id);
+                this.truncatedItems.add(id);
             } else {
-                this.truncatedItems.delete(datum.id);
+                this.truncatedItems.delete(id);
             }
 
             bboxes.push(markerLabel.computeBBox());

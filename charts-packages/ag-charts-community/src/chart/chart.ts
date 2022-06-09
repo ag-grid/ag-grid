@@ -879,6 +879,8 @@ export abstract class Chart extends Observable {
         const height = this.height - captionAutoPadding;
         const legendGroup = legend.group;
         const legendSpacing = legend.spacing;
+        const legendItemMaxWidthPercentage = 0.8;
+        legend.maxItemWidth = legend.item.maxWidth ?? (width * legendItemMaxWidthPercentage);
 
         let translationX = 0;
         let translationY = 0;
@@ -1230,7 +1232,7 @@ export abstract class Chart extends Observable {
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
             this.element.style.cursor = 'pointer';
-            if (datum && this.legend.truncatedItems.has(datum.id)) {
+            if (datum && this.legend.truncatedItems.has(datum.itemId || datum.id)) {
                 this.element.title = datum.label.text;
             } else {
                 this.element.title = '';
