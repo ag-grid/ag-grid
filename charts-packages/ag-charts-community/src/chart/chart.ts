@@ -1230,7 +1230,11 @@ export abstract class Chart extends Observable {
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
             this.element.style.cursor = 'pointer';
-            this.element.title = this.legend.truncatedItems.has(datum.id) ? datum.label.text : '';
+            if (datum && this.legend.truncatedItems.has(datum.id)) {
+                this.element.title = datum.label.text;
+            } else {
+                this.element.title = '';
+            }
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
             this.element.style.cursor = 'default';
