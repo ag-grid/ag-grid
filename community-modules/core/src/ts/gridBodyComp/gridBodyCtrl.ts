@@ -343,6 +343,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.setStickyTopOffsetTop();
     }
 
     public setStickyTopHeight(height: number = 0): void {
@@ -370,9 +371,15 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        const height = headerCtrl.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight();
+        const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
-        this.comp.setStickyTopTop(`${height + 1}px`);
+        let height = 0;
+
+        if (headerHeight > 0) { height += headerHeight + 1; }
+        if (pinnedTopHeight > 0) { height += pinnedTopHeight + 1; }
+
+        this.comp.setStickyTopTop(`${height}px`);
     }
 
     // method will call itself if no available width. this covers if the grid
