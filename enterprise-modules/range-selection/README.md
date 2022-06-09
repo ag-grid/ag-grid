@@ -25,10 +25,3 @@ If you are an Enterprise customer (or are evaluating AG Grid Enterprise) and wis
 To Sign Up:
 Send an email to accounts@ag-grid.com with your license key
 
-Building
-==============
-
-To build:
-- `npm install`
-- `npm install gulp -g`
-- `gulp` or `gulp release`
