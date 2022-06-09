@@ -44,7 +44,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agChartsSceneRenderModel || 'composite',
+            mode = (window as any).agChartsSceneRenderModel || 'adv-composite',
             width,
             height,
         } = opts;
@@ -316,8 +316,6 @@ export class Scene {
     }
 
     buildTree(node: Node): { name?: string, node?: any, dirty?: string } {
-        const childrenDirtyTree = node.children.map(c => this.buildDirtyTree(c))
-            .filter(c => c.paths.length > 0);
         const name = (node instanceof Group ? node.name : null) ?? node.id;
 
         return {
@@ -326,7 +324,11 @@ export class Scene {
             dirty: RedrawType[node.dirty],
             ...node.children.map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
-                    result[childTree.name || '<unknown>'] = childTree;
+                    let { name, node } = childTree;
+                    if (!node.visible || node.opacity <= 0) {
+                        name = `* ${name}`;
+                    }
+                    result[name ?? '<unknown>'] = childTree;
                     return result;
                 }, {} as Record<string, {}>),
         };

@@ -14,8 +14,8 @@ export class Group extends Node {
     protected clipPath: Path2D = new Path2D();
     readonly name?: string;
 
-    readonly dirtyChildren: Record<string, Node> = {};
-    readonly visibleChildren: Record<string, Node> = {};
+    readonly dirtyChildren?: Record<string, Node>;
+    readonly visibleChildren?: Record<string, Node>;
 
     @SceneChangeDetection({
         convertor: (v: number) => Math.min(1, Math.max(0, v)),
@@ -43,7 +43,22 @@ export class Group extends Node {
         if (this.opts?.zIndex !== undefined) {
             this.zIndex = this.opts.zIndex;
         }
+        if (this.opts?.optimiseDirtyTracking) {
+            this.visibleChildren = {};
+            this.dirtyChildren = {};
+        }
         this.name = this.opts?.name;
+    }
+
+    append(nodes: Node[] | Node) {
+        super.append(nodes);
+
+        if (this.dirtyChildren) {
+            nodes = nodes instanceof Array ? nodes : [nodes];
+            for (const node of nodes) {
+                this.dirtyChildren[node.id] = node;
+            }
+        }
     }
 
     _setScene(scene?: Scene) {
@@ -83,8 +98,9 @@ export class Group extends Node {
         // Ensure we update visibility tracking before blowing away dirty flags.
         this.syncChildVisibility();
 
-        for (const key of Object.keys(this.dirtyChildren)) {
-            delete this.dirtyChildren[key];
+        const { dirtyChildren = {} } = this;
+        for (const key of Object.keys(dirtyChildren)) {
+            delete dirtyChildren[key];
         }
 
         super.markClean(opts);
@@ -278,7 +294,17 @@ export class Group extends Node {
 
     private optimisedRender(renderCtx: RenderContext) {
         const { _debug: { consoleLog = false } = {} } = this;
-        const { name, dirty, dirtyZIndex, clipPath, layer, children, dirtyChildren, visibleChildren, visible: groupVisible } = this;
+        const {
+            name,
+            dirty,
+            dirtyZIndex,
+            clipPath,
+            layer,
+            children,
+            dirtyChildren = {},
+            visibleChildren = {},
+            visible: groupVisible,
+        } = this;
         let { ctx, clipBBox, resized, stats } = renderCtx;
 
         if (!layer) {
@@ -394,6 +420,10 @@ export class Group extends Node {
 
     private syncChildVisibility() {
         const { dirtyChildren, visibleChildren } = this;
+
+        if (!dirtyChildren || !visibleChildren) {
+            return;
+        }
 
         for (const child of Object.values(dirtyChildren)) {
             if (!child.visible && visibleChildren[child.id]) {

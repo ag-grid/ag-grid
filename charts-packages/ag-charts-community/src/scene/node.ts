@@ -54,7 +54,7 @@ export function SceneChangeDetection(opts?: {
             // steps, as these setters are called a LOT during update cycles.        
             const setterJs = `
                 ${debug ? 'var setCount = 0;' : ''}
-                function set${key}(value) {
+                function set_${key}(value) {
                     const oldValue = this.${privateKey};
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
@@ -67,13 +67,13 @@ export function SceneChangeDetection(opts?: {
                         ${changeCb ? 'changeCb(this);' : ''}
                     }
                 };
-                set${key};
+                set_${key};
             `;
             const getterJs = `
-                function get${key}() {
+                function get_${key}() {
                     return this.${privateKey};
                 };
-                get${key};
+                get_${key};
             `;
             Object.defineProperty(target, key, {
                 set: eval(setterJs),
@@ -185,33 +185,22 @@ export abstract class Node { // Don't confuse with `window.Node`.
         if (Node.isNode(nodes)) {
             nodes = [nodes];
         }
-        // The function takes an array rather than having open-ended
-        // arguments like `...nodes: Node[]` because the latter is
-        // transpiled to a function where the `arguments` object
-        // is copied to a temporary array inside a loop.
-        // So an array is created either way. And if we already have
-        // an array of nodes we want to add, we have to use the prohibitively
-        // expensive spread operator to pass it to the function,
-        // and, on top of that, the copy of the `arguments` is still made.
-        const n = nodes.length;
 
-        for (let i = 0; i < n; i++) {
-            const node = nodes[i];
-
+        for (const node of nodes) {
             if (node.parent) {
                 throw new Error(`${node} already belongs to another parent: ${node.parent}.`);
             }
             if (node.scene) {
-                throw new Error(`${node} already belongs a scene: ${node.scene}.`);
+                throw new Error(`${node} already belongs to a scene: ${node.scene}.`);
             }
             if (this.childSet[node.id]) {
                 // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
                 throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
             }
-
+    
             this._children.push(node);
             this.childSet[node.id] = true;
-
+    
             node._parent = this;
             node._setScene(this.scene);
         }
@@ -220,24 +209,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     appendChild<T extends Node>(node: T): T {
-        if (node.parent) {
-            throw new Error(`${node} already belongs to another parent: ${node.parent}.`);
-        }
-        if (node.scene) {
-            throw new Error(`${node} already belongs to a scene: ${node.scene}.`);
-        }
-        if (this.childSet[node.id]) {
-            // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
-            throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
-        }
-
-        this._children.push(node);
-        this.childSet[node.id] = true;
-
-        node._parent = this;
-        node._setScene(this.scene);
-
-        this.markDirty(this, RedrawType.MAJOR);
+        this.append(node);
 
         return node;
     }
@@ -251,7 +223,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._parent = undefined;
                 node._setScene();
-                this.markDirty(this, RedrawType.MAJOR);
+                this.markDirty(node, RedrawType.MAJOR);
 
                 return node;
             }
@@ -287,7 +259,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                     + `but is not in its list of children.`);
             }
 
-            this.markDirty(this, RedrawType.MAJOR);
+            this.markDirty(node, RedrawType.MAJOR);
         } else {
             this.append(node);
         }
