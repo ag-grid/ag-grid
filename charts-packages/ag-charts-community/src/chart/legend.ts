@@ -122,6 +122,8 @@ export class Legend {
 
     readonly item = new LegendItem();
 
+    truncatedItems: Set<string> = new Set();
+
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
         this._data = value;
@@ -263,8 +265,10 @@ export class Legend {
             if (addEllipsis) {
                 text += ellipsis;
                 markerLabel.text = text;
+                this.truncatedItems.add(datum.id);
+            } else {
+                this.truncatedItems.delete(datum.id);
             }
-
 
             bboxes.push(markerLabel.computeBBox());
         });
