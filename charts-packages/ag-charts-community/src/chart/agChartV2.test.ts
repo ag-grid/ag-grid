@@ -180,6 +180,10 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS,
         assertions: cartesianChartAssertions({ axisTypes: ['number', 'number'], seriesTypes: ['bar'] }),
     },
+    TRUNCATED_LEGEND_ITEMS: {
+        options: examples.TRUNCATED_LEGEND_ITEMS,
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+    },
 };
 
 describe('AgChartV2', () => {

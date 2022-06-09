@@ -3089,6 +3089,7 @@ Object {
     "enabled": false,
     "item": Object {
       "label": Object {
+        "characterLimit": 25,
         "color": "black",
         "fontFamily": "Verdana, sans-serif",
         "fontSize": 12,
