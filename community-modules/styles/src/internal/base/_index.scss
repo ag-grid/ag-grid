@@ -3,25 +3,43 @@
 @use "sass:meta";
 @use "sass:color";
 
+@use "./base-variables";
+@use "./parts/root";
+@use "./parts/common-structural";
+@use "./parts/print-structural";
+@use "./parts/reset";
+@use "./parts/widgets";
+@use "./parts/grid-layout";
+@use "./parts/grid-borders";
+@use "./parts/menu";
+@use "./parts/sidebar";
+@use "./parts/filter-tool-panel";
+@use "./parts/columns-tool-panel";
+@use "./parts/header";
+@use "./parts/footer";
+@use "./parts/column-drop";
+@use "./parts/charts";
+@use "./parts/date-time";
+
 @mixin general-styles() {
     @include ag.icon-styles();
-    @include meta.load-css("./base-variables");
-    @include meta.load-css("./parts/root");
-    @include meta.load-css("./parts/common-structural");
-    @include meta.load-css("./parts/print-structural");
-    @include meta.load-css("./parts/reset");
-    @include meta.load-css("./parts/widgets");
-    @include meta.load-css("./parts/grid-layout");
-    @include meta.load-css("./parts/grid-borders");
-    @include meta.load-css("./parts/menu");
-    @include meta.load-css("./parts/sidebar");
-    @include meta.load-css("./parts/filter-tool-panel");
-    @include meta.load-css("./parts/columns-tool-panel");
-    @include meta.load-css("./parts/header");
-    @include meta.load-css("./parts/footer");
-    @include meta.load-css("./parts/column-drop");
-    @include meta.load-css("./parts/charts");
-    @include meta.load-css("./parts/date-time");
+    @include base-variables.output();
+    @include root.output();
+    @include common-structural.output();
+    @include print-structural.output();
+    @include reset.output();
+    @include widgets.output();
+    @include grid-layout.output();
+    @include grid-borders.output();
+    @include menu.output();
+    @include sidebar.output();
+    @include filter-tool-panel.output();
+    @include columns-tool-panel.output();
+    @include header.output();
+    @include footer.output();
+    @include column-drop.output();
+    @include charts.output();
+    @include date-time.output();
 }
 
 @mixin native-input-styles() {
