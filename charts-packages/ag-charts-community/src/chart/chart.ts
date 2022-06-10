@@ -879,8 +879,6 @@ export abstract class Chart extends Observable {
         const height = this.height - captionAutoPadding;
         const legendGroup = legend.group;
         const legendSpacing = legend.spacing;
-        const legendItemMaxWidthPercentage = 0.8;
-        legend.maxItemWidth = legend.item.maxWidth ?? (width * legendItemMaxWidthPercentage);
 
         let translationX = 0;
         let translationY = 0;
@@ -920,7 +918,7 @@ export abstract class Chart extends Observable {
                 break;
 
             case 'left':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5)); // Remove legend if it takes up more than 50% of the chart width.
 
@@ -936,7 +934,7 @@ export abstract class Chart extends Observable {
                 break;
 
             default: // case 'right':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5));
 

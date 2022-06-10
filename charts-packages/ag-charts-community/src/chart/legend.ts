@@ -123,7 +123,6 @@ export class Legend {
     readonly item = new LegendItem();
 
     truncatedItems: Set<string> = new Set();
-    maxItemWidth?: number = undefined;
 
     private _data: LegendDatum[] = [];
     set data(value: LegendDatum[]) {
@@ -210,9 +209,8 @@ export class Legend {
      * @param height
      */
     performLayout(width: number, height: number) {
-        const { item, maxItemWidth } = this;
         const {
-            paddingX, paddingY, label,
+            paddingX, paddingY, label, maxWidth,
             marker: {
                 size: markerSize,
                 padding: markerPadding,
@@ -225,7 +223,7 @@ export class Legend {
                 fontSize,
                 fontFamily
             },
-        } = item;
+        } = this.item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
             const Marker = getMarker(markerShape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + Marker.name;
@@ -245,6 +243,9 @@ export class Legend {
         const font = label.getFont();
         const ellipsis = `...`;
 
+        const itemMaxWidthPercentage = 0.8;
+        const maxItemWidth = maxWidth ?? (width * itemMaxWidthPercentage);
+
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             let text = datum.label.text;
@@ -263,30 +264,28 @@ export class Legend {
                 addEllipsis = true;
             }
 
-            if (maxItemWidth) {
-                const labelWidth = markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width;
-                if (labelWidth > maxItemWidth) {
-                    let truncatedText = '';
-                    const characterWidths = this.getCharacterWidths(font);
-                    let cumCharSize = characterWidths[ellipsis];
+            const labelWidth = markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width;
+            if (labelWidth > maxItemWidth) {
+                let truncatedText = '';
+                const characterWidths = this.getCharacterWidths(font);
+                let cumCharSize = characterWidths[ellipsis];
 
-                    for (const char of textChars) {
-                        if (!characterWidths[char]) {
-                            characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
-                        };
+                for (const char of textChars) {
+                    if (!characterWidths[char]) {
+                        characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
+                    };
 
-                        cumCharSize += characterWidths[char];
+                    cumCharSize += characterWidths[char];
 
-                        if (cumCharSize > maxItemWidth) {
-                            break;
-                        }
-
-                        truncatedText += char;
+                    if (cumCharSize > maxItemWidth) {
+                        break;
                     }
 
-                    text = truncatedText;
-                    addEllipsis = true;
+                    truncatedText += char;
                 }
+
+                text = truncatedText;
+                addEllipsis = true;
             }
 
             const id = datum.itemId || datum.id;
