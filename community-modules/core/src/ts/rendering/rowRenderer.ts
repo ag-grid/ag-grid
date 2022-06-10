@@ -35,6 +35,8 @@ import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
 import { StickyRowFeature } from "./features/stickyRowFeature";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { browserSupportsPreventScroll } from "../utils/browser";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -47,6 +49,7 @@ interface RowNodeMap {
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
+    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnModel") private columnModel: ColumnModel;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
@@ -402,8 +405,8 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition | null {
-        const focusedCell = params.suppressKeepFocus ? null : this.focusService.getFocusCellToUseAfterRefresh();
+    private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
+        const focusedCell = (params?.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
 
         if (focusedCell == null) { return null; }
 
@@ -783,10 +786,27 @@ export class RowRenderer extends BeanStub {
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
     public redrawAfterScroll() {
+        let cellFocused: CellPosition | undefined;
+
+        // only try to refocus cells shifting in and out of sticky container
+        // if the browser supports focus ({ preventScroll })
+        if (this.stickyRowFeature && browserSupportsPreventScroll()) {
+            cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
+        }
+
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
         this.dispatchDisplayedRowsChanged();
+
+        if (cellFocused != null) {
+            const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
+
+            if (cellFocused != null && newFocusedCell == null) {
+                this.animationFrameService.flushAllFrames();
+                this.restoreFocusedCell(cellFocused);
+            }
+        }
     }
 
     private removeRowCompsNotToDraw(indexesToDraw: number[]): void {

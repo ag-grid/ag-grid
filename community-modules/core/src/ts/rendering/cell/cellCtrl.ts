@@ -267,7 +267,7 @@ export class CellCtrl extends BeanStub {
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
             const autoHeight = wrapperHeight + paddingTop + paddingBottom;
 
-            if (timesCalled<5) {
+            if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 const doc = this.beans.gridOptionsWrapper.getDocument();
@@ -275,7 +275,7 @@ export class CellCtrl extends BeanStub {
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
-                const possiblyNoContentYet = autoHeight==0;
+                const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
                     this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
@@ -1024,7 +1024,7 @@ export class CellCtrl extends BeanStub {
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
             const focusEl = this.cellComp.getFocusableElement();
-            focusEl.focus();
+            focusEl.focus({ preventScroll: true });
         }
 
         // if another cell was focused, and we are editing, then stop editing
