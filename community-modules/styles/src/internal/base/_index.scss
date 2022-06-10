@@ -20,6 +20,7 @@
 @use "./parts/column-drop";
 @use "./parts/charts";
 @use "./parts/date-time";
+@use "./parts/native-inputs";
 
 @mixin general-styles() {
     @include ag.icon-styles();
@@ -43,5 +44,5 @@
 }
 
 @mixin native-input-styles() {
-    @include meta.load-css("./parts/native-inputs");
+    @include native-inputs.output();
 }

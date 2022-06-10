@@ -8,16 +8,22 @@
 @use "./generated/agGridMaterial";
 @use "./generated/agGridClassic";
 
+$-fonts-emitted: ();
+
 @mixin font-face($name) {
-    $data: map.get(meta.module-variables($name), "data");
-    @if not $data {
-        @error "No $data for #{$name} font";
-    }
-    @font-face {
-        font-family: string.quote($name);
-        src: url(#{$data});
-        font-weight: normal;
-        font-style: normal;
+    @if not map.get($-fonts-emitted, $name) {
+        $-fonts-emitted: map.set($-fonts-emitted, $name, true);
+        
+        $data: map.get(meta.module-variables($name), "data");
+        @if not $data {
+            @error "No $data for #{$name} font";
+        }
+        @font-face {
+            font-family: string.quote($name);
+            src: url(#{$data});
+            font-weight: normal;
+            font-style: normal;
+        }
     }
 }
 
