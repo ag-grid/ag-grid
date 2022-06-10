@@ -196,16 +196,30 @@ export class Legend {
      */
     performLayout(width: number, height: number) {
         const { item, maxItemWidth } = this;
-        const { marker, paddingX, paddingY, label: { characterLimit = Infinity }, label } = item;
+        const {
+            paddingX, paddingY, label,
+            marker: {
+                size: markerSize,
+                padding: markerPadding,
+                shape: markerShape
+            },
+            label: {
+                characterLimit = Infinity,
+                fontStyle,
+                fontWeight,
+                fontSize,
+                fontFamily
+            },
+        } = item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
-            const MarkerShape = getMarker(marker.shape || datum.marker.shape);
-            return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
+            const Marker = getMarker(markerShape || datum.marker.shape);
+            return datum.id + '-' + datum.itemId + '-' + Marker.name;
         });
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
-            const MarkerShape = getMarker(marker.shape || datum.marker.shape);
-            node.marker = new MarkerShape();
+            const Marker = getMarker(markerShape || datum.marker.shape);
+            node.marker = new Marker();
         });
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
         const itemCount = itemSelection.size;
@@ -223,12 +237,12 @@ export class Legend {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             let text = datum.label.text;
             markerLabel.text = text;
-            markerLabel.markerSize = marker.size;
-            markerLabel.spacing = marker.padding;
-            markerLabel.fontStyle = label.fontStyle;
-            markerLabel.fontWeight = label.fontWeight;
-            markerLabel.fontSize = label.fontSize;
-            markerLabel.fontFamily = label.fontFamily;
+            markerLabel.markerSize = markerSize;
+            markerLabel.spacing = markerPadding;
+            markerLabel.fontStyle = fontStyle;
+            markerLabel.fontWeight = fontWeight;
+            markerLabel.fontSize = fontSize;
+            markerLabel.fontFamily = fontFamily;
 
             const textChars = text.split('');
             let addEllipsis = false;
@@ -415,15 +429,16 @@ export class Legend {
     }
 
     update() {
+        const { marker: { strokeWidth }, label: { color } } = this.item;
         this.itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
             markerLabel.markerFill = marker.fill;
             markerLabel.markerStroke = marker.stroke;
-            markerLabel.markerStrokeWidth = this.item.marker.strokeWidth;
+            markerLabel.markerStrokeWidth = strokeWidth;
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = this.item.label.color;
+            markerLabel.color = color;
         });
     }
 
