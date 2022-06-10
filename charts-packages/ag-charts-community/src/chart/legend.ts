@@ -236,7 +236,6 @@ export class Legend {
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             let text = datum.label.text;
-            markerLabel.text = text;
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
@@ -253,19 +252,19 @@ export class Legend {
             }
 
             if (maxItemWidth) {
-                const labelBBox = markerLabel.computeBBox();
-                if (labelBBox.width > maxItemWidth!) {
+                const labelWidth = markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width;
+                if (labelWidth > maxItemWidth) {
                     let truncatedText = '';
                     let cumCharSize = characterSizeMap[ellipsis];
 
-                    for (let char of textChars) {
+                    for (const char of textChars) {
                         if (!characterSizeMap[char]) {
                             characterSizeMap[char] = HdpiCanvas.getTextSize(char, font).width;
                         };
 
                         cumCharSize += characterSizeMap[char];
 
-                        if (cumCharSize > maxItemWidth!) {
+                        if (cumCharSize > maxItemWidth) {
                             break;
                         }
 
@@ -280,12 +279,12 @@ export class Legend {
             const id = datum.itemId || datum.id;
             if (addEllipsis) {
                 text += ellipsis;
-                markerLabel.text = text;
                 this.truncatedItems.add(id);
             } else {
                 this.truncatedItems.delete(id);
             }
 
+            markerLabel.text = text;
             bboxes.push(markerLabel.computeBBox());
         });
 
