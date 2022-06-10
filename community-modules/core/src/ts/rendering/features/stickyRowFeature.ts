@@ -96,7 +96,7 @@ export class StickyRowFeature extends BeanStub {
 
             // if first row is an open group, and practically shown, it needs
             // to be stuck
-            if (firstRow.group && firstRow.expanded && firstRow.rowTop! < firstPixelAfterStickyRows) {
+            if (firstRow.group && firstRow.expanded && !firstRow.footer && firstRow.rowTop! < firstPixelAfterStickyRows) {
                 addStickyRow(firstRow);
                 continue;
             }
