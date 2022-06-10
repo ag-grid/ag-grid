@@ -49,7 +49,7 @@ export class ScatterSeriesTooltip extends SeriesTooltip {
     renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class ScatterSeries extends CartesianSeries {
+export class ScatterSeries extends CartesianSeries<ScatterNodeDatum> {
 
     static className = 'ScatterSeries';
     static type = 'scatter' as const;

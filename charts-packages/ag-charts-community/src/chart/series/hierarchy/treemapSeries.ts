@@ -27,7 +27,6 @@ interface TreemapNodeDatum extends SeriesNodeDatum {
     y1: number;
     depth: number;
 
-    series: TreemapSeries;
     fill: string;
     label: string;
     hasTitle: boolean;
@@ -64,7 +63,7 @@ enum TextNodeTag {
     Value
 }
 
-export class TreemapSeries extends HierarchySeries {
+export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     static className = 'TreemapSeries';
     static type = 'treemap' as const;
@@ -203,7 +202,7 @@ export class TreemapSeries extends HierarchySeries {
             const label = datum[labelKey];
             const colorValue = colorKey ? datum[colorKey] : depth;
 
-            root.series = series;
+            Object.assign(root, { series });
             root.fill = !children || colorParents ? colorScale.convert(colorValue) : '#272931';
             root.colorValue = colorValue;
 
@@ -228,6 +227,10 @@ export class TreemapSeries extends HierarchySeries {
 
     protected getLabelCenterY(datum: any): number {
         return (datum.y0 + datum.y1) / 2 + 2;
+    }
+
+    createNodeData() {
+        return [];
     }
 
     update(): void {

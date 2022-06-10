@@ -1,6 +1,6 @@
 import { HierarchyChart } from "../../hierarchyChart";
-import { Series } from "../series";
+import { Series, SeriesNodeDatum } from "../series";
 
-export abstract class HierarchySeries extends Series {
+export abstract class HierarchySeries<S extends SeriesNodeDatum> extends Series<S> {
     chart?: HierarchyChart;
 }

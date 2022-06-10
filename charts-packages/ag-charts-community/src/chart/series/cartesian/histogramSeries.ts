@@ -113,7 +113,7 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
     renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class HistogramSeries extends CartesianSeries {
+export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
 
     static className = 'HistogramSeries';
     static type = 'histogram' as const;

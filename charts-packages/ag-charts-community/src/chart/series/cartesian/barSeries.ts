@@ -119,7 +119,7 @@ type BarSeriesGroup = {
     labelSelection: Selection<Text, Group, BarNodeDatum, any>;
 }
 
-export class BarSeries extends CartesianSeries {
+export class BarSeries extends CartesianSeries<BarNodeDatum> {
 
     static className = 'BarSeries';
     static type = 'bar' as const;

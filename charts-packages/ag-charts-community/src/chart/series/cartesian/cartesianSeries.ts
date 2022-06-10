@@ -1,9 +1,9 @@
-import { Series } from "../series";
+import { Series, SeriesNodeDatum } from "../series";
 import { ChartAxis, ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 import { isContinuous, isDiscrete } from "../../../util/value";
 
-export abstract class CartesianSeries extends Series {
+export abstract class CartesianSeries<S extends SeriesNodeDatum> extends Series<S> {
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
         [ChartAxisDirection.X]: ['xKey'],
         [ChartAxisDirection.Y]: ['yKey']

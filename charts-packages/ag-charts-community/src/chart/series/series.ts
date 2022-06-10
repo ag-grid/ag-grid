@@ -20,7 +20,7 @@ export interface SeriesNodeDatum {
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `datum` - raw series datum, an element from the `series.data` array
-    readonly series: Series;
+    readonly series: Series<this>;
     readonly itemId?: any;
     readonly datum: any;
     readonly point?: { // in local (series) coordinates
@@ -87,7 +87,7 @@ export class SeriesTooltip {
     enabled = true;
 }
 
-export abstract class Series extends Observable {
+export abstract class Series<S extends SeriesNodeDatum = SeriesNodeDatum> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
     protected static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
@@ -186,20 +186,20 @@ export abstract class Series extends Observable {
     abstract getDomain(direction: ChartAxisDirection): any[];
 
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
-    abstract processData(): boolean;
+    abstract processData(): void;
 
     // Using processed data, create data that backs visible nodes.
-    createNodeData(): SeriesNodeDatum[] { return []; }
+    abstract createNodeData(): S[];
+
+    // Returns persisted node data associated with the rendered portion of the series' data.
+    getNodeData(): readonly S[] { return []; }
+
+    getLabelData(): readonly PointLabelDatum[] { return []; }
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
         this.nodeDataRefresh = true;
     }
-
-    // Returns persisted node data associated with the rendered portion of the series' data.
-    getNodeData(): readonly SeriesNodeDatum[] { return []; }
-
-    getLabelData(): readonly PointLabelDatum[] { return []; }
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
@@ -263,7 +263,7 @@ export abstract class Series extends Observable {
         return this.pickGroup.pickNode(x, y);
     }
 
-    fireNodeClickEvent(_event: MouseEvent, _datum: SeriesNodeDatum): void {
+    fireNodeClickEvent(_event: MouseEvent, _datum: S): void {
         // Override point for subclasses.
     }
 
