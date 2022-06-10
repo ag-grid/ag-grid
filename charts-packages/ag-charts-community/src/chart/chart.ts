@@ -918,7 +918,7 @@ export abstract class Chart extends Observable {
                 break;
 
             case 'left':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5)); // Remove legend if it takes up more than 50% of the chart width.
 
@@ -934,7 +934,7 @@ export abstract class Chart extends Observable {
                 break;
 
             default: // case 'right':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5));
 
@@ -1230,6 +1230,11 @@ export abstract class Chart extends Observable {
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
             this.element.style.cursor = 'pointer';
+            if (datum && this.legend.truncatedItems.has(datum.itemId || datum.id)) {
+                this.element.title = datum.label.text;
+            } else {
+                this.element.title = '';
+            }
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
             this.element.style.cursor = 'default';

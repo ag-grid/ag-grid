@@ -1035,6 +1035,50 @@ export const GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = 
     ],
 }
 
+export const TRUNCATED_LEGEND_ITEMS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables long legend item text',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services another long legend item text',
+        },
+    ],
+    legend: {
+        position: 'left',
+        item: {
+            paddingY: 15,
+            maxWidth: 100,
+        },
+    },
+}
+
+
 // START ADVANCED EXAMPLES =========================================================================
 
 export const ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS: AgChartOptions = DOCS_EXAMPLES['time-axis-with-irregular-intervals'];
