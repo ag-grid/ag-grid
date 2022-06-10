@@ -180,6 +180,21 @@ export class Legend {
      */
     spacing = 20;
 
+    private characterWidths = new Map();
+
+    private getCharacterWidths(font: string) {
+        const { characterWidths } = this;
+        if (characterWidths.has(font)) {
+            return characterWidths.get(font);
+        } else {
+            const cw: { [key: string]: number } = {
+                '...': HdpiCanvas.getTextSize('...', font).width,
+            };
+            characterWidths.set(font, cw);
+            return cw;
+        }
+    }
+
     readonly size: [number, number] = [0, 0];
 
     /**
@@ -229,9 +244,6 @@ export class Legend {
 
         const font = label.getFont();
         const ellipsis = `...`;
-        const characterSizeMap: { [key: string]: number } = {
-            [ellipsis]: HdpiCanvas.getTextSize(ellipsis, font).width,
-        };
 
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
@@ -255,14 +267,15 @@ export class Legend {
                 const labelWidth = markerSize + markerPadding + HdpiCanvas.getTextSize(text, font).width;
                 if (labelWidth > maxItemWidth) {
                     let truncatedText = '';
-                    let cumCharSize = characterSizeMap[ellipsis];
+                    const characterWidths = this.getCharacterWidths(font);
+                    let cumCharSize = characterWidths[ellipsis];
 
                     for (const char of textChars) {
-                        if (!characterSizeMap[char]) {
-                            characterSizeMap[char] = HdpiCanvas.getTextSize(char, font).width;
+                        if (!characterWidths[char]) {
+                            characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
                         };
 
-                        cumCharSize += characterSizeMap[char];
+                        cumCharSize += characterWidths[char];
 
                         if (cumCharSize > maxItemWidth) {
                             break;
