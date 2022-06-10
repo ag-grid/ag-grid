@@ -8,7 +8,7 @@
     --ag-selected-row-background-color: #{color.change(#2196f3, $alpha: 0.3)};
     --ag-row-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
     --ag-column-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
-    --ag-chip-background-color: #{color.change(#2196f3, $alpha: 0.07)};
+    --ag-chip-background-color: #{color.change(#181d1f, $alpha: 0.07)};
     --ag-input-focus-border-color: #{color.change(#2196f3, $alpha: 0.4)};
     --ag-range-selection-background-color: #{color.change(#2196f3, $alpha: 0.2)};
     --ag-range-selection-background-color-2: #{color.change(#2196f3, $alpha: 0.36)};
@@ -26,7 +26,6 @@
     --ag-subheader-background-color: #fff;
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
-    --ag-input-disabled-background-color: #f1f2f4;
     
     // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -39,7 +38,9 @@
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in alpine-dark)
-    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
+    --ag-disabled-foreground-color: #{color.change(#181d1f, $alpha: 0.5)};
+    --ag-input-disabled-border-color: rgba(186, 191, 199, 0.3);
+    --ag-input-disabled-background-color: rgba(186, 191, 199, 0.15);
 
     // BORDERS
     --ag-borders: solid 1px;
