@@ -17,7 +17,6 @@ export class StickyRowFeature extends BeanStub {
     private stickyRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
     private containerHeight = 0;
-    private lastFirstVisiblePixel: number;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky: boolean) => RowCtrl,
@@ -47,10 +46,6 @@ export class StickyRowFeature extends BeanStub {
 
         const stickyRows: RowNode[] = [];
         const firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
-
-        if (firstPixel === this.lastFirstVisiblePixel) { return; }
-
-        this.lastFirstVisiblePixel = firstPixel;
 
         const addStickyRow = (stickyRow: RowNode) => {
             stickyRows.push(stickyRow);
@@ -112,21 +107,24 @@ export class StickyRowFeature extends BeanStub {
         this.refreshNodesAndContainerHeight(stickyRows, height);
     }
 
-    private refreshNodesAndContainerHeight(res: RowNode[], height: number): void {
-        const ctrlsToDestroy: RowCtrlMap = {};
-        this.stickyRowCtrls.forEach(ctrl => {
-            ctrl.getRowNode().sticky = false;
-            ctrlsToDestroy[ctrl.getRowNode().id!] = ctrl;
-        });
-        this.destroyRowCtrls(ctrlsToDestroy, false);
-        this.stickyRowCtrls = res
-            .map(stickyRow => {
-                stickyRow.sticky = true;
-                return this.createRowCon(stickyRow, false, false, true);
-            })
-            .reverse();
+    private refreshNodesAndContainerHeight(allStickyNodes: RowNode[], height: number): void {
+        const removedCtrls = this.stickyRowCtrls.filter(ctrl => allStickyNodes.indexOf(ctrl.getRowNode()) === -1);
+        const addedNodes = allStickyNodes.filter(rowNode => this.stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode() === rowNode) === -1);
 
-        if (this.containerHeight != height) {
+        const ctrlsToDestroy: RowCtrlMap = {};
+        removedCtrls.forEach(removedCtrl => {
+            ctrlsToDestroy[removedCtrl.getRowNode().id!] = removedCtrl;
+            this.stickyRowCtrls = this.stickyRowCtrls.filter(ctrl => ctrl !== removedCtrl);
+        });
+
+        this.destroyRowCtrls(ctrlsToDestroy, false);
+        const newCtrls = addedNodes.map(rowNode => this.createRowCon(rowNode, false, false, true));
+
+        this.stickyRowCtrls.push(...newCtrls);
+        this.stickyRowCtrls.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));
+        this.stickyRowCtrls.sort((a, b) => b.getRowNode().rowIndex! - a.getRowNode().rowIndex!);
+
+        if (this.containerHeight !== height) {
             this.containerHeight = height;
             this.gridBodyCtrl.setStickyTopHeight(height);
         }

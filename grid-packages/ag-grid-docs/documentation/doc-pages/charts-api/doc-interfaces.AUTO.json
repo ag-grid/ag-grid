@@ -3154,7 +3154,6 @@
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ChartUpdateType": {},
-  "Point": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
   "ChartAxisMeta": {

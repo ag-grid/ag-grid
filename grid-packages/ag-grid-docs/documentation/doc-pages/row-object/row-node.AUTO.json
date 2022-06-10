@@ -362,7 +362,7 @@
     }
   },
   "calculateSelectedFromChildren": {
-    "type": { "arguments": {}, "returnType": "void" }
+    "type": { "arguments": {}, "returnType": "boolean | undefined | null" }
   },
   "setSelectedInitialValue": {
     "type": { "arguments": { "selected": "boolean" }, "returnType": "void" }

@@ -480,7 +480,8 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |
 | If everything goes well, `ng serve` has started the web server. You can open your app at <a href="http://localhost:4200" target="_blank">localhost:4200</a>.
 |
-| As a next step, let's add the AG Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
+|
+| As a next step, let's add the AG Charts NPM packages. If you are not using the latest version of Angular check the [compatibility table](#compatible-versions) below. Run the following command in `my-app` (you may need a new instance of the terminal):
 |
 | ```bash
 | npm install --save ag-charts-community ag-charts-angular
@@ -1326,6 +1327,21 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | ```js
 | agCharts.AgChart.create(options);
 | ```
+
+[[only-angular]]
+|## Compatible Versions
+|
+|The table below gives the ranges of compatible versions of AG Charts with Angular versions.
+| 
+| [[note]]
+| | AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG Charts v6+. See [AG Grid Legacy](/angular-compatibility/#ag-grid-legacy) for more details about our legacy packages.
+| 
+| | Angular | AG Charts | AG Charts Package   |
+| | --------| --------- | --------------------|
+| | 8 - 11  | 2 - 5     | ag-charts-angular   |
+| | 8 - 11  | 6+        | ag-charts-angular-legacy   |
+| | 12+     | 6+        | ag-charts-angular   |
+|
 
 Now that you've had a taste of what it's like to use AG Charts, we encourage you to explore our documentation to learn more.
 
