@@ -183,15 +183,16 @@ export class Legend {
 
     private getCharacterWidths(font: string) {
         const { characterWidths } = this;
+
         if (characterWidths.has(font)) {
             return characterWidths.get(font);
-        } else {
-            const cw: { [key: string]: number } = {
-                '...': HdpiCanvas.getTextSize('...', font).width,
-            };
-            characterWidths.set(font, cw);
-            return cw;
         }
+
+        const cw: { [key: string]: number } = {
+            '...': HdpiCanvas.getTextSize('...', font).width,
+        };
+        characterWidths.set(font, cw);
+        return cw;
     }
 
     readonly size: [number, number] = [0, 0];
