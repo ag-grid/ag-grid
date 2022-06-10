@@ -37,6 +37,13 @@
 
     @each $theme-name, $extra-params in $themes {
         $theme-params: map.merge($params, $extra-params);
+        @include -validate-params($theme-params, $theme-name);
+
+        $font: map.get($theme-params, "icon-font-family");
+        $font: map.get($-theme-fonts, $theme-name) !default;
+        @if $font {
+            @include -load-css-file("#{$font}Font.css", $ignore-missing: true);
+        }
         .ag-theme-#{$theme-name} {
             @include -grid-variables($theme-params, $theme-name);
         }
@@ -67,17 +74,15 @@ $-loaded-css-files: ();
 
 // Fulfils the same role as meta.load-css, which we can't use due to this issue:
 // https://github.com/sass/dart-sass/issues/1627
-@mixin -load-css-file($file) {
+@mixin -load-css-file($file, $ignore-missing: false) {
     @if not map.get($-loaded-css-files, $file) {
         $-loaded-css-files: map.set($-loaded-css-files, $file, true);
-        @include css-content.output-css-file($file);
+        @include css-content.output-css-file($file, $ignore-missing: $ignore-missing);
     }
 }
 
 // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
 @mixin -grid-variables($params, $theme) {
-    @include -validate-params($params, $theme);
-    
     @if $theme {
         $theme-color-blends: meta.get-function("-theme-#{$theme}-color-blends");
         @if $theme-color-blends {
@@ -103,12 +108,21 @@ $-theme-variables: (
 );
 
 $-theme-css-files: (
-    alpine: "ag-theme-alpine.css",
-    alpine-dark: "ag-theme-alpine.css",
-    balham: "ag-theme-balham.css",
-    balham-dark: "ag-theme-balham.css",
-    material: "ag-theme-material.css",
-    classic: "ag-theme-classic.css",
+    alpine: "ag-theme-alpine-no-font.css",
+    alpine-dark: "ag-theme-alpine-no-font.css",
+    balham: "ag-theme-balham-no-font.css",
+    balham-dark: "ag-theme-balham-no-font.css",
+    material: "ag-theme-material-no-font.css",
+    classic: "ag-theme-classic-no-font.css",
+);
+
+$-theme-fonts: (
+    alpine: "agGridAlpine",
+    alpine-dark: "agGridAlpine",
+    balham: "agGridBalham",
+    balham-dark: "agGridBalham",
+    material: "agGridMaterial",
+    classic: "agGridClassic",
 );
 
 $-themes: map.keys($-theme-variables);
@@ -269,8 +283,8 @@ $-themes: map.keys($-theme-variables);
     @if map.has-key($params, $target) or $value == null {
         @return $params;
     }
-    @if $opacity != null {
-        $value: color.change($value, $alpha: color.alpha($value) * $opacity);
+    @if $alpha != null {
+        $value: color.change($value, $alpha: color.alpha($value) * $alpha);
     }
     @if $self-overlay != null {
         // this formula produces the same opacity value as overlaying the color on top
@@ -397,6 +411,7 @@ $-variable-param-types: (
     balham-active-color: "color",
     material-primary-color: "color",
     material-accent-color: "color",
+    icon-font-family: "any"
 );
 
 // params that are not copied to CSS variables
@@ -414,7 +429,8 @@ $-non-variable-param-types: (
     $param-types: map.merge($-variable-param-types, $theme-variables);
     $error-count: 0;
     @each $name, $value in $params {
-        @if string.index(meta.inspect($value), "var(") {
+        
+        @if string.index(meta.inspect($value), "var(") != null {
             // You can pass variable expressions as values and we'll just trust
             // that it's an appropriate value because we can't check at compile time
         } @else {

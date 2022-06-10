@@ -24,10 +24,10 @@ const content = `
 
 // Output compiled CSS content for a file in the dist folder, where $file is one of:
 //     - ${cssFiles.join("\n//     - ")}
-@mixin output-css-file($file) {
+@mixin output-css-file($file, $ignore-missing: false) {
     ${mixins}
-    @else {
-        @error "No such file #{$file}";
+    @else if not $ignore-missing {
+        @error "No such file #{$file}, try one of: ${cssFiles.join(", ")}";
     }
 }
 `;
