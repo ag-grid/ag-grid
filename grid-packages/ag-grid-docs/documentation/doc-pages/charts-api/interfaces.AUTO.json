@@ -597,6 +597,7 @@
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
+      "characterLimit?": "number",
       "color?": "CssColor",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -605,6 +606,7 @@
       "formatter?": "(id: string, itemId: any, value: string) => string"
     },
     "docs": {
+      "characterLimit?": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
       "color?": "/** The colour of the text. */",
       "fontStyle?": "/** The font style to use for the legend. */",
       "fontWeight?": "/** The font weight to use for the legend. */",
@@ -618,12 +620,14 @@
     "type": {
       "marker?": "AgChartLegendMarkerOptions",
       "label?": "AgChartLegendLabelOptions",
+      "maxWidth?": "PixelSize",
       "paddingX?": "PixelSize",
       "paddingY?": "PixelSize"
     },
     "docs": {
       "marker?": "/** Configuration for the legend markers. */",
       "label?": "/** Configuration for the legend labels. */",
+      "maxWidth?": "/** Used to constrain the width of legend items. */",
       "paddingX?": "/** The horizontal spacing in pixels to use between legend items. */",
       "paddingY?": "/** The vertical spacing in pixels to use between legend items. */"
     }

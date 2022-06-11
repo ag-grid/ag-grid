@@ -11303,6 +11303,10 @@
     }
   },
   "AgChartLegendLabelOptions": {
+    "characterLimit": {
+      "description": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "color": {
       "description": "/** The colour of the text. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -11340,6 +11344,10 @@
     "label": {
       "description": "/** Configuration for the legend labels. */",
       "type": { "returnType": "AgChartLegendLabelOptions", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of legend items. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "paddingX": {
       "description": "/** The horizontal spacing in pixels to use between legend items. */",

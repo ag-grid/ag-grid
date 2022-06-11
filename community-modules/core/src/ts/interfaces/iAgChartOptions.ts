@@ -288,6 +288,8 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelOptions {
+    /** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */
+    characterLimit?: number;
     /** The colour of the text. */
     color?: CssColor;
     /** The font style to use for the legend. */
@@ -307,6 +309,8 @@ export interface AgChartLegendItemOptions {
     marker?: AgChartLegendMarkerOptions;
     /** Configuration for the legend labels. */
     label?: AgChartLegendLabelOptions;
+    /** Used to constrain the width of legend items. */
+    maxWidth?: PixelSize;
     /** The horizontal spacing in pixels to use between legend items. */
     paddingX?: PixelSize;
     /** The vertical spacing in pixels to use between legend items. */
