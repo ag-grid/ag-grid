@@ -1,6 +1,6 @@
-import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp } from 'ag-grid-community';
+import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager } from 'ag-grid-community';
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import { CssClasses, isComponentStateless } from '../utils';
+import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
@@ -141,7 +141,6 @@ const CellComp = (props: {
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
 
     const [tabIndex, setTabIndex] = useState<number>();
@@ -318,7 +317,7 @@ const CellComp = (props: {
         if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
-            addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
+            addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setUserStyles: styles => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
             setTabIndex: tabIndex => setTabIndex(tabIndex),
@@ -375,13 +374,9 @@ const CellComp = (props: {
         return !!res;
     }, [renderDetails]);
 
-    const className = useMemo(() => {
-        let res = cssClasses.toString();
-        if (!showCellWrapper) {
-            res += ' ag-cell-value';
-        }
-        return res;
-    }, [cssClasses, showTools]);
+    if (eGui.current && !showCellWrapper) {
+        cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
+    }
 
     const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);
 
@@ -406,16 +401,22 @@ const CellComp = (props: {
     );
 
     return (
-        <div ref={ eGui } className={ className } style={ userStyles } tabIndex={ tabIndex }
-             role={ role } col-id={ colId } title={ title } 
-             aria-describedby={ ariaDescribedBy }>
-
-            { showCellWrapper ?
-                <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
-                    { showContents() }
-                </div>
-                :
-                showContents()
+        <div
+            ref={ eGui }
+            style={ userStyles }
+            tabIndex={ tabIndex }
+            role={ role }
+            col-id={ colId }
+            title={ title }
+            aria-describedby={ ariaDescribedBy }
+        >
+            { showCellWrapper
+                ? (
+                    <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
+                        { showContents() }
+                    </div>
+                )
+                : showContents()
             }
         </div>
     );
