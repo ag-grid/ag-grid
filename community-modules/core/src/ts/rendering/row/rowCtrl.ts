@@ -122,13 +122,11 @@ export class RowCtrl extends BeanStub {
         beans: Beans,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
-        printLayout: boolean,
-        sticky: boolean
+        printLayout: boolean
     ) {
         super();
         this.beans = beans;
         this.rowNode = rowNode;
-        this.rowNode.sticky = !!sticky;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -1281,7 +1279,6 @@ export class RowCtrl extends BeanStub {
 
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
-        this.rowNode.sticky = false;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());
