@@ -104,6 +104,9 @@
         "Combination of Different Series Types": {
             "description": "Different types of data series can be combined together in the same chart. This example shows how a <a href='../simple-line/'>line series</a> might be combined with a <a href='../grouped-column/'>grouped column series</a>."
         },
+        "Large Datasets": {
+            "description": "Scatter, line, area and bar series have been optimised for large datasets. This example shows a configuration that is optimised for fast rendering of these series types."
+        },
         "Chart Customisation": {
             "description": "As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend."
         },

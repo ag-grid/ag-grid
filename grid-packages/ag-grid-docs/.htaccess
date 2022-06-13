@@ -259,6 +259,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/grouped-bar/ /angular-charts/gallery/grouped-bar/
     Redirect 301 /documentation/angular/charts/grouped-column/ /angular-charts/gallery/grouped-column/
     Redirect 301 /documentation/angular/charts/histogram-with-specified-bins/ /angular-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/angular/charts/large-datasets/ /angular-charts/gallery/large-datasets/
     Redirect 301 /documentation/angular/charts/line-with-gaps/ /angular-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/angular/charts/market-index-treemap/ /angular-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/angular/charts/per-marker-customisation/ /angular-charts/gallery/per-marker-customisation/
@@ -515,6 +516,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/charts/grouped-bar/ /javascript-charts/gallery/grouped-bar/
     Redirect 301 /documentation/javascript/charts/grouped-column/ /javascript-charts/gallery/grouped-column/
     Redirect 301 /documentation/javascript/charts/histogram-with-specified-bins/ /javascript-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/javascript/charts/large-datasets/ /javascript-charts/gallery/large-datasets/
     Redirect 301 /documentation/javascript/charts/line-with-gaps/ /javascript-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/javascript/charts/market-index-treemap/ /javascript-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/javascript/charts/per-marker-customisation/ /javascript-charts/gallery/per-marker-customisation/
@@ -758,6 +760,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/grouped-bar/ /react-charts/gallery/grouped-bar/
     Redirect 301 /documentation/react/charts/grouped-column/ /react-charts/gallery/grouped-column/
     Redirect 301 /documentation/react/charts/histogram-with-specified-bins/ /react-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/react/charts/large-datasets/ /react-charts/gallery/large-datasets/
     Redirect 301 /documentation/react/charts/line-with-gaps/ /react-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/react/charts/market-index-treemap/ /react-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/react/charts/per-marker-customisation/ /react-charts/gallery/per-marker-customisation/
@@ -1006,6 +1009,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/grouped-bar/ /vue-charts/gallery/grouped-bar/
     Redirect 301 /documentation/vue/charts/grouped-column/ /vue-charts/gallery/grouped-column/
     Redirect 301 /documentation/vue/charts/histogram-with-specified-bins/ /vue-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/vue/charts/large-datasets/ /vue-charts/gallery/large-datasets/
     Redirect 301 /documentation/vue/charts/line-with-gaps/ /vue-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/vue/charts/market-index-treemap/ /vue-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/vue/charts/per-marker-customisation/ /vue-charts/gallery/per-marker-customisation/

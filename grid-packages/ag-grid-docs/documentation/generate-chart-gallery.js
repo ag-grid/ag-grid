@@ -76,11 +76,13 @@ function updateMenu(galleryConfig) {
 }
 
 function getChangedDirectories() {
-    const diffOutput = execSync(`git diff --dirstat=files,0 HEAD`).toString().split('\n');
-    const exampleFolder = `/${options.rootDirectory}/examples/`;
+    const diffOutput = execSync(`git status -s`).toString()
+        .split('\n')
+        .map((s => s.substr(3)));
+    const exampleFolder = `${options.rootDirectory}/examples/`;
 
     return diffOutput
-        .filter(entry => entry.indexOf(exampleFolder) > 0)
+        .filter(entry => entry.indexOf(exampleFolder) >= 0)
         .map(entry => entry.replace(new RegExp(`^.*?${exampleFolder}(.*?)/`), '$1'));
 }
 
@@ -127,6 +129,8 @@ async function generateThumbnails(galleryConfig) {
             const url = `https://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
 
             await page.goto(url, { waitUntil: 'networkidle2' });
+            // Wait for JS on page to stop running.
+            await page.waitForFunction(() => window.chart == null || window.chart.updatePending !== 0);
             await page.screenshot({ path: Path.join(outputDirectory, `${name}.png`) });
 
             browser.close();
