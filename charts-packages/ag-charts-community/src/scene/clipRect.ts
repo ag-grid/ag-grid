@@ -1,4 +1,4 @@
-import { Node, RedrawType, SceneChangeDetection } from "./node";
+import { Node, RedrawType, SceneChangeDetection, RenderContext } from "./node";
 import { Path2D } from "./path2D";
 import { BBox } from "./bbox";
 import { ScenePathChangeDetection } from "./shape/path";
@@ -12,9 +12,13 @@ export class ClipRect extends Node {
 
     static className = 'ClipRect';
 
-    protected isContainerNode: boolean = true;
-
     protected path = new Path2D();
+
+    constructor() {
+        super();
+
+        this.isContainerNode = true;
+    }
 
     containsPoint(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
@@ -40,10 +44,10 @@ export class ClipRect extends Node {
     height: number = 10;
 
     updatePath() {
-        const path = this.path;
+        const { x, y, width, height, path } = this;
 
         path.clear();
-        path.rect(this.x, this.y, this.width, this.height);
+        path.rect(x, y, width, height);
 
         this._dirtyPath = false;
     }
@@ -53,44 +57,39 @@ export class ClipRect extends Node {
         return new BBox(x, y, width, height);
     }
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
-        if (this.dirty === RedrawType.NONE && !forceRender) {
+    render(renderCtx: RenderContext) {
+        const { enabled, dirty, _dirtyPath, children } = this;
+        let { ctx, forceRender, stats } = renderCtx;
+
+        if (dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
-        if (this.enabled) {
-            if (this._dirtyPath) {
-                this.updatePath();
-            }
+        if (_dirtyPath) {
+            this.updatePath();
+        }
+
+        if (enabled) {
+            ctx.save();
             this.path.draw(ctx);
             ctx.clip();
         }
 
-        const clearNeeded = this.dirty >= RedrawType.MINOR;
-        if (!forceRender && clearNeeded) {
-            forceRender = true;
-            this.clearBBox(ctx);
-        }
-
-        const children = this.children;
-        const n = children.length;
-
-        for (let i = 0; i < n; i++) {
-            const child = children[i];
+        const clipBBox = enabled ? this.computeBBox() : undefined;
+        const childRenderContext = { ...renderCtx, clipBBox };
+        for (const child of children) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(ctx, forceRender);
+                child.render(childRenderContext);
                 ctx.restore();
             }
         }
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
 
-        // debug
-        // this.computeBBox().render(ctx, {
-        //     label: this.id,
-        //     resetTransform: true,
-        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
-        // });
+        if (enabled) {
+            ctx.restore();
+        }
     }
 }

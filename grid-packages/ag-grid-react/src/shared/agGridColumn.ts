@@ -10,9 +10,6 @@ export interface AgGridColumnGroupProps extends ColGroupDef {
 }
 
 export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
-    constructor(public props: any) {
-        super(props);
-    }
 
     render() {
         return null;

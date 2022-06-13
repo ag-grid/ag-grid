@@ -18,6 +18,7 @@ import { UndoRedoService } from "../../undoRedo/undoRedoService";
 import { Constants } from "../../constants/constants";
 import { missingOrEmpty } from "../../utils/generic";
 import { last } from "../../utils/array";
+import { normaliseQwertyAzerty } from "../../utils/keyboard";
 import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
@@ -245,20 +246,16 @@ export class RowContainerEventsFeature extends BeanStub {
         // was from a child grid (happens in master detail)
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
 
-        switch (keyboardEvent.code) {
-            case KeyCode.A:
-                return this.onCtrlAndA(keyboardEvent);
-            case KeyCode.C:
-                return this.onCtrlAndC(keyboardEvent);
-            case KeyCode.V:
-                return this.onCtrlAndV();
-            case KeyCode.D:
-                return this.onCtrlAndD(keyboardEvent);
-            case KeyCode.Z:
-                return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
-            case KeyCode.Y:
-                return this.undoRedoService.redo();
+        const keyCode = normaliseQwertyAzerty(keyboardEvent);
+
+        if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
+        if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
+        if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
+        if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
+        if (keyCode === KeyCode.Z) {
+            return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
         }
+        if (keyCode === KeyCode.Y) { return this.undoRedoService.redo(); }
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {

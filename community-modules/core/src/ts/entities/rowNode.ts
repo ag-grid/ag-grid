@@ -136,6 +136,12 @@ export class RowNode<TData = any> implements IEventEmitter {
     /** Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`. */
     public rowPinned: string;
 
+    /** When true, this row will appear in the top */
+    public sticky: boolean;
+
+    /** If row is pinned, then pinnedRowTop is used rather than rowTop */
+    public stickyRowTop: number;
+
     /** If using quick filter, stores a string representation of the row for searching against. */
     public quickFilterAggregateText: string | null;
 
@@ -610,7 +616,7 @@ export class RowNode<TData = any> implements IEventEmitter {
         this.onRowHeightChangedDebounced();
     }
 
-    /** This method is debounced. It is used for row auto-height. If we don't debounce, 
+    /** This method is debounced. It is used for row auto-height. If we don't debounce,
      * then the Row Models will end up recalculating each row position
      * for each row height change and result in the Row Renderer laying out rows.
      * This is particularly bad if using print layout, and showing eg 1,000 rows,
@@ -643,6 +649,9 @@ export class RowNode<TData = any> implements IEventEmitter {
         }
     }
 
+    /**
+     * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
+     */
     public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent): void {
         if (this.expanded === expanded) { return; }
 
@@ -810,25 +819,29 @@ export class RowNode<TData = any> implements IEventEmitter {
         callback(this);
     }
 
-    // + rowController.updateGroupsInSelection()
     // + selectionController.calculatedSelectedForAllGroupNodes()
-    public calculateSelectedFromChildren(): void {
+    public calculateSelectedFromChildren(): boolean | undefined | null {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
-        let newSelectedValue: boolean | undefined;
 
         if (!this.childrenAfterGroup?.length) {
-            return;
+            return this.selectable ? this.selected : null;
         }
 
         for (let i = 0; i < this.childrenAfterGroup.length; i++) {
             const child = this.childrenAfterGroup[i];
 
-            // skip non-selectable nodes to prevent inconsistent selection values
-            if (!child.selectable) { continue; }
+            let childState = child.isSelected();
+            // non-selectable nodes must be calculated from their children, or ignored if no value results.
+            if (!child.selectable) {
+                const selectable = child.calculateSelectedFromChildren();
+                if (selectable === null) {
+                    continue;
+                }
+                childState = selectable;
+            }
 
-            const childState = child.isSelected();
 
             switch (childState) {
                 case true:
@@ -843,17 +856,17 @@ export class RowNode<TData = any> implements IEventEmitter {
             }
         }
 
-        if (atLeastOneMixed) {
-            newSelectedValue = undefined;
-        } else if (atLeastOneSelected && !atLeastOneDeSelected) {
-            newSelectedValue = true;
-        } else if (!atLeastOneSelected && atLeastOneDeSelected) {
-            newSelectedValue = false;
+        if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
+            return undefined;
+        } else if (atLeastOneSelected) {
+            return true;
+        } else if (atLeastOneDeSelected) {
+            return false;
+        } else if (!this.selectable) {
+            return null;
         } else {
-            newSelectedValue = undefined;
+            return this.selected;
         }
-
-        this.selectThisNode(newSelectedValue);
     }
 
     public setSelectedInitialValue(selected: boolean): void {

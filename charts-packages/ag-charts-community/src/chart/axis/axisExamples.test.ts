@@ -97,7 +97,7 @@ function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, 
 function calculateAxisBBox(axis: ChartAxis<any>): { x: number, y: number, width: number, height: number} {
     let bbox = axis.computeBBox();
 
-    let parent: typeof axis.group.parent = axis.group;
+    let parent: typeof axis.axisGroup.parent = axis.axisGroup;
     while (parent != null) {
         bbox = parent.matrix.transformBBox(bbox);
 

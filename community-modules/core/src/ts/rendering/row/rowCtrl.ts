@@ -122,11 +122,13 @@ export class RowCtrl extends BeanStub {
         beans: Beans,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
-        printLayout: boolean
+        printLayout: boolean,
+        sticky: boolean
     ) {
         super();
         this.beans = beans;
         this.rowNode = rowNode;
+        this.rowNode.sticky = !!sticky;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -143,6 +145,10 @@ export class RowCtrl extends BeanStub {
         this.addListeners();
 
         this.setInitialRowTop();
+    }
+
+    public isSticky(): boolean {
+        return this.rowNode.sticky;
     }
 
     public getBeans(): Beans {
@@ -489,7 +495,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setAnimateFlags(animateIn: boolean): void {
-        if (animateIn) {
+        if (!this.isSticky() && animateIn) {
             const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
@@ -1190,6 +1196,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
+        // row heights don't change for sticky rows
+        if (this.isSticky()) { return; }
+
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
@@ -1213,7 +1222,7 @@ export class RowCtrl extends BeanStub {
             // We do not use rowNode.rowHeight here, as this could be the result of autoHeight,
             // and we found using the autoHeight result causes a loop, where changing the
             // line-height them impacts the cell height, resulting in a new autoHeight,
-            // resulting in a new line-height and so on loop. 
+            // resulting in a new line-height and so on loop.
             // const heightFromFunc = this.beans.gridOptionsWrapper.getRowHeightForNode(this.rowNode).height;
             if (lineHeight) {
                 gui.element.style.setProperty('--ag-line-height', lineHeight);
@@ -1254,6 +1263,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private setupRemoveAnimation(): void {
+        // we don't animate sticky rows
+        if (this.isSticky()) { return; }
+
         const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
         if (rowStillVisibleJustNotInViewport) {
             // if the row is not rendered, but in viewport, it means it has moved,
@@ -1269,6 +1281,7 @@ export class RowCtrl extends BeanStub {
 
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
+        this.rowNode.sticky = false;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());
@@ -1362,19 +1375,24 @@ export class RowCtrl extends BeanStub {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
 
-        // if sliding in, we take the old row top. otherwise we just set the current row top.
-        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
-        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
-        // we don't apply scaling if row is pinned
-        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+        let rowTop: number;
+        if (this.isSticky()) {
+            rowTop = this.rowNode.stickyRowTop;
+        } else {
+            // if sliding in, we take the old row top. otherwise we just set the current row top.
+            const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+            const afterPaginationPixels = this.applyPaginationOffset(pixels!);
+            // we don't apply scaling if row is pinned
+            rowTop = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+        }
 
-        const res = afterScalingPixels + 'px';
+        const rowTopPx = rowTop + 'px';
 
         const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
         if (suppressRowTransform) {
-            this.initialTop = res;
+            this.initialTop = rowTopPx;
         } else {
-            this.initialTransform = `translateY(${res})`;
+            this.initialTransform = `translateY(${rowTopPx})`;
         }
     }
 

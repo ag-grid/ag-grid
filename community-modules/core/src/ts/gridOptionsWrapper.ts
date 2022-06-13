@@ -23,6 +23,7 @@ import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
+import { _ } from './utils';
 import { getScrollbarWidth } from './utils/browser';
 import { doOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
@@ -138,8 +139,8 @@ export class GridOptionsWrapper {
     public static PROP_PROCESS_CELL_FROM_CLIPBOARD = 'processCellFromClipboard';
     public static PROP_SEND_TO_CLIPBOARD = 'sendToClipboard';
 
-    public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
-    public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_DEF = 'processPivotResultColDef';
+    public static PROP_PROCESS_PIVOT_RESULT_COL_GROUP_DEF = 'processPivotResultColGroupDef';
 
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
@@ -215,7 +216,7 @@ export class GridOptionsWrapper {
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn(
-                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!"
+                "AG Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to use these together on our support forum either, you will get the same answer!"
             );
         }
 
@@ -238,6 +239,12 @@ export class GridOptionsWrapper {
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("AG Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+        }
+
+        if (this.isGroupRowsSticky() && this.isGroupHideOpenParents()) {
+            console.warn(
+                "AG Grid: groupRowsSticky and groupHideOpenParents do not work with each other, you need to pick one."
+            );
         }
 
         const warnOfDeprecaredIcon = (name: string) => {
@@ -324,7 +331,7 @@ export class GridOptionsWrapper {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
                 const mergedParams = { ...callbackParams, api: this.getApi()!, columnApi: this.getColumnApi()!, context: this.getContext() } as P;
                 return callback(mergedParams);
-            }
+            };
             return wrapped;
         }
         return callback;
@@ -511,6 +518,10 @@ export class GridOptionsWrapper {
 
         return this.gridOptions.groupDisplayType ?
             this.matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
+    }
+
+    public isGroupRowsSticky(): boolean {
+        return isTrue(this.gridOptions.groupRowsSticky);
     }
 
     public isGroupSuppressAutoColumn() {
@@ -730,8 +741,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getServerSideStoreType(): string | undefined {
-        return this.gridOptions.serverSideStoreType;
+    public isServerSideInfiniteScroll(): boolean {
+        return isTrue(this.gridOptions.serverSideInfiniteScroll);
     }
 
     public getServerSideStoreParamsFunc() {
@@ -817,7 +828,7 @@ export class GridOptionsWrapper {
     }
 
     public isReadOnlyEdit(): boolean {
-        return isTrue(this.gridOptions.readOnlyEdit);;
+        return isTrue(this.gridOptions.readOnlyEdit);
     }
 
     public isImmutableData() {
@@ -1148,7 +1159,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.sortingOrder;
     }
 
-    public getAlignedGrids(): GridOptions[] | undefined {
+    public getAlignedGrids(): { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined {
         return this.gridOptions.alignedGrids;
     }
 
@@ -1291,7 +1302,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (groupRowAggNodes) {
-            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes)
+            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes);
         }
     }
 
@@ -1310,7 +1321,7 @@ export class GridOptionsWrapper {
         }
         // this is the deprecated way, so provide a proxy to make it compatible
         if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data)
+            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
         }
     }
 
@@ -1327,7 +1338,7 @@ export class GridOptionsWrapper {
     }
 
     public getTabToNextCellFunc() {
-        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell)
+        return this.mergeGridCommonParams(this.gridOptions.tabToNextCell);
     }
 
     public getGridTabIndex(): string {
@@ -1360,11 +1371,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
 
-    public getProcessSecondaryColDefFunc() {
-        return this.gridOptions.processSecondaryColDef;
+    public getProcessPivotResultColDefFunc() {
+        return this.gridOptions.processPivotResultColDef || this.gridOptions.processSecondaryColDef;
     }
-    public getProcessSecondaryColGroupDefFunc() {
-        return this.gridOptions.processSecondaryColGroupDef;
+
+    public getProcessPivotResultColGroupDefFunc() {
+        return this.gridOptions.processPivotResultColGroupDef || this.gridOptions.processSecondaryColGroupDef;
     }
 
     public getSendToClipboardFunc() {
@@ -1399,14 +1411,55 @@ export class GridOptionsWrapper {
         return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
     }
 
-    public isServerSideSortingAlwaysResets() {
-        return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    public isServerSideSortAllLevels() {
+        const isEnabled = isTrue(this.gridOptions.serverSideSortAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortAllLevels` property can only be used with the server side row model.'), 'serverSideSortAllLevels');
+            return false;
+        }
+        return isEnabled;
     }
 
-    public isServerSideFilteringAlwaysResets() {
-        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
+    public isServerSideFilterAllLevels() {
+        const isEnabled = isTrue(this.gridOptions.serverSideFilterAllLevels);
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterAllLevels` property can only be used with the server side row model.'), 'serverSideFilterAllLevels');
+            return false;
+        }
+        return isEnabled;
     }
 
+    public isServerSideSortOnServer() {
+        const isEnabled = isTrue(this.gridOptions.serverSideSortOnServer);
+
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property can only be used with the server side row model.'), 'serverSideSortOnServerRowModel');
+            return false;
+        }
+
+        if (this.isTreeData() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideSortOnServer` property cannot be used while using tree data.'), 'serverSideSortOnServerTreeData');
+            return false;
+        }
+
+        return isEnabled;
+    }
+
+    public isServerSideFilterOnServer() {
+        const isEnabled = isTrue(this.gridOptions.serverSideFilterOnServer);
+
+        if (!this.isRowModelServerSide() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property can only be used with the server side row model.'), 'serverSideFilterOnServerRowModel');
+            return false;
+        }
+
+        if (this.isTreeData() && isEnabled) {
+            doOnce(() => console.warn('AG Grid: The `serverSideFilterOnServer` property cannot be used while using tree data.'), 'serverSideFilterOnServerTreeData');
+            return false;
+        }
+
+        return isEnabled;
+    }
     public getPostSortFunc() {
         const { postSortRows, postSort } = this.gridOptions;
         if (postSortRows) {
@@ -1673,6 +1726,9 @@ export class GridOptionsWrapper {
         checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
         checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
 
+        checkRenamedProperty('serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', '28.0.0');
+        checkRenamedProperty('serverSideSortingAlwaysResets', 'serverSideSortAllLevels', '28.0.0');
+
         if (options.immutableColumns || options.deltaColumnMode) {
             console.warn(
                 'AG Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default. To keep column order maintained, set grid property applyColumnDefOrder=true'
@@ -1816,6 +1872,14 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v27.1, `clipboardDeliminator` has been replaced by `clipboardDelimiter`.');
             options.clipboardDelimiter = options.clipboardDeliminator;
         }
+
+        checkRenamedProperty('processSecondaryColDef', 'processPivotResultColDef', '28.0.x');
+        checkRenamedProperty('processSecondaryColGroupDef', 'processPivotResultColGroupDef', '28.0.x');
+
+        if (options.serverSideStoreType) {
+            console.warn('AG Grid: since v28.0, `serverSideStoreType` has been replaced by `serverSideInfiniteScroll`. Set to true to use Partial Store, and false to use Full Store.');
+            options.serverSideInfiniteScroll = options.serverSideStoreType === 'partial';
+        }
     }
 
     private checkForViolations() {
@@ -1849,6 +1913,7 @@ export class GridOptionsWrapper {
 
     public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         const { localeText, getLocaleText, localeTextFunc } = this.gridOptions;
+
         if (getLocaleText) {
             //key: string, defaultValue: string, variableValues?: string[]
             return (key: string, defaultValue: string, variableValues?: string[]) => {
@@ -1859,9 +1924,9 @@ export class GridOptionsWrapper {
                     api: this.getApi()!,
                     columnApi: this.getColumnApi()!,
                     context: this.getContext()
-                }
+                };
                 return getLocaleText(params);
-            }
+            };
         }
 
         if (localeTextFunc) {
@@ -1870,7 +1935,6 @@ export class GridOptionsWrapper {
 
         return (key: string, defaultValue: string, variableValues?: string[]) => {
             let localisedText = localeText && localeText[key];
-
 
             if (localisedText && variableValues && variableValues.length) {
                 let found = 0;

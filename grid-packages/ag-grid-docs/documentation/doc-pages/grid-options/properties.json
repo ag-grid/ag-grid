@@ -643,8 +643,8 @@
         "pivotSuppressAutoColumn": {
             "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
         },
-        "processSecondaryColDef": {},
-        "processSecondaryColGroupDef": {},
+        "processPivotResultColDef": {},
+        "processPivotResultColGroupDef": {},
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Fixed Pivot Column Groups",
@@ -848,6 +848,7 @@
             }
         },
         "groupSuppressBlankHeader": {},
+        "groupRowsSticky": {},
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
@@ -985,33 +986,29 @@
                 "url": "/server-side-model/"
             }
         },
-        "serverSideStoreType": {
-            "more": {
-                "name": "Row Stores",
-                "url": "/server-side-model-row-stores/"
-            }
-        },
         "serverSideDatasource": {
             "more": {
                 "name": "Registering the Datasource",
                 "url": "/server-side-model-datasource/#registering-the-datasource"
             }
         },
+        "serverSideInfiniteScroll": {
+        },
         "cacheBlockSize": {
-            "description": "(Partial Store only) How many rows for each block in the store, i.e. how many rows returned from the server at a time. Default: `100`"
+            "description": "(Infinite Scroll only) How many rows for each block in the store, i.e. how many rows returned from the server at a time. Default: `100`"
         },
         "maxBlocksInCache": {
-            "description": "(Partial Store only) How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
+            "description": "(Infinite Scroll only) How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
         },
         "maxConcurrentDatasourceRequests": {},
         "blockLoadDebounceMillis": {},
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
-        "serverSideSortingAlwaysResets": {
-            "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
-        },
-        "serverSideFilteringAlwaysResets": {},
+        "serverSideSortAllLevels": {},
+        "serverSideFilterAllLevels": {},
+        "serverSideSortOnServer": {},
+        "serverSideFilterOnServer": {},
         "getChildCount": {},
         "getServerSideStoreParams": {},
         "isServerSideGroupOpenByDefault": {},

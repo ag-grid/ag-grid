@@ -25,7 +25,7 @@ For more configuration details see the section on [Pagination](/row-pagination/)
 ## Server Pagination
 
 The pagination of rows is performed on the client, where it provides a proxy in front of the rows in the row model.
-However if using the Partial Store and have the `paginationPageSize` and `cacheBlockSize` equal, it will load
+However if using Infinite Scrolling and have the `paginationPageSize` and `cacheBlockSize` equal, it will load
 each pagination page on demand as the user goes to the next page.
 
 The example below demonstrates server-side Pagination. Note the following:

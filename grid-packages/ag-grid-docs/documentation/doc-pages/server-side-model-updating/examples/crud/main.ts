@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'single',
   columnDefs: columnDefs,
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
   getRowId: getRowId
 }
 

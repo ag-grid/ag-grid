@@ -1,19 +1,21 @@
 import { Autowired } from "../../../context/context";
 import { Column } from "../../../entities/column";
-import { Events } from "../../../events";
 import { IComponent } from "../../../interfaces/iComponent";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
 import { isIOSUserAgent } from "../../../utils/browser";
-import { clearElement, removeFromParent, setDisplayed } from "../../../utils/dom";
+import { removeFromParent } from "../../../utils/dom";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
 import { escapeString } from "../../../utils/string";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchListener";
+import { SortIndicatorComp } from "./sortIndicatorComp";
+import { ColumnModel } from "../../../columns/columnModel";
+import { Events } from "../../../eventKeys";
 
 export interface IHeaderParams extends AgGridCommon {
     /** The column the header is for. */
@@ -79,22 +81,16 @@ export class HeaderComp extends Component implements IHeaderComp {
             <div ref="eLabel" class="ag-header-cell-label" role="presentation">
                 <span ref="eText" class="ag-header-cell-text"></span>
                 <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
-                <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
-                <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
-                <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
-                <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
+                <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
             </div>
         </div>`;
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
-    @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
-
-    @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
-    @RefSelector('eSortNone') private eSortNone: HTMLElement;
-    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
+    @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
     @RefSelector('eMenu') private eMenu: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
@@ -164,9 +160,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupIcons(column: Column): void {
-        this.addInIcon('sortAscending', this.eSortAsc, column);
-        this.addInIcon('sortDescending', this.eSortDesc, column);
-        this.addInIcon('sortUnSort', this.eSortNone, column);
         this.addInIcon('menu', this.eMenu, column);
         this.addInIcon('filter', this.eFilter, column);
     }
@@ -258,13 +251,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
     }
 
-    private removeSortIcons(): void {
-        removeFromParent(this.eSortAsc);
-        removeFromParent(this.eSortDesc);
-        removeFromParent(this.eSortNone);
-        removeFromParent(this.eSortOrder);
-    }
-
     private workOutSort(): boolean | undefined {
         return this.params.enableSorting;
     }
@@ -272,8 +258,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     public setupSort(): void {
         this.currentSort = this.params.enableSorting;
 
+        if (this.eSortIndicator) {
+            this.eSortIndicator.setupSort(this.params.column);
+        }
+
+        // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
+        // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
         if (!this.currentSort) {
-            this.removeSortIcons();
             return;
         }
 
@@ -304,52 +295,23 @@ export class HeaderComp extends Component implements IHeaderComp {
             });
         }
 
-        this.addManagedListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.onSortChanged();
-
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
-        this.setMultiSortOrder();
-    }
-
-    private onSortChanged(): void {
-        this.addOrRemoveCssClass('ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        this.addOrRemoveCssClass('ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
-
-        if (this.eSortAsc) {
-            this.eSortAsc.classList.toggle('ag-hidden', !this.params.column.isSortAscending());
+        const onSortingChanged = () => {
+            this.addOrRemoveCssClass('ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+            this.addOrRemoveCssClass('ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+            this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
+    
+            if (this.params.column.getColDef().showRowGroup) {
+                const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.params.column);
+                // this == is intentional, as it allows null and undefined to match, which are both unsorted states
+                const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.params.column.getSort() == sourceCol.getSort());
+    
+                const isMultiSorting = !sortDirectionsMatch;
+    
+                this.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
+            }
         }
-
-        if (this.eSortDesc) {
-            this.eSortDesc.classList.toggle('ag-hidden', !this.params.column.isSortDescending());
-        }
-
-        if (this.eSortNone) {
-            const alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-            this.eSortNone.classList.toggle('ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
-        }
-    }
-
-    // we listen here for global sort events, NOT column sort events, as we want to do this
-    // when sorting has been set on all column (if we listened just for our col (where we
-    // set the asc / desc icons) then it's possible other cols are yet to get their sorting state.
-    private setMultiSortOrder(): void {
-
-        if (!this.eSortOrder) { return; }
-
-        const col = this.params.column;
-        const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
-        const indexThisCol = allColumnsWithSorting.indexOf(col);
-        const moreThanOneColSorting = allColumnsWithSorting.length > 1;
-        const showIndex = col.isSorting() && moreThanOneColSorting;
-
-        setDisplayed(this.eSortOrder, showIndex);
-
-        if (indexThisCol >= 0) {
-            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
-        } else {
-            clearElement(this.eSortOrder);
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, onSortingChanged);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, onSortingChanged);
     }
 
     private setupFilterIcon(): void {

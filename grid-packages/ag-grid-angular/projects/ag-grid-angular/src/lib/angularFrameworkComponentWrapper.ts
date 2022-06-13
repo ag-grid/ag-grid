@@ -39,7 +39,7 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
             }
 
             addMethod(name: string, callback: Function): void {
-                wrapper[name] = callback
+                (wrapper as any)[name] = callback
             }
         }
 

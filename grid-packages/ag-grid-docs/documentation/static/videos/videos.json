@@ -26,6 +26,34 @@
         "Configure AG Grid Enterprise."
       ],
       "runningTime": "3:21"
+    },
+    {
+      "title": "Customising Cells - Cell Renderers",
+      "url": "https://www.youtube.com/watch?v=NwLVitYQ9c4&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "JavaScript Cell Renderers"
+      },
+      "keyPoints": [
+        "Cell Renderers.",
+        "Cell Renderer Params.",
+        "Cell Renderer Selector."
+      ],
+      "runningTime": "7:53"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "react": [
@@ -182,6 +210,20 @@
         "State via API"
       ],
       "runningTime": "22:46"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "angular": [
@@ -225,6 +267,35 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "8:35"
+    },
+    {
+      "title": "Custom Components",
+      "url": "https://www.youtube.com/watch?v=A5-Li_9oPSEs&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Angular Custom Components"
+      },
+      "keyPoints": [
+        "Configuring Components",
+        "Component Params",
+        "Component Selectors",
+        "Angular & JavaScript Components"
+      ],
+      "runningTime": "13:59"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "vue": [
@@ -268,6 +339,36 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "6:00"
+    },
+    {
+      "title": "Column Filters",
+      "url": "https://www.youtube.com/watch?v=mBtVxJXWGNI&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo_MS.png",
+        "altText": "Column Filters"
+      },
+      "keyPoints": [
+        "Configuring Filters",
+        "Filter Models",
+        "Text, Number & Date Filters",
+        "Set Filter, Multi Filter"
+      ],
+      "runningTime": "12:54"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
+
   ]
 }

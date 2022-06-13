@@ -17,7 +17,9 @@ function templateFactory(): string {
     let res: string;
 
     const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER
+                     || name === RowContainerName.STICKY_TOP_CENTER
+                     || name === RowContainerName.BOTTOM_CENTER;
 
     if (template1) {
         res = /* html */

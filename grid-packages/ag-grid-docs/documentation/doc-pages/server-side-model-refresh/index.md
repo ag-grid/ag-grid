@@ -39,7 +39,7 @@ refreshing which are as follows:
 - When purging, all open groups will always get closed and children destroyed. This is explained in more detail
   in the section Maintaining Open Groups below.<br/><br/>
 
-- When Partial Store is used (i.e. data is loaded in blocks), purging will destroy all blocks
+- When Infinite Scroll is used (i.e. data is loaded in blocks), purging will destroy all blocks
   and remove them from the cache and only re-create blocks needed to show data the user is looking at. <br/><br/>
   For example if the user had scrolled down and 5 blocks are in the cache, after a purge it could
   be only 1 block exists in the cache after purging. This means only one block request is sent to the server.<br/><br/>
@@ -54,7 +54,7 @@ of open groups.
 
 Maintaining open groups is achieved when all of the following are configured:
 
-- Full Store (`serverSideStoreType=full`). When using Partial Store, groups and children will be lost.
+- Not Infinite Scrolling (`serverSideInfiniteScroll=false`). When using Infinite Scroll, groups and children will be lost.
 
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
@@ -86,13 +86,13 @@ is possible.
 <grid-example title='Keep Group State' name='keep-group-state' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always
+| If using Infinite Scroll, the grid does not provide for keeping open groups. Refreshing will always
 | reset groups and destroy children.
 |
-| This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to
+| This is because Infinite Scroll loads rows in blocks, so it's unreliable to expect rows that existed before to
 | exist in the new load, as the row could appear in a different block.
 |
-|If you are using the Partial Store and need to restore groups to their previously open state, then this logic can
+|If you are using Infinite Scroll and need to restore groups to their previously open state, then this logic can
 |be implemented in your application using the [Open by Default](/server-side-model-grouping/#open-by-default) API.
 
 

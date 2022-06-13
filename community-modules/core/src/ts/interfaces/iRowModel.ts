@@ -14,7 +14,7 @@ export interface IRowModel {
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | undefined;
 
-    /** This is legacy, not used by AG Grid, but keeping for backward compatibility */
+    /** Returns the number of rows */
     getRowCount(): number;
 
     getTopLevelRowCount(): number;

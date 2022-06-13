@@ -657,7 +657,7 @@ export class RangeService extends BeanStub implements IRangeService {
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
                     startRow: { ...startRow },
-                    endRow: this.rowPositionUtils.previousRow(intersectionStartRow),
+                    endRow: this.cellNavigationService.getRowAbove(intersectionStartRow)!,
                 };
                 newRanges.push(top);
             }
@@ -676,7 +676,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 newRanges.push({
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
-                    startRow: this.rowPositionUtils.nextRow(intersectionEndRow),
+                    startRow: this.cellNavigationService.getRowBelow(intersectionEndRow)!,
                     endRow: { ...endRow },
                 });
             }

@@ -1,5 +1,5 @@
 import { AgCartesianChartOptions, AgChartOptions } from '../agChartOptions';
-import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS } from './data';
+import { DATA_TOTAL_GAME_WINNINGS_GROUPED_BY_COUNTRY, DATA_INTERNET_EXPLORER_MARKET_SHARE, DATA_BROWSER_MARKET_SHARE, DATA_TIME_SENSOR, DATA_SINGLE_DATUM_TIME_SENSOR, DATA_MISSING_X, DATA_TIME_MISSING_X, DATA_VISITORS, DATA_MEAN_SEA_LEVEL, DATA_REVENUE, DATA_APPLE_REVENUE_BY_PRODUCT } from './data';
 import { readFileSync } from 'fs';
 
 function loadExampleOptions(name: string, evalFn = 'options'): any {
@@ -151,53 +151,53 @@ export const GROUPED_CATEGORY_AXIS_EXAMPLE: AgChartOptions = {};
 }
 
 export const AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
-        data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
-        axes: [
-            { type: 'category', position: 'bottom' },
-            { type: 'number', position: 'left' },
-        ],
-        series: [
-            {
-                type: 'area',
-                xKey: 'year',
-                yKeys: ['ie'],
-                yNames: ['IE'],
-                marker: {
-                    size: 5,
-                }
-            },
-        ],
-        title: {
-            text: 'Internet Explorer Market Share',
+    data: DATA_INTERNET_EXPLORER_MARKET_SHARE,
+    axes: [
+        { type: 'category', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'year',
+            yKeys: ['ie'],
+            yNames: ['IE'],
+            marker: {
+                size: 5,
+            }
         },
-        subtitle: {
-            text: '2009-2019 (aka "good times")',
-        },
+    ],
+    title: {
+        text: 'Internet Explorer Market Share',
+    },
+    subtitle: {
+        text: '2009-2019 (aka "good times")',
+    },
 }
 
-export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions =  {
-        data: DATA_BROWSER_MARKET_SHARE,
-        axes: [
-            { type: 'category', position: 'bottom' },
-            { type: 'number', position: 'left' },
-        ],
-        series: [
-            {
-                type: 'area',
-                xKey: 'year',
-                yKeys: ['ie', 'firefox', 'safari', 'chrome'],
-                yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
-                marker: {
-                    enabled: true,
-                },
+export const STACKED_AREA_MISSING_Y_DATA_EXAMPLE: AgChartOptions = {
+    data: DATA_BROWSER_MARKET_SHARE,
+    axes: [
+        { type: 'category', position: 'bottom' },
+        { type: 'number', position: 'left' },
+    ],
+    series: [
+        {
+            type: 'area',
+            xKey: 'year',
+            yKeys: ['ie', 'firefox', 'safari', 'chrome'],
+            yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
+            marker: {
+                enabled: true,
             },
-        ],
-        title: {
-            text: 'Browser Wars',
         },
-        subtitle: {
-            text: '2009-2019',
-        },
+    ],
+    title: {
+        text: 'Browser Wars',
+    },
+    subtitle: {
+        text: '2009-2019',
+    },
 }
 
 export const AREA_NUMBER_X_AXIS_MISSING_X_DATA_EXAMPLE: AgChartOptions = {
@@ -733,6 +733,351 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianCh
         },
     ],
 }
+
+export const COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: 'Mean Sea Level (mm)',
+    },
+    data: DATA_MEAN_SEA_LEVEL,
+    series: [
+        {
+            type: 'column',
+            xKey: 'time',
+            yKey: 'mm',
+            showInLegend: false,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_REVENUE,
+    series: [
+        {
+            type: 'column',
+            xKey: 'date',
+            yKey: 'value',
+        },
+    ],
+    axes: [
+        {
+            type: 'time',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ]
+}
+
+export const STACKED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+            stacked: true,
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+            stacked: true,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const GROUPED_COLUMN_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+        },
+        {
+            type: 'column',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: 'Mean Sea Level (mm)',
+    },
+    data: DATA_MEAN_SEA_LEVEL,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'time',
+            yKey: 'mm',
+            showInLegend: false,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const BAR_TIME_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_REVENUE,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'date',
+            yKey: 'value',
+        },
+    ],
+    axes: [
+        {
+            type: 'time',
+            nice: false,
+            position: 'left',
+        },
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+    ]
+}
+
+export const STACKED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+            stacked: true,
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+            stacked: true,
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+            stacked: true,
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+            stacked: true,
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            nice: false,
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const GROUPED_BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services',
+        },
+    ],
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+        },
+        {
+            type: 'number',
+            position: 'left',
+        },
+    ],
+}
+
+export const TRUNCATED_LEGEND_ITEMS: AgCartesianChartOptions = {
+    title: {
+        text: "Apple's revenue by product category",
+    },
+    subtitle: {
+        text: 'in billion U.S. dollars',
+    },
+    data: DATA_APPLE_REVENUE_BY_PRODUCT,
+    series: [
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'mac',
+            yName: 'Mac',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'ipad',
+            yName: 'iPad',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'wearables',
+            yName: 'Wearables long legend item text',
+        },
+        {
+            type: 'bar',
+            xKey: 'iphone',
+            yKey: 'services',
+            yName: 'Services another long legend item text',
+        },
+    ],
+    legend: {
+        position: 'left',
+        item: {
+            paddingY: 15,
+            maxWidth: 100,
+        },
+    },
+}
+
 
 // START ADVANCED EXAMPLES =========================================================================
 

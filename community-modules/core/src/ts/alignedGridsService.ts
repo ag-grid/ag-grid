@@ -60,7 +60,7 @@ export class AlignedGridsService extends BeanStub {
         // iterate through the aligned grids, and pass each aligned grid service to the callback
         const otherGrids = this.gridOptionsWrapper.getAlignedGrids();
         if (otherGrids) {
-            otherGrids.forEach((otherGridOptions: GridOptions) => {
+            otherGrids.forEach((otherGridOptions) => {
                 if (otherGridOptions.api) {
                     const alignedGridService = otherGridOptions.api.__getAlignedGridService();
                     callback(alignedGridService);
@@ -220,12 +220,24 @@ export class AlignedGridsService extends BeanStub {
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 const resizedEvent = colEvent as ColumnResizedEvent;
-
+                
+                const columnWidths: {
+                    [key: string]: {
+                        key: string | Column;
+                        newWidth: number;
+                    }
+                } = {};
                 masterColumns.forEach((column: Column) => {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`);
-                    const columnWidths = [{key: column.getColId(), newWidth: column.getActualWidth()}];
-                    this.columnModel.setColumnWidths(columnWidths, false, resizedEvent.finished, "alignedGridChanged");
+                    columnWidths[column.getId()] = {key: column.getColId(), newWidth: column.getActualWidth()};
                 });
+                // don't set flex columns width
+                resizedEvent.flexColumns?.forEach(col => {
+                    if (columnWidths[col.getId()]) {
+                        delete columnWidths[col.getId()];
+                    }
+                });
+                this.columnModel.setColumnWidths(Object.values(columnWidths), false, resizedEvent.finished, "alignedGridChanged");
                 break;
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();

@@ -72,7 +72,7 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
 
     onClick(happy: boolean) {
         this.setHappy(happy);
-        this.params.api.stopEditing();
+        this.params.stopEditing();
     }
 
     onKeyDown(event: any): void {

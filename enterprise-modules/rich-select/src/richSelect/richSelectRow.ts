@@ -2,10 +2,8 @@ import {
     _,
     Autowired,
     Component,
-    ICellRendererComp,
     ICellRendererParams,
     IRichCellEditorParams,
-    AgPromise,
     UserComponentFactory
 } from "@ag-grid-community/core";
 
@@ -26,6 +24,10 @@ export class RichSelectRow extends Component {
             this.populateWithoutRenderer(value, valueFormatted);
         }
 
+        this.updateSelected(selected);
+    }
+
+    public updateSelected(selected: boolean): void {
         this.addOrRemoveCssClass('ag-rich-select-row-selected', selected);
     }
 
@@ -44,7 +46,6 @@ export class RichSelectRow extends Component {
     }
 
     private populateWithRenderer(value: any, valueFormatted: string): boolean {
-
         // bad coder here - we are not populating all values of the cellRendererParams
         const params = {
             value: value,

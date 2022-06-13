@@ -56,4 +56,4 @@ The example below shows providing an initial group order. From the example the f
 
 ## Next Up
 
-Continue to the next section to learn about [Row Group Sorting](../grouping-sorting/).
+Continue to the next section to learn about the [Sticky Groups](../grouping-sticky-groups/).

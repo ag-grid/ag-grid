@@ -1,7 +1,11 @@
 {
   "ColumnResizeSet": {
     "meta": {},
-    "type": { "columns": "Column[]", "ratios": "number[]", "width": "number" }
+    "type": {
+      "columns": "Column[]",
+      "ratios": "number[]",
+      "width": "number"
+    }
   },
   "ColumnStateParams": {
     "meta": {},
@@ -86,7 +90,10 @@
   },
   "ComponentType": {
     "meta": {},
-    "type": { "propertyName": "string", "cellRenderer": "boolean" }
+    "type": {
+      "propertyName": "string",
+      "cellRenderer": "boolean"
+    }
   },
   "FrameworkComponentWrapper": {
     "meta": {
@@ -105,7 +112,9 @@
     }
   },
   "DefinitionObject": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "GridOptions | ColDef | ColGroupDef | IFilterDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef"
   },
   "UserCompDetails": {
@@ -124,11 +133,17 @@
     "meta": {
       "doc": "/** B the business interface (ie IHeader)\n * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid */"
     },
-    "type": { "component": "any", "componentFromFramework": "boolean" }
+    "type": {
+      "component": "any",
+      "componentFromFramework": "boolean"
+    }
   },
   "DeprecatedComponentName": {
     "meta": {},
-    "type": { "propertyHolder": "string", "newComponentName": "string" }
+    "type": {
+      "propertyHolder": "string",
+      "newComponentName": "string"
+    }
   },
   "ContextParams": {
     "meta": {},
@@ -140,7 +155,10 @@
   },
   "ComponentMeta": {
     "meta": {},
-    "type": { "componentClass": "new () => Object", "componentName": "string" }
+    "type": {
+      "componentClass": "new () => Object",
+      "componentName": "string"
+    }
   },
   "ControllerMeta": {
     "meta": {},
@@ -151,7 +169,11 @@
   },
   "BeanWrapper": {
     "meta": {},
-    "type": { "bean": "any", "beanInstance": "any", "beanName": "any" }
+    "type": {
+      "bean": "any",
+      "beanInstance": "any",
+      "beanName": "any"
+    }
   },
   "ReadyParams": {
     "meta": {},
@@ -167,6 +189,9 @@
       "topCenterRowContainerCtrl": "RowContainerCtrl",
       "topLeftRowContainerCtrl": "RowContainerCtrl",
       "topRightRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopCenterRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopLeftRowContainerCtrl": "RowContainerCtrl",
+      "stickyTopRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
       "gridHeaderCtrl": "GridHeaderCtrl",
       "centerHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
@@ -190,9 +215,21 @@
     }
   },
   "DragSourceType": {
-    "meta": { "isEnum": true },
-    "type": ["ToolPanel", "HeaderCell", "RowDrag", "ChartPanel"],
-    "docs": [null, null, null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "ToolPanel",
+      "HeaderCell",
+      "RowDrag",
+      "ChartPanel"
+    ],
+    "docs": [
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "DragSource": {
     "meta": {},
@@ -247,14 +284,30 @@
     }
   },
   "VerticalDirection": {
-    "meta": { "isEnum": true },
-    "type": ["Up", "Down"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "Up",
+      "Down"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "HorizontalDirection": {
-    "meta": { "isEnum": true },
-    "type": ["Left", "Right"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "Left",
+      "Right"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "DraggingEvent": {
     "meta": {},
@@ -398,8 +451,15 @@
     }
   },
   "IAggFunc": {
-    "meta": { "isCallSignature": true },
-    "type": { "arguments": { "params": "IAggFuncParams" }, "returnType": "any" }
+    "meta": {
+      "isCallSignature": true
+    },
+    "type": {
+      "arguments": {
+        "params": "IAggFuncParams"
+      },
+      "returnType": "any"
+    }
   },
   "IAggFuncParams": {
     "meta": {},
@@ -441,7 +501,9 @@
     }
   },
   "HeaderClass": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "string | string[] | ((params: HeaderClassParams) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
@@ -461,12 +523,16 @@
     }
   },
   "ToolPanelClass": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined)"
   },
   "ColDef": {
     "meta": {
-      "typeParams": ["TData"],
+      "typeParams": [
+        "TData"
+      ],
       "doc": "/** Configuration options for columns in AG Grid. */"
     },
     "type": {
@@ -731,7 +797,11 @@
     }
   },
   "ColumnFunctionCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -752,7 +822,11 @@
     }
   },
   "CheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -773,14 +847,25 @@
     }
   },
   "CheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "CheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "CheckboxSelectionCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "RowDragCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -801,14 +886,25 @@
     }
   },
   "RowDragCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "RowDragCallbackParams<TData>" },
+      "arguments": {
+        "params": "RowDragCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "DndSourceCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -829,7 +925,11 @@
     }
   },
   "DndSourceOnRowDragParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "rowNode": "RowNode<TData>",
       "dragEvent": "DragEvent",
@@ -846,14 +946,25 @@
     }
   },
   "DndSourceCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "DndSourceCallbackParams<TData>" },
+      "arguments": {
+        "params": "DndSourceCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "EditableCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -874,14 +985,25 @@
     }
   },
   "EditableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "EditableCallbackParams<TData>" },
+      "arguments": {
+        "params": "EditableCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "SuppressPasteCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -902,14 +1024,25 @@
     }
   },
   "SuppressPasteCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "SuppressPasteCallbackParams<TData>" },
+      "arguments": {
+        "params": "SuppressPasteCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "SuppressNavigableCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -930,14 +1063,25 @@
     }
   },
   "SuppressNavigableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "SuppressNavigableCallbackParams<TData>" },
+      "arguments": {
+        "params": "SuppressNavigableCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "HeaderCheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -952,26 +1096,39 @@
     }
   },
   "HeaderCheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "HeaderCheckboxSelectionCallbackParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "IsColumnFunc": {
     "meta": {
       "isCallSignature": true,
-      "typeParams": ["TData"],
+      "typeParams": [
+        "TData"
+      ],
       "doc": "/** @deprecated No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.\n */"
     },
     "type": {
-      "arguments": { "params": "IsColumnFuncParams<TData>" },
+      "arguments": {
+        "params": "IsColumnFuncParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "IsColumnFuncParams": {
     "meta": {
-      "typeParams": ["TData"],
+      "typeParams": [
+        "TData"
+      ],
       "doc": "/** @deprecated Replaced with ColumnFunctionCallbackParams\n */"
     },
     "type": {
@@ -994,7 +1151,11 @@
     }
   },
   "GetQuickFilterTextParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "node": "RowNode<TData>",
@@ -1029,7 +1190,11 @@
     }
   },
   "BaseColDefParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData> | null",
       "data": "TData",
@@ -1050,7 +1215,11 @@
     }
   },
   "BaseWithValueColDefParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "node": "RowNode<TData> | null",
@@ -1073,7 +1242,11 @@
     }
   },
   "ValueGetterParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "getValue": "(field: string) => any",
       "node": "RowNode<TData> | null",
@@ -1096,9 +1269,16 @@
     }
   },
   "ValueGetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ValueGetterParams<TData>" },
+      "arguments": {
+        "params": "ValueGetterParams<TData>"
+      },
       "returnType": "any"
     }
   },
@@ -1125,14 +1305,22 @@
     }
   },
   "HeaderValueGetterFunc": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "params": "HeaderValueGetterParams" },
+      "arguments": {
+        "params": "HeaderValueGetterParams"
+      },
       "returnType": "any"
     }
   },
   "NewValueParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -1157,7 +1345,11 @@
     }
   },
   "ValueSetterParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -1182,14 +1374,25 @@
     }
   },
   "ValueSetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ValueSetterParams<TData>" },
+      "arguments": {
+        "params": "ValueSetterParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "ValueParserParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -1214,14 +1417,25 @@
     }
   },
   "ValueParserFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ValueParserParams<TData>" },
+      "arguments": {
+        "params": "ValueParserParams<TData>"
+      },
       "returnType": "any"
     }
   },
   "ValueFormatterParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "node": "RowNode<TData> | null",
@@ -1244,14 +1458,25 @@
     }
   },
   "ValueFormatterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ValueFormatterParams<TData>" },
+      "arguments": {
+        "params": "ValueFormatterParams<TData>"
+      },
       "returnType": "string"
     }
   },
   "KeyCreatorParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "node": "RowNode<TData> | null",
@@ -1274,7 +1499,11 @@
     }
   },
   "ColSpanParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData> | null",
       "data": "TData",
@@ -1295,7 +1524,11 @@
     }
   },
   "RowSpanParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData> | null",
       "data": "TData",
@@ -1316,7 +1549,11 @@
     }
   },
   "SuppressKeyboardEventParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "event": "KeyboardEvent",
       "editing": "boolean",
@@ -1360,7 +1597,11 @@
     }
   },
   "CellClassParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "colDef": "ColDef",
       "value": "any",
@@ -1383,40 +1624,74 @@
     }
   },
   "CellClassFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": {
+        "cellClassParams": "CellClassParams<TData>"
+      },
       "returnType": "string | string[] | null | undefined"
     }
   },
   "CellStyleFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": {
+        "cellClassParams": "CellClassParams<TData>"
+      },
       "returnType": "CellStyle | null | undefined"
     }
   },
   "CellStyle": {
     "meta": {},
-    "type": { "[cssProperty: string]": "string | number" }
+    "type": {
+      "[cssProperty: string]": "string | number"
+    }
   },
   "CellClassRules": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "[cssClassName: string]": "(((params: CellClassParams<TData>) => boolean) | string)"
     }
   },
   "CellRendererSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ICellRendererParams<TData>" },
+      "arguments": {
+        "params": "ICellRendererParams<TData>"
+      },
       "returnType": "CellRendererSelectorResult | undefined"
     }
   },
   "CellEditorSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ICellEditorParams<TData>" },
+      "arguments": {
+        "params": "ICellEditorParams<TData>"
+      },
       "returnType": "CellEditorSelectorResult | undefined"
     }
   },
@@ -1540,8 +1815,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -1643,12 +1919,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -1729,6 +2010,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -1842,7 +2125,7 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
       "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
@@ -2017,15 +2300,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -2096,8 +2384,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -2107,7 +2397,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -2189,67 +2479,142 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "RowGroupingDisplayType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom'"
   },
   "TreeDataDisplayType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'auto' | 'custom'"
   },
   "GetDataPath": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
-    "type": { "arguments": { "data": "TData" }, "returnType": "string[]" }
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "arguments": {
+        "data": "TData"
+      },
+      "returnType": "string[]"
+    }
   },
   "IsServerSideGroup": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
-    "type": { "arguments": { "dataItem": "TData" }, "returnType": "boolean" }
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "arguments": {
+        "dataItem": "TData"
+      },
+      "returnType": "boolean"
+    }
   },
   "IsRowFilterable": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "GetGroupAggFilteringParams<TData>" },
+      "arguments": {
+        "params": "GetGroupAggFilteringParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "IsApplyServerSideTransaction": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "IsApplyServerSideTransactionParams<TData>" },
+      "arguments": {
+        "params": "IsApplyServerSideTransactionParams<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "GetServerSideGroupKey": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
-    "type": { "arguments": { "dataItem": "TData" }, "returnType": "string" }
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "arguments": {
+        "dataItem": "TData"
+      },
+      "returnType": "string"
+    }
   },
   "IsRowMaster": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
-    "type": { "arguments": { "dataItem": "TData" }, "returnType": "boolean" }
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "arguments": {
+        "dataItem": "TData"
+      },
+      "returnType": "boolean"
+    }
   },
   "IsRowSelectable": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "node": "RowNode<TData>" },
+      "arguments": {
+        "node": "RowNode<TData>"
+      },
       "returnType": "boolean"
     }
   },
   "RowClassRules": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "[cssClassName: string]": "(((params: RowClassParams<TData>) => boolean) | string)"
     }
   },
   "RowStyle": {
     "meta": {},
-    "type": { "[cssProperty: string]": "string | number" }
+    "type": {
+      "[cssProperty: string]": "string | number"
+    }
   },
   "RowClassParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "data": "TData",
       "node": "RowNode<TData>",
@@ -2268,16 +2633,27 @@
     }
   },
   "GetContextMenuItems": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "GetContextMenuItemsParams<TData>" },
+      "arguments": {
+        "params": "GetContextMenuItemsParams<TData>"
+      },
       "returnType": "(string | MenuItemDef)[]"
     }
   },
   "GetChartToolbarItems": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "params": "GetChartToolbarItemsParams" },
+      "arguments": {
+        "params": "GetChartToolbarItemsParams"
+      },
       "returnType": "ChartMenuOptions[]"
     }
   },
@@ -2330,20 +2706,38 @@
     }
   },
   "GetMainMenuItems": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "params": "GetMainMenuItemsParams" },
+      "arguments": {
+        "params": "GetMainMenuItemsParams"
+      },
       "returnType": "(string | MenuItemDef)[]"
     }
   },
   "GetRowNodeIdFunc": {
-    "meta": { "isCallSignature": true },
-    "type": { "arguments": { "data": "any" }, "returnType": "string" }
+    "meta": {
+      "isCallSignature": true
+    },
+    "type": {
+      "arguments": {
+        "data": "any"
+      },
+      "returnType": "string"
+    }
   },
   "GetRowIdFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "GetRowIdParams<TData>" },
+      "arguments": {
+        "params": "GetRowIdParams<TData>"
+      },
       "returnType": "string"
     }
   },
@@ -2384,26 +2778,37 @@
     }
   },
   "ServerSideStoreType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'full' | 'partial'"
   },
   "ServerSideStoreParams": {
     "meta": {},
     "type": {
       "storeType?": "ServerSideStoreType",
+      "infiniteScroll?": "boolean",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "storeType?": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
-      "maxBlocksInCache?": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
-      "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
+      "storeType?": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level. */",
+      "maxBlocksInCache?": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
     }
   },
   "LoadingCellRendererSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ILoadingCellRendererParams<TData>" },
+      "arguments": {
+        "params": "ILoadingCellRendererParams<TData>"
+      },
       "returnType": "LoadingCellRendererSelectorResult | undefined"
     }
   },
@@ -2421,7 +2826,11 @@
     }
   },
   "GetContextMenuItemsParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "defaultItems": "string[] | undefined",
       "column": "Column | null",
@@ -2459,7 +2868,11 @@
     }
   },
   "PostProcessPopupParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column?": "Column | null",
       "rowNode?": "RowNode<TData> | null",
@@ -2625,7 +3038,11 @@
     }
   },
   "IsGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "rowNode": "RowNode<TData>",
       "rowGroupColumn": "Column",
@@ -2648,7 +3065,11 @@
     }
   },
   "GetServerSideStoreParamsParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "level": "number",
       "parentRowNode?": "RowNode<TData>",
@@ -2671,7 +3092,11 @@
     }
   },
   "IsServerSideGroupOpenByDefaultParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "data": "TData",
       "rowNode": "RowNode<TData>",
@@ -2686,7 +3111,11 @@
     }
   },
   "IsApplyServerSideTransactionParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode<TData>",
@@ -2704,7 +3133,11 @@
     }
   },
   "GetRowIdParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "data": "TData",
       "level": "number",
@@ -2723,7 +3156,11 @@
     }
   },
   "ProcessRowParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "eRow": "HTMLElement",
       "ePinnedLeftRow": "HTMLElement",
@@ -2742,7 +3179,11 @@
     }
   },
   "FillOperationParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "event": "MouseEvent",
       "values": "any[]",
@@ -2771,7 +3212,11 @@
     }
   },
   "RowHeightParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "data": "TData",
       "node": "RowNode<TData>",
@@ -2787,7 +3232,11 @@
   },
   "IsExternalFilterPresentParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -2795,7 +3244,11 @@
     }
   },
   "InitialGroupOrderComparatorParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "nodeA": "RowNode<TData>",
       "nodeB": "RowNode<TData>",
@@ -2810,7 +3263,11 @@
     }
   },
   "GetGroupRowAggParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "nodes": "RowNode<TData>[]",
       "api": "GridApi",
@@ -2824,7 +3281,11 @@
     }
   },
   "PostSortRowsParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "nodes": "RowNode<TData>[]",
       "api": "GridApi",
@@ -2838,7 +3299,11 @@
     }
   },
   "IsFullWidthRowParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "rowNode": "RowNode<TData>",
       "api": "GridApi",
@@ -2868,7 +3333,11 @@
     }
   },
   "GetGroupAggFilteringParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "api": "GridApi",
@@ -2921,12 +3390,25 @@
     }
   },
   "RowNodeEvent": {
-    "meta": { "typeParams": ["TData"] },
-    "type": { "node": "RowNode<TData>", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "node": "RowNode<TData>",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "DataChangedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldData": "TData | undefined",
       "newData": "TData | undefined",
@@ -2934,10 +3416,16 @@
       "node": "RowNode<TData>",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "CellChangedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "newValue": "TData | undefined",
@@ -2945,16 +3433,29 @@
       "node": "RowNode<TData>",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "RowHighlightPosition": {
-    "meta": { "isEnum": true },
-    "type": ["Above", "Below"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "Above",
+      "Below"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "RowPosition": {
     "meta": {},
-    "type": { "rowIndex": "number", "rowPinned": "string | null" },
+    "type": {
+      "rowIndex": "number",
+      "rowPinned": "string | null"
+    },
     "docs": {
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
       "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
@@ -3003,12 +3504,16 @@
     }
   },
   "SASS_PROPERTIES": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth'"
   },
   "HardCodedSize": {
     "meta": {},
-    "type": { "[key: string]": "{[key in SASS_PROPERTIES]?: number}" }
+    "type": {
+      "[key: string]": "{[key in SASS_PROPERTIES]?: number}"
+    }
   },
   "ModelUpdatedEvent": {
     "meta": {},
@@ -3050,13 +3555,23 @@
   },
   "AgEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "AgGridEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ToolPanelVisibleChangedEvent": {
     "meta": {},
@@ -3066,17 +3581,31 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPivotModeChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "VirtualColumnsChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnEverythingChangedEvent": {
     "meta": {},
@@ -3086,42 +3615,86 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "NewColumnsLoadedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "GridColumnsChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedColumnsChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "RowDataChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "RowDataUpdatedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "PinnedRowDataChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "SelectionChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "FilterChangedEvent": {
     "meta": {},
@@ -3149,7 +3722,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "FilterOpenedEvent": {
     "meta": {},
@@ -3183,38 +3758,77 @@
   },
   "GridReadyEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedColumnsWidthChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnHoverChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "BodyHeightChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ComponentStateChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPanelItemDragStartEvent": {
     "meta": {},
-    "type": { "column": "Column | ProvidedColumnGroup", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "column": "Column | ProvidedColumnGroup",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPanelItemDragEndEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "DragEvent": {
     "meta": {},
@@ -3264,7 +3878,9 @@
       "previousValue": "boolean | undefined",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "GridSizeChangedEvent": {
     "meta": {},
@@ -3282,7 +3898,11 @@
     }
   },
   "RowDragEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "type": "string",
       "node": "RowNode<TData>",
@@ -3307,7 +3927,11 @@
     }
   },
   "RowDragEnterEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "type": "string",
       "node": "RowNode<TData>",
@@ -3332,7 +3956,11 @@
     }
   },
   "RowDragEndEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "type": "string",
       "node": "RowNode<TData>",
@@ -3357,7 +3985,11 @@
     }
   },
   "RowDragMoveEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "type": "string",
       "node": "RowNode<TData>",
@@ -3382,7 +4014,11 @@
     }
   },
   "RowDragLeaveEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "type": "string",
       "node": "RowNode<TData>",
@@ -3414,7 +4050,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "PasteEndEvent": {
     "meta": {},
@@ -3424,12 +4062,20 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "FillStartEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "FillEndEvent": {
     "meta": {},
@@ -3440,7 +4086,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ViewportChangedEvent": {
     "meta": {},
@@ -3558,20 +4206,30 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ItemsAddedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "items": "RowNode<TData>[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ScrollDirection": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'horizontal' | 'vertical'"
   },
   "BodyScrollEvent": {
@@ -3584,7 +4242,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "BodyScrollEndEvent": {
     "meta": {},
@@ -3596,7 +4256,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "FlashCellsEvent": {
     "meta": {},
@@ -3606,12 +4268,20 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "PaginationPixelOffsetChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "CellFocusedEvent": {
     "meta": {},
@@ -3666,10 +4336,14 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnEventType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "\"sizeColumnsToFit\" | \"autosizeColumns\" | \"alignedGridChanged\" | \"filterChanged\" | \"filterDestroyed\" | \"gridOptionsChanged\" | \"gridInitializing\" | \"toolPanelDragAndDrop\" | \"toolPanelUi\" | \"uiColumnMoved\" | \"uiColumnResized\" | \"uiColumnDragged\" | \"uiColumnExpanded\" | \"uiColumnSorted\" | \"contextMenu\" | \"columnMenu\" | \"rowModelUpdated\" | \"rowDataUpdated\" | \"api\" | \"flex\" | \"pivotChart\""
   },
   "ColumnEvent": {
@@ -3820,7 +4494,9 @@
   },
   "RowEvent": {
     "meta": {
-      "typeParams": ["TData"],
+      "typeParams": [
+        "TData"
+      ],
       "doc": "/** ------------ */\n/** ROW EVENTS */\n/** ------------ */"
     },
     "type": {
@@ -3844,7 +4520,11 @@
     }
   },
   "RowGroupOpenedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "expanded": "boolean",
       "node": "RowNode<TData>",
@@ -3868,7 +4548,11 @@
     }
   },
   "RowValueChangedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -3890,7 +4574,11 @@
     }
   },
   "RowSelectedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -3912,7 +4600,11 @@
     }
   },
   "VirtualRowRemovedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -3934,7 +4626,11 @@
     }
   },
   "RowClickedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -3956,7 +4652,11 @@
     }
   },
   "RowDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -3978,7 +4678,11 @@
     }
   },
   "RowEditingStartedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4000,7 +4704,11 @@
     }
   },
   "RowEditingStoppedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4022,7 +4730,11 @@
     }
   },
   "FullWidthCellKeyDownEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4044,7 +4756,11 @@
     }
   },
   "FullWidthCellKeyPressEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData | undefined",
@@ -4067,7 +4783,9 @@
   },
   "CellEvent": {
     "meta": {
-      "typeParams": ["TData"],
+      "typeParams": [
+        "TData"
+      ],
       "doc": "/** ------------ */\n/** CELL EVENTS */\n/** ------------ */"
     },
     "type": {
@@ -4095,7 +4813,11 @@
     }
   },
   "CellKeyDownEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4121,7 +4843,11 @@
     }
   },
   "CellKeyPressEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4147,7 +4873,12 @@
     }
   },
   "CellClickedEvent": {
-    "meta": { "typeParams": ["TData"], "doc": "/** Cell is clicked */" },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ],
+      "doc": "/** Cell is clicked */"
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4173,7 +4904,11 @@
     }
   },
   "CellMouseDownEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4199,7 +4934,11 @@
     }
   },
   "CellDoubleClickedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4225,7 +4964,11 @@
     }
   },
   "CellMouseOverEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4251,7 +4994,11 @@
     }
   },
   "CellMouseOutEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4277,7 +5024,11 @@
     }
   },
   "CellContextMenuEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4303,7 +5054,11 @@
     }
   },
   "CellEditingStartedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -4329,7 +5084,11 @@
     }
   },
   "CellEditingStoppedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -4359,7 +5118,11 @@
     }
   },
   "CellValueChangedEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -4388,7 +5151,11 @@
     }
   },
   "CellEditRequestEvent": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "oldValue": "any",
       "newValue": "any",
@@ -4437,7 +5204,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnRowGroupChangeRequestEvent": {
     "meta": {},
@@ -4447,7 +5216,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnPivotChangeRequestEvent": {
     "meta": {},
@@ -4457,7 +5228,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnValueChangeRequestEvent": {
     "meta": {},
@@ -4467,7 +5240,9 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnAggFuncChangeRequestEvent": {
     "meta": {},
@@ -4478,37 +5253,65 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ScrollVisibilityChangedEvent": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "StoreUpdatedEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "LeftPinnedWidthChangedEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "RightPinnedWidthChangedEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "RowContainerHeightChanged": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "DisplayedRowsChangedEvent": {
     "meta": {},
-    "type": { "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "IFilterLocaleText": {
     "meta": {},
@@ -4549,7 +5352,9 @@
     }
   },
   "FilterRequestSource": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI'"
   },
   "FilterWrapper": {
@@ -4571,15 +5376,26 @@
     }
   },
   "InbuiltParentType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "IFloatingFilterParent & IFilter"
   },
   "IFloatingFilterParentCallback": {
-    "meta": { "isTypeAlias": true, "typeParams": ["P"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "P"
+      ]
+    },
     "type": "(parentFilterInstance: P) => void"
   },
   "IFloatingFilterParams": {
-    "meta": { "typeParams": ["P"] },
+    "meta": {
+      "typeParams": [
+        "P"
+      ]
+    },
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
@@ -4615,7 +5431,11 @@
     }
   },
   "IFloatingFilterComp": {
-    "meta": { "typeParams": ["P"] },
+    "meta": {
+      "typeParams": [
+        "P"
+      ]
+    },
     "type": {
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
       "afterGuiAttached?()": "void",
@@ -4633,10 +5453,15 @@
   },
   "BaseFloatingFilterChange": {
     "meta": {},
-    "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
+    "type": {
+      "model": "ProvidedFilterModel",
+      "apply": "boolean"
+    }
   },
   "ModelUnion": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "TextFilterModel | NumberFilterModel"
   },
   "DateFilterModel": {
@@ -4718,9 +5543,14 @@
     }
   },
   "IDateComparatorFunc": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "filterLocalDateAtMidnight": "Date", "cellValue": "any" },
+      "arguments": {
+        "filterLocalDateAtMidnight": "Date",
+        "cellValue": "any"
+      },
       "returnType": "number"
     }
   },
@@ -4799,7 +5629,9 @@
     }
   },
   "FilterButtonType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'apply' | 'clear' | 'reset' | 'cancel'"
   },
   "IProvidedFilterParams": {
@@ -4922,13 +5754,26 @@
     }
   },
   "Comparator": {
-    "meta": { "isCallSignature": true, "typeParams": ["T"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": {
-      "arguments": { "left": "T", "right": "T" },
+      "arguments": {
+        "left": "T",
+        "right": "T"
+      },
       "returnType": "number"
     }
   },
-  "JoinOperator": { "meta": { "isTypeAlias": true }, "type": "'AND' | 'OR'" },
+  "JoinOperator": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "'AND' | 'OR'"
+  },
   "ISimpleFilter": {
     "meta": {
       "doc": "/** Interface contract for the public aspects of the SimpleFilter implementation(s). */"
@@ -5006,7 +5851,9 @@
     }
   },
   "ISimpleFilterModelType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'blank' | 'notBlank'"
   },
   "ISimpleFilterModel": {
@@ -5015,10 +5862,16 @@
       "type?": "ISimpleFilterModelType | null",
       "filterType?": "string"
     },
-    "docs": { "type?": "/** One of the filter options, e.g. `'equals'` */" }
+    "docs": {
+      "type?": "/** One of the filter options, e.g. `'equals'` */"
+    }
   },
   "ICombinedSimpleModel": {
-    "meta": { "typeParams": ["M extends ISimpleFilterModel"] },
+    "meta": {
+      "typeParams": [
+        "M extends ISimpleFilterModel"
+      ]
+    },
     "type": {
       "operator": "JoinOperator",
       "condition1": "M",
@@ -5027,12 +5880,25 @@
     }
   },
   "ConditionPosition": {
-    "meta": { "isEnum": true },
-    "type": ["One", "Two"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "One",
+      "Two"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "Tuple": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "(T | null)[]"
   },
   "TextFilterModel": {
@@ -5076,16 +5942,24 @@
     }
   },
   "TextMatcher": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "params": "TextMatcherParams" },
+      "arguments": {
+        "params": "TextMatcherParams"
+      },
       "returnType": "boolean"
     }
   },
   "TextFormatter": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "from?": "string | null" },
+      "arguments": {
+        "from?": "string | null"
+      },
       "returnType": "string | null"
     }
   },
@@ -5170,7 +6044,10 @@
   },
   "GetCellsParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "type": {
+      "rowNodes?": "RowNode[]",
+      "columns?": "(string | Column)[]"
+    },
     "docs": {
       "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
       "columns?": "/** Optional list of columns to restrict operation to */"
@@ -5206,7 +6083,10 @@
   },
   "GetCellRendererInstancesParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "type": {
+      "rowNodes?": "RowNode[]",
+      "columns?": "(string | Column)[]"
+    },
     "docs": {
       "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
       "columns?": "/** Optional list of columns to restrict operation to */"
@@ -5214,7 +6094,10 @@
   },
   "GetCellEditorInstancesParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "type": {
+      "rowNodes?": "RowNode[]",
+      "columns?": "(string | Column)[]"
+    },
     "docs": {
       "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
       "columns?": "/** Optional list of columns to restrict operation to */"
@@ -5222,8 +6105,12 @@
   },
   "RedrawRowsParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]" },
-    "docs": { "rowNodes?": "/** Row nodes to redraw */" }
+    "type": {
+      "rowNodes?": "RowNode[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Row nodes to redraw */"
+    }
   },
   "CreateChartParams": {
     "meta": {},
@@ -5243,7 +6130,9 @@
     }
   },
   "ChartParamsCellRange": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>"
   },
   "CreateRangeChartParams": {
@@ -5313,7 +6202,11 @@
   },
   "DetailGridInfo": {
     "meta": {},
-    "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
+    "type": {
+      "id": "string",
+      "api?": "GridApi",
+      "columnApi?": "ColumnApi"
+    },
     "docs": {
       "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
       "api?": "/** Grid api of the detail grid. */",
@@ -5334,12 +6227,17 @@
     }
   },
   "RowAnimationCssClasses": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "ANIMATION_ON = 'ag-row-animation'",
       "ANIMATION_OFF = 'ag-row-no-animation'"
     ],
-    "docs": [null, null]
+    "docs": [
+      null,
+      null
+    ]
   },
   "IGridBodyComp": {
     "meta": {},
@@ -5350,6 +6248,9 @@
       "setTopDisplay(display: string)": "void",
       "setBottomHeight(height: number)": "void",
       "setBottomDisplay(display: string)": "void",
+      "setStickyTopHeight(height: string)": "void",
+      "setStickyTopTop(offsetTop: string)": "void",
+      "setStickyTopWidth(width: string)": "void",
       "setColumnCount(count: number)": "void",
       "setRowCount(count: number)": "void",
       "setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean)": "void",
@@ -5366,7 +6267,8 @@
       "scrollType": "'top' | 'bottom' | null",
       "scrollColumn": "Column | null",
       "focusIndex": "number",
-      "focusColumn": "Column"
+      "focusColumn": "Column",
+      "isAsync?": "boolean"
     },
     "docs": {
       "scrollIndex": "/** The rowIndex to vertically scroll to. */",
@@ -5375,13 +6277,22 @@
       "focusIndex": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */"
     }
   },
-  "RenderParams": { "meta": {}, "type": { "rows": "RowNode" } },
+  "RenderParams": {
+    "meta": {},
+    "type": {
+      "rows": "RowNode"
+    }
+  },
   "RenderRowsFeature": {
     "meta": {},
-    "type": { "render(rows: RowNode[])": "void" }
+    "type": {
+      "render(rows: RowNode[])": "void"
+    }
   },
   "RowContainerName": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "LEFT = 'left'",
       "RIGHT = 'right'",
@@ -5391,6 +6302,10 @@
       "TOP_RIGHT = 'topRight'",
       "TOP_CENTER = 'topCenter'",
       "TOP_FULL_WIDTH = 'topFullWidth'",
+      "STICKY_TOP_LEFT = 'stickyTopLeft'",
+      "STICKY_TOP_RIGHT = 'stickyTopRight'",
+      "STICKY_TOP_CENTER = 'stickyTopCenter'",
+      "STICKY_TOP_FULL_WIDTH = 'stickyTopFullWidth'",
       "BOTTOM_LEFT = 'bottomLeft'",
       "BOTTOM_RIGHT = 'bottomRight'",
       "BOTTOM_CENTER = 'bottomCenter'",
@@ -5408,18 +6323,29 @@
       null,
       null,
       null,
+      null,
+      null,
+      null,
+      null,
       null
     ]
   },
   "RowContainerType": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "LEFT = 'left'",
       "RIGHT = 'right'",
       "CENTER = 'center'",
       "FULL_WIDTH = 'fullWidth'"
     ],
-    "docs": [null, null, null, null]
+    "docs": [
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "IRowContainerComp": {
     "meta": {},
@@ -5484,10 +6410,19 @@
   },
   "PropertyChangedEvent": {
     "meta": {},
-    "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "currentValue": "any",
+      "previousValue": "any",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
-  "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
+  "IAbstractHeaderCellComp": {
+    "meta": {},
+    "type": {}
+  },
   "IHeaderCellComp": {
     "meta": {},
     "type": {
@@ -5534,7 +6469,9 @@
   },
   "IHeader": {
     "meta": {},
-    "type": { "refresh(params: IHeaderParams)": "boolean" },
+    "type": {
+      "refresh(params: IHeaderParams)": "boolean"
+    },
     "docs": {
       "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */"
     }
@@ -5556,7 +6493,10 @@
   },
   "SelectionCount": {
     "meta": {},
-    "type": { "selected": "number", "notSelected": "number" }
+    "type": {
+      "selected": "number",
+      "notSelected": "number"
+    }
   },
   "IHeaderGroupCellComp": {
     "meta": {},
@@ -5589,7 +6529,10 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "IHeaderGroup": { "meta": {}, "type": {} },
+  "IHeaderGroup": {
+    "meta": {},
+    "type": {}
+  },
   "IHeaderGroupComp": {
     "meta": {},
     "type": {
@@ -5626,13 +6569,28 @@
     }
   },
   "HeaderNavigationDirection": {
-    "meta": { "isEnum": true },
-    "type": ["UP", "DOWN", "LEFT", "RIGHT"],
-    "docs": [null, null, null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "UP",
+      "DOWN",
+      "LEFT",
+      "RIGHT"
+    ],
+    "docs": [
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "HeaderPosition": {
     "meta": {},
-    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
+    "type": {
+      "headerRowIndex": "number",
+      "column": "Column | ColumnGroup"
+    },
     "docs": {
       "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
       "column": "/** The grid column or column group */"
@@ -5656,13 +6614,19 @@
     }
   },
   "HeaderRowType": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "COLUMN_GROUP = 'group'",
       "COLUMN = 'column'",
       "FLOATING_FILTER = 'filter'"
     ],
-    "docs": [null, null, null]
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "IHeaderRowComp": {
     "meta": {},
@@ -5685,7 +6649,12 @@
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
     }
   },
-  "ILogger": { "meta": {}, "type": { "log(message: string)": "void" } },
+  "ILogger": {
+    "meta": {},
+    "type": {
+      "log(message: string)": "void"
+    }
+  },
   "BaseExportParams": {
     "meta": {},
     "type": {
@@ -5716,7 +6685,11 @@
     }
   },
   "ExportParams": {
-    "meta": { "typeParams": ["T"] },
+    "meta": {
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": {
       "prependContent?": "T",
       "appendContent?": "T",
@@ -5752,16 +6725,31 @@
     }
   },
   "PackageFileParams": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "T & { data: string[]; }"
   },
   "CsvCell": {
     "meta": {},
-    "type": { "data": "CsvCellData", "mergeAcross?": "number" }
+    "type": {
+      "data": "CsvCellData",
+      "mergeAcross?": "number"
+    }
   },
-  "CsvCellData": { "meta": {}, "type": { "value": "string | null" } },
+  "CsvCellData": {
+    "meta": {},
+    "type": {
+      "value": "string | null"
+    }
+  },
   "CsvCustomContent": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "CsvCell[][] | string"
   },
   "CsvExportParams": {
@@ -5877,7 +6865,9 @@
     }
   },
   "ContainerType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter'"
   },
   "IAfterGuiAttachedParams": {
@@ -5894,29 +6884,65 @@
     }
   },
   "FontStyle": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'normal' | 'italic' | 'oblique'"
   },
   "FontWeight": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'"
   },
-  "FontFamily": { "meta": { "isTypeAlias": true }, "type": "string" },
-  "FontSize": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "FontFamily": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "string"
+  },
+  "FontSize": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "number"
+  },
   "AgChartThemeName": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'ag-default' | 'ag-default-dark' | 'ag-material' | 'ag-material-dark' | 'ag-pastel' | 'ag-pastel-dark' | 'ag-solar' | 'ag-solar-dark' | 'ag-vivid' | 'ag-vivid-dark'"
   },
   "MarkerShape": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'circle' | 'cross' | 'diamond' | 'heart' | 'plus' | 'triangle' | any"
   },
-  "CssColor": { "meta": { "isTypeAlias": true }, "type": "string" },
-  "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "CssColor": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "string"
+  },
+  "Opacity": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "number"
+  },
+  "PixelSize": {
+    "meta": {
+      "isTypeAlias": true
+    },
+    "type": "number"
+  },
   "AgChartThemePalette": {
     "meta": {},
-    "type": { "fills": "string[]", "strokes": "string[]" },
+    "type": {
+      "fills": "string[]",
+      "strokes": "string[]"
+    },
     "docs": {
       "fills": "/** The array of fills to be used. */",
       "strokes": "/** The array of strokes to be used. */"
@@ -5981,7 +7007,9 @@
   },
   "AgCartesianAxisThemeOptions": {
     "meta": {
-      "typeParams": ["T"],
+      "typeParams": [
+        "T"
+      ],
       "doc": "/** This is the configuration shared by all types of axis. */"
     },
     "type": {
@@ -5998,7 +7026,11 @@
     }
   },
   "AgCartesianThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S"
+      ]
+    },
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
@@ -6037,7 +7069,11 @@
     }
   },
   "AgPolarThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S"
+      ]
+    },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -6072,7 +7108,11 @@
     }
   },
   "AgHierarchyThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S"
+      ]
+    },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -6304,11 +7344,15 @@
   },
   "AgPolarSeriesTheme": {
     "meta": {},
-    "type": { "pie?": "AgPieSeriesOptions" }
+    "type": {
+      "pie?": "AgPieSeriesOptions"
+    }
   },
   "AgHierarchySeriesTheme": {
     "meta": {},
-    "type": { "treemap?": "AgTreemapSeriesOptions" }
+    "type": {
+      "treemap?": "AgTreemapSeriesOptions"
+    }
   },
   "AgChartPaddingOptions": {
     "meta": {},
@@ -6443,7 +7487,9 @@
     }
   },
   "AgChartLegendPosition": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'top' | 'right' | 'bottom' | 'left'"
   },
   "AgChartLegendMarkerOptions": {
@@ -6464,6 +7510,7 @@
   "AgChartLegendLabelOptions": {
     "meta": {},
     "type": {
+      "characterLimit?": "number",
       "color?": "CssColor",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -6472,6 +7519,7 @@
       "formatter?": "(id: string, itemId: any, value: string) => string"
     },
     "docs": {
+      "characterLimit?": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
       "color?": "/** The colour of the text. */",
       "fontStyle?": "/** The font style to use for the legend. */",
       "fontWeight?": "/** The font weight to use for the legend. */",
@@ -6485,12 +7533,14 @@
     "type": {
       "marker?": "AgChartLegendMarkerOptions",
       "label?": "AgChartLegendLabelOptions",
+      "maxWidth?": "PixelSize",
       "paddingX?": "PixelSize",
       "paddingY?": "PixelSize"
     },
     "docs": {
       "marker?": "/** Configuration for the legend markers. */",
       "label?": "/** Configuration for the legend labels. */",
+      "maxWidth?": "/** Used to constrain the width of legend items. */",
       "paddingX?": "/** The horizontal spacing in pixels to use between legend items. */",
       "paddingY?": "/** The vertical spacing in pixels to use between legend items. */"
     }
@@ -6527,7 +7577,10 @@
   },
   "AgChartBackground": {
     "meta": {},
-    "type": { "visible?": "boolean", "fill?": "CssColor" },
+    "type": {
+      "visible?": "boolean",
+      "fill?": "CssColor"
+    },
     "docs": {
       "visible?": "/** Whether or not the background should be visible. */",
       "fill?": "/** Colour of the chart background. */"
@@ -6545,7 +7598,9 @@
     }
   },
   "AgBaseChartOptions": {
-    "meta": { "doc": "/** Configuration common to all charts. */" },
+    "meta": {
+      "doc": "/** Configuration common to all charts. */"
+    },
     "type": {
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -6579,18 +7634,26 @@
   },
   "AgBaseAxisOptions": {
     "meta": {},
-    "type": { "keys?": "string[]", "thickness?": "PixelSize" },
+    "type": {
+      "keys?": "string[]",
+      "thickness?": "PixelSize"
+    },
     "docs": {
       "thickness?": "/** If set to a non-zero value, the axis will have the specified thickness regardless of label size. */"
     }
   },
   "AgCartesianAxisPosition": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'top' | 'right' | 'bottom' | 'left'"
   },
   "AgAxisLineOptions": {
     "meta": {},
-    "type": { "width?": "PixelSize", "color?": "CssColor" },
+    "type": {
+      "width?": "PixelSize",
+      "color?": "CssColor"
+    },
     "docs": {
       "width?": "/** The width in pixels of the axis line. */",
       "color?": "/** The colour of the axis line. */"
@@ -6679,18 +7742,25 @@
   },
   "AgAxisGridStyle": {
     "meta": {},
-    "type": { "stroke?": "CssColor", "lineDash?": "PixelSize[]" },
+    "type": {
+      "stroke?": "CssColor",
+      "lineDash?": "PixelSize[]"
+    },
     "docs": {
       "stroke?": "/** The colour of the grid line. */",
       "lineDash?": "/** Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */"
     }
   },
   "AgCartesianAxisType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'category' | 'groupedCategory' | 'number' | 'log' | 'time'"
   },
   "AgBaseCartesianAxisOptions": {
-    "meta": { "doc": "/** Configuration for axes in cartesian charts. */" },
+    "meta": {
+      "doc": "/** Configuration for axes in cartesian charts. */"
+    },
     "type": {
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
@@ -6843,7 +7913,9 @@
     }
   },
   "AgCartesianAxisOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "AgNumberAxisOptions | AgLogAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
   "AgSeriesHighlightMarkerStyle": {
@@ -6918,11 +7990,18 @@
   },
   "AgTooltipRendererResult": {
     "meta": {},
-    "type": { "title?": "string", "content?": "string" }
+    "type": {
+      "title?": "string",
+      "content?": "string"
+    }
   },
   "AgSeriesTooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color?": "CssColor" }
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor"
+    }
   },
   "AgCartesianSeriesTooltipRendererParams": {
     "meta": {},
@@ -7029,7 +8108,9 @@
     }
   },
   "AgCartesianSeriesMarkerFormatter": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat | undefined"
   },
   "AgCartesianSeriesMarker": {
@@ -7088,7 +8169,9 @@
   },
   "AgSeriesTooltip": {
     "meta": {},
-    "type": { "enabled?": "boolean" },
+    "type": {
+      "enabled?": "boolean"
+    },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
     }
@@ -7127,7 +8210,9 @@
     }
   },
   "AgLineSeriesOptions": {
-    "meta": { "doc": "/** Configuration for line series. */" },
+    "meta": {
+      "doc": "/** Configuration for line series. */"
+    },
     "type": {
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
@@ -7202,7 +8287,9 @@
     }
   },
   "AgScatterSeriesOptions": {
-    "meta": { "doc": "/** Configuration for scatter/bubble series. */" },
+    "meta": {
+      "doc": "/** Configuration for scatter/bubble series. */"
+    },
     "type": {
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
@@ -7289,7 +8376,9 @@
     }
   },
   "AgAreaSeriesOptions": {
-    "meta": { "doc": "/** Configuration for area series. */" },
+    "meta": {
+      "doc": "/** Configuration for area series. */"
+    },
     "type": {
       "type?": "'area'",
       "marker?": "AgAreaSeriesMarker",
@@ -7403,7 +8492,9 @@
     }
   },
   "AgBarSeriesOptions": {
-    "meta": { "doc": "/** Configuration for bar/column series. */" },
+    "meta": {
+      "doc": "/** Configuration for bar/column series. */"
+    },
     "type": {
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
@@ -7499,7 +8590,9 @@
     }
   },
   "AgHistogramSeriesOptions": {
-    "meta": { "doc": "/** Configuration for histogram series. */" },
+    "meta": {
+      "doc": "/** Configuration for histogram series. */"
+    },
     "type": {
       "type?": "'histogram'",
       "fill?": "CssColor",
@@ -7645,7 +8738,9 @@
     }
   },
   "AgPieSeriesOptions": {
-    "meta": { "doc": "/** Configuration for pie/doughnut series. */" },
+    "meta": {
+      "doc": "/** Configuration for pie/doughnut series. */"
+    },
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
@@ -7794,7 +8889,9 @@
     }
   },
   "AgTreemapSeriesOptions": {
-    "meta": { "doc": "/** Configuration for the treemap series. */" },
+    "meta": {
+      "doc": "/** Configuration for the treemap series. */"
+    },
     "type": {
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
@@ -7838,15 +8935,21 @@
     }
   },
   "AgCartesianSeriesOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
   },
   "AgPolarSeriesOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "AgPieSeriesOptions"
   },
   "AgHierarchySeriesOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "AgTreemapSeriesOptions"
   },
   "AgCartesianChartOptions": {
@@ -7965,7 +9068,9 @@
     }
   },
   "AgChartOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "IAggFuncService": {
@@ -8008,7 +9113,11 @@
     }
   },
   "ICellEditorParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "key": "string | null",
@@ -8051,7 +9160,11 @@
     }
   },
   "ICellEditorComp": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "getValue()": "any",
       "isPopup?()": "boolean",
@@ -8080,15 +9193,21 @@
     }
   },
   "ChartType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo'"
   },
   "CrossFilterChartType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area'"
   },
   "ChartMenuOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
   },
   "SeriesChartType": {
@@ -8101,14 +9220,19 @@
   },
   "GetChartImageDataUrlParams": {
     "meta": {},
-    "type": { "chartId": "string", "fileFormat?": "string" },
+    "type": {
+      "chartId": "string",
+      "fileFormat?": "string"
+    },
     "docs": {
       "chartId": "/** The id of the created chart. */",
       "fileFormat?": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */"
     }
   },
   "ChartModelType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'range' | 'pivot'"
   },
   "ChartModel": {
@@ -8142,7 +9266,9 @@
     }
   },
   "ClientSideRowModelSteps": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "EVERYTHING = 'group'",
       "FILTER = 'filter'",
@@ -8153,7 +9279,16 @@
       "PIVOT = 'pivot'",
       "NOTHING = 'nothing'"
     ],
-    "docs": [null, null, null, null, null, null, null, null]
+    "docs": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "IClientSideRowModel": {
     "meta": {},
@@ -8199,7 +9334,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -8229,7 +9364,10 @@
   },
   "IClipboardCopyParams": {
     "meta": {},
-    "type": { "includeHeaders?": "boolean", "includeGroupHeaders?": "boolean" }
+    "type": {
+      "includeHeaders?": "boolean",
+      "includeGroupHeaders?": "boolean"
+    }
   },
   "IClipboardCopyRowsParams": {
     "meta": {},
@@ -8272,12 +9410,21 @@
     }
   },
   "WithoutGridCommon": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends AgGridCommon"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T extends AgGridCommon"
+      ]
+    },
     "type": "Omit<T, keyof AgGridCommon>"
   },
   "AgGridCommon": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -8286,7 +9433,9 @@
   },
   "IComponent": {
     "meta": {
-      "typeParams": ["T"],
+      "typeParams": [
+        "T"
+      ],
       "doc": "/** This is for User Components only, do not implement this for internal components. */"
     },
     "type": {
@@ -8330,7 +9479,9 @@
     }
   },
   "IGetRowsParams": {
-    "meta": { "doc": "/** Params for the above IDatasource.getRows() */" },
+    "meta": {
+      "doc": "/** Params for the above IDatasource.getRows() */"
+    },
     "type": {
       "startRow": "number",
       "endRow": "number",
@@ -8370,7 +9521,9 @@
       "protection?": "ExcelProtection",
       "name?": "string"
     },
-    "docs": { "name?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "name?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelAlignment": {
     "meta": {},
@@ -8384,7 +9537,9 @@
       "wrapText?": "boolean",
       "verticalText?": "boolean"
     },
-    "docs": { "verticalText?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "verticalText?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelBorders": {
     "meta": {},
@@ -8419,7 +9574,9 @@
       "verticalAlign?": "'Superscript' | 'Subscript'",
       "charSet?": "number"
     },
-    "docs": { "charSet?": "/** @deprecated Legacy property\n */" }
+    "docs": {
+      "charSet?": "/** @deprecated Legacy property\n */"
+    }
   },
   "ExcelInterior": {
     "meta": {},
@@ -8429,18 +9586,32 @@
       "patternColor?": "string"
     }
   },
-  "ExcelNumberFormat": { "meta": {}, "type": { "format": "string" } },
+  "ExcelNumberFormat": {
+    "meta": {},
+    "type": {
+      "format": "string"
+    }
+  },
   "ExcelProtection": {
     "meta": {},
-    "type": { "protected": "boolean", "hideFormula": "boolean" }
+    "type": {
+      "protected": "boolean",
+      "hideFormula": "boolean"
+    }
   },
   "ExcelWorksheet": {
     "meta": {},
-    "type": { "name": "string", "table": "ExcelTable" }
+    "type": {
+      "name": "string",
+      "table": "ExcelTable"
+    }
   },
   "ExcelTable": {
     "meta": {},
-    "type": { "columns": "ExcelColumn[]", "rows": "ExcelRow[]" }
+    "type": {
+      "columns": "ExcelColumn[]",
+      "rows": "ExcelRow[]"
+    }
   },
   "ExcelColumn": {
     "meta": {},
@@ -8493,11 +9664,15 @@
     }
   },
   "ExcelDataType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'"
   },
   "ExcelOOXMLDataType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty'"
   },
   "ExcelData": {
@@ -8509,7 +9684,11 @@
   },
   "ExcelRelationship": {
     "meta": {},
-    "type": { "Id": "string", "Type": "string", "Target": "string" }
+    "type": {
+      "Id": "string",
+      "Type": "string",
+      "Target": "string"
+    }
   },
   "ExcelContentType": {
     "meta": {},
@@ -8534,15 +9713,31 @@
     }
   },
   "ExcelFactoryMode": {
-    "meta": { "isEnum": true },
-    "type": ["SINGLE_SHEET", "MULTI_SHEET"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "SINGLE_SHEET",
+      "MULTI_SHEET"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "ColumnWidthCallbackParams": {
     "meta": {},
-    "type": { "column": "Column | null", "index": "number" }
+    "type": {
+      "column": "Column | null",
+      "index": "number"
+    }
   },
-  "RowHeightCallbackParams": { "meta": {}, "type": { "rowIndex": "number" } },
+  "RowHeightCallbackParams": {
+    "meta": {},
+    "type": {
+      "rowIndex": "number"
+    }
+  },
   "ExcelExportParams": {
     "meta": {},
     "type": {
@@ -8661,11 +9856,15 @@
     }
   },
   "IFilterType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "string | { new (): IFilterComp; } | boolean"
   },
   "IFloatingFilterType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "string | { new (): IFloatingFilterComp; }"
   },
   "IFilterDef": {
@@ -8710,9 +9909,18 @@
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
-  "ProvidedFilterModel": { "meta": {}, "type": { "filterType?": "string" } },
+  "ProvidedFilterModel": {
+    "meta": {},
+    "type": {
+      "filterType?": "string"
+    }
+  },
   "IFilterComp": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "getGui()": "HTMLElement",
       "destroy?()": "void",
@@ -8741,8 +9949,15 @@
     }
   },
   "IDoesFilterPassParams": {
-    "meta": { "typeParams": ["TData"] },
-    "type": { "node": "RowNode<TData>", "data": "TData" },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "node": "RowNode<TData>",
+      "data": "TData"
+    },
     "docs": {
       "node": "/** The row node in question. */",
       "data": "/** The data part of the row node in question. */"
@@ -8768,7 +9983,11 @@
     }
   },
   "IFilterParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "column": "Column",
       "colDef": "ColDef<TData>",
@@ -8822,7 +10041,10 @@
   },
   "IImmutableService": {
     "meta": {},
-    "type": { "setRowData(data: any[])": "void", "isActive()": "boolean" }
+    "type": {
+      "setRowData(data: any[])": "void",
+      "isActive()": "boolean"
+    }
   },
   "IInfiniteRowModel": {
     "meta": {},
@@ -8851,7 +10073,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -8865,7 +10087,10 @@
       "start()": "/** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData\n * from gridOptions, the other row models will start calling their datasources. */"
     }
   },
-  "IMenu": { "meta": {}, "type": {} },
+  "IMenu": {
+    "meta": {},
+    "type": {}
+  },
   "IMenuFactory": {
     "meta": {},
     "type": {
@@ -8942,7 +10167,11 @@
     }
   },
   "IMultiFilterParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "filters?": "IMultiFilterDef[]",
       "readOnly?": "boolean",
@@ -8974,7 +10203,10 @@
   },
   "IMultiFilterModel": {
     "meta": {},
-    "type": { "filterType?": "'multi'", "filterModels": "any[] | null" },
+    "type": {
+      "filterType?": "'multi'",
+      "filterModels": "any[] | null"
+    },
     "docs": {
       "filterType?": "/** Multi filter type. */",
       "filterModels": "/** Child filter models in the same order as the filters are specified in `filterParams`. */"
@@ -8996,7 +10228,11 @@
     }
   },
   "IPopupComponent": {
-    "meta": { "typeParams": ["T"] },
+    "meta": {
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": {
       "isPopup?()": "boolean",
       "focusIn?()": "void",
@@ -9057,14 +10293,30 @@
     }
   },
   "SelectionHandleType": {
-    "meta": { "isEnum": true },
-    "type": ["FILL", "RANGE"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "FILL",
+      "RANGE"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "CellRangeType": {
-    "meta": { "isEnum": true },
-    "type": ["VALUE", "DIMENSION"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "VALUE",
+      "DIMENSION"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "CellRange": {
     "meta": {},
@@ -9105,7 +10357,9 @@
     }
   },
   "RangeSelection": {
-    "meta": { "doc": "/** @deprecated */" },
+    "meta": {
+      "doc": "/** @deprecated */"
+    },
     "type": {
       "start": "CellPosition",
       "end": "CellPosition",
@@ -9113,7 +10367,9 @@
     }
   },
   "AddRangeSelectionParams": {
-    "meta": { "doc": "/** @deprecated */" },
+    "meta": {
+      "doc": "/** @deprecated */"
+    },
     "type": {
       "rowStart": "number",
       "floatingStart": "string",
@@ -9124,7 +10380,9 @@
     }
   },
   "CellValue": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "object | string | number"
   },
   "IRichCellEditorParams": {
@@ -9176,7 +10434,11 @@
   },
   "RowBounds": {
     "meta": {},
-    "type": { "rowTop": "number", "rowHeight": "number", "rowIndex?": "number" }
+    "type": {
+      "rowTop": "number",
+      "rowHeight": "number",
+      "rowIndex?": "number"
+    }
   },
   "IRowModel": {
     "meta": {},
@@ -9201,7 +10463,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -9244,7 +10506,9 @@
   },
   "IRowNodeStage": {
     "meta": {},
-    "type": { "execute(params: StageExecuteParams)": "any" }
+    "type": {
+      "execute(params: StageExecuteParams)": "any"
+    }
   },
   "IServerSideGetRowsRequest": {
     "meta": {},
@@ -9337,7 +10601,7 @@
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
       "getRowNode(id: string)": "/** Returns the rowNode for given id. */",
-      "getRowCount()": "/** This is legacy, not used by AG Grid, but keeping for backward compatibility */",
+      "getRowCount()": "/** Returns the number of rows */",
       "getRowIndexAtPixel(pixel: number)": "/** Returns the row index at the given pixel */",
       "isRowPresent(rowNode: RowNode)": "/** Returns true if the provided rowNode is in the list of rows to render */",
       "getRowBounds(index: number)": "/** Returns row top and bottom for a given row */",
@@ -9361,7 +10625,10 @@
   },
   "RefreshStoreParams": {
     "meta": {},
-    "type": { "route?": "string[]", "purge?": "boolean" },
+    "type": {
+      "route?": "string[]",
+      "purge?": "boolean"
+    },
     "docs": {
       "route?": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
       "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
@@ -9398,14 +10665,13 @@
     "type": {
       "valueColChanged": "boolean",
       "secondaryColChanged": "boolean",
-      "alwaysReset": "boolean",
       "changedColumns": "string[]"
     }
   },
   "ServerSideStoreState": {
     "meta": {},
     "type": {
-      "type": "ServerSideStoreType",
+      "infiniteScroll": "boolean",
       "route": "string[]",
       "rowCount": "number",
       "lastRowIndexKnown?": "boolean",
@@ -9414,22 +10680,27 @@
       "cacheBlockSize?": "number"
     },
     "docs": {
-      "type": "/** Store type, `partial` or `full` */",
+      "infiniteScroll": "/** True if infininte scrolling */",
       "route": "/** The route that identifies this store. */",
       "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
-      "lastRowIndexKnown?": "/** Partial store only.\n * Whether the last row index is know. */",
+      "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
       "info?": "/** Any extra info provided to the store, when data was loaded. */",
-      "maxBlocksInCache?": "/** Partial store only.\n * Max blocks allowed in the store. */",
-      "cacheBlockSize?": "/** Partial store only.\n * The size (number of rows) of each block. */"
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */"
     }
   },
   "SetFilterModelValue": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(string | null)[]"
   },
   "SetFilterModel": {
     "meta": {},
-    "type": { "filterType?": "'set'", "values": "SetFilterModelValue" }
+    "type": {
+      "filterType?": "'set'",
+      "values": "SetFilterModelValue"
+    }
   },
   "ISetFilter": {
     "meta": {
@@ -9492,11 +10763,15 @@
     }
   },
   "SetFilterValuesFunc": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: SetFilterValuesFuncParams) => void"
   },
   "SetFilterValues": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "SetFilterValuesFunc | any[]"
   },
   "ISetFilterParams": {
@@ -9580,7 +10855,11 @@
     }
   },
   "ISparklineCellRendererParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "sparklineOptions?": "SparklineOptions",
       "value": "any",
@@ -9626,7 +10905,9 @@
     }
   },
   "SparklineOptions": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions | BarSparklineOptions"
   },
   "BaseSparklineOptions": {
@@ -9803,18 +11084,29 @@
   },
   "LabelFormatterParams": {
     "meta": {},
-    "type": { "value": "number | undefined" },
-    "docs": { "value": "/** The Y value of the data point. */" }
+    "type": {
+      "value": "number | undefined"
+    },
+    "docs": {
+      "value": "/** The Y value of the data point. */"
+    }
   },
   "BarColumnLabelPlacement": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "InsideBase = 'insideBase'",
       "InsideEnd = 'insideEnd'",
       "Center = 'center'",
       "OutsideEnd = 'outsideEnd'"
     ],
-    "docs": [null, null, null, null]
+    "docs": [
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "PaddingOptions": {
     "meta": {},
@@ -9845,7 +11137,9 @@
     }
   },
   "AxisType": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'number' | 'category' | 'time'"
   },
   "SparklineTooltipOptions": {
@@ -9866,7 +11160,9 @@
     }
   },
   "SparklineTooltipRenderer": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: TooltipRendererParams) => TooltipRendererResult"
   },
   "TooltipRendererResult": {
@@ -9905,7 +11201,10 @@
   },
   "SparklineLineOptions": {
     "meta": {},
-    "type": { "stroke?": "string", "strokeWidth?": "number" },
+    "type": {
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
     "docs": {
       "stroke?": "/** The CSS colour value for the line.\n * Default: `'rgb(124, 181, 236)'` */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the line.\n * Default: `1` */"
@@ -9951,11 +11250,15 @@
     }
   },
   "SparklineColumnFormatter": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: ColumnFormatterParams) => ColumnFormat"
   },
   "SparklineBarFormatter": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: BarFormatterParams) => BarFormat"
   },
   "ColumnFormatterParams": {
@@ -10072,7 +11375,9 @@
     }
   },
   "SparklineMarkerFormatter": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(params: MarkerFormatterParams) => MarkerFormat"
   },
   "MarkerFormatterParams": {
@@ -10145,14 +11450,21 @@
   },
   "IStatusPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "IStatusPanel": { "meta": {}, "type": {} },
+  "IStatusPanel": {
+    "meta": {},
+    "type": {}
+  },
   "IStatusPanelComp": {
     "meta": {},
     "type": {
@@ -10168,14 +11480,23 @@
   },
   "IToolPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "IToolPanel": { "meta": {}, "type": { "refresh()": "void" } },
+  "IToolPanel": {
+    "meta": {},
+    "type": {
+      "refresh()": "void"
+    }
+  },
   "IToolPanelComp": {
     "meta": {},
     "type": {
@@ -10289,7 +11610,10 @@
   },
   "PrefixedXmlAttributes": {
     "meta": {},
-    "type": { "prefix": "string", "map": "any" }
+    "type": {
+      "prefix": "string",
+      "map": "any"
+    }
   },
   "IDetailCellRenderer": {
     "meta": {},
@@ -10302,7 +11626,11 @@
     }
   },
   "IDetailCellRendererParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "detailGridOptions": "GridOptions",
       "getDetailRowData": "GetDetailRowData<TData>",
@@ -10362,14 +11690,25 @@
     }
   },
   "GetDetailRowData": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "GetDetailRowDataParams<TData>" },
+      "arguments": {
+        "params": "GetDetailRowDataParams<TData>"
+      },
       "returnType": "void"
     }
   },
   "GetDetailRowDataParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "node": "RowNode<TData>",
       "data": "TData",
@@ -10382,9 +11721,16 @@
     }
   },
   "TemplateFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ICellRendererParams<TData>" },
+      "arguments": {
+        "params": "ICellRendererParams<TData>"
+      },
       "returnType": "string"
     }
   },
@@ -10457,7 +11803,9 @@
     }
   },
   "ServerSideTransactionResultStatus": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "Applied = 'Applied'",
       "StoreNotFound = 'StoreNotFound'",
@@ -10500,19 +11848,36 @@
   },
   "TabbedItemWrapper": {
     "meta": {},
-    "type": { "tabbedItem": "TabbedItem", "eHeaderButton": "HTMLElement" }
+    "type": {
+      "tabbedItem": "TabbedItem",
+      "eHeaderButton": "HTMLElement"
+    }
   },
   "TaskItem": {
     "meta": {},
-    "type": { "task": "() => void", "index": "number", "createOrder": "number" }
+    "type": {
+      "task": "() => void",
+      "index": "number",
+      "createOrder": "number"
+    }
   },
   "TaskList": {
     "meta": {},
-    "type": { "list": "TaskItem[]", "sorted": "boolean" }
+    "type": {
+      "list": "TaskItem[]",
+      "sorted": "boolean"
+    }
   },
-  "SimpleHttpRequestParams": { "meta": {}, "type": { "url": "string" } },
+  "SimpleHttpRequestParams": {
+    "meta": {},
+    "type": {
+      "url": "string"
+    }
+  },
   "ModuleNames": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "CommunityCoreModule = \"@ag-grid-community/core\"",
       "CommunityAllModules = \"@ag-grid-community/all\"",
@@ -10742,9 +12107,13 @@
     }
   },
   "FooterValueGetterFunc": {
-    "meta": { "isCallSignature": true },
+    "meta": {
+      "isCallSignature": true
+    },
     "type": {
-      "arguments": { "params": "GroupCellRendererParams" },
+      "arguments": {
+        "params": "GroupCellRendererParams"
+      },
       "returnType": "any"
     }
   },
@@ -10821,7 +12190,11 @@
     }
   },
   "ICellRendererParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "valueFormatted": "any",
@@ -10885,14 +12258,24 @@
     }
   },
   "ICellRenderer": {
-    "meta": { "typeParams": ["TData"] },
-    "type": { "refresh(params: ICellRendererParams<TData>)": "boolean" },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
+    "type": {
+      "refresh(params: ICellRendererParams<TData>)": "boolean"
+    },
     "docs": {
       "refresh(params: ICellRendererParams<TData>)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "ICellRendererComp": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "getGui()": "HTMLElement",
       "destroy?()": "void",
@@ -10907,14 +12290,25 @@
     }
   },
   "ICellRendererFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
-      "arguments": { "params": "ICellRendererParams<TData>" },
+      "arguments": {
+        "params": "ICellRendererParams<TData>"
+      },
       "returnType": "HTMLElement | string"
     }
   },
   "ILoadingCellRendererParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "value": "any",
       "valueFormatted": "any",
@@ -10958,9 +12352,16 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "ILoadingCellRenderer": { "meta": {}, "type": {} },
+  "ILoadingCellRenderer": {
+    "meta": {},
+    "type": {}
+  },
   "ILoadingCellRendererComp": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "getGui()": "HTMLElement",
       "destroy?()": "void",
@@ -11051,20 +12452,31 @@
     }
   },
   "ResizableSides": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'topLeft' | 'top' | 'topRight' | 'right' | 'bottomRight' | 'bottom' | 'bottomLeft' | 'left'"
   },
   "ResizableStructure": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "{[key in ResizableSides]?: boolean}"
   },
   "MappedResizer": {
     "meta": {},
-    "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
+    "type": {
+      "element": "HTMLElement",
+      "dragSource?": "DragListenerParams"
+    }
   },
   "ILoadingOverlayParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -11086,7 +12498,11 @@
   },
   "INoRowsOverlayParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "type": {
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
     "docs": {
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
@@ -11107,9 +12523,17 @@
     }
   },
   "LoadingType": {
-    "meta": { "isEnum": true },
-    "type": ["Loading", "NoRows"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "Loading",
+      "NoRows"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "RowCssClassCalculatorParams": {
     "meta": {},
@@ -11129,7 +12553,9 @@
     }
   },
   "RowType": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "Normal = 'Normal'",
       "FullWidth = 'FullWidth'",
@@ -11137,7 +12563,13 @@
       "FullWidthGroup = 'FullWidthGroup'",
       "FullWidthDetail = 'FullWidthDetail'"
     ],
-    "docs": [null, null, null, null, null]
+    "docs": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
   },
   "IRowComp": {
     "meta": {},
@@ -11167,7 +12599,10 @@
   },
   "CellCtrlListAndMap": {
     "meta": {},
-    "type": { "list": "CellCtrl[]", "map": "{ [key: string]: CellCtrl; }" }
+    "type": {
+      "list": "CellCtrl[]",
+      "map": "{ [key: string]: CellCtrl; }"
+    }
   },
   "IRowDragItem": {
     "meta": {},
@@ -11186,8 +12621,18 @@
       "visibleState?": "/** When dragging columns, this contains the visible state of the columns */"
     }
   },
-  "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
-  "RowNodeMap": { "meta": {}, "type": { "[id: string]": "RowNode" } },
+  "RowCtrlMap": {
+    "meta": {},
+    "type": {
+      "[key: string]": "RowCtrl"
+    }
+  },
+  "RowNodeMap": {
+    "meta": {},
+    "type": {
+      "[id: string]": "RowNode"
+    }
+  },
   "RefreshViewParams": {
     "meta": {},
     "type": {
@@ -11200,7 +12645,11 @@
     }
   },
   "ITooltipParams": {
-    "meta": { "typeParams": ["TData"] },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "type": {
       "location": "string",
       "value?": "any",
@@ -11243,29 +12692,48 @@
   },
   "LoadCompleteEvent": {
     "meta": {},
-    "type": { "success": "boolean", "block": "RowNodeBlock", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "success": "boolean",
+      "block": "RowNodeBlock",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "LoadSuccessParams": {
     "meta": {},
-    "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
+    "type": {
+      "rowData": "any[]",
+      "rowCount?": "number",
+      "storeInfo?": "any"
+    },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
-      "rowCount?": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
       "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },
   "SortOption": {
     "meta": {},
-    "type": { "sort": "'asc' | 'desc'", "column": "Column" }
+    "type": {
+      "sort": "'asc' | 'desc'",
+      "column": "Column"
+    }
   },
   "SortedRowNode": {
     "meta": {},
-    "type": { "currentPos": "number", "rowNode": "RowNode" }
+    "type": {
+      "currentPos": "number",
+      "rowNode": "RowNode"
+    }
   },
   "SortModelItem": {
     "meta": {},
-    "type": { "colId": "string", "sort": "'asc' | 'desc'" },
+    "type": {
+      "colId": "string",
+      "sort": "'asc' | 'desc'"
+    },
     "docs": {
       "colId": "/** Column Id to apply the sort to. */",
       "sort": "/** Sort direction */"
@@ -11278,48 +12746,99 @@
     }
   },
   "LayoutCssClasses": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "AUTO_HEIGHT = 'ag-layout-auto-height'",
       "NORMAL = 'ag-layout-normal'",
       "PRINT = 'ag-layout-print'"
     ],
-    "docs": [null, null, null]
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "UpdateLayoutClassesParams": {
     "meta": {},
-    "type": { "autoHeight": "boolean", "normal": "boolean", "print": "boolean" }
+    "type": {
+      "autoHeight": "boolean",
+      "normal": "boolean",
+      "print": "boolean"
+    }
   },
   "GenericFunction": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "(...args: any[]) => any"
   },
   "PickByTypeKeyFilter": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T",
+        "C"
+      ]
+    },
     "type": "{[K in keyof T]: T[K] extends C ? K : never}"
   },
   "KeysByType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T",
+        "C"
+      ]
+    },
     "type": "PickByTypeKeyFilter<T, C>[keyof T]"
   },
   "ValuesByType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T",
+        "C"
+      ]
+    },
     "type": "{[K in keyof T]: T[K] extends C ? T[K] : never}"
   },
   "PickByType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T",
+        "C"
+      ]
+    },
     "type": "Pick<ValuesByType<T, C>, KeysByType<T, C>>"
   },
   "MethodsOf": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "KeysByType<Required<T>, GenericFunction>"
   },
   "InterfaceOf": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "PickByType<T, GenericFunction>"
   },
   "PartiallyMockedInterfaceOf": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "{[K in MethodsOf<T>]?: jest.Mock<InterfaceOf<T>[K]>}"
   },
   "CellValueChange": {
@@ -11341,24 +12860,44 @@
     }
   },
   "ColumnSortState": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'ascending' | 'descending' | 'none'"
   },
   "PathItem": {
     "meta": {},
-    "type": { "rowNode": "RowNode", "children": "PathItem[] | null" }
+    "type": {
+      "rowNode": "RowNode",
+      "children": "PathItem[] | null"
+    }
   },
   "ResolveAndRejectCallback": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "T"
+      ]
+    },
     "type": "(resolve: (value: T | null) => void, reject: (params: any) => void) => void"
   },
   "AgPromiseStatus": {
-    "meta": { "isEnum": true },
-    "type": ["IN_PROGRESS", "RESOLVED"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "IN_PROGRESS",
+      "RESOLVED"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "FieldElement": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement"
   },
   "IInputField": {
@@ -11373,7 +12912,9 @@
     }
   },
   "LabelAlignment": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'left' | 'right' | 'top'"
   },
   "IAgLabel": {
@@ -11387,8 +12928,13 @@
   },
   "ChangeEvent": {
     "meta": {},
-    "type": { "selected": "boolean", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "selected": "boolean",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "ColorPickerConfig": {
     "meta": {},
@@ -11430,15 +12976,21 @@
     }
   },
   "GroupItem": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "Component | HTMLElement"
   },
   "Align": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'start' | 'end' | 'center' | 'stretch'"
   },
   "Direction": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "'horizontal' | 'vertical'"
   },
   "AgGroupComponentParams": {
@@ -11482,7 +13034,10 @@
   },
   "ListOption": {
     "meta": {},
-    "type": { "value": "string", "text?": "string" }
+    "type": {
+      "value": "string",
+      "text?": "string"
+    }
   },
   "MenuItemComponentParams": {
     "meta": {},
@@ -11525,12 +13080,19 @@
       "event": "MouseEvent | KeyboardEvent",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "MenuItemActivatedEvent": {
     "meta": {},
-    "type": { "menuItem": "AgMenuItemComponent", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "menuItem": "AgMenuItemComponent",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "PanelOptions": {
     "meta": {},
@@ -11558,8 +13120,13 @@
   },
   "VisibleChangedEvent": {
     "meta": {},
-    "type": { "visible": "boolean", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "visible": "boolean",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "TooltipParentComp": {
     "meta": {},
@@ -11569,9 +13136,19 @@
     }
   },
   "TooltipStates": {
-    "meta": { "isEnum": true },
-    "type": ["NOTHING", "WAITING_TO_SHOW", "SHOWING"],
-    "docs": [null, null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "NOTHING",
+      "WAITING_TO_SHOW",
+      "SHOWING"
+    ],
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "ManagedFocusCallbacks": {
     "meta": {},
@@ -11613,9 +13190,17 @@
     }
   },
   "DIRECTION": {
-    "meta": { "isEnum": true },
-    "type": ["vertical", "horizontal"],
-    "docs": [null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "vertical",
+      "horizontal"
+    ],
+    "docs": [
+      null,
+      null
+    ]
   },
   "AddPopupParams": {
     "meta": {},
@@ -11641,7 +13226,9 @@
   },
   "ITabGuard": {
     "meta": {},
-    "type": { "setTabIndex(tabIndex?: string)": "void" }
+    "type": {
+      "setTabIndex(tabIndex?: string)": "void"
+    }
   },
   "ITooltipFeatureCtrl": {
     "meta": {},
@@ -11658,12 +13245,19 @@
   },
   "ITooltipFeatureComp": {
     "meta": {},
-    "type": { "setTitle(title: string | undefined)": "void" }
+    "type": {
+      "setTitle(title: string | undefined)": "void"
+    }
   },
   "TapEvent": {
     "meta": {},
-    "type": { "touchStart": "Touch", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "touchStart": "Touch",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "LongTapEvent": {
     "meta": {},
@@ -11672,7 +13266,9 @@
       "touchEvent": "TouchEvent",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "VirtualListModel": {
     "meta": {},
@@ -11695,13 +13291,28 @@
   },
   "SetFilterListItemSelectionChangedEvent": {
     "meta": {},
-    "type": { "isSelected": "boolean", "type": "string" },
-    "docs": { "type": "/** Event identifier */" }
+    "type": {
+      "isSelected": "boolean",
+      "type": "string"
+    },
+    "docs": {
+      "type": "/** Event identifier */"
+    }
   },
   "SetFilterModelValuesType": {
-    "meta": { "isEnum": true },
-    "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
-    "docs": [null, null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "PROVIDED_LIST",
+      "PROVIDED_CALLBACK",
+      "TAKEN_FROM_GRID_VALUES"
+    ],
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "ToolPanelFiltersCompParams": {
     "meta": {},
@@ -11723,24 +13334,44 @@
     }
   },
   "EXPAND_STATE": {
-    "meta": { "isEnum": true },
-    "type": ["EXPANDED", "COLLAPSED", "INDETERMINATE"],
-    "docs": [null, null, null]
+    "meta": {
+      "isEnum": true
+    },
+    "type": [
+      "EXPANDED",
+      "COLLAPSED",
+      "INDETERMINATE"
+    ],
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "ToolPanelFilterItem": {
-    "meta": { "isTypeAlias": true },
+    "meta": {
+      "isTypeAlias": true
+    },
     "type": "ToolPanelFilterGroupComp | ToolPanelFilterComp"
   },
   "AgFrameworkComponent": {
-    "meta": { "typeParams": ["T"] },
-    "type": { "agInit(params: T)": "void" },
+    "meta": {
+      "typeParams": [
+        "T"
+      ]
+    },
+    "type": {
+      "agInit(params: T)": "void"
+    },
     "docs": {
       "agInit(params: T)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "IHeaderGroupAngularComp": {
     "meta": {},
-    "type": { "agInit(params: IHeaderGroupParams)": "void" },
+    "type": {
+      "agInit(params: IHeaderGroupParams)": "void"
+    },
     "docs": {
       "agInit(params: IHeaderGroupParams)": "/** Mandatory - Params for rendering this component. */"
     }
@@ -11748,51 +13379,56 @@
   "IHeaderAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: IHeaderParams)": "boolean",
-      "agInit(params: IHeaderParams)": "void"
+      "agInit(params: IHeaderParams)": "void",
+      "refresh(params: IHeaderParams)": "boolean"
     },
     "docs": {
-      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
-      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: IHeaderParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */"
     }
   },
   "IFloatingFilterAngularComp": {
-    "meta": { "typeParams": ["P"] },
+    "meta": {
+      "typeParams": [
+        "P"
+      ]
+    },
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IDateAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IDateParams)": "void",
       "getDate()": "Date | null",
       "setDate(date: Date | null)": "void",
       "setDisabled?(disabled: boolean)": "void",
       "setInputPlaceholder?(placeholder: string)": "void",
       "setInputAriaLabel?(placeholder: string)": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IDateParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */",
       "getDate()": "/** Returns the current date represented by this component */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "setDisabled?(disabled: boolean)": "/** Optional: Sets the disabled state of this component */",
       "setInputPlaceholder?(placeholder: string)": "/** Optional: Sets the current input placeholder */",
       "setInputAriaLabel?(placeholder: string)": "/** Optional: Sets the current input aria label */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IDateParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "IFilterAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11800,10 +13436,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11811,24 +13447,24 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ICellRendererAngularComp": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams<TData>)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams<TData>)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "ICellEditorAngularComp": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11836,10 +13472,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11847,24 +13483,24 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgRendererComponent": {
     "meta": {},
     "type": {
-      "refresh(params: ICellRendererParams<TData>)": "boolean",
-      "agInit(params: ICellRendererParams)": "void"
+      "agInit(params: ICellRendererParams)": "void",
+      "refresh(params: ICellRendererParams)": "boolean"
     },
     "docs": {
-      "refresh(params: ICellRendererParams<TData>)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
-      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */"
+      "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "AgEditorComponent": {
     "meta": {},
     "type": {
+      "agInit(params: ICellEditorParams)": "void",
       "getValue()": "any",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
@@ -11872,10 +13508,10 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: ICellEditorParams)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
       "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
@@ -11883,13 +13519,13 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: ICellEditorParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * This method is called each time the edit component is activated.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFilterParams)": "void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -11897,10 +13533,10 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "agInit(params: IFilterParams)": "void"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void"
     },
     "docs": {
+      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. \n * If active then 1) the grid will show the filter icon in the column header \n * and 2) the filter will be included in the filtering of the data. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. The grid calls `getModel()` on all active filters when `gridApi.getFilterModel()` is called. */",
@@ -11908,61 +13544,72 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use `gridApi.forEachLeafNode(callback)`. */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFilterParams)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "AgFloatingFilterComponent": {
     "meta": {},
     "type": {
+      "agInit(params: IFloatingFilterParams<P>)": "void",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
-      "afterGuiAttached?()": "void",
-      "agInit(params: IFloatingFilterParams<P>)": "void"
+      "afterGuiAttached?()": "void"
     },
     "docs": {
+      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */",
       "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "/** Gets called every time the parent filter changes.\n * Your floating filter would typically refresh its UI to reflect the new filter state.\n * The provided parentModel is what the parent filter returns from its getModel() method.\n * The event is the FilterChangedEvent that the grid fires. */",
-      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */",
-      "agInit(params: IFloatingFilterParams<P>)": "/** Mandatory - Params for rendering this component. */"
+      "afterGuiAttached?()": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element. */"
     }
   },
   "ILoadingCellRendererAngularComp": {
     "meta": {},
-    "type": { "agInit(params: ILoadingCellRendererParams)": "void" },
+    "type": {
+      "agInit(params: ILoadingCellRendererParams)": "void"
+    },
     "docs": {
       "agInit(params: ILoadingCellRendererParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "ILoadingOverlayAngularComp": {
     "meta": {},
-    "type": { "agInit(params: ILoadingOverlayParams)": "void" },
+    "type": {
+      "agInit(params: ILoadingOverlayParams)": "void"
+    },
     "docs": {
       "agInit(params: ILoadingOverlayParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "INoRowsOverlayAngularComp": {
     "meta": {},
-    "type": { "agInit(params: INoRowsOverlayParams)": "void" },
+    "type": {
+      "agInit(params: INoRowsOverlayParams)": "void"
+    },
     "docs": {
       "agInit(params: INoRowsOverlayParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "IStatusPanelAngularComp": {
     "meta": {},
-    "type": { "agInit(params: IStatusPanelParams)": "void" },
+    "type": {
+      "agInit(params: IStatusPanelParams)": "void"
+    },
     "docs": {
       "agInit(params: IStatusPanelParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "IToolPanelAngularComp": {
     "meta": {},
-    "type": { "agInit(params: IToolPanelParams)": "void" },
+    "type": {
+      "agInit(params: IToolPanelParams)": "void"
+    },
     "docs": {
       "agInit(params: IToolPanelParams)": "/** Mandatory - Params for rendering this component. */"
     }
   },
   "ITooltipAngularComp": {
     "meta": {},
-    "type": { "agInit(params: ITooltipParams)": "void" },
+    "type": {
+      "agInit(params: ITooltipParams)": "void"
+    },
     "docs": {
       "agInit(params: ITooltipParams)": "/** Mandatory - Params for rendering this component. */"
     }
@@ -12278,17 +13925,25 @@
     }
   },
   "ChangeDetectionStrategyType": {
-    "meta": { "isEnum": true },
+    "meta": {
+      "isEnum": true
+    },
     "type": [
       "IdentityCheck = 'IdentityCheck'",
       "DeepValueCheck = 'DeepValueCheck'",
       "NoCheck = 'NoCheck'"
     ],
-    "docs": [null, null, null]
+    "docs": [
+      null,
+      null,
+      null
+    ]
   },
   "ChangeDetectionStrategy": {
     "meta": {},
-    "type": { "areEqual(a: any, b: any)": "boolean" }
+    "type": {
+      "areEqual(a: any, b: any)": "boolean"
+    }
   },
   "SharedProps": {
     "meta": {},
@@ -12387,8 +14042,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -12490,12 +14146,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -12576,6 +14237,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -12689,7 +14352,7 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
       "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
@@ -12864,15 +14527,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -12943,8 +14611,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -12954,7 +14624,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -13036,8 +14706,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgReactUiProps": {
@@ -13137,8 +14807,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -13240,12 +14911,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -13326,6 +15002,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -13439,7 +15117,7 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
       "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
@@ -13614,15 +15292,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -13693,8 +15376,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -13704,7 +15389,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -13786,8 +15471,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgGridReactProps": {
@@ -13891,8 +15576,9 @@
       "detailCellRendererParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
+      "groupRowsSticky?": "boolean",
       "context?": "any",
-      "alignedGrids?": "GridOptions[]",
+      "alignedGrids?": "{ api?: GridApi | null; columnApi?: ColumnApi | null; }[]",
       "tabIndex?": "number",
       "rowBuffer?": "number",
       "valueCache?": "boolean",
@@ -13994,12 +15680,17 @@
       "cacheOverflowSize?": "number",
       "infiniteInitialRowCount?": "number",
       "serverSideStoreType?": "ServerSideStoreType",
+      "serverSideInfiniteScroll?": "boolean",
       "cacheBlockSize?": "number",
       "maxBlocksInCache?": "number",
       "maxConcurrentDatasourceRequests?": "number",
       "blockLoadDebounceMillis?": "number",
       "purgeClosedRowNodes?": "boolean",
       "serverSideDatasource?": "IServerSideDatasource",
+      "serverSideSortAllLevels?": "boolean",
+      "serverSideFilterAllLevels?": "boolean",
+      "serverSideSortOnServer?": "boolean",
+      "serverSideFilterOnServer?": "boolean",
       "serverSideSortingAlwaysResets?": "boolean",
       "serverSideFilteringAlwaysResets?": "boolean",
       "suppressEnterpriseResetOnNewColumns?": "boolean",
@@ -14080,6 +15771,8 @@
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "processSecondaryColDef?": "(colDef: ColDef) => void",
       "processSecondaryColGroupDef?": "(colGroupDef: ColGroupDef) => void",
+      "processPivotResultColDef?": "(colDef: ColDef) => void",
+      "processPivotResultColGroupDef?": "(colGroupDef: ColGroupDef) => void",
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
@@ -14193,7 +15886,7 @@
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** @deprecated Use `clipboardDelimiter`\n */",
-      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard. \n * Default: `\\t` */",
+      "clipboardDelimiter?": "/** Specify the delimiter to use when copying to clipboard.\n * Default: `\\t` */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows. Default: `false` */",
       "suppressCopySingleCellRanges?": "/** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
@@ -14368,15 +16061,20 @@
       "datasource?": "/** Provide the datasource for infinite scrolling. */",
       "cacheOverflowSize?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "infiniteInitialRowCount?": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
-      "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
+      "serverSideStoreType?": "/** @deprecated Whether to use Full Store or Partial Store for storing rows. Default: `full`.\nDeprecated in favour of serverSideInfiniteScroll. When true, Partial Store is used. When false,\nFull Store is used.\n */",
+      "serverSideInfiniteScroll?": "/** Whether Server-side Row Model will use Infinite Scrolling */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",
-      "serverSideSortingAlwaysResets?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
-      "serverSideFilteringAlwaysResets?": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
+      "serverSideSortAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */",
+      "serverSideFilterAllLevels?": "/** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */",
+      "serverSideSortOnServer?": "/** When enabled, the grid will always request the server to provide the sort results */",
+      "serverSideFilterOnServer?": "/** When enabled, the grid will always request the server to provide the filter results */",
+      "serverSideSortingAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideSortAllLevels` instead.\n */",
+      "serverSideFilteringAlwaysResets?": "/** @deprecated This property has been deprecated. Use `serverSideFilterAllLevels` instead.\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated */",
       "viewportDatasource?": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "viewportRowModelPageSize?": "/** When using viewport row model, sets the page size for the viewport. */",
@@ -14447,8 +16145,10 @@
       "isGroupOpenByDefault?": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "initialGroupOrderComparator?": "/** Allows default sorting of groups. */",
       "defaultGroupOrderComparator?": "/** @deprecated - Use `initialGroupOrderComparator` instead\n */",
-      "processSecondaryColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
-      "processSecondaryColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
+      "processSecondaryColDef?": "/** @deprecated - Use `processPivotResultColDef` instead\n */",
+      "processSecondaryColGroupDef?": "/** @deprecated - Use `processPivotResultColGroupDef` instead\n */",
+      "processPivotResultColDef?": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
+      "processPivotResultColGroupDef?": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
@@ -14458,7 +16158,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true` \nAllows you to set the ID for a particular row node based on the data.\n */",
+      "getRowNodeId?": "/** @deprecated Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\nAllows you to set the ID for a particular row node based on the data.\n */",
       "getRowId?": "/** Allows setting the ID for a particular row node based on the data. */",
       "resetRowDataOnUpdate?": "/** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */",
       "processRowPostCreate?": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
@@ -14540,8 +16240,8 @@
       "onCellContextMenu?(event: CellContextMenuEvent)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent)": "/** Sort has changed. The grid also listens for this and updates the model. */",
-      "api?": "/** The Grid Api for interacting with the grid. \n * Set by the grid on init, set to null on destroy. */",
-      "columnApi?": "/** The Column Api for interacting with the grid columns. \n * Set by the grid on init, set to null on destroy. */"
+      "api?": "/** The Grid Api for interacting with the grid.\n * Set by the grid on init, set to null on destroy. */",
+      "columnApi?": "/** The Column Api for interacting with the grid columns.\n * Set by the grid on init, set to null on destroy. */"
     }
   },
   "AgReactComponent": {

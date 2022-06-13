@@ -1249,12 +1249,24 @@ export class GridApi<TData = any> {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FROM_CLIPBOARD, processCellFromClipboardFunc);
     }
 
+    /** @deprecated use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_TO_SECONDARY_COLDEF, processSecondaryColDefFunc);
+        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColDef has been renamed, please use setProcessPivotResultColDef instead');
+        this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
+    /** @deprecated use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_SECONDARY_COL_GROUP_DEF, processSecondaryColGroupDefFunc);
+        console.warn('AG Grid: since version 28.0.x setProcessSecondaryColGroupDef has been renamed, please use setProcessPivotResultColGroupDef instead');
+        this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
+    }
+
+    public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_PIVOT_RESULT_COL_DEF, processPivotResultColDefFunc);
+    }
+
+    public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_PIVOT_RESULT_COL_GROUP_DEF, processPivotResultColGroupDefFunc);
     }
 
     public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
@@ -1909,8 +1921,8 @@ export class GridApi<TData = any> {
 
     /**
      * Refresh a server-side store.
-     * If you pass no parameters, then the top level cache is purged.
-     * To purge a child cache, pass in the string of keys to get to the child cache.
+     * If you pass no parameters, then the top level store is purged.
+     * To purge a child store, pass in the string of keys to get to the child cache.
      */
     public refreshServerSideStore(params?: RefreshStoreParams): void {
         if (this.serverSideRowModel) {

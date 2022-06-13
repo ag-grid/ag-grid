@@ -31,7 +31,7 @@ $ag-compatibility-mode: "variables" !default;
     font-family: ag-param(font-family);
     font-size: ag-param(font-size);
     line-height: normal;
-    .ag-root-wrapper {
+    .ag-root-wrapper, .ag-sticky-top {
         @include ag-color-property(background-color, background-color);
     }
 

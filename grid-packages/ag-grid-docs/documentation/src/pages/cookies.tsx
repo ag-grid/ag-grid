@@ -8,7 +8,7 @@ const Cookies = () => {
         <>
             <SEO title="AG Grid: Cookies Policy"
                  description="This page outlines our policy in relation to the cookies that we collect on our website."/>
-            <div className={styles['page-content']}>
+            <div className={styles['page-content']} style={{marginLeft: "5rem", marginRight: "5rem"}}>
                 <div className={styles['cookies-page']}>
                     <div id="introduction">
                         <h1 className={styles['page-title']}>Cookie Policy</h1>

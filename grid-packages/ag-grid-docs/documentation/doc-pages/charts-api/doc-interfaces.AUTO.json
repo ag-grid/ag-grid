@@ -930,6 +930,10 @@
     }
   },
   "AgChartLegendLabelOptions": {
+    "characterLimit": {
+      "description": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "color": {
       "description": "/** The colour of the text. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -967,6 +971,10 @@
     "label": {
       "description": "/** Configuration for the legend labels. */",
       "type": { "returnType": "AgChartLegendLabelOptions", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of legend items. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     },
     "paddingX": {
       "description": "/** The horizontal spacing in pixels to use between legend items. */",
@@ -3146,7 +3154,6 @@
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ChartUpdateType": {},
-  "Point": {},
   "ChartAxisDirection": {},
   "ChartAxisPosition": {},
   "ChartAxisMeta": {
@@ -3271,6 +3278,8 @@
   "Coordinate": {},
   "CumulativeValue": {},
   "ProcessedXDatum": {},
+  "AreaSeriesTag": {},
+  "AreaSeriesGroup": {},
   "BarSeriesNodeClickEvent": {
     "type": { "type": { "returnType": "'nodeClick'", "optional": false } },
     "event": { "type": { "returnType": "MouseEvent", "optional": false } },
@@ -3301,6 +3310,7 @@
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
+    "colorIndex": { "type": { "returnType": "number", "optional": false } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
     "label": {
       "type": {
@@ -3334,6 +3344,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },
+  "BarSeriesGroup": {},
   "CartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
@@ -3677,14 +3688,39 @@
   },
   "PointerEvents": {},
   "RedrawType": {},
+  "RenderContext": {},
   "DebugOptions": {
-    "renderFrameIndex": {
-      "type": { "returnType": "boolean", "optional": false }
+    "stats": {
+      "type": {
+        "returnType": "false | 'basic' | 'detailed'",
+        "optional": false
+      }
     },
+    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
     "renderBoundingBoxes": {
       "type": { "returnType": "boolean", "optional": false }
     },
     "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "SceneOptions": {
+    "document": { "type": { "returnType": "Document", "optional": false } },
+    "mode": {
+      "type": {
+        "returnType": "'simple' | 'composite' | 'dom-composite' | 'adv-composite'",
+        "optional": false
+      }
+    }
+  },
+  "SceneLayer": {
+    "id": { "type": { "returnType": "number", "optional": false } },
+    "name": { "type": { "returnType": "string", "optional": true } },
+    "zIndex": { "type": { "returnType": "number", "optional": false } },
+    "canvas": {
+      "type": {
+        "returnType": "HdpiOffscreenCanvas | HdpiCanvas",
+        "optional": false
+      }
+    }
   },
   "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
   "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },

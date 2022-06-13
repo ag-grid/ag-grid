@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     imports: [
         BrowserModule,
         HttpClientModule,
-        AgGridModule.withComponents([DaysFrostRenderer])
+        AgGridModule
     ],
     declarations: [
         AppComponent, DaysFrostRenderer

@@ -1,111 +1,25 @@
-![alt text](./github-banner.png "AG Grid")
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
-[![npm](https://img.shields.io/npm/dt/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
+[![npm](https://img.shields.io/npm/dm/@ag-grid-community/infinite-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/infinite-row-model)
+[![npm](https://img.shields.io/npm/dt/@ag-grid-community/infinite-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/infinite-row-model)
 
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
-
-Here's how our grid looks with multiple filters and grouping enabled:
-
-![alt text](./github-grid-demo.jpg "AG Grid demo")
-
-## Features
-
-In addition to the standard set of features you'd expect from any grid:
-
-* Column Interactions (resize, reorder, and pin columns)
-* Pagination
-* Sorting
-* Row Selection
-
-Here are some of the features that make AG Grid stand out:
-
-* Grouping / Aggregation *
-* Custom Filtering
-* In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
-* Live Stream Updates
-* Hierarchical Data Support & Tree View *
-* Customizable Appearance
-* Customizable Cell Contents
-* Excel-like Pivoting *
-* State Persistence
-* Keyboard Navigation
-* Data Export to CSV
-* Data Export to Excel *
-* Row Reordering
-* Copy / Paste
-* Column Spanning
-* Pinned Rows
-* Full Width Rows
-
-\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github) only.
+It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-data-grid/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
 
 Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
-## Looking for a framework specific solution?
+## Infinite Row Model Module
 
-* [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
+This package is the feature module for the [Infinite Row Model](https://ag-grid.com/javascript-data-grid/infinite-scrolling/) feature to be used when working with AG Grid module setup in order to minimise your bundle size.  
 
-## Getting started
-
-### Install dependencies
-
-```sh
-$ npm install --save @ag-grid-community/infinite-row-model
-```
-
-### Add a placeholder to HTML
-
-```html
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-alpine"></div>
-```
-
-### Import the grid and styles
-
-```js
-import { Grid } from '@ag-grid-community/core';
-
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-```
-
-### Set configuration
-
-```js
-var gridOptions = {
-	columnDefs: [
-		{ headerName: 'Make', field: 'make' },
-		{ headerName: 'Model', field: 'model' },
-		{ headerName: 'Price', field: 'price' }
-	],
-	rowData: [
-		{ make: 'Toyota', model: 'Celica', price: 35000 },
-		{ make: 'Ford', model: 'Mondeo', price: 32000 },
-		{ make: 'Porsche', model: 'Boxster', price: 72000 }
-	]
-};
-```
-
-### Initialise the grid
-
-```js
-var eGridDiv = document.querySelector('#myGrid');
-new Grid(eGridDiv, this.gridOptions);
-```
-
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/javascript-grid/building-typescript/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
+For more details on working with AG Grid modules visit our [modules documentation](https://ag-grid.com/javascript-data-grid/modules/).
 
 ## Issue Reporting
 
-If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the private ticketing system to do that. For more information on support please see our [dedicated support page](https://www.ag-grid.com/support.php?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
+If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the [private ticketing](https://ag-grid.zendesk.com/) system to do that.
 
 ## Asking Questions
 

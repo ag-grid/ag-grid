@@ -10,16 +10,19 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/ag-charts-angular/tsconfig.lib.json",
             "project": "projects/ag-charts-angular/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "projects/ag-charts-angular/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ag-charts-angular/tsconfig.lib.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -28,20 +31,9 @@
             "tsConfig": "projects/ag-charts-angular/tsconfig.spec.json",
             "karmaConfig": "projects/ag-charts-angular/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/ag-charts-angular/tsconfig.lib.json",
-              "projects/ag-charts-angular/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "ag-charts-angular"
 }

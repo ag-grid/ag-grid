@@ -45,6 +45,10 @@
     "description": "/** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */",
     "type": { "arguments": { "key": "any" }, "returnType": "Column | null" }
   },
+  "getColumns": {
+    "description": "/** Returns all the columns, regardless of visible or not. */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
   "applyColumnState": {
     "description": "/** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */",
     "type": {
@@ -126,12 +130,8 @@
       "returnType": "void"
     }
   },
-  "getAllColumns": {
-    "description": "/** Returns all the columns, regardless of visible or not. */",
-    "type": { "arguments": {}, "returnType": "Column[] | null" }
-  },
   "getAllGridColumns": {
-    "description": "/** Returns all the grid columns, same as `getAllColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
+    "description": "/** Returns all the grid columns, same as `getColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedLeftColumns": {
@@ -223,7 +223,17 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "getSecondaryPivotColumn": {
-    "description": "/** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
+    "description": "/** @deprecated Use `getPivotResultColumn` instead\n */",
+    "type": {
+      "arguments": {
+        "pivotKeys": "string[]",
+        "valueColKey": "string | Column"
+      },
+      "returnType": "Column | null"
+    }
+  },
+  "getPivotResultColumn": {
+    "description": "/** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
     "type": {
       "arguments": {
         "pivotKeys": "string[]",
@@ -384,18 +394,33 @@
     "type": { "arguments": { "skipHeader?": "boolean" }, "returnType": "void" }
   },
   "setSecondaryColumns": {
-    "description": "/** Set the secondary pivot columns. */",
+    "description": "/** @deprecated Use `setPivotResultColumns` instead.\n */",
+    "type": {
+      "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
+      "returnType": "void"
+    }
+  },
+  "setPivotResultColumns": {
+    "description": "/** Set the pivot result columns. */",
     "type": {
       "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
       "returnType": "void"
     }
   },
   "getSecondaryColumns": {
-    "description": "/** Returns the grid's secondary columns. */",
+    "description": "/** @deprecated Use `getPivotResultColumns` instead.\n */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getPivotResultColumns": {
+    "description": "/** Returns the grid's pivot result columns. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getPrimaryColumns": {
-    "description": "/** Returns the grid's primary columns. */",
+    "description": "/** @deprecated Use `getColumns` instead.\n */",
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getAllColumns": {
+    "description": "/** @deprecated Use `getColumns` instead\n */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "columnGroupOpened": {

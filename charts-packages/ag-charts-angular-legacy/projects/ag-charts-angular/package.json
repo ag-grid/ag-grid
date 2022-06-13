@@ -1,0 +1,26 @@
+{
+  "name": "ag-charts-angular-legacy",
+  "version": "5.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "angular-component",
+    "charts",
+    "data",
+    "chart",
+    "angular"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://www.ag-grid.com/",
+  "peerDependencies": {
+    "@angular/common": ">=8.0.0",
+    "@angular/core": ">=8.0.0",
+    "ag-charts-community": "~5.3.0"
+  }
+}

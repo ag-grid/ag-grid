@@ -1,28 +1,18 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export function ScenePathChangeDetection(opts?: {
     redraw?: RedrawType,
+    convertor?: (o: any) => any,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
 
-    const changeCb = (o: any) => {
-        if (!o._dirtyPath) {
-            o._dirtyPath = true;
-            o.markDirty(redraw);
-        }
-        if (optChangeCb) {
-            optChangeCb(o);
-        }
-    };
-
-    return SceneChangeDetection({ redraw, type: 'path', changeCb });
+    return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
 
 export class Path extends Shape {
-
     static className = 'Path';
 
     /**
@@ -31,6 +21,12 @@ export class Path extends Shape {
      * of the native Path2D (with some differences) that works in all browsers.
      */
     readonly path = new Path2D();
+
+    @ScenePathChangeDetection()
+    clipPath?: Path2D;
+
+    @ScenePathChangeDetection()
+    clipMode?: 'normal' | 'punch-out';
 
      /**
      * The path only has to be updated when certain attributes change.
@@ -43,12 +39,20 @@ export class Path extends Shape {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;
             if (value) {
-                this.markDirty(RedrawType.MAJOR);
+                this.markDirty(this, RedrawType.MAJOR);
             }
         }
     }
     get dirtyPath(): boolean {
         return this._dirtyPath;
+    }
+
+    checkPathDirty() {
+        if (this._dirtyPath) {
+            return;
+        }
+
+        this.dirtyPath = this.path.isDirty();
     }
 
     /**
@@ -60,7 +64,7 @@ export class Path extends Shape {
         if (this._svgPath !== value) {
             this._svgPath = value;
             this.path.setFromString(value);
-            this.markDirty(RedrawType.MAJOR);
+            this.markDirty(this, RedrawType.MAJOR);
         }
     }
     get svgPath(): string {
@@ -72,16 +76,18 @@ export class Path extends Shape {
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 
-    isPointInStroke(_x: number, _y: number): boolean {
-        return false;
+    protected isDirtyPath() {
+        // Override point for more expensive dirty checks.
+    }
+    protected updatePath() {
+        // Override point for subclasses.
     }
 
-    /** Override point for more expensive dirty checks. */
-    protected isDirtyPath() {}
-    protected updatePath() {}
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender, stats } = renderCtx;
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
@@ -92,10 +98,34 @@ export class Path extends Shape {
             this.updatePath();
             this.dirtyPath = false;
         }
-        this.path.draw(ctx);
 
-        this.fillStroke(ctx);
+        if (this.clipPath) {
+            ctx.save();
 
-        super.render(ctx, forceRender);
+            if (this.clipMode === 'normal') {
+                // Bound the shape rendered to the clipping path.
+                this.clipPath.draw(ctx);
+                ctx.clip();
+            }
+
+            this.path.draw(ctx);
+            this.fillStroke(ctx);
+
+            if (this.clipMode === 'punch-out') {
+                // Bound the shape rendered to outside the clipping path.
+                this.clipPath.draw(ctx);
+                ctx.clip();
+                // Fallback values, but practically these should never be used.
+                const { x = -10000, y = -10000, width = 20000, height = 20000 } = this.computeBBox() ?? {};
+                ctx.clearRect(x, y, width, height);
+            }
+
+            ctx.restore();
+        } else {
+            this.path.draw(ctx);
+            this.fillStroke(ctx);
+        }
+
+        super.render(renderCtx);
     }
 }

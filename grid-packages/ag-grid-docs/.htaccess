@@ -259,6 +259,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/grouped-bar/ /angular-charts/gallery/grouped-bar/
     Redirect 301 /documentation/angular/charts/grouped-column/ /angular-charts/gallery/grouped-column/
     Redirect 301 /documentation/angular/charts/histogram-with-specified-bins/ /angular-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/angular/charts/large-datasets/ /angular-charts/gallery/large-datasets/
     Redirect 301 /documentation/angular/charts/line-with-gaps/ /angular-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/angular/charts/market-index-treemap/ /angular-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/angular/charts/per-marker-customisation/ /angular-charts/gallery/per-marker-customisation/
@@ -277,6 +278,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/charts/stacked-column/ /angular-charts/gallery/stacked-column/
     Redirect 301 /documentation/angular/charts/time-axis-with-irregular-intervals/ /angular-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/angular/charts/xy-histogram-with-mean-aggregation/ /angular-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /angular-charts/ /angular-charts/overview/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/client-side-model/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
     Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
@@ -514,6 +516,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/charts/grouped-bar/ /javascript-charts/gallery/grouped-bar/
     Redirect 301 /documentation/javascript/charts/grouped-column/ /javascript-charts/gallery/grouped-column/
     Redirect 301 /documentation/javascript/charts/histogram-with-specified-bins/ /javascript-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/javascript/charts/large-datasets/ /javascript-charts/gallery/large-datasets/
     Redirect 301 /documentation/javascript/charts/line-with-gaps/ /javascript-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/javascript/charts/market-index-treemap/ /javascript-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/javascript/charts/per-marker-customisation/ /javascript-charts/gallery/per-marker-customisation/
@@ -757,6 +760,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/grouped-bar/ /react-charts/gallery/grouped-bar/
     Redirect 301 /documentation/react/charts/grouped-column/ /react-charts/gallery/grouped-column/
     Redirect 301 /documentation/react/charts/histogram-with-specified-bins/ /react-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/react/charts/large-datasets/ /react-charts/gallery/large-datasets/
     Redirect 301 /documentation/react/charts/line-with-gaps/ /react-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/react/charts/market-index-treemap/ /react-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/react/charts/per-marker-customisation/ /react-charts/gallery/per-marker-customisation/
@@ -775,6 +779,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/charts/stacked-column/ /react-charts/gallery/stacked-column/
     Redirect 301 /documentation/react/charts/time-axis-with-irregular-intervals/ /react-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/react/charts/xy-histogram-with-mean-aggregation/ /react-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /react-charts/ /react-charts/overview/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/client-side-model/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
     Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
@@ -1004,6 +1009,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/grouped-bar/ /vue-charts/gallery/grouped-bar/
     Redirect 301 /documentation/vue/charts/grouped-column/ /vue-charts/gallery/grouped-column/
     Redirect 301 /documentation/vue/charts/histogram-with-specified-bins/ /vue-charts/gallery/histogram-with-specified-bins/
+    Redirect 301 /documentation/vue/charts/large-datasets/ /vue-charts/gallery/large-datasets/
     Redirect 301 /documentation/vue/charts/line-with-gaps/ /vue-charts/gallery/line-with-gaps/
     Redirect 301 /documentation/vue/charts/market-index-treemap/ /vue-charts/gallery/market-index-treemap/
     Redirect 301 /documentation/vue/charts/per-marker-customisation/ /vue-charts/gallery/per-marker-customisation/
@@ -1022,6 +1028,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/charts/stacked-column/ /vue-charts/gallery/stacked-column/
     Redirect 301 /documentation/vue/charts/time-axis-with-irregular-intervals/ /vue-charts/gallery/time-axis-with-irregular-intervals/
     Redirect 301 /documentation/vue/charts/xy-histogram-with-mean-aggregation/ /vue-charts/gallery/xy-histogram-with-mean-aggregation/
+    Redirect 301 /vue-charts/ /vue-charts/overview/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/client-side-model/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
     Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
@@ -2271,6 +2278,14 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-data-grid/integrated-charts-cross-filtering/ /angular-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /react-data-grid/integrated-charts-cross-filtering/ /react-data-grid/integrated-charts-api-cross-filter-chart/
     Redirect 301 /vue-data-grid/integrated-charts-cross-filtering/ /vue-data-grid/integrated-charts-api-cross-filter-chart/
+    Redirect 301 /javascript-data-grid/server-side-model-configuration/ /javascript-data-grid/server-side-model-api-reference/
+    Redirect 301 /angular-data-grid/server-side-model-configuration/ /angular-data-grid/server-side-model-api-reference/
+    Redirect 301 /react-data-grid/server-side-model-configuration/ /react-data-grid/server-side-model-api-reference/
+    Redirect 301 /vue-data-grid/server-side-model-configuration/ /vue-data-grid/server-side-model-api-reference/
+    Redirect 301 /javascript-data-grid/server-side-model-row-stores/ /javascript-data-grid/server-side-model-infinite-scroll/
+    Redirect 301 /angular-data-grid/server-side-model-row-stores/ /angular-data-grid/server-side-model-infinite-scroll/
+    Redirect 301 /react-data-grid/server-side-model-row-stores/ /react-data-grid/server-side-model-infinite-scroll/
+    Redirect 301 /vue-data-grid/server-side-model-row-stores/ /vue-data-grid/server-side-model-infinite-scroll/
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
     Redirect 301 /about.php /about

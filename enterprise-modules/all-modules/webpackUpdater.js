@@ -4,6 +4,7 @@ const glob = require("glob");
 const frameworkModules = [
     'react',
     'angular',
+    'angular-legacy',
     'vue',
     'vue3',
     'polymer'

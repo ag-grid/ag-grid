@@ -121,7 +121,7 @@ export abstract class AgChartV2 {
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartV2.DEBUG) {
+        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -143,7 +143,7 @@ export abstract class AgChartV2 {
     static update<T extends ChartType>(chart: Chart, userOptions: ChartOptionType<T>): void {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if (AgChartV2.DEBUG) {
+        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
@@ -173,7 +173,7 @@ export abstract class AgChartV2 {
 }
 
 function debug(message?: any, ...optionalParams: any[]): void {
-    if (AgChartV2.DEBUG) {
+    if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
         console.log(message, ...optionalParams);
     }
 }
@@ -243,9 +243,14 @@ function applySeries<
             const previousOpts = chart.options?.series?.[i] || {};
             const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
 
+            if (!seriesDiff) {
+                return;
+            }
+
             debug(`applying series diff idx ${i}`, seriesDiff);
 
             jsonApply(s, seriesDiff);
+            s.markNodeDataDirty();
         });
 
         return;

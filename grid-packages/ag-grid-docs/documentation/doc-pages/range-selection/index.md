@@ -7,11 +7,12 @@ Range selection allows Excel-like range selection of cells. Range selections are
 
 ## Selecting Ranges
 
-Ranges can be selected in the following ways:
+Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
+When enabled, ranges can be selected in the following ways:
 
 - **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
-- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> key while creating a range using mouse drag will create a new range selection and keep any existing ranges.
+- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> key while creating a range using mouse drag <b>outside an existing range</b> will create a new range selection and keep any existing ranges.
 
 - **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>Shift</kbd> while clicking another cell, will create a range between both cells.
 
@@ -19,7 +20,15 @@ Ranges can be selected in the following ways:
 
 - **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Ctrl</kbd> + <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
 
-Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
+### Range deselection
+
+It is possible to deselect part of existing ranges in the following ways:
+
+- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> and dragging a range starting <b>within an existing range</b> will cause any cells covered by the new range to be deselected.
+
+- **Ctrl & Click:**  Holding <kbd>Ctrl</kbd> and clicking a cell will deselect just that cell.
+
+Note that deselecting part of a range can split the range into multiple ranges, since individual ranges have the limitation of being rectangular.
 
 The example below demonstrates simple range selection. Ranges can be selected in all the ways described above.
 

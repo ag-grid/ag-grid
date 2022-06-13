@@ -2,7 +2,7 @@
 title: "DOM Virtualisation"
 ---
 
-The grid uses DOM virtualistaion to vastly improve rendering performance.
+The grid uses DOM virtualisation to vastly improve rendering performance.
 
 If you loaded 1,000 records with 20 columns into the browser without using a datagrid (eg using 'table', 'tr' and 'td' tags), then the page would end up with a lot of rendered DOM elements. This would drastically slow down the web page. This results in either a very poor user experience, or simply crashing the browser as the browser runs out of memory.
 

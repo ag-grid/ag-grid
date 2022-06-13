@@ -54,29 +54,23 @@ The properties relevant to pivoting in the request are shown below:
 Note in the snippet above that `pivotCols` contains all the columns the grid is pivoting on,
 and `pivotMode` is used to determine if pivoting is currently enabled in the grid.
 
-## Setting Secondary Columns
+## Setting Pivot Result Columns
 
-Secondary columns are the columns that are created as part of the pivot function. You must provide
+Pivot Result Columns are the columns that are created as part of the pivot function. You must provide
 these to the grid in order for the grid to display the correct columns for the active pivot function.
 
 For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the
-data, e.g. `2000, 2002, 2004 etc...`
+data, e.g. `2000`, `2002`, `2004` e.t.c.
 
-Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
+Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
-<api-documentation source='column-api/api.json' section='Pivoting' names='["setSecondaryColumns"]' ></api-documentation>
+<api-documentation source='column-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
 
 <snippet>
-gridOptions.columnApi.setSecondaryColumns(pivotColDefs);
+gridOptions.columnApi.setPivotResultColumns(pivotColDefs);
 </snippet>
 
 There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the field (or value getter) that you set for the columns match.
-
-
-[[note]]
-| Setting secondary columns will reset all secondary column state, which means resized or reordered columns
-| will be reset. To avoid this applications should keep track of the previously supplied secondary columns
-| and only update the secondary columns in the grid if they have changed.
 
 ## Example: Simple Pivot
 
@@ -87,20 +81,18 @@ The example below demonstrates server-side Pivoting. Note the following:
 - Rows are grouped by **Country** with `rowGroup=true` defined on the column definition.
 - Values in the **Total** column are aggregated as `aggFunc='sum'` is defined on the column definition.
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-- New column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setSecondaryColumns(pivotColDefs)`.
+- New column definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Simple Pivot' name='simple-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Full vs Partial Store
+## Infinite Scroll
 
-The Pivoting mechanics are almost identical with the [Full Store](/server-side-model-row-stores/)
-and [Partial Store](/server-side-model-row-stores/). The difference is that when
-using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
+The Pivoting mechanics are almost identical regardless of using Infinite Scroll. The difference is that when
+using the Infinite Scroll, data will be requested in blocks and could be requested to have sorting and / or
 filtering applied.
 
-All the examples presented in this section use the Partial Store as it covers all the semantics found when
-using both store types.
+All the examples presented in this section use Infinite Scroll as it covers all the semantics for both scenarios.
 
 ## Example: Pivot Column Groups
 
@@ -111,7 +103,7 @@ The example below demonstrates server-side Pivoting with multiple row groups whe
 - Rows are grouped by **Country** and **Sport** with `rowGroup=true` defined on their column definitions.
 - The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-- New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setSecondaryColumns(pivotColDefs)`.
+- New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 

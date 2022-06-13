@@ -2,6 +2,12 @@ const { JSDOM } = require('jsdom');
 const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
+const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
+const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
+const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
+const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
+const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
+
 window.Date = Date;
 global.window = window;
 global.document = document;
@@ -537,12 +543,12 @@ function addPackageJson(type, framework, importType, basePath) {
         dependencies: {},
     };
 
-    const addDependency = (name, version = '*') => {
+    const addDependency = (name, version) => {
         packageJson.dependencies[name] = version;
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core');
+        addDependency('@angular/core', "^13");
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -552,25 +558,25 @@ function addPackageJson(type, framework, importType, basePath) {
 
     if (importType === 'modules') {
         if (type === 'grid' && framework === 'angular') {
-            addDependency('@ag-grid-community/angular');
+            addDependency('@ag-grid-community/angular', agGridAngularVersion);
         }
         if (type === 'grid' && framework === 'reactFunctionalTs') {
-            addDependency('@ag-grid-community/react');
+            addDependency('@ag-grid-community/react', agGridReactVersion);
         }
-        modules.forEach(m => addDependency(m));
+        modules.forEach(m => addDependency(m, agGridVersion));
     } else {
         if (type === 'grid') {
             if (framework === 'angular') {
-                addDependency('ag-grid-angular');
+                addDependency('ag-grid-angular', agGridAngularVersion);
             }
             if (framework === 'reactFunctionalTs') {
-                addDependency('ag-grid-react');
+                addDependency('ag-grid-react', agGridReactVersion);
             }
-            addDependency('ag-grid-community');
-            addDependency('ag-grid-enterprise');
+            addDependency('ag-grid-community', agGridVersion);
+            addDependency('ag-grid-enterprise', agGridEnterpriseVersion);
         }
         if (type === 'chart') {
-            addDependency('ag-charts-community');
+            addDependency('ag-charts-community', agChartsVersion);
         }
     }
 

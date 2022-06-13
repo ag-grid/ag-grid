@@ -36,12 +36,9 @@ export class FilterListener extends BeanStub {
         const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
         const secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
 
-        const alwaysReset = this.gridOptionsWrapper.isServerSideFilteringAlwaysResets();
-
         const params: StoreRefreshAfterParams = {
             valueColChanged,
             secondaryColChanged,
-            alwaysReset,
             changedColumns
         };
 

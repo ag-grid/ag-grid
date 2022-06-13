@@ -1,7 +1,7 @@
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export class Line extends Shape {
 
@@ -42,12 +42,11 @@ export class Line extends Shape {
         return false;
     }
 
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
+    render(renderCtx: RenderContext) {
+        let { ctx, forceRender, stats } = renderCtx;
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean) {
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
     
@@ -77,6 +76,6 @@ export class Line extends Shape {
 
         this.fillStroke(ctx);
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }

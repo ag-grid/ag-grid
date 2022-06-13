@@ -9,7 +9,7 @@ Frameworks Supported
 ====================
 Framework specific Getting Started guides:
 
-[Angular](https://www.ag-grid.com/angular-grid/getting-started/) | [Javascript](https://www.ag-grid.com/javascript-grid/getting-started/) | [React](https://www.ag-grid.com/react-grid/getting-started/) | [TypeScript](https://www.ag-grid.com/javascript-grid/building-typescript/) | [VueJS](https://www.ag-grid.com/vue-grid/getting-started/)
+[Angular](https://www.ag-grid.com/angular-data-grid/getting-started/) | [Javascript](https://www.ag-grid.com/javascript-grid/getting-started/) | [React](https://www.ag-grid.com/react-data-grid/getting-started/) | [TypeScript](https://www.ag-grid.com/javascript-grid/building-typescript/) | [VueJS](https://www.ag-grid.com/vue-data-grid/getting-started/)
 
 This is not free software, this software is covered by copyright and to use you need a commercial license.
 
@@ -25,10 +25,3 @@ If you are an Enterprise customer (or are evaluating AG Grid Enterprise) and wis
 To Sign Up:
 Send an email to accounts@ag-grid.com with your license key
 
-Building
-==============
-
-To build:
-- `npm install`
-- `npm install gulp -g`
-- `gulp` or `gulp release`

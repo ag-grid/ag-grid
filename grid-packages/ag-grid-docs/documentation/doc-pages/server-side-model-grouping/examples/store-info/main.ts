@@ -16,16 +16,11 @@ const gridOptions: GridOptions = {
     sortable: true,
   },
   rowGroupPanelShow: 'always',
-  serverSideStoreType: 'full',
   autoGroupColumnDef: {
     flex: 1,
     minWidth: 280,
   },
 
-  // rowBuffer: 0,
-  cacheBlockSize: 4,
-
-  // use the server-side row model
   rowModelType: 'serverSide',
 
   getServerSideStoreParams: (params: GetServerSideStoreParamsParams): ServerSideStoreParams => {
@@ -34,7 +29,7 @@ const gridOptions: GridOptions = {
     if (noGroupingActive) {
       res = {
         // infinite scrolling
-        storeType: 'partial',
+        infiniteScroll: true,
         // 100 rows per block
         cacheBlockSize: 100,
         // purge blocks that are not needed
@@ -43,7 +38,7 @@ const gridOptions: GridOptions = {
     } else {
       var topLevelRows = params.level == 0
       res = {
-        storeType: topLevelRows ? 'full' : 'partial',
+        infiniteScroll: topLevelRows ? false : true,
         cacheBlockSize: params.level == 1 ? 5 : 2,
         maxBlocksInCache: -1, // never purge blocks
       }

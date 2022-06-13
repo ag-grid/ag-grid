@@ -8,7 +8,13 @@ import { Observable } from "rxjs";
 
 @Component({
     selector: 'my-app',
-    templateUrl: './rxjs-by-row.component.html',
+    template: `
+    <h2>Only Row Updates Supplied</h2>
+    <ag-grid-angular style="width: 100%; height: 330px;" class="ag-theme-alpine"
+                 [gridOptions]="gridOptions"
+                 [modules]="modules">
+    </ag-grid-angular>
+    `,
     providers: [MockServerService]
 })
 export class RxJsComponentByRow {
@@ -19,7 +25,7 @@ export class RxJsComponentByRow {
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
-        this.rowDataUpdates$ = mockServerService.byRowupdates();
+        this.rowDataUpdates$ = mockServerService.byRowUpdates();
 
         this.gridOptions = {
             enableRangeSelection: true,

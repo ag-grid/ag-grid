@@ -82,7 +82,7 @@ The example below has the above config applied to both series. The label placeme
 of all the scatter series in a chart, so labels don't overlap markers and other labels within a single
 series nor between different series.
 
-Try openening this example in a larger window to see that more labels are placed as the chart gets bigger.
+Try opening this example in a larger window to see that more labels are placed as the chart gets bigger.
 You can also try changing the size of the markers and the font size of the labels to see how that affects
 label placement.
 

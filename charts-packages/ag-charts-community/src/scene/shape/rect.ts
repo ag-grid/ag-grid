@@ -2,7 +2,6 @@ import { Path, ScenePathChangeDetection } from "./path";
 import { BBox } from "../bbox";
 import { LinearGradient } from "../gradient/linearGradient";
 import { Color } from "../../util/color";
-import { RedrawType } from "../node";
 import { Shape } from "./shape";
 
 export enum RectSizing {
@@ -130,10 +129,6 @@ export class Rect extends Path {
         const bbox = this.computeBBox();
 
         return bbox.containsPoint(point.x, point.y);
-    }
-
-    isPointInStroke(_x: number, _y: number): boolean {
-        return false;
     }
 
     protected fillStroke(ctx: CanvasRenderingContext2D) {

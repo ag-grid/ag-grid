@@ -9,20 +9,20 @@ function createServerSideDatasource(fakeServer, gridOptions) {
             // console.log('ServerSideDatasource.getRows: params = ', params);
             var that = this;
             this.fakeServer.getData(params.request,
-                function successCallback(resultForGrid, lastRow, secondaryColDefs) {
+                function successCallback(resultForGrid, lastRow, pivotResultColDefs) {
                     params.success({ rowData: resultForGrid, rowCount: lastRow });
-                    that.setSecondaryColsIntoGrid(secondaryColDefs);
+                    that.setPivotResultColsIntoGrid(pivotResultColDefs);
                 });
         };
 
-        // we only set the secondary cols if they have changed since the last time. otherwise
+        // we only set the pivot result cols if they have changed since the last time. otherwise
         // the cols would reset every time data comes back from the server (which means col
         // width, positioning etc would be lost every time we eg expand a group, or load another
         // block by scrolling down).
-        setSecondaryColsIntoGrid(secondaryColDefs) {
-            var colDefHash = this.createColsHash(secondaryColDefs);
+        setPivotResultColsIntoGrid(pivotResultColDefs) {
+            var colDefHash = this.createColsHash(pivotResultColDefs);
             if (this.colDefHash !== colDefHash) {
-                this.gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+                this.gridOptions.columnApi.setPivotResultColumns(pivotResultColDefs);
                 this.colDefHash = colDefHash;
             }
         };
@@ -90,7 +90,7 @@ function createFakeServer(data) {
             var rowData = this.allData;
 
             // if pivoting, this gets set
-            var secondaryColDefs = null;
+            var pivotResultColDefs = null;
 
             rowData = this.filterList(rowData, filterModel);
 
@@ -98,7 +98,7 @@ function createFakeServer(data) {
                 var pivotResult = this.pivot(pivotCols, rowGroupCols, valueCols, rowData);
                 rowData = pivotResult.data;
                 valueCols = pivotResult.aggCols;
-                secondaryColDefs = pivotResult.secondaryColDefs;
+                pivotResultColDefs = pivotResult.pivotResultColDefs;
             }
 
             // if not grouping, just return the full set
@@ -140,7 +140,7 @@ function createFakeServer(data) {
             // so that the example behaves like a server side call, we put
             // it in a timeout to a) give a delay and b) make it asynchronous
             setTimeout(function () {
-                callback(rowData, lastRow, secondaryColDefs);
+                callback(rowData, lastRow, pivotResultColDefs);
             }, 1000);
         };
 
@@ -234,7 +234,7 @@ function createFakeServer(data) {
             }
         };
 
-        // function does pivoting. this is very funky logic, doing pivoting and creating secondary columns on the fly.
+        // function does pivoting. this is very funky logic, doing pivoting and creating pivot result columns on the fly.
         // if you are using the AG Grid Enterprise Row Model, remember this would all be done on your server side with a
         // database or something that does pivoting for you - this messy code is just for demo purposes on how to use
         // ag-Gird, it's not supposed to be beautiful production quality code.
@@ -246,8 +246,8 @@ function createFakeServer(data) {
 
             var colKeyExistsMap = {};
 
-            var secondaryColDefs = [];
-            var secondaryColDefsMap = {};
+            var pivotResultColDefs = [];
+            var pivotResultColDefsMap = {};
 
             data.forEach(function (item) {
 
@@ -274,7 +274,7 @@ function createFakeServer(data) {
 
                     if (!colKeyExistsMap[colKey]) {
                         addNewAggCol(colKey, valueCol);
-                        addNewSecondaryColDef(colKey, pivotValues, valueCol);
+                        addNewPivotResultColDef(colKey, pivotValues, valueCol);
                         colKeyExistsMap[colKey] = true;
                     }
                 });
@@ -296,7 +296,7 @@ function createFakeServer(data) {
                 aggColsList.push(newCol);
             }
 
-            function addNewSecondaryColDef(colKey, pivotValues, valueCol) {
+            function addNewPivotResultColDef(colKey, pivotValues, valueCol) {
 
                 var parentGroup = null;
 
@@ -305,18 +305,18 @@ function createFakeServer(data) {
                 pivotValues.forEach(function (pivotValue) {
                     keyParts.push(pivotValue);
                     var colKey = createColKey(keyParts);
-                    var groupColDef = secondaryColDefsMap[colKey];
+                    var groupColDef = pivotResultColDefsMap[colKey];
                     if (!groupColDef) {
                         groupColDef = {
                             groupId: colKey,
                             headerName: pivotValue,
                             children: []
                         };
-                        secondaryColDefsMap[colKey] = groupColDef;
+                        pivotResultColDefsMap[colKey] = groupColDef;
                         if (parentGroup) {
                             parentGroup.children.push(groupColDef);
                         } else {
-                            secondaryColDefs.push(groupColDef);
+                            pivotResultColDefs.push(groupColDef);
                         }
                     }
                     parentGroup = groupColDef;
@@ -340,7 +340,7 @@ function createFakeServer(data) {
             return {
                 data: pivotData,
                 aggCols: aggColsList,
-                secondaryColDefs: secondaryColDefs
+                pivotResultColDefs: pivotResultColDefs
             };
         };
 
@@ -436,7 +436,6 @@ function createFakeServer(data) {
             return filteredData;
         };
 
-        // simple implementation of lodash groupBy
         groupBy(data, field) {
             var result = {};
             data.forEach(function (item) {
@@ -451,7 +450,6 @@ function createFakeServer(data) {
             return result;
         };
 
-        // simple implementation of lodash filter
         filter(data, callback) {
             var result = [];
             data.forEach(function (item) {

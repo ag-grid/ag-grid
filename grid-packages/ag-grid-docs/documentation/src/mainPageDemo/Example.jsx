@@ -474,6 +474,7 @@ const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('ag-theme-alpine');
+    const [recreateGrid, setRecreateGrid] = useState(false);
     const [bodyClass, setBodyClass] = useState('');
     const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
     const [base64Flags, setBase64Flags] = useState();
@@ -673,6 +674,7 @@ const Example = () => {
         // paginateChildRows: true,
         // paginationPageSize: 10,
         // groupSelectsFiltered: true,
+        // groupRowsSticky: true,
         suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
         // suppressColumnVirtualisation: true,
         // suppressContextMenu: true,
@@ -780,7 +782,7 @@ const Example = () => {
         // callback when row clicked
         // stopEditingWhenCellsLoseFocus: true,
         // allowShowChangeAfterFilter: true,
-        processSecondaryColDef: (def) => {
+        processPivotResultColDef: (def) => {
             def.filter = 'agNumberColumnFilter';
             def.floatingFilter = true;
         },
@@ -1125,6 +1127,12 @@ const Example = () => {
     }
 
     useEffect(() => {
+        if(recreateGrid) {
+            setRecreateGrid(false);
+        }
+    }, [recreateGrid]);
+
+    useEffect(() => {
         const small = IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768;
         setIsSmall(small);
 
@@ -1256,6 +1264,8 @@ const Example = () => {
             setBodyClass('');
             gridOptions.chartThemes = null;
         }
+
+        setRecreateGrid(true);
     }
 
     function toggleOptionsCollapsed() {
@@ -1329,7 +1339,7 @@ const Example = () => {
                 </div>
                 <section className={styles['example-wrapper__grid-wrapper']} style={{padding: "1rem", paddingTop: 0}}>
                     <div id="myGrid" style={{flex: "1 1 auto", overflow: "hidden"}} className={gridTheme}>
-                        <AgGridReactMemo
+                        {!recreateGrid && <AgGridReactMemo
                             ref={gridRef}
                             modules={modules}
                             gridOptions={gridOptions}
@@ -1337,7 +1347,7 @@ const Example = () => {
                             rowData={rowData}
                             defaultCsvExportParams={defaultExportParams}
                             defaultExcelExportParams={defaultExportParams}
-                        />
+                        />}
                     </div>
                 </section>
             </div>

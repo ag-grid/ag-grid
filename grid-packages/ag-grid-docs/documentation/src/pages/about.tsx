@@ -7,7 +7,7 @@ const AboutPage = () => {
         <>
             <SEO title="Our Mission, Our Principles and Our Team at AG Grid"
                  description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."/>
-            <div className={styles['page-content']}>
+            <div className={styles['page-content']} style={{marginLeft: "5rem", marginRight: "5rem"}}>
                 <div className={styles['about-page']}>
                     <section>
                         <h1 className={styles['page-title']}>About AG Grid</h1>
@@ -36,7 +36,7 @@ const AboutPage = () => {
                             </p>
                             <p>
                                 Niall found himself having to devote considerable time and effort to maintaining
-                                <strong>AG Grid</strong>, even fielding feature requests from users. It became apparent that
+                                <strong> AG Grid</strong>, even fielding feature requests from users. It became apparent that
                                 this thing had legs - and the idea of <strong>AG Grid Enterprise</strong> took seed in Niall’s
                                 mind. A little over one year after the project started the first commercial version was
                                 launched.
@@ -53,7 +53,7 @@ const AboutPage = () => {
                         <h2>Our Principles</h2>
                         <article>
                             <p>We believe that a datagrid should be agnostic to the framework that developers choose. This
-                                allows flexibility and future-proofs your development. This is also where the 'ag' in <strong>AG Grid</strong>
+                                allows flexibility and future-proofs your development. This is also where the 'ag' in <strong>AG Grid </strong>
                                 comes from. </p>
                             <p>Our experience is in building Enterprise applications: we know that the datagrid is at the core
                                 of an Enterprise application, and needs to deliver performance and a rich feature set. </p>

@@ -2,7 +2,7 @@ import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
 import { HdpiCanvas } from "../../canvas/hdpiCanvas";
-import { RedrawType, SceneChangeDetection } from "../node";
+import { RedrawType, SceneChangeDetection, RenderContext } from "../node";
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
 export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
@@ -11,17 +11,7 @@ export function SceneFontChangeDetection(opts?: {
     redraw?: RedrawType,
     changeCb?: (t: any) => any,
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb: optChangeCb } = opts || {};
-
-    const changeCb = (o: any) => {
-        if (!o._dirtyFont) {
-            o._dirtyFont = true;
-            o.markDirty(redraw);
-        }
-        if (optChangeCb) {
-            optChangeCb(o);
-        }
-    };
+    const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }
@@ -46,7 +36,7 @@ export class Text extends Shape {
 
     private lines: string[] = [];
     private _splitText() {
-        this.lines = this.text.split(/\r?\n/g);
+        this.lines = typeof this.text === 'string' ? this.text.split(/\r?\n/g) : [];
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o) => o._splitText() })
@@ -151,21 +141,20 @@ export class Text extends Shape {
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
-    isPointInStroke(_x: number, _y: number): boolean {
-        return false;
-    }
+    render(renderCtx: RenderContext): void {
+        let { ctx, forceRender, stats } = renderCtx;
 
-    render(ctx: CanvasRenderingContext2D, forceRender: boolean): void {
         if (this.dirty === RedrawType.NONE && !forceRender) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
         if (!this.lines.length || !this.scene) {
+            if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
         this.computeTransformMatrix();
-        // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
         const { fill, stroke, strokeWidth } = this;
@@ -226,7 +215,7 @@ export class Text extends Shape {
             ctx.strokeText(text, x, y);
         }
 
-        super.render(ctx, forceRender);
+        super.render(renderCtx);
     }
 }
 

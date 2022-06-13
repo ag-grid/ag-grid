@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-  serverSideStoreType: 'partial',
+  serverSideInfiniteScroll: true,
 
   // enable pivoting
   pivotMode: true,
@@ -72,7 +72,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 function addPivotColDefs(response: any, columnApi: ColumnApi) {
   // check if pivot colDefs already exist
-  var existingPivotColDefs = columnApi.getSecondaryColumns()
+  var existingPivotColDefs = columnApi.getPivotResultColumns()
   if (existingPivotColDefs && existingPivotColDefs.length > 0) {
     return
   }
@@ -83,6 +83,6 @@ function addPivotColDefs(response: any, columnApi: ColumnApi) {
     return { headerName: headerName, field: field }
   })
 
-  // supply secondary columns to the grid
-  columnApi.setSecondaryColumns(pivotColDefs)
+  // supply pivot result columns to the grid
+  columnApi.setPivotResultColumns(pivotColDefs)
 }
