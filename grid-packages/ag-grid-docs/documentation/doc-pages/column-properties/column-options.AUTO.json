@@ -294,7 +294,7 @@
   },
   "headerCheckboxSelection": {
     "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
-    "type": { "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>" }
+    "type": { "returnType": "boolean | HeaderCheckboxSelectionCallback" }
   },
   "headerCheckboxSelectionFilteredOnly": {
     "description": "/** If `true`, the header checkbox selection will only select filtered items. */",

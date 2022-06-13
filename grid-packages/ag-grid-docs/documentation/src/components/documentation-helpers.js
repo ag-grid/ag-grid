@@ -129,9 +129,14 @@ export function sortAndFilterProperties(properties, framework, applyOptionalOrde
     return properties;
 }
 
+export function getInterfaceWithGenericParams(name, meta) {
+    return `${name}${meta?.typeParams?.length > 0 ? `&lt;${meta.typeParams.join(', ')}&gt;` : ""}`
+}
+
 export function appendInterface(name, interfaceType, framework, allLines, printConfig = {}) {
     const toExclude = printConfig.exclude || [];
-    const lines = [`interface ${printConfig.hideName ? '' : name} {`];
+    const interfaceDeclaration = getInterfaceWithGenericParams(name, interfaceType.meta);
+    const lines = [`interface ${printConfig.hideName ? '' : interfaceDeclaration} {`];
     const properties = Object.entries(interfaceType.type);
 
     sortAndFilterProperties(properties, framework, printConfig.applyOptionalOrdering)
@@ -219,7 +224,8 @@ export function formatJsDocString(docString) {
 }
 
 export function appendCallSignature(name, interfaceType, framework, allLines) {
-    const lines = [`interface ${name} {`];
+    const interfaceDeclaration = getInterfaceWithGenericParams(name, interfaceType.meta);
+    const lines = [`interface ${interfaceDeclaration} {`];
     const args = Object.entries(interfaceType.type.arguments);
     const argTypes = args.map(([property, type]) => {
         return `${property}: ${getLinkedType(type, framework)}`;

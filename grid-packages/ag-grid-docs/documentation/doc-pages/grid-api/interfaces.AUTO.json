@@ -531,7 +531,7 @@
   "ColDef": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** Configuration options for columns in AG Grid. */"
     },
@@ -581,7 +581,7 @@
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | string | null",
@@ -799,7 +799,7 @@
   "ColumnFunctionCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -824,7 +824,7 @@
   "CheckboxSelectionCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -850,7 +850,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -863,7 +863,7 @@
   "RowDragCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -889,7 +889,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -902,7 +902,7 @@
   "DndSourceCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -927,7 +927,7 @@
   "DndSourceOnRowDragParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -949,7 +949,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -962,7 +962,7 @@
   "EditableCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -988,7 +988,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1001,7 +1001,7 @@
   "SuppressPasteCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1027,7 +1027,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1040,7 +1040,7 @@
   "SuppressNavigableCallbackParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1066,7 +1066,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1077,11 +1077,7 @@
     }
   },
   "HeaderCheckboxSelectionCallbackParams": {
-    "meta": {
-      "typeParams": [
-        "TData"
-      ]
-    },
+    "meta": {},
     "type": {
       "column": "Column",
       "colDef": "ColDef",
@@ -1097,14 +1093,11 @@
   },
   "HeaderCheckboxSelectionCallback": {
     "meta": {
-      "isCallSignature": true,
-      "typeParams": [
-        "TData"
-      ]
+      "isCallSignature": true
     },
     "type": {
       "arguments": {
-        "params": "HeaderCheckboxSelectionCallbackParams<TData>"
+        "params": "HeaderCheckboxSelectionCallbackParams"
       },
       "returnType": "boolean"
     }
@@ -1113,7 +1106,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** @deprecated No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.\n */"
     },
@@ -1127,7 +1120,7 @@
   "IsColumnFuncParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** @deprecated Replaced with ColumnFunctionCallbackParams\n */"
     },
@@ -1153,7 +1146,7 @@
   "GetQuickFilterTextParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1192,7 +1185,7 @@
   "BaseColDefParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1217,7 +1210,7 @@
   "BaseWithValueColDefParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1244,7 +1237,7 @@
   "ValueGetterParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1272,7 +1265,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1318,7 +1311,7 @@
   "NewValueParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1347,7 +1340,7 @@
   "ValueSetterParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1377,7 +1370,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1390,7 +1383,7 @@
   "ValueParserParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1420,7 +1413,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1433,7 +1426,7 @@
   "ValueFormatterParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1461,7 +1454,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1474,7 +1467,7 @@
   "KeyCreatorParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1501,7 +1494,7 @@
   "ColSpanParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1526,7 +1519,7 @@
   "RowSpanParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1551,7 +1544,7 @@
   "SuppressKeyboardEventParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1599,7 +1592,7 @@
   "CellClassParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1627,7 +1620,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1641,7 +1634,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1660,7 +1653,7 @@
   "CellClassRules": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1671,7 +1664,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -1685,7 +1678,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2499,7 +2492,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2513,7 +2506,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2527,7 +2520,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2541,7 +2534,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2555,7 +2548,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2569,7 +2562,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2583,7 +2576,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2596,7 +2589,7 @@
   "RowClassRules": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2612,7 +2605,7 @@
   "RowClassParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2636,7 +2629,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2731,7 +2724,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2802,7 +2795,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2828,7 +2821,7 @@
   "GetContextMenuItemsParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -2870,7 +2863,7 @@
   "PostProcessPopupParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3040,7 +3033,7 @@
   "IsGroupOpenByDefaultParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3067,7 +3060,7 @@
   "GetServerSideStoreParamsParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3094,7 +3087,7 @@
   "IsServerSideGroupOpenByDefaultParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3113,7 +3106,7 @@
   "IsApplyServerSideTransactionParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3135,7 +3128,7 @@
   "GetRowIdParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3158,7 +3151,7 @@
   "ProcessRowParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3181,7 +3174,7 @@
   "FillOperationParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3214,7 +3207,7 @@
   "RowHeightParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3246,7 +3239,7 @@
   "InitialGroupOrderComparatorParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3265,7 +3258,7 @@
   "GetGroupRowAggParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3283,7 +3276,7 @@
   "PostSortRowsParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3301,7 +3294,7 @@
   "IsFullWidthRowParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3335,7 +3328,7 @@
   "GetGroupAggFilteringParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3392,7 +3385,7 @@
   "RowNodeEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3406,7 +3399,7 @@
   "DataChangedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3423,7 +3416,7 @@
   "CellChangedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3900,7 +3893,7 @@
   "RowDragEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3929,7 +3922,7 @@
   "RowDragEnterEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3958,7 +3951,7 @@
   "RowDragEndEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -3987,7 +3980,7 @@
   "RowDragMoveEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4016,7 +4009,7 @@
   "RowDragLeaveEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4213,7 +4206,7 @@
   "ItemsAddedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4495,7 +4488,7 @@
   "RowEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** ------------ */\n/** ROW EVENTS */\n/** ------------ */"
     },
@@ -4522,7 +4515,7 @@
   "RowGroupOpenedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4550,7 +4543,7 @@
   "RowValueChangedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4576,7 +4569,7 @@
   "RowSelectedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4602,7 +4595,7 @@
   "VirtualRowRemovedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4628,7 +4621,7 @@
   "RowClickedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4654,7 +4647,7 @@
   "RowDoubleClickedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4680,7 +4673,7 @@
   "RowEditingStartedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4706,7 +4699,7 @@
   "RowEditingStoppedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4732,7 +4725,7 @@
   "FullWidthCellKeyDownEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4758,7 +4751,7 @@
   "FullWidthCellKeyPressEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4784,7 +4777,7 @@
   "CellEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** ------------ */\n/** CELL EVENTS */\n/** ------------ */"
     },
@@ -4815,7 +4808,7 @@
   "CellKeyDownEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4845,7 +4838,7 @@
   "CellKeyPressEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4875,7 +4868,7 @@
   "CellClickedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ],
       "doc": "/** Cell is clicked */"
     },
@@ -4906,7 +4899,7 @@
   "CellMouseDownEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4936,7 +4929,7 @@
   "CellDoubleClickedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4966,7 +4959,7 @@
   "CellMouseOverEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -4996,7 +4989,7 @@
   "CellMouseOutEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5026,7 +5019,7 @@
   "CellContextMenuEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5056,7 +5049,7 @@
   "CellEditingStartedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5086,7 +5079,7 @@
   "CellEditingStoppedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5120,7 +5113,7 @@
   "CellValueChangedEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5153,7 +5146,7 @@
   "CellEditRequestEvent": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -5385,7 +5378,7 @@
     "meta": {
       "isTypeAlias": true,
       "typeParams": [
-        "P"
+        "P = InbuiltParentType"
       ]
     },
     "type": "(parentFilterInstance: P) => void"
@@ -5393,7 +5386,7 @@
   "IFloatingFilterParams": {
     "meta": {
       "typeParams": [
-        "P"
+        "P = InbuiltParentType"
       ]
     },
     "type": {
@@ -5433,7 +5426,7 @@
   "IFloatingFilterComp": {
     "meta": {
       "typeParams": [
-        "P"
+        "P = any"
       ]
     },
     "type": {
@@ -7028,7 +7021,7 @@
   "AgCartesianThemeOptions": {
     "meta": {
       "typeParams": [
-        "S"
+        "S = AgCartesianSeriesTheme"
       ]
     },
     "type": {
@@ -7071,7 +7064,7 @@
   "AgPolarThemeOptions": {
     "meta": {
       "typeParams": [
-        "S"
+        "S = AgPolarSeriesTheme"
       ]
     },
     "type": {
@@ -7110,7 +7103,7 @@
   "AgHierarchyThemeOptions": {
     "meta": {
       "typeParams": [
-        "S"
+        "S = AgHierarchySeriesTheme"
       ]
     },
     "type": {
@@ -9115,7 +9108,7 @@
   "ICellEditorParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -9162,7 +9155,7 @@
   "ICellEditorComp": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -9918,7 +9911,7 @@
   "IFilterComp": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -9951,7 +9944,7 @@
   "IDoesFilterPassParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -9985,7 +9978,7 @@
   "IFilterParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -10169,7 +10162,7 @@
   "IMultiFilterParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -10857,7 +10850,7 @@
   "ISparklineCellRendererParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -11628,7 +11621,7 @@
   "IDetailCellRendererParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -11693,7 +11686,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -11706,7 +11699,7 @@
   "GetDetailRowDataParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -11724,7 +11717,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12192,7 +12185,7 @@
   "ICellRendererParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12260,7 +12253,7 @@
   "ICellRenderer": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12273,7 +12266,7 @@
   "ICellRendererComp": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12293,7 +12286,7 @@
     "meta": {
       "isCallSignature": true,
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12306,7 +12299,7 @@
   "ILoadingCellRendererParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12359,7 +12352,7 @@
   "ILoadingCellRendererComp": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -12647,7 +12640,7 @@
   "ITooltipParams": {
     "meta": {
       "typeParams": [
-        "TData"
+        "TData = any"
       ]
     },
     "type": {
@@ -13390,7 +13383,7 @@
   "IFloatingFilterAngularComp": {
     "meta": {
       "typeParams": [
-        "P"
+        "P = any"
       ]
     },
     "type": {
@@ -13662,7 +13655,7 @@
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "pinned?": "boolean | string | null",

@@ -263,7 +263,7 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
     /** Set to `true` if no menu should be shown for this column header. Default: `false` */
     suppressMenu?: boolean;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
-    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData>;
+    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback;
     /** If `true`, the header checkbox selection will only select filtered items. */
     headerCheckboxSelectionFilteredOnly?: boolean;
 
@@ -468,11 +468,11 @@ export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon 
 }
 
 export interface CheckboxSelectionCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-export interface CheckboxSelectionCallback<TData> {
+export interface CheckboxSelectionCallback<TData = any> {
     (params: CheckboxSelectionCallbackParams<TData>): boolean;
 }
 export interface RowDragCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-export interface RowDragCallback<TData> {
+export interface RowDragCallback<TData = any> {
     (params: RowDragCallbackParams<TData>): boolean;
 }
 export interface DndSourceCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
@@ -483,34 +483,34 @@ export interface DndSourceOnRowDragParams<TData = any> extends AgGridCommon {
     /** The DOM event that represents a drag and drop interaction */
     dragEvent: DragEvent;
 }
-export interface DndSourceCallback<TData> {
+export interface DndSourceCallback<TData = any> {
     (params: DndSourceCallbackParams<TData>): boolean;
 }
 export interface EditableCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-export interface EditableCallback<TData> {
+export interface EditableCallback<TData = any> {
     (params: EditableCallbackParams<TData>): boolean;
 }
 export interface SuppressPasteCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-export interface SuppressPasteCallback<TData> {
+export interface SuppressPasteCallback<TData = any> {
     (params: SuppressPasteCallbackParams<TData>): boolean;
 }
 export interface SuppressNavigableCallbackParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-export interface SuppressNavigableCallback<TData> {
+export interface SuppressNavigableCallback<TData = any> {
     (params: SuppressNavigableCallbackParams<TData>): boolean;
 }
-export interface HeaderCheckboxSelectionCallbackParams<TData = any> extends AgGridCommon {
+export interface HeaderCheckboxSelectionCallbackParams extends AgGridCommon {
     column: Column;
     colDef: ColDef;
 }
-export interface HeaderCheckboxSelectionCallback<TData> {
-    (params: HeaderCheckboxSelectionCallbackParams<TData>): boolean;
+export interface HeaderCheckboxSelectionCallback {
+    (params: HeaderCheckboxSelectionCallbackParams): boolean;
 }
 
 /**
  * @deprecated
  * No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.
  */
-export interface IsColumnFunc<TData> {
+export interface IsColumnFunc<TData = any> {
     (params: IsColumnFuncParams<TData>): boolean;
 }
 
@@ -562,7 +562,7 @@ export interface ValueGetterParams<TData = any> extends BaseColDefParams<TData> 
     /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
-export interface ValueGetterFunc<TData> {
+export interface ValueGetterFunc<TData = any> {
     (params: ValueGetterParams<TData>): any;
 }
 export interface HeaderValueGetterParams extends AgGridCommon {
@@ -589,19 +589,19 @@ export interface NewValueParams<TData = any> extends BaseColDefParams<TData> {
 
 export interface ValueSetterParams<TData = any> extends NewValueParams<TData> {
 }
-export interface ValueSetterFunc<TData> {
+export interface ValueSetterFunc<TData = any> {
     (params: ValueSetterParams<TData>): boolean;
 }
 export interface ValueParserParams<TData = any> extends NewValueParams<TData> {
 }
-export interface ValueParserFunc<TData> {
+export interface ValueParserFunc<TData = any> {
     (params: ValueParserParams<TData>): any;
 }
 
 export interface ValueFormatterParams<TData = any> extends BaseWithValueColDefParams<TData> {
 }
 
-export interface ValueFormatterFunc<TData> {
+export interface ValueFormatterFunc<TData = any> {
     (params: ValueFormatterParams<TData>): string;
 }
 

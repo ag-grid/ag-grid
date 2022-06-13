@@ -37,7 +37,7 @@ export interface GetDetailRowData<TData = any> {
     (params: GetDetailRowDataParams<TData>): void;
 }
 
-export interface GetDetailRowDataParams<TData> {
+export interface GetDetailRowDataParams<TData = any> {
     /** Row node for the details request. */
     node: RowNode<TData>;
     /** Data for the current row. */

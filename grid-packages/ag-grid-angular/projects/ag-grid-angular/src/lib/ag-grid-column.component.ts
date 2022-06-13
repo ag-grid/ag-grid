@@ -198,7 +198,7 @@ export class AgGridColumn<TData = any> {
     /** Set to `true` if no menu should be shown for this column header. Default: `false`     */
     @Input() public suppressMenu: boolean | undefined;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.     */
-    @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback<TData> | undefined;
+    @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback | undefined;
     /** If `true`, the header checkbox selection will only select filtered items.     */
     @Input() public headerCheckboxSelectionFilteredOnly: boolean | undefined;
     /** Defines the chart data type that should be used for a column.     */

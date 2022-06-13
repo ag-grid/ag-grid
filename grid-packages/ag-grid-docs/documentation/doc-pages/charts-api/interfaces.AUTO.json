@@ -131,7 +131,11 @@
     }
   },
   "AgCartesianThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S = AgCartesianSeriesTheme"
+      ]
+    },
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
@@ -170,7 +174,11 @@
     }
   },
   "AgPolarThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S = AgPolarSeriesTheme"
+      ]
+    },
     "type": {
       "series?": "S",
       "data?": "any[]",
@@ -205,7 +213,11 @@
     }
   },
   "AgHierarchyThemeOptions": {
-    "meta": { "typeParams": ["S"] },
+    "meta": {
+      "typeParams": [
+        "S = AgHierarchySeriesTheme"
+      ]
+    },
     "type": {
       "series?": "S",
       "data?": "any[]",

@@ -89,7 +89,11 @@ function formatNode(ts) {
                             return printer(ts).printNode(ts.EmitHint.Unspecified, node, file);
                         }
                     }
-                    return formatNode(ts)(node.name, file);
+                    let defaultVal = '';
+                    if (node.default) {
+                        defaultVal = ` = ${node.default.getText()}`;
+                    }
+                    return formatNode(ts)(node.name, file) + defaultVal;
                 }
             default:
                 return printer(ts).printNode(ts.EmitHint.Unspecified, node, file).replace(/(\n\s*)/g, ' ');
