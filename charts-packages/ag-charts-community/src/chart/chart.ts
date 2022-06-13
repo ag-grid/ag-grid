@@ -13,7 +13,7 @@ import { Caption } from "../caption";
 import { Observable, SourceEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { createId } from "../util/id";
-import { PlacedLabel, placeLabels, PointLabelDatum } from "../util/labelPlacement";
+import { PlacedLabel, placeLabels, PointLabelDatum, isPointLabelDatum } from "../util/labelPlacement";
 import { AgChartOptions } from "./agChartOptions";
 import { debouncedAnimationFrame, debouncedCallback } from "../util/render";
 
@@ -795,19 +795,25 @@ export abstract class Chart extends Observable {
     }
 
     placeLabels(): Map<Series, PlacedLabel[]> {
-        const series: Series[] = [];
+        const seriesIndex: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
-        this.nodeData.forEach((d, s) => {
-            if (s.visible && s.label.enabled) {
-                series.push(s);
-                data.push(s.getLabelData());
+        this.nodeData.forEach((_, series) => {
+            if (!series.visible || !series.label.enabled) {
+                return;
             }
+
+            const seriesData = series.getLabelData();
+            if (!isPointLabelDatum(seriesData[0])) {
+                return;
+            }
+            seriesIndex.push(series);
+            data.push(seriesData as unknown as PointLabelDatum[]);
         });
         const { seriesRect } = this;
         const labels: PlacedLabel[][] = seriesRect
             ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
             : [];
-        return new Map(labels.map((l, i) => [series[i], l]));
+        return new Map(labels.map((l, i) => [seriesIndex[i], l]));
     }
 
     private updateLegend() {

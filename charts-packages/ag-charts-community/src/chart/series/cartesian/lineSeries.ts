@@ -251,6 +251,10 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         return nodeData;
     }
 
+    createLabelData(opts: { nodeData: LineNodeDatum[] }) {
+        return opts.nodeData;
+    }
+
     protected updatePath(opts: {seriesHighlighted?: boolean, nodeData: LineNodeDatum[], path: Path}): void {
         const { nodeData, path: { path: linePath }, path: lineNode } = opts;
 
@@ -282,10 +286,11 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
 
     protected updateHighlightSelectionItem(opts: { item?: LineNodeDatum, highlightSelection: Selection<Marker, Group, LineNodeDatum, any> }): Selection<Marker, Group, LineNodeDatum, any> {
         const { item, highlightSelection } = opts;
-        const { marker: { shape } } = this;
+        const { marker: { shape, enabled } } = this;
+        const data = shape && enabled && item ? [item] : [];
         const MarkerShape = getMarker(shape);
 
-        const updateHighlightSelection = highlightSelection.setData(item ? [item] : []);
+        const updateHighlightSelection = highlightSelection.setData(data);
         updateHighlightSelection.exit.remove();
         const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
         return updateHighlightSelection.merge(enterHighlightSelection);
@@ -361,13 +366,13 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         });
     }
 
-    protected updateLabelSelection(opts: { nodeData: LineNodeDatum[], labelSelection: Selection<Text, Group, LineNodeDatum, any>  }): Selection<Text, Group, LineNodeDatum, any> {
-        let { nodeData, labelSelection } = opts;
+    protected updateLabelSelection(opts: { labelData: LineNodeDatum[], labelSelection: Selection<Text, Group, LineNodeDatum, any> }): Selection<Text, Group, LineNodeDatum, any> {
+        let { labelData, labelSelection } = opts;
         const { marker: { shape, enabled } } = this;
-        nodeData = shape && enabled ? nodeData : [];
+        labelData = shape && enabled ? labelData : [];
         const MarkerShape = getMarker(shape);
 
-        const updateTextSelection = labelSelection.setData(nodeData);
+        const updateTextSelection = labelSelection.setData(labelData);
         updateTextSelection.exit.remove();
         const enterTextSelection = updateTextSelection.enter.append(Text);
         return updateTextSelection.merge(enterTextSelection);
@@ -375,13 +380,12 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
 
     protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, LineNodeDatum, any>  }) {
         const { labelSelection } = opts;
+        const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 
         labelSelection.each((text, datum) => {
             const { point, label } = datum;
-    
-            const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
-    
-            if (label && labelEnabled) {
+
+            if (datum && label && labelEnabled) {
                 text.fontStyle = fontStyle;
                 text.fontWeight = fontWeight;
                 text.fontSize = fontSize;

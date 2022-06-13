@@ -8,12 +8,16 @@ import { Marker } from "../../marker/marker";
 import { Group } from "../../../scene/group";
 import { Text } from "../../../scene/shape/text";
 
-export abstract class CartesianSeriesV2<S extends SeriesNodeDatum> extends Series<S> {
+export abstract class CartesianSeriesV2<
+    S extends SeriesNodeDatum,
+    L extends SeriesNodeDatum = S,
+> extends Series<S, L> {
     private nodeData: S[] = [];
+    private labelData: L[] = [];
 
     private mainPath = new Path();
     private markerSelection: Selection<Marker, Group, S, any> = Selection.select(this.seriesGroup).selectAll<Marker>();
-    private labelSelection: Selection<Text, Group, S, any> = Selection.select(this.seriesGroup).selectAll<Text>();
+    private labelSelection: Selection<Text, Group, L, any> = Selection.select(this.seriesGroup).selectAll<Text>();
     private highlightSelection: Selection<Marker, Group, S, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
 
     protected constructor() {
@@ -81,6 +85,10 @@ export abstract class CartesianSeriesV2<S extends SeriesNodeDatum> extends Serie
         return this.nodeData;
     }
 
+    getLabelData() {
+        return this.labelData;
+    }
+
     update(): void {
         const { chart: { highlightedDatum: { datum = undefined, series = undefined } = {}, highlightedDatum = undefined } = {}} = this;
         const seriesHighlighted = series ? series === this : undefined;
@@ -98,9 +106,11 @@ export abstract class CartesianSeriesV2<S extends SeriesNodeDatum> extends Serie
         this.nodeDataRefresh = false;
 
         this.nodeData = this.createNodeData();
+        this.labelData = this.createLabelData({ nodeData: this.nodeData });
 
         const {
             nodeData,
+            labelData,
             mainPath: path,
             markerSelection,
             labelSelection,
@@ -108,7 +118,7 @@ export abstract class CartesianSeriesV2<S extends SeriesNodeDatum> extends Serie
 
         this.updatePath({ seriesHighlighted, nodeData, path });
         this.markerSelection = this.updateMarkerSelection({ nodeData, markerSelection });
-        this.labelSelection = this.updateLabelSelection({ nodeData, labelSelection });
+        this.labelSelection = this.updateLabelSelection({ labelData, labelSelection });
     }
 
     protected updateNodes(seriesHighlighted?: boolean) {
@@ -140,13 +150,24 @@ export abstract class CartesianSeriesV2<S extends SeriesNodeDatum> extends Serie
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
     }
 
-    protected abstract updatePath(opts: {seriesHighlighted?: boolean, nodeData: S[], path: Path}): void;
-    protected abstract updatePathNode(opts: {seriesHighlighted?: boolean, path: Path}): void;
+    protected abstract createLabelData(opts: { nodeData: S[] }): L[];
+
+    protected updatePath(opts: {seriesHighlighted?: boolean, nodeData: S[], path: Path}): void {
+        // Override point for sub-classes.
+        this.mainPath.visible = false;
+    }
+
+    protected updatePathNode(opts: {seriesHighlighted?: boolean, path: Path}): void {
+        // Override point for sub-classes.
+    }
+
     protected abstract updateHighlightSelectionItem(opts: { item?: S, highlightSelection: Selection<Marker, Group, S, any> }): Selection<Marker, Group, S, any>;
+
     protected abstract updateMarkerSelection(opts: { nodeData: S[], markerSelection: Selection<Marker, Group, S, any> }): Selection<Marker, Group, S, any>;
     protected abstract updateMarkerNodes(opts: { markerSelection: Selection<Marker, Group, S, any>, isHighlight: boolean }): void;
-    protected abstract updateLabelSelection(opts: { nodeData: S[], labelSelection: Selection<Text, Group, S, any>  }): Selection<Text, Group, S, any>;
-    protected abstract updateLabelNodes(opts: { labelSelection: Selection<Text, Group, S, any>  }): void;
+
+    protected abstract updateLabelSelection(opts: { labelData: L[], labelSelection: Selection<Text, Group, L, any>  }): Selection<Text, Group, L, any>;
+    protected abstract updateLabelNodes(opts: { labelSelection: Selection<Text, Group, L, any>  }): void;
 }
 
 export interface CartesianSeriesMarkerFormat {

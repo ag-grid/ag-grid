@@ -87,7 +87,10 @@ export class SeriesTooltip {
     enabled = true;
 }
 
-export abstract class Series<S extends SeriesNodeDatum = SeriesNodeDatum> extends Observable {
+export abstract class Series<
+    S extends SeriesNodeDatum = SeriesNodeDatum,
+    L extends SeriesNodeDatum = S,
+> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
     protected static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
@@ -194,7 +197,7 @@ export abstract class Series<S extends SeriesNodeDatum = SeriesNodeDatum> extend
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly S[] { return []; }
 
-    getLabelData(): readonly PointLabelDatum[] { return []; }
+    getLabelData(): readonly L[] { return []; }
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
