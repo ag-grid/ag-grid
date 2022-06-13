@@ -198,6 +198,7 @@ export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
+export { CssClassManager } from "./rendering/cssClassManager";
 
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
@@ -244,7 +245,7 @@ export { AgMenuPanel } from "./widgets/agMenuPanel";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { ListOption } from "./widgets/agList";
-export { Component, VisibleChangedEvent, CssClassManager } from "./widgets/component";
+export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";
