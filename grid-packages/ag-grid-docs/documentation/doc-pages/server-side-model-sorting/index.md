@@ -33,7 +33,7 @@ The example below demonstrates Client-side Sorting with no Infinite Scroll. Note
 - All columns have sorting enabled using the `defaultColDef.sortable = true`.
 - Rows are loaded once. All sorting is then subsequently done by the grid.
 
-<grid-example title='No Infinite Scroll Client-side Sort' name='full-sort-client-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='Client-side Sorting' name='full-sort-client-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
 ## Server-side Sorting
 
@@ -63,7 +63,7 @@ The example below demonstrates sorting using the SSRM and Infinite Scrolling. No
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
 - Try single / multi column (using <kbd>Shift</kbd> key) sorting by clicking on column headers.
 
-<grid-example title='Sorting With Infinite Scroll' name='infinite-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Server Side Sorting' name='infinite-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 As previously mentioned, when not using Infinite Scroll, the grid will sort on the client. To force Server-side Sorting, regardless of Infinite Scroll, set `serverSideSortOnServer=true`. This is demonstrated below, note the following:
 
@@ -71,7 +71,7 @@ As previously mentioned, when not using Infinite Scroll, the grid will sort on t
 - Grid property `serverSideSortOnServer=true` to force Server-side Sorting.
 - Rows are loaded every time the sort order changes.
 
-<grid-example title='No Infinite Scroll Server-side Sort' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='No Infinite Scroll Server-side Sorting' name='full-sort-server-side' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
 [[note]]
 | **Fake Server Implementation**
@@ -91,7 +91,7 @@ The example below shows Client-side sorting of groups. Note the following:
  - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
  - All columns can be sorted. The grid sors without reloading the rows.
 
-<grid-example title='Group Sort Client-side' name='group-sort-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Client-side Group Sorting' name='group-sort-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 
 ## Server-side Group Sorting
@@ -108,13 +108,13 @@ The example below demonstrates. Note the following:
 - Sorting by `Year` does not reload any groups. Only leaf-levels are reloaded.
 - Sorting by `Gold`, `Silver` or `Bronze` does reload groups, as they columns have `aggFunc` set.
 
-<grid-example title='Group Sort Server-side' name='group-sort-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Server-side Group Sorting' name='group-sort-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 To override this behaviour, and always have the grid reload all rows when a sort changes, set the grid property `serverSideSortAllLevels=true`.
 
 The example below is identical to the above, except `serverSideSortAllLevels=true`.
 
-<grid-example title='Group Sort Server-side Force' name='group-sort-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Server-side Group Sorting Force' name='group-sort-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Next Up
 

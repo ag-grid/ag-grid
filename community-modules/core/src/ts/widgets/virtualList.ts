@@ -143,6 +143,10 @@ export class VirtualList extends TabGuardComp {
         return comp && comp.rowComponent;
     }
 
+    public forEachRenderedRow(func: (comp: Component, idx: number) => void): void {
+        this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
+    }
+
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
             <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">

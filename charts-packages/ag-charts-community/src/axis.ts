@@ -283,7 +283,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.updateRange();
     }
     get range(): number[] {
-        return this.requestedRange.slice();
+        return this.requestedRange;
     }
 
     protected _visibleRange: number[] = [0, 1];

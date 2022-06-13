@@ -276,14 +276,23 @@ export class GridBodyCtrl extends BeanStub {
         };
 
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
-        this.addManagedListener(this.eBodyViewport, 'wheel', this.onWheel.bind(this));
+        this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
+        this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
     }
 
-    private onWheel(e: MouseEvent): void {
+    private onBodyViewportWheel(e: WheelEvent): void {
         if (!this.gridOptionsWrapper.isSuppressScrollWhenPopupsAreOpen()) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();
+        }
+    }
+
+    private onStickyTopWheel(e: WheelEvent): void {
+        e.preventDefault();
+
+        if (e.offsetY) {
+            this.scrollVertically(e.deltaY);
         }
     }
 
@@ -334,6 +343,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.setStickyTopOffsetTop();
     }
 
     public setStickyTopHeight(height: number = 0): void {
@@ -361,9 +371,15 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        const height = headerCtrl.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight();
+        const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 
-        this.comp.setStickyTopTop(`${height + 1}px`);
+        let height = 0;
+
+        if (headerHeight > 0) { height += headerHeight + 1; }
+        if (pinnedTopHeight > 0) { height += pinnedTopHeight + 1; }
+
+        this.comp.setStickyTopTop(`${height}px`);
     }
 
     // method will call itself if no available width. this covers if the grid

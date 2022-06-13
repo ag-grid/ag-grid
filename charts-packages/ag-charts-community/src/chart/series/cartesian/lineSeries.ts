@@ -72,9 +72,8 @@ export class LineSeries extends CartesianSeries {
 
     private lineNode = new Path();
 
-    // We use groups for this selection even though each group only contains a marker ATM
-    // because in the future we might want to add label support as well.
-    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Group>();
+    private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Marker>();
+    private textSelection: Selection<Text, Group, LineNodeDatum, any> = Selection.select(this.seriesGroup).selectAll<Text>();
     private highlightSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Marker>();
     private nodeData: LineNodeDatum[] = [];
 
@@ -188,6 +187,7 @@ export class LineSeries extends CartesianSeries {
 
     update(): void {
         this.updateSelections();
+        this.updateHighlightSelection();
         this.updateNodes();
     }
 
@@ -298,21 +298,34 @@ export class LineSeries extends CartesianSeries {
         const nodeData = shape && enabled ? this.nodeData : [];
         const MarkerShape = getMarker(shape);
 
-        const { nodeSelection, highlightSelection } = this;
+        const { markerSelection, textSelection } = this;
 
-        const updateSelection = nodeSelection.setData(nodeData);
-        updateSelection.exit.remove();
-        const enterSelection = updateSelection.enter.append(Group);
-        enterSelection.append(MarkerShape);
-        enterSelection.append(Text);
-        this.nodeSelection = updateSelection.merge(enterSelection);
-    
-        const updateHighlightSelection = highlightSelection.setData(nodeData);
+        const updateMarkerSelection = markerSelection.setData(nodeData);
+        updateMarkerSelection.exit.remove();
+        const enterMarkerSelection = updateMarkerSelection.enter.append(MarkerShape);
+        this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
+
+        const updateTextSelection = textSelection.setData(nodeData);
+        updateTextSelection.exit.remove();
+        const enterTextSelection = updateTextSelection.enter.append(Text);
+        this.textSelection = updateTextSelection.merge(enterTextSelection);
+    }
+
+    private updateHighlightSelection() {
+        const {
+            marker: { shape, enabled },
+            chart: { highlightedDatum: { datum = undefined, series = undefined } = {}, highlightedDatum = undefined } = {},
+            highlightSelection,
+        } = this;
+        const highlightData = shape && enabled && series === this && highlightedDatum && datum ? [highlightedDatum as LineNodeDatum] : [];
+        const MarkerShape = getMarker(shape);
+
+        const updateHighlightSelection = highlightSelection.setData(highlightData);
         updateHighlightSelection.exit.remove();
         const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
         this.highlightSelection = updateHighlightSelection.merge(enterHighlightSelection);
     }
-
+    
     private updateNodes() {
         this.group.visible = this.visible;
         this.seriesGroup.visible = this.visible;
@@ -395,7 +408,7 @@ export class LineSeries extends CartesianSeries {
             node.visible = node.size > 0;
         };
 
-        this.nodeSelection.selectByClass(MarkerShape)
+        this.markerSelection
             .each((node, datum) => updateMarkerFn(node, datum, false));
         this.highlightSelection
             .each((node, datum) => {
@@ -431,10 +444,7 @@ export class LineSeries extends CartesianSeries {
             }
         };
 
-        this.nodeSelection.selectByClass(Text)
-            .each(updateTextFn);
-        this.highlightSelection.selectByClass(Text)
-            .each(updateTextFn);
+        this.textSelection.each(updateTextFn);
     }
 
     getNodeData(): readonly LineNodeDatum[] {

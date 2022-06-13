@@ -1,4 +1,4 @@
-import {ColDef, ColDefUtil} from 'ag-grid-community';
+import { ColDef, ColDefUtil } from 'ag-grid-community';
 
 export class AgGridColumn {
     public static hasChildColumns(slots: any) {

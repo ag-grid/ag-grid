@@ -239,7 +239,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         this.selectedValue = value;
         this.virtualList.ensureIndexVisible(index);
-        this.virtualList.refresh();
+
+        this.virtualList.forEachRenderedRow((cmp: RichSelectRow, idx: number) => {
+            cmp.updateSelected(index === idx);
+        });
     }
 
     private createRowComponent(value: any): Component {

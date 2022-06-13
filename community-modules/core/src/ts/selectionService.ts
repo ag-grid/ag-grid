@@ -99,7 +99,8 @@ export class SelectionService extends BeanStub {
 
         changedPath.forEachChangedNodeDepthFirst(rowNode => {
             if (rowNode !== rootNode) {
-                rowNode.calculateSelectedFromChildren();
+                const selected = rowNode.calculateSelectedFromChildren();
+                rowNode.selectThisNode(selected === null ? false : selected);
             }
         });
 
@@ -133,7 +134,8 @@ export class SelectionService extends BeanStub {
             }
         });
         iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
-            group.calculateSelectedFromChildren();
+            const selected = group.calculateSelectedFromChildren();
+            group.selectThisNode(selected === null ? false : selected);
         });
         return updatedCount;
     }

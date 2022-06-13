@@ -2,7 +2,7 @@
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-angular-legacy)](https://www.npmjs.com/package/ag-grid-angular-legacy) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-angular-legacy)](https://bundlephobia.com/result?p=ag-grid-angular-legacy) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-AG Grid Angular Component
+AG Grid Angular Legacy
 ------
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
@@ -10,7 +10,11 @@ It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source
 
 ![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
 
-<br/>Version 22.1.1 of <code>ag-grid-angular</code> is the last version that supports Angular 5 and before.<br/>Version 23 onwards of <code>ag-grid-angular</code> will support Angular 6+ only.
+## Supported Angular Versions
+
+This legacy version is for use with Angular versions 8-11 as it is distributed in View Engine format now that the corresponding `ag-grid-angular` package has been moved on to Ivy with a minimum dependency of Angular v12.
+
+See Angular [Version Compatibility](https://ag-grid.com/angular-data-grid/angular-compatibility/) for which versions of Angular are supported by each AG Grid version.
 
 Features
 --------------
@@ -49,20 +53,20 @@ Here are some of the features that make AG Grid stand out:
 
 \* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out [developers documentation](https://www.ag-grid.com/javascript-data-grid?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out [developers documentation](https://www.ag-grid.com/angular-data-grid?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 Usage Overview
 --------------
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/react-grid?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
 
 #### Install dependencies
 
-    $ npm i --save ag-grid-community ag-grid-angular
+    $ npm i --save ag-grid-community ag-grid-angular-legacy
 
 #### Import `AgGridModule` and add it to the `App` module
 
-	import { AgGridModule } from 'ag-grid-angular';
+	import { AgGridModule } from 'ag-grid-angular-legacy';
 
 	@NgModule({
 	  declarations: [AppComponent],

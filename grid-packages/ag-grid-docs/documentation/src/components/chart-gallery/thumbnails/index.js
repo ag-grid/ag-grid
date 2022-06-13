@@ -13,6 +13,7 @@ import thumbnailCustomTooltips from './custom-tooltips.png';
 import thumbnailGroupedBar from './grouped-bar.png';
 import thumbnailGroupedColumn from './grouped-column.png';
 import thumbnailHistogramWithSpecifiedBins from './histogram-with-specified-bins.png';
+import thumbnailLargeDatasets from './large-datasets.png';
 import thumbnailLineWithGaps from './line-with-gaps.png';
 import thumbnailLogAxis from './log-axis.png';
 import thumbnailMarketIndexTreemap from './market-index-treemap.png';
@@ -49,6 +50,7 @@ const thumbnails = {
     'grouped-bar': thumbnailGroupedBar,
     'grouped-column': thumbnailGroupedColumn,
     'histogram-with-specified-bins': thumbnailHistogramWithSpecifiedBins,
+    'large-datasets': thumbnailLargeDatasets,
     'line-with-gaps': thumbnailLineWithGaps,
     'log-axis': thumbnailLogAxis,
     'market-index-treemap': thumbnailMarketIndexTreemap,

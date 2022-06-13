@@ -40,7 +40,7 @@ The example below demonstrates Client-side Filtering with no Infinite Scroll. No
     - Year column has Number Filter.
 - Rows are loaded once. All filtering is then subsequently done by the grid.
 
-<grid-example title='No Infinite Scroll Client Side' name='full-client-side' type='generated' options='{ "enterprise": true, "modules": ["serverside","setfilter", "menu"] }'></grid-example>
+<grid-example title='Client Side Filtering' name='full-client-side' type='generated' options='{ "enterprise": true, "modules": ["serverside","setfilter", "menu"] }'></grid-example>
 
 Note that the Set Filter is provided values to work. This is a requirement when using the Set Filter with the SSRM.
 
@@ -84,7 +84,7 @@ The example below demonstrates filtering using [Simple Column Filters](/filter-p
 - The server uses the metadata contained in the `filterModel` to filter the rows.
 - Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-<grid-example title='Filtering With Infinite Scroll' name='infinite-simple' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] }'></grid-example>
+<grid-example title='Server Side Filtering' name='infinite-simple' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] }'></grid-example>
 
 As previously mentioned, when not using Infinite Scroll, the grid will filter on the client. To force Server-side Filtering, regardless of Infinite Scroll, set `serverSideFilterOnServer=true`. This is demonstrated below, note the following:
 
@@ -160,7 +160,7 @@ When the filter for the **Country** column is changed, the values for the **Spor
 - The server uses the metadata contained in the `filterModel` to filter the rows.
 - Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-<grid-example title='Set Filter and Infinite Scrolling' name='infinite-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
+<grid-example title='Set Filter Server Side Filtering' name='infinite-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
 
 
 ## Client-side Group Filtering
@@ -172,7 +172,7 @@ The example below shows Client-side sorting of groups. Note the following:
  - The grid is not using [Infinite Scroll](/server-side-model-row-stores/), the property  `serverSideInfiniteScroll` is not set.
  - All columns have Text or Number filters configured. Setting filters on these columns will filter leaf values within the dataset.
 
-<grid-example title='Group Filter Client-side' name='group-filter-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Client-side Group Filtering' name='group-filter-client-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 Note the SSRM does not filter groups when using Client-side filtering. This is becasue not all children are loaded, so it is not possible for the grid to know if a group passes af filter. For example if the data was grouped by Sport, and the filter `Country=Ireland` was set, the Gymnastics group would still show even though it has no children (Ireland has no Gymnastics winners). This makes sense, as the grid cannot know this, if the child rows are not laoded. This leads to empty groups when filtering.
 
@@ -188,13 +188,13 @@ The example below demonstrates. Note the following:
 - Filtering is done on the Server-side via grid property `serverSideFilterOnServer=true`.
 - All columns have Text or Number filters configured.
 
-<grid-example title='Group Filter Server-side' name='group-filter-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Server-side Group Filtering' name='group-filter-server-side' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 To override this behaviour, and always have the grid reload all rows when a filter changes, set the grid property `serverSideFilterAllLevels=true`.
 
 The example below is identical to the above, except `serverSideFilterAllLevels=true`.
 
-<grid-example title='Group Filter Server-side Force' name='group-filter-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Server-side Group Filtering Force' name='group-filter-server-side-force' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Next Up
 

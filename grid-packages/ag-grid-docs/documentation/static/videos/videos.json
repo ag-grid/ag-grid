@@ -40,6 +40,20 @@
         "Cell Renderer Selector."
       ],
       "runningTime": "7:53"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "react": [
@@ -196,6 +210,20 @@
         "State via API"
       ],
       "runningTime": "22:46"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "angular": [
@@ -254,6 +282,20 @@
         "Angular & JavaScript Components"
       ],
       "runningTime": "13:59"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "thumbnail": {
+        "image": "AgGridVideo_SC.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
   ],
   "vue": [
@@ -312,6 +354,21 @@
         "Set Filter, Multi Filter"
       ],
       "runningTime": "12:54"
+    },
+    {
+      "title": "Row Grouping",
+      "url": "https://www.youtube.com/watch?v=kM0RFOoPDXk&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "Row Grouping"
+      },
+      "keyPoints": [
+        "Setting Row Groups",
+        "Group Display Types",
+        "Auto Group Columns"
+      ],
+      "runningTime": "20:23"
     }
+
   ]
 }

@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/angular-legacy.svg)](https://www.npmjs.com/package/@ag-grid-community/angular-legacy)
 [![npm](https://img.shields.io/npm/dt/@ag-grid-community/angular-legacy.svg)](https://www.npmjs.com/package/@ag-grid-community/angular-legacy)
 
-# AG Grid Angular Component
+# AG Grid Angular Legacy
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
@@ -13,9 +13,11 @@ Here's how our grid looks with multiple filters and grouping enabled:
 
 ![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
 
-Version 22.1.1 of `@ag-grid-community/angular` is the last version that supports Angular 5 and before.
+## Supported Angular Versions
 
-Version 23 onwards of `@ag-grid-community/angular` will support Angular 6+ only.
+This legacy version is for use with Angular versions 8-11 as it is distributed in View Engine format now that the corresponding `@ag-grid-community/angular` package has been moved on to Ivy with a minimum dependency of Angular v12.
+
+See Angular [Version Compatibility](https://ag-grid.com/angular-data-grid/angular-compatibility/) for which versions of Angular are supported by each AG Grid version.
 
 ## Features
 

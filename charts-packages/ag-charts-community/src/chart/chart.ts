@@ -918,7 +918,7 @@ export abstract class Chart extends Observable {
                 break;
 
             case 'left':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5)); // Remove legend if it takes up more than 50% of the chart width.
 
@@ -934,7 +934,7 @@ export abstract class Chart extends Observable {
                 break;
 
             default: // case 'right':
-                legend.performLayout(0, height - legendSpacing * 2);
+                legend.performLayout(width, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
                 legendGroup.visible = legendBBox.width < Math.floor((width * 0.5));
 
@@ -996,10 +996,8 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        const allSeries = this.series;
         let node: Node | undefined = undefined;
-        for (let i = allSeries.length - 1; i >= 0; i--) {
-            const series = allSeries[i];
+        for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
@@ -1026,44 +1024,37 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        const allSeries = this.series;
-
-        type Point = { x: number, y: number };
-
-        function getDistance(p1: Point, p2: Point): number {
-            // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
-            // values > 1 
-            return (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
-        }
-
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
 
-        for (let i = allSeries.length - 1; i >= 0; i--) {
-            const series = allSeries[i];
+        for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
+            // Ignore off-screen points when finding the closest series node datum in tracking mode.
+            const { xAxis, yAxis } = series;
             const hitPoint = series.group.transformPoint(x, y);
-            series.getNodeData().forEach(datum => {
-                if (!datum.point) {
+            for (const datum of series.getNodeData()) {
+                const { point } = datum;
+                if (!point) {
                     return;
                 }
 
-                // Ignore off-screen points when finding the closest series node datum in tracking mode.
-                const { xAxis, yAxis } = series;
-                const isInRange = xAxis?.inRange(datum.point.x) && yAxis?.inRange(datum.point.y);
+                const { x, y } = point;
+                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
 
                 if (!isInRange) {
-                    return;
+                    continue;
                 }
 
-                const distance = getDistance(hitPoint, datum.point);
+                // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
+                // values > 1 
+                const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
                 }
-            });
+            }
         }
 
         return closestDatum;
@@ -1239,6 +1230,11 @@ export abstract class Chart extends Observable {
 
         if (pointerOverLegendDatum && !this.pointerOverLegendDatum) {
             this.element.style.cursor = 'pointer';
+            if (datum && this.legend.truncatedItems.has(datum.itemId || datum.id)) {
+                this.element.title = datum.label.text;
+            } else {
+                this.element.title = '';
+            }
         }
         if (!pointerOverLegendDatum && this.pointerOverLegendDatum) {
             this.element.style.cursor = 'default';
