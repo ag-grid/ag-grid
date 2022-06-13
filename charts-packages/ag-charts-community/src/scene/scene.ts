@@ -213,8 +213,8 @@ export class Scene {
         consoleLog: false,
     };
 
-    render(opts: { start: number }) {
-        const { start: preprocessingStart } = opts;
+    render(opts?: { start?: number }) {
+        const { start: preprocessingStart = performance.now() } = opts || {};
         const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
