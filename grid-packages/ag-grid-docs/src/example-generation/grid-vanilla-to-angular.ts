@@ -129,7 +129,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces } = bindings;
-    const { rowDataType } = data;
+    const { rowDataType = 'any[]' } = data;
     const diParams = [];
 
     if (data) {
@@ -174,7 +174,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
 
-            propertyAssignments.push(`public rowData!: ${rowDataType || 'any[]'};`);
+            propertyAssignments.push(`public rowData!: ${rowDataType};`);
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
