@@ -4,8 +4,8 @@
   "description": "AG Grid Styles and Themes",
   "main": "_index.scss",
   "files": [
-    "*.css",
-    "*.scss"
+    "_index.scss",
+    "dist/*"
   ],
   "scripts": {
     "build": "npm run build:sass -- --no-error-css && node build-css-content.js",

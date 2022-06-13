@@ -13,7 +13,7 @@
         color: var(--ag-header-foreground-color);
     }
 
-    %ag-text-input {
+    @include ag.text-input {
         @include ag.theme-rtl((
             padding-left: var(--ag-grid-size),
         ));
