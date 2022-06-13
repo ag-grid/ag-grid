@@ -504,6 +504,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.autoGroupColumnDef;
     }
 
+    public isColumnsSortingCoupledToGroup(): boolean {
+        const autoGroupColumnDef = this.getAutoGroupColumnDef();
+        const isClientSideRowModel = this.isRowModelDefault();
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator;
+    }
+
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.groupDisplayType) {
             return this.matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);

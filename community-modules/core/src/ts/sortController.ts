@@ -35,26 +35,24 @@ export class SortController extends BeanStub {
             sort = null;
         }
 
-
-        // We only sort dependent columns as a result of sorting a group in CSRM
-        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
+        const isColumnsSortingCoupledToGroup = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
         let columnsToUpdate = [column];
-        // clear sort on all columns except this one, and update the icons
-        if (column.getColDef().showRowGroup && isClientSideRowModel) {
-            const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
-            const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
-            
-            if (sortableRowGroupColumns) {
-                columnsToUpdate = [column, ...sortableRowGroupColumns];
-            } 
+        if (isColumnsSortingCoupledToGroup) {
+            if (column.getColDef().showRowGroup) {
+                const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
+                
+                if (sortableRowGroupColumns) {
+                    columnsToUpdate = [column, ...sortableRowGroupColumns];
+                } 
+            }
         }
 
-        // update sort on changed cols
         columnsToUpdate.forEach(col => col.setSort(sort, source));
 
         const doingMultiSort = (multiSort || this.gridOptionsWrapper.isAlwaysMultiSort()) && !this.gridOptionsWrapper.isSuppressMultiSort();
 
-        // clear sort on all columns except this one, and update the icons
+        // clear sort on all columns except those changed, and update the icons
         if (!doingMultiSort) {
             this.clearSortBarTheseColumns(columnsToUpdate, source);
         } 
@@ -69,7 +67,15 @@ export class SortController extends BeanStub {
         // update sortIndex on all sorting cols
         const allSortedCols = this.getColumnsWithSortingOrdered();
         let sortIndex = 0;
+        const sortedRowGroupColumns: Column[] = [];
+        const doesGroupDisplaySortGroup = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
         allSortedCols.forEach(col => {
+            const groupColumn = this.columnModel.getGroupDisplayColumnForGroup(col.getId());
+            if (groupColumn && doesGroupDisplaySortGroup) {
+                // Update row group columns last as they replicate their group columns sort index
+                sortedRowGroupColumns.push(col);
+                return;
+            }
             if (col !== lastColToChange) {
                 col.setSortIndex(sortIndex);
                 sortIndex++;
@@ -79,6 +85,12 @@ export class SortController extends BeanStub {
         if (lastColToChange.getSort()) {
             lastColToChange.setSortIndex(sortIndex);
         }
+
+        // set row grouped columns sort index to match the row group display column
+        sortedRowGroupColumns.forEach(col => {
+            const groupColumn = this.columnModel.getGroupDisplayColumnForGroup(col.getId());
+            col.setSortIndex(groupColumn!.getSortIndex());
+        });
 
         // clear sort index on all cols not sorting
         const allCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();

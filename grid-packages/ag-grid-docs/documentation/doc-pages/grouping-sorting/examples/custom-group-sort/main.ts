@@ -5,18 +5,33 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'year',
-      rowGroup: true,
-      sortable: true,
-      sort: 'desc',
     },
     {
-      field: 'handset',
+      field: 'month',
       rowGroup: true,
       sortable: true,
       sort: 'asc',
+      comparator: (a, b) => {
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        // sorts 'months' in chronological order
+        return months.indexOf(a) - months.indexOf(b)
+      },
     },
     { field: 'salesRep' },
-    { field: 'month' },
+    { field: 'handset' },
     { field: 'sale' },
   ],
   defaultColDef: {

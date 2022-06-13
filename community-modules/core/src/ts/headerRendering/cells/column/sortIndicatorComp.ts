@@ -29,6 +29,7 @@ export class SortIndicatorComp extends Component {
     @Autowired('sortController')  private readonly sortController: SortController;
 
     private column: Column;
+    private suppressOrder: boolean;
 
     constructor() {
         super();
@@ -36,8 +37,9 @@ export class SortIndicatorComp extends Component {
         this.setTemplate(SortIndicatorComp.TEMPLATE);
     }
 
-    public setupSort(column: Column): void {
+    public setupSort(column: Column, suppressOrder: boolean = false): void {
         this.column = column;
+        this.suppressOrder = suppressOrder;
         
         this.setupMultiSortIndicator();
 
@@ -69,25 +71,29 @@ export class SortIndicatorComp extends Component {
 
     private onSortChanged(): void {
         this.updateIcons();
-        this.updateSortOrder();
+        if (!this.suppressOrder) {
+            this.updateSortOrder();
+        }
     }
 
     private updateIcons(): void {
-        const isMixedSort = this.isColumnMixedSorting();
-        const isAscending = !isMixedSort && this.column.isSortAscending();
-        const isDescending = !isMixedSort && this.column.isSortDescending();
-        const isNone = !isMixedSort && this.column.isSortNone();
+        const isColumnCoupled = this.isColumnCoupled();
+
+        const sortDirection = isColumnCoupled ? this.getGroupSortDirection() : this.column.getSort();
 
         if (this.eSortAsc) {
+            const isAscending = sortDirection === 'asc';
             this.eSortAsc.classList.toggle('ag-hidden', !isAscending);
         }
 
         if (this.eSortDesc) {
+            const isDescending = sortDirection === 'desc';
             this.eSortDesc.classList.toggle('ag-hidden', !isDescending);
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            const isNone = sortDirection === null || sortDirection === undefined;
             this.eSortNone.classList.toggle('ag-hidden', (alwaysHideNoSort || !isNone));
         }
     }
@@ -95,10 +101,9 @@ export class SortIndicatorComp extends Component {
     private setupMultiSortIndicator() {
         this.addInIcon('sortUnSort', this.eSortMixed, this.column);
     
-        // We only enable the mixed indicator for CSRM, as we know we always sort groups first.
         const isColumnShowingRowGroup = this.column.getColDef().showRowGroup;
-        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
-        if (isClientSideRowModel && isColumnShowingRowGroup) {
+        const areGroupsCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        if (areGroupsCoupled && isColumnShowingRowGroup) {
             // Watch global events, as row group columns can effect their display column.
             this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateMultiSortIndicator());
             // when grouping changes so can sort indexes and icons
@@ -107,26 +112,35 @@ export class SortIndicatorComp extends Component {
         }
     }
 
-    private isColumnMixedSorting() {
-        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
-        if (!isClientSideRowModel) {
-            return false;
-        }
+    private isColumnCoupled() {
+        const areGroupsCoupled = this.gridOptionsWrapper.isColumnsSortingCoupledToGroup();
+        const isColumnGroupDisplay = !!this.column.getColDef().showRowGroup;
+        return areGroupsCoupled && isColumnGroupDisplay;
+    }
 
-        if (!this.column.getColDef().showRowGroup) {
-            return false;
+    private getGroupSortDirection(): 'asc' | 'desc' | 'mixed' | null | undefined {
+        const columnHasUniqueData = this.column.getColDef().field;
+        const linkedColumns = this.columnModel.getSourceColumnsForGroupColumn(this.column);
+        if (!linkedColumns) {
+            return this.column.getSort();
         }
-        const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.column);
-        // this == is intentional, as it allows null and undefined to match, which are both unsorted states
-        const sortDirectionsMatch = sourceColumns?.every(sourceCol => this.column.getSort() == sourceCol.getSort());
+        const sortableColumns = columnHasUniqueData ? [this.column, ...linkedColumns] : linkedColumns;
 
-        const isMultiSorting = !sortDirectionsMatch;
-        return isMultiSorting;
+        if (sortableColumns.length === 0) {
+            return undefined;
+        }
+        const firstSort = sortableColumns[0].getSort();
+        const allMatch = sortableColumns.every(col => col.getSort() === firstSort);
+        if (!allMatch) {
+            return 'mixed';
+        }
+        return firstSort;
     }
 
     private updateMultiSortIndicator() {
         if (this.eSortMixed) {
-            this.eSortMixed.classList.toggle('ag-hidden', !this.isColumnMixedSorting());
+            const isMixedSort = this.isColumnCoupled() && this.getGroupSortDirection() === 'mixed';
+            this.eSortMixed.classList.toggle('ag-hidden', !isMixedSort);
         }
     }
 
@@ -137,15 +151,10 @@ export class SortIndicatorComp extends Component {
         if (!this.eSortOrder) { return; }
 
         const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
-        const notRowGroupColumnsWithSorting = allColumnsWithSorting.filter(sortedCol => !this.columnModel.getGroupDisplayColumnForGroup(sortedCol.getId()));
 
-        const isClientSideRowModel = this.gridOptionsWrapper.isRowModelDefault();
-        const indexableColumns = isClientSideRowModel ? notRowGroupColumnsWithSorting : allColumnsWithSorting;
-
-        const colIsNotRowGroup = !this.columnModel.getGroupDisplayColumnForGroup(this.column.getId());
-        const indexThisCol = indexableColumns.indexOf(this.column);
-        const moreThanOneColSorting = indexableColumns.length > 1;
-        const showIndex = this.column.isSorting() && moreThanOneColSorting && (!isClientSideRowModel || colIsNotRowGroup);
+        const indexThisCol = this.column.getSortIndex() ?? -1;
+        const moreThanOneColSorting = allColumnsWithSorting.some(col => col.getSortIndex() ?? -1 >= 1);
+        const showIndex = this.column.isSorting() && moreThanOneColSorting;
 
         setDisplayed(this.eSortOrder, showIndex);
 

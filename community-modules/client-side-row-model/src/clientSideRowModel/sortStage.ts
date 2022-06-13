@@ -33,19 +33,6 @@ export class SortStage extends BeanStub {
             && this.gridOptionsWrapper.isDeltaSort();
 
         const sortContainsGroupColumns = sortOptions.some(opt => !!this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()));
-
-        // In CSRM, we always sort groups first, as we don't display a sort index for group columns
-        const rowGroupSortOptions: SortOption[] = [];
-        const leafNodeSortOptions: SortOption[] = [];
-        sortOptions.forEach(so => {
-            const rowGroupColumns = this.columnModel.getRowGroupColumns();
-            if (rowGroupColumns.includes(so.column)) {
-                rowGroupSortOptions.push(so);
-            } else {
-                leafNodeSortOptions.push(so);
-            }
-        });
-        const orderedSortOptions = [...rowGroupSortOptions, ...leafNodeSortOptions];
-        this.sortService.sort(orderedSortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
+        this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     }
 }
