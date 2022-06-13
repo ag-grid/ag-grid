@@ -36152,6 +36152,11 @@
         "optional": false
       }
     },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "refresh": {
       "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
       "type": {
@@ -36161,12 +36166,9 @@
         "returnType": "boolean",
         "optional": false
       }
-    },
-    "meta": {
-      "typeParams": [
-        "TData"
-      ]
-    },
+    }
+  },
+  "ICellEditorAngularComp": {
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {
@@ -36253,6 +36255,11 @@
         "optional": false
       }
     },
+    "meta": {
+      "typeParams": [
+        "TData"
+      ]
+    },
     "refresh": {
       "description": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
       "type": {
@@ -36262,12 +36269,9 @@
         "returnType": "boolean",
         "optional": false
       }
-    },
-    "meta": {
-      "typeParams": [
-        "TData"
-      ]
-    },
+    }
+  },
+  "AgEditorComponent": {
     "agInit": {
       "description": "/** Mandatory - Params for rendering this component. */",
       "type": {

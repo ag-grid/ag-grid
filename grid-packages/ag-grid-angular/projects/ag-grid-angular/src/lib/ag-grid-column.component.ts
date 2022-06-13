@@ -183,8 +183,8 @@ export class AgGridColumn<TData = any> {
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined;
     /**     */
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
-         * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
+/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
+     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
     @Input() public headerComponent: any;
     /** @deprecated As of v27, use `headerComponent` for framework components too.     */
     @Input() public headerComponentFramework: any;

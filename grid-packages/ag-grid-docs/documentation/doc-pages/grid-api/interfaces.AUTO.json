@@ -13454,11 +13454,11 @@
     "meta": {},
     "type": {
       "agInit(params: ICellRendererParams)": "void",
-      "refresh(params: ICellRendererParams)": "boolean"
+      "refresh(params: ICellRendererParams<TData>)": "boolean"
     },
     "docs": {
       "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
+      "refresh(params: ICellRendererParams<TData>)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "ICellEditorAngularComp": {
@@ -13490,11 +13490,11 @@
     "meta": {},
     "type": {
       "agInit(params: ICellRendererParams)": "void",
-      "refresh(params: ICellRendererParams)": "boolean"
+      "refresh(params: ICellRendererParams<TData>)": "boolean"
     },
     "docs": {
       "agInit(params: ICellRendererParams)": "/** Mandatory - Params for rendering this component. */",
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
+      "refresh(params: ICellRendererParams<TData>)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
     }
   },
   "AgEditorComponent": {
