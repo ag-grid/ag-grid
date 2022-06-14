@@ -39,7 +39,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     getLastHighlightedRowNode(): RowNode | null;
 }
 
-export interface RefreshModelParams<TData> {
+export interface RefreshModelParams<TData = any> {
     // how much of the pipeline to execute
     step: ClientSideRowModelSteps;
     // what state to reset the groups back to after the refresh

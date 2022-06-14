@@ -1,6 +1,6 @@
 import { RowNode } from "../entities/rowNode";
 
-export interface RowNodeTransaction<TData> {
+export interface RowNodeTransaction<TData = any> {
     /** Row nodes added */
     add: RowNode<TData>[];
     /** Row nodes removed */

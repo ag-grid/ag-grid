@@ -36,7 +36,7 @@
     "type": { "returnType": "any" }
   },
   "data": {
-    "description": "/** The data as provided by the application. */",
+    "description": "/** The data as provided by the application.\n * Can be `undefined` when using row grouping or during grid initialisation. */",
     "type": { "returnType": "TData | undefined" }
   },
   "parent": {

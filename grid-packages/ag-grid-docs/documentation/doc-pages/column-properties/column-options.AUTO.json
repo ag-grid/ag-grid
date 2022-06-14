@@ -56,7 +56,7 @@
   },
   "children": {
     "description": "/** A list containing a mix of columns and column groups. */",
-    "type": { "returnType": "(ColDef | ColGroupDef)[]" }
+    "type": { "returnType": "(ColDef<TData> | ColGroupDef<TData>)[]" }
   },
   "groupId": {
     "description": "/** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */",

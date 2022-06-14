@@ -1,4 +1,4 @@
-export interface RowDataTransaction<TData> {
+export interface RowDataTransaction<TData = any> {
     /** Index to add rows */
     addIndex?: number | null;
     /** Rows to add */
