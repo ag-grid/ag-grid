@@ -89,7 +89,9 @@ Please refer to the example below to get a better idea of how the above configs 
 
 ## Fonts
 
-There are a number of configs that affect the `fontSize`, `fontStyle`, `fontWeight`, `fontFamily`, and `color` of the legend item labels:
+There are a number of configs that affect the `fontSize`, `fontStyle`, `fontWeight`, `fontFamily`, and `color` of the legend item labels.
+
+`characterLimit` can also be configured to constrain the length of legend item labels, if the label text exceeds the character limit, it will be truncated and an ellipsis will be appended.
 
 ```js
 legend: {
@@ -99,7 +101,8 @@ legend: {
             fontStyle: 'italic',
             fontWeight: 'bold',
             fontFamily: 'Papyrus',
-            color: 'red'
+            color: 'red',
+            characterLimit: 25
         }
     }
 }
