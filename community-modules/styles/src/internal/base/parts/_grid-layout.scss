@@ -119,6 +119,13 @@
         bottom: 0;
     }
 
+    .ag-row-hover.ag-row-selected::before {
+        background-color: var(--ag-row-hover-color);
+        // overlay the background color on the hover color when hovering over a selected row,
+        // if the background color is semi-transparent it will blend properly
+        background-image: linear-gradient(var(--ag-selected-row-background-color), var(--ag-selected-row-background-color));
+    }
+
     .ag-column-hover {
         background-color: var(--ag-column-hover-color);
     }

@@ -23,7 +23,10 @@
         font-weight: 600;
         color: var(--ag-disabled-foreground-color);
     }
-    .ag-dnd-ghost {
+    
+    &.ag-dnd-ghost {
+        font-size: var(--ag-font-size);
+        color: var(--ag-header-foreground-color);
         font-weight: 600;
     }
 
@@ -124,4 +127,8 @@
     .ag-charts-format-sub-level-group-item {
         margin-bottom: calc(var(--ag-grid-size) * 1.5);
     }
+}
+
+.ag-theme-balham-dark {
+    color-scheme: dark;
 }
