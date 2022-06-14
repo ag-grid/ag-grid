@@ -825,6 +825,8 @@ export class ColumnModel extends BeanStub {
     private isColumnInViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
         if (col.isAutoHeight()) { return true; }
+        // likewise we never filter out autoHeaderHeight columns
+        if (col.isAutoHeaderHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
