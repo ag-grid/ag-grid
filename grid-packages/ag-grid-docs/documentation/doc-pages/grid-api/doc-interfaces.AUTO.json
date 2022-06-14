@@ -11304,7 +11304,7 @@
   },
   "AgChartLegendLabelOptions": {
     "characterLimit": {
-      "description": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+      "description": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. */",
       "type": { "returnType": "number", "optional": true }
     },
     "color": {
