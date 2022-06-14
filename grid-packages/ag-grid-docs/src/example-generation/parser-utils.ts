@@ -320,7 +320,7 @@ export function getTypes(node: ts.Node) {
     let typesToInclude = []
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial'].includes(typeName)) {
+        if (!['HTMLElement', 'Function', 'Partial', 'TData'].includes(typeName)) {
             typesToInclude.push(typeName);
         }
     }
