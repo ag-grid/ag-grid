@@ -22,7 +22,16 @@ export class AgInputNumberField extends AgInputTextField {
             }
         });
 
+        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
+
         this.eInput.step = 'any';
+    }
+
+    private onWheel(e: WheelEvent) {
+        // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
+        if (document.activeElement === this.eInput) {
+            e.preventDefault();
+        }
     }
 
     public normalizeValue(value: string): string {

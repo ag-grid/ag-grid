@@ -576,6 +576,7 @@ export abstract class Chart extends Observable {
 
         if (this.debug) {
             console.log({
+                chart: this,
                 durationMs: Math.round((end - start)*100) / 100,
                 count,
                 performUpdateType: ChartUpdateType[performUpdateType],
@@ -1073,7 +1074,7 @@ export abstract class Chart extends Observable {
     }
 
     private lastTooltipEvent?: MouseEvent = undefined;
-    private handleTooltipTrigger = debouncedAnimationFrame(({ count }) => {
+    private handleTooltipTrigger = debouncedAnimationFrame(() => {
         this.handleTooltip(this.lastTooltipEvent!);
     });
     protected handleTooltip(event: MouseEvent) {

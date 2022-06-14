@@ -27,11 +27,13 @@ export class CategoryAxis extends ChartAxis<BandScale<string>> {
 
     set domain(values: string[]) {
         // Prevent duplicate categories.
-        const valuesDict: Record<string, null> = {};
+        const valuesDict: Record<string, string> = {};
         for (const value of values) {
-            valuesDict[value] = null;
+            // NOTE: keys are forces to strings, so we can't use them for cases where the domain is
+            // object-based - which is itself counter to the typings here!
+            valuesDict[value] = value;
         }
-        this.scale.domain = Object.keys(valuesDict);
+        this.scale.domain = Object.values(valuesDict);
     }
     get domain(): string[] {
         return this.scale.domain.slice();
