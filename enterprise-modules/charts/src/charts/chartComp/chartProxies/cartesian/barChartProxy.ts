@@ -1,9 +1,8 @@
-import { _, } from "@ag-grid-community/core";
-import { AgChart, BarSeries, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { _ } from "@ag-grid-community/core";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
-import { hexToRGBA } from "../../utils/color";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -18,78 +17,23 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     protected createChart(): CartesianChart {
-        const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
-
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-            axes: this.getAxes(isBar, isNormalised),
-            series: this.getSeries(isNormalised),
+            theme: this.chartTheme
         });
     }
 
     public update(params: UpdateChartParams): void {
-        this.updateAxes(params);
+        const { category, data } = params;
+        const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
 
-        const barSeries = this.chart.series[0] as BarSeries;
-        if (this.crossFiltering) {
-            this.updateCrossFilteringSeries(barSeries, params);
-        } else {
-            barSeries.fills = this.chartTheme.palette.fills;
-            barSeries.strokes = this.chartTheme.palette.strokes;
-        }
+        let options: AgCartesianChartOptions = {
+            data: this.transformData(data, category.id),
+            axes: this.getAxes(isBar, isNormalised),
+            series: this.getSeries(params, isNormalised)
+        };
 
-        barSeries.data = this.transformData(params.data, params.category.id);
-        barSeries.xKey = params.category.id;
-        barSeries.xName = params.category.name;
-        barSeries.yKeys = params.fields.map(f => f.colId) as any;
-        barSeries.yNames = params.fields.map(f => f.displayName!) as any;
-    }
-
-    private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
-        // add additional filtered out field
-        let fields: FieldDefinition[] = params.fields;
-        fields.forEach(field => {
-            const crossFilteringField = {...field};
-            crossFilteringField.colId = field.colId + '-filtered-out';
-            fields.push(crossFilteringField);
-        });
-
-        const palette = this.chartTheme.palette;
-
-        // introduce cross filtering transparent fills
-        const fills: string[] = [];
-        palette.fills.forEach(fill => {
-            fills.push(fill);
-            fills.push(hexToRGBA(fill, '0.3'));
-        });
-        barSeries.fills = fills;
-
-        // introduce cross filtering transparent strokes
-        const strokes: string[] = [];
-        palette.strokes.forEach(stroke => {
-            fills.push(stroke);
-            fills.push(hexToRGBA(stroke, '0.3'));
-        });
-        barSeries.strokes = strokes;
-
-        // disable series highlighting by default
-        barSeries.highlightStyle.fill = undefined;
-
-        // hide 'filtered out' legend items
-        const colIds = params.fields.map(f => f.colId);
-        barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
-
-        // @todo(AG-6790): Revisit approach here?
-        // sync toggling of legend item with hidden 'filtered out' item
-        // this.chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-        //     barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-        // });
-
-        this.chart.tooltip.delay = 500;
-
-        // add node click cross filtering callback to series
-        barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+        AgChart.update(this.chart as CartesianChart, options);
     }
 
     private getAxes(isBar: boolean, normalised: boolean) {
@@ -109,20 +53,35 @@ export class BarChartProxy extends CartesianChartProxy {
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         if (normalised) {
             const numberAxis = axes[1];
-            numberAxis.label = {...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%'};
+            numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
         }
         return axes;
     }
 
-    private getSeries(normalised: boolean) {
+    private getSeries(params: UpdateChartParams, normalised: boolean) {
         const groupedCharts = ['groupedColumn', 'groupedBar'];
         const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
-        return [{
-            ...this.chartOptions[this.standaloneChartType].series,
-            type: this.standaloneChartType,
-            grouped: isGrouped,
-            normalizedTo: normalised ? 100 : undefined,
-        }];
+        return params.fields.map(f => ({
+                ...this.extractSeriesOverrides(),
+                type: this.standaloneChartType,
+                grouped: isGrouped,
+                normalizedTo: normalised ? 100 : undefined,
+                xKey: params.category.id,
+                xName: params.category.name,
+                yKey: f.colId,
+                yName: f.displayName
+            }
+        ));
+    }
+
+    private extractSeriesOverrides() {
+        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
+
+        // TODO: remove once `yKeys` and `yNames` have been removed from the options
+        delete seriesOverrides.yKeys;
+        delete seriesOverrides.yNames;
+
+        return seriesOverrides;
     }
 
     private isNormalised() {
