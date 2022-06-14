@@ -82,7 +82,10 @@ export class RowNode<TData = any> implements IEventEmitter {
     /** If using row grouping and aggregation, contains the aggregation data. */
     public aggData: any;
 
-    /** The data as provided by the application. */
+    /**
+     * The data as provided by the application.
+     * Can be `undefined` when using row grouping or during grid initialisation. 
+     */
     public data: TData | undefined;
 
     /** The parent node to this node, or empty if top level */

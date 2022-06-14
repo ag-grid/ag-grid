@@ -4,9 +4,9 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { createIconNoSpan } from "../../utils/icon";
 import { IComponent } from "../../interfaces/iComponent";
 
-export interface ILoadingCellRendererParams<TData = any> extends ICellRendererParams<TData> { }
+export interface ILoadingCellRendererParams extends ICellRendererParams { }
 export interface ILoadingCellRenderer { }
-export interface ILoadingCellRendererComp<TData = any> extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams<TData>> { }
+export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> { }
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
 

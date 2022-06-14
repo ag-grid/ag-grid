@@ -37,9 +37,9 @@ import { ClientSideNodeManager } from "./clientSideNodeManager";
 
 enum RecursionType { Normal, AfterFilter, AfterFilterAndSort, PivotNodes }
 
-export interface BatchTransactionItem {
-    rowDataTransaction: RowDataTransaction;
-    callback: ((res: RowNodeTransaction) => void) | undefined;
+export interface BatchTransactionItem<TData = any> {
+    rowDataTransaction: RowDataTransaction<TData>;
+    callback: ((res: RowNodeTransaction<TData>) => void) | undefined;
 }
 
 export interface RowNodeMap {

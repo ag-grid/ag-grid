@@ -74,7 +74,7 @@ export class AgGridColumn<TData = any> {
     /** The params used to configure `tooltipComponent`.     */
     @Input() public tooltipComponentParams: any;
     /** A list containing a mix of columns and column groups.     */
-    @Input() public children: (ColDef | ColGroupDef)[] | undefined;
+    @Input() public children: (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API.     */
     @Input() public groupId: string | undefined;
     /** Set to `true` if this group should be opened by default. Default: `false`     */

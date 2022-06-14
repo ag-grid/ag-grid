@@ -470,12 +470,12 @@ export interface CellEditRequestEvent<TData = any> extends CellEvent<TData> {
     source: string | undefined;
 }
 
-export interface AsyncTransactionsFlushed extends AgGridEvent {
+export interface AsyncTransactionsFlushed<TData = any> extends AgGridEvent {
     /**
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
      * For Client-Side Row Model it's a list of `RowNodeTransaction`.
      */
-    results: (RowNodeTransaction | ServerSideTransactionResult)[];
+    results: (RowNodeTransaction<TData> | ServerSideTransactionResult)[];
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
