@@ -186,7 +186,11 @@ export class AgGridColumn {
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined;
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined;
+    /** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false`     */
     @Input() public wrapHeaderText: boolean | undefined;
+    /** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.
+     * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
+     * Default: `false`     */
     @Input() public autoHeaderHeight: boolean | undefined;
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.
      * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.     */
