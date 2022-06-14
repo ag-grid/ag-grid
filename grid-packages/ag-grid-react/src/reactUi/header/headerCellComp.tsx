@@ -76,7 +76,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             aria-description={ ariaDescription }
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
-            <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper">
+            <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
             </div>

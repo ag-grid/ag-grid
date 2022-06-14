@@ -12,7 +12,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell" role="columnheader" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper"></div>
+            <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
 
     @RefSelector('eResize') private eResize: HTMLElement;
