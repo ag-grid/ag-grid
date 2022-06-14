@@ -336,6 +336,10 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }
 
+        // Until we support this cleanly.
+        generatedOutput = generatedOutput.replace(/<TData>/g, '');
+        generatedOutput = generatedOutput.replace(/TData\[\]/g, 'any[]');
+
         return generatedOutput;
     };
 }

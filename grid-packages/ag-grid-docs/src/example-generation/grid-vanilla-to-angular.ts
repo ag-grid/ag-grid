@@ -129,7 +129,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces } = bindings;
-    const { rowDataType = 'any[]' } = data;
+    const { rowDataType = 'any[]' } = data || {};
     const diParams = [];
 
     if (data) {
@@ -199,7 +199,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
             .replace(/gridApi!\./g, 'gridApi.')
             .replace(/gridColumnApi!\./g, 'gridColumnApi.');
 
-        return `
+        let generatedOutput = `
 ${imports.join('\n')}${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({
@@ -224,6 +224,11 @@ ${bindings.classes.join('\n')}
 
 ${bindings.utils.join('\n')}
 `;
+
+        // Until we support this cleanly.
+        generatedOutput = generatedOutput.replace(/<TData>/g, '');
+        generatedOutput = generatedOutput.replace(/TData\[\]/g, 'any[]');
+        return generatedOutput;
     };
 }
 
