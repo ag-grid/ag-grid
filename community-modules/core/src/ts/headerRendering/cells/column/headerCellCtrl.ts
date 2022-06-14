@@ -473,8 +473,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             }
             this.columnModel.setColumnHeaderHeight(this.column, autoHeight);
         };
+
         measureHeight(0);
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => measureHeight(0));
+        this.addRefreshFunction(() => measureHeight(0));
     }
 
     private refreshAriaSort(): void {

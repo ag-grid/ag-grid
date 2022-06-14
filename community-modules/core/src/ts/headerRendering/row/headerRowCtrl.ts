@@ -98,6 +98,7 @@ export class HeaderRowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
         this.setWidth();
+        this.onRowHeightChanged();
     }
 
     public getType(): HeaderRowType {
