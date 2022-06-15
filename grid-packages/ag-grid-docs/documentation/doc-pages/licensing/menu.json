@@ -418,17 +418,12 @@
             "title": "Themes",
             "url": "/themes/",
             "matrixExcludeChildren": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Provided Themes",
-                "url": "/themes-provided/"
-              },
-              {
-                "title": "Customising Themes",
-                "url": "/themes-customising/"
-              }
-            ]
+            "showInCollapsed": true
+          },
+          {
+            "title": "Customising Design",
+            "url": "/customising-design/",
+            "showInCollapsed": true
           },
           {
             "title": "Grid Size",

@@ -1,12 +1,24 @@
 ---
-title: "Customising Themes"
+title: "Customising Design with CSS"
 ---
 
-This section describes how the themes provided by the grid can be customised to suit application requirements.
+[[warning]]
+| TODO: This page covers broadly the right topics, but needs updating for CSS variables.
 
-[Provided Themes](/themes-provided/) can be customised using theme parameters and CSS
-rules. This requires configuring your project to build Sass files and allows you to change elements of the look
-and feel like colours, padding, and borders.
+This section describes how to customise the look and feel of the grid using CSS. If you want to style a particular column, particular header or cell, consider using [row styles](/row-styles), [cell styles](/cell-styles) or [custom renderers](/component-types/).
+
+[Provided Themes](/themes/) can be customised using theme parameters and CSS rules. This requires configuring your project to build Sass files and allows you to change elements of the look and feel like colours, padding, and borders.
+
+## When to extend a provided theme
+
+The majority of users start by selecting a [provided theme](/themes) and making customisations using CSS.
+
+If you start with a provided theme and then very extensively alter it to make a totally different design, you may encounter a couple of issues:
+
+1. If the provided theme contains design elements that you don't want, you need to add CSS rules to remove them.
+2. Between releases, we may change some of the implementation details of the provided theme in a way that breaks these rules you have added.
+
+For apps that want a look and feel that is entirely different from our provided themes, follow the instructions to [create your own theme from scratch](/themes/#creating-your-own-theme).
 
 ## Theme Parameters
 
@@ -112,7 +124,6 @@ We have created an example that demonstrates both methods of CSS variable use in
 [theme examples GitHub repo](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-css-variables).
 
 ## Customising themes using CSS rules
-
 
 Whether you're using Sass or CSS variables to set theme parameters, you will find that some design effects can't be achieved through
 parameters alone. For example, there is no parameter to set the `font-style: italic` on header cells. If you want your column headers to be italic, use regular CSS:
