@@ -82,14 +82,6 @@ export class MoveColumnFeature implements DropListener {
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
-
-        if (hideColumnOnExit) {
-            const dragItem = draggingEvent.dragSource.getDragItem();
-            const columns = dragItem.columns;
-            this.setColumnsVisible(columns, false, "uiColumnDragged");
-        }
-
         this.ensureIntervalCleared();
     }
 

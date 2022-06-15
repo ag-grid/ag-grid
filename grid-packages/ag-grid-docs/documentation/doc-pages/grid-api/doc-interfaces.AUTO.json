@@ -352,7 +352,14 @@
     },
     "onDragStopped": {
       "description": "/** Callback for drag stopped */",
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
+      "type": {
+        "arguments": {
+          "dragItem": "DragItem | null",
+          "dropZone?": "DropTarget | null"
+        },
+        "returnType": "void",
+        "optional": true
+      }
     }
   },
   "DropTarget": {
@@ -2393,6 +2400,10 @@
     },
     "suppressDragLeaveHidesColumns": {
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colResizeDefault": {
@@ -21696,6 +21707,10 @@
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "colResizeDefault": {
       "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
@@ -24439,6 +24454,10 @@
     },
     "suppressDragLeaveHidesColumns": {
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colResizeDefault": {
@@ -27194,6 +27213,10 @@
     },
     "suppressDragLeaveHidesColumns": {
       "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressRowGroupHidesColumns": {
+      "description": "/** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colResizeDefault": {

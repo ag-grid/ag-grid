@@ -582,6 +582,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressDragLeaveHidesColumns);
     }
 
+    public isSuppressRowGroupHidesColumns() {
+        return isTrue(this.gridOptions.suppressRowGroupHidesColumns);
+    }
+
     public isSuppressScrollOnNewData() {
         return isTrue(this.gridOptions.suppressScrollOnNewData);
     }

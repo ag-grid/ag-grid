@@ -201,6 +201,8 @@ export interface GridOptions {
     suppressColumnMoveAnimation?: boolean;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */
     suppressDragLeaveHidesColumns?: boolean;
+    /** If `true`, when you drag a column into a row group panel the column is not hidden. Default: `false` */
+    suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */

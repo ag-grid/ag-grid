@@ -77,6 +77,14 @@ export interface DragSource {
      * Callback for drag stopped
      */
     onDragStopped?: () => void;
+    /**
+     * Callback for entering the grid
+     */
+    onGridEnter?: (dragItem: DragItem | null) => void;
+    /**
+     * Callback for exiting the grid
+     */
+    onGridExit?: (dragItem: DragItem | null) => void;
 }
 
 export interface DropTarget {
@@ -285,6 +293,12 @@ export class DragAndDropService extends BeanStub {
         }
 
         if (dropTarget !== this.lastDropTarget) {
+            if (this.lastDropTarget !== null && dropTarget === null) {
+                this.dragSource.onGridExit?.(this.dragItem);
+            }
+            if (this.lastDropTarget === null && dropTarget !== null) {
+                this.dragSource.onGridEnter?.(this.dragItem);
+            }
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
