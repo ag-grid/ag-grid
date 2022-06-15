@@ -6,6 +6,7 @@ import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
 import { ChartAxis } from "./chartAxis";
+import { _ } from "../../../../community-modules/core/dist/cjs/es5/main";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -82,10 +83,6 @@ export class CartesianChart extends Chart {
         }
 
         const { seriesRect } = this.updateAxes(shrinkRect);
-
-        // width and height should not be negative
-        seriesRect.width = Math.max(0, seriesRect.width);
-        seriesRect.height = Math.max(0, seriesRect.height);
 
         this.createNodeData();
 
@@ -258,9 +255,23 @@ export class CartesianChart extends Chart {
             seriesRect.y += top ?? 0;
             seriesRect.width -= (left ?? 0) + (right ?? 0);
             seriesRect.height -= (top ?? 0) + (bottom ?? 0);
+
+            // Width and height should not be negative.
+            seriesRect.width = Math.max(0, seriesRect.width);
+            seriesRect.height = Math.max(0, seriesRect.height);
+
             return seriesRect;
         }
         const seriesRect = buildSeriesRect();
+
+        const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
+            const {x, y, width, height} = seriesRect;
+            const bounds = [x, y, x + width, y + height];
+            const fn = direction === 1 ? Math.min : Math.max;
+            const compareTo = bounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
+
+            return fn(value, compareTo);
+        };
 
         // Set the number of ticks for continuous axes based on the available range
         // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
@@ -327,22 +338,36 @@ export class CartesianChart extends Chart {
 
             switch (position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = Math.floor(shrinkRect.x + (axisWidths.left ?? 0));
-                    axis.translation.y = Math.floor(shrinkRect.y + 1 + axisOffset + axisThickness);
-                    break;
-                case ChartAxisPosition.Right:
-                    const safeX = Math.max(shrinkRect.x, shrinkRect.x + shrinkRect.width);
-                    axis.translation.x = Math.floor(safeX - axisThickness - axisOffset);
-                    axis.translation.y = Math.floor(shrinkRect.y + (axisWidths.top ?? 0));
+                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.y = clampToOutsideSeriesRect(
+                        shrinkRect.y + 1 + axisOffset + axisThickness,
+                        'y',
+                        1,
+                    );
                     break;
                 case ChartAxisPosition.Bottom:
-                    const safeY = Math.max(shrinkRect.y, shrinkRect.y + shrinkRect.height + 1);
-                    axis.translation.x = Math.floor(shrinkRect.x + (axisWidths.left ?? 0));
-                    axis.translation.y = Math.floor(safeY - axisThickness - axisOffset);
+                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.y = clampToOutsideSeriesRect(
+                        shrinkRect.y + shrinkRect.height + 1 - axisThickness - axisOffset,
+                        'y',
+                        -1,
+                    );
                     break;
                 case ChartAxisPosition.Left:
-                    axis.translation.x = Math.floor(shrinkRect.x + axisOffset + axisThickness);
-                    axis.translation.y = Math.floor(shrinkRect.y + (axisWidths.top ?? 0));
+                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.x = clampToOutsideSeriesRect(
+                        shrinkRect.x + axisOffset + axisThickness,
+                        'x',
+                        1,
+                    );
+                    break;
+                case ChartAxisPosition.Right:
+                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.x = clampToOutsideSeriesRect(
+                        shrinkRect.x + shrinkRect.width - axisThickness - axisOffset,
+                        'x',
+                        -1,
+                    );
                     break;
             }
             axis.update();

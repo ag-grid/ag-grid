@@ -412,12 +412,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const parallelLabels = label.parallel;
         let labelAutoRotation = 0;
 
-        axisGroup.translationX = this.translation.x;
-        axisGroup.translationY = this.translation.y;
+        axisGroup.translationX = Math.floor(this.translation.x);
+        axisGroup.translationY = Math.floor(this.translation.y);
         axisGroup.rotation = rotation;
 
-        gridlineGroup.translationX = this.translation.x;
-        gridlineGroup.translationY = this.translation.y;
+        gridlineGroup.translationX = Math.floor(this.translation.x);
+        gridlineGroup.translationY = Math.floor(this.translation.y);
         gridlineGroup.rotation = rotation;
 
         const halfBandwidth = (scale.bandwidth || 0) / 2;
