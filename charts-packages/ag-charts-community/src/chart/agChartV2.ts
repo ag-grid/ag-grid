@@ -292,7 +292,7 @@ function applyAxes<
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
-    const series: Series[] = [];
+    const series: Series<any, any, any>[] = [];
     const skip: (keyof NonNullable<SeriesOptionsTypes>)[] = ['listeners'];
 
     let index = 0;
@@ -400,7 +400,7 @@ function applyOptionValues<T extends ChartType, S extends ChartOptionType<T>>(
     return jsonApply<T, any>(target, options, applyOpts);
 }
 
-function applySeriesValues<T extends Series, S extends SeriesOptionType<T>>(
+function applySeriesValues<T extends Series<any, any, any>, S extends SeriesOptionType<T>>(
     target: T,
     options?: S,
     { skip, path }: { skip?: (keyof T | keyof S)[], path?: string } = {},

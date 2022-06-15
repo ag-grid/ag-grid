@@ -5,7 +5,6 @@ import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
 import { Label } from "../label";
-import { PointLabelDatum } from "../../util/labelPlacement";
 import { isNumber } from "../../util/value";
 import { TimeAxis } from "../axis/timeAxis";
 import { Node } from '../../scene/node';
@@ -20,7 +19,7 @@ export interface SeriesNodeDatum {
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `datum` - raw series datum, an element from the `series.data` array
-    readonly series: Series<this>;
+    readonly series: Series<this, any, any>;
     readonly itemId?: any;
     readonly datum: any;
     readonly point?: { // in local (series) coordinates
@@ -87,9 +86,12 @@ export class SeriesTooltip {
     enabled = true;
 }
 
+type SeriesArray<S, Mode> = Mode extends 'single' ? S[] : S[][];
+
 export abstract class Series<
     S extends SeriesNodeDatum = SeriesNodeDatum,
     L extends SeriesNodeDatum = S,
+    SeriesMode extends 'single' | 'multi' = any,
 > extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
     protected static readonly SERIES_LAYER_ZINDEX = 100;
@@ -105,24 +107,15 @@ export abstract class Series<
     readonly group: Group = new Group();
 
     // The group node that contains the series rendering in it's default (non-highlighted) state.
-    readonly seriesGroup: Group = this.group.appendChild(
-        new Group({ name: `${this.id}-series`, layer: true, zIndex: Series.SERIES_LAYER_ZINDEX }),
-    );
+    readonly seriesGroup: Group;
 
     // The group node that contains all highlighted series items. This is a performance optimisation
     // for large-scale data-sets, where the only thing that routinely varies is the currently
     // highlighted node.
-    readonly highlightGroup: Group = this.group.appendChild(
-        new Group({
-            name: `${this.id}-highlight`,
-            layer: true,
-            zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
-            optimiseDirtyTracking: true,
-        }),
-    );
+    readonly highlightGroup: Group;
 
     // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
-    readonly pickGroup: Group = this.seriesGroup.appendChild(new Group());
+    readonly pickGroup: Group;
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
@@ -152,6 +145,28 @@ export abstract class Series<
     showInLegend = true;
 
     cursor = 'default';
+
+    constructor({ seriesGroupUsesLayer = true } = {}) {
+        super();
+
+        const { group } = this;
+        this.seriesGroup = group.appendChild(
+            new Group({ 
+                name: `${this.id}-series`, 
+                layer: seriesGroupUsesLayer, 
+                zIndex: Series.SERIES_LAYER_ZINDEX,
+            })
+        );
+        this.pickGroup = this.seriesGroup.appendChild(new Group());
+        this.highlightGroup = group.appendChild(
+            new Group({
+                name: `${this.id}-highlight`,
+                layer: true,
+                zIndex: Series.SERIES_HIGHLIGHT_LAYER_ZINDEX,
+                optimiseDirtyTracking: true,
+            })
+        );
+    }
 
     set grouped(g: boolean) {
         if (g === true) {
@@ -192,12 +207,12 @@ export abstract class Series<
     abstract processData(): void;
 
     // Using processed data, create data that backs visible nodes.
-    abstract createNodeData(): S[];
+    abstract createNodeData(): SeriesArray<S, SeriesMode>;
 
     // Returns persisted node data associated with the rendered portion of the series' data.
-    getNodeData(): readonly S[] { return []; }
+    getNodeData(): S[] { return []; }
 
-    getLabelData(): readonly L[] { return []; }
+    getLabelData(): L[] { return []; }
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {

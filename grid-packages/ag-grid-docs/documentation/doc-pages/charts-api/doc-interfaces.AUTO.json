@@ -3255,7 +3255,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
   },
@@ -3318,7 +3318,7 @@
         "optional": true
       }
     },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
@@ -3376,7 +3376,7 @@
         "optional": true
       }
     },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
@@ -3400,7 +3400,7 @@
   "LineNodeDatum": {
     "point": {
       "type": {
-        "returnType": "{\n        readonly x: number;\n        readonly y: number;\n    }",
+        "returnType": "{\n        readonly moveTo: boolean;\n        readonly x: number;\n        readonly y: number;\n    }",
         "optional": false
       }
     },
@@ -3410,7 +3410,7 @@
         "optional": true
       }
     },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
   },
@@ -3422,6 +3422,7 @@
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } }
   },
+  "LineTooltipRendererParams": {},
   "ScatterNodeDatum": {
     "point": {
       "type": {
@@ -3431,7 +3432,7 @@
     },
     "size": { "type": { "returnType": "number", "optional": false } },
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
   },
@@ -3472,11 +3473,11 @@
     "y0": { "type": { "returnType": "number", "optional": false } },
     "y1": { "type": { "returnType": "number", "optional": false } },
     "depth": { "type": { "returnType": "number", "optional": false } },
-    "series": { "type": { "returnType": "TreemapSeries", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": false } },
     "label": { "type": { "returnType": "string", "optional": false } },
     "hasTitle": { "type": { "returnType": "boolean", "optional": false } },
     "colorValue": { "type": { "returnType": "number", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
@@ -3529,7 +3530,7 @@
         "optional": true
       }
     },
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
@@ -3578,7 +3579,7 @@
     "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SeriesNodeDatum": {
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "Series<this>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
@@ -3747,6 +3748,8 @@
     "index": { "type": { "returnType": "number", "optional": false } },
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } },
+    "datum": { "type": { "returnType": "PLD", "optional": false } },
+    "meta": { "typeParams": ["PLD"] },
     "text": { "type": { "returnType": "string", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } }

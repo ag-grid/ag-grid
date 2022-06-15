@@ -86,7 +86,7 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super();
+        super({ pickGroupIncludes: [] });
 
         const { marker, label } = this;
 
@@ -248,15 +248,19 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
 
         // Used by marker nodes and for hit-testing even when not using markers
         // when `chart.tooltip.tracking` is true.
-        return nodeData;
+        return [nodeData];
     }
 
-    createLabelData(opts: { nodeData: LineNodeDatum[] }) {
+    createLabelData(opts: { nodeData: LineNodeDatum[][] }) {
         return opts.nodeData;
     }
 
     protected updatePath(opts: {seriesHighlighted?: boolean, nodeData: LineNodeDatum[], path: Path}): void {
         const { nodeData, path: { path: linePath }, path: lineNode } = opts;
+
+        lineNode.fill = undefined;
+        lineNode.lineJoin = 'round';
+        lineNode.pointerEvents = PointerEvents.None;
 
         linePath.clear({ trackChanges: true });
         for (const data of nodeData) {
@@ -272,10 +276,6 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
     protected updatePathNode(opts: {seriesHighlighted?: boolean, path: Path}): void {
         const { path: lineNode } = opts;
 
-        lineNode.fill = undefined;
-        lineNode.lineJoin = 'round';
-        lineNode.pointerEvents = PointerEvents.None;
-
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
         lineNode.strokeOpacity = this.strokeOpacity;
@@ -290,29 +290,29 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         const data = shape && enabled && item ? [item] : [];
         const MarkerShape = getMarker(shape);
 
-        const updateHighlightSelection = highlightSelection.setData(data);
-        updateHighlightSelection.exit.remove();
-        const enterHighlightSelection = updateHighlightSelection.enter.append(MarkerShape);
-        return updateHighlightSelection.merge(enterHighlightSelection);
+        const updateHighlight = highlightSelection.setData(data);
+        updateHighlight.exit.remove();
+        const enterHighlight = updateHighlight.enter.append(MarkerShape);
+        return updateHighlight.merge(enterHighlight);
     }
 
-    protected updateMarkerSelection(opts: { nodeData: LineNodeDatum[], markerSelection: Selection<Marker, Group, LineNodeDatum, any> }): Selection<Marker, Group, LineNodeDatum, any> {
-        let { nodeData, markerSelection } = opts;
+    protected updateDatumSelection(opts: { nodeData: LineNodeDatum[], datumSelection: Selection<Marker, Group, LineNodeDatum, any> }): Selection<Marker, Group, LineNodeDatum, any> {
+        let { nodeData, datumSelection } = opts;
         const { marker: { shape, enabled } } = this;
         nodeData = shape && enabled ? nodeData : [];
         const MarkerShape = getMarker(shape);
 
-        const updateMarkerSelection = markerSelection.setData(nodeData);
-        updateMarkerSelection.exit.remove();
-        const enterMarkerSelection = updateMarkerSelection.enter.append(MarkerShape);
-        return updateMarkerSelection.merge(enterMarkerSelection);
+        const updateDatumSelection = datumSelection.setData(nodeData);
+        updateDatumSelection.exit.remove();
+        const enterDatumSelection = updateDatumSelection.enter.append(MarkerShape);
+        return updateDatumSelection.merge(enterDatumSelection);
     }
 
-    protected updateMarkerNodes(opts: {
-        markerSelection: Selection<Marker, Group, LineNodeDatum, any>,
+    protected updateDatumNodes(opts: {
+        datumSelection: Selection<Marker, Group, LineNodeDatum, any>,
         isHighlight: boolean,
     }) {
-        const { markerSelection, isHighlight: isDatumHighlighted } = opts;
+        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             marker, xKey, yKey,
             stroke: lineStroke,
@@ -330,7 +330,7 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
-        markerSelection.each((node, datum) => {
+        datumSelection.each((node, datum) => {
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined

@@ -111,7 +111,7 @@ type AreaSeriesGroup = {
     labelSelection: Selection<Text, Group, LabelSelectionDatum, any>;
 }
 
-export class AreaSeries extends CartesianSeries<MarkerSelectionDatum> {
+export class AreaSeries extends CartesianSeries<MarkerSelectionDatum, 'single'> {
 
     static className = 'AreaSeries';
     static type = 'area' as const;
@@ -914,7 +914,7 @@ export class AreaSeries extends CartesianSeries<MarkerSelectionDatum> {
         });
     }
 
-    getNodeData(): readonly MarkerSelectionDatum[] {
+    getNodeData(): MarkerSelectionDatum[] {
         return this.allMarkerSelectionData;
     }
 

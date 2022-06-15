@@ -785,7 +785,7 @@ export abstract class Chart extends Observable {
         this.updateLegend();
     }
 
-    private nodeData: Map<Series, readonly SeriesNodeDatum[]> = new Map();
+    private nodeData: Map<Series, SeriesNodeDatum[] | SeriesNodeDatum[][]> = new Map();
     createNodeData(): void {
         this.nodeData.clear();
         this.series.forEach(s => {
@@ -794,7 +794,7 @@ export abstract class Chart extends Observable {
         });
     }
 
-    placeLabels(): Map<Series, PlacedLabel[]> {
+    placeLabels(): Map<Series<any, any, any>, PlacedLabel[]> {
         const seriesIndex: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
         this.nodeData.forEach((_, series) => {
@@ -1010,6 +1010,7 @@ export abstract class Chart extends Observable {
             }
             node = series.pickNode(x, y);
             if (node) {
+                console.log({node});
                 return {
                     series,
                     node
@@ -1038,22 +1039,24 @@ export abstract class Chart extends Observable {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
+
             // Ignore off-screen points when finding the closest series node datum in tracking mode.
             const { xAxis, yAxis } = series;
             const hitPoint = series.group.transformPoint(x, y);
+
             for (const datum of series.getNodeData()) {
                 const { point } = datum;
                 if (!point) {
-                    return;
+                    continue;
                 }
-
+    
                 const { x, y } = point;
                 const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
-
+    
                 if (!isInRange) {
                     continue;
                 }
-
+    
                 // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
                 // values > 1 
                 const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;

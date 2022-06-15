@@ -11,7 +11,7 @@ import {
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { CartesianSeries } from "./cartesianSeries";
+import { CartesianSeriesV2 } from "./cartesianSeriesV2";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
@@ -119,18 +119,11 @@ type BarSeriesGroup = {
     labelSelection: Selection<Text, Group, BarNodeDatum, any>;
 }
 
-export class BarSeries extends CartesianSeries<BarNodeDatum> {
+export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rect> {
 
     static className = 'BarSeries';
     static type = 'bar' as const;
 
-    private seriesGroups: BarSeriesGroup[] = [];
-    private seriesGroupId: number = 0;
-
-    private highlightRectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Rect>();
-
-    private nodeData: BarNodeDatum[][] = [];
-    private allNodeData: BarNodeDatum[] = [];
     private xData: string[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
@@ -174,7 +167,7 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
     formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat = undefined;
 
     constructor() {
-        super();
+        super({ pickGroupIncludes: ['datumNodes'] });
 
         this.label.enabled = false;
     }
@@ -499,7 +492,7 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
         return step;
     }
 
-    createNodeData(): BarNodeDatum[] {
+    createNodeData() {
         const { chart, data, visible } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
@@ -659,113 +652,36 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
             }
         });
 
-        this.nodeData = nodeData;
-        this.allNodeData = this.nodeData.reduce((r, n) => r.concat(n), []);
-
-        return this.allNodeData;
+        return nodeData;
     }
 
-    pickNode(x: number, y: number): Node | undefined {
-        let result = super.pickNode(x, y);
-
-        if (!result) {
-            for (const { pickGroup } of this.seriesGroups ) {
-                result = pickGroup.pickNode(x, y);
-
-                if (result) {
-                    break;
-                }
-            }
-        }
-
-        return result;
+    createLabelData(opts: { nodeData: BarNodeDatum[][] }) {
+        return opts.nodeData;
     }
 
-    update(): void {
-        this.updateSelections();
-        this.updateHighlightSelection();
-        this.updateNodes();
-    }
+    protected updateHighlightSelectionItem(
+        opts: { item?: BarNodeDatum, highlightSelection: Selection<Rect, Group, BarNodeDatum, any> }
+    ) {
+        const { item, highlightSelection } = opts;
+        const data = item ? [item] : [];
 
-    private updateSelections() {
-        if (!this.nodeDataRefresh) {
-            return;
-        }
-        this.nodeDataRefresh = false;
-
-        this.createNodeData();
-        this.updateSeriesGroups();
-
-        this.seriesGroups.forEach((groupSeries, idx) => {
-            const { labelSelection, rectSelection } = groupSeries;
-            groupSeries.rectSelection = this.updateRectSelection(rectSelection, this.nodeData[idx]);
-            groupSeries.labelSelection = this.updateLabelSelection(labelSelection, this.nodeData[idx]);
-        });
-    }
-
-    updateHighlightSelection() {
-        const {
-            chart: {
-                highlightedDatum: { datum = undefined, series = undefined } = {},
-                highlightedDatum = undefined,
-            } = {},
-        } = this;
-
-        const highlightData = series === this && highlightedDatum && datum ? [highlightedDatum as BarNodeDatum] : [];
-        this.highlightRectSelection = this.updateRectSelection(this.highlightRectSelection, highlightData);
-    }
-
-    private updateSeriesGroups() {
-        const { nodeData, seriesGroups } = this;
-        if (nodeData.length === seriesGroups.length) {
-            return;
-        }
-
-        if (nodeData.length < seriesGroups.length) {
-            seriesGroups.splice(nodeData.length)
-                .forEach((group) => this.seriesGroup.removeChild(group.group));
-        }
-
-        while (nodeData.length > seriesGroups.length) {
-            const group = new Group({
-                name: `${this.id}-series-sub${this.seriesGroupId++}`,
-                layer: true,
-                zIndex: Series.SERIES_LAYER_ZINDEX,
+        const updateHighlightSelection = highlightSelection.setData(data);
+        updateHighlightSelection.exit.remove();
+        const enterHighlightSelection = updateHighlightSelection.enter.append(Rect)
+            .each(rect => {
+                rect.tag = BarSeriesNodeTag.Bar;
+                rect.crisp = true;
             });
-            const pickGroup = new Group();
-            group.appendChild(pickGroup);
-            this.seriesGroup.appendChild(group);
+        return updateHighlightSelection.merge(enterHighlightSelection);
 
-            seriesGroups.push({
-                group,
-                pickGroup,
-                labelSelection: Selection.select(group).selectAllByTag<Text>(BarSeriesNodeTag.Label),
-                rectSelection: Selection.select(pickGroup).selectAllByTag<Rect>(BarSeriesNodeTag.Bar),
-            });
-        }
     }
 
-    private updateNodes() {
-        const visible = this.visible;
-        this.group.visible = visible;
-        this.seriesGroup.visible = visible;
-        this.highlightGroup.visible = visible && this.chart?.highlightedDatum?.series === this;
+    protected updateDatumSelection(
+        opts: { nodeData: BarNodeDatum[], datumSelection: Selection<Rect, Group, BarNodeDatum, any> },
+    ) {
+        const { nodeData, datumSelection } = opts;
 
-        this.updateRectNodes(this.highlightRectSelection, true);
-        this.seriesGroups.forEach(({ group, labelSelection, rectSelection }, idx) => {
-            group.opacity = this.getOpacity(rectSelection.data[0]);
-            group.visible = visible;
-
-            this.updateRectNodes(rectSelection, false);
-            this.updateLabelNodes(labelSelection);
-        });
-    }
-
-    private updateRectSelection(
-        rectSelection: Selection<Rect, Group, BarNodeDatum, any>,
-        nodeData: BarNodeDatum[],
-    ): Selection<Rect, Group, BarNodeDatum, any> {
-        const updateRects = rectSelection.setData(nodeData);
+        const updateRects = datumSelection.setData(nodeData);
         updateRects.exit.remove();
         const enterRects = updateRects.enter.append(Rect)
             .each(rect => {
@@ -775,18 +691,13 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
         return updateRects.merge(enterRects);
     }
 
-    private updateRectNodes(
-        rectSelection: Selection<Rect, Group, BarNodeDatum, any>,
-        highlightSelection: boolean,
-    ): void {
-        if (!this.chart) {
-            return;
-        }
-
+    protected updateDatumNodes(
+        opts: { datumSelection: Selection<Rect, Group, BarNodeDatum, any>, isHighlight: boolean },
+    ) {
+        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             fills, strokes, fillOpacity, strokeOpacity, shadow, formatter,
             xKey, flipXY,
-            chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -799,9 +710,8 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
             }
         } = this;
 
-        rectSelection.each((rect, datum) => {
-            const isDatumHighlighted = highlightSelection && datum === highlightedDatum;
-            rect.visible = !highlightSelection || isDatumHighlighted;
+        datumSelection.each((rect, datum) => {
+            rect.visible = !isDatumHighlighted || isDatumHighlighted;
             if (!rect.visible) {
                 return;
             }
@@ -842,16 +752,15 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
         });
     }
 
-    private updateLabelSelection(
-        labelSelection: Selection<Text, Group, BarNodeDatum, any>,
-        nodeData: BarNodeDatum[],
-    ): Selection<Text, Group, BarNodeDatum, any> {
+    protected updateLabelSelection(
+        opts: { labelData: BarNodeDatum[], labelSelection: Selection<Text, Group, BarNodeDatum, any>  },
+    ) {
+        const { labelData, labelSelection } = opts;
         const { enabled } = this.label;
-        const data = enabled ? nodeData : [];
+        const data = enabled ? labelData : [];
+
         const updateLabels = labelSelection.setData(data);
-
         updateLabels.exit.remove();
-
         const enterLabels = updateLabels.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
@@ -860,13 +769,10 @@ export class BarSeries extends CartesianSeries<BarNodeDatum> {
         return updateLabels.merge(enterLabels);
     }
 
-    private updateLabelNodes(
-        labelSelection: Selection<Text, Group, BarNodeDatum, any>,
-    ): void {
-        if (!this.chart) {
-            return;
-        }
-
+    protected updateLabelNodes(
+        opts: { labelSelection: Selection<Text, Group, BarNodeDatum, any> },
+    ) {
+        const { labelSelection } = opts;
         const {
             label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color }
         } = this;

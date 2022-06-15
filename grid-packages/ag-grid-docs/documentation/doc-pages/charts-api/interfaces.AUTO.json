@@ -2300,7 +2300,7 @@
       "stroke?": "string",
       "yKey": "string",
       "yValue": "number",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2377,7 +2377,7 @@
       "colorIndex": "number",
       "strokeWidth": "number",
       "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2451,7 +2451,7 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2478,9 +2478,9 @@
   "LineNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
+      "point": "{ readonly moveTo: boolean; readonly x: number; readonly y: number; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2497,13 +2497,17 @@
       "yKey": "string"
     }
   },
+  "LineTooltipRendererParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "CartesianTooltipRendererParams"
+  },
   "ScatterNodeDatum": {
     "meta": {},
     "type": {
       "point": "{ readonly x: number; readonly y: number; }",
       "size": "number",
       "label": "MeasuredLabel",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2550,11 +2554,11 @@
       "y0": "number",
       "y1": "number",
       "depth": "number",
-      "series": "TreemapSeries",
       "fill": "string",
       "label": "string",
       "hasTitle": "boolean",
       "colorValue": "number",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2611,7 +2615,7 @@
       "midCos": "number",
       "midSin": "number",
       "label?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; }",
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2672,7 +2676,7 @@
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc. */"
     },
     "type": {
-      "series": "Series",
+      "series": "Series<this>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2875,11 +2879,12 @@
     "type": { "text": "string", "width": "number", "height": "number" }
   },
   "PlacedLabel": {
-    "meta": {},
+    "meta": { "typeParams": ["PLD"] },
     "type": {
       "index": "number",
       "x": "number",
       "y": "number",
+      "datum": "PLD",
       "text": "string",
       "width": "number",
       "height": "number"
