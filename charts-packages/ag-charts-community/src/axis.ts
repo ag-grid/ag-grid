@@ -703,16 +703,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = title.padding.bottom;
             const titleNode = title.node;
-            const bbox = this.tickLineGroup.computeBBox();
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
-
+            
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = Math.floor(titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2);
-
+            
+            const bbox = this.tickLineGroup.computeBBox();
+            const bboxYDimension = rotation === 0 ? bbox.width : bbox.height;
             if (sideFlag === -1) {
-                titleNode.y = Math.floor(titleRotationFlag * (-padding - bbox.height));
+                titleNode.y = Math.floor(titleRotationFlag * (-padding - bboxYDimension));
             } else {
-                titleNode.y = Math.floor(-padding - bbox.width);
+                titleNode.y = Math.floor(-padding - bboxYDimension);
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
