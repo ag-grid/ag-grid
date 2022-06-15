@@ -75,10 +75,10 @@ export class CartesianChart extends Chart {
 
         if (navigator.enabled) {
             const navigatorTotalHeight = navigator.height + navigator.margin;
+            shrinkRect.height -= navigatorTotalHeight;
             navigator.x = shrinkRect.x;
             navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
             navigator.width = shrinkRect.width;
-            shrinkRect.height -= navigatorTotalHeight;
         }
 
         const { seriesRect } = this.updateAxes(shrinkRect);
