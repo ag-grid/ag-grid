@@ -337,8 +337,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         // Until we support this cleanly.
-        generatedOutput = generatedOutput.replace(/<TData>/g, '');
-        generatedOutput = generatedOutput.replace(/TData\[\]/g, 'any[]');
+        generatedOutput = generatedOutput.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
 
         return generatedOutput;
     };
