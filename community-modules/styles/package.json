@@ -8,10 +8,10 @@
     "*.css"
   ],
   "scripts": {
-    "build": "npm run build:sass -- --no-error-css && node build-css-content.js",
+    "build": "npm run build:sass -- --no-error-css && node post-build.js",
     "build:sass": "sass --no-source-map --load-path src/internal src:.",
-    "watch": "npm-run-all build --parallel watch:sass watch:content",
-    "watch:content": "chokidar '*.css' --command 'node build-css-content.js'",
+    "watch": "npm-run-all build --parallel watch:sass watch:post-build",
+    "watch:post-build": "chokidar '*.css' --ignore '*.min.css' --command 'node post-build.js'",
     "watch:sass": "npm run build:sass -- --watch",
     "clean": "rm *.css",
     "$COMMENT": "TODO remove these tmp scripts once the docs use this module rather than the legacy styles in community-modules/core",
@@ -42,6 +42,7 @@
   "devDependencies": {
     "@vusion/webfonts-generator": "^0.8.0",
     "chokidar-cli": "^3.0.0",
+    "csso": "^5.0.3",
     "npm-run-all": "^4.1.5",
     "postcss-scss": "^4.0.4",
     "sass": "^1.51.0",
