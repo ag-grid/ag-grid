@@ -3,7 +3,7 @@
 // helper to implement a classic-based theme
 @mixin ag-theme-classic-impl($theme-name, $params) {
     @if not global-variable-exists('ag-suppress-#{$theme-name}-deprecation-warning') and not global-variable-exists('ag-suppress-all-theme-deprecation-warnings') {
-        @warn "#{$theme-name} is a legacy theme. We continue to include it in our distribution for backwards compatibility, but do not update and test it with each release so some features may not look exactly right. You may continue to use it but if you encounter issues you will need to add your own CSS rules to make the app look as you want. For more information, see the migration advice at https://www.ag-grid.com/javascript-grid-themes-v23-migration/ . To suppress this warning, define $ag-suppress-#{$theme-name}-deprecation-warning:true; before including the theme file.";
+        @warn "#{$theme-name} is a legacy theme. We continue to include it in our distribution for backwards compatibility, but do not update and test it with each release so some features may not look exactly right. You may continue to use it but if you encounter issues you will need to add your own CSS rules to make the app look as you want. For more information, see the migration advice at https://www.ag-grid.com/archive/23.0.0/javascript-grid-themes-v23-migration/ . To suppress this warning, define $ag-suppress-#{$theme-name}-deprecation-warning:true; before including the theme file.";
     }
 
     .#{$theme-name} {
