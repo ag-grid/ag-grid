@@ -6,7 +6,6 @@ import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
 import { ChartAxis } from "./chartAxis";
-import { _ } from "../../../../community-modules/core/dist/cjs/es5/main";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
