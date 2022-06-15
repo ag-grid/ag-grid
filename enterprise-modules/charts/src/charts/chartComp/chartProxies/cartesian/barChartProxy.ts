@@ -1,8 +1,10 @@
 import { _ } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
+import { AgCartesianChartOptions, AgBarSeriesOptions, AgChart, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
+import { hexToRGBA } from "../../utils/color";
+import { AgCartesianSeriesOptions } from "ag-charts-community/src/chart/agChartOptions";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -33,6 +35,10 @@ export class BarChartProxy extends CartesianChartProxy {
             series: this.getSeries(params, isNormalised)
         };
 
+        if (this.crossFiltering) {
+            options.tooltip = {delay: 500};
+        }
+
         AgChart.update(this.chart as CartesianChart, options);
     }
 
@@ -61,7 +67,9 @@ export class BarChartProxy extends CartesianChartProxy {
     private getSeries(params: UpdateChartParams, normalised: boolean) {
         const groupedCharts = ['groupedColumn', 'groupedBar'];
         const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
-        return params.fields.map(f => ({
+
+        const series: AgBarSeriesOptions[] = params.fields.map(f => (
+            {
                 ...this.extractSeriesOverrides(),
                 type: this.standaloneChartType,
                 grouped: isGrouped,
@@ -72,6 +80,45 @@ export class BarChartProxy extends CartesianChartProxy {
                 yName: f.displayName
             }
         ));
+
+        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
+    }
+
+    private extractCrossFilterSeries(series: AgBarSeriesOptions[]): AgBarSeriesOptions[] {
+        const palette = this.chartTheme.palette;
+
+        const updatePrimarySeries = (s: AgBarSeriesOptions, index: number) => {
+            s.highlightStyle = { item: { fill: undefined } };
+            s.fill = palette.fills[index];
+            s.stroke = palette.strokes[index];
+            s.listeners = { nodeClick: this.crossFilterCallback };
+        }
+
+        const updateFilteredOutSeries = (s: AgBarSeriesOptions) => {
+            s.yKey = s.yKey + '-filtered-out';
+            s.fill = hexToRGBA(s.fill!, '0.3');
+            s.stroke = hexToRGBA(s.stroke!, '0.3');
+            (s as any).hideInLegend = [s.yKey];
+        }
+
+        const allSeries: AgBarSeriesOptions[] = [];
+        for (let i = 0; i < series.length; i++) {
+            const s: AgBarSeriesOptions = series[i];
+            updatePrimarySeries(s, i);
+            allSeries.push(s);
+
+            const filteredOutSeries = deepMerge({}, s);
+            updateFilteredOutSeries(filteredOutSeries);
+
+            // TODO: pending AG Chart factory support
+            // sync toggling of legend item with hidden 'filtered out' item
+            // this.chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+            //     barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            // });
+
+            allSeries.push(filteredOutSeries);
+        }
+        return allSeries;
     }
 
     private extractSeriesOverrides() {
