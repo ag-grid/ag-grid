@@ -3,6 +3,7 @@
 @use "sass:meta";
 @use "sass:color";
 
+@use "./parts/icons";
 @use "./base-variables";
 @use "./parts/root";
 @use "./parts/common-structural";
@@ -23,7 +24,7 @@
 @use "./parts/native-inputs";
 
 @mixin general-styles() {
-    @include ag.icon-styles();
+    @include icons.output();
     @include base-variables.output();
     @include root.output();
     @include common-structural.output();

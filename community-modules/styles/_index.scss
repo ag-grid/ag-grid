@@ -11,6 +11,7 @@
 @use "sass:color";
 @use "sass:math";
 @use "./css-content";
+@use "./icon-font-codes" as *;
 
 @forward "./shared";
 
@@ -77,9 +78,8 @@ $-loaded-css-files: ();
     $params: -base-color-blends($params);
 
     @each $name, $value in $params {
-        // @if map.has-key($-variable-param-types, $name) {
-            --ag-#{$name}: #{$value};
-        // }
+        // use meta.inspect to preserve the quote style of strings
+        --ag-#{$name}: #{meta.inspect($value)};
     }
 }
 
@@ -398,6 +398,10 @@ $-variable-param-types: (
     material-accent-color: "color",
     icon-font-family: "any"
 );
+
+@each $icon-name in map.keys($icon-font-codes) {
+    $-variable-param-types: map.set($-variable-param-types, "icon-font-code-#{$icon-name}", "any");
+}
 
 // params that are not copied to CSS variables
 $-non-variable-param-types: (

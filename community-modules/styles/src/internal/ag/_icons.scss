@@ -2,7 +2,7 @@
 @use "sass:map";
 @use "sass:meta";
 
-@use "./generated/icon-font-codes" as *;
+@use "../../../icon-font-codes" as *;
 @use "./generated/agGridAlpine";
 @use "./generated/agGridBalham";
 @use "./generated/agGridMaterial";
@@ -49,30 +49,3 @@ $-fonts-emitted: ();
     }
     @return $glyph;
 }
-
-// Emit styles for icons e.g. <span class="ag-icon ag-icon-grip">
-@mixin icon-styles() {
-    .ag-icon {
-        @include icon();
-    }
-
-    @each $icon in map.keys($icon-font-codes) {
-        .ag-icon-#{$icon} {
-            &::before {
-                content: icon-char($icon);
-            }
-        }
-    }
-
-    .ag-icon-row-drag::before {
-        content: icon-char('grip');
-    }
-
-    .ag-left-arrow::before {
-        content: icon-char('left');
-    }
-
-    .ag-right-arrow::before {
-        content: icon-char('right');
-    }
-}  
