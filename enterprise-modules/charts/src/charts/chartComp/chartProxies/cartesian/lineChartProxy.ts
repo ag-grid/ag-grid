@@ -34,8 +34,6 @@ export class LineChartProxy extends CartesianChartProxy {
             options.tooltip = { delay: 500 };
         }
 
-        console.log(options);
-
         AgChart.update(this.chart as CartesianChart, options);
     }
 
