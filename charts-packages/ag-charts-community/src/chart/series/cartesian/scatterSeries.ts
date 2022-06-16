@@ -250,18 +250,6 @@ export class ScatterSeries extends CartesianSeriesV2<SeriesNodeDataContext<Scatt
         return [{itemId: this.yKey, nodeData, labelData: nodeData}];
     }
 
-    protected updateHighlightSelectionItem(opts: { item?: ScatterNodeDatum, highlightSelection: Selection<Marker, Group, ScatterNodeDatum, any> }): Selection<Marker, Group, ScatterNodeDatum, any> {
-        const { item, highlightSelection } = opts;
-        const { marker: { enabled, shape } } = this;
-        const MarkerShape = getMarker(shape);
-        
-        const data = enabled && item ? [item] : [];
-        const updateHighlight = highlightSelection.setData(data);
-        updateHighlight.exit.remove();
-        const enterHighlight = updateHighlight.enter.append(MarkerShape);
-        return updateHighlight.merge(enterHighlight);
-    }
-
     protected updateDatumSelection(opts: { nodeData: ScatterNodeDatum[], datumSelection: Selection<Marker, Group, ScatterNodeDatum, any> }): Selection<Marker, Group, ScatterNodeDatum, any> {
         const { nodeData, datumSelection } = opts;
         const { marker: { enabled, shape } } = this;

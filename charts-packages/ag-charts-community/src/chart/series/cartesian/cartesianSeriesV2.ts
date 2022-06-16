@@ -262,10 +262,15 @@ export abstract class CartesianSeriesV2<
         // Override point for sub-classes.
     }
 
-    protected abstract updateHighlightSelectionItem(opts: {
+    protected updateHighlightSelectionItem(opts: {
         item?: C['nodeData'][number],
         highlightSelection: NodeDataSelection<N, C>,
-    }): NodeDataSelection<N, C>;
+    }): NodeDataSelection<N, C> {
+        const { item, highlightSelection: datumSelection } = opts;
+        const nodeData = item ? [item] : [];
+
+        return this.updateDatumSelection({ nodeData, datumSelection, seriesIdx: -1 });
+    }
 
     protected abstract updateDatumSelection(opts: {
         nodeData: C['nodeData'],

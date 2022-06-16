@@ -5,12 +5,12 @@ import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip, Series
+    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip, Series, SeriesNodeDataContext
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { CartesianSeries } from "./cartesianSeries";
+import { CartesianSeriesV2 } from "./cartesianSeriesV2";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { extent } from "../../../util/array";
@@ -113,29 +113,16 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
     renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
+export class HistogramSeries extends CartesianSeriesV2<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
 
     static className = 'HistogramSeries';
     static type = 'histogram' as const;
-
-    // Need to put column and label nodes into separate groups, because even though label nodes are
-    // created after the column nodes, this only guarantees that labels will always be on top of columns
-    // on the first run. If on the next run more columns are added, they might clip the labels
-    // rendered during the previous run.
-    private rectGroup = this.pickGroup.appendChild(new Group());
-    private textGroup = this.seriesGroup.appendChild(new Group());
-
-    private rectSelection: Selection<Rect, Group, HistogramNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private highlightSelection: Selection<Rect, Group, HistogramNodeDatum, any> = Selection.select(this.highlightGroup).selectAll<Rect>();
-    private textSelection: Selection<Text, Group, HistogramNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
 
     private binnedData: HistogramBin[] = [];
     private xDomain: number[] = [];
     private yDomain: number[] = [];
 
     readonly label = new HistogramSeriesLabel();
-
-    private seriesItemEnabled = true;
 
     tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
@@ -187,15 +174,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
     aggregation: HistogramAggregation = 'count';
     binCount: number | undefined = undefined;
     xName: string = '';
-    protected _yKey: string = '';
-    set yKey(yKey: string) {
-        this._yKey = yKey;
-        this.seriesItemEnabled = true;
-    }
-
-    get yKey(): string {
-        return this._yKey;
-    }
+    yKey: string = '';
 
     yName: string = '';
     strokeWidth: number = 1;
@@ -317,35 +296,6 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
         });
     }
 
-    update(): void {
-        this.updateSelections();
-        this.updateHighlightSelection();
-        this.updateNodes();
-    }
-
-    updateSelections() {
-        if (!this.nodeDataRefresh) {
-            return;
-        }
-        this.nodeDataRefresh = false;
-
-        const [{nodeData}] = this.createNodeData();
-
-        this.rectSelection = this.updateRectSelection(this.rectSelection, nodeData);
-        this.updateTextSelection(nodeData);
-    }
-
-    updateNodes() {
-        this.group.visible = this.visible;
-        this.seriesGroup.visible = this.visible;
-        this.highlightGroup.visible = this.visible && this.chart?.highlightedDatum?.series === this;
-
-        this.seriesGroup.opacity = this.getOpacity();
-
-        this.updateRectNodes();
-        this.updateTextNodes();
-    }
-
     createNodeData() {
         const { xAxis, yAxis } = this;
 
@@ -410,48 +360,32 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
             });
         });
 
-        return [{ nodeData, labelData: nodeData }];
+        return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
     }
 
-    private updateRectSelection(
-        rectSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
+    protected updateDatumSelection(opts: {
         nodeData: HistogramNodeDatum[],
-    ): Selection<Rect, Group, HistogramNodeDatum, any> {
-        const update = (selection: typeof rectSelection) => {
-            const updateRects = selection.setData(nodeData);
-            updateRects.exit.remove();
+        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
+    }) {
+        const { nodeData, datumSelection } = opts;
 
-            const enterRects = updateRects.enter.append(Rect).each(rect => {
-                rect.tag = HistogramSeriesNodeTag.Bin;
-                rect.crisp = true;
-            });
+        const updateRects = datumSelection.setData(nodeData);
+        updateRects.exit.remove();
+        const enterRects = updateRects.enter.append(Rect).each(rect => {
+            rect.tag = HistogramSeriesNodeTag.Bin;
+            rect.crisp = true;
+        });
 
-            return updateRects.merge(enterRects);
-        };
-
-        return update(rectSelection);
+        return updateRects.merge(enterRects);
     }
 
-    private updateHighlightSelection(): void {
-        const {
-            chart: {
-                highlightedDatum: { datum = undefined, series = undefined } = {},
-                highlightedDatum = undefined,
-            } = {},
-        } = this;
-
-        const highlightData = series === this && highlightedDatum && datum ? [highlightedDatum as HistogramNodeDatum] : [];
-        this.highlightSelection = this.updateRectSelection(this.highlightSelection, highlightData);
-    }
-
-    private updateRectNodes(): void {
-        if (!this.chart) {
-            return;
-        }
-
+    protected updateDatumNodes(opts: {
+        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
+        isHighlight: boolean,
+    }) {
+        const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             fillOpacity, strokeOpacity, shadow,
-            chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -464,7 +398,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
             }
         } = this;
 
-        const updateRectFn = (rect: Rect, datum: HistogramNodeDatum, index: number, isDatumHighlighted: boolean) => {
+        datumSelection.each((rect, datum, index) => {
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : datum.strokeWidth;
@@ -483,26 +417,18 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
             rect.fillShadow = shadow;
             rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
-        };
-
-        this.rectSelection
-            .each((rect, datum, index) => updateRectFn(rect, datum, index, false));
-        this.highlightSelection
-            .each((rect, datum, index) => {
-                const isDatumHighlighted = datum === highlightedDatum;
-
-                rect.visible = isDatumHighlighted;
-                if (rect.visible) {
-                    updateRectFn(rect, datum, index, isDatumHighlighted);
-                }
-            });
+        });
     }
 
 
-    private updateTextSelection(nodeData: HistogramNodeDatum[]): void {
-        const updateTexts = this.textSelection.setData(nodeData);
-        updateTexts.exit.remove();
+    protected updateLabelSelection(opts: {
+        labelData: HistogramNodeDatum[],
+        labelSelection: Selection<Text, Group, HistogramNodeDatum, any>,
+    }) {
+        const {labelData, labelSelection} = opts;
 
+        const updateTexts = labelSelection.setData(labelData);
+        updateTexts.exit.remove();
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = HistogramSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
@@ -510,13 +436,16 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
             text.textBaseline = 'middle';
         });
 
-        this.textSelection = updateTexts.merge(enterTexts);
+        return updateTexts.merge(enterTexts);
     }
 
-    private updateTextNodes(): void {
+    protected updateLabelNodes(
+        opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> },
+    ) {
+        const { labelSelection } = opts;
         const labelEnabled = this.label.enabled;
 
-        this.textSelection.each((text, datum) => {
+        labelSelection.each((text, datum) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -577,7 +506,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
-            id, data, yKey, yName, seriesItemEnabled,
+            id, data, yKey, yName, visible,
             fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
@@ -585,7 +514,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
             legendData.push({
                 id,
                 itemId: yKey,
-                enabled: seriesItemEnabled,
+                enabled: visible,
                 label: {
                     text: yName || yKey || 'Frequency'
                 },
@@ -596,12 +525,6 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
                     strokeOpacity: strokeOpacity
                 }
             });
-        }
-    }
-
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
-        if (itemId === this.yKey) {
-            this.seriesItemEnabled = enabled;
         }
     }
 }

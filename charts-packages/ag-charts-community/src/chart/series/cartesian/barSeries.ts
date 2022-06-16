@@ -651,23 +651,6 @@ export class BarSeries extends CartesianSeriesV2<SeriesNodeDataContext<BarNodeDa
         return contexts.reduce((r,n) => r.concat(...n), []);
     }
 
-    protected updateHighlightSelectionItem(
-        opts: { item?: BarNodeDatum, highlightSelection: Selection<Rect, Group, BarNodeDatum, any> }
-    ) {
-        const { item, highlightSelection } = opts;
-        const data = item ? [item] : [];
-
-        const updateHighlightSelection = highlightSelection.setData(data);
-        updateHighlightSelection.exit.remove();
-        const enterHighlightSelection = updateHighlightSelection.enter.append(Rect)
-            .each(rect => {
-                rect.tag = BarSeriesNodeTag.Bar;
-                rect.crisp = true;
-            });
-        return updateHighlightSelection.merge(enterHighlightSelection);
-
-    }
-
     protected updateDatumSelection(opts: {
         nodeData: BarNodeDatum[],
         datumSelection: Selection<Rect, Group, BarNodeDatum, any>,

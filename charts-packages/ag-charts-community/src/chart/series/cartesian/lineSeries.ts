@@ -285,18 +285,6 @@ export class LineSeries extends CartesianSeriesV2<LineContext> {
         lineNode.lineDashOffset = this.lineDashOffset;
     }
 
-    protected updateHighlightSelectionItem(opts: { item?: LineNodeDatum, highlightSelection: Selection<Marker, Group, LineNodeDatum, any> }): Selection<Marker, Group, LineNodeDatum, any> {
-        const { item, highlightSelection } = opts;
-        const { marker: { shape, enabled } } = this;
-        const data = shape && enabled && item ? [item] : [];
-        const MarkerShape = getMarker(shape);
-
-        const updateHighlight = highlightSelection.setData(data);
-        updateHighlight.exit.remove();
-        const enterHighlight = updateHighlight.enter.append(MarkerShape);
-        return updateHighlight.merge(enterHighlight);
-    }
-
     protected updateDatumSelection(opts: { nodeData: LineNodeDatum[], datumSelection: Selection<Marker, Group, LineNodeDatum, any> }): Selection<Marker, Group, LineNodeDatum, any> {
         let { nodeData, datumSelection } = opts;
         const { marker: { shape, enabled } } = this;

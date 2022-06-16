@@ -639,16 +639,6 @@ export class AreaSeries extends CartesianSeriesV2<AreaSeriesNodeDataContext> {
         }
     }
 
-    protected updateHighlightSelectionItem(opts: {
-        item?: MarkerSelectionDatum,
-        highlightSelection: Selection<Marker, Group, MarkerSelectionDatum, any>,
-    }) {
-        const { item, highlightSelection } = opts;
-        const data = item ? [item] : [];
-
-        return this.updateDatumSelection({ nodeData: data, datumSelection: highlightSelection });
-    }
-
     protected updateDatumSelection(opts: {
         nodeData: MarkerSelectionDatum[],
         datumSelection: Selection<Marker, Group, MarkerSelectionDatum, any>,
