@@ -6,7 +6,9 @@ import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
-    CartesianTooltipRendererParams, SeriesTooltip, Series
+    SeriesNodeDataContext,
+    CartesianTooltipRendererParams,
+    SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -112,14 +114,7 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
     return array.length > 0 && Array.isArray(array[0]);
 }
 
-type BarSeriesGroup = {
-    group: Group;
-    pickGroup: Group;
-    rectSelection: Selection<Rect, Group, BarNodeDatum, any>;
-    labelSelection: Selection<Text, Group, BarNodeDatum, any>;
-}
-
-export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rect> {
+export class BarSeries extends CartesianSeriesV2<SeriesNodeDataContext<BarNodeDatum>, Rect> {
 
     static className = 'BarSeries';
     static type = 'bar' as const;
@@ -129,12 +124,6 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
     private yDomain: number[] = [];
 
     readonly label = new BarSeriesLabel();
-
-    /**
-     * The assumption is that the values will be reset (to `true`)
-     * in the {@link yKeys} setter.
-     */
-    private readonly seriesItemEnabled = new Map<string, boolean>();
 
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
@@ -167,7 +156,7 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
     formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat = undefined;
 
     constructor() {
-        super({ pickGroupIncludes: ['datumNodes'] });
+        super({ pickGroupIncludes: ['datumNodes'], pathsPerSeries: 0 });
 
         this.label.enabled = false;
     }
@@ -545,7 +534,7 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
 
         const grouped = true;
         const barWidth = grouped ? groupScale.bandwidth : xBandWidth!;
-        const nodeData: BarNodeDatum[][] = [];
+        const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
         xData.forEach((group, groupIndex) => {
             const seriesDatum = data[groupIndex];
@@ -554,6 +543,7 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
             const groupYs = yData[groupIndex]; // y-data for groups of stacks
             for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
                 const stackYs = groupYs[stackIndex]; // y-data for a stack within a group
+                contexts[stackIndex] = contexts[stackIndex] ?? [];
 
                 let prevMinY = 0;
                 let prevMaxY = 0;
@@ -562,6 +552,11 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
                     const currY = +stackYs[levelIndex];
                     const yKey = yKeys[stackIndex][levelIndex];
                     const barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
+                    contexts[stackIndex][levelIndex] = contexts[stackIndex][levelIndex] ?? {
+                        itemId: yKey,
+                        nodeData: [],
+                        labelData: [],
+                    };
 
                     // Bars outside of visible range are not rendered, so we create node data
                     // only for the visible subset of user data.
@@ -613,8 +608,7 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                    nodeData[levelIndex] = nodeData[levelIndex] ?? [];
-                    nodeData[levelIndex].push({
+                    const nodeData: BarNodeDatum = {
                         index: groupIndex,
                         series: this,
                         itemId: yKey,
@@ -641,7 +635,9 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
                             x: labelX,
                             y: labelY
                         } : undefined
-                    });
+                    };
+                    contexts[stackIndex][levelIndex].nodeData.push(nodeData);
+                    contexts[stackIndex][levelIndex].labelData.push(nodeData);
 
                     if (currY < 0) {
                         prevMinY += currY;
@@ -652,11 +648,7 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
             }
         });
 
-        return nodeData;
-    }
-
-    createLabelData(opts: { nodeData: BarNodeDatum[][] }) {
-        return opts.nodeData;
+        return contexts.reduce((r,n) => r.concat(...n), []);
     }
 
     protected updateHighlightSelectionItem(
@@ -676,9 +668,10 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
 
     }
 
-    protected updateDatumSelection(
-        opts: { nodeData: BarNodeDatum[], datumSelection: Selection<Rect, Group, BarNodeDatum, any> },
-    ) {
+    protected updateDatumSelection(opts: {
+        nodeData: BarNodeDatum[],
+        datumSelection: Selection<Rect, Group, BarNodeDatum, any>,
+    }) {
         const { nodeData, datumSelection } = opts;
 
         const updateRects = datumSelection.setData(nodeData);
@@ -908,12 +901,11 @@ export class BarSeries extends CartesianSeriesV2<BarNodeDatum, BarNodeDatum, Rec
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        const { seriesItemEnabled } = this;
-        seriesItemEnabled.set(itemId, enabled);
+        super.toggleSeriesItem(itemId, enabled);
 
         const yKeys = this.yKeys.map(stack => stack.slice()); // deep clone
 
-        seriesItemEnabled.forEach((enabled, yKey) => {
+        this.seriesItemEnabled.forEach((enabled, yKey) => {
             if (!enabled) {
                 yKeys.forEach(stack => {
                     const index = stack.indexOf(yKey);

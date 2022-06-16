@@ -19,7 +19,7 @@ export interface SeriesNodeDatum {
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `datum` - raw series datum, an element from the `series.data` array
-    readonly series: Series<this, any, any>;
+    readonly series: Series<any>;
     readonly itemId?: any;
     readonly datum: any;
     readonly point?: { // in local (series) coordinates
@@ -86,12 +86,14 @@ export class SeriesTooltip {
     enabled = true;
 }
 
-type SeriesArray<S, Mode> = Mode extends 'single' ? S[] : S[][];
+export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
+    itemId: string;
+    nodeData: S[],
+    labelData: L[],
+}
 
 export abstract class Series<
-    S extends SeriesNodeDatum = SeriesNodeDatum,
-    L extends SeriesNodeDatum = S,
-    SeriesMode extends 'single' | 'multi' = any,
+    C extends SeriesNodeDataContext = SeriesNodeDataContext,
 > extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
     protected static readonly SERIES_LAYER_ZINDEX = 100;
@@ -207,12 +209,7 @@ export abstract class Series<
     abstract processData(): void;
 
     // Using processed data, create data that backs visible nodes.
-    abstract createNodeData(): SeriesArray<S, SeriesMode>;
-
-    // Returns persisted node data associated with the rendered portion of the series' data.
-    getNodeData(): S[] { return []; }
-
-    getLabelData(): L[] { return []; }
+    abstract createNodeData(): C[];
 
     // Indicate that something external changed and we should recalculate nodeData.
     markNodeDataDirty() {
@@ -239,6 +236,11 @@ export abstract class Series<
         if (series !== this) {
              // Highlighting active, this series not highlighted.
              return dimOpacity;
+        }
+
+        if (itemId === undefined) {
+            // Series doesn't use itemIds - so no further refinement needed, series is highlighted.
+            return defaultOpacity;
         }
 
         if (datum && itemId !== datum.itemId) {
@@ -281,7 +283,7 @@ export abstract class Series<
         return this.pickGroup.pickNode(x, y);
     }
 
-    fireNodeClickEvent(_event: MouseEvent, _datum: S): void {
+    fireNodeClickEvent(_event: MouseEvent, _datum: C['nodeData'][number]): void {
         // Override point for subclasses.
     }
 

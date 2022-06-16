@@ -1,6 +1,6 @@
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
-import { Series, SeriesNodeDatum } from "./series/series";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
@@ -618,7 +618,7 @@ export abstract class Chart extends Observable {
         return this._series;
     }
 
-    addSeries(series: Series, before?: Series): boolean {
+    addSeries(series: Series<any>, before?: Series<any>): boolean {
         const { series: allSeries, seriesRoot } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 
@@ -640,7 +640,7 @@ export abstract class Chart extends Observable {
         return false;
     }
 
-    protected initSeries(series: Series) {
+    protected initSeries(series: Series<any>) {
         series.chart = this;
         if (!series.data) {
             series.data = this.data;
@@ -648,12 +648,12 @@ export abstract class Chart extends Observable {
         series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
-    protected freeSeries(series: Series) {
+    protected freeSeries(series: Series<any>) {
         series.chart = undefined;
         series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
-    addSeriesAfter(series: Series, after?: Series): boolean {
+    addSeriesAfter(series: Series<any>, after?: Series<any>): boolean {
         const { series: allSeries, seriesRoot } = this;
         const canAdd = allSeries.indexOf(series) < 0;
 
@@ -684,7 +684,7 @@ export abstract class Chart extends Observable {
         return false;
     }
 
-    removeSeries(series: Series): boolean {
+    removeSeries(series: Series<any>): boolean {
         const index = this.series.indexOf(series);
 
         if (index >= 0) {
@@ -785,7 +785,7 @@ export abstract class Chart extends Observable {
         this.updateLegend();
     }
 
-    private nodeData: Map<Series, SeriesNodeDatum[] | SeriesNodeDatum[][]> = new Map();
+    private nodeData: Map<Series<any>, SeriesNodeDataContext<any>[]> = new Map();
     createNodeData(): void {
         this.nodeData.clear();
         this.series.forEach(s => {
@@ -794,20 +794,26 @@ export abstract class Chart extends Observable {
         });
     }
 
-    placeLabels(): Map<Series<any, any, any>, PlacedLabel[]> {
+    placeLabels(): Map<Series<any>, PlacedLabel[]> {
         const seriesIndex: Series[] = [];
         const data: (readonly PointLabelDatum[])[] = [];
-        this.nodeData.forEach((_, series) => {
+        this.nodeData.forEach((contexts, series) => {
             if (!series.visible || !series.label.enabled) {
                 return;
             }
 
-            const seriesData = series.getLabelData();
-            if (!isPointLabelDatum(seriesData[0])) {
-                return;
-            }
+            let seriesData: PointLabelDatum[] = [];
+            contexts.forEach((context) => {
+                const contextData = context.labelData;
+                if (!isPointLabelDatum(contextData[0])) {
+                    return;
+                }
+
+                seriesData.push(...contextData);
+            });
+
+            data.push(seriesData);
             seriesIndex.push(series);
-            data.push(seriesData as unknown as PointLabelDatum[]);
         });
         const { seriesRect } = this;
         const labels: PlacedLabel[][] = seriesRect
@@ -996,7 +1002,7 @@ export abstract class Chart extends Observable {
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
-        series: Series,
+        series: Series<any>,
         node: Node
     } | undefined {
         if (!(this.seriesRect && this.seriesRect.containsPoint(x, y))) {
@@ -1010,7 +1016,6 @@ export abstract class Chart extends Observable {
             }
             node = series.pickNode(x, y);
             if (node) {
-                console.log({node});
                 return {
                     series,
                     node
@@ -1035,7 +1040,8 @@ export abstract class Chart extends Observable {
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
 
-        for (const series of this.series) {
+        const { series: allSeries, nodeData: nodeDataMap } = this;
+        for (const series of allSeries) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
@@ -1044,25 +1050,28 @@ export abstract class Chart extends Observable {
             const { xAxis, yAxis } = series;
             const hitPoint = series.group.transformPoint(x, y);
 
-            for (const datum of series.getNodeData()) {
-                const { point } = datum;
-                if (!point) {
-                    continue;
-                }
-    
-                const { x, y } = point;
-                const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
-    
-                if (!isInRange) {
-                    continue;
-                }
-    
-                // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
-                // values > 1 
-                const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestDatum = datum;
+            const contexts = nodeDataMap.get(series) ?? [];
+            for (const context of contexts) {
+                for (const datum of context.nodeData) {
+                    const { point } = datum;
+                    if (!point) {
+                        continue;
+                    }
+        
+                    const { x, y } = point;
+                    const isInRange = xAxis?.inRange(x) && yAxis?.inRange(y);
+        
+                    if (!isInRange) {
+                        continue;
+                    }
+        
+                    // No need to use Math.sqrt() since x < y implies Math.sqrt(x) < Math.sqrt(y) for
+                    // values > 1 
+                    const distance = (hitPoint.x - x) ** 2 + (hitPoint.y - y) ** 2;
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestDatum = datum;
+                    }
                 }
             }
         }
@@ -1181,7 +1190,7 @@ export abstract class Chart extends Observable {
         return false;
     }
 
-    private onSeriesNodeClick(event: SourceEvent<Series>) {
+    private onSeriesNodeClick(event: SourceEvent<Series<any>>) {
         this.fireEvent({ ...event, type: 'seriesNodeClick' });
     }
 

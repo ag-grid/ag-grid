@@ -5,7 +5,8 @@ import { Group } from "../../../scene/group";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams,
-    SeriesTooltip
+    SeriesTooltip,
+    SeriesNodeDataContext,
 } from "../series";
 import { extent } from "../../../util/array";
 import { PointerEvents } from "../../../scene/node";
@@ -61,7 +62,8 @@ export class LineSeriesTooltip extends SeriesTooltip {
     format?: string = undefined;
 }
 
-export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
+type LineContext = SeriesNodeDataContext<LineNodeDatum>;
+export class LineSeries extends CartesianSeriesV2<LineContext> {
 
     static className = 'LineSeries';
     static type = 'line' as const;
@@ -246,17 +248,16 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         }
         nodeData.length = actualLength;
 
-        // Used by marker nodes and for hit-testing even when not using markers
-        // when `chart.tooltip.tracking` is true.
-        return [nodeData];
+        return [{ itemId: yKey, nodeData, labelData: nodeData}];
     }
 
-    createLabelData(opts: { nodeData: LineNodeDatum[][] }) {
-        return opts.nodeData;
-    }
-
-    protected updatePath(opts: {seriesHighlighted?: boolean, nodeData: LineNodeDatum[], path: Path}): void {
-        const { nodeData, path: { path: linePath }, path: lineNode } = opts;
+    protected updatePaths(opts: {
+        seriesHighlighted?: boolean,
+        contextData: LineContext,
+        paths: Path[],
+    }): void {
+        const { contextData: { nodeData }, paths: [lineNode] } = opts;
+        const { path: linePath } = lineNode;
 
         lineNode.fill = undefined;
         lineNode.lineJoin = 'round';
@@ -273,8 +274,8 @@ export class LineSeries extends CartesianSeriesV2<LineNodeDatum> {
         lineNode.checkPathDirty();
     }
 
-    protected updatePathNode(opts: {seriesHighlighted?: boolean, path: Path}): void {
-        const { path: lineNode } = opts;
+    protected updatePathNodes(opts: {seriesHighlighted?: boolean, paths: Path[]}): void {
+        const { paths: [lineNode] } = opts;
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);

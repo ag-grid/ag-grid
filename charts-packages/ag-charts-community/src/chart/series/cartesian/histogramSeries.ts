@@ -113,7 +113,7 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
     renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class HistogramSeries extends CartesianSeries<HistogramNodeDatum, 'single'> {
+export class HistogramSeries extends CartesianSeries<HistogramNodeDatum> {
 
     static className = 'HistogramSeries';
     static type = 'histogram' as const;
@@ -329,7 +329,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum, 'single
         }
         this.nodeDataRefresh = false;
 
-        const nodeData = this.createNodeData();
+        const [{nodeData}] = this.createNodeData();
 
         this.rectSelection = this.updateRectSelection(this.rectSelection, nodeData);
         this.updateTextSelection(nodeData);
@@ -346,7 +346,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum, 'single
         this.updateTextNodes();
     }
 
-    createNodeData(): HistogramNodeDatum[] {
+    createNodeData() {
         const { xAxis, yAxis } = this;
 
         if (!this.seriesItemEnabled || !xAxis || !yAxis) {
@@ -410,7 +410,7 @@ export class HistogramSeries extends CartesianSeries<HistogramNodeDatum, 'single
             });
         });
 
-        return nodeData;
+        return [{ nodeData, labelData: nodeData }];
     }
 
     private updateRectSelection(

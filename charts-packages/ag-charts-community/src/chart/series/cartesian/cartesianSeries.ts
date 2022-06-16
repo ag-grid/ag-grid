@@ -1,11 +1,11 @@
-import { Series, SeriesNodeDatum } from "../series";
+import { Series, SeriesNodeDatum, SeriesNodeDataContext } from "../series";
 import { ChartAxis, ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 import { isContinuous, isDiscrete } from "../../../util/value";
 
 export abstract class CartesianSeries<
-    S extends SeriesNodeDatum, M extends 'single' | 'multi'
-> extends Series<S, S, M> {
+    S extends SeriesNodeDatum
+> extends Series<SeriesNodeDataContext<S>> {
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
         [ChartAxisDirection.X]: ['xKey'],
         [ChartAxisDirection.Y]: ['yKey']

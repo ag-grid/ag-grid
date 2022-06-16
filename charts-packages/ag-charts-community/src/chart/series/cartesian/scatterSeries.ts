@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, Series } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, SeriesNodeDataContext } from "../series";
 import { extent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
@@ -15,9 +15,8 @@ import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
-import { MeasuredLabel, PlacedLabel, PointLabelDatum } from "../../../util/labelPlacement";
+import { MeasuredLabel } from "../../../util/labelPlacement";
 import { isContinuous } from "../../../util/value";
-import { Path } from "../../../scene/shape/path";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -50,7 +49,7 @@ export class ScatterSeriesTooltip extends SeriesTooltip {
     renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class ScatterSeries extends CartesianSeriesV2<ScatterNodeDatum, ScatterNodeDatum> {
+export class ScatterSeries extends CartesianSeriesV2<SeriesNodeDataContext<ScatterNodeDatum>> {
 
     static className = 'ScatterSeries';
     static type = 'scatter' as const;
@@ -129,7 +128,7 @@ export class ScatterSeries extends CartesianSeriesV2<ScatterNodeDatum, ScatterNo
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: [] });
+        super({ pickGroupIncludes: [], pathsPerSeries: 0 });
 
         const { label } = this;
 
@@ -247,11 +246,8 @@ export class ScatterSeries extends CartesianSeriesV2<ScatterNodeDatum, ScatterNo
         }
 
         nodeData.length = actualLength;
-        return [nodeData];
-    }
 
-    createLabelData(opts: { nodeData: ScatterNodeDatum[][] }) {
-        return opts.nodeData;
+        return [{itemId: this.yKey, nodeData, labelData: nodeData}];
     }
 
     protected updateHighlightSelectionItem(opts: { item?: ScatterNodeDatum, highlightSelection: Selection<Marker, Group, ScatterNodeDatum, any> }): Selection<Marker, Group, ScatterNodeDatum, any> {

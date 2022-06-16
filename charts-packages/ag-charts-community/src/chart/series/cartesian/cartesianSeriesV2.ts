@@ -1,4 +1,4 @@
-import { Series, SeriesNodeDatum } from "../series";
+import { Series, SeriesNodeDataContext } from "../series";
 import { ChartAxis, ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 import { isContinuous, isDiscrete } from "../../../util/value";
@@ -9,41 +9,50 @@ import { Group } from "../../../scene/group";
 import { Text } from "../../../scene/shape/text";
 import { Node } from "../../../scene/node";
 
-interface SubGroup<DatumType, LabelType, SceneNodeType extends Node> {
-    mainPath: Path;
+type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['nodeData'][number], any>;
+type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['labelData'][number], any>;
+
+interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
+    paths: Path[];
     group: Group;
     pickGroup: Group;
-    datumSelection: Selection<SceneNodeType, Group, DatumType, any>;
-    labelSelection: Selection<Text, Group, LabelType, any>;
+    datumSelection: NodeDataSelection<SceneNodeType, C>;
+    labelSelection: LabelDataSelection<Text, C>;
 }
 
 type PickGroupInclude = 'mainPath' | 'datumNodes';
 interface SeriesOpts {
     pickGroupIncludes: PickGroupInclude[];
+    pathsPerSeries: number;
 }
 
 export abstract class CartesianSeriesV2<
-    S extends SeriesNodeDatum,
-    L extends SeriesNodeDatum = S,
+    C extends SeriesNodeDataContext<any, any>,
     N extends Node = Marker,
-> extends Series<S, L, 'multi'> {
-    private nodeData: S[][] = [];
-    private flatNodeData?: S[] = [];
-    private labelData: L[][] = [];
-    private flatLabelData?: L[] = [];
+> extends Series<C> {
+    private contextNodeData: C[];
 
-    private highlightSelection: Selection<N, Group, S, any> = Selection.select(this.highlightGroup).selectAll<N>();
+    private highlightSelection: NodeDataSelection<N, C> = Selection.select(this.highlightGroup).selectAll<N>();
 
-    private subGroups: SubGroup<S, L, any>[] = [];
+    private subGroups: SubGroup<C, any>[] = [];
     private subGroupId: number = 0;
 
     private readonly opts: SeriesOpts;
 
+    /**
+     * The assumption is that the values will be reset (to `true`)
+     * in the {@link yKeys} setter.
+     */
+    protected readonly seriesItemEnabled = new Map<string, boolean>();
+
     protected constructor(opts: Partial<SeriesOpts> = {}) {
         super({ seriesGroupUsesLayer: false });
 
-        const { pickGroupIncludes = ['datumNodes'] as PickGroupInclude[] } = opts;
-        this.opts = { pickGroupIncludes };
+        const {
+            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
+            pathsPerSeries = 1,
+        } = opts;
+        this.opts = { pickGroupIncludes, pathsPerSeries };
     }
 
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
@@ -100,26 +109,14 @@ export abstract class CartesianSeriesV2<
         return !isNaN(x) && !isNaN(y) && xAxis.inRange(x) && yAxis.inRange(y);
     }
 
-    getNodeData() {
-        const { nodeData } = this;
-
-        if (this.flatNodeData === undefined) {
-            this.flatNodeData = nodeData.reduce((r, n) => r.concat(...n), []);
-        }
-        return this.flatNodeData;
-    }
-
-    getLabelData() {
-        const { labelData } = this;
-
-        if (this.flatLabelData === undefined) {
-            this.flatLabelData = labelData.reduce((r, n) => r.concat(...n), []);
-        }
-        return this.flatLabelData;
-    }
-
     update(): void {
-        const { chart: { highlightedDatum: { datum = undefined, series = undefined } = {}, highlightedDatum = undefined } = {}} = this;
+        const {
+            chart: {
+                highlightedDatum: {
+                    series = undefined,
+                } = {}, 
+            } = {},
+        } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
         this.updateSelections(seriesHighlighted);
@@ -134,36 +131,32 @@ export abstract class CartesianSeriesV2<
         }
         this.nodeDataRefresh = false;
 
-        this.nodeData = this.createNodeData();
-        this.flatNodeData = undefined;
-        this.labelData = this.createLabelData({ nodeData: this.nodeData });
-        this.flatLabelData = undefined;
+        this.contextNodeData = this.createNodeData();
         this.updateSeriesGroups();
 
-        const { nodeData } = this;
+        this.subGroups.forEach((subGroup, seriesIdx) => {
+            const { datumSelection, labelSelection, paths } = subGroup;
+            const contextData = this.contextNodeData[seriesIdx];
+            const { nodeData, labelData, itemId } = contextData;
 
-        this.subGroups.forEach((subGroup, idx) => {
-            const { datumSelection, labelSelection, mainPath: path } = subGroup;
-            const nodeData = this.nodeData[idx];
-            const labelData = this.labelData[idx];
-            this.updatePath({ seriesHighlighted, nodeData, path });
-            subGroup.datumSelection = this.updateDatumSelection({ nodeData, datumSelection });
-            subGroup.labelSelection = this.updateLabelSelection({ labelData, labelSelection });
+            this.updatePaths({ seriesHighlighted, itemId, contextData, paths, seriesIdx });
+            subGroup.datumSelection = this.updateDatumSelection({ nodeData, datumSelection, seriesIdx });
+            subGroup.labelSelection = this.updateLabelSelection({ labelData, labelSelection, seriesIdx });
         });
     }
 
     private updateSeriesGroups() {
-        const { nodeData, subGroups, opts: { pickGroupIncludes } } = this;
-        if (nodeData.length === subGroups.length) {
+        const { contextNodeData, subGroups, opts: { pickGroupIncludes, pathsPerSeries } } = this;
+        if (contextNodeData.length === subGroups.length) {
             return;
         }
 
-        if (nodeData.length < subGroups.length) {
-            subGroups.splice(nodeData.length)
+        if (contextNodeData.length < subGroups.length) {
+            subGroups.splice(contextNodeData.length)
                 .forEach((group) => this.seriesGroup.removeChild(group.group));
         }
 
-        while (nodeData.length > subGroups.length) {
+        while (contextNodeData.length > subGroups.length) {
             const group = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}`,
                 layer: true,
@@ -172,15 +165,17 @@ export abstract class CartesianSeriesV2<
             this.seriesGroup.appendChild(group);
             const pickGroup = new Group();
 
-            const mainPath = new Path();
+            const paths: Path[] = [];
             const pathParentGroup = pickGroupIncludes.includes('mainPath') ? pickGroup : group;
-            pathParentGroup.appendChild(mainPath);
-
+            for (let index = 0; index < pathsPerSeries; index++) {
+                paths[index] = new Path();
+                pathParentGroup.appendChild(paths[index]);
+            }
             group.appendChild(pickGroup);
 
             const datumParentGroup = pickGroupIncludes.includes('datumNodes') ? pickGroup : group;
             subGroups.push({
-                mainPath,
+                paths,
                 group,
                 pickGroup,
                 labelSelection: Selection.select(group).selectAll<Text>(),
@@ -190,23 +185,25 @@ export abstract class CartesianSeriesV2<
     }
 
     protected updateNodes(seriesHighlighted?: boolean) {
-        const { highlightSelection } = this;
+        const { highlightSelection, contextNodeData } = this;
 
-        this.group.visible = this.visible;
-        this.seriesGroup.visible = this.visible;
-        this.highlightGroup.visible = this.visible && !!seriesHighlighted;
+        const visible = this.visible && this.contextNodeData.length > 0;
+        this.group.visible = visible;
+        this.seriesGroup.visible = visible;
+        this.highlightGroup.visible = visible && !!seriesHighlighted;
         this.seriesGroup.opacity = this.getOpacity();
 
-        this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true });
+        this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
         
-        this.subGroups.forEach((subGroup) => {
-            const { group, datumSelection, labelSelection, mainPath: path } = subGroup;
-            group.opacity = this.getOpacity(datumSelection.data[0]);
-            group.visible = this.visible;
+        this.subGroups.forEach((subGroup, seriesIdx) => {
+            const { group, datumSelection, labelSelection, paths } = subGroup;
+            const { itemId } = contextNodeData[seriesIdx];
+            group.opacity = this.getOpacity({ itemId });
+            group.visible = visible && (this.seriesItemEnabled.get(itemId) ?? true);
 
-            this.updatePathNode({ seriesHighlighted, path });
-            this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false });
-            this.updateLabelNodes({ labelSelection: labelSelection });
+            this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
+            this.updateDatumNodes({ datumSelection: datumSelection, isHighlight: false, seriesIdx });
+            this.updateLabelNodes({ labelSelection: labelSelection, seriesIdx });
         });
     }
 
@@ -216,7 +213,7 @@ export abstract class CartesianSeriesV2<
             highlightSelection,
         } = this;
 
-        const item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum as S : undefined;
+        const item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum as C['nodeData'][number] : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
     }
 
@@ -236,24 +233,60 @@ export abstract class CartesianSeriesV2<
         return result;
     }
 
-    protected abstract createLabelData(opts: { nodeData: S[][] }): L[][];
-
-    protected updatePath(opts: {seriesHighlighted?: boolean, nodeData: S[], path: Path}): void {
-        // Override point for sub-classes.
-        opts.path.visible = false;
+    toggleSeriesItem(itemId: string, enabled: boolean): void {
+        if (this.seriesItemEnabled.size > 0) {
+            this.seriesItemEnabled.set(itemId, enabled);
+            this.nodeDataRefresh = true;
+        } else {
+            super.toggleSeriesItem(itemId, enabled);
+        }
     }
 
-    protected updatePathNode(opts: {seriesHighlighted?: boolean, path: Path}): void {
+    protected updatePaths(opts: {
+        seriesHighlighted?: boolean,
+        itemId?: string,
+        contextData: C,
+        paths: Path[],
+        seriesIdx: number,
+    }): void {
+        // Override point for sub-classes.
+        opts.paths.forEach(p => p.visible = false);
+    }
+
+    protected updatePathNodes(_opts: {
+        seriesHighlighted?: boolean,
+        itemId?: string,
+        paths: Path[],
+        seriesIdx: number,
+    }): void {
         // Override point for sub-classes.
     }
 
-    protected abstract updateHighlightSelectionItem(opts: { item?: S, highlightSelection: Selection<N, Group, S, any> }): Selection<N, Group, S, any>;
+    protected abstract updateHighlightSelectionItem(opts: {
+        item?: C['nodeData'][number],
+        highlightSelection: NodeDataSelection<N, C>,
+    }): NodeDataSelection<N, C>;
 
-    protected abstract updateDatumSelection(opts: { nodeData: S[], datumSelection: Selection<N, Group, S, any> }): Selection<N, Group, S, any>;
-    protected abstract updateDatumNodes(opts: { datumSelection: Selection<N, Group, S, any>, isHighlight: boolean }): void;
+    protected abstract updateDatumSelection(opts: {
+        nodeData: C['nodeData'],
+        datumSelection: NodeDataSelection<N, C>,
+        seriesIdx: number,
+    }): NodeDataSelection<N, C>;
+    protected abstract updateDatumNodes(opts: {
+        datumSelection: NodeDataSelection<N, C>,
+        isHighlight: boolean,
+        seriesIdx: number,
+    }): void;
 
-    protected abstract updateLabelSelection(opts: { labelData: L[], labelSelection: Selection<Text, Group, L, any>  }): Selection<Text, Group, L, any>;
-    protected abstract updateLabelNodes(opts: { labelSelection: Selection<Text, Group, L, any>  }): void;
+    protected abstract updateLabelSelection(opts: {
+        labelData: C['labelData'],
+        labelSelection: LabelDataSelection<Text, C>,
+        seriesIdx: number,
+    }): LabelDataSelection<Text, C>;
+    protected abstract updateLabelNodes(opts: {
+        labelSelection: LabelDataSelection<Text, C>,
+        seriesIdx: number,
+    }): void;
 }
 
 export interface CartesianSeriesMarkerFormat {
