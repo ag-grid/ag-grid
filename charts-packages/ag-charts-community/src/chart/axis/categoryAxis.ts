@@ -1,6 +1,6 @@
 import { BandScale } from "../../scale/bandScale";
 import { ChartAxis } from "../chartAxis";
-export class CategoryAxis extends ChartAxis<BandScale<string>> {
+export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
 
@@ -25,17 +25,13 @@ export class CategoryAxis extends ChartAxis<BandScale<string>> {
         return this.scale.paddingOuter;
     }
 
-    set domain(values: string[]) {
+    set domain(values: (string | object)[]) {
         // Prevent duplicate categories.
-        const valuesDict: Record<string, string> = {};
-        for (const value of values) {
-            // NOTE: keys are forces to strings, so we can't use them for cases where the domain is
-            // object-based - which is itself counter to the typings here!
-            valuesDict[value] = value;
-        }
-        this.scale.domain = Object.values(valuesDict);
+        const valuesSet = new Set<string | {}>(values);
+        this.scale.domain = new Array(...valuesSet.values());
     }
-    get domain(): string[] {
+
+    get domain(): (string | object)[] {
         return this.scale.domain.slice();
     }
 }
