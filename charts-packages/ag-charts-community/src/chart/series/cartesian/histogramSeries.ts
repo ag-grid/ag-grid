@@ -1,27 +1,30 @@
-import { Group } from "../../../scene/group";
-import { Selection } from "../../../scene/selection";
-import { Rect } from "../../../scene/shape/rect";
-import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
-import { DropShadow } from "../../../scene/dropShadow";
+import { Group } from '../../../scene/group';
+import { Selection } from '../../../scene/selection';
+import { Rect } from '../../../scene/shape/rect';
+import { Text, FontStyle, FontWeight } from '../../../scene/shape/text';
+import { DropShadow } from '../../../scene/dropShadow';
 import {
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip, Series, SeriesNodeDataContext
-} from "../series";
-import { Label } from "../../label";
-import { PointerEvents } from "../../../scene/node";
-import { LegendDatum } from "../../legend";
-import { CartesianSeries } from "./cartesianSeries";
-import { ChartAxisDirection } from "../../chartAxis";
-import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { extent } from "../../../util/array";
-import { TypedEvent } from "../../../util/observable";
-import ticks, { tickStep } from "../../../util/ticks";
-import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous } from "../../../util/value";
+    CartesianTooltipRendererParams as HistogramTooltipRendererParams,
+    SeriesTooltip,
+    Series,
+    SeriesNodeDataContext,
+} from '../series';
+import { Label } from '../../label';
+import { PointerEvents } from '../../../scene/node';
+import { LegendDatum } from '../../legend';
+import { CartesianSeries } from './cartesianSeries';
+import { ChartAxisDirection } from '../../chartAxis';
+import { TooltipRendererResult, toTooltipHtml } from '../../chart';
+import { extent } from '../../../util/array';
+import { TypedEvent } from '../../../util/observable';
+import ticks, { tickStep } from '../../../util/ticks';
+import { sanitizeHtml } from '../../../util/sanitize';
+import { isContinuous } from '../../../util/value';
 
 enum HistogramSeriesNodeTag {
     Bin,
-    Label
+    Label,
 }
 
 class HistogramSeriesLabel extends Label {
@@ -64,9 +67,9 @@ export type HistogramAggregation = 'count' | 'sum' | 'mean';
 type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
 const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction } = {
-    count: bin => bin.data.length,
+    count: (bin) => bin.data.length,
     sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
-    mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey)
+    mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey),
 };
 
 export class HistogramBin {
@@ -77,7 +80,7 @@ export class HistogramBin {
 
     constructor([domainMin, domainMax]: [number, number]) {
         this.domain = [domainMin, domainMax];
-    };
+    }
 
     addDatum(datum: any) {
         this.data.push(datum);
@@ -114,7 +117,6 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
 }
 
 export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
-
     static className = 'HistogramSeries';
     static type = 'histogram' as const;
 
@@ -143,7 +145,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     directionKeys = {
         [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey']
+        [ChartAxisDirection.Y]: ['yKey'],
     };
 
     getKeys(direction: ChartAxisDirection): string[] {
@@ -152,7 +154,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const values: string[] = [];
 
         if (keys) {
-            keys.forEach(key => {
+            keys.forEach((key) => {
                 const value = (this as any)[key];
 
                 if (value) {
@@ -200,23 +202,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             return bins;
         }
 
-        const xData = this.data.map(datum => datum[this.xKey]);
+        const xData = this.data.map((datum) => datum[this.xKey]);
         const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
 
         const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const firstBinEnd = binStarts[0];
 
-        const expandStartToBin: (n: number) => [number, number] = n => [n, n + binSize];
+        const expandStartToBin: (n: number) => [number, number] = (n) => [n, n + binSize];
 
-        return [
-            [firstBinEnd - binSize, firstBinEnd],
-            ...binStarts.map(expandStartToBin)
-        ];
+        return [[firstBinEnd - binSize, firstBinEnd], ...binStarts.map(expandStartToBin)];
     }
 
     private placeDataInBins(data: any[]): HistogramBin[] {
-
         const { xKey } = this;
         const derivedBins = this.deriveBins();
 
@@ -248,15 +246,18 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             bins[currentBin].addDatum(datum);
         }
 
-        bins.forEach(b => b.calculateAggregatedValue(this.aggregation, this.yKey));
+        bins.forEach((b) => b.calculateAggregatedValue(this.aggregation, this.yKey));
 
         return bins;
     }
 
     get xMax(): number {
-        return this.data && this.data.reduce((acc, datum) => {
-            return Math.max(acc, datum[this.xKey]);
-        }, Number.NEGATIVE_INFINITY);
+        return (
+            this.data &&
+            this.data.reduce((acc, datum) => {
+                return Math.max(acc, datum[this.xKey]);
+            }, Number.NEGATIVE_INFINITY)
+        );
     }
 
     processData(): boolean {
@@ -264,7 +265,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
 
-        const yData = this.binnedData.map(b => b.getY(this.areaPlot));
+        const yData = this.binnedData.map((b) => b.getY(this.areaPlot));
         const yMinMax = extent(yData, isContinuous);
 
         this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
@@ -292,7 +293,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             event,
             series: this,
             datum: datum.datum,
-            xKey: this.xKey
+            xKey: this.xKey,
         });
     }
 
@@ -317,38 +318,45 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
                 fontFamily: labelFontFamily,
-                color: labelColor
-            }
+                color: labelColor,
+            },
         } = this;
 
-        this.binnedData.forEach(binOfData => {
-            const { aggregatedValue: total, frequency, domain: [xDomainMin, xDomainMax], relativeHeight } = binOfData;
+        this.binnedData.forEach((binOfData) => {
+            const {
+                aggregatedValue: total,
+                frequency,
+                domain: [xDomainMin, xDomainMax],
+                relativeHeight,
+            } = binOfData;
 
-            const
-                xMinPx = xScale.convert(xDomainMin),
+            const xMinPx = xScale.convert(xDomainMin),
                 xMaxPx = xScale.convert(xDomainMax),
                 // note: assuming can't be negative:
-                y = this.areaPlot ? relativeHeight : (this.yKey ? total : frequency),
+                y = this.areaPlot ? relativeHeight : this.yKey ? total : frequency,
                 yZeroPx = yScale.convert(0),
                 yMaxPx = yScale.convert(y),
                 w = xMaxPx - xMinPx,
                 h = Math.abs(yMaxPx - yZeroPx);
 
-            const selectionDatumLabel = y !== 0 ? {
-                text: labelFormatter({ value: binOfData.aggregatedValue }),
-                fontStyle: labelFontStyle,
-                fontWeight: labelFontWeight,
-                fontSize: labelFontSize,
-                fontFamily: labelFontFamily,
-                fill: labelColor,
-                x: xMinPx + w / 2,
-                y: yMaxPx + h / 2
-            } : undefined;
+            const selectionDatumLabel =
+                y !== 0
+                    ? {
+                          text: labelFormatter({ value: binOfData.aggregatedValue }),
+                          fontStyle: labelFontStyle,
+                          fontWeight: labelFontWeight,
+                          fontSize: labelFontSize,
+                          fontFamily: labelFontFamily,
+                          fill: labelColor,
+                          x: xMinPx + w / 2,
+                          y: yMaxPx + h / 2,
+                      }
+                    : undefined;
 
             nodeData.push({
                 series: this,
-                datum: binOfData,  // required by SeriesNodeDatum, but might not make sense here
-                                   // since each selection is an aggregation of multiple data.
+                datum: binOfData, // required by SeriesNodeDatum, but might not make sense here
+                // since each selection is an aggregation of multiple data.
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,
@@ -364,14 +372,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     protected updateDatumSelection(opts: {
-        nodeData: HistogramNodeDatum[],
-        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
+        nodeData: HistogramNodeDatum[];
+        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
     }) {
         const { nodeData, datumSelection } = opts;
 
         const updateRects = datumSelection.setData(nodeData);
         updateRects.exit.remove();
-        const enterRects = updateRects.enter.append(Rect).each(rect => {
+        const enterRects = updateRects.enter.append(Rect).each((rect) => {
             rect.tag = HistogramSeriesNodeTag.Bin;
             rect.crisp = true;
         });
@@ -380,12 +388,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     protected updateDatumNodes(opts: {
-        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>,
-        isHighlight: boolean,
+        datumSelection: Selection<Rect, Group, HistogramNodeDatum, any>;
+        isHighlight: boolean;
     }) {
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
-            fillOpacity, strokeOpacity, shadow,
+            fillOpacity,
+            strokeOpacity,
+            shadow,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -394,14 +404,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                }
-            }
+                },
+            },
         } = this;
 
         datumSelection.each((rect, datum, index) => {
-            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                ? highlightedDatumStrokeWidth
-                : datum.strokeWidth;
+            const strokeWidth =
+                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : datum.strokeWidth;
 
             rect.x = datum.x;
             rect.y = datum.y;
@@ -420,16 +431,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         });
     }
 
-
     protected updateLabelSelection(opts: {
-        labelData: HistogramNodeDatum[],
-        labelSelection: Selection<Text, Group, HistogramNodeDatum, any>,
+        labelData: HistogramNodeDatum[];
+        labelSelection: Selection<Text, Group, HistogramNodeDatum, any>;
     }) {
-        const {labelData, labelSelection} = opts;
+        const { labelData, labelSelection } = opts;
 
         const updateTexts = labelSelection.setData(labelData);
         updateTexts.exit.remove();
-        const enterTexts = updateTexts.enter.append(Text).each(text => {
+        const enterTexts = updateTexts.enter.append(Text).each((text) => {
             text.tag = HistogramSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
             text.textAlign = 'center';
@@ -439,9 +449,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return updateTexts.merge(enterTexts);
     }
 
-    protected updateLabelNodes(
-        opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> },
-    ) {
+    protected updateLabelNodes(opts: { labelSelection: Selection<Text, Group, HistogramNodeDatum, any> }) {
         const { labelSelection } = opts;
         const labelEnabled = this.label.enabled;
 
@@ -474,41 +482,45 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const { xName, yName, fill: color, tooltip, aggregation } = this;
         const { renderer: tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.datum;
-        const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
+        const {
+            aggregatedValue,
+            frequency,
+            domain: [rangeMin, rangeMax],
+        } = bin;
         const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
-        let content = yKey ?
-            `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>` :
-            '';
+        let content = yKey
+            ? `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>`
+            : '';
 
         content += `<b>Frequency</b>: ${frequency}`;
 
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,
-            content
+            content,
         };
 
         if (tooltipRenderer) {
-            return toTooltipHtml(tooltipRenderer({
-                datum: bin,
-                xKey,
-                xValue: bin.domain,
-                xName,
-                yKey,
-                yValue: bin.aggregatedValue,
-                yName,
-                color
-            }), defaults);
+            return toTooltipHtml(
+                tooltipRenderer({
+                    datum: bin,
+                    xKey,
+                    xValue: bin.domain,
+                    xName,
+                    yKey,
+                    yValue: bin.aggregatedValue,
+                    yName,
+                    color,
+                }),
+                defaults
+            );
         }
 
         return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
-        const {
-            id, data, yKey, yName, visible,
-            fill, stroke, fillOpacity, strokeOpacity
-        } = this;
+        const { id, data, yKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (data && data.length) {
             legendData.push({
@@ -516,14 +528,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 itemId: yKey,
                 enabled: visible,
                 label: {
-                    text: yName || yKey || 'Frequency'
+                    text: yName || yKey || 'Frequency',
                 },
                 marker: {
                     fill: fill || 'rgba(0, 0, 0, 0)',
                     stroke: stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
-                    strokeOpacity: strokeOpacity
-                }
+                    strokeOpacity: strokeOpacity,
+                },
             });
         }
     }

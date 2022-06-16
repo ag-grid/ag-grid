@@ -1,12 +1,12 @@
-import { Group } from "../../scene/group";
-import { LegendDatum } from "../legend";
-import { Observable } from "../../util/observable";
-import { ChartAxis, ChartAxisDirection } from "../chartAxis";
-import { Chart } from "../chart";
-import { createId } from "../../util/id";
-import { Label } from "../label";
-import { isNumber } from "../../util/value";
-import { TimeAxis } from "../axis/timeAxis";
+import { Group } from '../../scene/group';
+import { LegendDatum } from '../legend';
+import { Observable } from '../../util/observable';
+import { ChartAxis, ChartAxisDirection } from '../chartAxis';
+import { Chart } from '../chart';
+import { createId } from '../../util/id';
+import { Label } from '../label';
+import { isNumber } from '../../util/value';
+import { TimeAxis } from '../axis/timeAxis';
 import { Node } from '../../scene/node';
 
 /**
@@ -22,10 +22,11 @@ export interface SeriesNodeDatum {
     readonly series: Series<any>;
     readonly itemId?: any;
     readonly datum: any;
-    readonly point?: { // in local (series) coordinates
+    readonly point?: {
+        // in local (series) coordinates
         readonly x: number;
         readonly y: number;
-    }
+    };
 }
 
 export interface TooltipRendererParams {
@@ -75,8 +76,8 @@ export class HighlightStyle {
      */
     stroke?: string = undefined;
     /**
-    * @deprecated Use item.strokeWidth instead.
-    */
+     * @deprecated Use item.strokeWidth instead.
+     */
     strokeWidth?: number = undefined;
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
@@ -88,13 +89,11 @@ export class SeriesTooltip {
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
     itemId: string;
-    nodeData: S[],
-    labelData: L[],
-}
+    nodeData: S[];
+    labelData: L[];
+};
 
-export abstract class Series<
-    C extends SeriesNodeDataContext = SeriesNodeDataContext,
-> extends Observable {
+export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataContext> extends Observable {
     protected static readonly highlightedZIndex = 1000000000000;
     protected static readonly SERIES_LAYER_ZINDEX = 100;
     protected static readonly SERIES_HIGHLIGHT_LAYER_ZINDEX = 150;
@@ -153,9 +152,9 @@ export abstract class Series<
 
         const { group } = this;
         this.seriesGroup = group.appendChild(
-            new Group({ 
-                name: `${this.id}-series`, 
-                layer: seriesGroupUsesLayer, 
+            new Group({
+                name: `${this.id}-series`,
+                layer: seriesGroupUsesLayer,
                 zIndex: Series.SERIES_LAYER_ZINDEX,
             })
         );
@@ -187,7 +186,7 @@ export abstract class Series<
         const values: string[] = [];
 
         if (keys) {
-            keys.forEach(key => {
+            keys.forEach((key) => {
                 const value = (this as any)[key];
 
                 if (value) {
@@ -220,22 +219,24 @@ export abstract class Series<
     abstract update(): void;
 
     protected getOpacity(datum?: { itemId?: any }): number {
-        const { 
+        const {
             chart: { highlightedDatum: { series = undefined, itemId = undefined } = {} } = {},
-            highlightStyle: { series: { dimOpacity = 1 } },
-         } = this;
+            highlightStyle: {
+                series: { dimOpacity = 1 },
+            },
+        } = this;
 
-         const defaultOpacity = 1;
-         const highlighting = series != null;
+        const defaultOpacity = 1;
+        const highlighting = series != null;
 
-         if (!highlighting) {
-             // Highlighting not active.
-             return defaultOpacity;
-         }
-        
+        if (!highlighting) {
+            // Highlighting not active.
+            return defaultOpacity;
+        }
+
         if (series !== this) {
-             // Highlighting active, this series not highlighted.
-             return dimOpacity;
+            // Highlighting active, this series not highlighted.
+            return dimOpacity;
         }
 
         if (itemId === undefined) {
@@ -244,17 +245,19 @@ export abstract class Series<
         }
 
         if (datum && itemId !== datum.itemId) {
-             // Highlighting active, this series item not highlighted.
-             return dimOpacity;
+            // Highlighting active, this series item not highlighted.
+            return dimOpacity;
         }
 
         return defaultOpacity;
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
-        const { 
+        const {
             chart: { highlightedDatum: { series = undefined } = {}, highlightedDatum = undefined } = {},
-            highlightStyle: { series: { strokeWidth } },
+            highlightStyle: {
+                series: { strokeWidth },
+            },
         } = this;
 
         if (strokeWidth === undefined) {
@@ -267,9 +270,7 @@ export abstract class Series<
             return defaultStrokeWidth;
         }
 
-        const matchesDatum = datum ?
-            highlightedDatum === datum || highlightedDatum?.itemId === datum?.itemId : 
-            true;
+        const matchesDatum = datum ? highlightedDatum === datum || highlightedDatum?.itemId === datum?.itemId : true;
         if (series === this && matchesDatum) {
             return strokeWidth;
         }
@@ -321,7 +322,8 @@ export abstract class Series<
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            if (axis instanceof TimeAxis) { // numbers in domain correspond to Unix timestamps
+            if (axis instanceof TimeAxis) {
+                // numbers in domain correspond to Unix timestamps
                 // automatically expand domain by 1 in each direction
                 min -= 1;
                 max += 1;

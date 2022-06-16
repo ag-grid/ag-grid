@@ -1,16 +1,26 @@
-import { Series, SeriesNodeDataContext } from "../series";
-import { ChartAxis, ChartAxisDirection } from "../../chartAxis";
-import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
-import { isContinuous, isDiscrete } from "../../../util/value";
-import { Path } from "../../../scene/shape/path";
-import { Selection } from "../../../scene/selection";
-import { Marker } from "../../marker/marker";
-import { Group } from "../../../scene/group";
-import { Text } from "../../../scene/shape/text";
-import { Node } from "../../../scene/node";
+import { Series, SeriesNodeDataContext } from '../series';
+import { ChartAxis, ChartAxisDirection } from '../../chartAxis';
+import { SeriesMarker, SeriesMarkerFormatterParams } from '../seriesMarker';
+import { isContinuous, isDiscrete } from '../../../util/value';
+import { Path } from '../../../scene/shape/path';
+import { Selection } from '../../../scene/selection';
+import { Marker } from '../../marker/marker';
+import { Group } from '../../../scene/group';
+import { Text } from '../../../scene/shape/text';
+import { Node } from '../../../scene/node';
 
-type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['nodeData'][number], any>;
-type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<N, Group, ContextType['labelData'][number], any>;
+type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
+    N,
+    Group,
+    ContextType['nodeData'][number],
+    any
+>;
+type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
+    N,
+    Group,
+    ContextType['labelData'][number],
+    any
+>;
 
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
     paths: Path[];
@@ -28,7 +38,7 @@ interface SeriesOpts {
 
 export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
-    N extends Node = Marker,
+    N extends Node = Marker
 > extends Series<C> {
     private contextNodeData: C[];
 
@@ -48,16 +58,13 @@ export abstract class CartesianSeries<
     protected constructor(opts: Partial<SeriesOpts> = {}) {
         super({ seriesGroupUsesLayer: false });
 
-        const {
-            pickGroupIncludes = ['datumNodes'] as PickGroupInclude[],
-            pathsPerSeries = 1,
-        } = opts;
+        const { pickGroupIncludes = ['datumNodes'] as PickGroupInclude[], pathsPerSeries = 1 } = opts;
         this.opts = { pickGroupIncludes, pathsPerSeries };
     }
 
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {
         [ChartAxisDirection.X]: ['xKey'],
-        [ChartAxisDirection.Y]: ['yKey']
+        [ChartAxisDirection.Y]: ['yKey'],
     };
 
     /**
@@ -71,8 +78,8 @@ export abstract class CartesianSeries<
      */
     protected checkDomainXY<T, K>(x: T, y: K, isContinuousX: boolean, isContinuousY: boolean): [T, K] | undefined {
         const isValidDatum =
-            (isContinuousX && isContinuous(x) || !isContinuousX && isDiscrete(x)) &&
-            (isContinuousY && isContinuous(y) || !isContinuousY && isDiscrete(y));
+            ((isContinuousX && isContinuous(x)) || (!isContinuousX && isDiscrete(x))) &&
+            ((isContinuousY && isContinuous(y)) || (!isContinuousY && isDiscrete(y)));
         return isValidDatum ? [x, y] : undefined;
     }
 
@@ -110,13 +117,7 @@ export abstract class CartesianSeries<
     }
 
     update(): void {
-        const {
-            chart: {
-                highlightedDatum: {
-                    series = undefined,
-                } = {}, 
-            } = {},
-        } = this;
+        const { chart: { highlightedDatum: { series = undefined } = {} } = {} } = this;
         const seriesHighlighted = series ? series === this : undefined;
 
         this.updateSelections(seriesHighlighted);
@@ -146,14 +147,17 @@ export abstract class CartesianSeries<
     }
 
     private updateSeriesGroups() {
-        const { contextNodeData, subGroups, opts: { pickGroupIncludes, pathsPerSeries } } = this;
+        const {
+            contextNodeData,
+            subGroups,
+            opts: { pickGroupIncludes, pathsPerSeries },
+        } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
         }
 
         if (contextNodeData.length < subGroups.length) {
-            subGroups.splice(contextNodeData.length)
-                .forEach((group) => this.seriesGroup.removeChild(group.group));
+            subGroups.splice(contextNodeData.length).forEach((group) => this.seriesGroup.removeChild(group.group));
         }
 
         while (contextNodeData.length > subGroups.length) {
@@ -194,7 +198,7 @@ export abstract class CartesianSeries<
         this.seriesGroup.opacity = this.getOpacity();
 
         this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
-        
+
         this.subGroups.forEach((subGroup, seriesIdx) => {
             const { group, datumSelection, labelSelection, paths } = subGroup;
             const { itemId } = contextNodeData[seriesIdx];
@@ -213,7 +217,8 @@ export abstract class CartesianSeries<
             highlightSelection,
         } = this;
 
-        const item = seriesHighlighted && highlightedDatum && datum ? highlightedDatum as C['nodeData'][number] : undefined;
+        const item =
+            seriesHighlighted && highlightedDatum && datum ? (highlightedDatum as C['nodeData'][number]) : undefined;
         this.highlightSelection = this.updateHighlightSelectionItem({ item, highlightSelection });
     }
 
@@ -221,7 +226,7 @@ export abstract class CartesianSeries<
         let result = super.pickNode(x, y);
 
         if (!result) {
-            for (const { pickGroup } of this.subGroups ) {
+            for (const { pickGroup } of this.subGroups) {
                 result = pickGroup.pickNode(x, y);
 
                 if (result) {
@@ -243,28 +248,28 @@ export abstract class CartesianSeries<
     }
 
     protected updatePaths(opts: {
-        seriesHighlighted?: boolean,
-        itemId?: string,
-        contextData: C,
-        paths: Path[],
-        seriesIdx: number,
+        seriesHighlighted?: boolean;
+        itemId?: string;
+        contextData: C;
+        paths: Path[];
+        seriesIdx: number;
     }): void {
         // Override point for sub-classes.
-        opts.paths.forEach(p => p.visible = false);
+        opts.paths.forEach((p) => (p.visible = false));
     }
 
     protected updatePathNodes(_opts: {
-        seriesHighlighted?: boolean,
-        itemId?: string,
-        paths: Path[],
-        seriesIdx: number,
+        seriesHighlighted?: boolean;
+        itemId?: string;
+        paths: Path[];
+        seriesIdx: number;
     }): void {
         // Override point for sub-classes.
     }
 
     protected updateHighlightSelectionItem(opts: {
-        item?: C['nodeData'][number],
-        highlightSelection: NodeDataSelection<N, C>,
+        item?: C['nodeData'][number];
+        highlightSelection: NodeDataSelection<N, C>;
     }): NodeDataSelection<N, C> {
         const { item, highlightSelection: datumSelection } = opts;
         const nodeData = item ? [item] : [];
@@ -273,25 +278,22 @@ export abstract class CartesianSeries<
     }
 
     protected abstract updateDatumSelection(opts: {
-        nodeData: C['nodeData'],
-        datumSelection: NodeDataSelection<N, C>,
-        seriesIdx: number,
+        nodeData: C['nodeData'];
+        datumSelection: NodeDataSelection<N, C>;
+        seriesIdx: number;
     }): NodeDataSelection<N, C>;
     protected abstract updateDatumNodes(opts: {
-        datumSelection: NodeDataSelection<N, C>,
-        isHighlight: boolean,
-        seriesIdx: number,
+        datumSelection: NodeDataSelection<N, C>;
+        isHighlight: boolean;
+        seriesIdx: number;
     }): void;
 
     protected abstract updateLabelSelection(opts: {
-        labelData: C['labelData'],
-        labelSelection: LabelDataSelection<Text, C>,
-        seriesIdx: number,
+        labelData: C['labelData'];
+        labelSelection: LabelDataSelection<Text, C>;
+        seriesIdx: number;
     }): LabelDataSelection<Text, C>;
-    protected abstract updateLabelNodes(opts: {
-        labelSelection: LabelDataSelection<Text, C>,
-        seriesIdx: number,
-    }): void;
+    protected abstract updateLabelNodes(opts: { labelSelection: LabelDataSelection<Text, C>; seriesIdx: number }): void;
 }
 
 export interface CartesianSeriesMarkerFormat {
