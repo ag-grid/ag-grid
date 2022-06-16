@@ -23,12 +23,17 @@
     $params: map.remove($params, "theme", "themes");
 
     $no-native-widgets: map.get($params, "suppress-native-widget-styling");
-    $params: map.remove($params, "suppress-native-widget-styling");
 
     @if $no-native-widgets {
         @include -load-css-file("ag-grid-no-native-widgets.css");
     } @else {
         @include -load-css-file("ag-grid.css");
+    }
+
+    $global-output-class-name: map.get($params, "output-class-name");
+    @if $global-output-class-name and list.length($themes) > 1 {
+        $first-theme: list.nth(map.keys($themes), 1);
+        @error "output-class-name is set at the top level, but multiple themes are specified. Instead set output-class-name as a parameter on each theme, e.g. themes: (#{$first-theme}: (output-class-name: #{$global-output-class-name}))";
     }
 
     @each $theme-name, $extra-params in $themes {
@@ -46,8 +51,24 @@
         @if $font {
             @include -load-css-file("#{$font}Font.css", $ignore-missing: true);
         }
-        .ag-theme-#{$theme-name} {
+        $default-output-class-name: "ag-theme-#{$theme-name}";
+        
+        // allow the theme class name to be specified globally
+        $output-class-name: $global-output-class-name;
+        // ... or at the theme configuration level ...
+        $output-class-name: map.get($theme-params, "output-class-name") !default;
+        // ... or use the default ...
+        $output-class-name: $default-output-class-name !default;
+        .#{$output-class-name} {
             @include -grid-variables($theme-params, $theme-name);
+        }
+
+        // if the class name has been changed, we need to use @extend to add
+        // the new custom class name to the default
+        @if $output-class-name != $default-output-class-name {
+            .#{$output-class-name} {
+                @extend .#{$default-output-class-name};
+            }
         }
     }
 }
@@ -79,7 +100,9 @@ $-loaded-css-files: ();
 
     @each $name, $value in $params {
         // use meta.inspect to preserve the quote style of strings
-        --ag-#{$name}: #{meta.inspect($value)};
+        @if map.has-key($-variable-param-types, $name) {
+            --ag-#{$name}: #{meta.inspect($value)};
+        }
     }
 }
 
@@ -405,7 +428,8 @@ $-variable-param-types: (
 
 // params that are not copied to CSS variables
 $-non-variable-param-types: (
-    suppress-native-widget-styling: "bool"
+    suppress-native-widget-styling: "bool",
+    output-class-name: "string"
 );
 
 @mixin -validate-params($params, $theme: null) {
@@ -481,6 +505,10 @@ $-non-variable-param-types: (
 
 @function -validate-bool($value) {
     @return meta.type-of($value) == "bool";
+}
+
+@function -validate-string($value) {
+    @return meta.type-of($value) == "string";
 }
 
 @function -validate-any($value) {
