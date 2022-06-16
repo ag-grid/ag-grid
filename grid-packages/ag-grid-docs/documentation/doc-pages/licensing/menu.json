@@ -426,6 +426,23 @@
             "showInCollapsed": true
           },
           {
+            "title": "Sass Styling API",
+            "url": "/styling-sass/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Legacy Sass API",
+                "url": "/styling-sass-legacy/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Upgrading from v27",
+                "url": "/styling-sass-upgrading-from-v27/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
             "title": "Grid Size",
             "url": "/grid-size/",
             "showInCollapsed": true

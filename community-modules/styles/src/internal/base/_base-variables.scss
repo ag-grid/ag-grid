@@ -164,7 +164,6 @@
         // Colour for borders between rows, if enabled with --ag-borders-row
         --ag-row-border-color: var(--ag-secondary-border-color);
 
-
         // Default border for cells. This can be used to specify the border-style
         // and border-color properties e.g. `dashed red` but the border-width is
         // fixed at 1px.
@@ -281,7 +280,7 @@
         --ag-cell-widget-spacing: var(--ag-cell-horizontal-padding);
 
         // Height of grid rows
-        --ag-row-height: calc(var(--ag-grid-size) * 6 + 1);
+        --ag-row-height: calc(var(--ag-grid-size) * 6 + 1px);
 
         // Height of header rows
         --ag-header-height: var(--ag-row-height);

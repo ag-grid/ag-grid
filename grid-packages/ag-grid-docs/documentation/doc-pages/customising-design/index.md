@@ -159,12 +159,27 @@ The simpler your CSS rules are, the less likely they are to break between releas
 
 Browsers use the same mechanism - CSS - for controlling how elements work (e.g. scrolling and whether they respond to mouse events), where elements appear, and how elements look. Our "structural stylesheet" (ag-grid.scss) sets CSS rules that control how the grid works, and the code depends on those rules not being overridden. There is nothing that we can do to prevent themes overriding critical rules, so as a theme author you need to be careful not to break the grid. Here's a guide:
 
-
 - Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change in a theme.
 
-- Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the align of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g.  turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
+- Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the alignment of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
 
 - The style properties `position`, `overflow` and `pointer-events` are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break functionality now or in future minor releases.
+
+## Creating a reusable package of design customisations
+
+To create a reusable set of design customisations that can be shared between projects you can use a CSS class that is applied in addition to the theme you're extending:
+
+```html
+<!-- grid div applies your class after the theme class -->
+<div id="myGrid" class="ag-theme-alpine acmecorp-house-style"></div>
+```
+
+```css
+/* acmecorp-house-style.css */
+.acmecorp-house-style {
+    --ag-odd-row-background-color: #aaa;
+}
+```
 
 ## Full list of theme parameters
 

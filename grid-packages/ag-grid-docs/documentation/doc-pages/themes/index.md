@@ -2,7 +2,7 @@
 title: "Themes"
 ---
 
-The grid is styled with CSS, and a theme is simply a CSS files that customise the appearance of the grid. Most users choose a provided theme and then [customise](/customising-design/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme)
+The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](/customising-design/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
 
 ## Provided Themes
 
@@ -77,9 +77,7 @@ The Material theme requires the Roboto font, and this is not bundled in the mate
 
 ## Creating your own theme
 
-The majority of users select a provided theme and [make customisations using CSS](/customising-design/).
-
-If you start with a provided theme and then very extensively alter it to make a totally different design, you may encounter a couple of issues:
+The majority of users select a provided theme and [make customisations using CSS](/customising-design/). If you start with a provided theme and then very extensively alter it to make a totally different design, you may encounter a couple of issues:
 
 1. If the provided theme contains design elements that you don't want, you need to add CSS rules to remove them.
 2. Between releases, we may change some of the implementation details of the provided theme in a way that breaks these rules you have added.
@@ -88,13 +86,13 @@ For apps that want a look and feel that is entirely different from our provided 
 
 A theme is simply a CSS class name matching the pattern `ag-theme-*`, along with CSS rules that target this class name.
 
-Firstly, define your custom theme name:
+Ensure that `ag-grid.css` is loaded, choose a theme name and apply it to the grid:
 
 ```html
 <div id="myGrid" class="ag-theme-mycustomtheme"></div>
 ```
 
-This will give you a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/customising-design/):
+That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](/customising-design/):
 
 ```css
 .ag-theme-mycustomtheme {
@@ -106,3 +104,8 @@ This will give you a nearly blank slate - basic customisable borders and padding
     font-style: italic;
 }
 ```
+
+[[note]]
+| Versions of the grid before v28 had a different mechanism for creating custom themes, and allowed custom themes to "extend" a provided theme. This functionality is now provided by [Design Customisations](/customising-design/).
+|
+| If you're using the old method of building themes, see the notes on [Upgrading from v27](/styling-sass#upgrading-from-v27)
