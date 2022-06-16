@@ -12,7 +12,7 @@ import { extent } from "../../../util/array";
 import { PointerEvents } from "../../../scene/node";
 import { Text } from "../../../scene/shape/text";
 import { LegendDatum } from "../../legend";
-import { CartesianSeriesV2, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeriesV2";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TypedEvent } from "../../../util/observable";
@@ -63,7 +63,7 @@ export class LineSeriesTooltip extends SeriesTooltip {
 }
 
 type LineContext = SeriesNodeDataContext<LineNodeDatum>;
-export class LineSeries extends CartesianSeriesV2<LineContext> {
+export class LineSeries extends CartesianSeries<LineContext> {
 
     static className = 'LineSeries';
     static type = 'line' as const;

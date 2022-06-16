@@ -5,14 +5,13 @@ import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as AreaTooltipRendererParams,
     SeriesTooltip,
-    Series,
     SeriesNodeDataContext,
 } from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Path } from "../../../scene/shape/path";
 import { Marker } from "../../marker/marker";
-import { CartesianSeriesV2, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeriesV2";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
@@ -27,7 +26,6 @@ import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { isContinuous, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 import { doOnce } from "../../../util/function";
-import { Node } from '../../../scene/node';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -108,7 +106,7 @@ type AreaSeriesNodeDataContext = SeriesNodeDataContext<MarkerSelectionDatum, Lab
     strokeSelectionData: StrokeSelectionDatum;
 };
 
-export class AreaSeries extends CartesianSeriesV2<AreaSeriesNodeDataContext> {
+export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     static className = 'AreaSeries';
     static type = 'area' as const;

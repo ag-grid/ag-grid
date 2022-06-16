@@ -10,7 +10,7 @@ import {
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { CartesianSeriesV2 } from "./cartesianSeriesV2";
+import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { extent } from "../../../util/array";
@@ -113,7 +113,7 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
     renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class HistogramSeries extends CartesianSeriesV2<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
+export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
 
     static className = 'HistogramSeries';
     static type = 'histogram' as const;

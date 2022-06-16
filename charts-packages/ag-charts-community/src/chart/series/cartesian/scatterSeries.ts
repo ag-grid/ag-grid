@@ -5,7 +5,7 @@ import { extent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
 import { TypedEvent } from "../../../util/observable";
-import { CartesianSeriesV2, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeriesV2";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
@@ -49,7 +49,7 @@ export class ScatterSeriesTooltip extends SeriesTooltip {
     renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult = undefined;
 }
 
-export class ScatterSeries extends CartesianSeriesV2<SeriesNodeDataContext<ScatterNodeDatum>> {
+export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<ScatterNodeDatum>> {
 
     static className = 'ScatterSeries';
     static type = 'scatter' as const;

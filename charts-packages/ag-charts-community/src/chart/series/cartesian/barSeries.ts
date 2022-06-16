@@ -13,7 +13,7 @@ import {
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { CartesianSeriesV2 } from "./cartesianSeriesV2";
+import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
@@ -23,7 +23,6 @@ import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
-import { Node } from '../../../scene/node';
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -114,7 +113,7 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
     return array.length > 0 && Array.isArray(array[0]);
 }
 
-export class BarSeries extends CartesianSeriesV2<SeriesNodeDataContext<BarNodeDatum>, Rect> {
+export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
 
     static className = 'BarSeries';
     static type = 'bar' as const;
