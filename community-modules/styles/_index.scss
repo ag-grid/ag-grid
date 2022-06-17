@@ -112,8 +112,8 @@ $-loaded-css-files: ();
     }
     $name: string.to-lower-case($name);
     $remove-prefix: "ag-theme-";
-    @if string.index($name, $remove-prefix) == 0 {
-        $name: string.slice($name, string.length($remove-prefix));
+    @if string.index($name, $remove-prefix) == 1 {
+        $name: string.slice($name, string.length($remove-prefix) + 1);
     }
     @return $name;
 }
@@ -331,7 +331,8 @@ $-param-type-descriptions: (
     "duration": "a number with time duration units (e.g. `3s` or `250ms`)",
     "border-style-and-size": "either `none`, or a border-style and size (e.g. `solid 1px`), or a boolean (true -> `solid 1px` and false -> `none`)",
     "border-style-and-color": "a border-style and color (e.g. `solid red`)",
-    "display": "`block` or `true` to show, `none` or `false` to hide"
+    "display": "`block` or `true` to show, `none` or `false` to hide",
+    "any": "any value",
 );
 
 // params that are copied to --ag-param-name variables
@@ -388,7 +389,7 @@ $-variable-param-types: (
     header-column-separator-height: "size",
     header-column-separator-width: "size",
     header-column-separator-color: "color",
-    header-column-resize-handle-display: none,
+    header-column-resize-handle-display: "display",
     header-column-resize-handle-height: "size",
     header-column-resize-handle-width: "size",
     header-column-resize-handle-color: "color",
@@ -409,8 +410,8 @@ $-variable-param-types: (
     toggle-button-border-width: "size",
     toggle-button-height: "size",
     toggle-button-width: "size",
-    input-focus-box-shadow: none,
-    input-focus-border-color: none,
+    input-focus-box-shadow: "any",
+    input-focus-border-color: "any",
     minichart-selected-chart-color: "color",
     minichart-selected-page-color: "color",
     grid-size: "size",
@@ -446,6 +447,12 @@ $-variable-param-types: (
     $-variable-param-types: map.set($-variable-param-types, "icon-font-code-#{$icon-name}", "any");
 }
 
+@each $variable-name, $type in $-variable-param-types {
+    @if not map.has-key($-param-type-descriptions, $type) {
+        @error "Internal error: missing type description for #{$type} (used on #{$variable-name})";
+    }
+}
+
 // params that are not copied to CSS variables
 $-non-variable-param-types: (
     suppress-native-widget-styling: "bool",
@@ -459,7 +466,7 @@ $-non-variable-param-types: (
     }
 
     $param-types: map.merge($-variable-param-types, $theme-variables);
-    $error-count: 0;
+    $errors: ();
     @each $name, $value in $params {
         
         @if string.index(meta.inspect($value), "var(") != null {
@@ -477,17 +484,30 @@ $-non-variable-param-types: (
                 @if not $is-valid {
                     $expected: map.get($-param-type-descriptions, $expected-type);
                     $expected: $expected-type !default;
-                    @warn "Invalid value for parameter '#{$name}': #{meta.inspect($value)} -- expected #{$expected}";
-                    $error-count: $error-count + 1;
+                    $errors: list.append($errors, "Invalid parameter `#{$name}: #{meta.inspect($value)}` (expected #{$expected})");
                 }
             } @else if not map.has-key($-non-variable-param-types, $name) {
-                @warn "Unrecognised parameter '#{$name}'";
-                $error-count: $error-count + 1;
+                $errors: list.append($errors, "Unrecognised parameter '#{$name}'");
             }
         }
     }
-    @if $error-count > 0 {
-        @error "#{$error-count} errors in theme params see warnings above for details";
+    @if list.length($errors) > 0 {
+        $message: "";
+        @each $error in $errors {
+            @if $message == "" {
+                $message: $error;
+            }
+            @else {
+                $message: "#{$message}; #{$error}";
+            }
+        }
+        @if list.length($errors) > 1 {
+            $message: "#{list.length($errors)} errors in #{$theme} parameters: #{$message}";
+        }
+        @else {
+            $message: "Error in #{$theme} parameters: #{$message}";
+        }
+        @error $message;
     }
 }
 
