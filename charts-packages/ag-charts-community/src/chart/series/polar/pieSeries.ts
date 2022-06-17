@@ -101,7 +101,7 @@ export class PieTitle extends Caption {
     showInLegend = false;
 }
 
-export class PieSeries extends PolarSeries {
+export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     static className = 'PieSeries';
     static type = 'pie' as const;
@@ -336,6 +336,10 @@ export class PieSeries extends PolarSeries {
         });
 
         return true;
+    }
+
+    createNodeData() {
+        return [];
     }
 
     update(): void {

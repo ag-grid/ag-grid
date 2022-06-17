@@ -356,8 +356,7 @@ export class RowRenderer extends BeanStub {
                 this.beans,
                 false,
                 false,
-                this.printLayout,
-                false
+                this.printLayout
             );
 
             rowComps.push(rowCtrl);
@@ -1234,7 +1233,7 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky = false): RowCtrl {
+    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
 
         const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
         if (rowCtrlFromCache) { return rowCtrlFromCache; }
@@ -1254,8 +1253,7 @@ export class RowRenderer extends BeanStub {
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout,
-            sticky
+            this.printLayout
         );
 
         return res;

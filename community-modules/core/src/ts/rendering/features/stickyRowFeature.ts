@@ -19,7 +19,7 @@ export class StickyRowFeature extends BeanStub {
     private containerHeight = 0;
 
     constructor(
-        private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean, sticky: boolean) => RowCtrl,
+        private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
         private readonly destroyRowCtrls: (rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean) => void
     ) {
         super();
@@ -117,8 +117,16 @@ export class StickyRowFeature extends BeanStub {
             this.stickyRowCtrls = this.stickyRowCtrls.filter(ctrl => ctrl !== removedCtrl);
         });
 
+        for (const ctrl of Object.values(ctrlsToDestroy)) {
+            ctrl.getRowNode().sticky = false;
+        }
+
         this.destroyRowCtrls(ctrlsToDestroy, false);
-        const newCtrls = addedNodes.map(rowNode => this.createRowCon(rowNode, false, false, true));
+
+        const newCtrls = addedNodes.map(rowNode => {
+            rowNode.sticky = true;
+            return this.createRowCon(rowNode, false, false);
+        });
 
         this.stickyRowCtrls.push(...newCtrls);
         this.stickyRowCtrls.forEach(ctrl => ctrl.setRowTop(ctrl.getRowNode().stickyRowTop));

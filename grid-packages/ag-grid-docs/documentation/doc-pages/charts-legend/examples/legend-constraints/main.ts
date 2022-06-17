@@ -42,31 +42,40 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = agCharts.AgChart.create(options);
 
 function updateLegendItemPaddingX(event: any) {
-  var value = +event.target.value
+  var value = +event.target.value;
 
-  options.legend!.item!.paddingX = value
-  agCharts.AgChart.update(chart, options)
+  options.legend!.item!.paddingX = value;
+  agCharts.AgChart.update(chart, options);
 
-  document.getElementById('xPaddingValue')!.innerHTML = String(value)
+  document.getElementById('xPaddingValue')!.innerHTML = String(value);
 }
 
 function updateLegendItemPaddingY(event: any) {
-  var value = event.target.value
+  var value = event.target.value;
 
-  options.legend!.item!.paddingY = +event.target.value
-  agCharts.AgChart.update(chart, options)
+  options.legend!.item!.paddingY = +event.target.value;
+  agCharts.AgChart.update(chart, options);
 
-  document.getElementById('yPaddingValue')!.innerHTML = String(value)
+  document.getElementById('yPaddingValue')!.innerHTML = String(value);
 }
 
 function updateLegendItemSpacing(event: any) {
-  var value = +event.target.value
+  var value = +event.target.value;
 
-  options.legend!.item!.marker!.padding = value
-  agCharts.AgChart.update(chart, options)
+  options.legend!.item!.marker!.padding = value;
+  agCharts.AgChart.update(chart, options);
 
-  document.getElementById('markerPaddingValue')!.innerHTML = String(value)
+  document.getElementById('markerPaddingValue')!.innerHTML = String(value);
+}
+
+function updateLegendItemMaxWidth(event: any) {
+  var value = +event.target.value;
+
+  options.legend!.item!.maxWidth = value;
+  agCharts.AgChart.update(chart, options);
+
+  document.getElementById('maxWidthValue')!.innerHTML = String(value);
 }
