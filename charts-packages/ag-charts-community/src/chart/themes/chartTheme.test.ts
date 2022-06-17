@@ -128,9 +128,9 @@ describe('ChartTheme', () => {
             expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
 
             expect(chart.series[1].type).toBe('area');
-            expect((chart.series[1] as AreaSeries).fills).toEqual(['blue', 'red', 'green', 'blue', 'red']);
-            expect((chart.series[1] as AreaSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
-            expect((chart.series[1] as AreaSeries).marker.formatter).toBe(markerFormatter);
+            expect((chart.series[1] as unknown as AreaSeries).fills).toEqual(['blue', 'red', 'green', 'blue', 'red']);
+            expect((chart.series[1] as unknown as AreaSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
+            expect((chart.series[1] as unknown as AreaSeries).marker.formatter).toBe(markerFormatter);
         });
     });
 
@@ -624,7 +624,7 @@ describe('ChartTheme', () => {
             expect(series[2].type).toEqual('area');
             expect((series[0] as BarSeries).strokeWidth).toEqual(16);
             expect((series[1] as LineSeries).strokeWidth).toEqual(17);
-            expect((series[2] as AreaSeries).strokeWidth).toEqual(18);
+            expect((series[2] as unknown as AreaSeries).strokeWidth).toEqual(18);
         });
     });
 });
