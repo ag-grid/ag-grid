@@ -19,9 +19,11 @@
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
 @mixin grid-styles($global-params) {
+    $no-native-widgets: map.get($global-params, "suppress-native-widget-styling");
+    $global-params: map.remove($global-params, "suppress-native-widget-styling");
+
     $themes: -get-themes($global-params);
 
-    $no-native-widgets: map.get($global-params, "suppress-native-widget-styling");
 
     @if $no-native-widgets {
         @include -load-css-file("ag-grid-no-native-widgets.css");
@@ -38,6 +40,9 @@
         $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
         @if not map.has-key($-theme-css-files, $extended-theme-name) {
             @error "Invalid extend-theme: \"#{$extended-theme-name}\": only provided themes can be extended, use one of #{meta.inspect(map.keys($-theme-css-files))}";
+        }
+        @if -is-provided-theme($theme-name) {
+            @error "Can't use a provided theme (#{$theme-name}) and also extend a provided theme (#{$extended-theme-name}). If you want to extend #{$extended-theme-name}, provide your own custom theme name.";
         }
         @if $extended-theme-name {
             @include -load-theme-css-file($extended-theme-name);
@@ -110,6 +115,10 @@ $-loaded-css-files: ();
     @if $name == null {
         @return null;
     }
+    @if $name == blue {
+        // if user passes `blue` the color, convert it to a string for the legacy "blue" theme
+        $name: "blue";
+    }
     $name: string.to-lower-case($name);
     $remove-prefix: "ag-theme-";
     @if string.index($name, $remove-prefix) == 1 {
@@ -127,32 +136,47 @@ $-loaded-css-files: ();
 }
 
 $-theme-variables: (
-    alpine: (alpine-active-color: "color"),
-    alpine-dark: (alpine-active-color: "color"),
-    balham: (balham-active-color: "color"),
-    balham-dark: (balham-active-color: "color"),
-    material: (material-primary-color: "color", material-accent-color: "color"),
-    classic: (),
+    "alpine": (alpine-active-color: "color"),
+    "alpine-dark": (alpine-active-color: "color"),
+    "balham": (balham-active-color: "color"),
+    "balham-dark": (balham-active-color: "color"),
+    "material": (material-primary-color: "color", material-accent-color: "color"),
+    "classic": (),
+    "fresh": (),
+    "dark": (),
+    "blue": (),
+    "bootstrap": (),
 );
 
 $-theme-css-files: (
-    alpine: "ag-theme-alpine-no-font.css",
-    alpine-dark: "ag-theme-alpine-no-font.css",
-    balham: "ag-theme-balham-no-font.css",
-    balham-dark: "ag-theme-balham-no-font.css",
-    material: "ag-theme-material-no-font.css",
+    "alpine": "ag-theme-alpine-no-font.css",
+    "alpine-dark": "ag-theme-alpine-no-font.css",
+    "balham": "ag-theme-balham-no-font.css",
+    "balham-dark": "ag-theme-balham-no-font.css",
+    "material": "ag-theme-material-no-font.css",
+    "classic": "ag-theme-classic-no-font.css",
+    "fresh": "ag-theme-classic-no-font.css",
+    "dark": "ag-theme-classic-no-font.css",
+    "blue": "ag-theme-classic-no-font.css",
+    "bootstrap": "ag-theme-classic-no-font.css",
 );
 
 $-theme-fonts: (
-    alpine: "agGridAlpine",
-    alpine-dark: "agGridAlpine",
-    balham: "agGridBalham",
-    balham-dark: "agGridBalham",
-    material: "agGridMaterial",
-    classic: "agGridClassic",
+    "alpine": "agGridAlpine",
+    "alpine-dark": "agGridAlpine",
+    "balham": "agGridBalham",
+    "balham-dark": "agGridBalham",
+    "material": "agGridMaterial",
+    "classic": "agGridClassic",
+    "fresh": "agGridClassic",
+    "dark": "agGridClassic",
+    "blue": "agGridClassic",
+    "bootstrap": "agGridClassic",
 );
 
-$-themes: map.keys($-theme-variables);
+@function -is-provided-theme($theme-name) {
+    @return map.has-key($-theme-variables, $theme-name);
+}
 
 @function -get-themes($params) {
     $themes: map.get($params, "themes");
@@ -294,6 +318,30 @@ $-themes: map.keys($-theme-variables);
     $params: -param-default($params, secondary-foreground-color, foreground-color, $alpha: 0.54);
     $params: -param-default($params, disabled-foreground-color, foreground-color, $alpha: 0.38);
     $params: -param-default($params, subheader-toolbar-background-color, subheader-background-color, $alpha: 0.5);
+    @return $params;
+}
+
+@function -theme-fresh-color-blends($params) {
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #FFF);
+    @return $params;
+}
+
+@function -theme-dark-color-blends($params) {
+    $params: -param-default($params, foreground-color, #ccc);
+    $params: -param-default($params, background-color, #302e2e);
+    @return $params;
+}
+
+@function -theme-blue-color-blends($params) {
+    $params: -param-default($params, foreground-color, #222);
+    $params: -param-default($params, background-color, #fff);
+    @return $params;
+}
+
+@function -theme-bootstrap-color-blends($params) {
+    $params: -param-default($params, foreground-color, #000);
+    $params: -param-default($params, background-color, #FFF);
     @return $params;
 }
 
@@ -468,6 +516,10 @@ $-non-variable-param-types: (
     $param-types: map.merge($-variable-param-types, $theme-variables);
     $errors: ();
     @each $name, $value in $params {
+
+        @if $name == "suppress-native-widget-styling" {
+            $errors: list.append($errors, "suppress-native-widget-styling can not be specified at the theme level, only at the top level");
+        }
         
         @if string.index(meta.inspect($value), "var(") != null {
             // You can pass variable expressions as values and we'll just trust
