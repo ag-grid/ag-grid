@@ -18,11 +18,10 @@
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
-@mixin grid-styles($params) {
-    $themes: -get-themes($params);
-    $params: map.remove($params, "theme", "themes");
+@mixin grid-styles($global-params) {
+    $themes: -get-themes($global-params);
 
-    $no-native-widgets: map.get($params, "suppress-native-widget-styling");
+    $no-native-widgets: map.get($global-params, "suppress-native-widget-styling");
 
     @if $no-native-widgets {
         @include -load-css-file("ag-grid-no-native-widgets.css");
@@ -30,44 +29,56 @@
         @include -load-css-file("ag-grid.css");
     }
 
-    $global-output-class-name: map.get($params, "output-class-name");
-    @if $global-output-class-name and list.length($themes) > 1 {
-        $first-theme: list.nth(map.keys($themes), 1);
-        @error "output-class-name is set at the top level, but multiple themes are specified. Instead set output-class-name as a parameter on each theme, e.g. themes: (#{$first-theme}: (output-class-name: #{$global-output-class-name}))";
-    }
+    $global-extended-theme-name: -clean-theme-name(map.get($global-params, "extend-theme"));
 
-    @each $theme-name, $extra-params in $themes {
-        @include -validate-theme($theme-name);
-        $css-file: map.get($-theme-css-files, $theme-name);
-        @include -load-css-file($css-file);
-    }
-
-    @each $theme-name, $extra-params in $themes {
-        $theme-params: map.merge($params, $extra-params);
+    @each $theme-name, $theme-params in $themes {
         @include -validate-params($theme-params, $theme-name);
+
+        @include -load-theme-css-file($theme-name);
+        $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
+        @if not map.has-key($-theme-css-files, $extended-theme-name) {
+            @error "Invalid extend-theme: \"#{$extended-theme-name}\": only provided themes can be extended, use one of #{meta.inspect(map.keys($-theme-css-files))}";
+        }
+        @if $extended-theme-name {
+            @include -load-theme-css-file($extended-theme-name);
+        }
 
         $font: map.get($theme-params, "icon-font-family");
         $font: map.get($-theme-fonts, $theme-name) !default;
+        $font: map.get($-theme-fonts, $extended-theme-name) !default;
         @if $font {
             @include -load-css-file("#{$font}Font.css", $ignore-missing: true);
         }
-        $default-output-class-name: "ag-theme-#{$theme-name}";
-        
-        // allow the theme class name to be specified globally
-        $output-class-name: $global-output-class-name;
-        // ... or at the theme configuration level ...
-        $output-class-name: map.get($theme-params, "output-class-name") !default;
-        // ... or use the default ...
-        $output-class-name: $default-output-class-name !default;
-        .#{$output-class-name} {
-            @include -grid-variables($theme-params, $theme-name);
+    }
+
+    @each $theme-name, $theme-params in $themes {
+        $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
+
+        @if $extended-theme-name and $extended-theme-name != $theme-name {
+            // alias all the styles in the extended theme to the new theme name
+            @warn "@#{$theme-name} extends #{$extended-theme-name}";
+            .ag-theme-#{$theme-name} {
+                @extend .ag-theme-#{$extended-theme-name};
+            }
         }
 
-        // if the class name has been changed, we need to use @extend to add
-        // the new custom class name to the default
-        @if $output-class-name != $default-output-class-name {
-            .#{$output-class-name} {
-                @extend .#{$default-output-class-name};
+
+        // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
+        .ag-theme-#{$theme-name} {
+            @if $extended-theme-name {
+                $blend-function-name: "-theme-#{$extended-theme-name}-color-blends";
+                @if meta.function-exists($blend-function-name) {
+                    $theme-color-blends: meta.get-function($blend-function-name);
+                    $theme-params: meta.call($theme-color-blends, $theme-params);
+                }
+            }
+            $theme-params: -base-color-blends($theme-params);
+        
+            @each $name, $value in $theme-params {
+                // use meta.inspect to preserve the quote style of strings
+                @if map.has-key($-variable-param-types, $name) {
+                    --ag-#{$name}: #{meta.inspect($value)};
+                }
             }
         }
     }
@@ -88,22 +99,31 @@ $-loaded-css-files: ();
     }
 }
 
-// Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
-@mixin -grid-variables($params, $theme) {
-    @if $theme {
-        $theme-color-blends: meta.get-function("-theme-#{$theme}-color-blends");
-        @if $theme-color-blends {
-            $params: meta.call($theme-color-blends, $params);
-        }
+@mixin -load-theme-css-file($theme-name, $ignore-missing: false) {
+    $css-file: map.get($-theme-css-files, $theme-name);
+    @if $css-file {
+        @include -load-css-file($css-file);
     }
-    $params: -base-color-blends($params);
+}
 
-    @each $name, $value in $params {
-        // use meta.inspect to preserve the quote style of strings
-        @if map.has-key($-variable-param-types, $name) {
-            --ag-#{$name}: #{meta.inspect($value)};
-        }
+@function -clean-theme-name($name) {
+    @if $name == null {
+        @return null;
     }
+    $name: string.to-lower-case($name);
+    $remove-prefix: "ag-theme-";
+    @if string.index($name, $remove-prefix) == 0 {
+        $name: string.slice($name, string.length($remove-prefix));
+    }
+    @return $name;
+}
+
+@function -get-extended-theme-name($theme-params, $default) {
+    $extended-theme-name: -clean-theme-name(map.get($theme-params, "extend-theme"));
+    @if $extended-theme-name {
+        @return $extended-theme-name;
+    }
+    @return $default;
 }
 
 $-theme-variables: (
@@ -121,7 +141,6 @@ $-theme-css-files: (
     balham: "ag-theme-balham-no-font.css",
     balham-dark: "ag-theme-balham-no-font.css",
     material: "ag-theme-material-no-font.css",
-    classic: "ag-theme-classic-no-font.css",
 );
 
 $-theme-fonts: (
@@ -134,12 +153,6 @@ $-theme-fonts: (
 );
 
 $-themes: map.keys($-theme-variables);
-
-@mixin -validate-theme($theme) {
-    @if not list.index($-themes, $theme) {
-        @error "Invalid theme #{$theme}, expected one of #{$-themes}";
-    }
-}
 
 @function -get-themes($params) {
     $themes: map.get($params, "themes");
@@ -169,8 +182,15 @@ $-themes: map.keys($-theme-variables);
     @if list.length($themes) == 0 {
         @return ("alpine": true);
     }
-    
-    @return $themes;
+
+    $params: map.remove($params, "theme", "themes");
+
+    $cleaned: ();
+    @each $name, $extra-params in $themes {
+        $params: map.merge($params, $extra-params);
+        $cleaned: map.set($cleaned, -clean-theme-name($name), $params);
+    }
+    @return $cleaned;
 }
 
 // Return a version of $params with colour blending applied
@@ -429,13 +449,12 @@ $-variable-param-types: (
 // params that are not copied to CSS variables
 $-non-variable-param-types: (
     suppress-native-widget-styling: "bool",
-    output-class-name: "string"
+    extend-theme: "string"
 );
 
 @mixin -validate-params($params, $theme: null) {
     $theme-variables: ();
-    @if $theme {
-        @include -validate-theme($theme);
+    @if $theme and map.has-key($-theme-variables, $theme) {
         $theme-variables: map.get($-theme-variables, $theme);
     }
 
