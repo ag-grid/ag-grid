@@ -137,7 +137,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     lineDashOffset: number = 0;
 
     constructor() {
-        super({ pathsPerSeries: 2, pickGroupIncludes: [] });
+        super({ pathsPerSeries: 2, pickGroupIncludes: ['datumNodes'] });
 
         const { marker, label } = this;
 

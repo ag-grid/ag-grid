@@ -127,7 +127,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: [], pathsPerSeries: 0 });
+        super({ pickGroupIncludes: ['datumNodes'], pathsPerSeries: 0 });
 
         const { label } = this;
 

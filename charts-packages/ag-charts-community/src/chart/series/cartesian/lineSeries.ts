@@ -82,7 +82,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
-        super({ pickGroupIncludes: [] });
+        super({ pickGroupIncludes: ['datumNodes'] });
 
         const { marker, label } = this;
 
