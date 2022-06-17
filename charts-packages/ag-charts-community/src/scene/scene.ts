@@ -213,8 +213,8 @@ export class Scene {
         consoleLog: false,
     };
 
-    render(opts?: { start?: number }) {
-        const { start: preprocessingStart = performance.now() } = opts || {};
+    render(opts?: { debugSplitTimes: number[], extraDebugStats: Record<string, number> }) {
+        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
@@ -286,6 +286,9 @@ export class Scene {
         const end = performance.now();
 
         if (this.debug.stats) {
+            const start = debugSplitTimes[0];
+            debugSplitTimes.push(end);
+
             const pct = (rendered: number, skipped: number) => {
                 const total = rendered + skipped;
                 return `${rendered} / ${total} (${Math.round(100*rendered/total)}%)`;
@@ -295,8 +298,18 @@ export class Scene {
             }
             const { layersRendered = 0, layersSkipped = 0, nodesRendered = 0, nodesSkipped = 0 } =
                 renderCtx.stats || {};
+
+            const splits = debugSplitTimes
+                .map((t, i) => i > 0 ? time(debugSplitTimes[i - 1], t) : null)
+                .filter(v => v != null)
+                .join(' + ');
+            const extras = Object.entries(extraDebugStats)
+                .map(([k, v]) => `${k}: ${v}`)
+                .join(' ; ');
+
             const stats = [
-                `${time(preprocessingStart, end)} (${time(preprocessingStart, start)} + ${time(start, end)})`,
+                `${time(start, end)} (${splits})`,
+                `${extras}`,
                 this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
                 this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
             ].filter((v): v is string => v != null);

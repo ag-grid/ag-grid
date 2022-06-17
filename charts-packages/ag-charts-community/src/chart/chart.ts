@@ -321,6 +321,8 @@ export abstract class Chart extends Observable {
         return this._debug;
     }
 
+    private extraDebugStats: Record<string, number> = {};
+
     private _container: HTMLElement | undefined | null = undefined;
     set container(value: HTMLElement | undefined | null) {
         if (this._container !== value) {
@@ -541,13 +543,14 @@ export abstract class Chart extends Observable {
         }
     }
     private performUpdate(count: number) {
-        const { _performUpdateType: performUpdateType, firstRenderComplete, firstResizeReceived } = this;
-        const start = performance.now();
+        const { _performUpdateType: performUpdateType, firstRenderComplete, firstResizeReceived, extraDebugStats } = this;
+        const splits = [performance.now()];
 
         switch (performUpdateType) {
             case ChartUpdateType.FULL:
             case ChartUpdateType.PROCESS_DATA:
                 this.processData();
+                splits.push(performance.now());
             case ChartUpdateType.PERFORM_LAYOUT:
                 if (!firstRenderComplete && !firstResizeReceived) {
                     if (this.debug) {
@@ -560,14 +563,17 @@ export abstract class Chart extends Observable {
                 }
 
                 this.performLayout();
+                splits.push(performance.now());
             case ChartUpdateType.SERIES_UPDATE:
                 this.seriesToUpdate.forEach(series => {
                     series.update();
                 });
                 this.seriesToUpdate.clear();
+                splits.push(performance.now());
             case ChartUpdateType.SCENE_RENDER:
-                this.scene.render({ start });
+                this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.firstRenderComplete = true;
+                this.extraDebugStats = {};
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
@@ -577,7 +583,7 @@ export abstract class Chart extends Observable {
         if (this.debug) {
             console.log({
                 chart: this,
-                durationMs: Math.round((end - start)*100) / 100,
+                durationMs: Math.round((end - splits[0])*100) / 100,
                 count,
                 performUpdateType: ChartUpdateType[performUpdateType],
             });
@@ -1009,20 +1015,30 @@ export abstract class Chart extends Observable {
             return undefined;
         }
 
-        let node: Node | undefined = undefined;
+        const start = performance.now();
+
+        let result: {series: Series<any>,node: Node} | undefined = undefined;
         for (const series of this.series) {
             if (!series.visible || !series.group.visible) {
                 continue;
             }
-            node = series.pickNode(x, y);
+            const node = series.pickNode(x, y);
             if (node) {
-                return {
+                result = {
                     series,
                     node
                 };
+                break;
             }
         }
-    }
+
+        this.extraDebugStats['pickSeriesNode'] = Math.round(
+            (this.extraDebugStats['pickSeriesNode'] ?? 0) +
+            (performance.now() - start)
+        );
+
+        return result;
+}
 
     lastPick?: {
         datum: SeriesNodeDatum;
