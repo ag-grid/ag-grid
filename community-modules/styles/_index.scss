@@ -38,10 +38,10 @@
 
         @include -load-theme-css-file($theme-name);
         $extended-theme-name: -get-extended-theme-name($theme-params, $default: $global-extended-theme-name);
-        @if not map.has-key($-theme-css-files, $extended-theme-name) {
+        @if $extended-theme-name and not -is-provided-theme($extended-theme-name) {
             @error "Invalid extend-theme: \"#{$extended-theme-name}\": only provided themes can be extended, use one of #{meta.inspect(map.keys($-theme-css-files))}";
         }
-        @if -is-provided-theme($theme-name) {
+        @if $extended-theme-name and -is-provided-theme($theme-name) {
             @error "Can't use a provided theme (#{$theme-name}) and also extend a provided theme (#{$extended-theme-name}). If you want to extend #{$extended-theme-name}, provide your own custom theme name.";
         }
         @if $extended-theme-name {
@@ -70,12 +70,12 @@
 
         // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
         .ag-theme-#{$theme-name} {
-            @if $extended-theme-name {
-                $blend-function-name: "-theme-#{$extended-theme-name}-color-blends";
-                @if meta.function-exists($blend-function-name) {
-                    $theme-color-blends: meta.get-function($blend-function-name);
-                    $theme-params: meta.call($theme-color-blends, $theme-params);
-                }
+            $color-blend-theme-name: $extended-theme-name;
+            $color-blend-theme-name: $theme-name !default;
+            $blend-function-name: "-theme-#{$color-blend-theme-name}-color-blends";
+            @if meta.function-exists($blend-function-name) {
+                $theme-color-blends: meta.get-function($blend-function-name);
+                $theme-params: meta.call($theme-color-blends, $theme-params);
             }
             $theme-params: -base-color-blends($theme-params);
         

@@ -181,7 +181,7 @@ To create a reusable set of design customisations that can be shared between pro
 }
 ```
 
-## Full list of theme parameters
+## Full list of CSS variables
 
 Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided
 themes Alpine, Balham and Material.
