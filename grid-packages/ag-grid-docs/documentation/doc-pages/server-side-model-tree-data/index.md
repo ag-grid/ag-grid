@@ -105,10 +105,10 @@ The example below shows this in action where the following can be noted:
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Sorting
+## Sorting and Filtering
 
-Sorting works in the same way when using Tree Data as when not using Tree Data with one exception. If using Infinite Scroll, a change in sort will reload the data. If using not using Infinite Scroll, a change in sort will result in the grid sorting the data without requiring a reload.
+Sorting and Filtering work the same while using Tree Data as it does without with a few exceptions.
 
-## Filtering
-
-Changing the filter applied to a column will always refresh (reload) the data.
+- Sorting with Infinite Scroll will always behave as if [serverSideSortAllLevels](/grid-options/#reference-serverSideRowModel-serverSideSortAllLevels) is enabled.
+- Filtering with Infinite Scroll will always behave as if [serverSideFilterAllLevels](/grid-options/#reference-serverSideRowModel-serverSideFilterAllLevels) is enabled.
+- It is not possible to enable [serverSideSortOnServer](/grid-options/#reference-serverSideRowModel-serverSideSortOnServer) or [serverSideFilterOnServer](/grid-options/#reference-serverSideRowModel-serverSideFilterOnServer) while using Tree Data without Infinite Scrolling enabled.

@@ -606,7 +606,7 @@
       "formatter?": "(id: string, itemId: any, value: string) => string"
     },
     "docs": {
-      "characterLimit?": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. By default, the character limit is 25. */",
+      "characterLimit?": "/** If the label text exceeds the character limit, it will be truncated and an ellipsis will be appended to indicate this. */",
       "color?": "/** The colour of the text. */",
       "fontStyle?": "/** The font style to use for the legend. */",
       "fontWeight?": "/** The font weight to use for the legend. */",
@@ -2300,7 +2300,7 @@
       "stroke?": "string",
       "yKey": "string",
       "yValue": "number",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2332,9 +2332,9 @@
     "type": ["Fill", "Stroke", "Marker", "Label"],
     "docs": [null, null, null, null]
   },
-  "AreaSeriesGroup": {
+  "AreaSeriesNodeDataContext": {
     "meta": { "isTypeAlias": true },
-    "type": "{ group: Group; pickGroup: Group; fill: Path; stroke: Path; markerSelection: Selection<Marker, Group, MarkerSelectionDatum, any>; labelSelection: Selection<Text, Group, LabelSelectionDatum, any>; }"
+    "type": "SeriesNodeDataContext<MarkerSelectionDatum, LabelSelectionDatum> & { fillSelectionData: FillSelectionDatum; strokeSelectionData: StrokeSelectionDatum; }"
   },
   "BarSeriesNodeClickEvent": {
     "meta": {},
@@ -2377,7 +2377,7 @@
       "colorIndex": "number",
       "strokeWidth": "number",
       "label?": "{ readonly x: number; readonly y: number; readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2409,10 +2409,6 @@
     "meta": {},
     "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
   },
-  "BarSeriesGroup": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ group: Group; pickGroup: Group; rectSelection: Selection<Rect, Group, BarNodeDatum, any>; labelSelection: Selection<Text, Group, BarNodeDatum, any>; }"
-  },
   "CartesianSeriesMarkerFormat": {
     "meta": {},
     "type": {
@@ -2435,6 +2431,52 @@
       "highlighted": "boolean"
     }
   },
+  "NodeDataSelection": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "N extends Node",
+        "ContextType extends SeriesNodeDataContext"
+      ]
+    },
+    "type": "Selection<N, Group, ContextType['nodeData'][number], any>"
+  },
+  "LabelDataSelection": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "N extends Node",
+        "ContextType extends SeriesNodeDataContext"
+      ]
+    },
+    "type": "Selection<N, Group, ContextType['labelData'][number], any>"
+  },
+  "SubGroup": {
+    "meta": {
+      "typeParams": [
+        "C extends SeriesNodeDataContext",
+        "SceneNodeType extends Node"
+      ]
+    },
+    "type": {
+      "paths": "Path[]",
+      "group": "Group",
+      "pickGroup": "Group",
+      "datumSelection": "NodeDataSelection<SceneNodeType, C>",
+      "labelSelection": "LabelDataSelection<Text, C>"
+    }
+  },
+  "PickGroupInclude": {
+    "meta": { "isTypeAlias": true },
+    "type": "'mainPath' | 'datumNodes'"
+  },
+  "SeriesOpts": {
+    "meta": {},
+    "type": {
+      "pickGroupIncludes": "PickGroupInclude[]",
+      "pathsPerSeries": "number"
+    }
+  },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Bin", "Label"],
@@ -2451,7 +2493,7 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2478,9 +2520,9 @@
   "LineNodeDatum": {
     "meta": {},
     "type": {
-      "point": "{ readonly x: number; readonly y: number; }",
+      "point": "{ readonly moveTo: boolean; readonly x: number; readonly y: number; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2497,13 +2539,21 @@
       "yKey": "string"
     }
   },
+  "LineTooltipRendererParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "CartesianTooltipRendererParams"
+  },
+  "LineContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "SeriesNodeDataContext<LineNodeDatum>"
+  },
   "ScatterNodeDatum": {
     "meta": {},
     "type": {
       "point": "{ readonly x: number; readonly y: number; }",
       "size": "number",
       "label": "MeasuredLabel",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2550,11 +2600,11 @@
       "y0": "number",
       "y1": "number",
       "depth": "number",
-      "series": "TreemapSeries",
       "fill": "string",
       "label": "string",
       "hasTitle": "boolean",
       "colorValue": "number",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2611,7 +2661,7 @@
       "midCos": "number",
       "midSin": "number",
       "label?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; }",
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2672,7 +2722,7 @@
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc. */"
     },
     "type": {
-      "series": "Series",
+      "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
       "point?": "{ readonly x: number; readonly y: number; }"
@@ -2709,6 +2759,10 @@
       "title?": "string",
       "color?": "string"
     }
+  },
+  "SeriesNodeDataContext": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S", "L"] },
+    "type": "{ nodeData: S[]; labelData: L[]; }"
   },
   "SeriesMarkerFormatterParams": {
     "meta": {},
@@ -2875,11 +2929,12 @@
     "type": { "text": "string", "width": "number", "height": "number" }
   },
   "PlacedLabel": {
-    "meta": {},
+    "meta": { "typeParams": ["PLD"] },
     "type": {
       "index": "number",
       "x": "number",
       "y": "number",
+      "datum": "PLD",
       "text": "string",
       "width": "number",
       "height": "number"

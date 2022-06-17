@@ -59,8 +59,11 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     /**
      * For continuous axes, if tick count has not been specified, set the number of ticks based on the available range
      */
-    calculateTickCount(availableRange: number): void {
+    calculateTickCount(): void {
         if (!this.useCalculatedTickCount()) { return; }
+
+        const [min, max] = this.range;
+        const availableRange = Math.abs(max - min);
 
         // Approximate number of pixels to allocate for each tick.
         const optimalRangePx = 600;
@@ -104,5 +107,33 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
     }
     get position(): ChartAxisPosition {
         return this._position;
+    }
+
+    calculateDomain({ primaryTickCount }: { primaryTickCount?: number }) {
+        const { direction, boundSeries } = this;
+
+        if (boundSeries.length === 0) {
+            console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
+        }
+
+        if (this.linkedTo) {
+            this.domain = this.linkedTo.domain;
+        } else {
+            const domains: any[][] = [];
+            boundSeries.filter(s => s.visible).forEach(series => {
+                domains.push(series.getDomain(direction));
+            });
+
+            const domain = new Array<any>().concat(...domains);
+            const isYAxis = this.direction === 'y';
+            primaryTickCount = this.updateDomain(domain, isYAxis, primaryTickCount);
+        }
+
+        return { primaryTickCount };
+    }
+
+    protected updateDomain(domain: any[], _isYAxis: boolean, primaryTickCount?: number) {
+        this.domain = domain;
+        return primaryTickCount;
     }
 }

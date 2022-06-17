@@ -22,6 +22,11 @@ export class BBox {
         this.height = height;
     }
 
+    clone() {
+        const { x, y, width, height } = this;
+        return new BBox(x, y, width, height);
+    }
+
     isValid(): boolean {
         return isFinite(this.x) && isFinite(this.y) && isFinite(this.width) && isFinite(this.height);
     }

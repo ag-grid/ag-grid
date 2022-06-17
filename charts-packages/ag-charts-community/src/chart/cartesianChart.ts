@@ -5,7 +5,7 @@ import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
-import { NumberAxis } from "./axis/numberAxis";
+import { ChartAxis } from "./chartAxis";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -29,11 +29,11 @@ export class CartesianChart extends Chart {
     readonly navigator = new Navigator(this);
 
     performLayout(): void {
-        this.scene.root!!.visible = true;
+        this.scene.root!.visible = true;
 
         const { width, height, axes, legend, navigator } = this;
 
-        const shrinkRect = new BBox(0, 0, width, height);
+        let shrinkRect = new BBox(0, 0, width, height);
 
         this.positionCaptions();
         this.positionLegend();
@@ -74,126 +74,29 @@ export class CartesianChart extends Chart {
         shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
 
         if (navigator.enabled) {
-            shrinkRect.height -= navigator.height + navigator.margin;
+            const navigatorTotalHeight = navigator.height + navigator.margin;
+            shrinkRect.height -= navigatorTotalHeight;
+            navigator.x = shrinkRect.x;
+            navigator.y = shrinkRect.y + shrinkRect.height + navigator.margin;
+            navigator.width = shrinkRect.width;
         }
 
-        // Set the number of ticks for continuous axes based on the available range
-        // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
-        axes.forEach(axis => {
-            let availableRange = 0;
-            switch (axis.position) {
-                case ChartAxisPosition.Top:
-                case ChartAxisPosition.Bottom:
-                    availableRange = shrinkRect.width;
-                    break;
-                case ChartAxisPosition.Left:
-                case ChartAxisPosition.Right:
-                    availableRange = shrinkRect.height;
-                    break;
-            }
-            axis.calculateTickCount(availableRange);
-        });
-
-        this.updateAxes();
-
-        let bottomAxesHeight = 0;
-        const axisPositionVisited: { [key in ChartAxisPosition]: boolean } = {
-            top: false,
-            right: false,
-            bottom: false,
-            left: false,
-            angle: false,
-            radius: false
-        }
-
-        axes.forEach(axis => {
-            axis.axisGroup.visible = true;
-            axis.gridlineGroup.visible = true;
-            let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
-
-            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
-            const axisPadding = axis.title && axis.title.padding.top || 15;
-
-            if (axisPositionVisited[axis.position]) {
-                axisThickness += axisPadding;
-            }
-
-            switch (axis.position) {
-                case ChartAxisPosition.Top:
-                    axisPositionVisited[ChartAxisPosition.Top] = true;
-                    shrinkRect.y += axisThickness;
-                    shrinkRect.height -= axisThickness;
-                    axis.translation.y = Math.floor(shrinkRect.y + 1);
-                    axis.label.mirrored = true;
-                    break;
-                case ChartAxisPosition.Right:
-                    axisPositionVisited[ChartAxisPosition.Right] = true;
-                    shrinkRect.width -= axisThickness;
-                    axis.translation.x = Math.max(Math.floor(shrinkRect.x), Math.floor(shrinkRect.x + shrinkRect.width));
-                    axis.label.mirrored = true;
-                    break;
-                case ChartAxisPosition.Bottom:
-                    axisPositionVisited[ChartAxisPosition.Bottom] = true;
-                    shrinkRect.height -= axisThickness;
-                    bottomAxesHeight += axisThickness;
-                    axis.translation.y = Math.max(Math.floor(shrinkRect.y), Math.floor(shrinkRect.y + shrinkRect.height + 1));
-                    break;
-                case ChartAxisPosition.Left:
-                    axisPositionVisited[ChartAxisPosition.Left] = true;
-                    shrinkRect.x += axisThickness;
-                    shrinkRect.width -= axisThickness;
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    break;
-            }
-        });
-
-        // width and height should not be negative
-        shrinkRect.width = Math.max(0, shrinkRect.width);
-        shrinkRect.height = Math.max(0, shrinkRect.height);
-
-        axes.forEach(axis => {
-            switch (axis.position) {
-                case ChartAxisPosition.Top:
-                case ChartAxisPosition.Bottom:
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    axis.range = [0, shrinkRect.width];
-                    axis.gridLength = shrinkRect.height;
-                    break;
-                case ChartAxisPosition.Left:
-                case ChartAxisPosition.Right:
-                    axis.translation.y = Math.floor(shrinkRect.y);
-                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.range = [0, shrinkRect.height];
-                    } else {
-                        axis.range = [shrinkRect.height, 0];
-                    }
-                    axis.gridLength = shrinkRect.width;
-                    break;
-            }
-        });
+        const { seriesRect } = this.updateAxes(shrinkRect);
 
         this.createNodeData();
 
-        this.seriesRect = shrinkRect;
+        this.seriesRect = seriesRect;
         this.series.forEach(series => {
-            series.group.translationX = Math.floor(shrinkRect.x);
-            series.group.translationY = Math.floor(shrinkRect.y);
+            series.group.translationX = Math.floor(seriesRect.x);
+            series.group.translationY = Math.floor(seriesRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
 
         const { seriesRoot } = this;
-        seriesRoot.x = shrinkRect.x;
-        seriesRoot.y = shrinkRect.y;
-        seriesRoot.width = shrinkRect.width;
-        seriesRoot.height = shrinkRect.height;
-
-        if (navigator.enabled) {
-            navigator.x = shrinkRect.x;
-            navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
-            navigator.width = shrinkRect.width;
-        }
-
-        this.axes.forEach(axis => axis.update());
+        seriesRoot.x = seriesRect.x;
+        seriesRoot.y = seriesRect.y;
+        seriesRoot.width = seriesRect.width;
+        seriesRoot.height = seriesRect.height;
     }
 
     private _onTouchStart: any;
@@ -288,50 +191,189 @@ export class CartesianChart extends Chart {
         });
     }
 
-    updateAxes() {
-        const { navigator } = this;
-        let clipSeries = false;
-        let primaryTickCount: number;
+    updateAxes(inputShrinkRect: BBox) {
+        const axisWidths: Partial<Record<ChartAxisPosition, number>> = {
+            [ChartAxisPosition.Top]: 0,
+            [ChartAxisPosition.Bottom]: 0,
+            [ChartAxisPosition.Left]: 0,
+            [ChartAxisPosition.Right]: 0,
+        };
 
-        this.axes.forEach(axis => {
-            const { direction, boundSeries } = axis;
-
-            if (boundSeries.length === 0 && this._series.length > 0) {
-                console.warn('AG Charts - chart series not initialised; check series and axes configuration.');
-            }
-
-            if (axis.linkedTo) {
-                axis.domain = axis.linkedTo.domain;
-            } else {
-                const domains: any[][] = [];
-                boundSeries.filter(s => s.visible).forEach(series => {
-                    domains.push(series.getDomain(direction));
+        const stableWidths = <T extends typeof axisWidths>(other: T) => {
+            return Object.entries(axisWidths)
+                .every(([p, w]) => {
+                    const otherW = (other as any)[p];
+                    if (w || otherW) {
+                        return w === otherW;
+                    }
+                    return true;
                 });
+        };
 
-                const domain = new Array<any>().concat(...domains);
+        // Iteratively try to resolve axis widths - since X axis width affects Y axis range,
+        // and vice-versa, we need to iteratively try and find a fit for the axes and their
+        // ticks/labels.
+        let lastPass: typeof axisWidths = {};
+        let clipSeries = false;
+        let seriesRect: BBox = inputShrinkRect.clone();
+        let count = 0;
+        do {
+            Object.assign(axisWidths, lastPass);
 
-                const isYAxis = axis.direction === 'y';
+            const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone());
+            lastPass = result.axisWidths;
+            clipSeries = result.clipSeries;
+            seriesRect = result.seriesRect;
 
-                if (axis instanceof NumberAxis && isYAxis) {
-                    // the `primaryTickCount` is used to align the secondary axis tick count with the primary
-                    axis.setDomain(domain, primaryTickCount);
-                    primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.calculatedTickCount).length;
-                } else {
-                    axis.domain = domain;
-                }
+            if (count++ > 10) {
+                throw new Error('AG Charts - unable to find stable axis layout.');
             }
+        } while (!stableWidths(lastPass));
+
+        this.seriesRoot.enabled = clipSeries;
+
+        return { seriesRect };
+    }
+
+
+    private updateAxesPass(
+        axisWidths: Partial<Record<ChartAxisPosition, number>>,
+        shrinkRect: BBox,
+    ) {
+        const { navigator, axes } = this;
+        const visited: Partial<Record<ChartAxisPosition, number>> = {};
+        const newAxisWidths: Partial<Record<ChartAxisPosition, number>> = {};
+
+        let clipSeries = false;
+        let primaryTickCount: number | undefined;
+
+        const buildSeriesRect = () => {
+            let seriesRect = shrinkRect.clone();
+            const { top, bottom, left, right } = axisWidths;
+            seriesRect.x += left ?? 0;
+            seriesRect.y += top ?? 0;
+            seriesRect.width -= (left ?? 0) + (right ?? 0);
+            seriesRect.height -= (top ?? 0) + (bottom ?? 0);
+
+            // Width and height should not be negative.
+            seriesRect.width = Math.max(0, seriesRect.width);
+            seriesRect.height = Math.max(0, seriesRect.height);
+
+            return seriesRect;
+        }
+        const seriesRect = buildSeriesRect();
+
+        const clampToOutsideSeriesRect = (value: number, dimension: 'x' | 'y', direction: -1 | 1) => {
+            const {x, y, width, height} = seriesRect;
+            const bounds = [x, y, x + width, y + height];
+            const fn = direction === 1 ? Math.min : Math.max;
+            const compareTo = bounds[(dimension === 'x' ? 0 : 1) + (direction === 1 ? 0 : 2)];
+
+            return fn(value, compareTo);
+        };
+
+        // Set the number of ticks for continuous axes based on the available range
+        // before updating the axis domain via `this.updateAxes()` as the tick count has an effect on the calculated `nice` domain extent
+        axes.forEach(axis => {
+            const { position, direction } = axis;
+            visited[position] = (visited[position] ?? 0) + 1;
+
+            // for multiple axes in the same direction and position, apply padding at the top of each inner axis (i.e. between axes).
+            const axisPadding = axis.title && axis.title.padding.top || 15;
+
+            const axisLeftRightRange = (axis: ChartAxis<any>) => {
+                if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
+                    return [0, seriesRect.height];
+                }
+                return [seriesRect.height, 0];
+            };
+
+            axis.label.mirrored = ['top', 'right'].includes(position);
+
+            const axisOffset = newAxisWidths[position] ?? 0;
+            switch (position) {
+                case ChartAxisPosition.Top:
+                    axis.range = [0, seriesRect.width];
+                    axis.gridLength = seriesRect.height;
+                    break;
+                case ChartAxisPosition.Right:
+                    axis.range = axisLeftRightRange(axis);
+                    axis.gridLength = seriesRect.width;
+                    break;
+                case ChartAxisPosition.Bottom:
+                    axis.range = [0, seriesRect.width];
+                    axis.gridLength = seriesRect.height;
+                    break;
+                case ChartAxisPosition.Left:
+                    axis.range = axisLeftRightRange(axis);
+                    axis.gridLength = seriesRect.width;
+                    break;
+            }
+
+            axis.calculateTickCount();
 
             if (axis.direction === ChartAxisDirection.X) {
                 axis.visibleRange = [navigator.min, navigator.max];
             }
-
             if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
                 clipSeries = true;
             }
-
+    
+            primaryTickCount = axis.calculateDomain({ primaryTickCount }).primaryTickCount;
             axis.update();
+            
+            let axisThickness = 0;
+            if (axis.thickness) {
+                axisThickness = axis.thickness;
+            } else {
+                const bbox = axis.computeBBox();
+                axisThickness = direction === ChartAxisDirection.X ? bbox.height : bbox.width;
+            }
+
+            const visitCount = (visited[position] ?? 0);
+            if (visitCount > 1) {
+                axisThickness += axisPadding;
+            }
+
+            switch (position) {
+                case ChartAxisPosition.Top:
+                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.y = clampToOutsideSeriesRect(
+                        shrinkRect.y + 1 + axisOffset + axisThickness,
+                        'y',
+                        1,
+                    );
+                    break;
+                case ChartAxisPosition.Bottom:
+                    axis.translation.x = shrinkRect.x + (axisWidths.left ?? 0);
+                    axis.translation.y = clampToOutsideSeriesRect(
+                        shrinkRect.y + shrinkRect.height + 1 - axisThickness - axisOffset,
+                        'y',
+                        -1,
+                    );
+                    break;
+                case ChartAxisPosition.Left:
+                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.x = clampToOutsideSeriesRect(
+                        shrinkRect.x + axisOffset + axisThickness,
+                        'x',
+                        1,
+                    );
+                    break;
+                case ChartAxisPosition.Right:
+                    axis.translation.y = shrinkRect.y + (axisWidths.top ?? 0);
+                    axis.translation.x = clampToOutsideSeriesRect(
+                        shrinkRect.x + shrinkRect.width - axisThickness - axisOffset,
+                        'x',
+                        -1,
+                    );
+                    break;
+            }
+            axis.update();
+
+            newAxisWidths[position] = (newAxisWidths[position] ?? 0) + axisThickness;
         });
 
-        this.seriesRoot.enabled = clipSeries;
+        return { clipSeries, seriesRect, axisWidths: newAxisWidths };
     }
 }

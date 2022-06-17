@@ -26,7 +26,6 @@ export class DragListenerFeature extends BeanStub {
         }
 
         const params: DragListenerParams = {
-            dragStartPixels: 0,
             eElement: this.eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
             onDragStop: this.rangeService.onDragStop.bind(this.rangeService),

@@ -263,26 +263,7 @@ export class DragAndDropService extends BeanStub {
 
         // check if mouseEvent intersects with any of the drop targets
         const validDropTargets = this.dropTargets.filter(target => this.isMouseOnDropTarget(mouseEvent, target));
-        const len = validDropTargets.length;
-
-        let dropTarget: DropTarget | null = null;
-
-        if (len > 0) {
-            dropTarget = len === 1
-            ? validDropTargets[0]
-            // the current mouse position could intersect with more than 1 element
-            // if they are nested. In that case we need to get the most specific
-            // container, which is the one that does not contain any other targets.
-            : validDropTargets.reduce((prevTarget, currTarget) => {
-                if (!prevTarget) { return currTarget; }
-                const prevContainer = prevTarget.getContainer();
-                const currContainer = currTarget.getContainer();
-
-                if (prevContainer.contains(currContainer)) { return currTarget; }
-
-                return prevTarget;
-            });
-        }
+        const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
 
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
@@ -292,6 +273,28 @@ export class DragAndDropService extends BeanStub {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
+    }
+
+    private findCurrentDropTarget(mouseEvent: MouseEvent, dropTargets: DropTarget[]): DropTarget | null {
+        const len = dropTargets.length;
+
+        if (len === 0) { return  null; }
+        if (len === 1) { return dropTargets[0]; }
+
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eGhost = this.eGhost;
+
+        let elementStack = eDocument.elementsFromPoint(mouseEvent.x, mouseEvent.y);
+
+        if (eGhost) {
+            elementStack = elementStack.filter(el => eGhost !== el && !eGhost.contains(el));
+        }
+
+        if (elementStack.length === 0) { return null; }
+
+        const topMostEl = elementStack[0];
+
+        return dropTargets.find(dropTarget => dropTarget.getContainer().contains(topMostEl)) || null;
     }
 
     private enterDragTargetIfExists(dropTarget: DropTarget | null, mouseEvent: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): void {

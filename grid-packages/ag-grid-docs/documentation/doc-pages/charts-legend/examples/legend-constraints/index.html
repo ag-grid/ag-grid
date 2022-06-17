@@ -26,5 +26,14 @@
                 onchange="updateLegendItemSpacing(event)" />
         </div>
     </div>
+    <div class="toolPanel">
+        <div class="slider">
+            <label for="maxWidthLabel"><strong>item.maxWidth:</strong></label>
+            <span id="maxWidthValue" class="slider-value">100</span>
+            <input type="range" id="maxWidthLabel" min="0" max="100" value="100"
+                oninput="updateLegendItemMaxWidth(event)"
+                onchange="updateLegendItemMaxWidth(event)" />
+        </div>
+    </div>
     <div id="myChart"></div>
 </div>
