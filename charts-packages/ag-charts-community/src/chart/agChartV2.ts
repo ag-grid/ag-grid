@@ -116,12 +116,12 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static DEBUG = false;
+    static DEBUG = (window as any).agChartsDebug ?? false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
         const mixinOpts: any = {};
-        if ((window as any).agChartsDebug ?? AgChartV2.DEBUG) {
+        if (AgChartV2.DEBUG) {
             mixinOpts['debug'] = true;
         }
 
