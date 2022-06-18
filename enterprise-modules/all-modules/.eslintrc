@@ -13,6 +13,7 @@
     "ie11"
   ],
   "rules": {
+    "jsx-a11y/aria-props": 0,
     "ie11/no-collection-args": [
       "error"
     ],
