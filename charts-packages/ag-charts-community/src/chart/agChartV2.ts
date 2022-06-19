@@ -116,7 +116,7 @@ export abstract class AgChart {
 }
 
 export abstract class AgChartV2 {
-    static DEBUG = (window as any).agChartsDebug ?? false;
+    static DEBUG = false;
     
     static create<T extends ChartType>(userOptions: ChartOptionType<T>): T {
         debug('user options', userOptions);
