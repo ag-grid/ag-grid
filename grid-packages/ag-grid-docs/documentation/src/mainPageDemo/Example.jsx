@@ -869,11 +869,6 @@ const Example = () => {
                             formatter: axisLabelFormatter
                         }
                     },
-                    category: {
-                        label: {
-                            rotation: 335
-                        }
-                    }
                 },
                 series: {
                     column: {

@@ -20,27 +20,12 @@ export class AreaChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
-        return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme
-        });
-    }
-
     public update(params: UpdateChartParams): void {
-        const { category, data } = params;
-
-        let options: AgCartesianChartOptions = {
-            data: this.transformData(data, category.id),
+        this.updateChart({
+            data: this.transformData(params.data, params.category.id),
             axes: this.getAxes(),
             series: this.getSeries(params)
-        };
-
-        if (this.crossFiltering) {
-            options.tooltip = { delay: 500 };
-        }
-
-        AgChart.update(this.chart as CartesianChart, options);
+        });
     }
 
     private getSeries(params: UpdateChartParams): AgAreaSeriesOptions[] {
@@ -87,15 +72,5 @@ export class AreaChartProxy extends CartesianChartProxy {
         }
 
         return options;
-    }
-
-    private extractSeriesOverrides() {
-        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
-
-        // TODO: remove once `yKeys` and `yNames` have been removed from the options
-        delete seriesOverrides.yKeys;
-        delete seriesOverrides.yNames;
-
-        return seriesOverrides;
     }
 }

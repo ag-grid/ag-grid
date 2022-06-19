@@ -57,8 +57,9 @@ export class AxisPanel extends Component {
         this.initAxisTicks();
         this.initAxisLabels();
 
-        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
+        // TODO: reintroduce
+        // const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
+        // this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
     private initAxis() {

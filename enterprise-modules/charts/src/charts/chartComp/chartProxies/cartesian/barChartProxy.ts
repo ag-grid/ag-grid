@@ -1,10 +1,9 @@
 import { _ } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgBarSeriesOptions, AgChart, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
+import { AgBarSeriesOptions, AgCartesianChartOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { hexToRGBA } from "../../utils/color";
-import { AgCartesianSeriesOptions } from "ag-charts-community/src/chart/agChartOptions";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -18,28 +17,15 @@ export class BarChartProxy extends CartesianChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
-        return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme
-        });
-    }
-
     public update(params: UpdateChartParams): void {
-        const { category, data } = params;
-        const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
+        const isNormalised = this.isNormalised();
+        const isBar = this.standaloneChartType === 'bar';
 
-        let options: AgCartesianChartOptions = {
-            data: this.transformData(data, category.id),
+        this.updateChart({
+            data: this.transformData(params.data, params.category.id),
             axes: this.getAxes(isBar, isNormalised),
             series: this.getSeries(params, isNormalised)
-        };
-
-        if (this.crossFiltering) {
-            options.tooltip = {delay: 500};
-        }
-
-        AgChart.update(this.chart as CartesianChart, options);
+        });
     }
 
     private getAxes(isBar: boolean, normalised: boolean) {
@@ -61,6 +47,7 @@ export class BarChartProxy extends CartesianChartProxy {
             const numberAxis = axes[1];
             numberAxis.label = { ...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%' };
         }
+
         return axes;
     }
 
@@ -119,16 +106,6 @@ export class BarChartProxy extends CartesianChartProxy {
             allSeries.push(filteredOutSeries);
         }
         return allSeries;
-    }
-
-    private extractSeriesOverrides() {
-        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
-
-        // TODO: remove once `yKeys` and `yNames` have been removed from the options
-        delete seriesOverrides.yKeys;
-        delete seriesOverrides.yNames;
-
-        return seriesOverrides;
     }
 
     private isNormalised() {
