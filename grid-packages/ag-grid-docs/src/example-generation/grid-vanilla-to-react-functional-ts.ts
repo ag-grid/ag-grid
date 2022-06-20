@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, ImportType, isInstanceMethod } from './parser-utils';
+import { addBindingImports, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 
 function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[]): string[] {
@@ -30,13 +30,17 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
         imports.push(...componentFilenames.map(getImport));
     }
 
+    if (bindings.tData) {
+        imports.push(`import { ${bindings.tData} } from './interfaces'`)
+    }
+
     imports = [...imports, ...getModuleRegistration(bindings)];
 
     return imports;
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[]): string[] {
-    const { gridSettings } = bindings;
+    const { gridSettings, tData } = bindings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
@@ -67,6 +71,10 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
+    }
+
+    if (tData) {
+        imports.push(`import { ${tData} } from './interfaces'`)
     }
 
     return imports;
@@ -137,7 +145,7 @@ const ROW_DATA_STATE = 'const [rowData, setRowData] = useState<any[]>();'
 const GRID_REF_HOOK = "const gridRef = useRef<AgGridReact>(null);"
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
+    const { properties, data, tData, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
     const eventAndCallbackNames = getEventAndCallbackNames();
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -337,7 +345,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         // Until we support this cleanly.
-        generatedOutput = generatedOutput.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
 
         return generatedOutput;
     };

@@ -39,6 +39,10 @@ function getModuleImports(bindings: any): string[] {
         addBindingImports(bImports, imports, false, false);
     }
 
+    if (bindings.tData) {
+        imports.push(`import { ${bindings.tData} } from './interfaces'`)
+    }
+
     imports = [...imports, ...getModuleRegistration(bindings)]
 
     return imports;
@@ -68,6 +72,10 @@ function getPackageImports(bindings: any): string[] {
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true, false);
+    }
+
+    if (bindings.tData) {
+        imports.push(`import { ${bindings.tData} } from './interfaces'`)
     }
     return imports;
 }

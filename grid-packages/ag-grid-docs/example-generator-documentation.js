@@ -8,6 +8,8 @@ const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/pac
 const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
 
+const getGenericInterface = require('./documentation/shared-types/generators')
+
 window.Date = Date;
 global.window = window;
 global.document = document;
@@ -399,6 +401,11 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         const getSource = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}.tsx`, ''));
                         importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.tsx': getSource(importType) }));
                         reactDeclarativeConfigs = addRawScripts(reactDeclarativeConfigs, false, '.tsx');
+
+                        if (typedBindings.tData) {
+                            importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { ...reactDeclarativeConfigs.get(importType), 'interfaces.ts': getGenericInterface(typedBindings.tData) }));
+                        }
+
                     } catch (e) {
                         console.error(`Failed to process React Typescript example in ${examplePath}`, e);
                         throw e;
@@ -418,10 +425,14 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames);
 
                     importTypes.forEach(importType => {
-                        angularConfigs.set(importType, {
+                        let frameworkFiles = {
                             'app.component.ts': getSource(importType),
                             'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
-                        });
+                        };
+                        if (typedBindings.tData) {
+                            frameworkFiles = { ...frameworkFiles, 'interfaces.ts': getGenericInterface(typedBindings.tData) }
+                        }
+                        angularConfigs.set(importType, frameworkFiles);
                     });
                     angularConfigs = addRawScripts(angularConfigs, false);
                 } catch (e) {
@@ -515,6 +526,11 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     tsConfigs.set(importType, {
                         'main.ts': getSource(importType),
                     });
+
+                    if (typedBindings.tData) {
+                        tsConfigs.set(importType, { ...tsConfigs.get(importType), 'interfaces.ts': getGenericInterface(typedBindings.tData) });
+                    }
+
                 });
             } catch (e) {
                 console.error(`Failed to process Typescript example in ${examplePath}`, e);

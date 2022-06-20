@@ -644,3 +644,9 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
     moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
     return moduleRegistration;
 }
+
+export function handleRowGenericInterface(fileTxt: string, tData: string): string {
+    // Until we support this cleanly.
+    fileTxt = fileTxt.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+    return fileTxt;
+}

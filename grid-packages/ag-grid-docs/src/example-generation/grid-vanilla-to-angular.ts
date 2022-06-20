@@ -1,8 +1,11 @@
 import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, getPropertyInterfaces, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 
-function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; rowDataType: string | undefined }, hasApi: boolean, hasColApi: boolean): string {
+function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
+    data: { url: string, callback: string; },
+    rowDataType: string | undefined,
+    hasApi: boolean, hasColApi: boolean): string {
     const additionalLines = [];
 
     if (readyCode) {
@@ -14,7 +17,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }
 
     if (data) {
-        const { url, callback, rowDataType = 'any[]' } = data;
+        const { url, callback } = data;
 
         if (callback.indexOf('api!.setRowData') !== -1) {
             const setRowDataBlock = callback.replace('params.api!.setRowData(data)', 'this.rowData = data');
@@ -31,7 +34,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const { gridSettings, imports: bindingImports, properties, tData } = bindings;
 
     const imports = ["import { Component } from '@angular/core';"];
 
@@ -61,13 +64,17 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push(...componentFileNames.map(getImport));
     }
 
+    if (tData) {
+        imports.push(`import { ${tData} } from './interfaces'`)
+    }
+
     imports.push('// Required feature modules are registered in app.module.ts')
 
     return imports;
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const { gridSettings, imports: bindingImports, properties, tData } = bindings;
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
@@ -100,6 +107,10 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
         imports.push(...componentFileNames.map(getImport));
     }
 
+    if (tData) {
+        imports.push(`import { ${tData} } from './interfaces'`)
+    }
+
     return imports;
 }
 
@@ -128,8 +139,8 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
-    const { data, properties, typeDeclares, interfaces } = bindings;
-    const { rowDataType = 'any[]' } = data || {};
+    const { data, properties, typeDeclares, interfaces, tData } = bindings;
+    const rowDataType = tData ? `${tData}[]` : 'any[]';
     const diParams = [];
 
     if (data) {
@@ -188,7 +199,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const hasGridApi = componentForCheckBody.includes('gridApi');
         const hasGridColumnApi = componentForCheckBody.includes('gridColumnApi');
 
-        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, hasGridApi, hasGridColumnApi)];
+        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, tData, hasGridApi, hasGridColumnApi)];
         const componentBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(additional)
@@ -226,7 +237,8 @@ ${bindings.utils.join('\n')}
 `;
 
         // Until we support this cleanly.
-        generatedOutput = generatedOutput.replace(/<TData>/g, '').replace(/TData\[\]/g, 'any[]');
+        generatedOutput = handleRowGenericInterface(generatedOutput, tData);
+
         return generatedOutput;
     };
 }

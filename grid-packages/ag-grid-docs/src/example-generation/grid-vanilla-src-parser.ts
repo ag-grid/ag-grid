@@ -267,8 +267,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
         apply: (bindings, node) => {
             const url = node.arguments[0].getText();
             const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
-            const rowDataType = node.parent.parent.parent.parent.arguments[0]?.parameters[0]?.type?.getText()
-            bindings.data = { url, callback, rowDataType };
+            bindings.data = { url, callback };
         }
     });
 
@@ -548,7 +547,9 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     tsCollectors.push({
         matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
-
+            if (node.type?.typeArguments?.length > 0) {
+                bindings.tData = node.type.typeArguments[0].getText();
+            }
             bindings = tsCollect(node.initializer, bindings, tsGridOptionsCollectors, false);
             return bindings;
         }
