@@ -18,11 +18,13 @@
 // Emit styles for the grid. This mixin validates the parameters passed to it,
 // converts the parameters to CSS variables, and combines all the necessary CSS
 // files for the grid and selected theme.
-@mixin grid-styles($global-params) {
+@mixin grid-styles($global-params: ()) {
     $no-native-widgets: map.get($global-params, "suppress-native-widget-styling");
     $global-params: map.remove($global-params, "suppress-native-widget-styling");
 
     $themes: -get-themes($global-params);
+
+    @warn meta.inspect($themes);
 
 
     @if $no-native-widgets {
@@ -197,14 +199,17 @@ $-theme-fonts: (
     
     @if map.has-key($params, "theme") {
         $theme: map.get($params, "theme");
-        @if meta.type-of($theme) != string {
-            @error "Expected theme to be a string, got #{meta.inspect($theme)}";
+        @if meta.type-of($theme) == list {
+            @error "Expected theme to be a string, got a list (if you intend to use multiple themes, use the plural `themes` parameter)";
+        }
+        @else if meta.type-of($theme) != string {
+            @error "Expected theme to be a string, got #{meta.inspect($theme)})";
         }
         $themes: map.set($themes, $theme, ());
     }
     
     @if list.length($themes) == 0 {
-        @return ("alpine": true);
+        @return ("alpine": ());
     }
 
     $params: map.remove($params, "theme", "themes");
