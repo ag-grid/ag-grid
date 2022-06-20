@@ -22,6 +22,7 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
+import { getElementSize } from "../../../utils/dom";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     setWidth(width: string): void;
@@ -73,7 +74,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.column = column;
     }
 
-    public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
+    public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
         super.setGui(eGui);
         this.comp = comp;
 
@@ -84,6 +85,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMovingCss();
         this.setupMenuClass();
         this.setupSortableClass();
+        this.setupWrapTextClass();
+        this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
         this.setupColId();
@@ -430,6 +433,50 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         this.addRefreshFunction(updateSortableCssClass);
         this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
+    }
+
+    private setupWrapTextClass() {
+        const listener = () => {
+            const wrapText = !!this.column.getColDef().wrapHeaderText;
+            this.comp.addOrRemoveCssClass('ag-header-cell-wrap-text', wrapText);
+        };
+        listener();
+        this.addRefreshFunction(listener);
+    }
+
+    private setupAutoHeight(wrapperElement: HTMLElement) {
+        if (!this.column.isAutoHeaderHeight()) {
+            return;
+        }
+
+        const measureHeight = (timesCalled: number) => {
+            if (!this.isAlive()) { return; }
+
+            const { paddingTop, paddingBottom } = getElementSize(this.getGui());
+            const wrapperHeight = wrapperElement.offsetHeight;
+            const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+
+            if (timesCalled < 5) {
+                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
+                // maybe it will be ready next VM turn
+                const doc = this.beans.gridOptionsWrapper.getDocument();
+                const notYetInDom = !doc || !doc.contains(wrapperElement);
+
+                // this happens in React, where React hasn't put any content in. we say 'possibly'
+                // as a) may not be React and b) the cell could be empty anyway
+                const possiblyNoContentYet = autoHeight == 0;
+
+                if (notYetInDom || possiblyNoContentYet) {
+                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    return;
+                }
+            }
+            this.columnModel.setColumnHeaderHeight(this.column, autoHeight);
+        };
+
+        measureHeight(0);
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, () => measureHeight(0));
+        this.addRefreshFunction(() => measureHeight(0));
     }
 
     private refreshAriaSort(): void {

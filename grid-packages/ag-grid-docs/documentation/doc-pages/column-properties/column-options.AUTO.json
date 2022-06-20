@@ -265,8 +265,16 @@
     "description": "/** Whether to display a floating filter for this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "wrapHeaderText": {
+    "description": "/** If enabled then column header names that are too long for the column width will wrap onto the next line. Default `false` */",
+    "type": { "returnType": "boolean" }
+  },
+  "autoHeaderHeight": {
+    "description": "/** If enabled then the column header row will automatically adjust height to acommodate the size of the header cell.\n * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.\n * Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "headerComponent": {
-    "description": "/** */\n/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
+    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.\n * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail. */",
     "type": { "returnType": "any" }
   },
   "headerComponentFramework": {
