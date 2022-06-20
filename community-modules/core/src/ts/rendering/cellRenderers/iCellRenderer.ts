@@ -13,8 +13,8 @@ export interface ICellRendererParams<TData = any> extends AgGridCommon {
     fullWidth?: boolean;
     /** Pinned state of the cell. */
     pinned?: string | null;
-    /** The row's data. */
-    data: TData;
+    /** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */
+    data: TData | undefined;
     /** The row node. */
     node: RowNode<TData>;
     /** The current index of the row (this changes after filter and sort). */

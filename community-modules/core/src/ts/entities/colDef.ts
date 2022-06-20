@@ -459,8 +459,8 @@ export interface ColDef<TData = any> extends AbstractColDef, IFilterDef {
 export interface ColumnFunctionCallbackParams<TData = any> extends AgGridCommon {
     /** Row node for the given row */
     node: RowNode<TData>;
-    /** Data associated with the node */
-    data: TData;
+    /** Data associated with the node. Will be `undefined` for group rows. */
+    data: TData | undefined;
     /** Column for this callback */
     column: Column;
     /** ColDef provided for this column */
@@ -521,10 +521,15 @@ export interface IsColumnFunc<TData = any> {
 export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
 export interface GetQuickFilterTextParams<TData = any> extends AgGridCommon {
+    /** Value for the cell. */
     value: any;
+    /** Row node for the given row */
     node: RowNode<TData>;
+    /** Row data associated with the node. */
     data: TData;
+    /** Column for this callback */
     column: Column;
+    /** ColDef provided for this column */
     colDef: ColDef;
 }
 
@@ -553,12 +558,18 @@ export interface BaseColDefParams<TData = any> extends AgGridCommon {
     colDef: ColDef;
 }
 
-export interface BaseWithValueColDefParams<TData = any> extends BaseColDefParams<TData> {
-    /** Value for the cell. */
-    value: any;
+export interface BaseColDefOptionalDataParams<TData = any> extends AgGridCommon {
+    /** Row node for the given row */
+    node: RowNode<TData> | null;
+    /** Data associated with the node */
+    data: TData | undefined;
+    /** Column for this callback */
+    column: Column;
+    /** ColDef provided for this column */
+    colDef: ColDef;
 }
 
-export interface ValueGetterParams<TData = any> extends BaseColDefParams<TData> {
+export interface ValueGetterParams<TData = any> extends BaseColDefOptionalDataParams<TData> {
     /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
@@ -598,19 +609,24 @@ export interface ValueParserFunc<TData = any> {
     (params: ValueParserParams<TData>): any;
 }
 
-export interface ValueFormatterParams<TData = any> extends BaseWithValueColDefParams<TData> {
+export interface ValueFormatterParams<TData = any> extends BaseColDefOptionalDataParams<TData> {
+    /** Value for the cell. */
+    value: any;
 }
 
 export interface ValueFormatterFunc<TData = any> {
     (params: ValueFormatterParams<TData>): string;
 }
 
-export interface KeyCreatorParams<TData = any> extends BaseWithValueColDefParams<TData> { }
-
-export interface ColSpanParams<TData = any> extends BaseColDefParams<TData> {
+export interface KeyCreatorParams<TData = any> extends BaseColDefParams<TData> {
+    /** Value for the cell. */
+    value: any;
 }
 
-export interface RowSpanParams<TData = any> extends BaseColDefParams<TData> {
+export interface ColSpanParams<TData = any> extends BaseColDefOptionalDataParams<TData> {
+}
+
+export interface RowSpanParams<TData = any> extends BaseColDefOptionalDataParams<TData> {
 }
 
 export interface SuppressKeyboardEventParams<TData = any> extends ColumnFunctionCallbackParams<TData> {

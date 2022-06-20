@@ -386,7 +386,7 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 /**------------*/
 export interface RowEvent<TData = any> extends AgGridEvent {
     node: RowNode<TData>;
-    /** The user provided data for the row */
+    /** The user provided data for the row. Data is `undefined` for row groups. */
     data: TData | undefined;
     /** The visible row index for the row */
     rowIndex: number | null;
