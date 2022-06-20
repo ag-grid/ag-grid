@@ -3203,6 +3203,7 @@ export class ColumnModel extends BeanStub {
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
+        const prevGridCols = this.gridColumns;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         } else {
@@ -3248,13 +3249,14 @@ export class ColumnModel extends BeanStub {
 
         this.setAutoHeightActive();
 
-        const event: GridColumnsChangedEvent = {
-            type: Events.EVENT_GRID_COLUMNS_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-
-        this.eventService.dispatchEvent(event);
+        if (!areEqual(prevGridCols, this.gridColumns)) {
+            const event: GridColumnsChangedEvent = {
+                type: Events.EVENT_GRID_COLUMNS_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private setAutoHeightActive(): void {
