@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 export const useEffectOnce = (effect: () => void | (() => void)) => {
+
+    const effectFn = 
     const destroyFunc = useRef<void | (() => void)>();
     const effectCalled = useRef(false);
     const renderAfterCalled = useRef(false);
