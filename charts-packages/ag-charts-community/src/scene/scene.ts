@@ -3,6 +3,7 @@ import { Node, RedrawType, RenderContext } from "./node";
 import { createId } from "../util/id";
 import { Group } from "./group";
 import { HdpiOffscreenCanvas } from "../canvas/hdpiOffscreenCanvas";
+import { WINDOW } from '../util/window';
 
 interface DebugOptions {
     stats: false | 'basic' | 'detailed';
@@ -44,14 +45,14 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = (window as any).agChartsSceneRenderModel || 'adv-composite',
+            mode = WINDOW?.agChartsSceneRenderModel || 'adv-composite',
             width,
             height,
         } = opts;
 
         this.opts = { document, mode };
-        this.debug.stats = (window as any).agChartsSceneStats ?? false;
-        this.debug.dirtyTree = (window as any).agChartsSceneDirtyTree ?? false;
+        this.debug.stats = WINDOW?.agChartsSceneStats ?? false;
+        this.debug.dirtyTree = WINDOW?.agChartsSceneDirtyTree ?? false;
         this.canvas = new HdpiCanvas({ document, width, height });
         this.ctx = this.canvas.context;
     }
@@ -215,7 +216,6 @@ export class Scene {
 
     render(opts?: { debugSplitTimes: number[], extraDebugStats: Record<string, number> }) {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
-        const start = performance.now();
         const { canvas, ctx, root, layers, pendingSize, opts: { mode } } = this;
 
         if (pendingSize) {
