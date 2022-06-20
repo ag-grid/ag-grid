@@ -203,6 +203,8 @@ export class Group extends Node {
                 stats.nodesSkipped += this.nodeCount.count;
             }
 
+            super.markClean({ recursive: false });
+
             // Nothing to do.
             return;
         }
@@ -332,6 +334,8 @@ export class Group extends Node {
                 stats.layersSkipped++;
                 stats.nodesSkipped += this.nodeCount.count;
             }
+
+            super.markClean({ recursive: false });
 
             // Nothing to do.
             return;
