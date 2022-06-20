@@ -33,6 +33,11 @@ archive*.zip
 # latest only
 dist
 
+# compiled CSS files
+community-modules/styles/*.css
+# compiled css files as SCSS
+community-modules/styles/_css-content.scss
+
 charts-packages/**/dist
 community-modules/**/dist
 enterprise-modules/**/dist

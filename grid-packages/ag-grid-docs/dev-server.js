@@ -3,7 +3,6 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve;
-const http = require('http');
 const https = require('https');
 const express = require('express');
 const realWebpack = require('webpack');
@@ -428,17 +427,19 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
         })
         .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
+
+    if (modulesState["@ag-grid-community/core"].moduleChanged ||
+        modulesState["@ag-grid-community/styles"].moduleChanged) {
+        console.log("Core / Styles have changed - rebuilding CSS");
+        await buildCss();
+    }
+
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
-
-        await buildPackages(Array.from(lernaPackagesToRebuild));
-
-        if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
-            await buildCss();
-        }
+        // await buildPackages(Array.from(lernaPackagesToRebuild));
     } else {
         console.log("No non-core packages are out of date - skipping");
     }
@@ -595,7 +596,7 @@ const addWebpackMiddleware = (app) => {
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {
-    watchCss();
+    await watchCss();
     await watchCoreModules(skipFrameworks);
 };
 
@@ -716,9 +717,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
 
-            console.log("Watch Typescript examples...");
-            await watchValidateExampleTypes();
-
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");
                 watchFrameworkModules();
@@ -736,6 +734,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             console.log("Watch and Generate Examples");
             await watchAndGenerateExamples();
             console.log("Examples Generated");
+
+            console.log("Watch Typescript examples...");
+            await watchValidateExampleTypes();
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way
