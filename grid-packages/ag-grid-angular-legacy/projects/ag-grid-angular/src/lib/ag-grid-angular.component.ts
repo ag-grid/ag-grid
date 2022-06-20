@@ -938,15 +938,15 @@ Full Store is used.
     /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams<TData>) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
-    @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
+    @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */
-    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction<TData> | undefined = undefined;
+    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
     /** SSRM Tree Data: Allows specifying which rows are expandable.     */
-    @Input() public isServerSideGroup: IsServerSideGroup<TData> | undefined = undefined;
+    @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
     /** SSRM Tree Data: Allows specifying group keys.     */
-    @Input() public getServerSideGroupKey: GetServerSideGroupKey<TData> | undefined = undefined;
+    @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode<TData>) => string) | undefined = undefined;

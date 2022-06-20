@@ -883,15 +883,15 @@ export interface GridOptions<TData = any> {
     /** Allows setting the child count for a group row. */
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
-    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams<TData>) => ServerSideStoreParams;
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
     /** Allows groups to be open by default. */
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     /** SSRM Tree Data: Allows specifying which rows are expandable. */
-    isServerSideGroup?: IsServerSideGroup<TData>;
+    isServerSideGroup?: IsServerSideGroup;
     /** SSRM Tree Data: Allows specifying group keys. */
-    getServerSideGroupKey?: GetServerSideGroupKey<TData>;
+    getServerSideGroupKey?: GetServerSideGroupKey;
 
     // *** Rows *** //
     /**
@@ -1140,18 +1140,18 @@ export interface GetDataPath<TData = any> {
     (data: TData): string[];
 }
 
-export interface IsServerSideGroup<TData = any> {
-    (dataItem: TData): boolean;
+export interface IsServerSideGroup {
+    (dataItem: any): boolean;
 }
 
 export interface IsRowFilterable<TData = any> {
     (params: GetGroupAggFilteringParams<TData>): boolean;
 }
-export interface IsApplyServerSideTransaction<TData = any> {
-    (params: IsApplyServerSideTransactionParams<TData>): boolean;
+export interface IsApplyServerSideTransaction {
+    (params: IsApplyServerSideTransactionParams): boolean;
 }
-export interface GetServerSideGroupKey<TData = any> {
-    (dataItem: TData): string;
+export interface GetServerSideGroupKey {
+    (dataItem: any): string;
 }
 
 export interface IsRowMaster<TData = any> {
@@ -1169,8 +1169,8 @@ export interface RowClassRules<TData = any> {
 export interface RowStyle { [cssProperty: string]: string | number; }
 
 export interface RowClassParams<TData = any> extends AgGridCommon {
-    /** The data associated with this row from rowData */
-    data: TData;
+    /** The data associated with this row from rowData. Data is `undefined` for row groups. */
+    data: TData | undefined;
     /** The RowNode associated with this row */
     node: RowNode<TData>;
     /** The index of the row */
