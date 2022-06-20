@@ -1,10 +1,4 @@
-import {
-    AgCartesianAxisOptions,
-    AgCartesianChartOptions,
-    AgChart,
-    CartesianChart,
-    ChartAxisPosition
-} from "ag-charts-community";
+import { AgCartesianAxisOptions, AgCartesianChartOptions, ChartAxisPosition } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";

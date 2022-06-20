@@ -39,9 +39,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
         if (this.crossFiltering) {
             options.tooltip = { delay: 500 };
         }
-
-        console.log(options);
-
         AgChart.update(this.chart as CartesianChart, options);
     }
 

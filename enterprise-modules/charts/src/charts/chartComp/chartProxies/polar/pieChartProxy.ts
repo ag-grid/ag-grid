@@ -1,7 +1,6 @@
-import { AgChart, PolarChart } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
-import { AgPolarChartOptions, AgPolarSeriesOptions } from "ag-charts-community/src/chart/agChartOptions";
+import { AgPolarSeriesOptions } from "ag-charts-community/src/chart/agChartOptions";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -10,21 +9,11 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(): PolarChart {
-        return AgChart.create({
-            type: 'pie',
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-        });
-    }
-
     public update(params: UpdateChartParams): void {
-        const options: AgPolarChartOptions = {
+        this.updateChart({
             data: this.transformData(params.data, params.category.id),
             series: this.getSeries(params)
-        }
-
-        AgChart.update(this.chart as PolarChart, options);
+        });
     }
 
     private getSeries(params: UpdateChartParams): AgPolarSeriesOptions[] {

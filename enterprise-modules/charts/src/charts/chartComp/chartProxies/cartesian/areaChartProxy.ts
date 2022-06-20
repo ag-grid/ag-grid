@@ -1,10 +1,4 @@
-import {
-    AgAreaSeriesOptions,
-    AgCartesianChartOptions,
-    AgChart,
-    CartesianChart,
-    ChartAxisPosition
-} from "ag-charts-community";
+import { AgAreaSeriesOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";

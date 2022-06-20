@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { AgBarSeriesOptions, AgCartesianChartOptions, ChartAxisPosition } from "ag-charts-community";
+import { AgBarSeriesOptions, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
