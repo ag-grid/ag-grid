@@ -24,7 +24,7 @@ export interface IServerSideStore {
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;
     getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
-    addStoreStates(result: ServerSideGroupState[]): void;
+    addStoreStates(result: ServerSideGroupLevelState[]): void;
 }
 
 export interface StoreRefreshAfterParams {
@@ -33,7 +33,7 @@ export interface StoreRefreshAfterParams {
     changedColumns: string[];
 }
 
-export interface ServerSideGroupState {
+export interface ServerSideGroupLevelState {
     /** True if infininte scrolling */
     infiniteScroll: boolean;
     /** The route that identifies this level. */
@@ -58,3 +58,6 @@ export interface ServerSideGroupState {
      */
     cacheBlockSize?: number;
 }
+
+/** @deprecated use ServerSideGroupLevelState instead  */
+export interface ServerSideGroupState extends ServerSideGroupLevelState {}

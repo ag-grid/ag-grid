@@ -13,7 +13,7 @@ import {
     RowBounds,
     RowNode,
     RowNodeBlock,
-    ServerSideGroupParams,
+    ServerSideGroupLevelParams,
     RowNodeBlockLoader
 } from "@ag-grid-community/core";
 import { StoreUtils } from "../stores/storeUtils";
@@ -33,7 +33,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private logger: Logger;
 
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideGroupParams;
+    private readonly storeParams: ServerSideGroupLevelParams;
     private readonly startRow: number;
 
     private readonly level: number;
@@ -63,7 +63,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private nodeIdPrefix: string | undefined;
 
     constructor(blockNumber: number, parentRowNode: RowNode, ssrmParams: SSRMParams,
-                storeParams: ServerSideGroupParams, parentStore: PartialStore) {
+                storeParams: ServerSideGroupLevelParams, parentStore: PartialStore) {
         super(blockNumber);
 
         this.ssrmParams = ssrmParams;

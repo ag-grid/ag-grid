@@ -16,13 +16,13 @@ export interface LoadSuccessParams {
      */
     rowCount?: number;
     /**
-     * @deprecated use groupInfo instead
+     * @deprecated use groupLevelInfo instead
      */
     storeInfo?: any;
     /**
      * Any extra information for the grid to associate with this load.
      */
-    groupInfo?: any;
+    groupLevelInfo?: any;
 }
 
 export abstract class RowNodeBlock extends BeanStub {

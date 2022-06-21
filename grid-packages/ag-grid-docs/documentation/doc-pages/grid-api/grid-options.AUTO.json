@@ -1206,18 +1206,18 @@
     "description": "/** Allows setting the child count for a group row. */",
     "type": { "arguments": { "dataItem": "any" }, "returnType": "number" }
   },
-  "getServerSideGroupParams": {
+  "getServerSideGroupLevelParams": {
     "description": "/** Allows providing different params for different levels of grouping. */",
     "type": {
-      "arguments": { "params": "GetServerSideGroupParamsParams" },
-      "returnType": "ServerSideGroupParams"
+      "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+      "returnType": "ServerSideGroupLevelParams"
     }
   },
   "getServerSideStoreParams": {
-    "description": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+    "description": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
     "type": {
-      "arguments": { "params": "GetServerSideGroupParamsParams" },
-      "returnType": "ServerSideGroupParams"
+      "arguments": { "params": "GetServerSideGroupLevelParamsParams" },
+      "returnType": "ServerSideGroupLevelParams"
     }
   },
   "isServerSideGroupOpenByDefault": {

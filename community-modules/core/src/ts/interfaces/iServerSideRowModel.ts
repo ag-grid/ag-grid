@@ -1,13 +1,13 @@
 import { IRowModel } from "./iRowModel";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
-import { ServerSideGroupState } from "./IServerSideStore";
+import { ServerSideGroupLevelState } from "./IServerSideStore";
 import { IServerSideDatasource } from "./iServerSideDatasource";
 import { RowNode } from "../entities/rowNode";
 
 export interface IServerSideRowModel extends IRowModel {
-    refreshStore(params?: RefreshStoreParams): void;
+    refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
-    getStoreState(): ServerSideGroupState[];
+    getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
@@ -20,7 +20,7 @@ export interface IServerSideTransactionManager {
     flushAsyncTransactions(): void;
 }
 
-export interface RefreshStoreParams {
+export interface RefreshServerSideParams {
     /**
      * List of group keys, pointing to the level to refresh.
      * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].
@@ -33,3 +33,6 @@ export interface RefreshStoreParams {
      */
     purge?: boolean;
 }
+
+/** @deprecated use RefreshServerSideParams instead  */
+export interface RefreshStoreParams extends RefreshServerSideParams {}

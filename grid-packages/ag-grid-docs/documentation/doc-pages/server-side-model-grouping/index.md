@@ -22,7 +22,7 @@ const gridOptions = {
 
 For more configuration details see the section on [Row Grouping](/grouping/).
 
-## Row Grouping on the Server
+## Server Side Row Grouping
 
 The actual grouping of rows is performed on the server when using the SSRM.
 When the grid needs more rows it makes a request via `getRows(params)` on
@@ -62,33 +62,33 @@ The example below demonstrates server-side Row Grouping. Note the following:
 
 Some applications may require Infinite Scrolling at certain group levels only. It may be that some levels have large numbers of rows making Infinite Scrolling a better choice, while levels with fewer rows don't require Infinite Scrolling.
 
-This is done by implementing the grid callback `getServerSideGroupParams(params)`.
+This is done by implementing the grid callback `getServerSideGroupLevelParams(params)`.
 
-<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getServerSideGroupParams"]' ></api-documentation>
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["getServerSideGroupLevelParams"]' ></api-documentation>
 
-The example below demonstrates the `getServerSideGroupParams(params)` callback. Note the following:
+The example below demonstrates the `getServerSideGroupLevelParams(params)` callback. Note the following:
 
 - The grid is configured differently depending on whether grouping is active or not by implementing
-the `getServerSideGroupParams(params)` callback. The callback logs its results to the dev console.
+the `getServerSideGroupLevelParams(params)` callback. The callback logs its results to the dev console.
 
-- When grouping is active, the levels are configured as follows:
-    - Level 0 - No Infinite Scrolling
-    - Level 1 - Infinite Scrolling with block size of 5
-    - Level 2 - Infinite Scrolling with block size of 2
+- When grouping is active, the group levels are configured as follows:
+    - Group Level 0 - No Infinite Scrolling
+    - Group Level 1 - Infinite Scrolling with block size of 5
+    - Group Level 2 - Infinite Scrolling with block size of 2
 
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
-- When no grouping is active, the top most (and only) level is configured to use Infinite Scroll and only keeps two blocks of rows. To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
+- When no grouping is active, the top most (and only) group level is configured to use Infinite Scroll and only keeps two blocks of rows. To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Debugging Group Levels
 
-The grid API `getServerSideGroupState()` returns info on all levels that have child rows loaded. Using this you can see details about the group level such as it's route and whether Infinite Scroll is on.
+The grid API `getServerSideGroupLevelState()` returns info on all existing levels. Levels do not exist if their parent groups have not been opened. Using this you can see details about the group level such as it's route and whether Infinite Scroll is on.
 
-<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideGroupState"]' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideGroupLevelState"]' ></api-documentation>
 
-Inspecting the Group State can be useful, for example when wanting to know what Route to use when
+Inspecting the Group Level State can be useful, for example when wanting to know what Route to use when
 providing [Transactions](/server-side-model-transactions/) or doing a [Level Refresh](/server-side-model-refresh/).
 
 
@@ -207,9 +207,9 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 <grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Group Info
+## Group Level Info
 
-It is also possible to attach info to each group as data is loaded. This is done through the `success()` callback
+It is also possible to attach info to each Group Level as data is loaded. This is done through the `success()` callback
 when rows are fetched.
 
 ```js
@@ -223,20 +223,20 @@ const createDatasource = server => {
             // pass rows back along with any additional group info
             params.success({
                 rowData: rows,
-                groupInfo: {a: 22, b: 55}
+                groupLevelInfo: {a: 22, b: 55}
             });
         }
     }
 }
 ```
 
-The info object is merged into the Group Info (which is initially an empty object) and then available through the `getServerSideGroupState()` API.
+The `groupLevelInfo` object is merged into the Group Level Info (which is initially an empty object) and then available through the `getServerSideGroupLevelState()` API.
 
-If rows are loaded multiple times, then the Group Info values will over write existing values
+If rows are loaded multiple times, then the `groupLevelInfo` values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the level
 is [Refreshed](/server-side-model-refresh/) or b) [Infinite Scrolling](/server-side-model-row-stores/) is used (as each block load will get the opportunity to add info data).
 
-The example below shows Group Info in action.
+The example below shows Group Level Info in action.
 
 <grid-example title='Group Info' name='group-info' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

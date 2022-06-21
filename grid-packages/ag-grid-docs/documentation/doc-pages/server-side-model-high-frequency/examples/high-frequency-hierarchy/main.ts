@@ -131,7 +131,7 @@ const gridOptions: GridOptions = {
           function (result: any[], serverVersion: string) {
             params2.success({
               rowData: result,
-              groupInfo: { serverVersion: serverVersion },
+              groupLevelInfo: { serverVersion: serverVersion },
             })
           }
         )
@@ -161,7 +161,7 @@ function getRowId(params: any) {
 
 function isApplyServerSideTransaction(params: IsApplyServerSideTransactionParams) {
   var transactionVersion = (params.transaction as any).serverVersion
-  var dataLoadedVersion = params.groupInfo.serverVersion
+  var dataLoadedVersion = params.groupLevelInfo.serverVersion
   var transactionCreatedSinceInitialLoad =
     transactionVersion > dataLoadedVersion
   if (!transactionCreatedSinceInitialLoad) {

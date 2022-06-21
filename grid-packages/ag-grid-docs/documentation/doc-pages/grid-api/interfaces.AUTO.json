@@ -1738,8 +1738,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
-      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -2115,8 +2115,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
-      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -2399,8 +2399,25 @@
     "meta": { "isTypeAlias": true },
     "type": "'full' | 'partial'"
   },
-  "ServerSideGroupParams": {
+  "ServerSideGroupLevelParams": {
     "meta": {},
+    "type": {
+      "storeType?": "ServerSideStoreType",
+      "infiniteScroll?": "boolean",
+      "maxBlocksInCache?": "number",
+      "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "storeType?": "/** @deprecated What store type to use.\nIf missing, then defaults to grid option `serverSideStoreType`.\nDeprecated in favor of infiniteScroll.\nIf infiniteScroll==true, then Partial Store is used.\nIf infiniteScroll==false, then Full Store is used.\n */",
+      "infiniteScroll?": "/** Whether to have infinite scroll active or not for the level. */",
+      "maxBlocksInCache?": "/** For Infinite Scroll only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Infinite Scroll only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
+    }
+  },
+  "ServerSideStoreParams": {
+    "meta": {
+      "doc": "/** @deprecated use ServerSideGroupLevelParams instead\n */"
+    },
     "type": {
       "storeType?": "ServerSideStoreType",
       "infiniteScroll?": "boolean",
@@ -2661,8 +2678,33 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "GetServerSideGroupParamsParams": {
+  "GetServerSideGroupLevelParamsParams": {
     "meta": {},
+    "type": {
+      "level": "number",
+      "parentRowNode?": "RowNode",
+      "rowGroupColumns": "Column[]",
+      "pivotColumns": "Column[]",
+      "pivotMode": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "GetServerSideStoreParamsParams": {
+    "meta": {
+      "doc": "/** @deprecated use GetServerSideGroupLevelParamsParams instead\n */"
+    },
     "type": {
       "level": "number",
       "parentRowNode?": "RowNode",
@@ -2705,7 +2747,7 @@
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode",
       "storeInfo": "any",
-      "groupInfo": "any",
+      "groupLevelInfo": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -2713,8 +2755,8 @@
     "docs": {
       "transaction": "/** The transaction getting applied. */",
       "parentNode": "/** The parent RowNode, if transaction is applied to a group. */",
-      "storeInfo": "/** @deprecated use groupInfo instead\n */",
-      "groupInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
+      "storeInfo": "/** @deprecated use groupLevelInfo instead\n */",
+      "groupLevelInfo": "/** Store info, if any, as passed via the success() callback when loading data. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -9341,9 +9383,9 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
-      "refreshStore(params?: RefreshStoreParams)": "void",
+      "refreshStore(params?: RefreshServerSideParams)": "void",
       "onRowHeightChanged()": "void",
-      "getStoreState()": "ServerSideGroupState[]",
+      "getStoreState()": "ServerSideGroupLevelState[]",
       "retryLoads()": "void",
       "expandAll(value: boolean)": "void",
       "setDatasource(datasource: IServerSideDatasource)": "void",
@@ -9390,11 +9432,21 @@
       "flushAsyncTransactions()": "void"
     }
   },
-  "RefreshStoreParams": {
+  "RefreshServerSideParams": {
     "meta": {},
     "type": { "route?": "string[]", "purge?": "boolean" },
     "docs": {
-      "route?": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
+      "route?": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
+      "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
+    }
+  },
+  "RefreshStoreParams": {
+    "meta": {
+      "doc": "/** @deprecated use RefreshServerSideParams instead\n */"
+    },
+    "type": { "route?": "string[]", "purge?": "boolean" },
+    "docs": {
+      "route?": "/** List of group keys, pointing to the level to refresh.\n * For example, to purge two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level is refreshed. */",
       "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
     }
   },
@@ -9421,7 +9473,7 @@
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
       "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
-      "addStoreStates(result: ServerSideGroupState[])": "void"
+      "addStoreStates(result: ServerSideGroupLevelState[])": "void"
     }
   },
   "StoreRefreshAfterParams": {
@@ -9432,7 +9484,7 @@
       "changedColumns": "string[]"
     }
   },
-  "ServerSideGroupState": {
+  "ServerSideGroupLevelState": {
     "meta": {},
     "type": {
       "infiniteScroll": "boolean",
@@ -9445,12 +9497,35 @@
     },
     "docs": {
       "infiniteScroll": "/** True if infininte scrolling */",
-      "route": "/** The route that identifies this store. */",
-      "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
+      "route": "/** The route that identifies this level. */",
+      "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
       "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
-      "info?": "/** Any extra info provided to the store, when data was loaded. */",
-      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the store. */",
-      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each block. */"
+      "info?": "/** Any extra info provided to the level, when data was loaded. */",
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */"
+    }
+  },
+  "ServerSideGroupState": {
+    "meta": {
+      "doc": "/** @deprecated use ServerSideGroupLevelState instead\n */"
+    },
+    "type": {
+      "infiniteScroll": "boolean",
+      "route": "string[]",
+      "rowCount": "number",
+      "lastRowIndexKnown?": "boolean",
+      "info?": "any",
+      "maxBlocksInCache?": "number",
+      "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "infiniteScroll": "/** True if infininte scrolling */",
+      "route": "/** The route that identifies this level. */",
+      "rowCount": "/** How many rows the level has. This includes 'loading rows'. */",
+      "lastRowIndexKnown?": "/** Infinite Scroll only.\n * Whether the last row index is know. */",
+      "info?": "/** Any extra info provided to the level, when data was loaded. */",
+      "maxBlocksInCache?": "/** Infinite Scroll only.\n *  Max blocks allowed in the infinite cache. */",
+      "cacheBlockSize?": "/** Infinite Scroll only.\n * The size (number of rows) of each infinite cache block. */"
     }
   },
   "SetFilterModelValue": {
@@ -11282,13 +11357,13 @@
       "rowData": "any[]",
       "rowCount?": "number",
       "storeInfo?": "any",
-      "groupInfo?": "any"
+      "groupLevelInfo?": "any"
     },
     "docs": {
       "rowData": "/** Data retrieved from the server as requested by the grid. */",
       "rowCount?": "/** The last row, if known, to help Infinite Scroll. */",
-      "storeInfo?": "/** @deprecated use groupInfo instead\n */",
-      "groupInfo?": "/** Any extra information for the grid to associate with this load. */"
+      "storeInfo?": "/** @deprecated use groupLevelInfo instead\n */",
+      "groupLevelInfo?": "/** Any extra information for the grid to associate with this load. */"
     }
   },
   "SortOption": {
@@ -12623,8 +12698,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
-      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -13000,8 +13075,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
-      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -13390,8 +13465,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
-      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -13767,8 +13842,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
-      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
@@ -14161,8 +14236,8 @@
       "getDataPath?": "GetDataPath",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "getChildCount?": "(dataItem: any) => number",
-      "getServerSideGroupParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
-      "getServerSideStoreParams?": "(params: GetServerSideGroupParamsParams) => ServerSideGroupParams",
+      "getServerSideGroupLevelParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
+      "getServerSideStoreParams?": "(params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
       "isServerSideGroup?": "IsServerSideGroup",
@@ -14538,8 +14613,8 @@
       "getDataPath?": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "defaultGroupSortComparator?": "/** @deprecated - Use initialGroupOrderComparator instead\n */",
       "getChildCount?": "/** Allows setting the child count for a group row. */",
-      "getServerSideGroupParams?": "/** Allows providing different params for different levels of grouping. */",
-      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupParams` instead.\n */",
+      "getServerSideGroupLevelParams?": "/** Allows providing different params for different levels of grouping. */",
+      "getServerSideStoreParams?": "/** @deprecated use `getServerSideGroupLevelParams` instead.\n */",
       "isServerSideGroupOpenByDefault?": "/** Allows groups to be open by default. */",
       "isApplyServerSideTransaction?": "/** Allows cancelling transactions. */",
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",

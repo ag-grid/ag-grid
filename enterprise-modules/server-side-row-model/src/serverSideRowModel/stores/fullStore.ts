@@ -16,8 +16,8 @@ import {
     RowNodeBlockLoader,
     RowNodeSorter,
     SelectionChangedEvent,
-    ServerSideGroupParams,
-    ServerSideGroupState,
+    ServerSideGroupLevelParams,
+    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -74,7 +74,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.ssrmParams = ssrmParams;
@@ -200,7 +200,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     protected processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
-        const info = params.storeInfo || params.groupInfo;
+        const info = params.storeInfo || params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -504,7 +504,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
                 storeInfo: this.info,
-                groupInfo: this.info
+                groupLevelInfo: this.info
             };
             const apply = applyCallback(params);
             if (!apply) {
@@ -650,7 +650,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
-    public addStoreStates(result: ServerSideGroupState[]): void {
+    public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             infiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),

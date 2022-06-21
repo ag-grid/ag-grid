@@ -15,8 +15,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    ServerSideGroupParams,
-    ServerSideGroupState,
+    ServerSideGroupLevelParams,
+    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -48,7 +48,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired("columnModel") private columnModel: ColumnModel;
 
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideGroupParams;
+    private readonly storeParams: ServerSideGroupLevelParams;
     private readonly parentRowNode: RowNode;
     private readonly blocks: { [blockNumber: string]: PartialStoreBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
@@ -70,7 +70,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
         this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
@@ -113,7 +113,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
-        const info = params.storeInfo || params.groupInfo;
+        const info = params.storeInfo || params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -665,7 +665,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
-    public addStoreStates(result: ServerSideGroupState[]): void {
+    public addStoreStates(result: ServerSideGroupLevelState[]): void {
         result.push({
             infiniteScroll: true,
             route: this.parentRowNode.getGroupKeys(),

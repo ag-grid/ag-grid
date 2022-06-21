@@ -5,6 +5,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { CellPosition } from "./cellPosition";
 import { ColDef, ColGroupDef } from "./colDef";
 import { Column } from "./column";
+import { ServerSideGroupLevelParams } from "./gridOptions";
 import { RowNode } from "./rowNode";
 
 export interface GetContextMenuItemsParams extends AgGridCommon {
@@ -123,7 +124,7 @@ export interface IsGroupOpenByDefaultParams extends AgGridCommon {
     key: string;
 }
 
-export interface GetServerSideGroupParamsParams extends AgGridCommon {
+export interface GetServerSideGroupLevelParamsParams extends AgGridCommon {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -136,6 +137,9 @@ export interface GetServerSideGroupParamsParams extends AgGridCommon {
     pivotMode: boolean;
 }
 
+/** @deprecated use GetServerSideGroupLevelParamsParams instead */
+export interface GetServerSideStoreParamsParams extends GetServerSideGroupLevelParamsParams {}
+
 export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon {
     data: any;
     rowNode: RowNode;
@@ -146,10 +150,10 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon {
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */
     parentNode: RowNode;
-    /** @deprecated use groupInfo instead */
+    /** @deprecated use groupLevelInfo instead */
     storeInfo: any;
     /** Store info, if any, as passed via the success() callback when loading data. */
-    groupInfo: any;
+    groupLevelInfo: any;
 }
 
 export interface GetRowIdParams extends AgGridCommon {

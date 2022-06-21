@@ -10,7 +10,7 @@ This is useful when the data has changed at the source (typically on the server)
 
 The grid has the following API's to assist with refreshing:
 
-<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["refreshServerSideGroup"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["refreshServerSide"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
 <api-documentation source='grid-api/api.json' section='infiniteScrolling' names='["getCacheBlockState"]'  ></api-documentation>
 
 

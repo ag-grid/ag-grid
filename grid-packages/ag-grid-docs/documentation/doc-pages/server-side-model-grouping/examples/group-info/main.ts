@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, ServerSideGroupParams, GetServerSideGroupParamsParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, ServerSideGroupLevelParams, GetServerSideGroupLevelParamsParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -23,9 +23,9 @@ const gridOptions: GridOptions = {
 
   rowModelType: 'serverSide',
 
-  getServerSideGroupParams: (params: GetServerSideGroupParamsParams): ServerSideGroupParams => {
+  getServerSideGroupLevelParams: (params: GetServerSideGroupLevelParamsParams): ServerSideGroupLevelParams => {
     var noGroupingActive = params.rowGroupColumns.length == 0
-    var res: ServerSideGroupParams;
+    var res: ServerSideGroupLevelParams;
     if (noGroupingActive) {
       res = {
         // infinite scrolling
@@ -46,7 +46,7 @@ const gridOptions: GridOptions = {
 
     console.log('############## NEW STORE ##############')
     console.log(
-      'getServerSideGroupParams, level = ' +
+      'getServerSideGroupLevelParams, level = ' +
       params.level +
       ', result = ' +
       JSON.stringify(res)
@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
 }
 
 function onBtGroupState() {
-  var storeState = gridOptions.api!.getServerSideGroupState()
+  var storeState = gridOptions.api!.getServerSideGroupLevelState()
   console.log('Store States:')
   storeState.forEach(function (state, index) {
     console.log(
@@ -86,7 +86,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           params.success({
             rowData: response.rows,
             rowCount: response.lastRow,
-            groupInfo: {
+            groupLevelInfo: {
               lastLoadedTime: new Date().toLocaleString(),
               randomValue: Math.random(),
             },

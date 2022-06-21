@@ -66,7 +66,7 @@ function onBtRetry() {
 }
 
 function onBtReset() {
-  gridOptions.api!.refreshServerSideGroup({ purge: true })
+  gridOptions.api!.refreshServerSide({ purge: true })
 }
 
 // setup the grid after the page has finished loading
