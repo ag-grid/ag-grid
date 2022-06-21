@@ -713,16 +713,10 @@ export abstract class Chart extends Observable {
 
     protected assignSeriesToAxes() {
         this.axes.forEach(axis => {
-            const axisName = axis.direction + 'Axis';
-            const boundSeries: Series[] = [];
-
-            this.series.forEach(series => {
-                if ((series as any)[axisName] === axis) {
-                    boundSeries.push(series);
-                }
+            axis.boundSeries = this.series.filter((s) => {
+                const seriesAxis =  axis.direction === 'x' ? s.xAxis : s.yAxis;
+                return seriesAxis === axis;
             });
-
-            axis.boundSeries = boundSeries;
         });
     }
 
@@ -737,16 +731,30 @@ export abstract class Chart extends Observable {
         });
 
         this.series.forEach(series => {
-            series.directions.forEach(direction => {
-                const axisName = direction + 'Axis';
-                if ((series as any)[axisName] && !force) {
+            series.directions.forEach((direction) => {
+                const currentAxis =  direction === 'x' ? series.xAxis : series.yAxis;
+                if (currentAxis && !force) {
                     return;
                 }
+
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
+                    console.warn(`AG Charts - no available axis for direction [${direction}]; check series and axes configuration.`)
                     return;
                 }
-                (series as any)[axisName] = this.findMatchingAxis(directionAxes, series.getKeys(direction));
+
+                const seriesKeys = series.getKeys(direction);
+                const newAxis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
+                if (!newAxis) {
+                    console.warn(`AG Charts - no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`)
+                    return;
+                }
+
+                if (direction === 'x') {
+                    series.xAxis = newAxis;
+                } else {
+                    series.yAxis = newAxis;
+                }
             });
         });
     }
