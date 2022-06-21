@@ -81,6 +81,17 @@ const applyGeneric = () => {
         .pipe(dest('./'))
 };
 
+const containsCallsData = function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes('master-detail-data.json')
+}
+const applyGeneric2 = () => {
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(gulpIf(containsCallsData, replace(new RegExp('gridOptions: GridOptions =', 'g'), 'gridOptions: GridOptions<IAccount> =')))
+        .pipe(gulpIf(containsCallsData, replace(new RegExp('then\\(function \\(data\\) ', 'g'), 'then((data: IAccount[]) => ')))
+        .pipe(dest('./'))
+};
+
 const containsChartOptions = function (file) {
     const fileContent = fs.readFileSync(file.path, "utf8");
     return fileContent.includes('options =')
@@ -103,4 +114,4 @@ const prettify = () => {
 
 // applyTypes
 //series(renameFiles, convertDataFile, convertData, prettify)
-exports.default = series(applyGeneric)
+exports.default = series(applyGeneric2)

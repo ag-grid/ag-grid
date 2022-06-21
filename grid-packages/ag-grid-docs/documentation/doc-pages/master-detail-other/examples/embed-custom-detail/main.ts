@@ -1,7 +1,7 @@
 import { Grid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IAccount> = {
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 150,
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
-    .then(function (data) {
+    .then((data: IAccount[]) => {
       gridOptions.api!.setRowData(data)
     })
 })
