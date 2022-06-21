@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const {series, parallel} = gulp;
-
 const fs = require('fs');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
@@ -55,11 +54,15 @@ const copyGridCoreStyles = (done) => {
         done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
+    // we don't have a dist folder in styles so just check for at least the core structural css file
+    if (!fs.existsSync('./node_modules/@ag-grid-community/styles/ag-grid.css')) {
+        done("./node_modules/@ag-grid-community/styles/ag-grid.css doesn't exist - exiting")
+    }
+
     return merge([
             gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
-            gulp.src([
-                './node_modules/@ag-grid-community/core/src/styles/**/*'
-            ]).pipe(gulp.dest('./src/styles')),
+            gulp.src('./node_modules/@ag-grid-community/styles/*.css').pipe(gulp.dest('./styles')),
+            gulp.src('./node_modules/@ag-grid-community/styles/*.scss').pipe(gulp.dest('./styles'))
         ]
     );
 };
@@ -91,7 +94,9 @@ const copyGridCoreTypings = (done) => {
             const match = (this.file.relative.match(WINDOWS ? /\\/g : /\//g) || []);
             const depth = match.length;
 
-            if (depth === 0) { return './main'; }
+            if (depth === 0) {
+                return './main';
+            }
 
             return `${Array(depth).fill('../').join('')}main`;
         }))

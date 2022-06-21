@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/styles",
-  "version": "27.2.1",
+  "version": "27.3.0",
   "description": "AG Grid Styles and Themes",
   "main": "_index.scss",
   "files": [
@@ -10,6 +10,7 @@
   "scripts": {
     "build": "npm run build:sass -- --no-error-css && node post-build.js",
     "build:sass": "sass --no-source-map --load-path src/internal src:.",
+    "build-css": "npm run build",
     "watch": "npm-run-all build --parallel watch:sass watch:post-build",
     "watch:post-build": "chokidar '*.css' --ignore '*.min.css' --command 'node post-build.js'",
     "watch:sass": "npm run build:sass -- --watch",
