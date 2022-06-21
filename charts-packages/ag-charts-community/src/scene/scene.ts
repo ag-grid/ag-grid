@@ -257,7 +257,7 @@ export class Scene {
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                console.log({ redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+                console.log('before', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
             }
 
             if (root.visible) {
@@ -326,7 +326,10 @@ export class Scene {
             ctx.restore();
         }
 
-    }
+        if (root && this.debug.consoleLog) {
+            console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+        }
+}
 
     buildTree(node: Node): { name?: string, node?: any, dirty?: string } {
         const name = (node instanceof Group ? node.name : null) ?? node.id;

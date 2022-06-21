@@ -59,7 +59,7 @@ export function SceneChangeDetection(opts?: {
                     ${convertor ? 'value = convertor(value);' : ''}
                     if (value !== oldValue) {
                         this.${privateKey} = value;
-                        ${debug ? `if (window.agChartsSceneChangeDetectionDebug) console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
+                        ${debug ? `console.log({ t: this, property: '${key}', oldValue, value, stack: new Error().stack });` : ''}
                         ${type === 'normal' ? 'this.markDirty(this, ' + redraw + ');' : ''}
                         ${type === 'transform' ? 'this.markDirtyTransform(' + redraw + ');' : ''}
                         ${type === 'path' ? `if (!this._dirtyPath) { this._dirtyPath = true; this.markDirty(this, redraw); }` : ''}
