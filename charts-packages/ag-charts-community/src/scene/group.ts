@@ -274,12 +274,14 @@ export class Group extends Node {
                 continue;
             }
 
+            // Render marks this node (and children) as clean - no need to explicitly markClean().
             ctx.save();
             child.render(childRenderContext);
             ctx.restore();
         }
         if (stats) stats.nodesSkipped += skipped;
 
+        // Render marks this node as clean - no need to explicitly markClean().
         super.render(renderCtx);
 
         if (layer) {
