@@ -219,6 +219,9 @@ function applyChartOptions<
     if (options.listeners) {
         registerListeners(chart, options.listeners);
     }
+    if (options.legend?.listeners) {
+        Object.assign(chart.legend.listeners, options.legend.listeners);
+    }
 
     chart.options = jsonMerge(chart.options || {}, options);
     chart.userOptions = jsonMerge(chart.userOptions || {}, userOptions);

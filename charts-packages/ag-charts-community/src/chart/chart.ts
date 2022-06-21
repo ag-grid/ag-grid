@@ -1211,7 +1211,8 @@ export abstract class Chart extends Observable {
     }
 
     private checkLegendClick(event: MouseEvent): boolean {
-        const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
+        const { legend, legend: { listeners: { legendItemClick } } } = this;
+        const datum = legend.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return false;
         }
@@ -1238,6 +1239,8 @@ export abstract class Chart extends Observable {
                 datum: undefined
             };
         }
+
+        legendItemClick({ enabled: !enabled, itemId });
 
         return true;
     }
