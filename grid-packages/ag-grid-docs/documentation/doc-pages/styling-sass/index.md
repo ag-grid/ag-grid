@@ -1,8 +1,8 @@
 ---
-title: "Sass styling API"
+title: "Sass Styling API"
 ---
 
-The Sass styling API is an optional lightweight wrapper around [Themes](/themes) and [Design Customisations](/customising-design) that automates the process of importing CSS files and setting CSS variables.
+The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Design Customisations](/customising-design) that automates the process of importing CSS files and setting CSS variables.
 
 Sass is not necessary to customise the provided themes. Since introducing full support for design customisation through CSS variables in v28, anything that is possible with Sass is also possible with CSS. But the Sass API provides some benefits:
 
@@ -12,7 +12,11 @@ Sass is not necessary to customise the provided themes. Since introducing full s
 
 ## Getting started
 
-First, set up your project to compile Sass (.scss) files. We provide an example using the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla) and one using [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla-webpack).
+First, set up your project to compile Sass (.scss) files. We provide examples for the major frameworks:
+
+ - Vanilla JS and React: use the [Sass CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla) or [Webpack and sass-loader](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vanilla-webpack)
+ - Angular: see our [Angular CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/angular) example
+ - Vue: see our [Vue CLI](https://github.com/ag-grid/ag-grid-customise-theme/tree/v28-theme-refactor/src/vue) example
 
 Next, create import the Sass API in your .scss file:
 
@@ -25,6 +29,9 @@ The above import path assumes that `node_modules` is added to the Sass load path
  - `@ag-grid-community/styles` if you're using the grid [modules](/modules/) feature
  - `node_modules/ag-grid-community/styles` if `node_modules` is not in the Sass load path
  - `~ag-grid-community/styles` is you're using webpack and sass-loader (the tilde instructs sass-loader to look in `node_modules`)
+
+ [[note]]
+| These import paths changed in v28. If you have created ag-Grid apps using v27 or below, ensure that you use the above import paths rather than copying the old v27 import paths, to avoid importing the [Legacy Sass API](/styling-sass-legacy/).
 
 ## Simple example
 
@@ -65,9 +72,9 @@ If you
 
 ## Setting CSS variables
 
-The Sass styling API is a wrapper around the CSS variable API for design customisation, you can pass any supported CSS variable as a parameter to the Sass API, just remove the `--ag-` prefix from the variable name. See the [full list of supported CSS variables](/customising-design#full-list-of-css-variables).
+The Sass Styling API is a wrapper around the CSS variable API for design customisation, you can pass any supported CSS variable as a parameter to the Sass API, just remove the `--ag-` prefix from the variable name. See the [full list of supported CSS variables](/customising-design#full-list-of-css-variables).
 
-The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [legacy Sass styling API](/styling-sass-legacy/).
+The Sass API provides a little bit of sugar to make it easier to read and remember some parameter values and assists migration from the [Legacy Sass API](/styling-sass-legacy/).
 
 - You can pass `true` or `false` to any `borders-*` parameter to enable or disable the border (the equivalent CSS variables require `solid 1px` or `none`)
 - You can pass `true` or `false` to the `header-column-separator-display` or `header-column-resize-handle-display` parameters (the equivalent CSS variables require `block` or `none`)
@@ -79,7 +86,7 @@ The grid relies extensively on transparency to look good. For example when the g
 
 CSS cannot automatically generate a transparent version a colour, so in CSS if you change the background colour of the grid you may also want to set the `--ag-modal-overlay-background-color` variable in order to update the overlay to the new colour scheme.
 
-The Sass styling API will do this for you. If you define a `background-color` and have not set an explicit value for `modal-overlay-background-color` then it will be set to the background color with an opacity of 66%.
+The Sass Styling API will do this for you. If you define a `background-color` and have not set an explicit value for `modal-overlay-background-color` then it will be set to the background color with an opacity of 66%.
 
 The most important parameters for colour blending are:
 

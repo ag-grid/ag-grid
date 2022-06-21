@@ -24,9 +24,6 @@
 
     $themes: -get-themes($global-params);
 
-    @warn meta.inspect($themes);
-
-
     @if $no-native-widgets {
         @include -load-css-file("ag-grid-no-native-widgets.css");
     } @else {
@@ -63,12 +60,10 @@
 
         @if $extended-theme-name and $extended-theme-name != $theme-name {
             // alias all the styles in the extended theme to the new theme name
-            @warn "@#{$theme-name} extends #{$extended-theme-name}";
             .ag-theme-#{$theme-name} {
                 @extend .ag-theme-#{$extended-theme-name};
             }
         }
-
 
         // Emit CSS variable declarations for a st of params, converting (foo: bar) to `--ag-foo: bar`
         .ag-theme-#{$theme-name} {
@@ -99,6 +94,9 @@ $-loaded-css-files: ();
 
 // Fulfils the same role as meta.load-css, which we can't use due to this issue:
 // https://github.com/sass/dart-sass/issues/1627
+//
+// NOTE the above bug was fixed in Sass 1.52.4 in June 2022, this workaround should
+// be kept as long as we want to support earlier Sass versions
 @mixin -load-css-file($file, $ignore-missing: false) {
     @if not map.get($-loaded-css-files, $file) {
         $-loaded-css-files: map.set($-loaded-css-files, $file, true);
